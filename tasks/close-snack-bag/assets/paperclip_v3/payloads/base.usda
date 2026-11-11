@@ -1,0 +1,186 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "MuJoCo USD Converter v0.5.0"
+    }
+    defaultPrim = "paperclip_v3"
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    subLayers = [
+        @./robot.usda@
+    ]
+    upAxis = "Z"
+)
+
+def Xform "paperclip_v3" (
+    prepend apiSchemas = ["GeomModelAPI", "PhysicsArticulationRootAPI", "NewtonArticulationRootAPI", "IsaacRobotAPI"]
+    assetInfo = {
+        string name = "paperclip_v3"
+    }
+    kind = "component"
+)
+{
+    float3[] extentsHint = [(-0.0128, -0.0058, -0.0008000017), (0.012800001, 0.0058, 0.0008000017)]
+    custom rel isaac:physics:robotJoints
+    custom rel isaac:physics:robotLinks
+    custom token isaac:robotType = "Default"
+    bool newton:selfCollisionEnabled = 0
+
+    def Scope "Geometry"
+    {
+        def Xform "paperclip" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI", "IsaacLinkAPI"]
+        )
+        {
+            quatf xformOp:orient = (1, 0, 0, 0)
+            float3 xformOp:scale = (1, 1, 1)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+            def Capsule "wire0" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0008, -0.0008, -0.0128), (0.0008, 0.0008, 0.0128)]
+                double height = 0.024
+                rel material:binding:physics = </paperclip_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0002
+                color3f[] primvars:displayColor = [(0.65, 0.66, 0.69)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0008
+                quatf xformOp:orient = (0.7071068, 0, 0.7071067, 0)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0, -0.005, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "wire1" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0008, -0.0008, -0.0058), (0.0008, 0.0008, 0.0058)]
+                double height = 0.01
+                rel material:binding:physics = </paperclip_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0002
+                color3f[] primvars:displayColor = [(0.65, 0.66, 0.69)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0008
+                quatf xformOp:orient = (0.7071068, -0.7071067, 0, 0)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.012, 0, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "wire2" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0008, -0.0008, -0.0113), (0.0008, 0.0008, 0.0113)]
+                double height = 0.020999999999999998
+                rel material:binding:physics = </paperclip_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0002
+                color3f[] primvars:displayColor = [(0.65, 0.66, 0.69)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0008
+                quatf xformOp:orient = (0.7071068, 0, -0.7071067, 0)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.0015000000000000005, 0.005, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "wire3" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0008, -0.0008, -0.0028), (0.0008, 0.0008, 0.0028)]
+                double height = 0.004
+                rel material:binding:physics = </paperclip_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0002
+                color3f[] primvars:displayColor = [(0.65, 0.66, 0.69)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0008
+                quatf xformOp:orient = (0.7071068, 0.7071067, 0, 0)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.009, 0.003, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "wire4" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0008, -0.0008, -0.0088), (0.0008, 0.0008, 0.0088)]
+                double height = 0.016
+                rel material:binding:physics = </paperclip_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0002
+                color3f[] primvars:displayColor = [(0.65, 0.66, 0.69)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0008
+                quatf xformOp:orient = (0.7071068, 0, 0.7071067, 0)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.0009999999999999996, 0.001, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+        }
+    }
+
+    def Scope "Physics"
+    {
+        def Material "PhysicsMaterial" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "NewtonMaterialAPI"]
+        )
+        {
+            float newton:contactDamping = 100
+            float newton:contactStiffness = 2500
+            float newton:rollingFriction = 0.0001
+            float newton:torsionalFriction = 0.005
+            float physics:dynamicFriction = 1
+            float physics:staticFriction = 1
+        }
+    }
+}

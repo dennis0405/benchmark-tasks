@@ -1,0 +1,49 @@
+<mujoco model="snack bag and spring clip prototype">
+  <compiler angle="radian"/>
+  <option timestep="0.002" gravity="0 0 -9.81" integrator="implicitfast"/>
+  <default>
+    <geom friction="1 0.01 0.001" solref="0.01 1" solimp="0.95 0.99 0.001"/>
+    <joint damping="0.01" armature="0.00002"/>
+  </default>
+  <worldbody>
+    <light pos="0 0 1.2" dir="0 0 -1" diffuse="0.8 0.8 0.8"/>
+    <camera name="top" pos="0.18 0 0.65" xyaxes="1 0 0 0 1 0"/>
+    <geom name="table" type="plane" size="0.5 0.4 0.05" rgba="0.68 0.55 0.39 1"/>
+    <!-- Filled packet is rigid; three thin layers form a two-hinge folded mouth. -->
+    <body name="bag" pos="0.10 0.09 0.022">
+      <freejoint/>
+      <!-- Five thin rigid walls; the +X mouth is open. Visual skin is added in USD. -->
+      <geom name="bag_body" type="box" pos="0 0 -0.019" size="0.06 0.08 0.002" mass="0.07" rgba="0.78 0.49 0.08 1"/>
+      <geom name="bag_top" type="box" pos="0 0 0.020" size="0.06 0.08 0.001" mass="0.02" rgba="0.78 0.49 0.08 1"/>
+      <geom name="bag_back" type="box" pos="-0.058 0 0" size="0.002 0.08 0.019" mass="0.01" rgba="0.78 0.49 0.08 1"/>
+      <geom name="bag_front" type="box" pos="0.058 0 -0.010" size="0.002 0.08 0.009" mass="0.005" rgba="0.78 0.49 0.08 1"/>
+      <geom name="bag_side_l" type="box" pos="0 0.078 0" size="0.06 0.002 0.019" mass="0.01" rgba="0.78 0.49 0.08 1"/>
+      <geom name="bag_side_r" type="box" pos="0 -0.078 0" size="0.06 0.002 0.019" mass="0.01" rgba="0.78 0.49 0.08 1"/>
+      <geom name="mouth_lower" type="box" pos="0.08 0 0.021" size="0.02 0.08 0.0007" mass="0.002" rgba="0.91 0.66 0.16 1"/>
+      <body name="bag_flap" pos="0.10 0 0.0225">
+        <joint name="fold" type="hinge" axis="0 1 0" range="-3.14 0" limited="true" stiffness="0.0001" springref="0" damping="0.01" frictionloss="0.00002"/>
+        <geom name="film" type="box" pos="0.02 0 0" size="0.02 0.08 0.0007" mass="0.002" rgba="0.96 0.73 0.24 1"/>
+        <body name="bag_flap_end" pos="0.04 0 -0.0015">
+          <joint name="fold2" type="hinge" axis="0 1 0" range="0 3.14" limited="true" stiffness="0.0001" springref="0" damping="0.01" frictionloss="0.00002"/>
+          <geom name="film_end" type="box" pos="0.02 0 0" size="0.02 0.08 0.0007" mass="0.002" rgba="0.98 0.77 0.32 1"/>
+        </body>
+      </body>
+    </body>
+    <!-- A free clip: upper jaw/handle rotates about a spring-loaded hinge. -->
+    <body name="clip" pos="0.31 -0.09 0.014">
+      <freejoint/>
+      <geom name="lower_jaw" type="box" pos="0.022 0 -0.004" size="0.022 0.05 0.003" mass="0.008" rgba="0.12 0.38 0.78 1"/>
+      <geom name="lower_handle" type="box" pos="-0.018 0 -0.008" size="0.018 0.012 0.003" mass="0.004" rgba="0.12 0.38 0.78 1"/>
+      <body name="upper" pos="0 0 0">
+        <joint name="clip_hinge" type="hinge" axis="0 1 0" range="-0.55 0.02" limited="true" stiffness="0.13" springref="0" damping="0.003"/>
+        <geom name="upper_jaw" type="box" pos="0.022 0 0.004" size="0.022 0.05 0.003" mass="0.008" rgba="0.19 0.51 0.92 1"/>
+        <geom name="upper_handle" type="box" pos="-0.018 0 0.008" size="0.018 0.012 0.003" mass="0.004" rgba="0.19 0.51 0.92 1"/>
+      </body>
+    </body>
+  </worldbody>
+  <actuator>
+    <!-- For mechanism checks only; a robot must operate the objects by contact. -->
+    <motor name="fold_test" joint="fold" gear="1" ctrllimited="true" ctrlrange="-0.03 0.03"/>
+    <motor name="clip_test" joint="clip_hinge" gear="1" ctrllimited="true" ctrlrange="-0.075 0.075"/>
+  </actuator>
+</mujoco>

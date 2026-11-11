@@ -1,0 +1,472 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "MuJoCo USD Converter v0.5.0"
+    }
+    defaultPrim = "band_v3"
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    subLayers = [
+        @./robot.usda@
+    ]
+    upAxis = "Z"
+)
+
+def Xform "band_v3" (
+    prepend apiSchemas = ["GeomModelAPI", "PhysicsArticulationRootAPI", "NewtonArticulationRootAPI", "IsaacRobotAPI"]
+    assetInfo = {
+        string name = "band_v3"
+    }
+    kind = "component"
+)
+{
+    float3[] extentsHint = [(-0.027736496, -0.020518608, -0.0016953605), (0.027736496, 0.020518608, 0.0016953605)]
+    custom rel isaac:physics:robotJoints
+    custom rel isaac:physics:robotLinks
+    custom token isaac:robotType = "Default"
+    bool newton:selfCollisionEnabled = 0
+
+    def Scope "Geometry"
+    {
+        def Xform "band" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI", "IsaacLinkAPI"]
+        )
+        {
+            quatf xformOp:orient = (1, 0, 0, 0)
+            float3 xformOp:scale = (1, 1, 1)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+
+            def Capsule "segment0" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.0049677645), (0.0012, 0.0012, 0.0049677645)]
+                double height = 0.007535528520390692
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, -0.682283, -0.18571462, 1.9626155e-17)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.02501043392264673, 0.0036354926074683527, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment1" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.0053761513), (0.0012, 0.0012, 0.0053761513)]
+                double height = 0.00835230277394645
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, -0.52184856, -0.47715208, -3.925231e-17)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.021202822078071844, 0.010353007028740554, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment2" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.005893423), (0.0012, 0.0012, 0.005893423)]
+                double height = 0.009386846538849863
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, -0.31025842, -0.6354052, -7.850462e-17)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.014167272776171285, 0.015494369980129426, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment3" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.006227168), (0.0012, 0.0012, 0.006227168)]
+                double height = 0.01005433535794235
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, -0.10171539, -0.6997528, 5.887847e-17)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.004974884620746169, 0.018276855558857226, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment4" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.006227168), (0.0012, 0.0012, 0.006227168)]
+                double height = 0.01005433535794235
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, 0.10171539, -0.6997528, 5.887847e-17)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.004974884620746165, 0.018276855558857226, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment5" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.005893423), (0.0012, 0.0012, 0.005893423)]
+                double height = 0.009386846538849863
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, 0.31025842, -0.6354052, 7.850462e-17)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.014167272776171282, 0.015494369980129426, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment6" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.0053761513), (0.0012, 0.0012, 0.0053761513)]
+                double height = 0.008352302773946451
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, 0.52184856, -0.47715208, -1.9626155e-17)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.021202822078071844, 0.010353007028740556, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment7" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.0049677645), (0.0012, 0.0012, 0.0049677645)]
+                double height = 0.007535528520390692
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, 0.682283, -0.18571462, 1.9626155e-17)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.02501043392264673, 0.0036354926074683553, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment8" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.0049677645), (0.0012, 0.0012, 0.0049677645)]
+                double height = 0.007535528520390692
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, 0.682283, 0.18571462, -1.9626155e-17)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.02501043392264673, -0.0036354926074683505, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment9" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.0053761513), (0.0012, 0.0012, 0.0053761513)]
+                double height = 0.008352302773946451
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, 0.52184856, 0.47715208, 3.925231e-17)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.02120282207807185, -0.010353007028740552, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment10" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.005893423), (0.0012, 0.0012, 0.005893423)]
+                double height = 0.009386846538849854
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, 0.31025842, 0.6354052, 0)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.014167272776171294, -0.015494369980129423, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment11" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.006227168), (0.0012, 0.0012, 0.006227168)]
+                double height = 0.010054335357942359
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, 0.10171539, 0.6997528, 0)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (-0.004974884620746176, -0.01827685555885722, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment12" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.006227168), (0.0012, 0.0012, 0.006227168)]
+                double height = 0.01005433535794236
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, -0.10171539, 0.6997528, 0)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.004974884620746167, -0.018276855558857222, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment13" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.005893423), (0.0012, 0.0012, 0.005893423)]
+                double height = 0.009386846538849851
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, -0.31025842, 0.6354052, 0)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.014167272776171285, -0.015494369980129426, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment14" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.0053761513), (0.0012, 0.0012, 0.0053761513)]
+                double height = 0.008352302773946444
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, -0.52184856, 0.47715208, -9.813078e-17)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.021202822078071837, -0.010353007028740561, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+
+            def Capsule "segment15" (
+                prepend apiSchemas = ["PhysicsCollisionAPI", "NewtonCollisionAPI", "MjcCollisionAPI", "PhysicsMassAPI", "MaterialBindingAPI"]
+            )
+            {
+                uniform token axis = "Z"
+                float3[] extent = [(-0.0012, -0.0012, -0.0049677645), (0.0012, 0.0012, 0.0049677645)]
+                double height = 0.0075355285203907016
+                rel material:binding:physics = </band_v3/Physics/PhysicsMaterial>
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+                float physics:mass = 0.0001
+                color3f[] primvars:displayColor = [(0.85, 0.16, 0.12)] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayColor:indices = None
+                float[] primvars:displayOpacity = [1] (
+                    interpolation = "constant"
+                )
+                int[] primvars:displayOpacity:indices = None
+                double radius = 0.0012
+                quatf xformOp:orient = (0.70710677, -0.682283, 0.18571462, -1.9626155e-17)
+                float3 xformOp:scale = (1, 1, 1)
+                double3 xformOp:translate = (0.02501043392264672, -0.003635492607468361, 0)
+                uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:orient", "xformOp:scale"]
+            }
+        }
+    }
+
+    def Scope "Physics"
+    {
+        def Material "PhysicsMaterial" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "NewtonMaterialAPI"]
+        )
+        {
+            float newton:contactDamping = 100
+            float newton:contactStiffness = 2500
+            float newton:rollingFriction = 0.0001
+            float newton:torsionalFriction = 0.005
+            float physics:dynamicFriction = 1
+            float physics:staticFriction = 1
+        }
+    }
+}

@@ -1,0 +1,150 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "MuJoCo USD Converter v0.5.0"
+    }
+    defaultPrim = "bag_v4"
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+over "bag_v4"
+{
+    over "Geometry"
+    {
+        over "bag" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsArticulationRootAPI", "NewtonArticulationRootAPI"]
+        )
+        {
+            uniform bool newton:jointsAddMobility = 1
+            bool newton:selfCollisionEnabled = 0
+
+            over "bag_body" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.07
+            }
+
+            over "bag_top" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.02
+            }
+
+            over "bag_back" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.01
+            }
+
+            over "bag_front" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.005
+            }
+
+            over "bag_side_l" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.01
+            }
+
+            over "bag_side_r" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.01
+            }
+
+            over "mouth_lower" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.002
+            }
+
+            over "bag_flap" (
+                prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+            )
+            {
+                over "film" (
+                    prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+                )
+                {
+                    float physics:mass = 0.002
+                }
+
+                over "bag_flap_end" (
+                    prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+                )
+                {
+                    over "film_end" (
+                        prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+                    )
+                    {
+                        float physics:mass = 0.002
+                    }
+
+                    def PhysicsRevoluteJoint "fold2" (
+                        prepend apiSchemas = ["NewtonJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                    )
+                    {
+                        float newton:damping = 0.00017453292
+                        float newton:friction = 0.00002
+                        uniform token physics:axis = "Y"
+                        custom rel physics:body0
+                        append rel physics:body0 = </bag_v4/Geometry/bag/bag_flap>
+                        custom rel physics:body1
+                        append rel physics:body1 = </bag_v4/Geometry/bag/bag_flap/bag_flap_end>
+                        point3f physics:localPos0 = (0.04, 0, -0.0015)
+                        point3f physics:localPos1 = (0, 0, 0)
+                        quatf physics:localRot0 = (1, 0, 0, 0)
+                        quatf physics:localRot1 = (1, 0, 0, 0)
+                        float physics:lowerLimit = 0
+                        float physics:upperLimit = 179.90875
+                    }
+                }
+
+                def PhysicsRevoluteJoint "fold" (
+                    prepend apiSchemas = ["NewtonJointAPI", "PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                )
+                {
+                    float newton:damping = 0.00017453292
+                    float newton:friction = 0.00002
+                    uniform token physics:axis = "Y"
+                    custom rel physics:body0
+                    append rel physics:body0 = </bag_v4/Geometry/bag>
+                    custom rel physics:body1
+                    append rel physics:body1 = </bag_v4/Geometry/bag/bag_flap>
+                    point3f physics:localPos0 = (0.1, 0, 0.0225)
+                    point3f physics:localPos1 = (0, 0, 0)
+                    quatf physics:localRot0 = (1, 0, 0, 0)
+                    quatf physics:localRot1 = (1, 0, 0, 0)
+                    float physics:lowerLimit = -179.90875
+                    float physics:upperLimit = 0
+                }
+            }
+        }
+    }
+
+    over "Physics"
+    {
+        over "PhysicsMaterial" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "NewtonMaterialAPI"]
+        )
+        {
+            float newton:contactDamping = 100
+            float newton:contactStiffness = 2500
+            float newton:rollingFriction = 0.0001
+            float newton:torsionalFriction = 0.005
+            float physics:dynamicFriction = 1
+            float physics:staticFriction = 1
+        }
+    }
+}

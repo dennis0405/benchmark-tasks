@@ -1,0 +1,66 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "MuJoCo USD Converter v0.5.0"
+    }
+    defaultPrim = "wide_peg_v5"
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    subLayers = [
+        @./physics.usda@
+    ]
+    upAxis = "Z"
+)
+
+over "wide_peg_v5"
+{
+    over "Geometry"
+    {
+        over "peg"
+        {
+            over "lower_jaw" (
+                prepend apiSchemas = ["MjcCollisionAPI"]
+            )
+            {
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+            }
+
+            over "lower_handle" (
+                prepend apiSchemas = ["MjcCollisionAPI"]
+            )
+            {
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+            }
+
+            over "upper"
+            {
+                over "upper_jaw" (
+                    prepend apiSchemas = ["MjcCollisionAPI"]
+                )
+                {
+                    uniform double[] mjc:solref = [0.02, 1]
+                    float newton:contactGap = 0
+                }
+
+                over "upper_handle" (
+                    prepend apiSchemas = ["MjcCollisionAPI"]
+                )
+                {
+                    uniform double[] mjc:solref = [0.02, 1]
+                    float newton:contactGap = 0
+                }
+
+                over "clip_hinge" (
+                    delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                    prepend apiSchemas = ["MjcJointAPI"]
+                )
+                {
+                    uniform double mjc:damping = 0.003
+                    uniform double mjc:stiffness = 0.13
+                }
+            }
+        }
+    }
+}

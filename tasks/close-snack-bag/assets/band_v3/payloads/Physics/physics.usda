@@ -1,0 +1,152 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "MuJoCo USD Converter v0.5.0"
+    }
+    defaultPrim = "band_v3"
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+over "band_v3" (
+    prepend apiSchemas = ["PhysicsArticulationRootAPI", "NewtonArticulationRootAPI"]
+)
+{
+    bool newton:selfCollisionEnabled = 0
+
+    over "Geometry"
+    {
+        over "band" (
+            prepend apiSchemas = ["PhysicsRigidBodyAPI"]
+        )
+        {
+            over "segment0" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment1" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment2" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment3" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment4" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment5" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment6" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment7" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment8" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment9" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment10" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment11" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment12" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment13" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment14" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+
+            over "segment15" (
+                prepend apiSchemas = ["NewtonCollisionAPI", "PhysicsMassAPI"]
+            )
+            {
+                float physics:mass = 0.0001
+            }
+        }
+    }
+
+    over "Physics"
+    {
+        over "PhysicsMaterial" (
+            prepend apiSchemas = ["PhysicsMaterialAPI", "NewtonMaterialAPI"]
+        )
+        {
+            float newton:contactDamping = 100
+            float newton:contactStiffness = 2500
+            float newton:rollingFriction = 0.0001
+            float newton:torsionalFriction = 0.005
+            float physics:dynamicFriction = 1
+            float physics:staticFriction = 1
+        }
+    }
+}

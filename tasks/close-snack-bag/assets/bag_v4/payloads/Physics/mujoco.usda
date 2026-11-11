@@ -1,0 +1,120 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "MuJoCo USD Converter v0.5.0"
+    }
+    defaultPrim = "bag_v4"
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    subLayers = [
+        @./physics.usda@
+    ]
+    upAxis = "Z"
+)
+
+over "bag_v4"
+{
+    over "Geometry"
+    {
+        over "bag"
+        {
+            over "bag_body" (
+                prepend apiSchemas = ["MjcCollisionAPI"]
+            )
+            {
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+            }
+
+            over "bag_top" (
+                prepend apiSchemas = ["MjcCollisionAPI"]
+            )
+            {
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+            }
+
+            over "bag_back" (
+                prepend apiSchemas = ["MjcCollisionAPI"]
+            )
+            {
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+            }
+
+            over "bag_front" (
+                prepend apiSchemas = ["MjcCollisionAPI"]
+            )
+            {
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+            }
+
+            over "bag_side_l" (
+                prepend apiSchemas = ["MjcCollisionAPI"]
+            )
+            {
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+            }
+
+            over "bag_side_r" (
+                prepend apiSchemas = ["MjcCollisionAPI"]
+            )
+            {
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+            }
+
+            over "mouth_lower" (
+                prepend apiSchemas = ["MjcCollisionAPI"]
+            )
+            {
+                uniform double[] mjc:solref = [0.02, 1]
+                float newton:contactGap = 0
+            }
+
+            over "bag_flap"
+            {
+                over "film" (
+                    prepend apiSchemas = ["MjcCollisionAPI"]
+                )
+                {
+                    uniform double[] mjc:solref = [0.02, 1]
+                    float newton:contactGap = 0
+                }
+
+                over "bag_flap_end"
+                {
+                    over "film_end" (
+                        prepend apiSchemas = ["MjcCollisionAPI"]
+                    )
+                    {
+                        uniform double[] mjc:solref = [0.02, 1]
+                        float newton:contactGap = 0
+                    }
+
+                    over "fold2" (
+                        delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                        prepend apiSchemas = ["MjcJointAPI"]
+                    )
+                    {
+                        uniform double mjc:damping = 0.01
+                        uniform double mjc:frictionloss = 0.00002
+                        uniform double mjc:stiffness = 0.0001
+                    }
+                }
+
+                over "fold" (
+                    delete apiSchemas = ["PhysicsDriveAPI:angular", "PhysicsJointStateAPI:angular"]
+                    prepend apiSchemas = ["MjcJointAPI"]
+                )
+                {
+                    uniform double mjc:damping = 0.01
+                    uniform double mjc:frictionloss = 0.00002
+                    uniform double mjc:stiffness = 0.0001
+                }
+            }
+        }
+    }
+}

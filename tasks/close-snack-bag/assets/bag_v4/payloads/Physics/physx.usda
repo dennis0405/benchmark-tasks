@@ -1,0 +1,42 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "MuJoCo USD Converter v0.5.0"
+    }
+    defaultPrim = "bag_v4"
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    subLayers = [
+        @./physics.usda@
+    ]
+    upAxis = "Z"
+)
+
+over "bag_v4"
+{
+    over "Geometry"
+    {
+        over "bag"
+        {
+            over "bag_flap"
+            {
+                over "bag_flap_end"
+                {
+                    over "fold2" (
+                        prepend apiSchemas = ["PhysxJointAPI"]
+                    )
+                    {
+                        float physxJoint:jointFriction = 0.00002
+                    }
+                }
+
+                over "fold" (
+                    prepend apiSchemas = ["PhysxJointAPI"]
+                )
+                {
+                    float physxJoint:jointFriction = 0.00002
+                }
+            }
+        }
+    }
+}

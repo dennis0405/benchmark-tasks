@@ -1,0 +1,37 @@
+#usda 1.0
+(
+    customLayerData = {
+        string creator = "MuJoCo USD Converter v0.5.0"
+    }
+    defaultPrim = "clip_v5"
+    kilogramsPerUnit = 1
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+over "clip_v5" (
+    prepend apiSchemas = ["IsaacRobotAPI"]
+)
+{
+    custom rel isaac:physics:robotJoints
+    custom rel isaac:physics:robotLinks
+
+    over "Geometry"
+    {
+        over "clip" (
+            prepend apiSchemas = ["IsaacLinkAPI"]
+        )
+        {
+            over "upper" (
+                prepend apiSchemas = ["IsaacLinkAPI"]
+            )
+            {
+                over "clip_hinge" (
+                    prepend apiSchemas = ["IsaacJointAPI"]
+                )
+                {
+                }
+            }
+        }
+    }
+}
