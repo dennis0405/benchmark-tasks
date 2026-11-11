@@ -39,6 +39,23 @@ def mouth_area(points, cap):
                                           triangles[:, 2] - triangles[:, 0]), axis=1) / 2).sum())
 
 
+def mouth_channel_area(points, grid, first_column, contact_gap):
+    """Approximate the narrowest paired-skin opening through the mouth.
+
+    This is a geometric leak proxy: it does not resolve folds or microchannels.
+    """
+    if not 0 <= first_column < grid.shape[1] or contact_gap < 0:
+        raise ValueError("invalid mouth range or contact gap")
+    widths = []
+    for i in range(first_column, grid.shape[1]):
+        lower, upper = points[grid[0, i]], points[grid[1, i]]
+        center = (lower + upper) / 2
+        span = np.linalg.norm(np.diff(center, axis=0), axis=1)
+        gap = np.maximum(np.linalg.norm(upper-lower, axis=1) - contact_gap, 0)
+        widths.append(float(np.sum(span * (gap[1:] + gap[:-1]) / 2)))
+    return min(widths)
+
+
 def film_pressure_forces(points, faces, gauge_pressure):
     triangles = points[faces].astype(np.float64)
     f = gauge_pressure * np.cross(triangles[:, 1] - triangles[:, 0],

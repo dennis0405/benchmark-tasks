@@ -23,12 +23,13 @@ def yielded_rest_angles(rest_angles, angles, eligible, yield_angle):
     """Update permanent rest angle only beyond yield; no healing below yield.
 
     This simple perfect-plasticity rule has no time dependence, hardening, or
-    calibration. Keep Newton's unwrapped angle convention; avoid branch-cut cases.
+    calibration. Align the rest angle to the solver angle's current 2*pi branch
+    so Newton's unwrapped (theta - rest) remains a short angular difference.
     """
     if not 0 <= yield_angle < np.pi:
         raise ValueError("yield angle must be in [0, pi)")
-    delta = angles - rest_angles
-    if np.any(np.abs(delta[eligible]) > np.pi):
-        raise ValueError("angle branch crossing requires a consistent unwrapping model")
+    delta = (angles - rest_angles + np.pi) % (2 * np.pi) - np.pi
+    aligned_rest = angles - delta
     amount = np.maximum(np.abs(delta) - yield_angle, 0.0)
-    return rest_angles + np.where(eligible, np.sign(delta) * amount, 0.0)
+    candidate = aligned_rest + np.sign(delta) * amount
+    return np.where(eligible, candidate, rest_angles)

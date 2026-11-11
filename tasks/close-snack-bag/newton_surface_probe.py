@@ -143,6 +143,13 @@ def main():
             clip.write_root_pose_to_sim_index(root_pose=torch.tensor(
                 [[args.clip_x, 0, args.clip_z, 0, 0, 1, 0]], device=args.device, dtype=torch.float32))
             clip.write_root_velocity_to_sim_index(root_velocity=torch.zeros((1, 6), device=args.device))
+            # Flush pending articulation FK and reset solver internals after state writes.
+            # Without this VBD can launch the clip even in an empty scene.
+            sim.forward()
+            from isaaclab_newton.physics.newton_manager import NewtonManager
+            labels = list(NewtonManager.get_model().body_label)
+            clip_body_ids = [labels.index("/World/clip/Geometry/clip"),
+                             labels.index("/World/clip/Geometry/clip/upper")]
         rest, faces = packet_mesh(nx=args.nx, ny=args.ny, flat_mouth=True, mouth_half_gap=0.0003,
                                   taper_start=0.12, taper_end=0.14)
         initial = packet.data.default_nodal_state_w.torch[0, :, :3].detach().cpu().numpy()
@@ -185,8 +192,28 @@ def main():
                        "finite": bool(np.isfinite(nodes).all()), "fold_cosine_mean": [float(c.mean()) for c in cosines],
                        "both_folds_reversed_fraction": folded_fraction}
                 if clip:
-                    clip_pos = clip.data.root_link_pose_w.torch[0, :3].detach().cpu().numpy()
-                    jaw = float(clip.data.joint_pos.torch[0, 0].item())
+                    # Isaac Lab articulation views can return stale qpos/poses with VBD.
+                    # Read maximal-coordinate body poses from Newton's live state.
+                    body_pose = NewtonManager.get_state_0().body_q.numpy()[clip_body_ids]
+                    clip_pos = body_pose[0, :3]
+                    x0, y0, z0, w0 = body_pose[0, 3:7]
+                    x1, y1, z1, w1 = body_pose[1, 3:7]
+                    rel_y = w0*y1 - x0*z1 - y0*w1 + z0*x1
+                    rel_w = x0*x1 + y0*y1 + z0*z1 + w0*w1
+                    relative_angle = float((2 * np.arctan2(rel_y, rel_w) + np.pi) % (2 * np.pi) - np.pi)
+                    # USD joint sign is opposite the child-relative body rotation.
+                    jaw = -relative_angle
+                    row["clip_upper_xyz"] = body_pose[1, :3].tolist()
+                    row["clip_pose_source"] = "newton_state_body_q"
+                    row["relative_y_angle_rad"] = relative_angle
+                    contacts = NewtonManager.get_contacts()
+                    if contacts is not None:
+                        count = int(contacts.soft_contact_count.numpy()[0])
+                        shape_ids, counts = np.unique(contacts.soft_contact_shape.numpy()[:min(count, contacts.soft_contact_max)], return_counts=True)
+                        shape_labels = NewtonManager.get_model().shape_label
+                        row["soft_contact_count"] = count
+                        row["soft_contact_capacity"] = int(contacts.soft_contact_max)
+                        row["soft_contacts_by_shape"] = {str(shape_labels[int(i)]): int(n) for i, n in zip(shape_ids, counts) if i >= 0}
                     row["clip_finite"] = bool(np.isfinite(clip_pos).all() and np.isfinite(jaw))
                     row["clip_plausible"] = bool(row["clip_finite"] and np.max(np.abs(clip_pos)) < 2 and abs(jaw) < 1)
                     row["clip_xyz"] = clip_pos.tolist() if np.isfinite(clip_pos).all() else None

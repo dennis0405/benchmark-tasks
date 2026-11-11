@@ -12,6 +12,7 @@ parser.add_argument("--initial-crease-yield", type=float, default=None, help="Ex
 parser.add_argument("--foldable-mouth", action="store_true")
 parser.add_argument("--air", action="store_true", help="Experimental lumped isothermal gas")
 parser.add_argument("--air-opening-scale", type=float, default=1.0)
+parser.add_argument("--air-channel", action="store_true", help="Experimental narrowest-mouth leak proxy")
 parser.add_argument("--fold-radius", type=float, default=0.0018)
 parser.add_argument("--duration", type=float, default=0.5)
 parser.add_argument("--contents-stiffness", type=float, default=1000.0)
@@ -211,7 +212,7 @@ def main():
             start = offsets[0]
         if args.air:
             from pouch_air_warp import LumpedGas
-            gas = LumpedGas(model, initial, faces, grid, start, dt / args.substeps, args.air_opening_scale)
+            gas = LumpedGas(model, initial, faces, grid, start, dt / args.substeps, args.air_opening_scale, channel=args.air_channel, contact_gap=2*args.self_radius)
             NewtonManager.register_state_force_callback(gas.apply)
         if args.initial_crease_yield is not None:
             import warp as wp
@@ -270,7 +271,7 @@ def main():
                        "both_folds_reversed_fraction": folded_fraction}
                 if gas is not None:
                     gas_stats, gas_moles = gas.stats.numpy(), gas.moles.numpy()
-                    row["air"] = {"volume_m3": float(gas_stats[0]), "opening_area_m2": float(gas_stats[1]),
+                    row["air"] = {"volume_m3": float(gas_stats[0] - gas_stats[3]), "gross_volume_m3": float(gas_stats[0]), "contents_volume_m3": float(gas_stats[3]), "inverted_tets": int(gas_stats[4]), "opening_area_m2": float(gas_stats[1]), "channel_area_m2": float(gas_stats[5]) if args.air_channel else None,
                                   "gauge_pressure_pa": float(gas_stats[2]), "moles": float(gas_moles[0])}
                 if clip:
                     clip_pos = clip.data.root_link_pose_w.torch[0, :3].detach().cpu().numpy()
@@ -282,7 +283,7 @@ def main():
                 samples.append(row)
                 print("NEWTON_SURFACE", json.dumps(row), flush=True)
         np.savez_compressed(args.output / "surface-snapshots.npz", faces=faces, **snapshots)
-        (args.output / "newton-result.json").write_text(json.dumps({"chip_count": len(chips), "chip_tet_counts": [len(t) for t in chip_tets], "dt": dt, "air_enabled": args.air, "air_opening_scale": args.air_opening_scale, "initial_crease_yield": args.initial_crease_yield, "crease_count": crease_count, "substeps": args.substeps, "iterations": args.iterations, "self_radius": args.self_radius, "self_margin": args.self_margin, "collision_interval": args.collision_interval, "foldable_mouth": args.foldable_mouth, "contents_stiffness": args.contents_stiffness, "contents_damping": args.contents_damping, "folded": args.folded, "clip": args.clip,
+        (args.output / "newton-result.json").write_text(json.dumps({"chip_count": len(chips), "chip_tet_counts": [len(t) for t in chip_tets], "dt": dt, "air_enabled": args.air, "air_channel": args.air_channel, "air_opening_scale": args.air_opening_scale, "initial_crease_yield": args.initial_crease_yield, "crease_count": crease_count, "substeps": args.substeps, "iterations": args.iterations, "self_radius": args.self_radius, "self_margin": args.self_margin, "collision_interval": args.collision_interval, "foldable_mouth": args.foldable_mouth, "contents_stiffness": args.contents_stiffness, "contents_damping": args.contents_damping, "folded": args.folded, "clip": args.clip,
             "coupled": args.coupled,
             "proxy": args.proxy,
             "coupling_mode": args.coupling_mode if args.coupled else None,
