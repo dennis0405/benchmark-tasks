@@ -150,3 +150,31 @@ The convex per-link deformable-contact proxy ran briefly with stationary arms;
 neither accurate finger/film contact nor the task plan has been validated.
 The `--sample-every` option records intermediate probe states for later analysis;
 it does not itself make the disconnected scorer valid.
+
+In the v8 support-only control, the 40 g fixture stayed at its target height
+for 0.3 s away from the bag. V9's corner support nevertheless stayed near the
+floor when interacting with the folded packet, and the clip again stalled at
+the packet edge. V10 began with the wide support overlapping the packet and
+broke two chips; this run is invalid. `support_clearance.py` conservatively
+checks the folded surface against the reset support box and rejects that
+configuration before simulation. A collision-free v11 corner pinch lost its
+grip while the upper fixture rose; the lower support remained near the floor.
+All these are fixture diagnostics with experimental material parameters.
+
+In v13, the corner support began clear of the packet at z=14 mm, but by
+0.2 s had been pushed to z≈5 mm and its measured fixture force approached
+the 3 N cap. The clip stalled and only the lower jaw contacted; no chips broke.
+Reducing the soft-contact stiffness from 8000 to 2000 in the 0.6 s v14 control
+still produced the same support loss. These are not validated force estimates
+for a real bag; sampled fixture commands do not measure all contact forces.
+Saved fixture poses now allow sampled triangle/box crossing checks against
+the press and support in addition to the articulated clip.
+
+V16 used a 5 N support limit and soft contact stiffness 2000. The sampled
+fixture checker detected 17 strict film/support crossings at 0.1 s and 19 at
+0.5 s. No vertices happened to be inside the box, illustrating why a
+vertex-only check is insufficient. This trial is invalid due to penetration;
+it cannot establish a feasible grip. The checker is sampled, not continuous.
+With stiffness 8000 and a stronger position gain in v18, the support remained
+near z=10 mm and all chips survived, but the sampled checker still found 3–9
+strict film/support crossings after 0.1 s. V18 is also invalid.

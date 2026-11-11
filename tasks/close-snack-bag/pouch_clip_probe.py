@@ -35,15 +35,28 @@ parser.add_argument("--fixture-lower-first", action="store_true", help="Lower th
 parser.add_argument("--press-fixture", action="store_true", help="Press fold with a controlled plate")
 parser.add_argument("--support-fixture", action="store_true", help="Support one side of the fold from below, then withdraw")
 parser.add_argument("--support-y", type=float, default=.068)
+parser.add_argument("--support-x", type=float, default=.145)
+parser.add_argument("--support-z", type=float, default=.008)
+parser.add_argument("--support-start-z", type=float, default=None)
+parser.add_argument("--support-rise-s", type=float, default=.5)
+parser.add_argument("--support-rise-start-s", type=float, default=0.)
+parser.add_argument("--support-width", type=float, default=.03)
+parser.add_argument("--support-length", type=float, default=.04)
+parser.add_argument("--support-max-force", type=float, default=3.)
+parser.add_argument("--support-gain", type=float, default=250.)
 parser.add_argument("--press-y", type=float, default=.067)
 parser.add_argument("--press-width", type=float, default=.024)
 parser.add_argument("--press-start-z", type=float, default=.05)
 parser.add_argument("--press-target-z", type=float, default=.014)
 parser.add_argument("--press-duration", type=float, default=.2)
 parser.add_argument("--press-max-force", type=float, default=1.0)
+parser.add_argument("--press-lift-z", type=float, default=None)
+parser.add_argument("--press-lift-start-s", type=float, default=0.)
+parser.add_argument("--press-lift-s", type=float, default=.5)
 parser.add_argument("--seat-x", type=float, default=.18)
 parser.add_argument("--seat-z", type=float, default=.012)
 parser.add_argument("--fixture-move-s", type=float, default=.3)
+parser.add_argument("--fixture-start-s", type=float, default=0.)
 parser.add_argument("--fixture-release-s", type=float, default=.4)
 parser.add_argument("--fixture-max-force", type=float, default=1.)
 parser.add_argument("--clip-x", type=float, default=0.194)
@@ -80,6 +93,9 @@ if args.yam_plan and (not args.yam or not args.clip or args.force_fixture or arg
     parser.error("--yam-plan requires --yam --clip and no external fixtures")
 if args.sample_every < 0:
     parser.error("--sample-every must be nonnegative")
+if (args.support_rise_s <= 0 or args.press_lift_s <= 0 or args.fixture_move_s <= 0
+        or min(args.fixture_start_s, args.support_rise_start_s, args.press_lift_start_s) < 0):
+    parser.error("fixture timings must be positive")
 
 import numpy as np
 import torch
@@ -95,6 +111,13 @@ from bag_surface_mesh import folded_positions
 
 
 def main():
+    if args.support_fixture and args.folded:
+        from support_clearance import initial_overlap
+        start_z = args.support_z if args.support_start_z is None else args.support_start_z
+        if initial_overlap(args.nx, args.ny, args.fold_radius,
+                           (args.support_x, args.support_y, start_z),
+                           (args.support_length, args.support_width, .008)):
+            raise ValueError("initial support intersects the folded packet; choose a clear reset pose")
     args.output.mkdir(parents=True, exist_ok=True)
     usd = args.output / "packet-surface.usda"
     if usd.exists():
@@ -215,9 +238,10 @@ def main():
         support = None
         if args.support_fixture:
             support_cfg = RigidObjectCfg(prim_path="/World/support_plate", spawn=sim_utils.CuboidCfg(
-                size=(.04,.03,.008), rigid_props=sim_utils.RigidBodyPropertiesCfg(),
+                size=(args.support_length,args.support_width,.008), rigid_props=sim_utils.RigidBodyPropertiesCfg(),
                 collision_props=sim_utils.CollisionPropertiesCfg(), mass_props=sim_utils.MassPropertiesCfg(mass=.04)),
-                init_state=RigidObjectCfg.InitialStateCfg(pos=(.145,args.support_y,.008), rot=(0,0,0,1)))
+                init_state=RigidObjectCfg.InitialStateCfg(pos=(args.support_x,args.support_y,
+                    args.support_z if args.support_start_z is None else args.support_start_z), rot=(0,0,0,1)))
             support = support_cfg.class_type(support_cfg)
         proxy_info=[]
         if args.yam and args.yam_soft_proxies:
@@ -330,7 +354,12 @@ def main():
             model_labels = list(NewtonManager.get_model().body_label)
             print("PLATE_LABELS",model_labels,flush=True)
             plate_id = next(i for i, name in enumerate(model_labels) if name == "/World/press_plate")
-            plate_fixture = ClipForceFixture(NewtonManager.get_model(), plate_id, args.press_max_force)
+            if args.press_lift_z is not None:
+                plate_mass = float(NewtonManager.get_model().body_mass.numpy()[plate_id])
+                plate_fixture = ClipForceFixture(NewtonManager.get_model(), plate_id, args.press_max_force,
+                                                  lift=plate_mass*9.81, gain=250., damping=2.)
+            else:
+                plate_fixture = ClipForceFixture(NewtonManager.get_model(), plate_id, args.press_max_force)
             plate_fixture.set([.145,args.press_y,args.press_start_z], True)
             NewtonManager.register_state_force_callback(plate_fixture.apply)
         fixture = None
@@ -347,9 +376,10 @@ def main():
             support_id = labels.index("/World/support_plate")
             support_mass = float(NewtonManager.get_model().body_mass.numpy()[support_id])
             print("SUPPORT_BODY_MASS", support_mass, flush=True)
-            support_fixture = ClipForceFixture(NewtonManager.get_model(), support_id, 3.,
-                                                lift=support_mass * 9.81, gain=250., damping=2.)
-            support_fixture.set([.145,args.support_y,.008], True)
+            support_fixture = ClipForceFixture(NewtonManager.get_model(), support_id, args.support_max_force,
+                                                lift=support_mass * 9.81, gain=args.support_gain, damping=2.)
+            support_fixture.set([args.support_x,args.support_y,
+                                 args.support_z if args.support_start_z is None else args.support_start_z], True)
             NewtonManager.register_state_force_callback(support_fixture.apply)
         plan_done = False
         controller = None
@@ -402,17 +432,22 @@ def main():
                 t_plate = min(1., (step+1)*dt/args.press_duration)
                 smooth_plate = t_plate*t_plate*(3-2*t_plate)
                 z_plate = args.press_start_z + (args.press_target_z-args.press_start_z)*smooth_plate
+                if args.press_lift_z is not None:
+                    lift = max(0., min(1., (step*dt-args.press_lift_start_s)/args.press_lift_s))
+                    lift = lift*lift*(3.-2.*lift)
+                    z_plate += lift*(args.press_lift_z-args.press_target_z)
                 if step*dt >= args.fixture_release_s:
                     withdraw = min(1., (step*dt-args.fixture_release_s)/.5)
                     withdraw = withdraw*withdraw*(3-2*withdraw)
-                    z_plate = args.press_target_z + (.12-args.press_target_z)*withdraw
+                    held_z = args.press_target_z if args.press_lift_z is None else args.press_lift_z
+                    z_plate = held_z + (.12-held_z)*withdraw
                 # Keep the fixture well above the bag after withdrawal rather
                 # than allowing the plate to fall back and hold the fold.
                 plate_fixture.set([.145,args.press_y,z_plate], True)
             if fixture is not None:
                 # An external-force fixture holds the clip open and moves it.
                 # The fixture is released after 0.4 s; this is not a robot demo.
-                t = min(1., (step + 1)*dt / args.fixture_move_s)
+                t = max(0., min(1., ((step + 1)*dt-args.fixture_start_s) / args.fixture_move_s))
                 smooth = t*t*(3 - 2*t)
                 if args.fixture_lower_first:
                     lower = min(1., t * 2.)
@@ -425,12 +460,16 @@ def main():
                     pos = [args.clip_x + (args.seat_x - args.clip_x)*smooth, 0,
                            args.clip_z + (args.seat_z - args.clip_z)*smooth]
                 fixture.set(pos, step*dt < args.fixture_release_s)
-                target = opened if step*dt < args.fixture_move_s else torch.zeros_like(opened)
+                target = opened if step*dt < args.fixture_start_s + args.fixture_move_s else torch.zeros_like(opened)
                 clip.set_joint_position_target_index(target=target, joint_ids=ids)
             if support_fixture is not None:
                 withdraw = max(0., min(1., (step*dt-args.fixture_release_s)/.5))
                 withdraw = withdraw*withdraw*(3.-2.*withdraw)
-                support_fixture.set([.145,args.support_y+.2*withdraw,.008], True)
+                rise = max(0., min(1., ((step+1)*dt-args.support_rise_start_s)/args.support_rise_s))
+                rise = rise*rise*(3.-2.*rise)
+                start_z = args.support_z if args.support_start_z is None else args.support_start_z
+                z_support = start_z + rise*(args.support_z-start_z)
+                support_fixture.set([args.support_x,args.support_y+.2*withdraw,z_support], True)
             if clip and args.fixture_seat and step < 48:
                 # Experimental kinematic fixture, not a YAM action. It holds the
                 # jaws open while moving towards the folded mouth for 0.2 s.
@@ -508,9 +547,14 @@ def main():
                         row["yam_ik_worst_m"] = {p.side: float(p.worst_ik_error) for p in yam_plans}
                     row["yam_gripper_xyz"] = {side: state[labels.index(f"/World/{side}_robot/Geometry/base/link1/link2/link3/link4/link5/gripper"),:3].tolist() for side in ("left", "right")}
                 if plate_fixture is not None:
-                    row["plate_xyz"] = NewtonManager.get_state_0().body_q.numpy()[plate_id,:3].tolist()
+                    plate_pose = NewtonManager.get_state_0().body_q.numpy()[plate_id]
+                    row["plate_xyz"] = plate_pose[:3].tolist()
+                    row["plate_pose_xyzw"] = plate_pose.tolist()
                 if support_fixture is not None:
-                    row["support_xyz"] = NewtonManager.get_state_0().body_q.numpy()[support_id,:3].tolist()
+                    support_pose = NewtonManager.get_state_0().body_q.numpy()[support_id]
+                    row["support_xyz"] = support_pose[:3].tolist()
+                    row["support_pose_xyzw"] = support_pose.tolist()
+                    row["support_fixture_force_n"] = support_fixture.measured_force.numpy()[0].tolist()
                 if clip:
                     body_pose = NewtonManager.get_state_0().body_q.numpy()[clip_body_ids]
                     clip_pos = body_pose[0, :3]
@@ -555,6 +599,15 @@ def main():
             "coupled": args.coupled,
             "support_fixture": args.support_fixture,
             "support_y": args.support_y,
+            "support_x": args.support_x, "support_z": args.support_z, "support_width": args.support_width,
+            "support_length": args.support_length,
+            "support_max_force": args.support_max_force,
+            "support_gain": args.support_gain,
+            "support_start_z": args.support_start_z, "support_rise_s": args.support_rise_s,
+            "support_rise_start_s": args.support_rise_start_s,
+            "press_lift_z": args.press_lift_z, "press_lift_start_s": args.press_lift_start_s,
+            "press_lift_s": args.press_lift_s,
+            "fixture_start_s": args.fixture_start_s,
             "fixture_lower_first": args.fixture_lower_first,
             "proxy": args.proxy,
             "coupling_mode": args.coupling_mode if args.coupled else None,

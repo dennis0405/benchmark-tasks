@@ -29,8 +29,10 @@ class ClipForceFixtureTest(unittest.TestCase):
         np.testing.assert_allclose(state.body_f.numpy()[0,:3], [0,0,.3924], atol=1e-6)
         state.body_f.zero_(); fixture.set([0,0,.0004], True); fixture.apply(state); wp.synchronize()
         np.testing.assert_allclose(state.body_f.numpy()[0,:3], [0,0,.4924], atol=1e-6)
+        np.testing.assert_allclose(fixture.measured_force.numpy()[0], [0,0,.4924], atol=1e-6)
         state.body_f.zero_(); fixture.set([0,0,0], False); fixture.apply(state); wp.synchronize()
         np.testing.assert_allclose(state.body_f.numpy(), 0, atol=1e-8)
+        np.testing.assert_allclose(fixture.measured_force.numpy(), 0, atol=1e-8)
 
 
 if __name__ == '__main__':

@@ -7,7 +7,8 @@ import warp as wp
 def _drive(body_q: wp.array(dtype=wp.transform), body_qd: wp.array(dtype=wp.spatial_vector),
            body_f: wp.array(dtype=wp.spatial_vector), body_id: int,
            target: wp.array(dtype=wp.vec3), enabled: wp.array(dtype=float), limit: float, lift: float,
-           gain: float, damping: float):
+           gain: float, damping: float, measured: wp.array(dtype=wp.vec3)):
+    measured[0] = wp.vec3(0.0, 0.0, 0.0)
     if enabled[0] > 0.5:
         pose = body_q[body_id]
         v = body_qd[body_id]
@@ -19,6 +20,7 @@ def _drive(body_q: wp.array(dtype=wp.transform), body_qd: wp.array(dtype=wp.spat
         size = wp.length(linear)
         if size > limit:
             linear = linear * (limit / size)
+        measured[0] = linear
         wanted = wp.quat(0.0, 0.0, 1.0, 0.0)
         error = wanted * wp.quat_inverse(rot)
         sign = wp.where(error[3] >= 0.0, 1.0, -1.0)
@@ -37,10 +39,11 @@ class ClipForceFixture:
         self.gain, self.damping = gain, damping
         self.target = wp.zeros(1, dtype=wp.vec3, device=self.device)
         self.enabled = wp.zeros(1, dtype=float, device=self.device)
+        self.measured_force = wp.zeros(1, dtype=wp.vec3, device=self.device)
     def set(self, pos, active):
         wp.copy(self.target, wp.array(np.asarray([pos], dtype=np.float32), dtype=wp.vec3, device=self.device))
         wp.copy(self.enabled, wp.array([float(active)], dtype=float, device=self.device))
     def apply(self, state):
         wp.launch(_drive, dim=1, inputs=[state.body_q, state.body_qd, state.body_f,
                                          self.body_id, self.target, self.enabled, self.limit, self.lift,
-                                         self.gain, self.damping], device=self.device)
+                                         self.gain, self.damping, self.measured_force], device=self.device)
