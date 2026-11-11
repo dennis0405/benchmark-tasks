@@ -2,6 +2,8 @@
 
 **Not ready for submission.** Instruction: “Keep the chips from going stale.” The 160 mm wide packet rests on a 25 mm support board on the table, leaving its mouth overhanging the front edge, and starts with its mouth folded twice. It should gradually reopen unless it is pressed down or held shut with a clip. One YAM arm holds the fold while the other squeezes a spring clip's handles, inserts the folded mouth between its jaws, releases the clip, and withdraws. A 100 mm-wide main clip, a wide clothespeg-style alternative, a small paper clip and a rubber-band-shaped distractor are part of the intended scene. Both wide clips use the same scoring rule.
 
+An experimental deformable-surface packet and isolated contact probes are documented in [DEFORMABLE_EXPERIMENT.md](DEFORMABLE_EXPERIMENT.md). They are not connected to `arena_scene.py`, the scorer, or the YAM demo: the folded-mouth/clip tests have not yet shown reliable retention without unacceptable penetration. The existing robot video and score below concern only the rigid-panel prototype.
+
 The packet's printed `CHIPS` label, shaded pillow-like surface and crimp stripes are original procedural graphics. The visible skin is non-colliding. The body is a rigid, hollow shell with a partially open front with four rigid spherical contents; the folded mouth consists of three thin rigid panels and two spring-loaded hinges. It is not continuous deformable film, the band is a rigid approximation, the contents are not individual chips, and air leakage and packet tearing are not simulated. Physical values and robot-force limits have not been measured on real items. These limits must be addressed or disclosed before a submission.
 
 ## Implementation
