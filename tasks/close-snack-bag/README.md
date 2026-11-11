@@ -6,7 +6,7 @@ An experimental deformable-surface packet and isolated contact probes are docume
 
 The follow-up solver and intersection investigation is in [DEFORMABLE_REFINEMENT.md](DEFORMABLE_REFINEMENT.md). Newton VBD avoided detected surface crossings in short single-packet probes, but coupled clip contact remains unstable and is not ready for YAM integration.
 
-The packet's printed `CHIPS` label, shaded pillow-like surface and crimp stripes are original procedural graphics. The visible skin is non-colliding. The body is a rigid, hollow shell with a partially open front with four rigid spherical contents; the folded mouth consists of three thin rigid panels and two spring-loaded hinges. It is not continuous deformable film, the band is a rigid approximation, the contents are not individual chips, and air leakage and packet tearing are not simulated. Physical values and robot-force limits have not been measured on real items. These limits must be addressed or disclosed before a submission.
+The packet's printed `CHIPS` label, shaded pillow-like surface and crimp stripes are original procedural graphics. The visible skin is non-colliding. The body is a rigid, hollow shell with a partially open front and four thin rigid food proxies; the folded mouth consists of three thin rigid panels and two spring-loaded hinges. It is not continuous deformable film, the band is a rigid approximation, the food proxies cannot fracture, and air leakage and packet tearing are not simulated. Physical values and robot-force limits have not been measured on real items. The simulation can test clip placement and retention, not whether real food stays fresh or breaks.
 
 ## Implementation
 
@@ -21,10 +21,21 @@ The packet's printed `CHIPS` label, shaded pillow-like surface and crimp stripes
 - `test_scoring.py`: synthetic geometry/score checks, including the alternative clip, released hold, open clip, and spill override. They do not establish physical scoring validity.
 - `evidence/scripted/`: the actual trial's result, setup screenshot and three camera videos; these files still need to be uploaded to the task board for a submission.
 - `evidence/contact-demo/`: a newer robot trial under the contact-based scorer, including a setup frame, three 640 x 352 H.264 videos and source hashes.
+- `evidence/flat-chip-demo/`: the current rigid-approximation task's recorded YAM rollout, setup frame, source hashes and physical scoring controls.
 
 The YAM controller squeezes the clip handles, lifts and carries the clip, inserts it over the folded mouth, then withdraws both arms. The older recording in `evidence/scripted/` scored 1.0 in 404 steps with the previous geometry-only scorer, before contact reporting was added. Earlier trials failed. One scripted run is not a success-rate estimate and does not validate the simulator's real-world fidelity or the scorer's resistance to all exploits.
 
-The newer fixed-layout robot trial in `evidence/contact-demo/` reached 1.0 in 404 steps with the contact-based scorer, without a spill violation. Both simulated jaws had to remain in contact during the 60-step release hold. On the Brev L40S instance it took 74 seconds through completion, excluding video encoding; the result records hashes of the Python source and USD assets and confirms they were unchanged during the run. The packet starts folded: the robot holds the existing folds, rather than making two new folds from an unfolded packet.
+The earlier fixed-layout robot trial in `evidence/contact-demo/` reached 1.0 in 404 steps with the contact-based scorer, without a spill violation. It used the prior visual skin and spherical food proxies. Both simulated jaws had to remain in contact during the 60-step release hold. On the Brev L40S instance it took 74 seconds through completion, excluding video encoding; the result records hashes of the Python source and USD assets and confirms they were unchanged during the run. The packet starts folded: the robot holds the existing folds, rather than making two new folds from an unfolded packet.
+
+The current scene's scripted YAM rollout in `evidence/flat-chip-demo/` reached
+1.0 in 403 steps, with no detected spill or fall. It took 74.4 seconds before
+video encoding on an L40S, and the recorded Python and USD hashes match this
+revision. The fixed-layout trial is not a success-rate estimate. After changing
+the food proxies to thin boxes, independent simulator placement controls gave
+0 without a clip, 1 with each of the two wide clips, 0.5 for partial overlap,
+and 0 for either a displaced food proxy or a fallen packet. These deliberately
+placed controls are not robot rollouts. Food fracture, actual leakage and a
+physical material calibration are outside this approximation.
 
 On the current v5 clip, a **separate** placement diagnostic held the prepositioned clip and folded panels for more than 3 seconds and triggered the candidate 1.0 state; this diagnostic writes the initial clip pose and therefore is not evidence of robot feasibility. In a MuJoCo joint-actuation check, 0.07 N m opened the jaw tip about 22 mm. An idealized 18 mm handle lever corresponds to approximately 3.9 N at that torque; this is not a measured gripper force. The available MuJoCo pull comparison remains inconclusive and is not proof of retention.
 

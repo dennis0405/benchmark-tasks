@@ -13,7 +13,7 @@ import os
 
 import numpy as np
 from scenekit import UsdBody, on_reset, on_step, robot_links
-from yam_arena.task_file import TABLE_TOP, Box, Sphere
+from yam_arena.task_file import TABLE_TOP, Box
 
 SCENE = "station"
 TOP = TABLE_TOP[SCENE]
@@ -40,8 +40,8 @@ OBJECTS = [
             size=(0.054, 0.04, 0.003), mass=0.0016),
     UsdBody("paperclip", usd="assets/paperclip_v3/paperclip_v3.usda", pos=(0.46, -0.21, TOP + 0.003),
             size=(0.025, 0.011, 0.002), mass=0.001),
-    *(Sphere(f"chip{i}", pos=(0.24 + dx, 0.11 + dy, TOP + SUPPORT + 0.012), radius=0.008, mass=0.002,
-             color=(0.93, 0.72, 0.28))
+    *(Box(f"chip{i}", pos=(0.24 + dx, 0.11 + dy, TOP + SUPPORT + 0.012), size=(0.025, 0.020, 0.003),
+          mass=0.001, yaw=(i % 2) * 0.3, color=(0.93, 0.72, 0.28))
       for i, (dx, dy) in enumerate(((-0.03, -0.04), (-0.03, 0.04), (0.02, -0.04), (0.02, 0.04)))),
 ]
 
@@ -126,7 +126,8 @@ def _check_clear(environment):
     # These are rigid food proxies, not a granular or deformable chip model.
     for i in range(4):
         xyz = rot.T @ (states[f"chip{i}"].pos - bag.pos)
-        # Allow a proxy radius plus contact tolerance beyond the rigid shell.
+        # Bounding region includes tolerance around the rigid shell. This is
+        # a center-based spill proxy, not exact chip/packet containment.
         if not (-0.075 <= xyz[0] <= 0.075 and abs(xyz[1]) <= 0.095 and -0.035 <= xyz[2] <= 0.035):
             if not _STATE["violation"]:
                 _STATE["reason"] = f"chip{i} outside packet: {np.round(xyz, 4).tolist()}"
