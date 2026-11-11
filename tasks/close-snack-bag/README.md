@@ -2,6 +2,9 @@
 
 **Not ready for submission.** Instruction: “Keep the chips from going stale.” The 160 mm wide packet rests on a 25 mm support board on the table, leaving its mouth overhanging the front edge, and starts with its mouth folded twice. It should gradually reopen unless it is pressed down or held shut with a clip. One YAM arm holds the fold while the other squeezes a spring clip's handles, inserts the folded mouth between its jaws, releases the clip, and withdraws. A 100 mm-wide main clip, a wide clothespeg-style alternative, a small paper clip and a rubber-band-shaped distractor are part of the intended scene. Both wide clips use the same scoring rule.
 
+For environment versions, setup on a new GPU machine, preserved evidence and
+the remaining Dream-1 steps, see [RESTART.md](RESTART.md).
+
 An experimental deformable-surface packet and isolated contact probes are documented in [DEFORMABLE_EXPERIMENT.md](DEFORMABLE_EXPERIMENT.md). They are not connected to `arena_scene.py`, the scorer, or the YAM demo: the folded-mouth/clip tests have not yet shown reliable retention without unacceptable penetration. The existing robot video and score below concern only the rigid-panel prototype.
 
 The follow-up solver and intersection investigation is in [DEFORMABLE_REFINEMENT.md](DEFORMABLE_REFINEMENT.md). Newton VBD avoided detected surface crossings in short single-packet probes, but coupled clip contact remains unstable and is not ready for YAM integration.
