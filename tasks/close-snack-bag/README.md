@@ -4,6 +4,8 @@
 
 An experimental deformable-surface packet and isolated contact probes are documented in [DEFORMABLE_EXPERIMENT.md](DEFORMABLE_EXPERIMENT.md). They are not connected to `arena_scene.py`, the scorer, or the YAM demo: the folded-mouth/clip tests have not yet shown reliable retention without unacceptable penetration. The existing robot video and score below concern only the rigid-panel prototype.
 
+The follow-up solver and intersection investigation is in [DEFORMABLE_REFINEMENT.md](DEFORMABLE_REFINEMENT.md). Newton VBD avoided detected surface crossings in short single-packet probes, but coupled clip contact remains unstable and is not ready for YAM integration.
+
 The packet's printed `CHIPS` label, shaded pillow-like surface and crimp stripes are original procedural graphics. The visible skin is non-colliding. The body is a rigid, hollow shell with a partially open front with four rigid spherical contents; the folded mouth consists of three thin rigid panels and two spring-loaded hinges. It is not continuous deformable film, the band is a rigid approximation, the contents are not individual chips, and air leakage and packet tearing are not simulated. Physical values and robot-force limits have not been measured on real items. These limits must be addressed or disclosed before a submission.
 
 ## Implementation
