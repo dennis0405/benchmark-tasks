@@ -21,6 +21,12 @@ class OpenPouchGeometryTest(unittest.TestCase):
                                          points[faces[:, 2]]-points[faces[:, 0]]), axis=1)
         self.assertGreater(area2.min(), 1e-10)
 
+    def test_foldable_mouth_is_narrow_after_taper(self):
+        points, _, ix = open_pouch(nx=40, ny=32, mouth_half_gap=0.0003, foldable_mouth=True)
+        for column in range(28, 41):
+            gap = points[ix[1, column, 16], 2] - points[ix[0, column, 16], 2]
+            self.assertAlmostEqual(float(gap), 0.0006, places=6)
+
     def test_body_bulge_and_mouth(self):
         points, _, ix = open_pouch(nx=40, ny=32)
         self.assertAlmostEqual(float(np.ptp(points[:, 0])), 0.20, places=6)

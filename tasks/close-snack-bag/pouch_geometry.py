@@ -3,7 +3,8 @@ import numpy as np
 
 
 def open_pouch(nx=80, ny=64, length=0.20, width=0.16,
-               body_half_height=0.022, mouth_half_gap=0.002):
+               body_half_height=0.022, mouth_half_gap=0.002,
+               foldable_mouth=False):
     """Two film faces sharing side/bottom seals, with an open top boundary."""
     if nx < 4 or ny < 4 or min(length, width, body_half_height, mouth_half_gap) <= 0:
         raise ValueError("positive dimensions and at least four cells per axis required")
@@ -19,6 +20,10 @@ def open_pouch(nx=80, ny=64, length=0.20, width=0.16,
                 across = np.sin(np.pi * v) ** 0.7
                 mouth = max(0.0, (u - 0.88) / 0.12)
                 h = across * (body_half_height * body + mouth_half_gap * mouth)
+                if foldable_mouth and u >= 0.60:
+                    # Reserve the last 60 mm for a flat, foldable mouth.
+                    blend = min(1.0, (u - 0.60) / 0.10)
+                    h = (1.0 - blend) * h + blend * mouth_half_gap * across
                 indices[layer, i, j] = len(points)
                 points.append((length * u, width * (v - 0.5), (1 if layer else -1) * h))
     faces = []

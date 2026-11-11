@@ -6,6 +6,7 @@ import open3d as o3d
 from bag_surface_mesh import folded_positions, packet_mesh
 from check_surface_intersections import strict_crossing
 from initial_clip_clearance import inspect
+from pouch_geometry import open_pouch
 
 
 class SurfaceIntersectionTest(unittest.TestCase):
@@ -28,6 +29,14 @@ class SurfaceIntersectionTest(unittest.TestCase):
         vertices, faces = packet_mesh(nx=160, flat_mouth=True, mouth_half_gap=0.0003,
                                       taper_start=0.12, taper_end=0.14)
         folded = folded_positions(vertices, radius=0.001)
+        mesh = o3d.geometry.TriangleMesh(o3d.utility.Vector3dVector(folded.astype(np.float64)),
+                                         o3d.utility.Vector3iVector(faces))
+        self.assertEqual(len(mesh.get_self_intersecting_triangles()), 0)
+
+    def test_new_pouch_fold_reset_has_no_initial_crossings(self):
+        points, faces, _ = open_pouch(nx=80, ny=64, mouth_half_gap=0.0003, foldable_mouth=True)
+        shift = np.array([0, 0, .019], dtype=np.float32)
+        folded = folded_positions(points + shift, radius=.0018) - shift
         mesh = o3d.geometry.TriangleMesh(o3d.utility.Vector3dVector(folded.astype(np.float64)),
                                          o3d.utility.Vector3iVector(faces))
         self.assertEqual(len(mesh.get_self_intersecting_triangles()), 0)
