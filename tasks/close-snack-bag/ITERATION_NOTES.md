@@ -112,3 +112,41 @@ action was tested. Reproduce with:
 ```sh
 python yam_newton_ik_smoke.py /data/snack-runs/yam-ik-new
 ```
+
+## Clip and chip follow-up
+
+Two fixture-driven controls used full-surface contact and four breakable
+chips, without the air model. Neither is a robot demonstration. In v2, both
+jaws had contacts at 0.8 and 1.0 s, and all four chips remained intact; after
+the clip fixture was released at 1.2 s, the clip slipped away and the two-fold
+heuristic fell to zero by 1.6 s. The eight saved samples had no strict
+film/film or film/clip crossings. This is a sampled check only.
+
+V3 used a wider, faster pressing plate. Two chips broke by the first 0.25 s,
+and the two-fold heuristic was only 0.22 at 1.5 s. It is a failed control,
+not evidence of a safe manipulation. Provisional fracture parameters are not
+measured physical properties. The compact logs for both controls are under
+`evidence/iteration-nov12/clip-followup/`.
+
+V4 initialized the already-folded mouth with the experimental crease rest
+angles (`--initial-crease-yield .25`). At 1.6 s the fold-reversal heuristic
+was 0.93 and no chips were broken, but the clip had closed on top of the bag:
+there was no observed upper-jaw contact and no demonstrated clamping. The
+33 sampled configurations had no strict film/clip box crossings. This does
+not establish continuous collision freedom. The initial crease is imposed,
+not an observed robot folding action. V5 explores
+a lower-first clip trajectory with an additional side support that is moved
+away after release; it must be evaluated independently for collisions,
+contact, integrity and retention.
+
+In V5, the open clip stalled at x≈0.209 m, outside the folded mouth, and only
+the lower jaw was observed contacting the packet. The support also settled on
+the floor and moved only 12 mm laterally during the release interval. Although
+no chips broke, this was not a successful insertion or a clean release. No
+strict film/clip crossings were detected in its 20 sampled configurations.
+
+`yam_snack_plan.py` and `yam_soft_proxies.py` are unfinished robot experiments.
+The convex per-link deformable-contact proxy ran briefly with stationary arms;
+neither accurate finger/film contact nor the task plan has been validated.
+The `--sample-every` option records intermediate probe states for later analysis;
+it does not itself make the disconnected scorer valid.

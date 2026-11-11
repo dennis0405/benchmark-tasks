@@ -6,7 +6,8 @@ import warp as wp
 @wp.kernel
 def _drive(body_q: wp.array(dtype=wp.transform), body_qd: wp.array(dtype=wp.spatial_vector),
            body_f: wp.array(dtype=wp.spatial_vector), body_id: int,
-           target: wp.array(dtype=wp.vec3), enabled: wp.array(dtype=float), limit: float):
+           target: wp.array(dtype=wp.vec3), enabled: wp.array(dtype=float), limit: float, lift: float,
+           gain: float, damping: float):
     if enabled[0] > 0.5:
         pose = body_q[body_id]
         v = body_qd[body_id]
@@ -14,7 +15,7 @@ def _drive(body_q: wp.array(dtype=wp.transform), body_qd: wp.array(dtype=wp.spat
         rot = wp.transform_get_rotation(pose)
         velocity = wp.vec3(v[0], v[1], v[2])
         omega = wp.vec3(v[3], v[4], v[5])
-        linear = 25.0 * (target[0] - pos) - 0.6 * velocity
+        linear = gain * (target[0] - pos) - damping * velocity + wp.vec3(0.0, 0.0, lift)
         size = wp.length(linear)
         if size > limit:
             linear = linear * (limit / size)
@@ -29,10 +30,11 @@ def _drive(body_q: wp.array(dtype=wp.transform), body_qd: wp.array(dtype=wp.spat
 
 
 class ClipForceFixture:
-    def __init__(self, model, body_id, limit=1.0):
-        if limit <= 0:
-            raise ValueError("force limit must be positive")
-        self.device, self.body_id, self.limit = model.device, body_id, limit
+    def __init__(self, model, body_id, limit=1.0, lift=0.0, gain=25.0, damping=0.6):
+        if limit <= 0 or lift < 0 or gain <= 0 or damping < 0:
+            raise ValueError("invalid fixture force or gains")
+        self.device, self.body_id, self.limit, self.lift = model.device, body_id, limit, lift
+        self.gain, self.damping = gain, damping
         self.target = wp.zeros(1, dtype=wp.vec3, device=self.device)
         self.enabled = wp.zeros(1, dtype=float, device=self.device)
     def set(self, pos, active):
@@ -40,4 +42,5 @@ class ClipForceFixture:
         wp.copy(self.enabled, wp.array([float(active)], dtype=float, device=self.device))
     def apply(self, state):
         wp.launch(_drive, dim=1, inputs=[state.body_q, state.body_qd, state.body_f,
-                                         self.body_id, self.target, self.enabled, self.limit], device=self.device)
+                                         self.body_id, self.target, self.enabled, self.limit, self.lift,
+                                         self.gain, self.damping], device=self.device)
