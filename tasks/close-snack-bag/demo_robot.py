@@ -4,13 +4,21 @@ All commands are 14-D YAM joint targets; there are no object pose/joint writes
 after reset. A run can fail, and its recorded result is not a claimed demo.
 """
 import argparse
+import hashlib
 import json
 import math
+import time
 from pathlib import Path
 
 import numpy as np
 
 HZ = 20
+
+
+def source_hashes(folder):
+    """Bind a recording to its scene, controller, helper code and USD assets."""
+    files = sorted([*folder.glob("*.py"), *folder.glob("assets/**/*.usda")])
+    return {str(path.relative_to(folder)): hashlib.sha256(path.read_bytes()).hexdigest() for path in files}
 
 
 class Arm:
@@ -115,7 +123,7 @@ def plan(left, right, emb, task):
     yield from pause(3.5)
 
 
-def run(output, record):
+def run(output, record, cam_width=320, cam_height=176):
     from inspect_robots import Scene
     from inspect_robots.types import Action
     from inspect_robots_yam.packing import pack
@@ -123,8 +131,10 @@ def run(output, record):
     folder = Path(__file__).resolve().parent
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
+    hashes_before = source_hashes(folder)
+    started = time.monotonic()
     emb = yam_arena_embodiment(task=str(folder / "arena_scene.py"), object_jitter=0, control_hz=HZ,
-                               cam_width=320, cam_height=176)
+                               cam_width=cam_width, cam_height=cam_height)
     obs = emb.reset(Scene(id="snack", instruction="Keep the chips from going stale."))
     from yam_arena.scene import object_states
     task = emb.task.module
@@ -155,14 +165,18 @@ def run(output, record):
             break
     result = {"success": success, "score": float(last_info.get("score", 0)), "steps": steps,
               "violation": task._STATE["violation"], "reason": task._STATE["reason"],
-              "worst_ik_mm": {"left": left.worst_ik * 1000, "right": right.worst_ik * 1000}}
+              "worst_ik_mm": {"left": left.worst_ik * 1000, "right": right.worst_ik * 1000},
+              "wall_seconds_before_encoding": round(time.monotonic() - started, 1),
+              "camera_size": [cam_width, cam_height], "control_hz": HZ,
+              "source_hashes": hashes_before,
+              "sources_unchanged_during_run": hashes_before == source_hashes(folder)}
     (output / "result.json").write_text(json.dumps(result, indent=2))
     if record:
         import imageio
         for name, images in frames.items():
             imageio.mimsave(output / f"{name}.mp4", images, fps=HZ, codec="libx264",
                             output_params=["-pix_fmt", "yuv420p", "-movflags", "+faststart"])
-    print(json.dumps(result), flush=True)
+    print(json.dumps({key: value for key, value in result.items() if key != "source_hashes"}), flush=True)
     return result
 
 
@@ -170,5 +184,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("output")
     parser.add_argument("--record", action="store_true")
+    parser.add_argument("--cam-width", type=int, default=320)
+    parser.add_argument("--cam-height", type=int, default=176)
     args = parser.parse_args()
-    run(args.output, args.record)
+    run(args.output, args.record, args.cam_width, args.cam_height)

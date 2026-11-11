@@ -103,6 +103,8 @@ def _usd_object(spec: UsdBody):
                                               friction_combine_mode="min" if spec.friction_min else "average")
     addon = {"physics_material": material}
     if spec.articulation:
+        addon["activate_contact_sensors"] = True
+    if spec.articulation:
         addon["articulation_props"] = sim_utils.ArticulationRootPropertiesCfg(
             solver_position_iteration_count=spec.solver_iters, enabled_self_collisions=True)
         # The folded film is millimetres thick; default broad contact margins

@@ -1,7 +1,7 @@
-"""WIP scene only: an opened packet and spring clip on the YAM station table.
+"""Experimental folded-packet and spring-clip task for the YAM station.
 
-The packet is a rigid body and a hinged flap, not deformable film. There is no
-scorer or robot demonstration. Use only to check asset spawning and interaction.
+The scorer uses PhysX jaw contacts and approximate robot clearance. The wrapper
+is a rigid approximation, not deformable film; validation is still in progress.
 """
 
 import pathlib
@@ -45,7 +45,8 @@ OBJECTS = [
       for i, (dx, dy) in enumerate(((-0.03, -0.04), (-0.03, 0.04), (0.02, -0.04), (0.02, 0.04)))),
 ]
 
-_STATE = {"arms_clear": False, "violation": False, "hold_steps": 0, "holding_tool": None}
+_STATE = {"arms_clear": False, "violation": False, "hold_steps": 0, "holding_tool": None,
+          "contacts": {"clip": False, "peg": False}, "contact_monitor": None}
 
 
 def _rotation(q):
@@ -56,7 +57,7 @@ def _rotation(q):
 
 
 def _measure(objects, tool="clip"):
-    """Conservative geometric candidate checks; contact/retention still need validation."""
+    """Geometric candidate checks, combined with contact monitoring in score()."""
     bag, clip = objects["bag"], objects[tool]
     rb, rc = _rotation(bag.quat_xyzw), _rotation(clip.quat_xyzw)
     p = rb.T @ (clip.pos - bag.pos)
@@ -92,6 +93,13 @@ def _reset(environment):
     _STATE["holding_tool"] = None
     _STATE["reason"] = None
     _STATE["steps"] = 0
+    _STATE["contacts"] = {"clip": False, "peg": False}
+    _STATE["contact_monitor"] = None
+    try:
+        from contact_monitor import ContactMonitor
+        _STATE["contact_monitor"] = ContactMonitor()
+    except Exception as exc:
+        print(f"SNACK contact monitor unavailable; scoring fails closed: {exc!r}", flush=True)
     # The embodiment settles the scene before returning reset; restore the two
     # pre-folded joints once at reset, never during the robot rollout.
     import torch
@@ -106,6 +114,13 @@ def _reset(environment):
 def _check_clear(environment):
     from yam_arena.scene import object_states
     states = object_states(environment, ["bag", "clip", "peg", "chip0", "chip1", "chip2", "chip3"])
+    monitor = _STATE.get("contact_monitor")
+    try:
+        _STATE["contacts"] = monitor.read() if monitor else {"clip": False, "peg": False}
+    except Exception as exc:
+        print(f"SNACK contact read failed; scoring fails closed: {exc!r}", flush=True)
+        _STATE["contact_monitor"] = None
+        _STATE["contacts"] = {"clip": False, "peg": False}
     bag = states["bag"]
     rot = _rotation(bag.quat_xyzw)
     # These are rigid food proxies, not a granular or deformable chip model.
@@ -130,7 +145,8 @@ def _check_clear(environment):
     if not _STATE["violation"] and _STATE["arms_clear"]:
         for tool in ("clip", "peg"):
             m = _measure(states, tool)
-            if all(m[k] for k in ("folded", "aligned", "jaw_on_layers", "still")) and m["overlap"] >= 0.096:
+            if (all(m[k] for k in ("folded", "aligned", "jaw_on_layers", "still")) and
+                    _STATE["contacts"][tool] and m["overlap"] >= 0.096):
                 holding = tool
                 break
     _STATE["hold_steps"] = (_STATE["hold_steps"] + 1 if holding and holding == _STATE["holding_tool"] else
@@ -151,7 +167,7 @@ def score(objects):
         if tool not in objects:
             continue
         m = _measure(objects, tool)
-        if not (m["folded"] and m["aligned"] and m["jaw_on_layers"]):
+        if not (m["folded"] and m["aligned"] and m["jaw_on_layers"] and _STATE["contacts"].get(tool, False)):
             continue
         if (m["overlap"] >= 0.096 and m["still"] and _STATE["arms_clear"] and
                 _STATE["hold_steps"] >= 60 and _STATE["holding_tool"] == tool):

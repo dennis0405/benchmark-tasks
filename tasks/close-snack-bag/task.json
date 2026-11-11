@@ -1,13 +1,20 @@
 {
   "title": "Keep an opened snack bag closed with a spring clip",
   "category": "Societal relevance",
-  "keywords": ["household", "food storage", "bimanual", "spring clip", "folded bag", "implicit instruction"],
+  "keywords": [
+    "household",
+    "food storage",
+    "bimanual",
+    "spring clip",
+    "folded bag",
+    "implicit instruction"
+  ],
   "instruction": "Keep the chips from going stale.",
   "context": "An opened snack packet needs its folded mouth held closed for storage.",
-  "setup": "On the table, a 120 x 160 x 25 mm support board holds a packet with a 120 x 160 x 42 mm rigid body and a 160 mm wide mouth overhanging the board. The mouth starts twice folded. The packet contains four spherical 16 mm food proxies. A blue 100 mm wide spring clip and a tan 100 mm wide clothespeg-style alternative stand on edge; a small metal-colored paper clip and a red ring-shaped rubber-band proxy lie separately on the table. The setup image and arena_scene.py fix the exact poses.",
-  "scoring": "Candidate scorer, pending validation: any food proxy outside the packet bounds or the packet falling below the table gives 0. Otherwise, 0.5 if both mouth hinges are folded, either wide clip is aligned and its two jaws lie within 0.5 mm of the outer folded layers. Score 1.0 after at least 96 mm of the 160 mm mouth is covered and the packet and clip remain still with robot link origins at least 80 mm from the mouth and clips for 60 consecutive steps. All other states score 0. See README for exact limits and known approximation risks.",
+  "setup": "On the table, a 120 x 160 x 25 mm wood-colored rigid support board holds a foil-style packet with a 120 x 160 x 42 mm rigid body and a 160 mm wide mouth overhanging the board. The mouth starts twice folded. The packet contains four rigid spherical food proxies, 16 mm diameter. A blue plastic-style spring clip and a tan wide clothespeg-style alternative, each nominally 80 x 100 x 14 mm, stand on edge. A rigid red band-shaped decoy (54 x 40 x 3 mm) and a metal-colored rigid paper-clip decoy (25 x 11 x 2 mm) lie separately on the table. These simulated surfaces approximate the named materials. The setup image and arena_scene.py fix the poses.",
+  "scoring": "Provisional: 0 if any food proxy escapes the packet bounds or the packet falls below the table. Otherwise 0.5 if the mouth is folded and a wide clip is aligned, both jaws are within 0.5 mm of the outer folded layers, and each jaw has at least 0.001 N simulated normal contact with the packet at separation at most 0.2 mm. Score 1.0 if the clip covers at least 96 mm of the 160 mm mouth and the packet and clip remain still with robot link origins at least 80 mm from the mouth and clips for 60 consecutive steps. A contact-monitor failure gives 0. All other states score 0. Exact numerical conditions and limitations are in arena_scene.py and README.",
   "run_limit": "2,400 control steps (120 seconds at 20 Hz)",
   "reset_notes": "Restore the packet, both clips, band proxy and paper clip to the fixed poses in arena_scene.py, return four food proxies to their initial positions, and set the two mouth hinges to their pre-folded starting angles.",
-  "fidelity": "Experimental: a rigid hollow shell with a partly open front, four rigid spherical food proxies, and three rigid film panels on spring hinges approximate a snack packet; the visual wrapper does not collide. The rubber-band decoy is rigid. The clips use a spring-loaded revolute joint; the alternative is a wide clothespeg-style approximation. Airtightness, wrinkling, tearing and actual food freshness are not modeled. Scoring estimates jaw contact geometrically and robot clearance from link origins, without measured contact force. Spring force and real-world fidelity remain unverified.",
-  "scores": "Dream-1: not yet run; scripted YAM demo: 1.0 in one 404-step trial using the candidate scorer."
+  "fidelity": "Experimental: a rigid hollow shell with a partly open front, four rigid spherical food proxies, and three rigid film panels on spring hinges approximate a snack packet; the visual wrapper does not collide. The rubber-band decoy is rigid. The clips use a spring-loaded revolute joint; the alternative is a wide clothespeg-style approximation. Airtightness, wrinkling, tearing and actual food freshness are not modeled. PhysX contact forces are sampled once per control step; robot clearance is approximated using link origins. Contact thresholds, spring force and real-world fidelity remain uncalibrated.",
+  "scores": "Dream-1: not yet run; scripted YAM demo: 1.0 in one 404-step trial with the contact-based scorer."
 }

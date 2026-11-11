@@ -21,6 +21,7 @@ class ScoringTest(unittest.TestCase):
         task._STATE["violation"] = False
         task._STATE["hold_steps"] = 60
         task._STATE["holding_tool"] = "clip"
+        task._STATE["contacts"] = {"clip": True, "peg": True}
 
     def test_valid_geometry(self):
         self.assertEqual(task.score(self.objects), 1.0)
@@ -41,6 +42,10 @@ class ScoringTest(unittest.TestCase):
 
     def test_spilled_contents_override_full_score(self):
         task._STATE["violation"] = True
+        self.assertEqual(task.score(self.objects), 0.0)
+
+    def test_no_contact_fails_closed(self):
+        task._STATE["contacts"]["clip"] = False
         self.assertEqual(task.score(self.objects), 0.0)
 
     def test_full_score_requires_three_seconds(self):

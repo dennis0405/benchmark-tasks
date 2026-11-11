@@ -10,19 +10,25 @@ The packet's printed `CHIPS` label, shaded pillow-like surface and crimp stripes
 - `arena_scene.py`, `scenekit.py`, `assets/`: Isaac Lab-Arena scene, monitoring and experimental scorer. The task's initial joint positions are restored once after simulator settling; no object poses or joints are written during robot actions.
 - `demo_robot.py`: a contact-only, bimanual YAM controller that uses absolute 14-D joint commands and measured object states. A single scripted run reached the candidate full score; it is not a learned policy.
 - `physical_probe.py`: isolated retention diagnostic that directly places the clip at reset. It is not a robot rollout and its video must not be used as a demonstration.
+- `validate_physics.py`: simulator controls for both clips, 70 mm overlap, an unclipped bag, an escaped food proxy, and a fallen packet. These deliberately place objects directly at reset; they are not robot rollouts.
+- `contact_monitor.py`: PhysX contact reporting for both jaws of each wide clip against the packet's rigid bodies. It samples the last physics substep of each control step and fails closed if unavailable.
+- `contact_probe.py`: an isolated PhysX contact diagnostic that directly places a clip at reset; this is not a robot demonstration.
 - `generate_mjcf_assets.py`, `design_bag.py`: procedural source for the converted assets and appearance.
 - `test_scoring.py`: synthetic geometry/score checks, including the alternative clip, released hold, open clip, and spill override. They do not establish physical scoring validity.
 - `evidence/scripted/`: the actual trial's result, setup screenshot and three camera videos; these files still need to be uploaded to the task board for a submission.
+- `evidence/contact-demo/`: a newer robot trial under the contact-based scorer, including a setup frame, three 640 x 352 H.264 videos and source hashes.
 
-The YAM controller squeezed the clip handles, lifted and carried the clip, inserted it over the folded mouth, then withdrew both arms. On the current assets and candidate scorer, one recorded trial (`/data/snack-runs/final-test/`) reached 1.0 in 404 control steps, with no spill violation. Earlier trials failed. One scripted run is not a success-rate estimate and does not validate the simulator's real-world fidelity or the candidate scorer's resistance to all exploits.
+The YAM controller squeezes the clip handles, lifts and carries the clip, inserts it over the folded mouth, then withdraws both arms. The older recording in `evidence/scripted/` scored 1.0 in 404 steps with the previous geometry-only scorer, before contact reporting was added. Earlier trials failed. One scripted run is not a success-rate estimate and does not validate the simulator's real-world fidelity or the scorer's resistance to all exploits.
+
+The newer fixed-layout robot trial in `evidence/contact-demo/` reached 1.0 in 404 steps with the contact-based scorer, without a spill violation. Both simulated jaws had to remain in contact during the 60-step release hold. On the Brev L40S instance it took 74 seconds through completion, excluding video encoding; the result records hashes of the Python source and USD assets and confirms they were unchanged during the run. The packet starts folded: the robot holds the existing folds, rather than making two new folds from an unfolded packet.
 
 On the current v5 clip, a **separate** placement diagnostic held the prepositioned clip and folded panels for more than 3 seconds and triggered the candidate 1.0 state; this diagnostic writes the initial clip pose and therefore is not evidence of robot feasibility. In a MuJoCo joint-actuation check, 0.07 N m opened the jaw tip about 22 mm. An idealized 18 mm handle lever corresponds to approximately 3.9 N at that torque; this is not a measured gripper force. The available MuJoCo pull comparison remains inconclusive and is not proof of retention.
 
-On the final scene, a YAM no-action control scored 0 while the two fold angles moved away from their initial folded values. A separate placement diagnostic for the wide peg also triggered the same candidate 1.0 after the hold; it is not a robot demonstration of using the peg.
+On the contact-scored scene, the placement controls in `evidence/controls/physical-controls.json` yielded 0 for no clip, 1 for the main clip and the wide peg after the hold, 0.5 for a 70 mm overlap, and 0 for a food proxy outside the packet. `fallen-control.json` records a separate packet-fall test yielding 0. The prior geometry-only controls are retained separately. These placement diagnostics are not robot demonstrations. `contact-probe.txt` records a separate pre-integration measurement of normal forces on both jaws.
 
 ## Scoring under development
 
-The intended score is 0 for a fallen packet or spilled contents; 0.5 if a clip grips the folded mouth; and 1.0 if it covers at least 96 mm of the 160 mm mouth and keeps it folded for 60 consecutive control steps at 20 Hz after both grippers withdraw. The current code approximates jaw contact using joint angle, alignment and distances rather than measured contact forces. It uses link-origin distances as a conservative approximation to gripper clearance. The score has only synthetic tests; contact, retention, spillage and false positives must be validated in real simulator runs before it is trusted. The 3-second counter assumes 20 Hz; the task limit is 2,400 control steps.
+The intended score is 0 for a fallen packet or spilled contents; 0.5 if a clip grips the folded mouth; and 1.0 if it covers at least 96 mm of the 160 mm mouth and keeps it folded for 60 consecutive control steps at 20 Hz after both grippers withdraw. The current scorer requires the geometric checks and at least 0.001 N of simulated normal contact force from each jaw to a packet body, at separation <= 0.2 mm. It samples contact once per control step, and returns zero if contact monitoring fails. It uses link-origin distances as an approximation to gripper clearance. The 3-second counter assumes 20 Hz; the task limit is 2,400 control steps. Contact thresholds are simulation values, not real-world calibration. Adversarial false positives and actual physical retention remain under investigation.
 
 ## Run the experimental controller
 
@@ -31,9 +37,11 @@ source /data/IsaacLab-Arena/yam.env
 cd /data/benchmark-tasks/tasks/close-snack-bag
 python -m unittest -v test_scoring
 python demo_robot.py /data/snack-runs/attempt --record
+python validate_physics.py /data/snack-runs/physical-controls.json
+python contact_probe.py
 ```
 
-The runner writes its actual result and camera videos. The recorded 404-step trial is one fixed-layout trial with `object_jitter=0`; it is not a multi-seed success rate. It used the Arena environment from the simulation walkthrough at 20 Hz, 320 x 176 camera frames, and the candidate scorer. Record a new run whenever the task code or assets change.
+The runner writes its actual result and camera videos. It accepts `--cam-width 640 --cam-height 352` for a larger recording and includes SHA-256 hashes for the Python and USD files and whether they changed during the run. The recorded 404-step trials use a fixed layout with `object_jitter=0`; they are not a multi-seed success rate. Both use the Arena environment from the simulation walkthrough at 20 Hz. Record a new run whenever the task code or assets change.
 
 ## Dream-1 evaluation
 
