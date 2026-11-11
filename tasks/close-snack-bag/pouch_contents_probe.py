@@ -8,7 +8,11 @@ from isaaclab.app import add_launcher_args, launch_simulation
 parser = argparse.ArgumentParser(conflict_handler="resolve")
 parser.add_argument("output", type=Path)
 parser.add_argument("--folded", action="store_true")
+parser.add_argument("--initial-crease-yield", type=float, default=None, help="Experimental reset-time plasticity diagnostic, radians")
+parser.add_argument("--dynamic-crease-yield", type=float, default=None, help="Update permanent bend after each simulation step")
 parser.add_argument("--foldable-mouth", action="store_true")
+parser.add_argument("--air", action="store_true", help="Experimental lumped isothermal gas")
+parser.add_argument("--air-opening-scale", type=float, default=1.0)
 parser.add_argument("--fold-radius", type=float, default=0.0018)
 parser.add_argument("--duration", type=float, default=0.5)
 parser.add_argument("--contents-stiffness", type=float, default=1000.0)
@@ -39,6 +43,10 @@ if args.clip or args.coupled or args.proxy:
     parser.error("This probe supports surface and deformable contents only; clip and rigid coupling are not implemented.")
 if args.folded and not args.foldable_mouth:
     parser.error("--folded requires --foldable-mouth")
+if args.initial_crease_yield is not None and not args.folded:
+    parser.error("--initial-crease-yield requires --folded")
+if args.dynamic_crease_yield is not None and args.initial_crease_yield is not None:
+    parser.error("choose either dynamic or initial crease plasticity")
 
 import numpy as np
 import torch
@@ -170,6 +178,46 @@ def main():
             packet.write_nodal_pos_to_sim_index(torch.tensor(folded[None], device=args.device))
             packet.write_nodal_velocity_to_sim_index(torch.zeros((1, len(rest), 3), device=args.device))
             sim.forward()
+        crease_count, gas = 0, None
+        if args.initial_crease_yield is not None or args.dynamic_crease_yield is not None or args.air:
+            from isaaclab_newton.physics.newton_manager import NewtonManager
+            model = NewtonManager.get_model()
+            model_points = model.particle_q.numpy()
+            candidates = np.flatnonzero(np.linalg.norm(model_points - initial[0], axis=1) < 1e-6)
+            offsets = [int(i) for i in candidates if i + len(initial) <= len(model_points)
+                       and np.max(np.abs(model_points[i:i + len(initial)] - initial)) < 1e-6]
+            if len(offsets) != 1:
+                raise RuntimeError(f"Cannot uniquely locate pouch particles: {offsets}")
+            start = offsets[0]
+        if args.dynamic_crease_yield is not None:
+            import warp as wp
+            from crease_model import hinge_angles, yielded_rest_angles
+            edges = model.edge_indices.numpy()
+            safe = np.clip(edges[:, 2:4], 0, len(model_points) - 1)
+            is_pouch = np.all((edges >= start) & (edges < start + len(initial)), axis=1)
+            crease_region = is_pouch & (model_points[safe, 0].mean(axis=1) >= 0.145)
+            dynamic_changed = np.zeros(len(edges), dtype=bool)
+        if args.air:
+            from pouch_air_warp import LumpedGas
+            gas = LumpedGas(model, initial, faces, grid, start, dt / args.substeps, args.air_opening_scale)
+            NewtonManager.register_state_force_callback(gas.apply)
+        if args.initial_crease_yield is not None:
+            import warp as wp
+            from crease_model import hinge_angles, yielded_rest_angles
+            edges = model.edge_indices.numpy()
+            old_angles = model.edge_rest_angle.numpy()
+            posed = model_points.copy()
+            posed[start:start + len(folded)] = folded
+            angles, valid = hinge_angles(posed, edges)
+            is_pouch = np.all((edges >= start) & (edges < start + len(initial)), axis=1)
+            safe = np.clip(edges[:, 2:4], 0, len(model_points) - 1)
+            eligible = valid & is_pouch & (model_points[safe, 0].mean(axis=1) >= 0.145)
+            updated = yielded_rest_angles(old_angles, angles, eligible, args.initial_crease_yield)
+            crease_count = int(np.count_nonzero(np.abs(updated - old_angles) > 1e-6))
+            if crease_count == 0:
+                raise RuntimeError("No yielding edges; check crease region and node mapping")
+            wp.copy(model.edge_rest_angle, wp.array(updated, dtype=wp.float32, device=model.device))
+            print("RESET_CREASE_EDGES", crease_count, flush=True)
         snapshots, samples = {}, []
         total = round(args.duration / dt)
         sample_steps = {0, 59, 119, 239, 479, total - 1}
@@ -183,6 +231,19 @@ def main():
             sim.step(render=False)
             packet.update(dt)
             contents.update(dt)
+            if args.dynamic_crease_yield is not None:
+                # Update after each 240 Hz step. This is a numerical prototype;
+                # it does not yet account for plastic work or substep history.
+                current = packet.data.nodal_pos_w.torch[0].detach().cpu().numpy()
+                posed = model_points.copy()
+                posed[start:start + len(current)] = current
+                angles, valid = hinge_angles(posed, edges)
+                old_angles = model.edge_rest_angle.numpy()
+                eligible = valid & crease_region
+                updated = yielded_rest_angles(old_angles, angles, eligible, args.dynamic_crease_yield)
+                dynamic_changed |= np.abs(updated - old_angles) > 1e-6
+                wp.copy(model.edge_rest_angle, wp.array(updated, dtype=wp.float32, device=model.device))
+                crease_count = int(dynamic_changed.sum())
             if clip:
                 clip.update(dt)
             if step in sample_steps:
@@ -202,6 +263,10 @@ def main():
                        "contents_max": content_nodes.max(axis=0).tolist(),
                        "contents_finite": bool(np.isfinite(content_nodes).all()), "fold_cosine_mean": [float(c.mean()) for c in cosines],
                        "both_folds_reversed_fraction": folded_fraction}
+                if gas is not None:
+                    gas_stats, gas_moles = gas.stats.numpy(), gas.moles.numpy()
+                    row["air"] = {"volume_m3": float(gas_stats[0]), "opening_area_m2": float(gas_stats[1]),
+                                  "gauge_pressure_pa": float(gas_stats[2]), "moles": float(gas_moles[0])}
                 if clip:
                     clip_pos = clip.data.root_link_pose_w.torch[0, :3].detach().cpu().numpy()
                     jaw = float(clip.data.joint_pos.torch[0, 0].item())
@@ -212,7 +277,7 @@ def main():
                 samples.append(row)
                 print("NEWTON_SURFACE", json.dumps(row), flush=True)
         np.savez_compressed(args.output / "surface-snapshots.npz", faces=faces, **snapshots)
-        (args.output / "newton-result.json").write_text(json.dumps({"dt": dt, "substeps": args.substeps, "iterations": args.iterations, "self_radius": args.self_radius, "self_margin": args.self_margin, "collision_interval": args.collision_interval, "foldable_mouth": args.foldable_mouth, "contents_stiffness": args.contents_stiffness, "contents_damping": args.contents_damping, "folded": args.folded, "clip": args.clip,
+        (args.output / "newton-result.json").write_text(json.dumps({"dt": dt, "air_enabled": args.air, "air_opening_scale": args.air_opening_scale, "initial_crease_yield": args.initial_crease_yield, "dynamic_crease_yield": args.dynamic_crease_yield, "crease_count": crease_count, "substeps": args.substeps, "iterations": args.iterations, "self_radius": args.self_radius, "self_margin": args.self_margin, "collision_interval": args.collision_interval, "foldable_mouth": args.foldable_mouth, "contents_stiffness": args.contents_stiffness, "contents_damping": args.contents_damping, "folded": args.folded, "clip": args.clip,
             "coupled": args.coupled,
             "proxy": args.proxy,
             "coupling_mode": args.coupling_mode if args.coupled else None,

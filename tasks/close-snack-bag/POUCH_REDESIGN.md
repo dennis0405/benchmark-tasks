@@ -87,8 +87,9 @@ The contained nodes stayed inside at all sampled times. This is a failed
 collision/retention control, not a successful fold or sealing demo.
 
 The solver uses edge rest angles in its bending term. Updating those angles
-could be investigated as a crease approximation, but the current code does not
-implement or validate plastic deformation. No inference about actual packet
+could be investigated as a crease approximation, but at that stage the code did not
+implement or validate plastic deformation. Later experiments below implement
+only an uncalibrated hinge-yield approximation. No inference about actual packet
 fold recovery can be made without calibration. Before a YAM demo, resolve
 folded self-contact, validate the coupled dynamic clip and its force, develop
 and validate a crease model, and test real folding and release.
@@ -114,4 +115,96 @@ behavior. The simulation took roughly 100 s on the L40S for 1 s simulated.
 python pouch_contents_probe.py /data/snack-runs/fold-check-finer --folded --foldable-mouth \
   --duration 1 --contents-stiffness 100000 --contents-damping 10 \
   --substeps 8 --iterations 30 --self-radius .0002 --self-margin .0004 --collision-interval 1
+```
+
+## Experimental gas, individual chips, crease and integrity scoring
+
+These components are research probes, **not** part of `arena_scene.py` or the
+submission scorer. Their constants and scoring thresholds are not validated
+against real snacks. No actual clip, robot manipulation or leakage test is shown.
+
+### Crease
+
+`crease_model.py` provides a provisional rate-independent hinge yield rule using
+Newton's signed bending-angle convention. `--initial-crease-yield .25` applies
+it once to already folded reset coordinates, updating 812 bending rest angles
+in the mouth. This is imposed plastic deformation, not a result of contact
+loading, and is not updated as a robot folds the packet. A 1 s run with the
+same stricter settings as the prior fold control retained the two-reversal
+heuristic on ~91% of nodes at 1 s, versus 0% in the prior elastic control; no
+film self-crossings were found at the four sampled times, and all 19 content
+nodes were inside. Tests are sparse and the uncalibrated result retained most
+of the fold, not necessarily the small wrinkle expected from real packaging.
+
+### Air
+
+`pouch_air.py` implements an isothermal lumped ideal-gas and low-pressure
+orifice-flow model; `pouch_air_warp.py` couples pressure forces to Newton via a
+per-substep GPU callback. A virtual mouth cap is used to measure volume. Its
+traction is applied in proportion to an imposed seal control; the control is
+not inferred from a real clip. The model does not subtract the volume occupied
+by contents, model local flow or film permeability, or calculate real leakage
+through a pinched mouth. Cap area alone is not a reliable seal detector after
+folding. In a 0.5 s open-mouth control the pressure stayed close to ambient.
+
+Forcing a closed-mouth control (`--air-opening-scale 0`) preserved gas amount
+but the bag remained ~3.3 mm above the ground at 0.25 s. Adding cap traction
+made the total calculated pressure force approximately zero on a closed surface
+but did **not** resolve the implausible floating behavior. This coupled air
+model is not accepted for a task demo or score. Check solver momentum, pressure
+integration, masses, pressure range, contents exclusion and mesh closure before
+further use. Do not mistake an artificial closed control for actual sealing.
+
+### Separate chips and damage
+
+`pouch_chips_probe.py` replaces the single contents block with four independently
+moving 28 x 24 x 2.5 mm deformable rectangular pieces. Their 300 kg/m^3 density
+and tetrahedral stiffness are provisional, and the pieces do not fracture.
+`chip_damage.py` computes maximum absolute principal stretch change from the
+reference tetrahedra, with a per-chip running peak at every simulation step;
+this strain is a diagnostic, not a calibrated fracture detector.
+
+In a 0.5 s no-manipulation run with the stronger contact setting and 1 MPa
+Lame parameters, peak strain was roughly 4.3--5.5% across the four pieces.
+All 97 sampled chip nodes were inside the pouch and zero strict film crossings
+were detected at the three saved times. Individual chip face crossings and
+continuous containment were not checked. Particle/tetrahedron counts can
+vary with automatic meshing. Even resting baseline deformation requires
+calibration and reproducibility work before any damage classification.
+
+`experimental_integrity_score.py` provides a **provisional, disconnected**
+penalty rule: a spill or half the pieces broken gives 0, fewer broken pieces
+cap score at 0.5. This retains the original task's spill-to-zero rule, but its
+breakage threshold is a proposal. It requires observed integer event counts and
+rejects unknown counts. No detector currently produces validated breakage or
+spill events, so this rule cannot be used as a benchmark score.
+
+Representative commands (new output directories required):
+
+```sh
+python pouch_contents_probe.py /data/snack-runs/crease-check --folded --foldable-mouth \
+  --duration 1 --contents-stiffness 100000 --contents-damping 10 --substeps 8 \
+  --iterations 30 --self-radius .0002 --self-margin .0004 --collision-interval 1 \
+  --initial-crease-yield .25
+python pouch_chips_probe.py /data/snack-runs/chips-check --duration .5 --air \
+  --contents-stiffness 1000000 --contents-damping 10 --substeps 8 --iterations 30 \
+  --self-radius .0002 --self-margin .0004 --collision-interval 1
+python pouch_contents_probe.py /data/snack-runs/seal-control --duration .25 --air \
+  --air-opening-scale 0 --contents-stiffness 100000 --contents-damping 10
+```
+
+A second crease diagnostic uses `--dynamic-crease-yield .25` to update the
+rest angle from the current nodal state after each 240 Hz step. In a 0.5 s
+trial beginning with an imposed folded pose, 864 mouth edges changed; the
+first fold remained strongly reversed at 0.5 s while the second did not, and
+zero strict film crossings were detected at the three saved times. It is still
+not a physically generated fold: the rule only observes each whole step, has
+no measured yield parameters or work/energy validation, and starts from a
+teleported pose. Use only as a diagnostic.
+
+```sh
+python pouch_contents_probe.py /data/snack-runs/dynamic-crease --folded --foldable-mouth \
+  --duration .5 --contents-stiffness 100000 --contents-damping 10 --substeps 8 \
+  --iterations 30 --self-radius .0002 --self-margin .0004 --collision-interval 1 \
+  --dynamic-crease-yield .25
 ```
