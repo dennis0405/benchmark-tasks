@@ -15,10 +15,11 @@ they are not the submitted scene or its scorer. See `README.md` and
   selected deformable packet node snapshots and results. Their support/film
   intersection reports are adjacent as `v16-fixture-intersections.json` and
   `v18-fixture-intersections.json`; both controls failed.
-- Other trial outputs under the original VM's `/data/snack-runs/` are not all
-  in Git. They include intermediate logs and surface snapshots; the directory
-  occupied about 123 MB when checked. Copy it separately before retiring the
-  VM if every raw intermediate experiment must be retained.
+- Other trial outputs under the original VM's `/data/snack-runs/` were not all
+  in Git. They included intermediate logs and surface snapshots; the directory
+  occupied about 123 MB when checked. The user later reported deleting the
+  Brev instance. An independent backup of those extra outputs is not known;
+  do not assume they are recoverable.
 - No virtual environment, Isaac Sim installation, GPU driver, authentication
   token or Dream-1 run is stored in this repository.
 
@@ -132,3 +133,6 @@ or paste credentials into this repository. The Dream-1 command is in
 also obtain a team media ID and complete `task.json`; neither a Dream-1 run nor
 an upload or pull request has been recorded. Recheck task-board duplicates,
 review criteria and current instructions before submitting.
+
+For the RoboVoLo and RoboSimStudio references and a proposed deformable-bag
+experiment sequence after Blackwell access, see `DEFORMABLE_NEXT_STEPS.md`.
