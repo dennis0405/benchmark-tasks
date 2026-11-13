@@ -1,4 +1,5 @@
 """Brev lifecycle restricted to one provisioned instance, plus SSH file transport."""
+
 import json
 import re
 import shlex
@@ -14,7 +15,9 @@ class RuntimeErrorState(StateError):
 
 
 def capture(argv, timeout=120, stdin=None):
-    p = subprocess.run(argv, input=stdin, capture_output=True, text=True, timeout=timeout, check=False)
+    p = subprocess.run(
+        argv, input=stdin, capture_output=True, text=True, timeout=timeout, check=False
+    )
     if p.returncode:
         raise RuntimeErrorState(f"command failed: {argv[0]}: {p.stderr[-800:]}")
     return p.stdout
@@ -88,13 +91,30 @@ class Brev:
             raise RuntimeErrorState("remote transfer path must be an absolute simple path")
         src = self.name + ":" + str(source) if download else str(source)
         dst = str(destination) if download else self.name + ":" + str(destination)
-        return capture(["rsync", "-a", "--exclude=__pycache__", "--exclude=.venv", "--exclude=.git",
-                        "--exclude=.pytest_cache", "-e", "ssh -o BatchMode=yes -o ConnectTimeout=20", src, dst], timeout=600)
+        return capture(
+            [
+                "rsync",
+                "-a",
+                "--exclude=__pycache__",
+                "--exclude=.venv",
+                "--exclude=.git",
+                "--exclude=.pytest_cache",
+                "-e",
+                "ssh -o BatchMode=yes -o ConnectTimeout=20",
+                src,
+                dst,
+            ],
+            timeout=600,
+        )
 
     def deploy(self, source):
         base = self.config["remote_root"]
         self.ssh("mkdir -p " + shlex.quote(base + "/pipeline"))
         for relative in ["src", "config", "pyproject.toml", "uv.lock"]:
             self.rsync(Path(source) / relative, base + "/pipeline/")
-        return self.ssh("cd " + shlex.quote(base + "/pipeline") +
-                        " && /home/ubuntu/.local/bin/uv sync --frozen --no-dev", timeout=300)
+        return self.ssh(
+            "cd "
+            + shlex.quote(base + "/pipeline")
+            + " && /home/ubuntu/.local/bin/uv sync --frozen --no-dev",
+            timeout=300,
+        )

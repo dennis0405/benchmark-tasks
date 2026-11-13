@@ -7,6 +7,7 @@ def test_instance_id_mismatch_prevents_start_or_stop():
     class B(Brev):
         def inventory(self):
             return [{"id": "wrong", "name": "vm", "status": "STOPPED"}]
+
     b = B({"instance": "vm", "instance_id": "expected"})
     with pytest.raises(RuntimeErrorState, match="identity"):
         b.status()
@@ -16,6 +17,7 @@ def test_missing_instance_does_not_create_replacement():
     class B(Brev):
         def inventory(self):
             return []
+
     with pytest.raises(RuntimeErrorState, match="missing"):
         B({"instance": "vm", "instance_id": "id"}).status()
 

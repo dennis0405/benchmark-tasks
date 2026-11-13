@@ -1,4 +1,5 @@
 """Durable local journal. Unknown external effects are deliberately never reset."""
+
 import contextlib
 import fcntl
 import json
@@ -52,8 +53,15 @@ class Store:
         if not prompt.strip():
             raise StateError("prompt must not be empty")
         rid = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S") + "-" + uuid.uuid4().hex[:8]
-        value = dict(id=rid, prompt=prompt, instance=instance, created_at=now(),
-                     status="created", stage=None, **extra)
+        value = dict(
+            id=rid,
+            prompt=prompt,
+            instance=instance,
+            created_at=now(),
+            status="created",
+            stage=None,
+            **extra,
+        )
         with self.db:
             self.db.execute("INSERT INTO runs VALUES(?,?)", (rid, json.dumps(value)))
             self._event(rid, {"event": "created", "instance": instance})
@@ -83,7 +91,9 @@ class Store:
             self._event(rid, {"invalidated": list(stages)})
 
     def run_dir(self, rid):
-        if not rid or any(c not in "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_" for c in rid):
+        if not rid or any(
+            c not in "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_" for c in rid
+        ):
             raise StateError("invalid run id")
         return self.root / "runs" / rid
 
@@ -97,7 +107,9 @@ class Store:
         return [json.loads(r[0]) for r in self.db.execute("SELECT data FROM runs ORDER BY id DESC")]
 
     def _event(self, rid, data):
-        self.db.execute("INSERT INTO events(run,at,data) VALUES(?,?,?)", (rid, now(), json.dumps(data)))
+        self.db.execute(
+            "INSERT INTO events(run,at,data) VALUES(?,?,?)", (rid, now(), json.dumps(data))
+        )
 
     def update(self, rid, **changes):
         with self.db:
@@ -108,26 +120,37 @@ class Store:
         return value
 
     def events(self, rid):
-        return [dict(r) for r in self.db.execute("SELECT * FROM events WHERE run=? ORDER BY seq", (rid,))]
+        return [
+            dict(r)
+            for r in self.db.execute("SELECT * FROM events WHERE run=? ORDER BY seq", (rid,))
+        ]
 
     def stage_done(self, rid, stage, receipt):
         with self.db:
-            self.db.execute("INSERT OR REPLACE INTO stages VALUES(?,?,?)",
-                            (rid, stage, json.dumps(receipt)))
+            self.db.execute(
+                "INSERT OR REPLACE INTO stages VALUES(?,?,?)", (rid, stage, json.dumps(receipt))
+            )
             self._event(rid, {"stage_done": stage, "receipt": receipt})
 
     def completed(self, rid):
-        return [r[0] for r in self.db.execute("SELECT stage FROM stages WHERE run=? ORDER BY rowid", (rid,))]
+        return [
+            r[0]
+            for r in self.db.execute("SELECT stage FROM stages WHERE run=? ORDER BY rowid", (rid,))
+        ]
 
     def effect(self, rid, kind):
-        row = self.db.execute("SELECT * FROM effects WHERE run=? AND kind=?", (rid, kind)).fetchone()
+        row = self.db.execute(
+            "SELECT * FROM effects WHERE run=? AND kind=?", (rid, kind)
+        ).fetchone()
         return dict(row) if row else None
 
     def reserve_effect(self, rid, kind, data, budget=None):
         self.db.execute("BEGIN IMMEDIATE")
         try:
             if self.effect(rid, kind):
-                raise StateError(f"{kind} already reserved/executed; reconcile, never retry automatically")
+                raise StateError(
+                    f"{kind} already reserved/executed; reconcile, never retry automatically"
+                )
             if budget is not None:
                 reserved = 0
                 for row in self.db.execute("SELECT status,data FROM effects WHERE kind=?", (kind,)):
@@ -135,7 +158,9 @@ class Store:
                     reserved += entry.get("actual_usd", entry["cap_usd"])
                 if data["cap_usd"] <= 0 or reserved + data["cap_usd"] > budget:
                     raise StateError("cumulative budget exceeded")
-            self.db.execute("INSERT INTO effects VALUES(?,?,?,?)", (rid, kind, "unknown", json.dumps(data)))
+            self.db.execute(
+                "INSERT INTO effects VALUES(?,?,?,?)", (rid, kind, "unknown", json.dumps(data))
+            )
             self._event(rid, {"reserved_effect": kind, "data": data})
             self.db.commit()
         except BaseException:
@@ -149,13 +174,16 @@ class Store:
                 raise StateError("effect has not been reserved")
             data = json.loads(row["data"])
             data.update(result)
-            self.db.execute("UPDATE effects SET status='finished',data=? WHERE run=? AND kind=?",
-                            (json.dumps(data), rid, kind))
+            self.db.execute(
+                "UPDATE effects SET status='finished',data=? WHERE run=? AND kind=?",
+                (json.dumps(data), rid, kind),
+            )
             self._event(rid, {"finished_effect": kind, "result": result})
 
     @contextlib.contextmanager
     def lock(self, key):
         import hashlib
+
         p = self.root / ("lock-" + hashlib.sha256(key.encode()).hexdigest())
         with p.open("a+") as f:
             try:

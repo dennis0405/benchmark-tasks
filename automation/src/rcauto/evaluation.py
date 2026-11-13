@@ -1,4 +1,5 @@
 """Trusted single-episode entrypoint; credentials enter through stdin, never argv/files."""
+
 import argparse
 import http.client
 import json
@@ -50,23 +51,56 @@ def main():
     output.mkdir(parents=True, exist_ok=True)
     guard = EpisodeGuard(output / "request-journal.jsonl", job["max_requests"])
     from inspect_robots_dream import policy
+
     old_reset = policy.DreamPolicy.reset
+
     def reset(self, scene):
         guard.start()
         return old_reset(self, scene)
+
     policy.DreamPolicy.reset = reset
     old_request = http.client.HTTPConnection.request
+
     def request(self, method, url, *a, **kw):
         if method == "POST" and url.split("?", 1)[0].endswith("/v1/get_action"):
             guard.request()
         return old_request(self, method, url, *a, **kw)
+
     http.client.HTTPConnection.request = request
     from inspect_robots.cli import main as inspect_main
-    sys.argv = ["inspect-robots", "run", "--embodiment", "yam_arena", "--policy", "dream",
-                "-E", "task=" + job["task"], "-E", "object_jitter=0", "-E", "control_hz=20",
-                "-E", "cam_width=320", "-E", "cam_height=176", "--instruction", job["instruction"],
-                "--scorer", "task_score", "--max-steps", str(job["max_steps"]), "--epochs", "1",
-                "--grader", "none", "--no-prompt", "--store-frames", "--log-dir", str(output)]
+
+    sys.argv = [
+        "inspect-robots",
+        "run",
+        "--embodiment",
+        "yam_arena",
+        "--policy",
+        "dream",
+        "-E",
+        "task=" + job["task"],
+        "-E",
+        "object_jitter=0",
+        "-E",
+        "control_hz=20",
+        "-E",
+        "cam_width=320",
+        "-E",
+        "cam_height=176",
+        "--instruction",
+        job["instruction"],
+        "--scorer",
+        "task_score",
+        "--max-steps",
+        str(job["max_steps"]),
+        "--epochs",
+        "1",
+        "--grader",
+        "none",
+        "--no-prompt",
+        "--store-frames",
+        "--log-dir",
+        str(output),
+    ]
     code = 0
     try:
         inspect_main()
@@ -77,8 +111,15 @@ def main():
         code = 1
         guard.event("error", error_type=type(e).__name__)
     finally:
-        write_json(output / "attempt.json", {"episodes": guard.episodes, "requests": guard.requests,
-                                              "exit_code": code, "billing": "unverified-reservation-retained"})
+        write_json(
+            output / "attempt.json",
+            {
+                "episodes": guard.episodes,
+                "requests": guard.requests,
+                "exit_code": code,
+                "billing": "unverified-reservation-retained",
+            },
+        )
         os.environ.pop("DREAM_API_KEY", None)
     raise SystemExit(code)
 

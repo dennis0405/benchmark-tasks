@@ -1,4 +1,5 @@
 """CLI execution boundary; skills only route user intent to these commands."""
+
 import argparse
 import getpass
 import json
@@ -19,11 +20,17 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def parser():
-    p = argparse.ArgumentParser(description="Prompt-driven RoboCurve production; submission requires human approval.")
+    p = argparse.ArgumentParser(
+        description="Prompt-driven RoboCurve production; submission requires human approval."
+    )
     p.add_argument("--config", default=str(ROOT / "config/production.json"))
-    p.add_argument("--state", default=os.environ.get("RCAUTO_STATE", str(Path.home() / ".local/state/rcauto")))
+    p.add_argument(
+        "--state", default=os.environ.get("RCAUTO_STATE", str(Path.home() / ".local/state/rcauto"))
+    )
     sub = p.add_subparsers(dest="command", required=True)
-    start = sub.add_parser("start", help="create a run and start production on the registered Brev instance")
+    start = sub.add_parser(
+        "start", help="create a run and start production on the registered Brev instance"
+    )
     group = start.add_mutually_exclusive_group(required=True)
     group.add_argument("--prompt")
     group.add_argument("--prompt-file")
@@ -37,27 +44,41 @@ def parser():
     resume.add_argument("--detach", action="store_true")
     stop = sub.add_parser("stop", help="checkpoint at a safe stage boundary, then stop GPU")
     stop.add_argument("run")
-    approval = sub.add_parser("approve", help="record the user's explicit approval of the reviewed bundle")
+    approval = sub.add_parser(
+        "approve", help="record the user's explicit approval of the reviewed bundle"
+    )
     approval.add_argument("run")
     approval.add_argument("--actor", required=True)
     approval.add_argument("--statement", required=True)
     approval.add_argument("--digest", required=True)
-    submit = sub.add_parser("submit", help="refresh novelty, upload media and open one approved PR; no GPU start")
+    submit = sub.add_parser(
+        "submit", help="refresh novelty, upload media and open one approved PR; no GPU start"
+    )
     submit.add_argument("run")
     submit.add_argument("--approval", required=True)
-    evaluate = sub.add_parser("evaluate", help="perform the reserved final Dream episode after production is complete")
+    evaluate = sub.add_parser(
+        "evaluate", help="perform the reserved final Dream episode after production is complete"
+    )
     evaluate.add_argument("run")
     auth = sub.add_parser("auth", help="enter credentials locally; never paste them into chat")
     auth.add_argument("service", choices=["board", "dream"])
     auth.add_argument("--provider-cap-confirmed", action="store_true")
-    doctor = sub.add_parser("doctor", help="check tools/auth; --remote tests the dedicated instance and stops it")
+    doctor = sub.add_parser(
+        "doctor", help="check tools/auth; --remote tests the dedicated instance and stops it"
+    )
     doctor.add_argument("--remote", action="store_true")
     doctor.add_argument("--agent", action="store_true")
-    sub.add_parser("catalog-sync", help="sync all PR metadata and active task revisions without GPU")
+    sub.add_parser(
+        "catalog-sync", help="sync all PR metadata and active task revisions without GPU"
+    )
     sub.add_parser("selftest", help="offline fixture run; cannot evaluate or submit")
-    receipt = sub.add_parser("receipt", help="read actual PR comments; PR creation is not contest acceptance")
+    receipt = sub.add_parser(
+        "receipt", help="read actual PR comments; PR creation is not contest acceptance"
+    )
     receipt.add_argument("run")
-    reconcile = sub.add_parser("reconcile", help="inspect unknown external effects without retrying them")
+    reconcile = sub.add_parser(
+        "reconcile", help="inspect unknown external effects without retrying them"
+    )
     reconcile.add_argument("run")
     reconcile.add_argument("--dream-actual-usd", type=float)
     reconcile.add_argument("--billing-reference")
@@ -84,20 +105,37 @@ def dispatch(args, store, config):
         if run.get("mode") == "selftest":
             raise StateError("selftest cannot resume as production")
         if store.effect(args.run, "dream"):
-            raise StateError("final Dream already attempted; use reconcile, never auto-regenerate or reevaluate")
+            raise StateError(
+                "final Dream already attempted; use reconcile, never auto-regenerate or reevaluate"
+            )
         root = store.run_dir(args.run)
         if args.request:
             (root / "revision-request.txt").write_text(args.request)
         if (root / "cancel-requested.json").exists():
             (root / "cancel-requested.json").unlink()
-        return execute_or_detach(args, store, coordinator, args.run,
-                                 args.from_stage or ("research" if args.request else None))
+        return execute_or_detach(
+            args,
+            store,
+            coordinator,
+            args.run,
+            args.from_stage or ("research" if args.request else None),
+        )
     if cmd == "stop":
         run = store.get(args.run)
-        write_json(store.run_dir(args.run) / "cancel-requested.json", {"at": now(), "requested": "human"})
+        write_json(
+            store.run_dir(args.run) / "cancel-requested.json", {"at": now(), "requested": "human"}
+        )
         if run.get("status") not in {"working", "starting", "syncing-catalog"}:
-            return {"run": args.run, "status": "pause-requested", "note": "no live supervisor; resume reconciliation required before stop"}
-        return {"run": args.run, "status": "pause-requested", "note": "supervisor stops after safe stage boundary and preservation"}
+            return {
+                "run": args.run,
+                "status": "pause-requested",
+                "note": "no live supervisor; resume reconciliation required before stop",
+            }
+        return {
+            "run": args.run,
+            "status": "pause-requested",
+            "note": "supervisor stops after safe stage boundary and preservation",
+        }
     if cmd == "approve":
         m = read(store.run_dir(args.run) / "release-manifest.json")
         if args.digest != m["digest"]:
@@ -105,13 +143,20 @@ def dispatch(args, store, config):
         return approve(store, args.run, args.actor, args.statement)
     if cmd == "submit":
         with store.lock("publish-" + args.run):
-            return Publisher(store, config).submit(args.run, args.approval,
-                        fresh_novelty=lambda: coordinator.fresh_novelty(args.run), credentials=credentials(store.root))
+            return Publisher(store, config).submit(
+                args.run,
+                args.approval,
+                fresh_novelty=lambda: coordinator.fresh_novelty(args.run),
+                credentials=credentials(store.root),
+            )
     if cmd == "evaluate":
         root = store.run_dir(args.run)
         if store.effect(args.run, "dream"):
             raise StateError("Dream already attempted; use reconcile")
-        if store.get(args.run).get("mode") == "selftest" or not (root / "release-manifest.json").exists():
+        if (
+            store.get(args.run).get("mode") == "selftest"
+            or not (root / "release-manifest.json").exists()
+        ):
             raise StateError("validated production bundle required")
         with store.lock("instance-" + config["instance_id"]):
             coordinator.brev.start()
@@ -130,13 +175,18 @@ def dispatch(args, store, config):
             team = input("Team code: ").strip()
             token = getpass.getpass("Team access token (hidden): ")
             import httpx
+
             with httpx.Client(headers={"User-Agent": "robocurve-automation/0.1"}) as client:
-                result = client.post("https://tasks.robocurve.org/api/login", json={"code": team, "token": token})
+                result = client.post(
+                    "https://tasks.robocurve.org/api/login", json={"code": team, "token": token}
+                )
                 result.raise_for_status()
             save(store.root, {"ROBOCURVE_TEAM": team, "ROBOCURVE_TOKEN": token})
         else:
             if not args.provider_cap_confirmed:
-                raise StateError("confirm provider-side cumulative $20 spending cap with --provider-cap-confirmed")
+                raise StateError(
+                    "confirm provider-side cumulative $20 spending cap with --provider-cap-confirmed"
+                )
             key = getpass.getpass("DREAM_API_KEY (hidden, no inference sent): ")
             if not key.strip():
                 raise StateError("empty Dream key")
@@ -144,39 +194,57 @@ def dispatch(args, store, config):
         return {"service": args.service, "configured": True, "paid_requests": 0}
     if cmd == "catalog-sync":
         result = coordinator.sync()
-        return {k: result[k] for k in ["scope", "complete", "digest", "completed_at"]} | {"records": len(result["records"])}
+        return {k: result[k] for k in ["scope", "complete", "digest", "completed_at"]} | {
+            "records": len(result["records"])
+        }
     if cmd == "doctor":
-        result = {"tools": {x: shutil.which(x) for x in ["brev", "git", "gh", "uv", "codex", "ffmpeg", "ffprobe"]},
-                  "credentials": {k: bool(v) for k, v in credentials(store.root).items()},
-                  "pipeline": "implemented; industrial pilot only starts with user prompt"}
+        result = {
+            "tools": {
+                x: shutil.which(x)
+                for x in ["brev", "git", "gh", "uv", "codex", "ffmpeg", "ffprobe"]
+            },
+            "credentials": {k: bool(v) for k, v in credentials(store.root).items()},
+            "pipeline": "implemented; industrial pilot only starts with user prompt",
+        }
         if args.remote:
             b = Brev(config)
             b.start()
             try:
                 result["deploy"] = b.deploy(ROOT)[-1000:]
-                result["remote"] = b.ssh("nvidia-smi --query-gpu=name,memory.used --format=csv,noheader; "
-                                         "/home/ubuntu/.local/bin/codex login status")
+                result["remote"] = b.ssh(
+                    "nvidia-smi --query-gpu=name,memory.used --format=csv,noheader; "
+                    "/home/ubuntu/.local/bin/codex login status"
+                )
                 if args.agent:
                     remote_python = config["remote_root"] + "/pipeline/.venv/bin/python"
-                    script = ("from pathlib import Path;from rcauto.agents import Agent;import json;"
-                              "p=Path('/data/robocurve-automation/connection-smoke/workspace');p.mkdir(parents=True,exist_ok=True);"
-                              "r=Agent(timeout=120).run('connection-smoke','Return only {\\\"ok\\\":true}. Do not use tools.',p,"
-                              "{'type':'object','properties':{'ok':{'type':'boolean'}},'required':['ok'],'additionalProperties':False});print(json.dumps(r))")
+                    script = (
+                        "from pathlib import Path;from rcauto.agents import Agent;import json;"
+                        "p=Path('/data/robocurve-automation/connection-smoke/workspace');p.mkdir(parents=True,exist_ok=True);"
+                        "r=Agent(timeout=120).run('connection-smoke','Return only {\\\"ok\\\":true}. Do not use tools.',p,"
+                        "{'type':'object','properties':{'ok':{'type':'boolean'}},'required':['ok'],'additionalProperties':False});print(json.dumps(r))"
+                    )
                     import shlex
-                    result["agent"] = b.ssh(shlex.quote(remote_python) + " -c " + shlex.quote(script), timeout=180)
+
+                    result["agent"] = b.ssh(
+                        shlex.quote(remote_python) + " -c " + shlex.quote(script), timeout=180
+                    )
             finally:
                 result["compute"] = b.stop()["status"]
         write_json(store.root / "doctor.json", result)
         return result
     if cmd == "selftest":
         from .selftest import run
+
         return run(store)
     if cmd == "receipt":
         run = store.get(args.run)
         if not run.get("pr"):
             raise StateError("no recorded PR")
         from .runtime import capture
-        comments = capture(["gh", "pr", "view", run["pr"], "--json", "comments,state,labels,mergedAt"])
+
+        comments = capture(
+            ["gh", "pr", "view", run["pr"], "--json", "comments,state,labels,mergedAt"]
+        )
         value = json.loads(comments)
         write_json(store.run_dir(args.run) / "receipt.json", value)
         return value
@@ -184,24 +252,50 @@ def dispatch(args, store, config):
         if args.dream_actual_usd is not None:
             if args.dream_actual_usd < 0 or not args.billing_reference:
                 raise StateError("nonnegative actual billing and provider reference required")
-            store.finish_effect(args.run, "dream", {"actual_usd": args.dream_actual_usd,
-                                "billing_reference": args.billing_reference, "reconciled_by": "human"})
-        return {"run": store.get(args.run), "effects": {k: store.effect(args.run, k) for k in ["dream", "upload", "pr"]}}
+            store.finish_effect(
+                args.run,
+                "dream",
+                {
+                    "actual_usd": args.dream_actual_usd,
+                    "billing_reference": args.billing_reference,
+                    "reconciled_by": "human",
+                },
+            )
+        return {
+            "run": store.get(args.run),
+            "effects": {k: store.effect(args.run, k) for k in ["dream", "upload", "pr"]},
+        }
     raise StateError("unknown command")
 
 
 def execute_or_detach(args, store, coordinator, rid, from_stage=None):
     if getattr(args, "detach", False):
         log = store.run_dir(rid) / "supervisor.log"
-        argv = [sys.executable, "-m", "rcauto.cli", "--state", str(store.root), "--config", args.config,
-                "_supervise", rid]
+        argv = [
+            sys.executable,
+            "-m",
+            "rcauto.cli",
+            "--state",
+            str(store.root),
+            "--config",
+            args.config,
+            "_supervise",
+            rid,
+        ]
         if from_stage:
             argv.extend(["--from-stage", from_stage])
         with log.open("a") as f:
-            child = subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=f, stderr=f, start_new_session=True)
+            child = subprocess.Popen(
+                argv, stdin=subprocess.DEVNULL, stdout=f, stderr=f, start_new_session=True
+            )
         if sys.platform == "darwin" and shutil.which("caffeinate"):
-            subprocess.Popen(["caffeinate", "-i", "-w", str(child.pid)], stdin=subprocess.DEVNULL,
-                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, start_new_session=True)
+            subprocess.Popen(
+                ["caffeinate", "-i", "-w", str(child.pid)],
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True,
+            )
         store.update(rid, supervisor_pid=child.pid, supervisor_log=str(log))
         return store.get(rid)
     coordinator.produce(rid, from_stage)
@@ -216,7 +310,10 @@ def main(argv=None):
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return 0
     except (StateError, OSError, ValueError) as e:
-        print(json.dumps({"error": str(e), "type": type(e).__name__}, ensure_ascii=False), file=sys.stderr)
+        print(
+            json.dumps({"error": str(e), "type": type(e).__name__}, ensure_ascii=False),
+            file=sys.stderr,
+        )
         return 2
 
 

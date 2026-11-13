@@ -19,6 +19,7 @@ def test_fresh_novelty_failure_stops_before_upload(tmp_path):
     from rcauto.engine import approve
     from rcauto.gates import manifest
     from rcauto.store import write_json
+
     s = Store(tmp_path)
     r = s.create("task", instance="vm")
     root = s.run_dir(r["id"])
@@ -28,8 +29,10 @@ def test_fresh_novelty_failure_stops_before_upload(tmp_path):
     write_json(root / "report.json", {})
     s.update(r["id"], status="awaiting-review")
     a = approve(s, r["id"], "user", "submit these files")
+
     def blocked():
         raise GateError("new duplicate")
+
     with pytest.raises(GateError, match="duplicate"):
         Publisher(s, {"fork": "user/fork"}).submit(r["id"], a["id"], fresh_novelty=blocked)
     assert s.effect(r["id"], "upload") is None

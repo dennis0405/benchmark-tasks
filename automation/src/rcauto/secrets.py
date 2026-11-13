@@ -1,12 +1,20 @@
 """Local-only, mode-0600 credentials. Never copied to workers or public checkpoints."""
+
 import json
 import os
 from pathlib import Path
 
 from .store import StateError
 
-NAMES = {"ROBOCURVE_TEAM", "ROBOCURVE_TOKEN", "DREAM_API_KEY", "DREAM_GATEWAY_URL",
-         "DREAM_API_URL", "DREAM_DATA_URL", "DREAM_PROVIDER_CAP_CONFIRMED"}
+NAMES = {
+    "ROBOCURVE_TEAM",
+    "ROBOCURVE_TOKEN",
+    "DREAM_API_KEY",
+    "DREAM_GATEWAY_URL",
+    "DREAM_API_URL",
+    "DREAM_DATA_URL",
+    "DREAM_PROVIDER_CAP_CONFIRMED",
+}
 
 
 def credentials(root):

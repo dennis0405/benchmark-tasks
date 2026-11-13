@@ -1,4 +1,5 @@
 """Detached GPU worker. No publication or paid-evaluation credentials are accepted here."""
+
 import argparse
 import json
 import logging
@@ -24,12 +25,18 @@ def main():
         with store.lock("gpu-worker"):
             store.register(run)
             write_json(status, {"status": "working", "pid": os.getpid(), "at": now()})
-            pipeline = Production(store, run["id"], Agent(model=config.get("model"),
-                                  timeout=config.get("agent_timeout", 1800)), config)
+            pipeline = Production(
+                store,
+                run["id"],
+                Agent(model=config.get("model"), timeout=config.get("agent_timeout", 1800)),
+                config,
+            )
             pipeline.run(from_stage=job.get("from_stage"))
     except BaseException as e:
         logging.getLogger(__name__).exception("worker/evaluation terminated")
-        write_json(status, {"status": "blocked", "error": str(e), "type": type(e).__name__, "at": now()})
+        write_json(
+            status, {"status": "blocked", "error": str(e), "type": type(e).__name__, "at": now()}
+        )
         if store.db.execute("SELECT 1 FROM runs WHERE id=?", (run["id"],)).fetchone():
             store.update(run["id"], status="blocked", error=str(e))
     finally:

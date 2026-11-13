@@ -2,8 +2,12 @@
 
 
 def obj(**properties):
-    return {"type": "object", "properties": properties, "required": list(properties),
-            "additionalProperties": False}
+    return {
+        "type": "object",
+        "properties": properties,
+        "required": list(properties),
+        "additionalProperties": False,
+    }
 
 
 def array(items):
@@ -14,19 +18,52 @@ S = {"type": "string"}
 N = {"type": "number"}
 EVIDENCE = obj(source_id=S, quote=S, locator=S)
 RESEARCH = obj(summary=S, sources=array(obj(url=S, title=S, publisher=S, kind=S)))
-CANDIDATE = obj(id=S, title=S, objective=S, skills=array(S), success_conditions=S,
-                industrial_value=S, dexterity=S, evidence=array(EVIDENCE), asset_plan=S, risk=S)
+CANDIDATE = obj(
+    id=S,
+    title=S,
+    objective=S,
+    skills=array(S),
+    success_conditions=S,
+    industrial_value=S,
+    dexterity=S,
+    evidence=array(EVIDENCE),
+    asset_plan=S,
+    risk=S,
+)
 CANDIDATES = obj(candidates=array(CANDIDATE), selected_id=S, selection_reason=S)
-REVIEW = obj(verdict={"type": "string", "enum": ["pass", "repair", "blocked"]},
-             findings=array(S), evidence_paths=array(S))
-NOVELTY = obj(comparisons=array(obj(id=S, objective=S, physical_skill=S, success_condition=S,
-                                  verdict={"type": "string", "enum": ["distinct", "overlap", "uncertain"]},
-                                  reason=S)))
-CHECK = obj(name=S, operator={"type": "string", "enum": ["<=", ">=", "==", "<", ">"]},
-            threshold=N, unit=S)
-CONTRACT = obj(slug=S, objective=S, instruction=S, industrial_mapping=S, run_steps={"type": "integer"},
-               physics_checks=array(CHECK), damage_rules=array(S), assets=array(S),
-               approximations=array(S), scoring_spec=S, required_controls=array(S))
+REVIEW = obj(
+    verdict={"type": "string", "enum": ["pass", "repair", "blocked"]},
+    findings=array(S),
+    evidence_paths=array(S),
+)
+NOVELTY = obj(
+    comparisons=array(
+        obj(
+            id=S,
+            objective=S,
+            physical_skill=S,
+            success_condition=S,
+            verdict={"type": "string", "enum": ["distinct", "overlap", "uncertain"]},
+            reason=S,
+        )
+    )
+)
+CHECK = obj(
+    name=S, operator={"type": "string", "enum": ["<=", ">=", "==", "<", ">"]}, threshold=N, unit=S
+)
+CONTRACT = obj(
+    slug=S,
+    objective=S,
+    instruction=S,
+    industrial_mapping=S,
+    run_steps={"type": "integer"},
+    physics_checks=array(CHECK),
+    damage_rules=array(S),
+    assets=array(S),
+    approximations=array(S),
+    scoring_spec=S,
+    required_controls=array(S),
+)
 SCRIPT = obj(id=S, script=S, args=array(S), report=S)
 BUILD = obj(summary=S, scripts=array(SCRIPT), files=array(S))
 SCENARIO_POLICY = """

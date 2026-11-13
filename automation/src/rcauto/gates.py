@@ -1,4 +1,5 @@
 """Deterministic artifact checks; an agent's success statement is not a receipt."""
+
 import hashlib
 import json
 import math
@@ -13,8 +14,11 @@ class GateError(StateError):
 
 
 def digest(value):
-    return hashlib.sha256(json.dumps(value, sort_keys=True, ensure_ascii=False,
-                                     separators=(",", ":"), allow_nan=False).encode()).hexdigest()
+    return hashlib.sha256(
+        json.dumps(
+            value, sort_keys=True, ensure_ascii=False, separators=(",", ":"), allow_nan=False
+        ).encode()
+    ).hexdigest()
 
 
 def file_hash(path):
@@ -44,13 +48,17 @@ def manifest(root, max_file_mb=50):
         name = p.relative_to(root).as_posix()
         if any(part in {".git", ".codex", ".venv", "__pycache__"} for part in p.parts):
             raise GateError(f"runtime/private file cannot be released: {name}")
-        if p.name.lower() in {"auth.json", "credentials.json", "credentials"} or p.name.startswith(".env"):
+        if p.name.lower() in {"auth.json", "credentials.json", "credentials"} or p.name.startswith(
+            ".env"
+        ):
             raise GateError(f"secret-like file cannot be released: {name}")
         if p.stat().st_size > max_file_mb * 1024 * 1024:
             raise GateError(f"large file requires explicit storage decision: {name}")
         if p.suffix in {".py", ".md", ".json", ".txt", ".toml", ".yaml", ".yml", ".sh"}:
             text = p.read_text(errors="replace")
-            if re.search(r"(?:sk-[A-Za-z0-9_-]{25,}|gh[pousr]_[A-Za-z0-9]{25,}|BEGIN .*PRIVATE KEY)", text):
+            if re.search(
+                r"(?:sk-[A-Za-z0-9_-]{25,}|gh[pousr]_[A-Za-z0-9]{25,}|BEGIN .*PRIVATE KEY)", text
+            ):
                 raise GateError(f"possible secret in release: {name}")
         files[name] = {"sha256": file_hash(p), "bytes": p.stat().st_size}
     if not files:
@@ -81,13 +89,24 @@ def validate_checks(report):
     checks = report.get("checks", [])
     if not checks:
         raise GateError("missing numerical checks")
-    operations = {"<=": lambda a, b: a <= b, ">=": lambda a, b: a >= b,
-                  "==": lambda a, b: a == b, "<": lambda a, b: a < b, ">": lambda a, b: a > b}
+    operations = {
+        "<=": lambda a, b: a <= b,
+        ">=": lambda a, b: a >= b,
+        "==": lambda a, b: a == b,
+        "<": lambda a, b: a < b,
+        ">": lambda a, b: a > b,
+    }
     for c in checks:
         a, b = c.get("measured"), c.get("threshold")
-        if (not c.get("name") or not c.get("unit") or type(a) not in (int, float)
-                or type(b) not in (int, float) or not math.isfinite(a) or not math.isfinite(b)
-                or c.get("operator") not in operations):
+        if (
+            not c.get("name")
+            or not c.get("unit")
+            or type(a) not in (int, float)
+            or type(b) not in (int, float)
+            or not math.isfinite(a)
+            or not math.isfinite(b)
+            or c.get("operator") not in operations
+        ):
             raise GateError("invalid numerical measurement")
         if not operations[c["operator"]](a, b):
             raise GateError(f"failed check {c['name']}: {a} {c['operator']} {b}")
@@ -101,7 +120,10 @@ def require_fields(value, fields):
 
 
 def validate_spec(spec, require_media=False):
-    require_fields(spec, ["title", "category", "instruction", "setup", "scoring", "run_limit",
-                          "fidelity", "scores"] + (["media"] if require_media else []))
+    require_fields(
+        spec,
+        ["title", "category", "instruction", "setup", "scoring", "run_limit", "fidelity", "scores"]
+        + (["media"] if require_media else []),
+    )
     if spec["category"] != "Impact on AI timelines":
         raise GateError("task outside the agreed category")

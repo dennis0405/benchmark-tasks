@@ -1,4 +1,5 @@
 """Task production gates. Runtime execution is separate from human approval/publication."""
+
 import json
 import re
 import shutil
@@ -49,26 +50,43 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
     comparisons = []
     records = catalog["records"]
     for i in range(0, len(records), batch_size):
-        batch = records[i:i + batch_size]
+        batch = records[i : i + batch_size]
         data = {"candidate": candidate, "records": batch}
         filename = Path(workspace) / "input" / "novelty-batch.json"
         write_json(filename, data)
-        result = agent.run("novelty-reviewer", C.SCENARIO_POLICY + "\nRead input/novelty-batch.json. "
-                           "Compare EVERY record on objective, physical skill and success conditions. "
-                           "Different geometry/tool names are not sufficient. Mark insufficient data uncertain. "
-                           "Return one comparison per exact record id.", workspace, C.NOVELTY)
+        result = agent.run(
+            "novelty-reviewer",
+            C.SCENARIO_POLICY + "\nRead input/novelty-batch.json. "
+            "Compare EVERY record on objective, physical skill and success conditions. "
+            "Different geometry/tool names are not sufficient. Mark insufficient data uncertain. "
+            "Return one comparison per exact record id.",
+            workspace,
+            C.NOVELTY,
+        )
         rows = result["comparisons"]
         if len(rows) != len(batch) or {r["id"] for r in rows} != {b["id"] for b in batch}:
             raise GateError("novelty comparison coverage incomplete")
-        if any(not all(r.get(k) for k in ("objective", "physical_skill", "success_condition", "reason")) for r in rows):
+        if any(
+            not all(
+                r.get(k) for k in ("objective", "physical_skill", "success_condition", "reason")
+            )
+            for r in rows
+        ):
             raise GateError("novelty comparison axes missing")
         comparisons.extend(rows)
-    report = {"catalog_digest": catalog["digest"], "candidate_digest": digest(candidate),
-              "compared": len(comparisons), "comparisons": comparisons, "at": now()}
+    report = {
+        "catalog_digest": catalog["digest"],
+        "candidate_digest": digest(candidate),
+        "compared": len(comparisons),
+        "comparisons": comparisons,
+        "at": now(),
+    }
     write_json(Path(workspace) / "artifacts" / "novelty.json", report)
     blockers = [r for r in comparisons if r["verdict"] != "distinct"]
     if blockers:
-        raise GateError(f"novelty overlap/uncertainty: {len(blockers)} records; inspect novelty.json")
+        raise GateError(
+            f"novelty overlap/uncertainty: {len(blockers)} records; inspect novelty.json"
+        )
     return report
 
 
@@ -81,10 +99,17 @@ def approve(store, rid, actor, statement):
     root = store.run_dir(rid)
     release = read(root / "release-manifest.json")
     verify_manifest(root / "release", release)
-    approval = {"id": uuid.uuid4().hex, "purpose": "human-submission-approval", "actor": actor,
-                "statement": statement, "at": now(), "release_digest": release["digest"],
-                "report_sha256": file_hash(root / "report.json"), "run": rid,
-                "target": "robocurve/benchmark-tasks:main"}
+    approval = {
+        "id": uuid.uuid4().hex,
+        "purpose": "human-submission-approval",
+        "actor": actor,
+        "statement": statement,
+        "at": now(),
+        "release_digest": release["digest"],
+        "report_sha256": file_hash(root / "report.json"),
+        "run": rid,
+        "target": "robocurve/benchmark-tasks:main",
+    }
     write_json(root / "approval.json", approval)
     store.update(rid, approval=approval["id"])
     return approval
@@ -94,10 +119,14 @@ def approval_valid(store, rid, approval_id):
     run = store.get(rid)
     root = store.run_dir(rid)
     value = read(root / "approval.json")
-    if (run.get("approval") != approval_id or value.get("id") != approval_id
-            or value.get("purpose") != "human-submission-approval"
-            or value.get("run") != rid or run.get("mode") == "selftest"
-            or value.get("report_sha256") != file_hash(root / "report.json")):
+    if (
+        run.get("approval") != approval_id
+        or value.get("id") != approval_id
+        or value.get("purpose") != "human-submission-approval"
+        or value.get("run") != rid
+        or run.get("mode") == "selftest"
+        or value.get("report_sha256") != file_hash(root / "report.json")
+    ):
         raise GateError("approval does not match current reviewed result")
     m = read(root / "release-manifest.json")
     if value["release_digest"] != m["digest"]:
@@ -120,13 +149,18 @@ class Production:
         return self.workspace / "artifacts" / (name + ".json")
 
     def ask(self, role, instruction, schema, writable=False):
-        return self.agent.run(role, C.SCENARIO_POLICY + "\n" + instruction, self.workspace,
-                              schema, writable=writable)
+        return self.agent.run(
+            role, C.SCENARIO_POLICY + "\n" + instruction, self.workspace, schema, writable=writable
+        )
 
     def review(self, name, instruction):
-        result = self.ask(name, instruction + "\nInspect actual code and evidence files. "
-                          "Read images with image tools and verify logs; do not infer a pass from "
-                          "another role's assertion. Return pass only with no material unresolved issues.", C.REVIEW)
+        result = self.ask(
+            name,
+            instruction + "\nInspect actual code and evidence files. "
+            "Read images with image tools and verify logs; do not infer a pass from "
+            "another role's assertion. Return pass only with no material unresolved issues.",
+            C.REVIEW,
+        )
         write_json(self.artifact(name), result)
         if result["verdict"] != "pass":
             raise GateError(name + ": " + "; ".join(result["findings"]))
@@ -142,41 +176,58 @@ class Production:
         if from_stage:
             if from_stage not in self.STAGES:
                 raise GateError("invalid resume stage")
-            completed = [s for s in completed if self.STAGES.index(s) < self.STAGES.index(from_stage)]
-            self.store.invalidate(self.rid, self.STAGES[self.STAGES.index(from_stage):])
+            completed = [
+                s for s in completed if self.STAGES.index(s) < self.STAGES.index(from_stage)
+            ]
+            self.store.invalidate(self.rid, self.STAGES[self.STAGES.index(from_stage) :])
         for stage in self.STAGES:
             if (self.root / "cancel.json").exists():
                 self.store.update(self.rid, status="paused", stage=stage)
-                write_json(self.root / "worker-status.json", {"status": "paused", "stage": stage, "at": now()})
+                write_json(
+                    self.root / "worker-status.json",
+                    {"status": "paused", "stage": stage, "at": now()},
+                )
                 return
             if stage in completed:
                 continue
             self.store.update(self.rid, status="working", stage=stage)
             checkpoint = self.root / "worker-status.json"
             write_json(checkpoint, {"status": "working", "stage": stage, "at": now()})
-            attempts = self.config.get("repair_attempts", 2) if stage in {"environment", "demo", "export"} else 0
+            attempts = (
+                self.config.get("repair_attempts", 2)
+                if stage in {"environment", "demo", "export"}
+                else 0
+            )
             for attempt in range(attempts + 1):
                 try:
                     receipt = getattr(self, stage)()
                     self.store.stage_done(self.rid, stage, receipt)
                     break
                 except GateError as e:
-                    write_json(self.workspace / "input" / "last-failure.json",
-                               {"stage": stage, "attempt": attempt, "reason": str(e)})
+                    write_json(
+                        self.workspace / "input" / "last-failure.json",
+                        {"stage": stage, "attempt": attempt, "reason": str(e)},
+                    )
                     if attempt == attempts:
                         raise
             write_json(checkpoint, {"status": "working", "completed": stage, "at": now()})
         self.store.update(self.rid, status="pre-evaluation-ready", stage="export")
-        write_json(self.root / "worker-status.json", {"status": "pre-evaluation-ready", "at": now()})
+        write_json(
+            self.root / "worker-status.json", {"status": "pre-evaluation-ready", "at": now()}
+        )
 
     def research(self):
-        result = self.ask("industrial-researcher", "Read input/request.json and search original industrial "
-                          "manuals/service procedures before proposing a task. Find at least 3 usable sources, "
-                          "including official equipment geometry/dimensions and relevant public asset/licensing "
-                          "pages. Also find original task-definition sources for each suite listed in "
-                          "input/runtime.json benchmarks, or these defaults: LIBERO, RoboCasa, SimplerEnv, "
-                          "BEHAVIOR, DataCenterBench, RoboDojo. Mark their kind exactly benchmark:SUITE_NAME. "
-                          "Return direct URLs (not search pages). Do not download executables.", C.RESEARCH)
+        result = self.ask(
+            "industrial-researcher",
+            "Read input/request.json and search original industrial "
+            "manuals/service procedures before proposing a task. Find at least 3 usable sources, "
+            "including official equipment geometry/dimensions and relevant public asset/licensing "
+            "pages. Also find original task-definition sources for each suite listed in "
+            "input/runtime.json benchmarks, or these defaults: LIBERO, RoboCasa, SimplerEnv, "
+            "BEHAVIOR, DataCenterBench, RoboDojo. Mark their kind exactly benchmark:SUITE_NAME. "
+            "Return direct URLs (not search pages). Do not download executables.",
+            C.RESEARCH,
+        )
         if len(result["sources"]) < 3:
             raise GateError("insufficient industrial sources")
         sources = {}
@@ -189,8 +240,11 @@ class Production:
             except (httpx.HTTPError, StateError, OSError, ValueError, PdfReadError) as e:
                 failures.append({"url": source["url"], "reason": str(e)})
         write_json(self.workspace / "input" / "sources.json", sources)
-        benchmarks = {s["kind"].split(":", 1)[1]: s for s in sources.values()
-                      if s["kind"].startswith("benchmark:")}
+        benchmarks = {
+            s["kind"].split(":", 1)[1]: s
+            for s in sources.values()
+            if s["kind"].startswith("benchmark:")
+        }
         write_json(self.workspace / "input" / "benchmark-sources.json", benchmarks)
         write_json(self.artifact("research"), {"sources": list(sources), "failures": failures})
         if len(sources) < 2:
@@ -200,11 +254,15 @@ class Production:
         return {"sources": list(sources)}
 
     def candidates(self):
-        result = self.ask("task-ideator", "Read acquired input/sources.json. Generate at least three distinct "
-                          "industrially meaningful manipulation objectives and select one. Cite exact verbatim "
-                          "source snippets with source_id and page/section. Keep extreme difficulty subordinate "
-                          "to validity and a feasible real robot demo. Match actual equipment geometry. "
-                          "Consider available pinned YAM runtime in input/runtime.json.", C.CANDIDATES)
+        result = self.ask(
+            "task-ideator",
+            "Read acquired input/sources.json. Generate at least three distinct "
+            "industrially meaningful manipulation objectives and select one. Cite exact verbatim "
+            "source snippets with source_id and page/section. Keep extreme difficulty subordinate "
+            "to validity and a feasible real robot demo. Match actual equipment geometry. "
+            "Consider available pinned YAM runtime in input/runtime.json.",
+            C.CANDIDATES,
+        )
         if len(result["candidates"]) < 3:
             raise GateError("must compare several candidate objectives")
         sources = read(self.workspace / "input" / "sources.json")
@@ -218,22 +276,33 @@ class Production:
         return {"selected": selected[0]["id"]}
 
     def novelty(self):
-        result = compare_catalog(self.agent, self.workspace, read(self.artifact("selected")),
-                                 read(self.workspace / "input" / "catalog.json"))
-        self.review("novelty-critic", "Read artifacts/selected.json, artifacts/novelty.json, "
-                    "input/catalog.json and input/benchmark-sources.json. Challenge superficial distinctions "
-                    "and compare against LIBERO, RoboCasa, SimplerEnv, BEHAVIOR, DataCenterBench and RoboDojo "
-                    "using original suite definitions. Search and acquire additional original task definitions "
-                    "where needed. If benchmark coverage or any potentially similar objective is unknown, block. "
-                    "Record source URLs and specific task names in findings even when passing.")
+        result = compare_catalog(
+            self.agent,
+            self.workspace,
+            read(self.artifact("selected")),
+            read(self.workspace / "input" / "catalog.json"),
+        )
+        self.review(
+            "novelty-critic",
+            "Read artifacts/selected.json, artifacts/novelty.json, "
+            "input/catalog.json and input/benchmark-sources.json. Challenge superficial distinctions "
+            "and compare against LIBERO, RoboCasa, SimplerEnv, BEHAVIOR, DataCenterBench and RoboDojo "
+            "using original suite definitions. Search and acquire additional original task definitions "
+            "where needed. If benchmark coverage or any potentially similar objective is unknown, block. "
+            "Record source URLs and specific task names in findings even when passing.",
+        )
         return {"catalog_digest": result["catalog_digest"], "compared": result["compared"]}
 
     def contract(self):
-        result = self.ask("task-specifier", "Write frozen TaskContract for artifacts/selected.json. "
-                          "Numerical physics_checks must include stability, no initial success, joint/contact "
-                          "mechanics, camera validity and relevant penetration/damage constraints. Units/thresholds "
-                          "need industrial sources or explicit assumptions. Cover damage shortcuts and measurable "
-                          "success/partial/failure. Slug must be lowercase kebab-case. Do not develop demo yet.", C.CONTRACT)
+        result = self.ask(
+            "task-specifier",
+            "Write frozen TaskContract for artifacts/selected.json. "
+            "Numerical physics_checks must include stability, no initial success, joint/contact "
+            "mechanics, camera validity and relevant penetration/damage constraints. Units/thresholds "
+            "need industrial sources or explicit assumptions. Cover damage shortcuts and measurable "
+            "success/partial/failure. Slug must be lowercase kebab-case. Do not develop demo yet.",
+            C.CONTRACT,
+        )
         if not re.fullmatch(r"[a-z][a-z0-9-]{2,70}", result["slug"]) or result["run_steps"] <= 0:
             raise GateError("invalid task slug or run limit")
         if len(result["physics_checks"]) < 4 or not result["required_controls"]:
@@ -252,11 +321,21 @@ class Production:
                 report_path.unlink()
             # CLI/python path and EULA flags are controlled by runtime config, not by generated argv.
             runtime = self.config["runtime"]
-            env = clean_environment({"PATH": str(Path(runtime["python"]).parent) + ":" + clean_environment()["PATH"],
-                                     "ACCEPT_EULA": "Y", "OMNI_KIT_ACCEPT_EULA": "YES", "PRIVACY_CONSENT": "Y"})
-            receipt = command([runtime["python"], str(path), *script["args"]],
-                              self.workspace / "task", self.root / "logs" / (script["id"] + ".log"),
-                              timeout=self.config.get("sim_timeout", 1800), env=env)
+            env = clean_environment(
+                {
+                    "PATH": str(Path(runtime["python"]).parent) + ":" + clean_environment()["PATH"],
+                    "ACCEPT_EULA": "Y",
+                    "OMNI_KIT_ACCEPT_EULA": "YES",
+                    "PRIVACY_CONSENT": "Y",
+                }
+            )
+            receipt = command(
+                [runtime["python"], str(path), *script["args"]],
+                self.workspace / "task",
+                self.root / "logs" / (script["id"] + ".log"),
+                timeout=self.config.get("sim_timeout", 1800),
+                env=env,
+            )
             if not report_path.is_file():
                 raise GateError("script did not produce a fresh report")
             report = read(report_path)
@@ -265,91 +344,147 @@ class Production:
                 artifact = inside(self.workspace, relative)
                 if not artifact.is_file() or artifact.stat().st_size == 0:
                     raise GateError("missing/empty measured artifact")
-            receipts.append(dict(receipt, id=script["id"], report=script["report"],
-                                 report_sha256=file_hash(report_path), measurements=report))
+            receipts.append(
+                dict(
+                    receipt,
+                    id=script["id"],
+                    report=script["report"],
+                    report_sha256=file_hash(report_path),
+                    measurements=report,
+                )
+            )
         if not receipts:
             raise GateError("no runtime checks executed")
         return receipts
 
     def environment(self):
         contract = read(self.artifact("contract"))
-        plan = self.ask("environment-builder", "Implement task/scene, actual equipment assets, reset and "
-                        "component physics checks for artifacts/contract.json. Read pinned runtime source and "
-                        "examples using paths in input/runtime.json; use public task.py YAM interface. "
-                        "No complete demo yet. Return Python diagnostic scripts and relative report paths. "
-                        "Each script must write JSON {checks:[{name,measured,operator,threshold,unit}],artifacts:[...]} "
-                        "with actual numerical readings. Use all frozen contract checks in one aggregate report, "
-                        "not fabricated constants. Reports and render images go under ../measurements/. "
-                        "On repair read input/last-failure.json; retain criteria and fix the mechanism.", C.BUILD, True)
+        plan = self.ask(
+            "environment-builder",
+            "Implement task/scene, actual equipment assets, reset and "
+            "component physics checks for artifacts/contract.json. Read pinned runtime source and "
+            "examples using paths in input/runtime.json; use public task.py YAM interface. "
+            "No complete demo yet. Return Python diagnostic scripts and relative report paths. "
+            "Each script must write JSON {checks:[{name,measured,operator,threshold,unit}],artifacts:[...]} "
+            "with actual numerical readings. Use all frozen contract checks in one aggregate report, "
+            "not fabricated constants. Reports and render images go under ../measurements/. "
+            "On repair read input/last-failure.json; retain criteria and fix the mechanism.",
+            C.BUILD,
+            True,
+        )
         receipts = self.execute_scripts(plan, contract["physics_checks"])
         write_json(self.artifact("environment-plan"), plan)
         write_json(self.artifact("environment"), receipts)
-        self.review("physics-reviewer", "Review task code, artifacts/contract.json and executed "
-                    "artifacts/environment.json. Confirm measurements, contact/collision and mechanism fidelity, "
-                    "not mock math. Inspect measured setup images against industrial originals. "
-                    "All contract checks must represent actual simulation state.")
+        self.review(
+            "physics-reviewer",
+            "Review task code, artifacts/contract.json and executed "
+            "artifacts/environment.json. Confirm measurements, contact/collision and mechanism fidelity, "
+            "not mock math. Inspect measured setup images against industrial originals. "
+            "All contract checks must represent actual simulation state.",
+        )
         return {"receipts_digest": digest(receipts)}
 
     def demo(self):
-        plan = self.ask("demo-and-scoring-builder", "Environment passed. Implement real YAM action demo, "
-                        "stateful scoring and raw trace. Run at least two clean-reset full-score episodes, "
-                        "all contract negative controls and trace replay. Required script ids: demo, controls, "
-                        "replay. Each writes checks+requirements arrays and actual artifacts as environment scripts. "
-                        "Demo checks must include full_score_episode_count >= 2 and object_pose_injections == 0. "
-                        "Controls checks include incorrect_nonzero_count == 0; replay includes score_error <= 1e-6. "
-                        "Provide H264 MP4 video, initial setup screenshot, raw action/state trace and episode logs. "
-                        "Do not use diagnostic fixtures as robot success. Keep script criteria in contract. "
-                        "task/task.json must contain official required fields, category Impact on AI timelines, "
-                        "scores describing actual scripted demo and Dream not run. Add README/license/runtime "
-                        "pins. Implement a task-local evaluate.py wrapper for final inspect-robots Dream run, "
-                        "but NEVER execute it. It must honor --output and use the same scorer and run limit.", C.BUILD, True)
+        plan = self.ask(
+            "demo-and-scoring-builder",
+            "Environment passed. Implement real YAM action demo, "
+            "stateful scoring and raw trace. Run at least two clean-reset full-score episodes, "
+            "all contract negative controls and trace replay. Required script ids: demo, controls, "
+            "replay. Each writes checks+requirements arrays and actual artifacts as environment scripts. "
+            "Demo checks must include full_score_episode_count >= 2 and object_pose_injections == 0. "
+            "Controls checks include incorrect_nonzero_count == 0; replay includes score_error <= 1e-6. "
+            "Provide H264 MP4 video, initial setup screenshot, raw action/state trace and episode logs. "
+            "Do not use diagnostic fixtures as robot success. Keep script criteria in contract. "
+            "task/task.json must contain official required fields, category Impact on AI timelines, "
+            "scores describing actual scripted demo and Dream not run. Add README/license/runtime "
+            "pins. Implement a task-local evaluate.py wrapper for final inspect-robots Dream run, "
+            "but NEVER execute it. It must honor --output and use the same scorer and run limit.",
+            C.BUILD,
+            True,
+        )
         required = {"demo", "controls", "replay"}
         if not required.issubset({s["id"] for s in plan["scripts"]}):
             raise GateError("demo/controls/replay scripts missing")
         receipts = self.execute_scripts(plan)
-        fixed = {"demo": [{"name": "full_score_episode_count", "operator": ">=", "threshold": 2, "unit": "episodes"},
-                          {"name": "object_pose_injections", "operator": "==", "threshold": 0, "unit": "writes"}],
-                 "controls": [{"name": "incorrect_nonzero_count", "operator": "==", "threshold": 0, "unit": "episodes"}],
-                 "replay": [{"name": "score_error", "operator": "<=", "threshold": 1e-6, "unit": "score"}]}
+        fixed = {
+            "demo": [
+                {
+                    "name": "full_score_episode_count",
+                    "operator": ">=",
+                    "threshold": 2,
+                    "unit": "episodes",
+                },
+                {
+                    "name": "object_pose_injections",
+                    "operator": "==",
+                    "threshold": 0,
+                    "unit": "writes",
+                },
+            ],
+            "controls": [
+                {
+                    "name": "incorrect_nonzero_count",
+                    "operator": "==",
+                    "threshold": 0,
+                    "unit": "episodes",
+                }
+            ],
+            "replay": [
+                {"name": "score_error", "operator": "<=", "threshold": 1e-6, "unit": "score"}
+            ],
+        }
         for receipt in receipts:
             if receipt["id"] in fixed:
                 numerical_report(receipt["measurements"], fixed[receipt["id"]])
         write_json(self.artifact("demo"), receipts)
-        self.review("demo-scoring-critic", "Read executed demo/controls/replay reports and raw traces. "
-                    "Check real joint actions, bimanual contact, meaningful scoring, damage cheats, all outcomes, "
-                    "absence of object teleport/hidden weld/disabled collision. Inspect actual image/video frames. "
-                    "Confirm reset reproducibility and counterexamples use the same scorer. Block any fake success.")
+        self.review(
+            "demo-scoring-critic",
+            "Read executed demo/controls/replay reports and raw traces. "
+            "Check real joint actions, bimanual contact, meaningful scoring, damage cheats, all outcomes, "
+            "absence of object teleport/hidden weld/disabled collision. Inspect actual image/video frames. "
+            "Confirm reset reproducibility and counterexamples use the same scorer. Block any fake success.",
+        )
         return {"receipts_digest": digest(receipts)}
 
     def export(self):
         validate_spec(read(self.workspace / "task" / "task.json"))
-        plan = self.ask("export-builder", "Package only portable task code/assets/licenses/README/task.json "
-                        "under task/; remove generated caches there. Produce actual clean-directory or Docker "
-                        "reproduction script id portable. It must copy the task to a fresh isolated location, "
-                        "verify no private path/helper dependence, run demo/scorer/observations and compare score. "
-                        "Write numerical checks/requirements and artifacts under ../measurements. "
-                        "Include reproducibility details and native runtime pins, do not call a native rerun a "
-                        "fresh-container validation. Add evaluation/medias output mapping release-map.json in "
-                        "workspace root with keys demo_video, screenshot, trace, episode_log (workspace-relative). "
-                        "Do not put lab/team/user names into task text/media. Do not run Dream.", C.BUILD, True)
+        plan = self.ask(
+            "export-builder",
+            "Package only portable task code/assets/licenses/README/task.json "
+            "under task/; remove generated caches there. Produce actual clean-directory or Docker "
+            "reproduction script id portable. It must copy the task to a fresh isolated location, "
+            "verify no private path/helper dependence, run demo/scorer/observations and compare score. "
+            "Write numerical checks/requirements and artifacts under ../measurements. "
+            "Include reproducibility details and native runtime pins, do not call a native rerun a "
+            "fresh-container validation. Add evaluation/medias output mapping release-map.json in "
+            "workspace root with keys demo_video, screenshot, trace, episode_log (workspace-relative). "
+            "Do not put lab/team/user names into task text/media. Do not run Dream.",
+            C.BUILD,
+            True,
+        )
         if "portable" not in {s["id"] for s in plan["scripts"]}:
             raise GateError("portable reproduction missing")
         receipts = self.execute_scripts(plan)
         write_json(self.artifact("portable"), receipts)
         # Demo/export development may have changed scene code. Recheck frozen component gates.
-        refreshed = self.execute_scripts(read(self.artifact("environment-plan")),
-                                         read(self.artifact("contract"))["physics_checks"])
+        refreshed = self.execute_scripts(
+            read(self.artifact("environment-plan")),
+            read(self.artifact("contract"))["physics_checks"],
+        )
         write_json(self.artifact("environment-final"), refreshed)
         mapping = read(self.workspace / "release-map.json")
         require_fields(mapping, ["demo_video", "screenshot", "trace", "episode_log"])
         for p in mapping.values():
             if not inside(self.workspace, p).is_file():
                 raise GateError("missing release evidence")
-        self.review("release-critic", "Review all artifacts, code, README, task.json, licenses, "
-                    "release-map.json, actual initial image and sampled demo video frames. Apply official "
-                    "input/review-prompt source if available and repository AGENTS.md rules. Check industrial "
-                    "construct validity, difficult manipulation, scoring completeness, all relevant damage, "
-                    "blindness and reproducibility. Confirm final objective still matches novelty analysis.")
+        self.review(
+            "release-critic",
+            "Review all artifacts, code, README, task.json, licenses, "
+            "release-map.json, actual initial image and sampled demo video frames. Apply official "
+            "input/review-prompt source if available and repository AGENTS.md rules. Check industrial "
+            "construct validity, difficult manipulation, scoring completeness, all relevant damage, "
+            "blindness and reproducibility. Confirm final objective still matches novelty analysis.",
+        )
         release = self.root / "release"
         if release.exists():
             shutil.rmtree(release)
@@ -362,7 +497,10 @@ class Production:
             if source.stat().st_size > 50 * 1024 * 1024:
                 raise GateError("large evidence requires storage decision before origin push")
             shutil.copy2(source, media / (key + source.suffix))
-        write_json(release / "release-map.json", {k: "evidence/" + k + Path(v).suffix for k, v in mapping.items()})
+        write_json(
+            release / "release-map.json",
+            {k: "evidence/" + k + Path(v).suffix for k, v in mapping.items()},
+        )
         m = manifest(release)
         write_json(self.root / "release-manifest.json", m)
         return {"release_digest": m["digest"], "slug": slug}

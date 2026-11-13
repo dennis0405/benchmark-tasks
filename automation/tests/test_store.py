@@ -17,15 +17,17 @@ def test_run_reopens_without_losing_step_or_prompt(tmp_path):
 
 
 def test_process_death_releases_lock_but_keeps_unknown_effect(tmp_path):
-    script = '''from rcauto.store import Store
+    script = """from rcauto.store import Store
 import os,sys
 s=Store(sys.argv[1]); r=s.create("x",instance="vm")
 with s.lock("instance-vm"):
  s.reserve_effect(r["id"],"dream",{"cap_usd":2})
  print(r["id"],flush=True)
  os._exit(9)
-'''
-    p = subprocess.run([sys.executable, "-c", script, str(tmp_path)], capture_output=True, text=True, check=False)
+"""
+    p = subprocess.run(
+        [sys.executable, "-c", script, str(tmp_path)], capture_output=True, text=True, check=False
+    )
     assert p.returncode == 9
     rid = p.stdout.strip()
     s = Store(tmp_path)

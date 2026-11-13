@@ -1,4 +1,3 @@
-
 import pytest
 
 from rcauto.engine import approval_valid, approve, compare_catalog, numerical_report
@@ -8,15 +7,27 @@ from rcauto.store import Store, write_json
 
 def test_script_cannot_replace_contract_threshold_with_easier_value():
     with pytest.raises(GateError):
-        numerical_report({"checks": [{"name": "penetration", "measured": 0.1,
-                                       "operator": "<=", "threshold": 10, "unit": "m"}]},
-                         [{"name": "penetration", "operator": "<=", "threshold": 0.002, "unit": "m"}])
+        numerical_report(
+            {
+                "checks": [
+                    {
+                        "name": "penetration",
+                        "measured": 0.1,
+                        "operator": "<=",
+                        "threshold": 10,
+                        "unit": "m",
+                    }
+                ]
+            },
+            [{"name": "penetration", "operator": "<=", "threshold": 0.002, "unit": "m"}],
+        )
 
 
 def test_catalog_coverage_requires_every_record_and_every_comparison_axis(tmp_path):
     class TruncatedAgent:
         def run(self, *args, **kwargs):
             return {"comparisons": []}
+
     cat = {"complete": True, "records": [{"id": "a"}], "digest": "d"}
     with pytest.raises(GateError, match="coverage"):
         compare_catalog(TruncatedAgent(), tmp_path, {"objective": "x"}, cat)

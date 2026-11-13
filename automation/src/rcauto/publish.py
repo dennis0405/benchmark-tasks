@@ -1,4 +1,5 @@
 """Preserve in the fork; publish only the exact reviewed task after explicit approval."""
+
 import os
 import shutil
 import subprocess
@@ -14,19 +15,46 @@ class Publisher:
         self.store, self.config = store, config
 
     def git(self, repo, *args):
-        return capture(["git", "-C", str(repo), "-c", "credential.helper=",
-                        "-c", "credential.helper=!gh auth git-credential", *args], timeout=300)
+        return capture(
+            [
+                "git",
+                "-C",
+                str(repo),
+                "-c",
+                "credential.helper=",
+                "-c",
+                "credential.helper=!gh auth git-credential",
+                *args,
+            ],
+            timeout=300,
+        )
 
     def checkout(self, rid, kind):
         root = self.store.run_dir(rid)
         repo = root / (kind + "-checkout")
         if not repo.exists():
-            capture(["git", "clone", "--filter=blob:none", "--no-checkout",
-                     "https://github.com/" + self.config["fork"] + ".git", str(repo)], timeout=300)
+            capture(
+                [
+                    "git",
+                    "clone",
+                    "--filter=blob:none",
+                    "--no-checkout",
+                    "https://github.com/" + self.config["fork"] + ".git",
+                    str(repo),
+                ],
+                timeout=300,
+            )
             self.git(repo, "fetch", "https://github.com/robocurve/benchmark-tasks.git", "main")
             self.git(repo, "checkout", "-b", f"{kind}/{rid}", "FETCH_HEAD")
-            self.git(repo, "config", "user.name", self.config.get("git_name", "RoboCurve contributor"))
-            self.git(repo, "config", "user.email", self.config.get("git_email", "contributor@users.noreply.github.com"))
+            self.git(
+                repo, "config", "user.name", self.config.get("git_name", "RoboCurve contributor")
+            )
+            self.git(
+                repo,
+                "config",
+                "user.email",
+                self.config.get("git_email", "contributor@users.noreply.github.com"),
+            )
         return repo
 
     def push(self, repo):
@@ -36,7 +64,11 @@ class Publisher:
         remote = self.git(repo, "ls-remote", "origin", "refs/heads/" + branch).split()[0]
         if local != remote:
             raise GateError("origin SHA verification failed")
-        return {"branch": branch, "sha": local, "url": f"https://github.com/{self.config['fork']}/tree/{branch}"}
+        return {
+            "branch": branch,
+            "sha": local,
+            "url": f"https://github.com/{self.config['fork']}/tree/{branch}",
+        }
 
     def checkpoint(self, rid):
         root = self.store.run_dir(rid)
@@ -73,7 +105,9 @@ class Publisher:
         root = self.store.run_dir(rid)
         approval_valid(self.store, rid, approval_id)
         if self.store.effect(rid, "pr"):
-            raise GateError("PR already attempted; reconcile recorded effect instead of creating another")
+            raise GateError(
+                "PR already attempted; reconcile recorded effect instead of creating another"
+            )
         fresh_novelty()
         # Fresh inspection is read-only with respect to the approved bundle.
         approval_valid(self.store, rid, approval_id)
@@ -90,13 +124,30 @@ class Publisher:
             shutil.copytree(folders[0], target, dirs_exist_ok=True)
             mapping = read(release / "release-map.json")
             upload = repo / "tools" / "upload_media.py"
-            self.store.reserve_effect(rid, "upload", {"release_digest": read(root / "release-manifest.json")["digest"],
-                                                       "uploader_sha256": file_hash(upload)})
+            self.store.reserve_effect(
+                rid,
+                "upload",
+                {
+                    "release_digest": read(root / "release-manifest.json")["digest"],
+                    "uploader_sha256": file_hash(upload),
+                },
+            )
             env = dict(os.environ)
             env.update(credentials)
-            args = ["python3", str(upload), str(target), "--video", str(release / mapping["model_video"]),
-                    "--demo", str(release / mapping["demo_video"]), "--screenshot", str(release / mapping["screenshot"])]
-            p = subprocess.run(args, capture_output=True, text=True, env=env, timeout=660, check=False)
+            args = [
+                "python3",
+                str(upload),
+                str(target),
+                "--video",
+                str(release / mapping["model_video"]),
+                "--demo",
+                str(release / mapping["demo_video"]),
+                "--screenshot",
+                str(release / mapping["screenshot"]),
+            ]
+            p = subprocess.run(
+                args, capture_output=True, text=True, env=env, timeout=660, check=False
+            )
             if p.returncode:
                 raise GateError("media upload failed/unknown; do not retry automatically")
             spec = read(target / "task.json")
@@ -113,13 +164,31 @@ class Publisher:
             self.git(repo, "commit", "-m", "Add " + read(target / "task.json")["title"])
         pushed = self.push(repo)
         body = root / "pr-body.md"
-        body.write_text("Add one reproducible task under `tasks/" + folders[0].name +
-                        "`. Setup, physics limitations, demo and scoring commands are in its README.\n")
+        body.write_text(
+            "Add one reproducible task under `tasks/"
+            + folders[0].name
+            + "`. Setup, physics limitations, demo and scoring commands are in its README.\n"
+        )
         owner = self.config["fork"].split("/")[0]
         self.store.reserve_effect(rid, "pr", dict(pushed, approval=approval_id))
-        url = capture(["gh", "pr", "create", "--repo", "robocurve/benchmark-tasks", "--base", "main",
-                       "--head", owner + ":" + pushed["branch"], "--title", read(target / "task.json")["title"],
-                       "--body-file", str(body)], timeout=120).strip()
+        url = capture(
+            [
+                "gh",
+                "pr",
+                "create",
+                "--repo",
+                "robocurve/benchmark-tasks",
+                "--base",
+                "main",
+                "--head",
+                owner + ":" + pushed["branch"],
+                "--title",
+                read(target / "task.json")["title"],
+                "--body-file",
+                str(body),
+            ],
+            timeout=120,
+        ).strip()
         self.store.finish_effect(rid, "pr", {"url": url})
         self.store.update(rid, status="submitted-awaiting-receipt", pr=url)
         return {"pr": url, "status": "submitted-awaiting-receipt"}
