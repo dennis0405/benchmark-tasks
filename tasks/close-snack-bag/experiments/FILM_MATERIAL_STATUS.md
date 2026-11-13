@@ -1,7 +1,9 @@
 # Thin-film implementation and validation — 2026-11-13
 
-Status: **pouch self-contact controls passed at sampled states; clip retention
-failed. No completed deformable task, YAM demo, Isaac Sim run or submission is
+Historical checkpoint: **pouch self-contact controls passed at sampled states;
+the clip trials below failed. Follow-up found an inconsistent joint rest-state
+initialization in our probe; see [CLIP_HOLD_STATUS.md](CLIP_HOLD_STATUS.md).
+No completed deformable task, YAM demo, Isaac Sim run or submission is
 claimed.** The existing rigid task and its scores have not been replaced.
 
 ## Material implementation
@@ -44,7 +46,7 @@ No robot folding action is demonstrated by those trials.
 | Native VBD derived pouch, 80×64, self-contact on | 180 frames / 3 s; all finite; 0/14 saved states crossed | Basic self-contact control passed under this configuration |
 | Same derived pouch, self-contact off | all finite; 13/14 saved states crossed | Expected failure control; a smaller mouth opening alone is not sealing evidence |
 | Native VBD clip/film trial 05 | 240 frames / 4 s; 17/18 saved states intruded into clip boxes; film still moving at late samples | **Failed retention diagnostic** despite finite numbers |
-| Bare clip, VBD | final measured angle +0.506 rad, outside authored [-0.55, 0.02] | This import/configuration's rigid-joint path is unsuitable without correction |
+| Bare clip, VBD, inconsistent model defaults | final measured angle +0.506 rad, outside authored [-0.55, 0.02] | Our probe changed the model's joint default without matching authored body poses; corrected A/B initializes the episode State separately |
 | Same bare clip, MuJoCo CPU | final angle +0.0083 rad, inside limits | Rigid backend control works; it does not establish mixed rigid/film stability |
 | MuJoCo–VBD coupled trial 05 | implausibly large rigid position on frame 1; nonfinite/invalid rigid state on frame 2 | **Failed coupling diagnostic**, not a demo |
 
@@ -88,7 +90,9 @@ python /data/robocurve/tasks/close-snack-bag/experiments/check_rss_crossings.py 
 
 `--self-contact 0` selects the negative control. `--clip` is an experimental
 closing-only diagnostic: the free clip starts open around the fold. It is
-currently **known to fail** and must not be used as a successful demo.
+known to fail in the historical configurations above. Current corrected trials
+are assessed separately in `CLIP_HOLD_STATUS.md`; these older runs must not be
+used as successful demos.
 `coupled_film_clip.py` is likewise a failed research probe. Current code adds
 more diagnostic guards than some older recordings; use each run's frozen
 source where present and its recorded settings when comparing results.

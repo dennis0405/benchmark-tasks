@@ -1,7 +1,7 @@
 """Native Newton VBD pouch with yield-based crease memory; uncalibrated diagnostic.
 API pattern: Newton 1.7 example_cloth_hanging.py; plastic kernel: pinned RSS paper.py.
 """
-import argparse,json,sys,time
+import argparse,json,sys,time,shutil
 from pathlib import Path
 from types import SimpleNamespace
 import numpy as np
@@ -20,9 +20,21 @@ p.add_argument("--prepare-only",action="store_true")
 p.add_argument("--clip",action="store_true",help="Free spring clip initially open around the fold; closing-only diagnostic")
 p.add_argument("--folded",action="store_true");p.add_argument("--yield-angle",type=float)
 p.add_argument("--seconds",type=float,default=3);p.add_argument("--self-contact",type=int,choices=(0,1),default=1)
+p.add_argument("--verify-every-step",action="store_true")
+p.add_argument("--record-every",type=int,default=15)
+p.add_argument("--substeps",type=int,default=10)
+p.add_argument("--clip-offset",type=float,nargs=3,default=(0.,0.,0.))
+p.add_argument("--spring-damping",type=float,default=.003)
 a=p.parse_args()
 if a.seconds<=0 and not a.prepare_only:p.error("positive duration required")
+if a.substeps<1 or a.record_every<1:p.error("substeps and record-every must be positive")
 a.output.mkdir(parents=True,exist_ok=False)
+source_dir=a.output/"sources";source_dir.mkdir()
+for name in (Path(__file__),Path(__file__).with_name("gpu_contact_checks.py"),
+             Path(__file__).with_name("film_material.py"),Path(__file__).resolve().parents[1]/"pouch_geometry.py",
+             Path(__file__).resolve().parents[1]/"bag_surface_mesh.py"):
+    shutil.copy2(name,source_dir/name.name)
+(a.output/"arguments.json").write_text(json.dumps(vars(a),default=str,indent=2))
 wp.init();wp.set_device(a.device)
 q,f,g=open_pouch(nx=a.nx,ny=a.ny,mouth_half_gap=.0003,foldable_mouth=True)
 coeff=FilmMaterial().coefficients(min(.20/a.nx,.16/a.ny))
@@ -37,14 +49,14 @@ b.add_cloth_mesh(scale=1.0,pos=wp.vec3(0,0,.025),rot=wp.quat_identity(),vel=wp.v
 clip_root = clip_upper = None
 if a.clip:
     asset=Path(__file__).resolve().parents[1]/"assets/clip_v5/clip_v5.usda"
-    b.add_usd(str(asset),floating=True,xform=wp.transform(wp.vec3(.184,0,.0252),wp.quat(0,0,1,0)),
+    clip_pos=np.array([.184,0,.0252])+a.clip_offset
+    b.add_usd(str(asset),floating=True,xform=wp.transform(wp.vec3(*clip_pos),wp.quat(0,0,1,0)),
               override_root_xform=True)
     hinge=next(i for i,label in enumerate(b.joint_label) if label.endswith("clip_hinge"))
     dof=b.joint_qd_start[hinge]
-    b.joint_q[b.joint_q_start[hinge]]=-.55
     b.joint_target_q[b.joint_q_start[hinge]]=0.
     b.joint_target_ke[dof]=.13
-    b.joint_target_kd[dof]=.003
+    b.joint_target_kd[dof]=a.spring_damping
     b.joint_target_mode[dof]=newton.JointTargetMode.POSITION
     clip_root,clip_upper=b.joint_parent[hinge],b.joint_child[hinge]
 b.color(include_bending=True)
@@ -55,8 +67,13 @@ solver=newton.solvers.SolverVBD(m,iterations=50 if a.clip else 20,rigid_body_par
     particle_vertex_contact_buffer_size=64,particle_edge_contact_buffer_size=128)
 s0,s1=m.state(),m.state();ctrl=m.control()
 if a.clip:
-    newton.eval_fk(m,m.joint_q,m.joint_qd,s0)
-    newton.eval_fk(m,m.joint_q,m.joint_qd,s1)
+    # Preserve authored rest poses for the solver. Open only the episode state.
+    initial_joints=m.joint_q.numpy().copy()
+    initial_joints[b.joint_q_start[hinge]]=-.55
+    initial_joints_wp=wp.array(initial_joints,dtype=wp.float32,device=a.device)
+    for state in (s0,s1):
+        if state.joint_q is not None:state.joint_q.assign(initial_joints)
+        newton.eval_fk(m,initial_joints_wp,m.joint_qd,state)
 if a.folded:
     from bag_surface_mesh import folded_positions
     initial=folded_positions(q+np.array([0.,0.,.019]),radius=.0018)-[0.,0.,.019]+[0.,0.,.025]
@@ -91,14 +108,23 @@ if a.clip:
 if a.prepare_only:
     np.savez_compressed(a.output/"pouch-snapshots.npz",faces=f,**snapshots)
     sys.exit(0)
-started=time.monotonic();dt=1/600
+started=time.monotonic();dt=1/(60*a.substeps)
+geometry=None
+if a.verify_every_step:
+    from gpu_contact_checks import GeometryChecks
+    geometry=GeometryChecks(m,(s0,s1),f,round(a.seconds*60)*a.substeps+1)
+    geometry.check(s0,0)
+physics_step=0
+fold_ids=np.flatnonzero(q[:,0]>=.16)
 for frame in range(round(a.seconds*60)):
-    for _ in range(10):
+    for _ in range(a.substeps):
         s0.clear_forces();pipeline.collide(s0,contacts)
         solver.step(s0,s1,ctrl,contacts,dt,observables=observables)
         wp.launch(_crease_kernel,dim=len(rows),inputs=[rows_wp,m.edge_indices,params,dt,s1.particle_q],
                   outputs=[m.edge_rest_angle],device=a.device)
         s0,s1=s1,s0
+        physics_step+=1
+        if geometry:geometry.check(s0,physics_step)
     measured=s0.particle_q.numpy().astype(float)
     gap=layer_gap(measured,entity)
     trace.append({"step":frame+1,"finite":bool(np.isfinite(measured).all()),
@@ -116,10 +142,30 @@ for frame in range(round(a.seconds*60)):
         nets={str(i):float(np.linalg.norm(forces[shape_body[ids]==i].sum(axis=0))) for i in (clip_root,clip_upper)}
         trace[-1].update(clip_root_pose=body[clip_root].tolist(),jaw_angle_rad=float(jaw),
             clip_soft_force_norm_sum_N=sums,clip_soft_net_force_N=nets,soft_contact_count=n)
-    if frame%15==0 or frame==round(a.seconds*60)-1:
+        indices=contacts.soft_contact_indices.numpy()[:n]
+        weights=contacts.soft_contact_barycentric.numpy()[:n]
+        contact_points=(measured[np.maximum(indices,0)]*weights[:,:,None]).sum(axis=1)
+        contact_local=Rotation.from_quat(body[clip_root,3:]).inv().apply(contact_points-body[clip_root,:3])
+        shape_reports={}
+        for sid in np.flatnonzero(shape_body>=0):
+            mask=(ids==sid)&(np.linalg.norm(forces,axis=1)>1e-5)
+            in_fold=np.any((indices>=0)&(q[np.maximum(indices,0),0]>=.16),axis=1)
+            active=mask&in_fold
+            shape_reports[str(sid)]={"active_fold_contacts":int(active.sum()),
+                "force_norm_sum_N":float(np.linalg.norm(forces[active],axis=1).sum()),
+                "fold_contact_y_span_m":float(np.ptp(contact_local[active,1])) if active.any() else 0.}
+        trace[-1]["shape_fold_contacts"]=shape_reports
+        fold_local=Rotation.from_quat(body[clip_root,3:]).inv().apply(measured[fold_ids]-body[clip_root,:3])
+        trace[-1]["fold_centroid_clip_local_m"]=fold_local.mean(axis=0).tolist()
+    if frame%a.record_every==0 or frame==round(a.seconds*60)-1:
         snapshots[f"q_{frame+1:05d}"]=measured.copy()
         if a.clip:snapshots[f"b_{frame+1:05d}"]=body.copy()
-    if frame%30==0:print("PROGRESS",frame+1,trace[-1],flush=True)
+    if frame%30==0:
+        if geometry:
+            trace[-1]["geometry_violations_so_far"]={"clip":int(np.count_nonzero(geometry.box_counts.numpy()[:physics_step+1])),
+                "self":int(np.count_nonzero(geometry.self_counts.numpy()[:physics_step+1]))}
+            (a.output/"progress.json").write_text(json.dumps(trace[-1],indent=2))
+        print("PROGRESS",frame+1,trace[-1],flush=True)
 rest_final=m.edge_rest_angle.numpy()
 crease_delta=np.abs(np.arctan2(np.sin(rest_final-rest_initial),np.cos(rest_final-rest_initial)))[rows]
 result={"residual_rest_angle_max_rad":float(crease_delta.max()),"residual_rest_angle_over_0_05_count":int((crease_delta>.05).sum()),"device":a.device,"self_contact":bool(a.self_contact),"initial_fold_imposed":a.folded,"material_profile":a.material_profile,"coefficients":coeff,"steps":len(trace),
@@ -127,6 +173,14 @@ result={"residual_rest_angle_max_rad":float(crease_delta.max()),"residual_rest_a
   "contact_radius_m":.0001,"mesh_cells":[a.nx,a.ny],"crease_hinges":len(rows),
   "all_finite":all(x["finite"] for x in trace),"mouth":mouth_opening(measured,entity),
   "clip":a.clip,"limitation":"homogeneous equivalent and uniform hinge width are assumptions; optional clip starts open around fold; no insertion, air, food or robot"}
+result.update(substeps=a.substeps,physics_dt_s=dt,clip_offset_m=a.clip_offset,record_every=a.record_every,
+    spring_damping=a.spring_damping)
+if geometry:
+    box_counts,self_counts=geometry.box_counts.numpy(),geometry.self_counts.numpy()
+    np.savez_compressed(a.output/"geometry-counts.npz",clip_intrusions=box_counts,self_crossings=self_counts)
+    result["geometry"]={"states_checked":len(box_counts),"clip_intrusion_states":int(np.count_nonzero(box_counts)),
+        "clip_intrusion_max":int(box_counts.max()),"self_crossing_states":int(np.count_nonzero(self_counts)),
+        "self_crossing_max":int(self_counts.max()),"scope":"triangle/box interiors with 0.1um tolerance; strict transverse self crossings; excludes coplanar overlap and inter-step motion"}
 (a.output/"result.json").write_text(json.dumps(result,indent=2))
 (a.output/"trace.json").write_text(json.dumps(trace))
 np.savez_compressed(a.output/"pouch-snapshots.npz",faces=f,edges=edges,rest_initial=rest_initial,rest_final=rest_final,**snapshots)

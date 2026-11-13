@@ -1,4 +1,8 @@
-"""Isolate imported spring-clip hinge before trusting a rigid/film coupling."""
+"""Historical inconsistent-rest probe, retained to explain old failed results.
+
+This sets the model joint default open without matching authored body poses.
+Use hinge_rest_repro.py for the corrected rest-state/episode-state A/B instead.
+"""
 import json,sys,time
 from pathlib import Path
 import numpy as np
