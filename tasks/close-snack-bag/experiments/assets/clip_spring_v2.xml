@@ -4,13 +4,16 @@
   <worldbody>
     <body name="snack_clip">
       <freejoint name="clip_free"/>
-      <geom name="lower_jaw" pos=".022 0 -.004" size=".022 .05 .003" mass=".008"/>
-      <geom name="lower_handle" pos="-.015 0 -.008" size=".015 .012 .003" mass=".004"/>
+      <geom name="lower_jaw" pos=".022 0 -.0032" size=".022 .05 .003" mass=".008"/>
+      <!-- Long handles clear the YAM pad's 80 mm axis before the jaw. -->
+      <geom name="lower_handle" pos="-.0375 0 -.020" size=".0375 .012 .003" mass=".006" friction="1.2 .005 .0001"/>
+      <geom name="lower_stem" pos="-.003 0 -.0116" size=".004 .012 .0086" mass=".0015"/>
       <body name="upper">
-        <joint name="clip_hinge" type="hinge" axis="0 1 0" range="-.27 .02"
-               stiffness=".2" springref="0" damping=".01"/>
-        <geom name="upper_jaw" pos=".022 0 .004" size=".022 .05 .003" mass=".008"/>
-        <geom name="upper_handle" pos="-.015 0 .008" size=".015 .012 .003" mass=".004"/>
+        <joint name="clip_hinge" type="hinge" axis="0 1 0" range="-.44 .006"
+               stiffness=".1" springref="0" damping=".01"/>
+        <geom name="upper_jaw" pos=".022 0 .0032" size=".022 .05 .003" mass=".008"/>
+        <geom name="upper_handle" pos="-.0375 0 .020" size=".0375 .012 .003" mass=".006" friction="1.2 .005 .0001"/>
+        <geom name="upper_stem" pos="-.003 0 .0116" size=".004 .012 .0086" mass=".0015"/>
       </body>
     </body>
   </worldbody>

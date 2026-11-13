@@ -12,7 +12,7 @@ import numpy as np
 class ClipSpec:
     entity: str = "snack_free_clip"
     name: str = "clip"
-    at: tuple = (.02, -.20, .052)
+    at: tuple = (.02, -.20, .102)
     quat: tuple = (.7071067811865475, 0., 0., .7071067811865475)
     sim: Any = field(default_factory=lambda:rss.SimRequirements(
         domain="articulated", contacts=rss.contacts_with("surface", "objects", "paper", "cloth")))

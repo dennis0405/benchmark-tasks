@@ -6,6 +6,42 @@ experiments run YAM through pinned RoboSimStudio, MuJoCo and Newton VBD.
 
 ## Observed evidence
 
+- The 20 Hz `unfolded-self-contact-v7b` single-fold component completed 194
+  frames with hands still holding the rim. Fourteen sampled states had zero
+  strict self-crossings and BOX intersections. Compact evidence is in
+  `../evidence/unfolded-20261114/fold-hold-194/`; this is not clip retention.
+- A new post-solve observer checks every physics substep. Its one-frame smoke
+  counted exactly 60 checks at 1200 Hz / 20 Hz control. A CPU fixture test
+  verified both static and body-local box transforms. The 1200 Hz folding
+  probe `unfolded-ramp-substeps-v8` failed after 8,400 checked substeps with
+  14 transient BOX intersections, even though the final recorded state had
+  none. It is rejected. Sparse snapshots must not be described as a full
+  trajectory certificate.
+- `unfolded-short-lay-v9`, at 2400 Hz, ended with zero detected crossings in
+  16,320 substeps, but failed its pre-press fraction gate: median angle reached
+  2.59 rad with 72% of measured columns folded. It did not attempt a clip.
+- The short-handle clip component opened and rose about 90 mm through robot
+  contact. Its parking-position wrist turn failed, and a later carry control
+  missed its pose target. Neither is a completed tool-use demonstration.
+
+Current controller changes remain under test: a shorter lay path accounts for
+the 12 mm strip held by a pad; a 2.2 rad median / 60% pre-press trigger hands
+off to pressing. These are motion triggers, not relaxed final success criteria.
+Both sides are pressed before transfer to the clip. The pressing path now
+leaves 2.5 mm nominal clearance above the board instead of targeting below it.
+
+The experimental clip now has 75 mm hollow-handle surrogates, offset by +/-20
+mm, connected to the jaws by stems. A passive parking support and 50 mm riser
+put the grip in the YAM workspace. The control stops squeezing at a measured
+hinge angle rather than driving through a joint limit. Its 0.1 Nm/rad spring,
+handle friction, 0.4 mm closed jaw gap, and geometry are uncalibrated design
+parameters. Final clip/film retention and self-intersection checks are pending.
+
+The research bag remains empty. The 80 micrometre material thickness is not
+its collision thickness: 0.3 mm particle radius and 0.5 mm self-contact
+interaction distance are numerical contact skins. Contents, air, breakage,
+Arena integration and Dream evaluation remain outstanding.
+
 - Brev `robocurve-snack-film` restarted with an idle L40S. Previous padded
   clip work is preserved at `d5e68ca`.
 - The pouch starts unfolded, with no particle attachment or object pose writes

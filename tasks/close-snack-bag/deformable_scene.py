@@ -70,7 +70,7 @@ class PouchEntity(EntityPaper):
             particle_radius=material.particle_radius, label=self.name)
 
 
-def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60):
+def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None):
     if embodiment != "yam_bimanual":
         raise ValueError("This research scene currently supports yam_bimanual only")
     coeff = FilmMaterial().coefficients(min(.2 / cells[0], .16 / cells[1]))
@@ -90,15 +90,18 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
     # fingers' slides. General two-way clip/film coupling is a later gate.
     coupling_spec = (rss.coupler("one_way", contact_forces=True, slide_feedback=True)
                      if coupling == "one_way" else rss.coupler("proxy", iterations=2, proxy_joints=True))
+    physics_rate=physics_hz or (2400 if with_clip else 1200)
+    if physics_rate<control_hz or physics_rate%control_hz:
+        raise ValueError("physics_hz must be a positive multiple of control_hz")
     physics = rss.replace(
-        rss.GENERIC, control_hz=float(control_hz), substeps=round((2400 if with_clip else 1200)/control_hz),
+        rss.GENERIC, control_hz=float(control_hz), substeps=physics_rate//control_hz,
         coupling=coupling_spec,
         collision=rss.CollisionSpec(full_surface_contact=True))
     backend = rss.backend(
         "vbd", iterations=30, friction_epsilon=1e-3,
         rigid_compliant_alm=True,
-        particle_self_contact_radius=.0003, particle_self_contact_margin=.001,
-        particle_topological_contact_filter_threshold=1,
+        particle_self_contact_radius=.0005, particle_self_contact_margin=.002,
+        particle_topological_contact_filter_threshold=0,
         rigid_body_contact_buffer_size=2048, rigid_body_particle_contact_buffer_size=16384,
         particle_vertex_contact_buffer_size=64, particle_edge_contact_buffer_size=128)
     physics = physics.with_backend("*", backend)
@@ -118,6 +121,12 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
     half = (.085, .12, .05) if ready_start else (.101, .06, .02)
     at = (.055, 0, .05) if ready_start else (.039, 0, .02)
     height = .10 if ready_start else .04
+    if ready_start and side_access:
+        # Keep the filled-body area fully supported. Only the 30 mm neck
+        # extension is narrower, leaving side access for the lower pad.
+        half,at=(.07,.12,.05),(.07,0,.05)
+        scene.add(rss.slab(name="mouth_support",half=(.015,.06,.05),
+                           at=(-.015,0,.05),color=(.64,.47,.30),friction=1.))
     scene.add(rss.slab(name="board", half=half, at=at,
                        color=(.64, .47, .30), friction=1.))
     scene.add(PouchSpec(name="pouch", pose=(.14, 0, height+.0237), quat=(0, 0, 1, 0),
@@ -128,6 +137,12 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         if coupling!="one_way":
             raise ValueError("Clip reaction hook currently requires the MuJoCo/VBD path")
         from deformable_clip import ClipSpec
+        scene.add(rss.slab(name="tool_base",half=(.10,.07,.025),
+                           at=(0,-.20,.025),color=(.64,.47,.30),friction=.6))
+        # A passive parking support under the long handles. Without it the
+        # free upright clip tips backward before the robot reaches it.
+        scene.add(rss.slab(name="tool_stand",half=(.04,.035,.019),
+                           at=(-.02,-.20,.069),color=(.64,.47,.30),friction=.6))
         scene.add(ClipSpec())
     env = scene.build(device=device, control_mode="joint_position")
     if with_clip:

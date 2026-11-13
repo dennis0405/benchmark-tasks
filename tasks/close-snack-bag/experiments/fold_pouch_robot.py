@@ -24,8 +24,11 @@ def main():
     parser.add_argument("--clip", action="store_true")
     parser.add_argument("--checkpoint-every",type=int,default=120)
     parser.add_argument("--material-profile",choices=("derived","paper_matched"),default="derived")
-    parser.add_argument("--stage",choices=("fold","clip_grasp"),default="fold")
+    parser.add_argument("--stage",choices=("fold","fold_hold","regrasp","seal","clip_grasp"),default="fold")
     parser.add_argument("--hz",type=int,choices=(20,60),default=60)
+    parser.add_argument("--physics-hz",type=int,choices=(600,1200,2400),default=None)
+    parser.add_argument("--check-substeps",action="store_true")
+    parser.add_argument("--side-access",action="store_true")
     args = parser.parse_args()
     if args.stage=="clip_grasp" and not (args.clip and args.drive):
         parser.error("clip_grasp requires --clip --drive")
@@ -39,9 +42,13 @@ def main():
                    Path(__file__).resolve().parents[1]/"deformable_scene.py",
                    Path(__file__).resolve().parents[1]/"pouch_geometry.py",
                    Path(__file__).with_name("film_material.py"),
+                   Path(__file__).resolve().parents[1]/"fold_metrics.py",
                    Path(__file__).with_name("assets")/"yam_ready_pose.json"):
         shutil.copy2(source, sources/source.name)
     if args.clip:
+        # Eagerly import optional controllers before stepping. A later rsync
+        # must not change a running experiment at its first delayed import.
+        import clip_controller
         for source in (Path(__file__).resolve().parents[1]/"deformable_clip.py",
                        Path(__file__).with_name("tool_feedback.py"),
                        Path(__file__).with_name("clip_controller.py"),
@@ -50,7 +57,8 @@ def main():
     (args.output/"arguments.json").write_text(json.dumps(vars(args), default=str, indent=2))
     started = time.monotonic()
     sim = make_environment(coupling=args.coupling, ready_start=args.ready_start,
-                           with_clip=args.clip, material_profile=args.material_profile, control_hz=args.hz)
+                           with_clip=args.clip, material_profile=args.material_profile, control_hz=args.hz,
+                           side_access=args.side_access or args.stage in ("regrasp","seal"),physics_hz=args.physics_hz)
     timings = dict(build_s=time.monotonic()-started, driver_tick_s=0., readback_and_metrics_s=0., recording_s=0.)
     entity = sim.scene.by_name["pouch"]
     export_render_geometry(sim, args.output)
@@ -60,16 +68,29 @@ def main():
         from fold_controller import FoldController
         session = open_session(sim, 9764)
         controller = FoldController(sim, session)
+        if args.stage=="fold_hold":
+            controller.after_fold="hold"
+        elif args.stage in ("regrasp","seal"):
+            controller.after_fold=args.stage
         if args.stage=="clip_grasp":
             from clip_controller import clip_grasp_drive
             drive=clip_grasp_drive(controller)
         else:
             drive = controller.drive()
     snapshots, trace = {}, []
+    watcher=None
+    if args.check_substeps:
+        from substep_geometry import SubstepGeometry
+        shutil.copy2(Path(__file__).with_name("substep_geometry.py"),sources/"substep_geometry.py")
+        shutil.copy2(Path(__file__).with_name("gpu_contact_checks.py"),sources/"gpu_contact_checks.py")
+        watcher=SubstepGeometry(sim,entity)
+        sim.pipeline.hooks.add("post_solve",watcher.check,name="independent-film-geometry",cadence=1)
+        sim.pipeline.invalidate_graph()
+    controller_completed = False
     def save_record():
         before=time.monotonic()
         temporary=args.output/"states.tmp.npz"
-        np.savez_compressed(temporary, faces=entity.faces, **snapshots)
+        np.savez_compressed(temporary, faces=entity.faces,grid=entity.grid, **snapshots)
         temporary.replace(args.output/"states.npz")
         temporary=args.output/"trace.tmp.json"
         temporary.write_text(json.dumps(trace));temporary.replace(args.output/"trace.json")
@@ -83,6 +104,7 @@ def main():
                 try:
                     next(drive)
                 except StopIteration:
+                    controller_completed = True
                     break
                 tick(session, 1)
             else:
@@ -97,6 +119,8 @@ def main():
                           z_min=float(state["pouch"][:, 2].min()),
                           z_max=float(state["pouch"][:, 2].max())))
         trace[-1]["fold"] = fold_metrics(state["pouch"], entity.grid, [(34, 28, 40)])
+        if watcher:
+            trace[-1]["substep_geometry"]=watcher.report()
         if args.clip:
             from scipy.spatial.transform import Rotation
             clip_entity=sim.scene.by_name["clip"]
@@ -137,6 +161,13 @@ def main():
                     a:[float(np.linalg.norm(forces[np.isin(owners, side)].sum(axis=0)))
                        for side in index.finger_bodies]
                     for a,index in sim.scene.embodiment.arms.items()}
+                if args.clip:
+                    clip_forces={}
+                    for label,body in zip(("lower","upper"),clip_entity.bodies):
+                        force=forces[owners==body].sum(axis=0)
+                        normal=Rotation.from_quat(state["bodies"][body,3:]).apply([0,0,1])
+                        clip_forces[label]=dict(world_N=force.tolist(),normal_N=float(force@normal))
+                    trace[-1]["clip_film_force"]=clip_forces
         timings["readback_and_metrics_s"]+=time.monotonic()-before
         if step % 30 == 0:
             print("PROGRESS", {k:v for k,v in trace[-1].items() if k!="jaws"}, flush=True)
@@ -144,6 +175,11 @@ def main():
                 print("RESET_JAWS", trace[-1]["jaws"], flush=True)
         if step % args.checkpoint_every == 0:
             save_record()
+        if watcher and (trace[-1]["substep_geometry"]["transverse_edge_crossings"] or
+                        trace[-1]["substep_geometry"]["film_box_intersections"]):
+            if controller:
+                controller.failure="independent substep geometry observer detected an intersection"
+            break
     save_record()
     result = dict(frames=trace[-1]["step"], wall_seconds=time.monotonic()-started,
                   all_finite=all(row["finite"] for row in trace),
@@ -155,7 +191,9 @@ def main():
                   timings=timings,
                   interrupted=interrupted[0],
                   controller_failure=controller.failure if controller else None,
-                  limitation="Uncalibrated material; contents/air not integrated; ready-start places open hands around the unfolded rim at reset; clip insertion not yet demonstrated")
+                  controller_completed=controller_completed,
+                  substep_geometry=watcher.report() if watcher else None,
+                  limitation="Uncalibrated material; contents/air not integrated; ready-start places open hands around the unfolded rim at reset; controller completion is not a physical success assessment")
     (args.output / "result.json").write_text(json.dumps(result, indent=2))
     print("RESULT", result, flush=True)
     if session:

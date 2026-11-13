@@ -21,6 +21,7 @@ class FoldController:
         self.phase = "settle"
         self.marks = {}
         self.failure = None
+        self.after_fold = "press"
 
     def wait(self, frames):
         yield from range(self.frames(frames))
@@ -30,7 +31,29 @@ class FoldController:
 
     def move(self, points, quats, speed=.05, settle=100):
         targets = self.takes._fold_targets(self.film, points, quats)
-        yield from self.takes._go_both(self.film, targets, quats, speed, self.frames(settle), .003)
+        panels={arm:self.session.arms[arm] for arm in targets}
+        starts={arm:np.array(panel.cursor_pos) for arm,panel in panels.items()}
+        turns={arm:np.array(panel.cursor_quat) for arm,panel in panels.items()}
+        hz=float(self.sim.request.physics.control_hz)
+        def angle(a,b):
+            return 2*np.arccos(np.clip(abs(np.dot(a,b)),0.,1.))
+        # Include rotation in path duration: the reference cursor helper ends
+        # on position alone and can request a 90-degree turn in one frame.
+        seconds=max(max(np.linalg.norm(targets[a]-starts[a])/speed,
+                        angle(turns[a],quats[a])/np.deg2rad(45)) for a in panels)
+        count=max(1,int(np.ceil(seconds*hz)))
+        for k in range(1,count+1):
+            t=k/count
+            for arm,panel in panels.items():
+                panel.aim(starts[arm]+t*(targets[arm]-starts[arm]),
+                          self.takes._slerp(turns[arm],quats[arm],t),moving=k<count)
+            yield
+        for _ in range(self.frames(settle)):
+            yield
+            poses={a:p.ik.ee_pose(self.sim.state) for a,p in panels.items()}
+            if all(np.linalg.norm(poses[a][0]-targets[a])<.003 and
+                   angle(poses[a][1],quats[a])<.05 for a in panels):
+                break
 
     def drive(self):
         self.phase = "settle"
@@ -76,9 +99,11 @@ class FoldController:
             yield from self.move(points, hands, .025, 40)
         self.phase = "pinch"
         print("PINCH_JAWS", {a:self.takes._fold_jaws(self.film,a).tolist() for a in hands}, flush=True)
-        for panel in self.session.arms.values():
-            panel.grip_request = 1.
-        yield from self.wait(90)
+        for request in np.linspace(.9053 if ready else .79,1.,self.frames(60)):
+            for panel in self.session.arms.values():
+                panel.grip_request=float(request)
+            yield
+        yield from self.wait(30)
         self.marks["pinched"] = self.sim.state.particle_q.numpy()[entity.particles].copy()
         if not ready:
             self.phase = "lift_to_board"
@@ -101,13 +126,17 @@ class FoldController:
         # lay the upright flap over the body, release, then crease by pressing.
         self.phase = "lay_flap"
         quats = {a:self.takes._fold_hand(a, 88.) for a in hands}
-        run = np.sqrt(max(radius**2-.008**2, 1e-6))
-        points = {a:(line+run, ys[a], self.layout["board_top"]+.008) for a in hands}
+        # The pad grips a 12 mm strip, not a single point at its centre.
+        # Keeping the wrist near 90 degrees leaves that strip upright; the
+        # remaining free flap is shorter than the centre-to-crease radius.
+        run = min(.014,np.sqrt(max(radius**2-.010**2, 1e-6)))
+        points = {a:(line+run, ys[a], self.layout["board_top"]+.010) for a in hands}
         reached = False
         for _ in self.move(points, quats, .015, 100):
             q = self.sim.state.particle_q.numpy()[entity.particles]
             fold = fold_metrics(q, entity.grid, [(34, 28, 40)])["folds"][0]
-            if fold["median_angle_rad"] >= 2.5 and fold["folded_fraction"] >= .8:
+            # This is a pre-press handoff trigger, not the final fold score.
+            if fold["median_angle_rad"] >= 2.2 and fold["folded_fraction"] >= .6:
                 print("FOLD_REACHED", fold, flush=True)
                 reached = True
                 # Stop at the measured folded state instead of driving on
@@ -118,10 +147,14 @@ class FoldController:
                 break
             yield
         if not reached:
-            self.failure = "fold did not reach 2.5 rad across 80 percent of measured columns"
+            self.failure = "pre-press fold did not reach a 2.2 rad median and 60 percent folded columns"
             self.phase = "fold_failed"
             return
         self.marks["carried"] = self.sim.state.particle_q.numpy()[entity.particles].copy()
+        if self.after_fold == "hold":
+            self.phase = "fold_hold"
+            yield from self.wait(180)
+            return
         # Keep whichever hand still has bilateral contact; a fixed left/right
         # order dropped the flap when the left grip had slipped during the turn.
         solver = self.sim.pipeline.program.solver
@@ -135,6 +168,13 @@ class FoldController:
         print("SUPPORT_HAND", holder, loads, flush=True)
         yield from self.retract_grasp(presser)
         yield from self.press(presser, leave_down=True)
+        if self.after_fold in ("regrasp", "seal"):
+            from clip_controller import regrasp_fold
+            held=yield from regrasp_fold(self, holder, presser)
+            if held and self.after_fold=="seal":
+                from clip_controller import seal_fold
+                yield from seal_fold(self)
+            return
         yield from self.retract_grasp(holder)
         yield from self.press(holder, leave_down=True)
         yield from self.lift_press("right")
@@ -161,18 +201,18 @@ class FoldController:
         self.phase = "press_"+arm
         panel = self.session.arms[arm]
         sign = 1. if arm=="left" else -1.
-        quat = self.takes._fold_presser(arm)
+        quat = self.takes._fold_hand(arm)
         panel.grip_request = .6
         top, line, yc = (self.layout[k] for k in ("board_top", "line", "center_y"))
         yield from self.move({arm:(line+.010, yc+sign*.14, top+.12)}, {arm:quat}, .06, 100)
         low = self.takes._fold_low(self.film, arm)
         tcp = panel.ik.ee_pose(self.sim.state)[0]
-        target = tcp + np.array([line+.012, yc+sign*.025, top+.001])-low
+        target = tcp + np.array([line+.012, yc+sign*.025, top+.0035])-low
         yield from self.takes._go_both(self.film, {arm:target}, {arm:quat}, .025, self.frames(100), .003)
         yield from self.wait(45)
         # A modest compliant push, then a stroke along the fold. It acts
         # through the free finger slide; no film point is prescribed.
-        start = target + [0, 0, -.002]
+        start = target + [0, 0, -.001]
         for t in np.linspace(0, 1, self.frames(180)):
             panel.aim(start + [0, sign*.04*t, 0], quat, moving=True)
             yield
