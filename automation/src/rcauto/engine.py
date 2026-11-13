@@ -208,8 +208,14 @@ class Production:
                 try:
                     receipt = getattr(self, stage)()
                     self.store.stage_done(self.rid, stage, receipt)
+                    failure = self.workspace / "input" / "last-failure.json"
+                    if failure.exists():
+                        failure.unlink()
                     break
                 except StateError as e:
+                    self.store.update(
+                        self.rid, last_repair={"stage": stage, "attempt": attempt, "reason": str(e)}
+                    )
                     write_json(
                         self.workspace / "input" / "last-failure.json",
                         {"stage": stage, "attempt": attempt, "reason": str(e)},
@@ -417,8 +423,12 @@ class Production:
         if (out / "samples.json").exists():
             return read(out / "samples.json")
         out.mkdir(parents=True, exist_ok=True)
-        probe = subprocess.run(["ffprobe", "-v", "error", "-show_format", "-of", "json", str(path)],
-                               capture_output=True, text=True, check=False)
+        probe = subprocess.run(
+            ["ffprobe", "-v", "error", "-show_format", "-of", "json", str(path)],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
         if probe.returncode:
             raise GateError("cannot decode actual demo video")
         duration = float(json.loads(probe.stdout)["format"]["duration"])
@@ -426,12 +436,32 @@ class Production:
         for i in range(4):
             at = max(0, duration - 0.05) * i / 3
             target = out / f"frame-{i}.png"
-            command(["ffmpeg", "-loglevel", "error", "-ss", str(at), "-i", str(path),
-                     "-frames:v", "1", "-y", str(target)], self.workspace, out / f"ffmpeg-{i}.log", timeout=60)
+            command(
+                [
+                    "ffmpeg",
+                    "-loglevel",
+                    "error",
+                    "-ss",
+                    str(at),
+                    "-i",
+                    str(path),
+                    "-frames:v",
+                    "1",
+                    "-y",
+                    str(target),
+                ],
+                self.workspace,
+                out / f"ffmpeg-{i}.log",
+                timeout=60,
+            )
             if not target.is_file() or not target.stat().st_size:
                 raise GateError("video sample missing")
             samples.append({"at_seconds": at, "path": str(target.relative_to(self.workspace))})
-        value = {"video": str(Path(path).relative_to(self.workspace)), "sha256": file_hash(path), "samples": samples}
+        value = {
+            "video": str(Path(path).relative_to(self.workspace)),
+            "sha256": file_hash(path),
+            "samples": samples,
+        }
         write_json(out / "samples.json", value)
         return value
 
