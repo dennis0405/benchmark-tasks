@@ -16,10 +16,15 @@ def evaluate(result, trace, shapes, *, seconds=3., slip_limit=.002):
               'contact_span_min_m': .08, 'scope': 'stationary table-supported closing only'}
     geometry = result.get('geometry', {})
     report['complete_physics_cadence'] = bool(geometry and
-        geometry.get('states_checked') == len(trace)*result.get('substeps', 0)+1 and result.get('substeps', 0) > 0)
+        geometry.get('states_checked') == len(trace)*result.get('substeps', 0)+1 and result.get('substeps', 0) > 0 and
+        geometry.get('checks_per_state_min') == 1 and geometry.get('checks_per_state_max') == 1)
     report['all_step_geometry_passed'] = bool(report['complete_physics_cadence'] and
-        geometry['clip_intrusion_states'] == 0 and geometry['self_crossing_states'] == 0)
-    report['all_finite'] = bool(result['all_finite'])
+        geometry['clip_intrusion_states'] == 0 and geometry['self_crossing_states'] == 0 and
+        geometry.get('ground_intrusion_states') == 0 and geometry.get('clip_self_intrusion_states') == 0)
+    report['all_finite'] = bool(result['all_finite'] and all(
+        np.isfinite(row.get('clip_root_pose', [np.nan])).all() and
+        np.isfinite(row.get('fold_centroid_clip_local_m', [np.nan])).all() and
+        np.isfinite(row.get('jaw_angle_rad', np.nan)) for row in trace))
     jaw_shapes = [str(i) for i, (owner, local, half) in enumerate(zip(
         shapes['shape_body'], shapes['shape_local'], shapes['shape_scale']))
         if owner >= 0 and local[0] > 0 and half[1] >= .045]
@@ -41,7 +46,7 @@ def evaluate(result, trace, shapes, *, seconds=3., slip_limit=.002):
             jaw = np.array([row['jaw_angle_rad'] for row in window])
             slip = float(np.linalg.norm(fold-fold[0], axis=1).max())
             drift = float(np.linalg.norm(root-root[0], axis=1).max())
-            if slip > slip_limit or drift > .002 or jaw.min() < -.56 or jaw.max() > .03 or np.ptp(jaw) > .02:
+            if slip > slip_limit or drift > .002 or jaw.min() < result.get('open_limit',-.55)-.01 or jaw.max() > .03 or np.ptp(jaw) > .02:
                 continue
             windows.append({'start_s': window[0]['step']/60, 'end_s': window[-1]['step']/60,
                 'hold_seconds': (window[-1]['step']-window[0]['step'])/60,

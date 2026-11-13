@@ -7,7 +7,7 @@ import numpy as np
 import warp as wp
 from scipy.spatial.transform import Rotation
 from check_native_clip import penetrating_triangles
-from gpu_contact_checks import boxes, GeometryChecks
+from gpu_contact_checks import boxes, plane_points, plane_boxes, rigid_boxes, GeometryChecks
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from pouch_geometry import open_pouch
@@ -72,6 +72,7 @@ class GPUChecksTest(unittest.TestCase):
         state.particle_q.assign(points)
         checks.check(state, 1)
         self.assertEqual(checks.self_counts.numpy()[1], 0)
+        np.testing.assert_array_equal(checks.checked_counts.numpy(),[1,1])
 
     def test_real_folded_pouch_initialization_has_no_strict_crossing(self):
         q, faces, _ = open_pouch(nx=80, ny=64, mouth_half_gap=.0003, foldable_mouth=True)
@@ -79,6 +80,51 @@ class GPUChecksTest(unittest.TestCase):
         state, checks = self.checker(initial, faces, 1)
         checks.check(state, 0)
         self.assertEqual(checks.self_counts.numpy()[0], 0)
+
+    def test_plane_vertex_crossing_and_boundary_tolerance(self):
+        points = wp.array([[0, 0, -.001], [0, 0, -.5e-7], [0, 0, .001]], dtype=wp.vec3, device=self.device)
+        counts = wp.zeros(1, dtype=int, device=self.device)
+        wp.launch(plane_points, dim=3, inputs=[points, 0, counts], device=self.device)
+        self.assertEqual(counts.numpy()[0], 1)
+
+    def test_rotated_box_plane_corners(self):
+        quat = Rotation.from_euler('y', np.pi/4).as_quat()
+        local = wp.array([[0, 0, 0, 0, 0, 0, 1]], dtype=wp.transform, device=self.device)
+        owners = wp.array([0], dtype=int, device=self.device)
+        half = wp.array([[.1, .1, .1]], dtype=wp.vec3, device=self.device)
+        ids = wp.array([0], dtype=int, device=self.device)
+        counts = wp.zeros(3, dtype=int, device=self.device)
+        for slot, height in enumerate((.1, .2, np.sqrt(.02))):
+            body = wp.array([np.r_[[0, 0, height], quat]], dtype=wp.transform, device=self.device)
+            wp.launch(plane_boxes, dim=8, inputs=[body, owners, local, half, ids, slot, counts], device=self.device)
+        np.testing.assert_array_equal(counts.numpy(), [2, 0, 0])
+
+    def test_clip_handles_overlap_at_old_opening_but_not_revised_opening(self):
+        owners=wp.array([0,0,1,1],dtype=int,device=self.device)
+        local=wp.array([[.022,0,-.004,0,0,0,1],[-.018,0,-.008,0,0,0,1],
+                        [.022,0,.004,0,0,0,1],[-.018,0,.008,0,0,0,1]],dtype=wp.transform,device=self.device)
+        scale=wp.array([[.022,.05,.003],[.018,.012,.003]]*2,dtype=wp.vec3,device=self.device)
+        pairs=wp.array([[0,2],[0,3],[1,2],[1,3]],dtype=wp.vec2i,device=self.device)
+        counts=wp.zeros(3,dtype=int,device=self.device);flags=wp.zeros(4,dtype=int,device=self.device)
+        for slot,angle in enumerate((-.55,-.27,0.)):
+            body=wp.array([[0,0,0,0,0,0,1],np.r_[[0,0,0],Rotation.from_euler('y',angle).as_quat()]],
+                          dtype=wp.transform,device=self.device)
+            wp.launch(rigid_boxes,dim=4,inputs=[body,owners,local,scale,pairs,slot,counts,flags],device=self.device)
+        values=counts.numpy()
+        self.assertGreater(values[0],0)
+        np.testing.assert_array_equal(values[1:],[0,0])
+
+    def test_rigid_box_rotated_overlap_and_boundary(self):
+        owners=wp.array([0,1],dtype=int,device=self.device)
+        local=wp.array([[0,0,0,0,0,0,1]]*2,dtype=wp.transform,device=self.device)
+        scale=wp.array([[.1,.05,.01]]*2,dtype=wp.vec3,device=self.device)
+        pairs=wp.array([[0,1]],dtype=wp.vec2i,device=self.device)
+        counts=wp.zeros(3,dtype=int,device=self.device);flags=wp.zeros(1,dtype=int,device=self.device)
+        quat=Rotation.from_euler('z',np.pi/2).as_quat()
+        for slot,x in enumerate((.14,.15,.4)):
+            body=wp.array([[0,0,0,0,0,0,1],np.r_[[x,0,0],quat]],dtype=wp.transform,device=self.device)
+            wp.launch(rigid_boxes,dim=1,inputs=[body,owners,local,scale,pairs,slot,counts,flags],device=self.device)
+        np.testing.assert_array_equal(counts.numpy(),[1,0,0])
 
 
 if __name__ == '__main__':

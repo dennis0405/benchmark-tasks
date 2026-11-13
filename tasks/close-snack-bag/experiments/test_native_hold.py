@@ -7,7 +7,9 @@ from verify_native_hold import evaluate
 class HoldGateTest(unittest.TestCase):
     def example(self):
         result = {'all_finite': True, 'substeps': 10, 'geometry': {'states_checked': 1811,
-                  'clip_intrusion_states': 0, 'self_crossing_states': 0}}
+                  'checks_per_state_min':1,'checks_per_state_max':1,
+                  'clip_intrusion_states': 0, 'self_crossing_states': 0, 'ground_intrusion_states': 0,
+                  'clip_self_intrusion_states':0}}
         shapes = {'shape_body': [0, 1], 'shape_local': [[.022, 0, -.004], [.022, 0, .004]],
                   'shape_scale': [[.022, .05, .003]]*2}
         trace = [{'step': i+1, 'shape_fold_contacts': {str(j): {'active_fold_contacts': 5,
@@ -27,7 +29,7 @@ class HoldGateTest(unittest.TestCase):
         self.assertFalse(evaluate(result, trace, shapes)['passed'])
 
     def test_missing_jaw_contact_slip_and_joint_limit_each_reject(self):
-        for change in ('contact', 'slip', 'joint', 'self_crossing'):
+        for change in ('contact', 'slip', 'joint', 'self_crossing', 'ground', 'clip_self'):
             result, trace, shapes = deepcopy(self.example())
             if change == 'contact':
                 trace[90]['shape_fold_contacts']['1']['active_fold_contacts'] = 0
@@ -35,10 +37,31 @@ class HoldGateTest(unittest.TestCase):
                 trace[90]['fold_centroid_clip_local_m'][0] += .01
             elif change == 'joint':
                 trace[90]['jaw_angle_rad'] = .5
-            else:
+            elif change == 'self_crossing':
                 result['geometry']['self_crossing_states'] = 1
+            elif change == 'ground':
+                result['geometry']['ground_intrusion_states'] = 1
+            else:
+                result['geometry']['clip_self_intrusion_states'] = 1
             with self.subTest(change=change):
                 self.assertFalse(evaluate(result, trace, shapes)['passed'])
+
+    def test_nonfinite_rigid_measurements_reject(self):
+        for field in ('jaw_angle_rad', 'fold_centroid_clip_local_m', 'clip_root_pose'):
+            result, trace, shapes = deepcopy(self.example())
+            if field == 'jaw_angle_rad':
+                trace[90][field] = float('nan')
+            else:
+                trace[90][field][0] = float('nan')
+            with self.subTest(field=field):
+                self.assertFalse(evaluate(result, trace, shapes)['passed'])
+
+    def test_unchecked_or_duplicate_physics_states_reject(self):
+        for field,value in (('checks_per_state_min',0),('checks_per_state_max',2)):
+            result,trace,shapes=deepcopy(self.example())
+            result['geometry'][field]=value
+            with self.subTest(field=field):
+                self.assertFalse(evaluate(result,trace,shapes)['passed'])
 
 
 if __name__ == '__main__':

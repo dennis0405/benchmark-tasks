@@ -23,11 +23,26 @@ p.add_argument("--seconds",type=float,default=3);p.add_argument("--self-contact"
 p.add_argument("--verify-every-step",action="store_true")
 p.add_argument("--record-every",type=int,default=15)
 p.add_argument("--substeps",type=int,default=10)
+p.add_argument("--iterations",type=int,help="VBD iterations per physics step")
+p.add_argument("--collision-refresh",type=int,default=0,help="Owned contact detection every N iterations; -1 before/after initialization; zero historical external detection")
+p.add_argument("--rigid-soft-dat",action="store_true",help="Truncate rigid/film motion against detected division planes; needs owned collision refresh")
 p.add_argument("--clip-offset",type=float,nargs=3,default=(0.,0.,0.))
+p.add_argument("--initial-open-angle",type=float,default=-.55)
+p.add_argument("--open-limit",type=float,default=-.55)
+p.add_argument("--mouth-drop",type=float,default=0.,help="Resting pouch neck descends over x=120..140 mm, metres")
 p.add_argument("--spring-damping",type=float,default=.003)
+p.add_argument("--contact-stiffness",type=float,default=1e4)
+p.add_argument("--rigid-contact-stiffness",type=float,help="Override all rigid shape contact stiffness, including ground")
+p.add_argument("--clip-contact-margin",type=float,default=0.,help="Conservative numerical clip contact skin, metres; geometry checks still use actual box surfaces")
+p.add_argument("--ground-contact-margin",type=float,default=0.,help="Conservative numerical plane skin, metres; geometry checks still use z=0")
+p.add_argument("--stop-on-geometry-error",action="store_true",help="Save the first failing physics state and reject early")
+p.add_argument("--cuda-graph",action="store_true",help="Capture a control frame; retain checks at every physics step")
 a=p.parse_args()
 if a.seconds<=0 and not a.prepare_only:p.error("positive duration required")
 if a.substeps<1 or a.record_every<1:p.error("substeps and record-every must be positive")
+if a.rigid_soft_dat and a.collision_refresh==0:p.error("rigid-soft-dat requires owned collision refresh")
+if a.cuda_graph and (not a.verify_every_step or a.substeps%2 or a.stop_on_geometry_error or not a.device.startswith('cuda')):
+    p.error("cuda-graph requires CUDA, even substeps, verify-every-step, and no stop-on-geometry-error")
 a.output.mkdir(parents=True,exist_ok=False)
 source_dir=a.output/"sources";source_dir.mkdir()
 for name in (Path(__file__),Path(__file__).with_name("gpu_contact_checks.py"),
@@ -37,12 +52,17 @@ for name in (Path(__file__),Path(__file__).with_name("gpu_contact_checks.py"),
 (a.output/"arguments.json").write_text(json.dumps(vars(a),default=str,indent=2))
 wp.init();wp.set_device(a.device)
 q,f,g=open_pouch(nx=a.nx,ny=a.ny,mouth_half_gap=.0003,foldable_mouth=True)
+undeformed_neck=q.copy()
+neck_t=np.clip((q[:,0]-.12)/.02,0.,1.)
+neck_drop=a.mouth_drop*(neck_t*neck_t*(3.-2.*neck_t))
+q[:,2]-=neck_drop
 coeff=FilmMaterial().coefficients(min(.20/a.nx,.16/a.ny))
 if a.material_profile=="legacy":coeff.update(areal_density=.08,tri_ke=1e4,tri_ka=1e4,edge_ke=3.,yield_angle=.45)
 if a.yield_angle is not None:coeff["yield_angle"]=a.yield_angle
 b=newton.ModelBuilder()
 if a.clip:b.default_shape_cfg.gap=.0005
 b.add_ground_plane()
+b.shape_margin[0]=a.ground_contact_margin
 b.add_cloth_mesh(scale=1.0,pos=wp.vec3(0,0,.025),rot=wp.quat_identity(),vel=wp.vec3(0),
     vertices=[wp.vec3(*map(float,x)) for x in q],indices=f.ravel().tolist(),density=coeff["areal_density"],
     tri_ke=coeff["tri_ke"],tri_ka=coeff["tri_ka"],tri_kd=.01,edge_ke=coeff["edge_ke"],edge_kd=.0001,particle_radius=.0001)
@@ -52,34 +72,55 @@ if a.clip:
     clip_pos=np.array([.184,0,.0252])+a.clip_offset
     b.add_usd(str(asset),floating=True,xform=wp.transform(wp.vec3(*clip_pos),wp.quat(0,0,1,0)),
               override_root_xform=True)
+    for sid,owner in enumerate(b.shape_body):
+        if owner>=0:b.shape_margin[sid]=a.clip_contact_margin
     hinge=next(i for i,label in enumerate(b.joint_label) if label.endswith("clip_hinge"))
     dof=b.joint_qd_start[hinge]
+    b.joint_limit_lower[dof]=a.open_limit
     b.joint_target_q[b.joint_q_start[hinge]]=0.
     b.joint_target_ke[dof]=.13
     b.joint_target_kd[dof]=a.spring_damping
     b.joint_target_mode[dof]=newton.JointTargetMode.POSITION
     clip_root,clip_upper=b.joint_parent[hinge],b.joint_child[hinge]
+if a.rigid_contact_stiffness is not None:
+    b.shape_material_ke[:]=[a.rigid_contact_stiffness]*len(b.shape_material_ke)
 b.color(include_bending=True)
-m=b.finalize(device=a.device);m.soft_contact_ke=1e4;m.soft_contact_kd=.01;m.soft_contact_mu=.3
-solver=newton.solvers.SolverVBD(m,iterations=50 if a.clip else 20,rigid_body_particle_contact_buffer_size=16384 if a.clip else 256,rigid_compliant_alm=True,particle_enable_self_contact=bool(a.self_contact),
+m=b.finalize(device=a.device);m.soft_contact_ke=a.contact_stiffness;m.soft_contact_kd=.01;m.soft_contact_mu=.3
+pipeline_args={"soft_contact_gap":.0005} if a.clip else {}
+if a.collision_refresh!=0:pipeline_args['contact_matching']='latest'
+pipeline=newton.CollisionPipeline(m,enable_rigid_soft_full_surface_contact=a.clip,**pipeline_args)
+owned={}
+if a.collision_refresh!=0:
+    Slot=newton.solvers.SolverBase.CollisionSlot
+    Frequency=newton.solvers.SolverBase.CollisionFrequencyType
+    detection_type=Frequency.PRE_POST_INIT if a.collision_refresh<0 else Frequency.ITERATIONS
+    detection_frequency=max(1,a.collision_refresh)
+    frequencies={Slot.RIGID:detection_frequency};frequency_types={Slot.RIGID:detection_type}
+    if a.rigid_soft_dat:
+        frequencies[Slot.SOFT_SELF_CONTACT]=detection_frequency
+        frequency_types[Slot.SOFT_SELF_CONTACT]=detection_type
+    owned=dict(collision_pipeline=pipeline,collision_frequency=frequencies,
+        collision_frequency_type=frequency_types,rigid_soft_enable_dat=a.rigid_soft_dat)
+iterations=a.iterations if a.iterations is not None else (50 if a.clip else 20)
+solver=newton.solvers.SolverVBD(m,iterations=iterations,rigid_body_particle_contact_buffer_size=16384 if a.clip else 256,rigid_compliant_alm=True,particle_enable_self_contact=bool(a.self_contact),
     particle_self_contact_margin=.001,particle_self_contact_gap=.0005,
     particle_topological_contact_filter_threshold=2,particle_rest_shape_contact_exclusion_radius=0.,
-    particle_vertex_contact_buffer_size=64,particle_edge_contact_buffer_size=128)
+    particle_vertex_contact_buffer_size=64,particle_edge_contact_buffer_size=128,**owned)
 s0,s1=m.state(),m.state();ctrl=m.control()
 if a.clip:
     # Preserve authored rest poses for the solver. Open only the episode state.
     initial_joints=m.joint_q.numpy().copy()
-    initial_joints[b.joint_q_start[hinge]]=-.55
+    initial_joints[b.joint_q_start[hinge]]=a.initial_open_angle
     initial_joints_wp=wp.array(initial_joints,dtype=wp.float32,device=a.device)
     for state in (s0,s1):
         if state.joint_q is not None:state.joint_q.assign(initial_joints)
         newton.eval_fk(m,initial_joints_wp,m.joint_qd,state)
 if a.folded:
     from bag_surface_mesh import folded_positions
-    initial=folded_positions(q+np.array([0.,0.,.019]),radius=.0018)-[0.,0.,.019]+[0.,0.,.025]
+    initial=folded_positions(undeformed_neck+np.array([0.,0.,.019]),radius=.0018)-[0.,0.,.019]+[0.,0.,.025]
+    initial[:,2]-=neck_drop
     s0.particle_q.assign(initial.astype(np.float32));s1.particle_q.assign(initial.astype(np.float32))
-pipeline=newton.CollisionPipeline(m,enable_rigid_soft_full_surface_contact=a.clip,
-    **({"soft_contact_gap":.0005} if a.clip else {}));contacts=pipeline.contacts()
+contacts=solver.contacts if owned else pipeline.contacts()
 observables=solver.observables({"contact_f"},contacts=contacts) if a.clip else None
 edges=m.edge_indices.numpy();valid=np.all(edges>=0,axis=1)
 mid=q[np.maximum(edges,0)].mean(axis=1)
@@ -95,6 +136,8 @@ if a.clip:
     (a.output/"clip-shapes.json").write_text(json.dumps({"body_labels":list(m.body_label),
         "shape_body":m.shape_body.numpy().tolist(),"shape_local":m.shape_transform.numpy().tolist(),
         "shape_scale":m.shape_scale.numpy().tolist(),"shape_type":m.shape_type.numpy().tolist(),
+        "shape_margin":m.shape_margin.numpy().tolist(),
+        "shape_contact_stiffness":m.shape_material_ke.numpy().tolist(),
         "root":clip_root,"upper":clip_upper},indent=2))
 if a.clip:
     from check_native_clip import inspect_state
@@ -112,19 +155,55 @@ started=time.monotonic();dt=1/(60*a.substeps)
 geometry=None
 if a.verify_every_step:
     from gpu_contact_checks import GeometryChecks
-    geometry=GeometryChecks(m,(s0,s1),f,round(a.seconds*60)*a.substeps+1)
+    geometry=GeometryChecks(m,(s0,s1),f,(a.substeps if a.cuda_graph else round(a.seconds*60)*a.substeps)+1,ground_plane=True)
     geometry.check(s0,0)
 physics_step=0
 fold_ids=np.flatnonzero(q[:,0]>=.16)
+def advance_substep(slot):
+    global s0,s1
+    s0.clear_forces()
+    if not owned:pipeline.collide(s0,contacts)
+    solver.step(s0,s1,ctrl,None if owned else contacts,dt,observables=observables)
+    wp.launch(_crease_kernel,dim=len(rows),inputs=[rows_wp,m.edge_indices,params,dt,s1.particle_q],
+              outputs=[m.edge_rest_angle],device=a.device)
+    s0,s1=s1,s0
+    if geometry:geometry.check(s0,slot)
+
+buffers={} if geometry is None else dict(clip=geometry.box_counts,self=geometry.self_counts,
+    ground=geometry.ground_counts,clip_self=geometry.rigid_counts,checked=geometry.checked_counts)
+history={}
+graph=None
+if a.cuda_graph:
+    history={name:[int(buffer.numpy()[0])] for name,buffer in buffers.items()}
+    # Same even-substep state-buffer pattern as Newton's official cloth example.
+    # Each graph replay writes a fresh per-frame ring; CPU concatenation preserves
+    # one independent geometry record for every physics state, including reset.
+    with wp.ScopedCapture() as capture:
+        for buffer in buffers.values():buffer.zero_()
+        for substep in range(a.substeps):advance_substep(substep+1)
+    graph=capture.graph
+
 for frame in range(round(a.seconds*60)):
-    for _ in range(a.substeps):
-        s0.clear_forces();pipeline.collide(s0,contacts)
-        solver.step(s0,s1,ctrl,contacts,dt,observables=observables)
-        wp.launch(_crease_kernel,dim=len(rows),inputs=[rows_wp,m.edge_indices,params,dt,s1.particle_q],
-                  outputs=[m.edge_rest_angle],device=a.device)
-        s0,s1=s1,s0
+    if graph:
+        wp.capture_launch(graph)
+        physics_step+=a.substeps
+        for name,buffer in buffers.items():history[name].extend(buffer.numpy()[1:a.substeps+1].tolist())
+    for _ in range(0 if graph else a.substeps):
+        advance_substep(physics_step+1)
         physics_step+=1
-        if geometry:geometry.check(s0,physics_step)
+        if geometry and a.stop_on_geometry_error:
+            failed_box=int(geometry.box_counts.numpy()[physics_step])
+            failed_self=int(geometry.self_counts.numpy()[physics_step])
+            failed_ground=int(geometry.ground_counts.numpy()[physics_step])
+            failed_rigid=int(geometry.rigid_counts.numpy()[physics_step])
+            if failed_box or failed_self or failed_ground or failed_rigid:
+                np.savez_compressed(a.output/'failure-state.npz',q=s0.particle_q.numpy(),
+                    bodies=s0.body_q.numpy(),faces=f,box_flags=geometry.box_flags.numpy(),
+                    self_flags=geometry.self_flags.numpy(),rigid_flags=geometry.rigid_flags.numpy())
+                (a.output/'failure.json').write_text(json.dumps({'physics_step':physics_step,
+                    'time_s':physics_step*dt,'box_intrusions':failed_box,'self_crossings':failed_self,
+                    'ground_intrusions':failed_ground,'clip_self_intrusions':failed_rigid},indent=2))
+                raise RuntimeError('Rejected: first geometry violation saved in failure-state.npz')
     measured=s0.particle_q.numpy().astype(float)
     gap=layer_gap(measured,entity)
     trace.append({"step":frame+1,"finite":bool(np.isfinite(measured).all()),
@@ -133,6 +212,7 @@ for frame in range(round(a.seconds*60)):
     if a.clip:
         from scipy.spatial.transform import Rotation
         body=s0.body_q.numpy()
+        trace[-1]['finite']=bool(trace[-1]['finite'] and np.isfinite(body).all())
         jaw=(Rotation.from_quat(body[clip_root,3:]).inv()*Rotation.from_quat(body[clip_upper,3:])).as_rotvec()[1]
         n=min(int(contacts.soft_contact_count.numpy()[0]),contacts.soft_contact_max)
         ids=contacts.soft_contact_shape.numpy()[:n]
@@ -162,8 +242,8 @@ for frame in range(round(a.seconds*60)):
         if a.clip:snapshots[f"b_{frame+1:05d}"]=body.copy()
     if frame%30==0:
         if geometry:
-            trace[-1]["geometry_violations_so_far"]={"clip":int(np.count_nonzero(geometry.box_counts.numpy()[:physics_step+1])),
-                "self":int(np.count_nonzero(geometry.self_counts.numpy()[:physics_step+1]))}
+            trace[-1]["geometry_violations_so_far"]={name:int(np.count_nonzero(history[name] if graph else buffer.numpy()[:physics_step+1]))
+                for name,buffer in buffers.items() if name!='checked'}
             (a.output/"progress.json").write_text(json.dumps(trace[-1],indent=2))
         print("PROGRESS",frame+1,trace[-1],flush=True)
 rest_final=m.edge_rest_angle.numpy()
@@ -174,13 +254,26 @@ result={"residual_rest_angle_max_rad":float(crease_delta.max()),"residual_rest_a
   "all_finite":all(x["finite"] for x in trace),"mouth":mouth_opening(measured,entity),
   "clip":a.clip,"limitation":"homogeneous equivalent and uniform hinge width are assumptions; optional clip starts open around fold; no insertion, air, food or robot"}
 result.update(substeps=a.substeps,physics_dt_s=dt,clip_offset_m=a.clip_offset,record_every=a.record_every,
-    spring_damping=a.spring_damping)
+    spring_damping=a.spring_damping,soft_contact_stiffness=a.contact_stiffness,
+    clip_contact_margin_m=a.clip_contact_margin,rigid_contact_stiffness=a.rigid_contact_stiffness,iterations=iterations,
+    collision_refresh=a.collision_refresh,rigid_soft_dat=a.rigid_soft_dat)
+result.update(initial_open_angle=a.initial_open_angle,open_limit=a.open_limit,mouth_drop_m=a.mouth_drop)
+result['ground_contact_margin_m']=a.ground_contact_margin
+result['cuda_graph']=a.cuda_graph
 if geometry:
-    box_counts,self_counts=geometry.box_counts.numpy(),geometry.self_counts.numpy()
-    np.savez_compressed(a.output/"geometry-counts.npz",clip_intrusions=box_counts,self_crossings=self_counts)
-    result["geometry"]={"states_checked":len(box_counts),"clip_intrusion_states":int(np.count_nonzero(box_counts)),
+    values={name:np.asarray(history[name]) if graph else buffer.numpy() for name,buffer in buffers.items()}
+    box_counts,self_counts=values['clip'],values['self']
+    ground_counts,rigid_counts=values['ground'],values['clip_self']
+    np.savez_compressed(a.output/"geometry-counts.npz",clip_intrusions=box_counts,self_crossings=self_counts,
+        ground_intrusions=ground_counts,clip_self_intrusions=rigid_counts,checks_per_state=values['checked'])
+    result["geometry"]={"states_checked":int(np.count_nonzero(values['checked'])),
+        "checks_per_state_min":int(values['checked'].min()),"checks_per_state_max":int(values['checked'].max()),
+        "clip_intrusion_states":int(np.count_nonzero(box_counts)),
         "clip_intrusion_max":int(box_counts.max()),"self_crossing_states":int(np.count_nonzero(self_counts)),
-        "self_crossing_max":int(self_counts.max()),"scope":"triangle/box interiors with 0.1um tolerance; strict transverse self crossings; excludes coplanar overlap and inter-step motion"}
+        "self_crossing_max":int(self_counts.max()),"ground_intrusion_states":int(np.count_nonzero(ground_counts)),
+        "ground_intrusion_max":int(ground_counts.max()),
+        "clip_self_intrusion_states":int(np.count_nonzero(rigid_counts)),"clip_self_intrusion_max":int(rigid_counts.max()),
+        "scope":"triangle/box interiors and z=0 plane with 0.1um tolerance; strict transverse self crossings; excludes coplanar overlap and inter-step motion"}
 (a.output/"result.json").write_text(json.dumps(result,indent=2))
 (a.output/"trace.json").write_text(json.dumps(trace))
 np.savez_compressed(a.output/"pouch-snapshots.npz",faces=f,edges=edges,rest_initial=rest_initial,rest_final=rest_final,**snapshots)

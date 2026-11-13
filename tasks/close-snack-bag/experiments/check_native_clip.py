@@ -2,6 +2,7 @@
 import json,sys
 from pathlib import Path
 import numpy as np
+from itertools import product
 from scipy.spatial.transform import Rotation
 
 def penetrating_triangles(q,faces,half,tolerance=1e-7):
@@ -38,6 +39,18 @@ def inspect_state(q,faces,body,shape):
         hits=penetrating_triangles((q-pos)@rot,faces,half)
         boxes.append({"shape":i,"body":owner,"penetrating_triangles":len(hits)})
     return boxes
+
+def ground_clearance(q,body,shape):
+    """Minimum height of nominal mesh vertices / rigid box corners above z=0."""
+    corners=np.asarray(list(product((-1.,1.),repeat=3)))
+    boxes=[]
+    for sid,(owner,local,half) in enumerate(zip(shape['shape_body'],shape['shape_local'],shape['shape_scale'])):
+        if owner<0:continue
+        local_points=Rotation.from_quat(local[3:]).apply(corners*np.asarray(half))+local[:3]
+        world=Rotation.from_quat(body[owner,3:]).apply(local_points)+body[owner,:3]
+        boxes.append({'shape':sid,'min_z_m':float(world[:,2].min())})
+    return {'film_min_z_m':float(np.min(q[:,2])),'boxes':boxes,
+        'intrusion':bool(np.min(q[:,2]) < -1e-7 or any(row['min_z_m'] < -1e-7 for row in boxes))}
 
 if __name__=="__main__":
     sanity();folder=Path(sys.argv[1]);data=np.load(folder/"pouch-snapshots.npz")
