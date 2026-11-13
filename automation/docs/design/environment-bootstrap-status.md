@@ -37,6 +37,46 @@ stop·재설치·GPU 시험·프로세스 종료를 수행하지 않았다.
 | 검색 표시 가격 | 약 $2.18/hour. 실제 청구/할당 디스크와 별도 구분 |
 | 최초 관측 상태 | DEPLOYING / PENDING / SHELL NOT READY |
 
+후속 관측: SSH 준비 전에 `FAILURE`로 전환했다. 생성 명령은
+`internal server error`로 종료했고 `brev stop robocurve-automation`도
+`Internal Server Error`를 반환했다. 이 인스턴스를 정상 실행/정상 stop으로
+기록하지 않는다. 데이터 업로드·패키지 설치·로그인은 수행하지 않았다.
+
+## AWS 대체 환경
+
+동일 작업의 fallback으로 다음 전용 인스턴스를 요청했다.
+
+```sh
+brev create robocurve-automation-aws --type g6e.2xlarge --provider aws --stoppable --min-disk 200 --jupyter=false --timeout 600
+```
+
+검색 사양은 L40S 48GB 1개·8 vCPU·RAM 64GiB, 표시 가격은 약 $2.69/hour다.
+생성 접수와 SSH/런타임 준비 완료를 구분한다. 이 대체 시도가 실패하면 추가
+provider를 계속 생성하지 않고 원인을 확인한다.
+
+후속 관측: AWS는 RUNNING/COMPLETED/READY가 됐고 Brev 관리 SSH alias로
+접속했다. L40S·driver 595.112.07·Python 3.10.12·Docker 접근을 확인했다.
+실제 root는 117GiB이며 별도 412GiB ephemeral mount도 보였다. 요청한 min-disk
+조건을 실제 영속 디스크 200GiB로 검증한 것은 아니다. 패키지 설치·Codex 로그인·
+Isaac Sim 실행은 아직 수행하지 않았다.
+
+사용자 지적 후 기존 Crusoe `l40s-48gb.1x` 생성 페이지를 직접 확인했다.
+UI에는 L40S 48GB·8 CPU·RAM 147GB·256GiB와 stop/start 지원이 명시됐고,
+총 $1.77/hr, stop 중 storage $0.03/hr로 표시됐다. 현재 CLI 검색에서 이 사양이
+누락돼도 생성 불가/stop 미지원으로 판단하면 안 된다. 실제 새 할당은 아직 하지 않았다.
+[확인한 생성 설정](https://brev.nvidia.com/environment/new?gpu=L40S&instanceType=l40s-48gb.1x&storage=256&location=any).
+
+AWS의 추가 환경 작업을 멈추고 stop을 요청했으며 최초 확인은 STOPPING이다.
+기존 과자봉지 실험 인스턴스는 중지하지 않았다. 기존 사양으로 신규 생성하는
+동작도 아직 수행하지 않았다.
+
+## GitHub 보존
+
+기존 task checkout을 전환하지 않고 별도 임시 checkout에서
+`automation/bootstrap` 브랜치를 만들었다. 설계·미착수 계획·이 준비 기록을
+fork origin에 push했다. 대회 PR이나 미디어 업로드는 수행하지 않았다.
+[보존 브랜치](https://github.com/dennis0405/benchmark-tasks/tree/automation/bootstrap).
+
 생성에 사용한 실제 명령:
 
 ```sh
