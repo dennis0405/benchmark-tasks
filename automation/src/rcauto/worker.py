@@ -24,13 +24,22 @@ def main():
     try:
         with store.lock("gpu-worker"):
             store.register(run)
-            write_json(status, {"status": "working", "pid": os.getpid(), "at": now()})
-            pipeline = Production(
-                store,
-                run["id"],
-                Agent(model=config.get("model"), timeout=config.get("agent_timeout", 1800)),
-                config,
+            write_json(
+                Path(config["remote_root"]) / "worker-owner.json",
+                {"run": run["id"], "pid": os.getpid(), "at": now()},
             )
+            write_json(status, {"status": "working", "pid": os.getpid(), "at": now()})
+            if run.get("mode") == "selftest":
+                from .selftest import FixtureAgent, FixtureProduction
+
+                pipeline = FixtureProduction(store, run["id"], FixtureAgent(), config)
+            else:
+                pipeline = Production(
+                    store,
+                    run["id"],
+                    Agent(model=config.get("model"), timeout=config.get("agent_timeout", 1800)),
+                    config,
+                )
             pipeline.run(from_stage=job.get("from_stage"))
     except BaseException as e:
         logging.getLogger(__name__).exception("worker/evaluation terminated")
@@ -41,6 +50,9 @@ def main():
             store.update(run["id"], status="blocked", error=str(e))
     finally:
         store.backup(root / "snapshot")
+        owner = Path(config["remote_root"]) / "worker-owner.json"
+        if owner.exists() and json.loads(owner.read_text()).get("run") == run["id"]:
+            owner.unlink()
 
 
 if __name__ == "__main__":

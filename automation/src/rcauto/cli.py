@@ -60,18 +60,32 @@ def parser():
         "evaluate", help="perform the reserved final Dream episode after production is complete"
     )
     evaluate.add_argument("run")
+    finalize = sub.add_parser(
+        "finalize",
+        help="recover final novelty/report/fork preservation without GPU or reevaluation",
+    )
+    finalize.add_argument("run")
     auth = sub.add_parser("auth", help="enter credentials locally; never paste them into chat")
     auth.add_argument("service", choices=["board", "dream"])
-    auth.add_argument("--provider-cap-confirmed", action="store_true")
     doctor = sub.add_parser(
         "doctor", help="check tools/auth; --remote tests the dedicated instance and stops it"
     )
     doctor.add_argument("--remote", action="store_true")
     doctor.add_argument("--agent", action="store_true")
+    doctor.add_argument(
+        "--sim",
+        action="store_true",
+        help="run upstream scripted YAM baseline, not a new task or Dream",
+    )
     sub.add_parser(
         "catalog-sync", help="sync all PR metadata and active task revisions without GPU"
     )
-    sub.add_parser("selftest", help="offline fixture run; cannot evaluate or submit")
+    selftest = sub.add_parser("selftest", help="fixture run; cannot evaluate or submit")
+    selftest.add_argument(
+        "--remote",
+        action="store_true",
+        help="exercise real Brev/SSH/detached worker/stop with synthetic fixtures",
+    )
     receipt = sub.add_parser(
         "receipt", help="read actual PR comments; PR creation is not contest acceptance"
     )
@@ -104,11 +118,26 @@ def dispatch(args, store, config):
         run = store.get(args.run)
         if run.get("mode") == "selftest":
             raise StateError("selftest cannot resume as production")
-        if store.effect(args.run, "dream"):
-            raise StateError(
-                "final Dream already attempted; use reconcile, never auto-regenerate or reevaluate"
-            )
+        if (
+            store.effect(args.run, "dream")
+            and not args.request
+            and not args.from_stage
+            and not run.get("resume_from_stage")
+        ):
+            return coordinator.finalize(args.run)
         root = store.run_dir(args.run)
+        if args.request or args.from_stage:
+            store.update(
+                args.run,
+                revision=run.get("revision", 0) + 1,
+                revision_request=args.request,
+                approval=None,
+            )
+            store.update(
+                args.run,
+                resume_from_stage=args.from_stage
+                or ("environment" if store.effect(args.run, "dream") else "research"),
+            )
         if args.request:
             (root / "revision-request.txt").write_text(args.request)
         if (root / "cancel-requested.json").exists():
@@ -118,7 +147,7 @@ def dispatch(args, store, config):
             store,
             coordinator,
             args.run,
-            args.from_stage or ("research" if args.request else None),
+            args.from_stage or store.get(args.run).get("resume_from_stage"),
         )
     if cmd == "stop":
         run = store.get(args.run)
@@ -161,15 +190,27 @@ def dispatch(args, store, config):
         with store.lock("instance-" + config["instance_id"]):
             coordinator.brev.start()
             try:
+                coordinator.brev.deploy(ROOT)
                 coordinator.evaluate(args.run)
-                coordinator.fresh_novelty(args.run)
-                coordinator.report(args.run, "awaiting-review")
+                coordinator.report(args.run, "final-novelty-pending")
                 Publisher(store, config).checkpoint(args.run)
-                store.update(args.run, status="awaiting-review")
             finally:
-                coordinator.brev.stop()
-                store.update(args.run, compute="stopped")
-        return store.get(args.run)
+                import shlex
+
+                busy = coordinator.brev.ssh(
+                    "flock -n "
+                    + shlex.quote(config["remote_root"] + "/worker-state/gpu-reservation.lock")
+                    + " true || echo BUSY"
+                )
+                if "BUSY" in busy:
+                    store.update(args.run, compute="running-evaluation-needs-reconciliation")
+                else:
+                    coordinator.brev.stop()
+                    store.update(args.run, compute="stopped")
+        return coordinator.finalize(args.run)
+    if cmd == "finalize":
+        with store.lock("publish-" + args.run):
+            return coordinator.finalize(args.run)
     if cmd == "auth":
         if args.service == "board":
             team = input("Team code: ").strip()
@@ -183,14 +224,10 @@ def dispatch(args, store, config):
                 result.raise_for_status()
             save(store.root, {"ROBOCURVE_TEAM": team, "ROBOCURVE_TOKEN": token})
         else:
-            if not args.provider_cap_confirmed:
-                raise StateError(
-                    "confirm provider-side cumulative $20 spending cap with --provider-cap-confirmed"
-                )
             key = getpass.getpass("DREAM_API_KEY (hidden, no inference sent): ")
             if not key.strip():
                 raise StateError("empty Dream key")
-            save(store.root, {"DREAM_API_KEY": key.strip(), "DREAM_PROVIDER_CAP_CONFIRMED": "true"})
+            save(store.root, {"DREAM_API_KEY": key.strip()})
         return {"service": args.service, "configured": True, "paid_requests": 0}
     if cmd == "catalog-sync":
         result = coordinator.sync()
@@ -198,6 +235,8 @@ def dispatch(args, store, config):
             "records": len(result["records"])
         }
     if cmd == "doctor":
+        if (args.agent or args.sim) and not args.remote:
+            raise StateError("--agent/--sim require --remote")
         result = {
             "tools": {
                 x: shutil.which(x)
@@ -228,11 +267,38 @@ def dispatch(args, store, config):
                     result["agent"] = b.ssh(
                         shlex.quote(remote_python) + " -c " + shlex.quote(script), timeout=180
                     )
+                remote_python = config["remote_root"] + "/pipeline/.venv/bin/python"
+                import shlex
+
+                result["worker_selftest"] = json.loads(
+                    b.ssh(
+                        shlex.quote(remote_python)
+                        + " -m rcauto.cli --state "
+                        + shlex.quote(config["remote_root"] + "/pipeline-checks/selftest")
+                        + " selftest",
+                        timeout=180,
+                    )
+                )
+                if args.sim:
+                    from .validation import validate_native_baseline
+
+                    result["simulation"] = validate_native_baseline(b, config)
             finally:
                 result["compute"] = b.stop()["status"]
         write_json(store.root / "doctor.json", result)
         return result
     if cmd == "selftest":
+        if args.remote:
+            import copy
+
+            config = copy.deepcopy(config)
+            config["runtime"]["python"] = config["remote_root"] + "/pipeline/.venv/bin/python"
+            config["repair_attempts"] = 0
+            r = store.create(
+                "REMOTE CONTROL-FLOW FIXTURE ONLY", instance=config["instance"], mode="selftest"
+            )
+            Coordinator(store, config, ROOT).produce(r["id"])
+            return store.get(r["id"])
         from .selftest import run
 
         return run(store)
@@ -240,14 +306,9 @@ def dispatch(args, store, config):
         run = store.get(args.run)
         if not run.get("pr"):
             raise StateError("no recorded PR")
-        from .runtime import capture
+        from .receipt import poll
 
-        comments = capture(
-            ["gh", "pr", "view", run["pr"], "--json", "comments,state,labels,mergedAt"]
-        )
-        value = json.loads(comments)
-        write_json(store.run_dir(args.run) / "receipt.json", value)
-        return value
+        return poll(store, args.run, config.get("receipt_authors", []))
     if cmd == "reconcile":
         if args.dream_actual_usd is not None:
             if args.dream_actual_usd < 0 or not args.billing_reference:

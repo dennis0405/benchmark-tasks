@@ -41,6 +41,8 @@ def main():
     parser.add_argument("--job", required=True)
     args = parser.parse_args()
     job = json.loads(Path(args.job).read_text())
+    owner = Path(job["owner_path"])
+    write_json(owner, {"run": job["run"], "kind": "evaluation", "pid": os.getpid(), "at": now()})
     secret = json.load(sys.stdin)
     os.environ["DREAM_API_KEY"] = secret["DREAM_API_KEY"]
     os.environ["DREAM_CREDENTIALS"] = "/dev/null"
@@ -121,6 +123,8 @@ def main():
             },
         )
         os.environ.pop("DREAM_API_KEY", None)
+        if owner.exists() and json.loads(owner.read_text()).get("run") == job["run"]:
+            owner.unlink()
     raise SystemExit(code)
 
 
