@@ -22,7 +22,8 @@ def main():
     parser.add_argument("--plan",action="store_true")
     parser.add_argument("--frames",type=int,default=1000)
     parser.add_argument("--physics-hz",type=int,default=1200)
-    parser.add_argument("--workspace",choices=("original","raised_forward"),default="original")
+    parser.add_argument("--workspace",choices=("original","raised_forward","raised_flat"),default="original")
+    parser.add_argument("--clip-style",choices=("standard","thin_lower"),default="standard")
     parser.add_argument("--carry-root",type=float,nargs=3,default=None)
     args=parser.parse_args()
     args.output.mkdir(parents=True,exist_ok=False)
@@ -33,13 +34,17 @@ def main():
     for name in ("clip_rigid_probe.py","fold_controller.py","clip_controller.py","check_rigid_tool.py",
                  "gpu_contact_checks.py","film_material.py","plan_clip_poses.py","assets/clip_spring_v2.xml","assets/yam_ready_pose.json"):
         shutil.copy2(root/"experiments"/name,sources/Path(name).name)
-    if args.workspace=="raised_forward":
-        name="assets/yam_raised_forward_pose.json"
+    if args.workspace!="original":
+        name=f"assets/yam_{args.workspace}_pose.json"
+        shutil.copy2(root/"experiments"/name,sources/Path(name).name)
+    if args.clip_style=="thin_lower":
+        name="assets/clip_thin_lower.xml"
         shutil.copy2(root/"experiments"/name,sources/Path(name).name)
     (args.output/"arguments.json").write_text(json.dumps(dict(vars(args),hz=20),default=str,indent=2))
     started=time.monotonic()
     sim=make_environment(ready_start=True,with_clip=True,rigid_cpu=args.cpu,
-                         rigid_only=True,control_hz=20,physics_hz=args.physics_hz,workspace=args.workspace)
+                         rigid_only=True,control_hz=20,physics_hz=args.physics_hz,workspace=args.workspace,
+                         clip_style=args.clip_style)
     assert sim.model.particle_count==0
     solver=sim.pipeline.program.solver
     actual=getattr(solver,"rigid",solver)

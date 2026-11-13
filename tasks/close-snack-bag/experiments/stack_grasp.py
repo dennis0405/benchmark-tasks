@@ -67,6 +67,30 @@ def select_stack_grasp(points,grid,faces,board_half_width=.06):
     return best[1] if best else None
 
 
+def select_press_patch(points,grid,faces,y_center,support_front):
+    """Place the 12 x 80 mm pressing pad over the four actual ply groups."""
+    q=np.asarray(points,dtype=float)
+    groups=[q[f] for f in ply_faces(faces,grid)]
+    crease=float(np.median(q[grid[:,34,:],0]))
+    low=max(support_front+.0065,crease-.006)
+    high=max(low,crease+.030)
+    best=None
+    for x in np.linspace(low,high,81):
+        bounds=[(0,x-.006,x+.006),(1,y_center-.04,y_center+.04)]
+        areas=[clipped_surfaces(triangles,bounds,True)[0]*1e6 for triangles in groups]
+        score=(min(areas),sum(areas),-abs(x-crease-.008))
+        if best is None or score>best[0]:best=(score,dict(x=float(x),ply_area_mm2=areas))
+    plan=best[1]
+    plan["kind"]="four-ply projected overlap"
+    if min(plan["ply_area_mm2"])<.5:
+        rim=q[grid[:,-1]].reshape(-1,3)
+        rim=rim[abs(rim[:,1]-y_center)<.04]
+        if len(rim):
+            plan["x"]=float(np.clip(np.median(rim[:,0])+.003,low,high))
+            plan["kind"]="measured upright rim fallback"
+    return plan
+
+
 def captured_plies(c,arm="left"):
     entity=c.sim.scene.by_name["pouch"]
     q=c.sim.state.particle_q.numpy()[entity.particles]

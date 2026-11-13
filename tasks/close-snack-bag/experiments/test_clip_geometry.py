@@ -10,7 +10,13 @@ from gpu_contact_checks import rigid_boxes
 
 class ClipGeometryTests(unittest.TestCase):
     def test_joint_range_has_no_opposing_box_overlap(self):
-        root=ET.parse(Path(__file__).with_name("assets")/"clip_spring_v2.xml").getroot()
+        self.check_asset("clip_spring_v2.xml")
+
+    def test_thin_blade_joint_range_has_no_opposing_box_overlap(self):
+        self.check_asset("clip_thin_lower.xml")
+
+    def check_asset(self,filename):
+        root=ET.parse(Path(__file__).with_name("assets")/filename).getroot()
         lower=root.find("worldbody/body")
         upper=lower.find("body")
         owners,transforms,scales=[],[],[]

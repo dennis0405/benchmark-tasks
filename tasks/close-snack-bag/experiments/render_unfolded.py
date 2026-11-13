@@ -45,7 +45,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("run", type=Path)
     p.add_argument("--stride", type=int, default=4)
-    p.add_argument("--detail",choices=("mouth","clip"),default="mouth")
+    p.add_argument("--detail",choices=("mouth","mouth_side","clip"),default="mouth")
     args = p.parse_args()
     recording_bytes=(args.run/"states.npz").read_bytes()
     trace_bytes=(args.run/"trace.json").read_bytes()
@@ -67,7 +67,7 @@ def main():
         scene.add(pyrender.DirectionalLight(color=(1, 1, 1), intensity=2.5),
                   pose=camera_pose(eye, center))
     renderer = pyrender.OffscreenRenderer(640, 540)
-    film_node = None
+    film_nodes = []
     texture_image=wrapper_texture()
     texture_image.save(args.run/"wrapper-print.png")
     if has_film:
@@ -76,19 +76,32 @@ def main():
                             (q0[:,0].max()-q0[:,0])/np.ptp(q0[:,0])))
     film_material=pyrender.MetallicRoughnessMaterial(baseColorFactor=(1.,1.,1.,1.),
         baseColorTexture=pyrender.Texture(source=np.asarray(texture_image),source_channels="RGB"),
-        metallicFactor=.15,roughnessFactor=.45,doubleSided=True)
+        metallicFactor=.15,roughnessFactor=.45,doubleSided=False)
+    liner_material=pyrender.MetallicRoughnessMaterial(baseColorFactor=(.72,.75,.77,1.),
+        metallicFactor=.45,roughnessFactor=.38,doubleSided=False)
+    validated=False
+    assessment=args.run/"core-assessment.json"
+    if has_film and assessment.exists():
+        report=json.loads(assessment.read_text())
+        validated=(report.get("core_passed") is True and
+                   report.get("states_sha256")==hashlib.sha256(recording_bytes).hexdigest() and
+                   report.get("trace_sha256")==hashlib.sha256(trace_bytes).hexdigest())
     keys = sorted(k for k in data.files if k.startswith("q_" if has_film else "b_") and int(k[2:])<len(trace))[::args.stride]
-    output = args.run / f"{'unfolded-yam' if has_film else 'rigid-clip'}-{args.detail}-diagnostic.mp4"
+    output = args.run / f"{'unfolded-yam' if has_film else 'rigid-clip'}-{args.detail}-{'core-demo' if validated else 'diagnostic'}.mp4"
     writer = imageio.get_writer(str(output), fps=hz/args.stride, codec="libx264",
                                quality=8, ffmpeg_params=["-pix_fmt", "yuv420p", "-movflags", "+faststart"])
     for key in keys:
         step = int(key[2:])
-        if film_node:
-            scene.remove_node(film_node)
+        for node in film_nodes:scene.remove_node(node)
+        film_nodes=[]
         if has_film:
             film = trimesh.Trimesh(vertices=data[key], faces=data["faces"], process=False)
             film.visual=trimesh.visual.texture.TextureVisuals(uv=uv,image=texture_image)
-            film_node = scene.add(pyrender.Mesh.from_trimesh(film, smooth=False,material=film_material))
+            film_nodes.append(scene.add(pyrender.Mesh.from_trimesh(film, smooth=False,material=film_material)))
+            # A separate back-facing draw changes appearance only. The
+            # physics surface remains the single frozen recorded mesh.
+            liner=trimesh.Trimesh(vertices=data[key],faces=data["faces"][:,::-1],process=False)
+            film_nodes.append(scene.add(pyrender.Mesh.from_trimesh(liner,smooth=False,material=liner_material)))
         bodies = data["b_"+key[2:]]
         for part, node in nodes:
             transform = np.array(part["local"])
@@ -97,6 +110,8 @@ def main():
             scene.set_pose(node, transform)
         views=[]
         detail_eye,detail_target=center+[-.10,-.03,.40],center+[-.065,0,0]
+        if args.detail=="mouth_side":
+            detail_eye=center+[.20,-.15,.25]
         if args.detail=="clip":
             detail_target=np.asarray(trace[step]["clip_root_pose"][:3])
             detail_eye=detail_target+[.18,-.25,.20]
@@ -109,9 +124,10 @@ def main():
         canvas[55:595] = np.concatenate(views, axis=1)
         label = trace[step]["phase"]
         title="YAM + UNFOLDED FILM POUCH" if has_film else "YAM + SPRING CLIP | NO FILM"
-        cv2.putText(canvas, title+" | contact-driven diagnostic", (20, 32),
+        cv2.putText(canvas, title+(" | EMPTY-POUCH MECHANICS" if validated else " | contact-driven diagnostic"), (20, 32),
                     cv2.FONT_HERSHEY_SIMPLEX, .8, (30, 40, 50), 1, cv2.LINE_AA)
-        cv2.putText(canvas, f"t={step/hz:.2f}s | phase={label} | recorded physics, 1x playback | not a completed sealing demo",
+        scope="3s hands-free core check PASS; no contents/air" if validated else "not a completed sealing demo"
+        cv2.putText(canvas, f"t={step/hz:.2f}s | phase={label} | recorded physics, 1x playback | {scope}",
                     (20, 625), cv2.FONT_HERSHEY_SIMPLEX, .65, (30, 40, 50), 1, cv2.LINE_AA)
         writer.append_data(canvas)
         if args.stride>=30 or step in (0, 60, 300, 600, 900) or key == keys[-1]:
@@ -125,7 +141,8 @@ def main():
         video_sha256=hashlib.sha256(output.read_bytes()).hexdigest(),
         source_steps=[int(key[2:]) for key in keys], fps=hz/args.stride,detail=args.detail,
         physics_modified=False,position_interpolation=False,
-        wrapper_print="original procedural graphic, fixed UV; no collision effect"),indent=2))
+        core_assessment_verified=validated,
+        wrapper_print="original procedural outer print, fixed UV, silver inner liner; no collision effect"),indent=2))
     print(output)
 
 

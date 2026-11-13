@@ -1,106 +1,150 @@
 # Unfolded pouch research — 2026-11-14
 
-**Work in progress. No completed deformable sealing demonstration yet.**
-`task.py` / `arena_scene.py` still preserve the older rigid Arena task. These
-experiments use the pinned RoboSimStudio + MuJoCo + Newton VBD environment,
-not a verified replacement for the public Isaac/Arena runner.
+**WIP. No completed deformable sealing demonstration or public task score yet.**
+The older rigid Arena implementation remains in `task.py` / `arena_scene.py`.
+These experiments use RoboSimStudio + MuJoCo + Newton VBD; they do not yet
+establish public Isaac/Arena compatibility.
 
-## Verified components and rejected trials
+## Verified results
 
-| Trial | Observed result | Scope |
+| Trial | Observed result | Limit |
 |---|---|---|
-| `unfolded-self-contact-v7b` | 194 frames; 14 selected states without detected strict crossings/BOX intersections | Hands continue holding the fold; selected snapshots only |
-| `unfolded-ramp-substeps-v8` | 14 transient BOX hits in 8,400 substeps | Rejected despite a clear final snapshot |
-| `unfolded-short-lay-v9` | 16,320 substeps with zero detected hits | Failed the earlier pre-press motion gate |
-| `unfolded-stack-frame-v4` | 74,520 substeps with zero detected hits | Nominal side regrasp missed the actual film |
-| `unfolded-surface-stack-v6` | 89,040 substeps with zero detected hits; all four ply groups inside the measured finger gap | Rejected by an instantaneous contact-force gate; no lift or retention proof |
-| `rigid-clip-high-carry-v6` | Grasp, spring opening, lift, turn, carry, 3-second hold; final target error 0.218 mm / 0.0172 rad | **Rigid tool component only: no film** |
-| `raised-workspace-smoke-v1` | Two control frames, 240 substeps, finite and zero detected hits | Reset smoke only, not robot manipulation |
+| `rigid-clip-high-carry-v6` | YAM grasps handle ends, opens spring, lifts, rotates, carries, holds 3 s; target error 0.218 mm / 0.0172 rad | No film |
+| `rigid-thin-blade-v7` | Same sequence with the thin lower blade, 434 frames, finite, no controller failure | No film; not sealing |
+| `fixed-clip-closure-ke1e6-v1` | Passive upper-jaw closure on four film layers; 3 s / 7,200 substeps, zero scoped intersections | Lower clip body fixed to a fixture |
+| `fixed-clip-closure-ke1e4-v2` | Same fixture for 4 s / 9,600 substeps, zero scoped intersections | Fixed base; not free-tool retention |
+| `unfolded-supported-press-v7` | Continuous unfolded start; folding proceeds; rejected at frame 494, with 428 substep BOX hits | Narrow neck support side-edge failure |
+| `unfolded-full-support-v8` | Continuous unfolded start, folding and pressing; median fold 2.63 rad, 90% folded columns; 90,960 substeps with zero detected crossings/BOX hits | Frictional transfer to the board edge failed; no clip attempt |
+| `press-component-force-v2` | Resumed physical checkpoint, 28,080 substeps with zero scoped hits | Nominal press missed the folded patch; fold gate failed |
+| `release-component-sliding-v3` | Resumed pre-release checkpoint, 33,720 substeps with zero scoped hits | Fold gate failed on the former narrow support |
 
-The last-substep force observable is not a time-integrated load. In the
-surface-stack trial, the final left-finger result was `[0, 0.355] N` while the
-preceding 30 control samples averaged `[3.93, 3.21] N`. The current controller
-uses a 0.75-second observation window, checks actual four-ply surface capture,
-and still requires a physical lift/retention test. No attachment is used.
+Compact results, selected actual states, frozen sources and explicit scopes
+are under `../evidence/unfolded-20261114/`. Full raw trajectories remain on
+Brev. Selected snapshots do not certify intervening steps.
 
-The revised parking stand ends 15 mm before the clip hinge. A previous longer
-stand overlapped the rigid jaw at reset and launched the tool. This was a scene
-error; those trials are rejected. `check_rigid_tool.py` now rejects initial
-clip/BOX interference, including opposing jaw/handle geometry. Its scope does
-not include robot mesh/capsule contacts.
+The former 120 mm neck support left 20 mm of pouch on either side unsupported.
+Rejected triangles were at Y=+/-60 mm, around its upper side edges. That narrow
+apron was useful for the abandoned side regrasp but is unnecessary for table
+insertion. The full-width candidate now supports the whole 160 mm pouch.
+Its reset finger/fixture BOX check passed 48 pairs; mesh/capsule contacts are
+outside that check.
 
-## Current mechanics under test
+## Current implementation
 
-- Initial state: a sewn 200 x 160 mm pouch, closed bottom/sides, open flat
-  mouth. No initial imposed fold or particle attachment. The authored
-  `--ready-start` reset places open hands around the unfolded rim.
-- YAM pads are 12 x 4 x 80 mm. A 90-degree wrist turn leaves a finite upright
-  strip inside the grip; release and pressing must finish folding both panels.
-- `raised_forward` moves the bag 80 mm forward and uses a 200 mm support.
-  Fifteen nominal FK waypoints were reachable within 0.004 mm in the offline
-  plan. Actual dynamic reach/contact still need validation.
-- A narrow 120 mm neck apron gives lower-finger access while a full-width
-  board supports the pouch body. The clip parking rack is at Y=-300 mm.
-- The new clip has divergent levers, end bosses, 100 mm jaws, a 0.4 mm closed
-  gap, and an uncalibrated 0.2 Nm/rad passive spring. End squeezing opens its
-  hinge; no motor or external pose command actuates the clip.
-- The latest follow-up press sweeps along the fold with a central pad after
-  releasing the raw rim. Side grasp planning clips actual film triangles
-  against the pad footprint; it does not depend on a vertex falling inside.
-- `ToolFeedback` routes the previous substep's full contact wrench onto the
-  clip. This is explicit staggered coupling, not an implicit two-way solver.
-  Loaded contact and timestep convergence remain to be proved.
+- A sewn 200 x 160 mm pouch starts lying down, mouth flat and unfolded.
+  Bottom and sides are welded; there is no initial imposed fold, particle
+  attachment or object pose write during actions. The authored ready reset
+  places open hands around the rim.
+- YAM's pads are 12 x 4 x 80 mm. The wrist follows the folding arc at the same
+  angle. The former 1.45x wrist lead requested about 5% geometric free-span
+  extension at mid-turn. Actual edge extension is separately measurable with
+  `inspect_membrane.py` and must not be confused with that planned demand.
+- `raised_flat` shifts the pouch 120 mm forward and uses a 240 mm raised
+  support. `--mouth-support full --support-extension-mm 14` places the board
+  front 14 mm ahead of the intended crease, preserving reset finger clearance.
+- `select_press_patch` measures projected overlap of the four actual material
+  ply groups. If a strip is upright, it explicitly falls back to its measured
+  rim. It keeps the pad footprint on the support.
+- Pressing completes XY travel with 50 mm bottom clearance, then descends
+  vertically. A sampled force limit and slow admittance stroke replace an
+  unconditional downward push. Sampled simulator loads are not hardware force
+  measurements or substep-integrated loads.
+- The `admittance` support option keeps a pressing hand in contact while the
+  other hand works. Contact floor and pad/board friction experiments remain
+  under validation. The baseline fixed-height pad slipped during edge transfer.
+- The clip has divergent levers and end bosses, a 0.8 mm lower-blade surrogate,
+  stepped thin toe, 100 mm jaws, 0.4 mm closed gap and an uncalibrated 0.2
+  Nm/rad passive spring. The tool is squeezed by its handle ends, not motorized.
+- After folding, the planned controller slides the folded neck to the edge
+  through left-pad contact, enters below the overhang, raises the blade clear
+  of the board, then advances and releases. The four-ply clip retention stage
+  is not yet complete.
+- `ToolFeedback` adds the preceding substep's full film reaction wrench to
+  clip bodies. This is explicit staggered coupling, not an implicit two-way
+  solver. The fixed-base closure fixture does not prove free-body stability.
 
-The live complete trials `unfolded-raised-permanent-v1` and
-`unfolded-raised-laminate-v2` were launched before the newest central pressing
-path. Their frozen sources, rather than the current files, define each trial.
+## Restartable component diagnostics
 
-## Materials and limitations
+Each frame now records film position/velocity, rigid pose, joint position/
+velocity and actual plastic rest angles. A successful pre-clip gate writes
+`clip-entry.npz` plus metadata and control targets. `--clip-component-seed`
+restores a physical component reset, rebuilds solver caches, and marks
+`initial_fold_imposed=true`. It is never an uninterrupted end-to-end proof.
 
-All material values are **uncalibrated hypotheses**. Thickness is 80 micrometres
-and areal density 0.08 kg/m². Collision thickness is larger: a 0.3 mm particle
-radius and 0.5 mm self-contact interaction distance are numerical contact skins.
+Saved partial-stage reset seeds also include the exact source frame and control
+trace. `--component-start` selects raw-rim release, centre pressing, edge drag
+or clipping. Geometry and material profiles must match. An intentional contact
+material comparison requires the explicit `--override-contact-materials` flag
+and is recorded in the arguments; the final demonstration must rerun from the
+unfolded reset with the selected settings.
 
-- `derived`: E=100 MPa, plastic-rest recovery 0.1/s; previous baseline.
-- `permanent`: same stiffness, zero recovery; crease rest changes remain.
-- `laminate`: E=1 GPa, zero recovery; a comparison for a less floppy wrapper.
-- `paper_matched`: upstream numerical coefficients; not a measured laminate.
+For a resumed rack contact, the strict rigid preflight is retained alongside
+an additional 10 micrometre rack-only surface inset check. The observed settled
+contacts were 2.2–3.6 micrometres deep. This does not relax film checks, opposing
+clip-part checks, or the strict fresh-scene preflight.
 
-The 1 GPa comparison is below the 2.507 GPa MD modulus listed for one
+## Material scope
+
+All values are uncalibrated hypotheses. The 80 micrometre mass thickness gives
+0.08 kg/m². Numerical contact skins are larger: 0.3 mm particle radius and
+0.5 mm self-contact interaction distance. An actual multilayer wrapper still
+needs measured thickness, bending, friction and crease recovery; anisotropy,
+delamination and film tearing are not represented.
+
+- `derived`: E=100 MPa, rest-angle recovery 0.1/s (older baseline).
+- `permanent`: E=100 MPa, zero recovery.
+- `laminate`: E=1 GPa, zero recovery; the current comparison.
+- `paper_matched`: upstream numerical coefficients, not a measured laminate.
+
+The 1 GPa hypothesis is below one manufacturer's 2.507 GPa MD value for a
 [BOPP product](https://www.derflex.com/flexible-BOPP-packaging-films.html).
-That product is a 20.7 micrometre cigarette film, **not our snack package**;
-it provides scale only. Toray explains the tensile-modulus measurement in its
-[film mechanics reference](https://www.films.toray/en/knowledge/kno_002_2.html).
-An actual multilayer wrapper needs thickness, bending, friction and recovery
-measurements; anisotropy/delamination/tearing are not represented here.
+That 20.7 micrometre cigarette film is not our snack wrapper; it supplies a
+scale comparison only. See Toray's [measurement explanation](https://www.films.toray/en/knowledge/kno_002_2.html).
 
-The research scene is currently **empty**. Internal air, contents, fracture,
-spill penalties, Arena integration and Dream inference remain outstanding.
-`assess_unfolded.py` reports only an empty-pouch mechanics assessment and always
-leaves `submission_score` unknown. It must never borrow the rigid task score.
+The current research bag is empty. Contents, fracture/spill penalties, air,
+public runner integration and Dream inference remain outstanding.
+`implicit_pouch_air.py` is an unintegrated candidate: four reference/kernel
+bridge tests pass on CPU and CUDA, but no pouch pressure/vent/convergence
+validation is claimed yet.
 
-## Reproduction
+## Commands and acceptance
 
-Use the pinned RSS commit `4e52e1a76437ef1296028afea744437f6e9469c0` and the
-existing CUDA-12 Warp environment. Do not run `uv sync` into that environment.
-From `/data/robocurve/robosimstudio`:
+Pinned RSS: `4e52e1a76437ef1296028afea744437f6e9469c0`. Use the existing
+CUDA-12 Warp environment on this L40S/565-driver instance; do not `uv sync`
+CUDA-13 packages into it. Check the driver before restoring on other GPUs.
+
+From `/data/robocurve/robosimstudio`, the current full-support baseline is:
 
 ```sh
 PYTHONPATH=. JAX_PLATFORMS=cpu OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 \
   /data/robocurve/envs/rss/bin/python \
   /data/robocurve/tasks/close-snack-bag/experiments/fold_pouch_robot.py \
   /fresh/output --ready-start --drive --clip --stage seal --hz 20 \
-  --physics-hz 2400 --workspace raised_forward --material-profile permanent \
-  --check-substeps --frames 3000
+  --physics-hz 2400 --workspace raised_flat --material-profile laminate \
+  --clip-style thin_lower --table-insert --release-style sliding \
+  --mouth-support full --support-extension-mm 14 --support-hold static \
+  --press-floor-mm 2.5 --check-substeps --frames 3000
 ```
 
-The controller records actual film, rigid, joint-position and joint-velocity
-states. Every run freezes its sources and parameters. Outputs must be new
-folders. A completed command generator or `all_finite` is not success.
+This baseline's edge transfer failed; it is not a successful task recipe.
+The `edge-drag-contact-v9` component had no film load: a released cursor
+was re-seated on the measured hand every tick, cancelling its small descent.
+`edge-drag-contact-v10` keeps the continuous force-control cursor moving and
+requires measured contact before transfer. Its regression test and 17 related
+geometry/material/air-kernel tests passed. Physical retention remains unproved.
+The component compares pad friction 1.2, board
+friction 0.2, a 0.5 mm approach floor and admittance support against its actual
+folded checkpoint. Those coefficients are experimental, not calibrated.
 
-`substep_geometry.py` checks strict transverse self-crossings and film/BOX
-intersections after every physics substep. It excludes coplanar overlap,
-non-BOX colliders and motion between solved states. `clip_capture.py` measures
-actual four-ply coverage between jaw planes. A final success claim additionally
-needs at least three continuous seconds with both hands clear, retained fold,
-loaded jaws and all the scoped geometry checks passing.
+`assess_unfolded.py` requires a genuine full episode, an unfolded start,
+controller completion without failure, all substeps checked, no scoped hits,
+measured four-ply jaw coverage >=96 mm, retained fold, loaded jaws and both
+hands clear continuously for >=3 s. It always leaves `submission_score`
+unknown while air/contents and the public scorer are absent.
+
+The independent observer covers strict transverse self-crossings and
+film/BOX intersections after every solved physics substep. It excludes
+coplanar overlap, non-BOX colliders and motion within a substep. The renderer
+uses actual recorded coordinates without interpolation; printed outer film and
+silver inner lining affect appearance only. A core-demo caption requires an
+assessment matching the exact recording and trace hashes.

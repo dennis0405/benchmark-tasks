@@ -12,6 +12,7 @@ import numpy as np
 class ClipSpec:
     entity: str = "snack_free_clip"
     name: str = "clip"
+    style: str = "standard"
     at: tuple = (.02, -.30, .102)
     quat: tuple = (.7071067811865475, 0., 0., .7071067811865475)
     sim: Any = field(default_factory=lambda:rss.SimRequirements(
@@ -27,7 +28,8 @@ class ClipEntity(rss.Entity):
         start_b, start_s, start_j = builder.body_count, builder.shape_count, builder.joint_count
         start_q = len(builder.joint_q)
         frame = self.placed((*self.spec.at, *self.spec.quat))
-        builder.add_mjcf(str(Path(__file__).parent/"experiments/assets/clip_spring_v2.xml"),
+        filenames={"standard":"clip_spring_v2.xml","thin_lower":"clip_thin_lower.xml"}
+        builder.add_mjcf(str(Path(__file__).parent/"experiments/assets"/filenames[self.spec.style]),
                          floating=True, override_root_xform=True,
                          xform=wp.transform(wp.vec3(*map(float,frame[:3])), wp.quat(*map(float,frame[3:]))))
         self.bodies = tuple(range(start_b, builder.body_count))

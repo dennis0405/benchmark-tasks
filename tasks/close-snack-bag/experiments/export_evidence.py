@@ -28,7 +28,8 @@ def main():
     args.output.mkdir(parents=True,exist_ok=False)
     for name in ("result.json","trace.json","arguments.json","preflight.json","rigid-tool-preflight.json",
                  "sampled-geometry.json","crossing-details.json","controller-marks.json",
-                 "core-assessment.json","render-manifest.json"):
+                 "core-assessment.json","render-manifest.json","finger-fixture-preflight.json",
+                 "fixed-open-clip.xml"):
         path=args.run/name
         if path.exists():
             shutil.copy2(path,args.output/name)
@@ -43,7 +44,7 @@ def main():
         for step in sorted(set(args.steps)):
             if f"b_{step:05d}" not in states:
                 raise KeyError(f"No recorded step {step}")
-            for prefix in ("q","b","j","d"):
+            for prefix in ("q","b","j","d","v","r"):
                 key=f"{prefix}_{step:05d}"
                 if key in states:
                     selected[key]=states[key]

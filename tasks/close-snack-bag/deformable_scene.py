@@ -19,7 +19,7 @@ from film_material import FilmMaterial
 from pouch_geometry import open_pouch
 
 
-def configure_rigid_model(model,ready_start,structural_fk=False):
+def configure_rigid_model(model,ready_start,structural_fk=False,finger_friction=None):
     if ready_start:
         q=model.joint_q.numpy().copy()
         starts=model.joint_q_start.numpy()
@@ -32,6 +32,11 @@ def configure_rigid_model(model,ready_start,structural_fk=False):
     if structural_fk:
         newton.eval_fk(model,model.joint_q,model.joint_qd,model)
     model.shape_material_ke.assign(np.full(model.shape_count,1e6,np.float32))
+    if finger_friction is not None:
+        mu=model.shape_material_mu.numpy().copy()
+        for shape,body in enumerate(model.shape_body.numpy()):
+            if body>=0 and "finger" in str(model.body_label[body]):mu[shape]=finger_friction
+        model.shape_material_mu.assign(mu)
 
 
 @dataclass(frozen=True,kw_only=True)
@@ -39,6 +44,7 @@ class RigidSetupSpec:
     entity:str="snack_rigid_setup"
     name:str="rigid_setup"
     ready_start:bool=True
+    finger_friction:float|None=None
     sim:object=field(default_factory=lambda:rss.SimRequirements(domain="articulated"))
 
 
@@ -50,7 +56,7 @@ class RigidSetupEntity(rss.Entity):
         pass
 
     def apply_model_materials(self,model):
-        configure_rigid_model(model,self.spec.ready_start)
+        configure_rigid_model(model,self.spec.ready_start,finger_friction=self.spec.finger_friction)
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -58,6 +64,7 @@ class PouchSpec(PaperSpec):
     entity: str = "snack_unfolded_pouch"
     ready_start: bool = False
     structural_fk: bool = False
+    finger_friction:float|None=None
 
 
 @rss.register_entity("snack_unfolded_pouch")
@@ -68,7 +75,7 @@ class PouchEntity(EntityPaper):
         super().apply_model_materials(model)
         # Newton 1.7 VBD requires body_q and joint_q to describe the SAME
         # structural rest pose before solver construction (not just State FK).
-        configure_rigid_model(model,self.spec.ready_start,self.spec.structural_fk)
+        configure_rigid_model(model,self.spec.ready_start,self.spec.structural_fk,self.spec.finger_friction)
 
     def surface(self):
         q, f, self.grid = open_pouch(
@@ -94,15 +101,19 @@ class PouchEntity(EntityPaper):
             particle_radius=material.particle_radius, label=self.name)
 
 
-def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original"):
+def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None):
     if embodiment != "yam_bimanual":
         raise ValueError("This research scene currently supports yam_bimanual only")
-    if workspace not in ("original","raised_forward"):
+    if not 0<=support_extension<=.014:
+        raise ValueError("support extension must stay within the reset finger clearance (0..14 mm)")
+    if board_friction<0 or (finger_friction is not None and finger_friction<0):
+        raise ValueError("contact friction cannot be negative")
+    if workspace not in ("original","raised_forward","raised_flat"):
         raise ValueError("unknown workspace")
-    if workspace=="raised_forward" and not ready_start:
+    if workspace!="original" and not ready_start:
         raise ValueError("raised_forward currently requires the authored ready-start reset")
-    shift=.08 if workspace=="raised_forward" else 0.
-    height=(.20 if workspace=="raised_forward" else .10) if ready_start else .04
+    shift={"original":0.,"raised_forward":.08,"raised_flat":.12}[workspace]
+    height={"original":.10,"raised_forward":.20,"raised_flat":.24}[workspace] if ready_start else .04
     # 1 GPa is a comparison hypothesis for a laminate, not a measured
     # bag. It remains below the 2.507 GPa MD value in the cited BOPP sheet.
     # Retaining rest-angle changes represents irreversible crease memory.
@@ -151,7 +162,8 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
     robot = get_embodiment(embodiment)
     if ready_start:
         import json
-        filename="yam_raised_forward_pose.json" if workspace=="raised_forward" else "yam_ready_pose.json"
+        filename={"original":"yam_ready_pose.json","raised_forward":"yam_raised_forward_pose.json",
+                  "raised_flat":"yam_raised_flat_pose.json"}[workspace]
         ready = json.loads((Path(__file__).parent/"experiments/assets"/filename).read_text())
         robot = rss.replace(robot, reset_joint_q=True, arms=tuple(rss.replace(
             arm, home_q=tuple(ready["home"][arm.name]), home_gripper_q=(.0045,)) for arm in robot.arms))
@@ -160,21 +172,24 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
     # 20 mm of film on either side accessible to the fingers from below.
     half = (.085, .12, height/2) if ready_start else (.101, .06, .02)
     at = (.055+shift, 0, height/2) if ready_start else (.039, 0, .02)
+    if ready_start and not side_access:
+        half=(half[0]+support_extension/2,*half[1:])
+        at=(at[0]-support_extension/2,*at[1:])
     if ready_start and side_access:
         # Keep the filled-body area fully supported. Only the 30 mm neck
         # extension is narrower, leaving side access for the lower pad.
         half,at=(.07,.12,height/2),(.07+shift,0,height/2)
         scene.add(rss.slab(name="mouth_support",half=(.015,.06,height/2),
-                           at=(-.015+shift,0,height/2),color=(.64,.47,.30),friction=1.))
+                           at=(-.015+shift,0,height/2),color=(.64,.47,.30),friction=board_friction))
     scene.add(rss.slab(name="board", half=half, at=at,
-                       color=(.64, .47, .30), friction=1.))
+                       color=(.64, .47, .30), friction=board_friction))
     if rigid_only:
-        scene.add(RigidSetupSpec(ready_start=ready_start))
+        scene.add(RigidSetupSpec(ready_start=ready_start,finger_friction=finger_friction))
     else:
         scene.add(PouchSpec(name="pouch", pose=(.14+shift, 0, height+.0237), quat=(0, 0, 1, 0),
                             cells=cells, size=(.2, .16), material=material,
                             color=(.96, .58, .08), settle_frames=0, ready_start=ready_start,
-                            structural_fk=coupling=="unified"))
+                            structural_fk=coupling=="unified",finger_friction=finger_friction))
     if with_clip:
         if coupling!="one_way":
             raise ValueError("Clip reaction hook currently requires the MuJoCo/VBD path")
@@ -188,7 +203,7 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         for side in (-1,1):
             scene.add(rss.slab(name=f"tool_rail_{side}",half=(.035,.002,.002),
                 at=(-.03,-.30+side*.047,.090),color=(.64,.47,.30),friction=.6))
-        scene.add(ClipSpec())
+        scene.add(ClipSpec(style=clip_style))
     env = scene.build(device=device, control_mode="joint_position")
     if rigid_cpu:
         env.pipeline.use_cuda_graph=False
@@ -217,9 +232,14 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
     env.snack_material_parameters.update(tri_ke=material.tri_ke,tri_ka=material.tri_ka,
         edge_ke=material.edge_ke,yield_angle=material.yield_angle,
         plastic_recovery=material.plastic_recovery)
+    env.snack_material_parameters.update(board_shape_friction=board_friction,finger_shape_friction=finger_friction)
     env.snack_rigid_backend="mujoco_native_cpu" if rigid_cpu else "mujoco_warp_gpu"
     env.snack_rigid_only=rigid_only
     env.snack_workspace=workspace
+    env.snack_clip_style=clip_style
+    support_name="mouth_support" if ready_start and side_access else "board"
+    support_id=next(i for i,label in enumerate(env.model.shape_label) if str(label)==support_name)
+    env.snack_support_front_m=float(env.model.shape_transform.numpy()[support_id,0]-env.model.shape_scale.numpy()[support_id,0])
     return env
 
 
