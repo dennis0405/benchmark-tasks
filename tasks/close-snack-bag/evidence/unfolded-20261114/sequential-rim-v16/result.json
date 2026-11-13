@@ -1,0 +1,133 @@
+{
+  "frames": 772,
+  "wall_seconds": 817.0852501410009,
+  "all_finite": true,
+  "initial_fold_imposed": true,
+  "object_pose_writes_during_rollout": false,
+  "component_reset": {
+    "layout": {
+      "mouth": 0.6600000262260437,
+      "line": 0.6900000262260437,
+      "center_y": 0.0,
+      "board_top": 0.968,
+      "support_front": 0.6759999990463257
+    },
+    "source_step": 136,
+    "support_holds": {
+      "left": {
+        "floor_z": 0.9966713054419534,
+        "quat": [
+          0.5963678105290181,
+          0.5963678105290182,
+          0.37992819659091526,
+          0.37992819659091526
+        ],
+        "filtered": 3.1659535200330554e-14
+      }
+    },
+    "seed_sha256": "d80ea1df5ac55aafdc526f3bf749420d068108569e3f58571bd5ac7c7f3128d5",
+    "fk_position_error_m": 0.0,
+    "target_source": "checkpoint array",
+    "target_q": [
+      -0.2482837289571762,
+      2.0525519847869873,
+      1.5644389390945435,
+      0.4876728951931,
+      1.322353720664978,
+      0.034916747361421585,
+      0.0020084113348275423,
+      0.0,
+      0.24829985201358795,
+      2.0523600578308105,
+      1.56451416015625,
+      0.48739999532699585,
+      -1.3225499391555786,
+      -0.03486691787838936,
+      0.0,
+      0.0,
+      0.6200000047683716,
+      -0.30000001192092896,
+      0.8299999833106995,
+      0.7071067690849304,
+      0.0,
+      0.0,
+      0.7071067690849304,
+      0.0
+    ],
+    "limitation": "Reset a clip-only diagnostic from an observed fold checkpoint.\n\nParticle/joint velocities and plastic rest angles are preserved. Solver\ncontact/friction caches are rebuilt, so this is a component reset, never a\nclaim of an uninterrupted end-to-end demonstration."
+  },
+  "coupling": "one_way",
+  "ready_start": true,
+  "clip": true,
+  "physics_substeps": 120,
+  "control_hz": 20,
+  "rigid_backend": "mujoco_warp_gpu",
+  "workspace": "raised_flat",
+  "clip_style": "thin_lower",
+  "table_insert": true,
+  "material_profile": "laminate",
+  "material": {
+    "profile": "laminate",
+    "thickness": 8e-05,
+    "density": 1000.0,
+    "young": 1000000000.0,
+    "poisson": 0.35,
+    "yield_curvature": 100.0,
+    "recovery_per_second": 0.0,
+    "areal_density": 0.08,
+    "tri_ke": 29629.629629629628,
+    "tri_ka": 31908.831908831908,
+    "edge_ke": 0.00972459639126306,
+    "bending_rigidity": 4.86229819563153e-05,
+    "yield_angle": 0.5,
+    "recovery": 0.0,
+    "particle_radius_m": 0.0003,
+    "self_contact_interaction_m": 0.0005,
+    "plastic_recovery": 0.0,
+    "board_shape_friction": 1.0,
+    "finger_shape_friction": null
+  },
+  "timings": {
+    "build_s": 11.729554589001054,
+    "driver_tick_s": 788.5682531129823,
+    "readback_and_metrics_s": 3.3116151099311537,
+    "recording_s": 11.502537289008615
+  },
+  "interrupted": true,
+  "controller_failure": null,
+  "controller_completed": false,
+  "controller_diagnostics": {
+    "press_plans": [
+      {
+        "arm": "left",
+        "x": 0.6982790231704712,
+        "ply_area_mm2": [
+          787.8757348791518,
+          739.6434288769236,
+          749.6976278549038,
+          855.0917411109521
+        ],
+        "kind": "measured free rim, pressed vertically before creasing"
+      }
+    ],
+    "press_diagnostics": [
+      {
+        "arm": "left",
+        "centre_pass": false,
+        "peak_sampled_upward_force_N": 10.87303352355957,
+        "filtered_end_force_N": 1.5177857891342912,
+        "final_cursor_z_m": 0.9999794438631238
+      }
+    ]
+  },
+  "substep_geometry": {
+    "checked_substeps": 92640,
+    "transverse_edge_crossings": 0,
+    "film_box_intersections": 0,
+    "checked_round_shapes": 68,
+    "film_round_intersections": 0,
+    "hit_round_shapes": [],
+    "hit_boxes": []
+  },
+  "limitation": "Uncalibrated material; contents/air not integrated; ready-start places open hands around the unfolded rim at reset; controller completion is not a physical success assessment"
+}

@@ -24,7 +24,9 @@ def main():
     parser.add_argument("--clip", action="store_true")
     parser.add_argument("--checkpoint-every",type=int,default=120)
     parser.add_argument("--material-profile",choices=("derived","permanent","laminate","paper_matched"),default="derived")
-    parser.add_argument("--stage",choices=("fold","fold_hold","regrasp","seal","clip_grasp"),default="fold")
+    parser.add_argument("--stage",choices=("fold","fold_hold","regrasp","seal","clip_grasp","rest"),default="fold")
+    parser.add_argument("--self-filter-rings",type=int,choices=(0,2),default=0)
+    parser.add_argument("--self-radius-mm",type=float,default=.5)
     parser.add_argument("--hz",type=int,choices=(20,60),default=60)
     parser.add_argument("--physics-hz",type=int,choices=(600,1200,2400),default=None)
     parser.add_argument("--check-substeps",action="store_true")
@@ -33,9 +35,12 @@ def main():
     parser.add_argument("--workspace",choices=("original","raised_forward","raised_flat"),default="original")
     parser.add_argument("--clip-style",choices=("standard","thin_lower"),default="standard")
     parser.add_argument("--table-insert",action="store_true")
+    parser.add_argument("--insert-mode",choices=("overhang","wedge"),default="overhang")
+    parser.add_argument("--force-readout",choices=("last","mean"),default="last")
+    parser.add_argument("--record-force-means",action="store_true")
     parser.add_argument("--release-style",choices=("wide","sliding"),default="sliding")
     parser.add_argument("--clip-component-seed",type=Path,default=None)
-    parser.add_argument("--component-start",choices=("clip","centre_press","raw_release","edge_drag","press_drag"),default="clip")
+    parser.add_argument("--component-start",choices=("clip","centre_press","raw_release","edge_drag","press_drag","insert","prepare"),default="clip")
     parser.add_argument("--mouth-support",choices=("narrow","full"),default="narrow")
     parser.add_argument("--support-extension-mm",type=float,default=0.)
     parser.add_argument("--support-hold",choices=("static","admittance"),default="static")
@@ -58,7 +63,7 @@ def main():
         for key,default in (("mouth_support","narrow"),("support_extension_mm",0.)):
             if seed_meta["arguments"].get(key,default)!=getattr(args,key):
                 parser.error(f"checkpoint support geometry mismatch: {key}")
-        for key,default in (("board_friction",1.),("finger_friction",None)):
+        for key,default in (("board_friction",1.),("finger_friction",None),("self_filter_rings",0),("self_radius_mm",.5)):
             if seed_meta["arguments"].get(key,default)!=getattr(args,key) and not args.override_contact_materials:
                 parser.error(f"checkpoint material change requires --override-contact-materials: {key}")
     interrupted = [False]
@@ -109,7 +114,8 @@ def main():
                            side_access=args.mouth_support=="narrow" and (args.side_access or args.stage in ("regrasp","seal")),
                            physics_hz=args.physics_hz,rigid_cpu=args.rigid_cpu,workspace=args.workspace,
                            clip_style=args.clip_style,support_extension=args.support_extension_mm/1000.,
-                           board_friction=args.board_friction,finger_friction=args.finger_friction)
+                           board_friction=args.board_friction,finger_friction=args.finger_friction,
+                           self_filter_rings=args.self_filter_rings,self_radius=args.self_radius_mm/1000.)
     timings = dict(build_s=time.monotonic()-started, driver_tick_s=0., readback_and_metrics_s=0., recording_s=0.)
     entity = sim.scene.by_name["pouch"]
     export_render_geometry(sim, args.output)
@@ -126,6 +132,7 @@ def main():
             component_reset=restore(sim,session,args.clip_component_seed)
         controller = FoldController(sim, session)
         controller.table_insert=args.table_insert
+        controller.insert_mode=args.insert_mode
         controller.release_style=args.release_style
         controller.support_hold_enabled=args.support_hold=="admittance"
         controller.press_floor_m=args.press_floor_mm/1000.
@@ -134,17 +141,25 @@ def main():
         elif args.stage in ("regrasp","seal"):
             controller.after_fold=args.stage
         if args.clip_component_seed:
-            from clip_controller import seal_fold,centre_press_component,raw_release_component,edge_drag_component,press_drag_component
+            from clip_controller import seal_fold,centre_press_component,raw_release_component,edge_drag_component,press_drag_component,insert_component,sequential_component
             controller.layout=component_reset["layout"]
             controller.marks["left_press_hold"]=True
+            if component_reset.get("left_cleared_for_clip"):
+                controller.marks["left_cleared_for_clip"]=True
+                controller.marks["left_press_hold"]=False
             controller.support_holds=component_reset.get("support_holds",{})
-            if not controller.support_holds:controller.start_support("left")
+            if not controller.support_holds and not controller.marks.get("left_cleared_for_clip"):
+                controller.start_support("left")
             controller.phase="clip_component_reset"
-            stages={"clip":seal_fold,"centre_press":centre_press_component,"raw_release":raw_release_component,"edge_drag":edge_drag_component,"press_drag":press_drag_component}
+            stages={"clip":seal_fold,"centre_press":centre_press_component,"raw_release":raw_release_component,"edge_drag":edge_drag_component,"press_drag":press_drag_component,"insert":insert_component,"prepare":sequential_component}
             drive=stages[args.component_start](controller)
         elif args.stage=="clip_grasp":
             from clip_controller import clip_grasp_drive
             drive=clip_grasp_drive(controller)
+        elif args.stage=="rest":
+            controller.phase="rest"
+            for panel in session.arms.values():panel.grip_request=.9052631579
+            drive=controller.wait((args.frames+10)*60/args.hz)
         else:
             drive = controller.drive()
     snapshots, trace = {}, []
@@ -164,6 +179,14 @@ def main():
         watcher=SubstepGeometry(sim,entity)
         sim.pipeline.hooks.add("post_solve",watcher.check,name="independent-film-geometry",cadence=1)
         sim.pipeline.invalidate_graph()
+    average=None
+    if args.force_readout=="mean" or args.record_force_means:
+        from contact_average import ContactAverage
+        shutil.copy2(Path(__file__).with_name("contact_average.py"),sources/"contact_average.py")
+        average=ContactAverage(sim.pipeline.program.solver)
+        if args.force_readout=="mean":sim.snack_force_average=average
+        sim.pipeline.hooks.add("post_solve",average.observe,name="substep-contact-average",cadence=1)
+        sim.pipeline.invalidate_graph()
     controller_completed = False
     clip_entry_saved=False
     saved_stages=set()
@@ -176,6 +199,7 @@ def main():
         (directory/"clip-entry.json").write_text(json.dumps(dict(
             step=step,layout=controller.layout,arguments=vars(args),
             support_holds=controller.support_holds,source=str(args.output),
+            left_cleared_for_clip=controller.marks.get("left_cleared_for_clip",False),
             phase=controller.phase,
             scope="Observed physical component reset; velocities and plastic rest preserved, solver caches rebuilt; not an uninterrupted episode"),default=str,indent=2))
         if directory!=args.output:
@@ -203,8 +227,10 @@ def main():
                     controller_completed = True
                     break
                 controller.update_support_holds()
+                if average:average.reset()
                 tick(session, 1)
             else:
+                if average:average.reset()
                 sim.run(1).sync()
             timings["driver_tick_s"]+=time.monotonic()-before
         before=time.monotonic()
@@ -282,6 +308,18 @@ def main():
             if hasattr(solver, "shape_contact_forces"):
                 forces = solver.shape_contact_forces()
                 owners = sim.model.shape_body.numpy()
+                trace[-1]["fixture_soft_force_world_N"]={
+                    str(sim.model.shape_label[i]):forces[i].tolist() for i in np.flatnonzero(owners<0)}
+                if average:
+                    mean_forces=average.forces()
+                    trace[-1]["force_window_s"]=float(average.duration.numpy()[0])
+                    trace[-1]["all_shape_mean_force_world_N"]=mean_forces.sum(0).tolist()
+                    trace[-1]["body_mean_force_world_N"]={str(sim.model.body_label[body]):mean_forces[owners==body].sum(0).tolist()
+                        for body in np.unique(owners[owners>=0])}
+                    trace[-1]["finger_mean_force_world_N"]={a:[mean_forces[np.isin(owners,side)].sum(0).tolist()
+                        for side in index.finger_bodies] for a,index in sim.scene.embodiment.arms.items()}
+                    trace[-1]["fixture_mean_force_world_N"]={str(sim.model.shape_label[i]):mean_forces[i].tolist()
+                                                              for i in np.flatnonzero(owners<0)}
                 trace[-1]["finger_soft_force_N"] = {
                     a:[float(np.linalg.norm(forces[np.isin(owners, side)].sum(axis=0)))
                        for side in index.finger_bodies]
@@ -298,6 +336,9 @@ def main():
                         normal=Rotation.from_quat(state["bodies"][body,3:]).apply([0,0,1])
                         clip_forces[label]=dict(world_N=force.tolist(),normal_N=float(force@normal))
                     trace[-1]["clip_film_force"]=clip_forces
+                    if average:
+                        trace[-1]["clip_mean_force_world_N"]={label:mean_forces[owners==body].sum(0).tolist()
+                            for label,body in zip(("lower","upper"),clip_entity.bodies)}
         timings["readback_and_metrics_s"]+=time.monotonic()-before
         if controller and hasattr(controller,"layout"):
             geometry=watcher.report() if watcher else None
@@ -306,7 +347,7 @@ def main():
             if clean and phase not in saved_stages and phase in (
                     "release_left","release_right","press_left","press_right",
                     "lift_press_right","fold_drag_to_edge","table_fold_ready",
-                    "clip_approach","clip_stage","clip_close_release","hands_free_hold"):
+                    "clip_approach","clip_carry_high","clip_stage","clip_descend_outside","clip_insert","clip_release","hands_free_hold"):
                 save_component_seed(args.output/"seeds"/phase,step)
                 saved_stages.add(phase)
             if clean and phase=="table_fold_ready" and not clip_entry_saved:
@@ -342,7 +383,10 @@ def main():
                   interrupted=interrupted[0],
                   controller_failure=controller.failure if controller else None,
                   controller_completed=controller_completed,
-                  controller_diagnostics=({k:controller.marks[k] for k in ("press_plans","press_diagnostics","fold_drag_m") if k in controller.marks} if controller else {}),
+                  controller_diagnostics=({k:controller.marks[k] for k in (
+                      "press_plans","press_diagnostics","fold_drag_m","clip_grasp_transform",
+                      "left_clear_kinematic_plan","left_cleared_for_clip","last_move_error")
+                      if k in controller.marks} if controller else {}),
                   substep_geometry=watcher.report() if watcher else None,
                   limitation="Uncalibrated material; contents/air not integrated; ready-start places open hands around the unfolded rim at reset; controller completion is not a physical success assessment")
     (args.output / "result.json").write_text(json.dumps(result, indent=2))

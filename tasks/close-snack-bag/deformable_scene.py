@@ -101,7 +101,7 @@ class PouchEntity(EntityPaper):
             particle_radius=material.particle_radius, label=self.name)
 
 
-def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None):
+def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None,self_filter_rings=0,self_radius=.0005):
     if embodiment != "yam_bimanual":
         raise ValueError("This research scene currently supports yam_bimanual only")
     if not 0<=support_extension<=.014:
@@ -146,8 +146,8 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
     backend = rss.backend(
         "vbd", iterations=30, friction_epsilon=1e-3,
         rigid_compliant_alm=True,
-        particle_self_contact_radius=.0005, particle_self_contact_margin=.002,
-        particle_topological_contact_filter_threshold=0,
+        particle_self_contact_radius=self_radius, particle_self_contact_margin=.002,
+        particle_topological_contact_filter_threshold=self_filter_rings,
         rigid_body_contact_buffer_size=2048, rigid_body_particle_contact_buffer_size=16384,
         particle_vertex_contact_buffer_size=64, particle_edge_contact_buffer_size=128)
     physics = physics.with_backend("*", backend)
@@ -228,11 +228,17 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
     env.snack_ready_start = ready_start
     env.snack_with_clip = with_clip
     env.snack_material_parameters=dict(profile=material_profile,**vars(film),**coeff,
-        particle_radius_m=.0003,self_contact_interaction_m=.0005)
+        particle_radius_m=.0003,self_contact_interaction_m=self_radius)
     env.snack_material_parameters.update(tri_ke=material.tri_ke,tri_ka=material.tri_ka,
         edge_ke=material.edge_ke,yield_angle=material.yield_angle,
         plastic_recovery=material.plastic_recovery)
     env.snack_material_parameters.update(board_shape_friction=board_friction,finger_shape_friction=finger_friction)
+    env.snack_material_parameters["self_contact_filter_rings"]=self_filter_rings
+    if not rigid_only:
+        mass=env.model.particle_mass.numpy()[env.scene.by_name["pouch"].particles]
+        env.snack_material_parameters.update(actual_pouch_mass_kg=float(mass.sum()),
+            zero_mass_pouch_particles=int((mass==0).sum()),
+            model_gravity=np.asarray(env.model.gravity.numpy()).tolist())
     env.snack_rigid_backend="mujoco_native_cpu" if rigid_cpu else "mujoco_warp_gpu"
     env.snack_rigid_only=rigid_only
     env.snack_workspace=workspace
@@ -267,4 +273,7 @@ def export_render_geometry(env, output):
     m = env.model
     np.savez_compressed(output/"colliders.npz", body=m.shape_body.numpy(), kind=m.shape_type.numpy(),
                         scale=m.shape_scale.numpy(), local=m.shape_transform.numpy(),
-                        flags=m.shape_flags.numpy())
+                        flags=m.shape_flags.numpy(),mu=m.shape_material_mu.numpy(),
+                        margin=m.shape_margin.numpy(),
+                        contact_ke=m.shape_material_ke.numpy(),contact_kd=m.shape_material_kd.numpy(),
+                        particle_mass=m.particle_mass.numpy(),particle_inv_mass=m.particle_inv_mass.numpy())

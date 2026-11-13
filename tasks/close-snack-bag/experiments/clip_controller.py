@@ -70,8 +70,8 @@ def grasp_clip(controller, arm="right"):
             c.failure="clip displaced more than 50 mm while squeezing"
             return None
         if clip_angle(c)<=-.32:
-            # Hold the measured slide position instead of driving through
-            # the clip's hinge limit. The 0.1 mm relief avoids extra squeeze.
+            # Preserve the spring-limited pinch; do not load the soft
+            # hinge stop to make transport look stable.
             coords=c.sim.scene.embodiment.arms[arm].gripper_coords
             actual=float(c.sim.state.joint_q.numpy()[coords][0])
             panel.grip_request=float(np.clip(1-(actual+.0001)/.0475,0,1))
@@ -119,6 +119,12 @@ def clip_grasp_drive(controller):
             return
         controller.phase="clip_carry_rotate"
         root=np.asarray(getattr(controller,"carry_root",(.66,-.02,.95)),dtype=float)
+        via=getattr(controller,"carry_via_root",None)
+        if via is not None:
+            controller.phase="clip_carry_via"
+            if not (yield from move_clip_root(controller,np.asarray(via),Rotation.identity(),grasp,.05)):
+                return
+            controller.phase="clip_carry_rotate"
         reached=yield from move_clip_root(controller,root,Rotation.identity(),grasp,.05)
         if not reached:
             return
@@ -309,6 +315,28 @@ def prepare_table_fold(c,holder,presser):
     return (yield from table_fold_gate(c))
 
 
+def sequential_table_fold(c):
+    """Release raw rim grips, then press the free flap down across its width.
+
+    Pressing the crease nose while the other rim was still gripped peeled
+    the flap up. A pitched tip now starts at the measured free rim instead.
+    """
+    yield from c.retract_grasp("left")
+    yield from c.retract_grasp("right")
+    right=c.session.arms["right"]
+    quat=right.ik.ee_pose(c.sim.state)[1]
+    jaw=c.takes._fold_jaws(c.film,"right")
+    yield from c.move({"right":jaw+[0,-.10,.05]},{"right":quat},.12,100)
+    yield from c.press("left",leave_down=True,near=-.045,sweep_end=.070,at_rim=True)
+    if c.failure:return False
+    return (yield from table_fold_gate(c))
+
+
+def sequential_component(c):
+    held=yield from sequential_table_fold(c)
+    if held:yield from seal_fold(c)
+
+
 def table_fold_gate(c):
     entity=c.sim.scene.by_name["pouch"]
     from fold_metrics import fold_metrics
@@ -318,7 +346,7 @@ def table_fold_gate(c):
     if not fold["valid"] or fold["median_angle_rad"]<2.2 or fold["folded_fraction"]<.6:
         c.failure="table-supported centre press did not retain the folded mouth"
         return False
-    if c.layout.get("support_front",c.layout["line"])<c.layout["line"]-.005:
+    if getattr(c,"insert_mode","overhang")!="wedge" and c.layout.get("support_front",c.layout["line"])<c.layout["line"]-.005:
         if not (yield from drag_fold_to_edge(c)):
             return False
     c.marks["left_press_hold"]=True
@@ -412,9 +440,36 @@ def insert_over_support(c,grasp,center):
     final_x=float(center[0]-.035)
     lift_x=min(final_x-.008,front-.045)
     outside_x=lift_x-.025
+    # First finish rotation in the validated high workspace. Rotating
+    # while approaching the lower stage let the handle slip in rigid-only
+    # tests; the high-then-low route retained the spring-limited grip.
+    c.phase="clip_carry_high"
+    if not (yield from move_clip_root(c,np.array([.66,center[1],top+.072]),rotation,grasp,.05)):
+        return None
     c.phase="clip_stage"
     if not (yield from move_clip_root(c,np.array([outside_x,center[1],top+.04]),rotation,grasp,.045)):
         return None
+    if getattr(c,"insert_mode","overhang")=="wedge":
+        # The 0.2 mm stepped toe approaches above the board, then lifts the
+        # bottom film on contact. No frictional pull on the free flap and no
+        # prescribed film motion. All insertion geometry stays observed.
+        c.phase="clip_descend_outside"
+        pose=clip_pose(c)
+        safe_z=float(top+.0004-blade_offsets(c,Rotation.from_quat(pose[3:]))[:,2].min())
+        for _ in range(4):
+            if not (yield from move_clip_root(c,np.array([outside_x,center[1],safe_z]),rotation,grasp,.010,precise=True)):
+                return None
+            pose=clip_pose(c)
+            clearance=float(pose[2]+blade_offsets(c,Rotation.from_quat(pose[3:]))[:,2].min()-top)
+            if clearance>=.0002:break
+            safe_z+=.0004-clearance
+        else:
+            c.failure="wedge lower blade did not clear the board";return None
+        c.phase="clip_insert"
+        target=np.array([final_x,center[1],safe_z])
+        if not (yield from move_clip_root(c,target,rotation,grasp,.003,precise=True)):
+            return None
+        return target
     entity=c.sim.scene.by_name["pouch"]
     q=c.sim.state.particle_q.numpy()[entity.particles]
     near=(abs(q[:,1]-center[1])<.052)&(q[:,0]>center[0]-.006)&(q[:,0]<center[0]+.012)
@@ -448,13 +503,65 @@ def insert_over_support(c,grasp,center):
     return target
 
 
-def seal_fold(c):
+def insert_component(c):
+    """Resume the measured robot/clip grasp from a recorded component state."""
+    pose=clip_pose(c);rotation=Rotation.from_quat(pose[3:])
+    quat=c.session.arms["right"].ik.ee_pose(c.sim.state)[1]
+    grasp=dict(offset=rotation.inv().apply(c.takes._fold_jaws(c.film,"right")-pose[:3]),
+               relative_rotation=rotation.inv()*Rotation.from_quat(quat),start_z=float(pose[2]))
+    yield from seal_fold(c,grasp=grasp)
+
+
+def clear_left_for_clip(c):
+    """Park the creasing arm outside the right arm's transport corridor."""
+    yield from c.lift_press("left")
+    c.phase="clear_left_for_clip"
+    ik=c.sim.arm("left");initial=c.sim.state.joint_q.numpy().copy()
+    current_quat=c.session.arms["left"].ik.ee_pose(c.sim.state)[1]
+    chosen=None
+    # Retain the current wrist first: the fixed inward pinch quaternion
+    # saturated the wrist at the former side-park goal. Plan by FK/IK,
+    # without writing the candidate joint vector into the live state.
+    for quat in (current_quat,c.takes._fold_hand("left")):
+        for x,y,z in ((.55,.22,.13),(.50,.25,.15),(.60,.18,.13)):
+            target=np.array([x,c.layout["center_y"]+y,c.layout["board_top"]+z])
+            tcp=c.takes._fold_targets(c.film,{"left":target},{"left":quat})["left"]
+            with ik.host_fk():candidate=ik.solve_q_full(initial,tcp,quat)
+            actual,turn=ik.fk_ee(candidate)
+            miss=float(np.linalg.norm(actual-tcp))
+            angle=float((Rotation.from_quat(turn).inv()*Rotation.from_quat(quat)).magnitude())
+            if miss<.003 and angle<.05:
+                chosen=(target,quat)
+                c.marks["left_clear_kinematic_plan"]=dict(jaw_m=target.tolist(),tcp_residual_m=miss,
+                    angle_residual_rad=angle,candidate_joints=candidate[ik.arm_coords].tolist())
+                break
+        if chosen is not None:break
+    if chosen is None:
+        c.failure="no reachable side park for the left arm";return False
+    target,quat=chosen
+    if not (yield from c.move({"left":target},{"left":quat},.10,150)):
+        c.failure="left arm did not reach its clear side park";return False
+    c.marks["left_cleared_for_clip"]=True
+    c.marks["left_press_hold"]=False
+    from fold_metrics import fold_metrics
+    entity=c.sim.scene.by_name["pouch"]
+    q=c.sim.state.particle_q.numpy()[entity.particles]
+    fold=fold_metrics(q,entity.grid,[(34,28,40)])["folds"][0]
+    if fold["median_angle_rad"]<2.2 or fold["folded_fraction"]<.6:
+        c.failure="fold did not retain the pre-clip gate after the pressing arm cleared"
+        return False
+    return True
+
+
+def seal_fold(c,grasp=None):
     """Attempt insertion using measured cloth/clip poses, then release.
 
     Completion of these commands is not a success score. Independent contacts,
     cloth geometry and the full hands-free interval must still be assessed.
     """
-    grasp=yield from grasp_clip(c)
+    if getattr(c,"table_insert",False) and not c.marks.get("left_cleared_for_clip"):
+        if not (yield from clear_left_for_clip(c)):return
+    if grasp is None:grasp=yield from grasp_clip(c)
     if grasp is None:
         return
     entity=c.sim.scene.by_name["pouch"]
@@ -507,15 +614,35 @@ def seal_fold(c):
     if miss>.006:
         c.failure=f"clip insertion error {miss:.4f} m exceeds 6 mm"
         return
+    yield from release_clip(c,rotation)
+
+
+def release_clip(c,rotation):
+    """Clear both closed handle ends before retreating the open gripper."""
+    x_axis=rotation.apply([1,0,0]);z_axis=rotation.apply([0,0,1])
     c.phase="clip_release"
     quat=c.session.arms["right"].ik.ee_pose(c.sim.state)[1]
-    # End pads are 86 mm apart when closed: use the full 95 mm opening.
+    # The opened handles' midpoint is below the root. A 95 mm gap only
+    # clears the 86 mm closed ends when centred about the closed clip,
+    # not about that earlier squeeze midpoint.
     c.session.arms["right"].grip_request=0.
-    yield from c.wait(60)
+    yield from c.wait(30)
+    pose=clip_pose(c);root_rotation=Rotation.from_quat(pose[3:])
     jaw=c.takes._fold_jaws(c.film,"right")
-    yield from c.move({"right":jaw-x_axis*.080+z_axis*.020},{"right":quat},.025,80)
+    local=root_rotation.inv().apply(jaw-pose[:3]);local[2]=0.
+    c.phase="clip_centre_open_gripper"
+    if not (yield from c.move({"right":pose[:3]+root_rotation.apply(local)},{"right":quat},.008,100)):
+        c.failure="open gripper could not centre clear of both clip handle ends";return
+    yield from c.wait(30)
+    jaw=c.takes._fold_jaws(c.film,"right")
+    c.phase="clip_retreat"
+    yield from c.move({"right":jaw-x_axis*.080},{"right":quat},.025,80)
+    jaw=c.takes._fold_jaws(c.film,"right")
+    yield from c.move({"right":jaw+z_axis*.040},{"right":quat},.05,80)
     c.phase="fold_stack_release"
-    if c.marks.get("left_press_hold"):
+    if c.marks.get("left_cleared_for_clip"):
+        pass
+    elif c.marks.get("left_press_hold"):
         yield from c.lift_press("left")
     else:
         c.session.arms["left"].grip_request=.95

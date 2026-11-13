@@ -171,3 +171,75 @@ the tip's side sweep ends at Y=70 mm, inside the 80 mm pouch half-width.
 `fold_pouch_robot.py` now saves physical component seeds at stage boundaries
 under `seeds/`, including target controls, velocities and crease rest angles.
 These reduce repeated prefix simulation and remain labelled component resets.
+
+
+## Latest contact-driven iterations
+
+No completed sealing demo yet. The preceding "live v10" paragraph is now
+historical. Current scripts use a direct wedge path and a different press order.
+
+| Trial | Outcome |
+|---|---|
+| `unfolded-tip-press-v11` | Real pitched finger contact; 690 frames / 82,800 substeps, zero scoped hits; edge drag peeled the flap open and failed |
+| `unfolded-wedge-v12` | 591 frames / 70,920 substeps, zero scoped hits; centre press while supported did not retain the fold |
+| `press-drag-tip-v13` | Actual side press retained ~2.69 rad / 90% fold; edge drag failed; restart seeds preserved |
+| `wedge-clip-v14` | Handle grasp and lift succeeded; low simultaneous rotation/translation slipped; 35,040 substeps, zero scoped film hits |
+| `rigid-wedge-carry-v8` | Low direct carry slipped without any film |
+| `rigid-wedge-carry-v9` | Opening-stop preload rejected: -0.407 rad exceeded the allowed opening check; this preload was reverted |
+| `rigid-wedge-via-high-v10` | High rotation at (0.66,0,1.04), then lower target (0.606,0,1.008), held 3 s; 571 frames, finite, no failure. Final target error 5.46 mm / 0.0741 rad; no film |
+| `rigid-wedge-friction3-v11` | Higher friction did not meet the pose check |
+| `sequential-rim-press-v16` | Released both raw grips, pressed the measured free rim across Y; reached ~3.00 rad / 100% folded columns with zero scoped hits. Interrupted after the valid fold prefix because the arm-clearance policy needed updating |
+| `wedge-high-route-v17` | High route blocked with the left pressing arm present. Recorded cross-arm capsule pair 24/91 (bodies 4/13) at ~23 micrometres penetration. This is rigid arm contact, not film penetration |
+
+`clear-arm-wedge-v18` rejected an unreachable fixed park.
+`clear-arm-wedge-v19` resumes v16's pre-grasp seed, selects a reachable side
+park by offline FK/IK, then attempts high carry and direct insertion.
+It is a component reset, never an end-to-end success claim.
+
+The current wedge policy releases both raw rim grips, presses the actual free
+flap end vertically, and sweeps the pressing tip from Y=-45 to +70 mm without
+pulling the flap toward the board edge. The FK/IK sweep check passes all six
+sampled contact/hover poses (worst position residual 1.99 mm). The left arm is
+then cleared to avoid the right arm's transport corridor. The clipped hold
+must still be verified and the whole sequence rerun from the unfolded reset.
+
+A 95 mm opening is centred about the closed handle ends before gripper
+retreat. Opening about the earlier squeeze midpoint can leave one 86 mm-wide
+closed end obstructed. This release correction is implemented, not yet a
+validated free-tool retention result.
+
+### Force observations and material scope
+
+`--record-force-means` adds a read-only sum over every physics substep.
+`--force-readout mean` additionally chooses that signal for pressing control;
+recording alone leaves the last-substep controller unchanged. The core
+assessment now requires full force windows, loaded jaws and unloaded fingers
+through the continuous 3 s hold. The focused suite passes 27 tests, including
+CPU/CUDA geometry and impulse-averaging cases.
+
+The actual pouch mass is 5.615 g, zero particles have zero mass, and gravity
+is -9.81 m/s2. Static force-balance auditing is unresolved: rest trials report
+roughly 23 N board reaction despite a 0.055 N pouch weight and near-zero
+momentum change. A two-ring self-contact filter and reducing the self-contact
+skin from 0.5 to 0.1 mm did not resolve this. Treat reported forces as solver
+observations, not calibrated physical loads. The existing material/spring
+claims remain uncalibrated; the source of this large residual needs isolation.
+The legacy 0.5 mm self-contact skin and zero-ring filter remain the default;
+changes require explicit flags and a contact-settings override for old seeds.
+
+A held-clip component reset was rejected by strict BOX preflight: observed
+MuJoCo pad/handle overlaps were 56-73 micrometres. That check was not relaxed.
+Retry from the saved pre-grasp seed instead of the held-tool seed.
+
+All raw runs stay on Brev. Code, selected evidence and prior reset seeds stay
+on `feature/close-snack-bag`; no Dream run or submission has been made.
+
+The updated side park passed dynamically in v19; the fold retained ~2.92 rad
+and 100% folded columns with the left arm clear. `unfolded-clear-wedge-v13`
+is the current fresh, uninterrupted reset attempt using that policy.
+
+A full-shape reaction audit also reports ~26 N total reaction, so the earlier
+force-balance discrepancy is not just omitted palm contacts. All robot-body
+reaction sums are now recorded, and the core hands-free gate requires them to
+be unloaded. The physical interpretation/convergence of these solver forces
+is still unresolved. No force scaling or arbitrary reaction cap was applied.

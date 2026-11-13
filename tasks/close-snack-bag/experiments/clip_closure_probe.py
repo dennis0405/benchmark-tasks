@@ -70,6 +70,7 @@ def main():
     for source in (Path(__file__),root/"deformable_scene.py",root/"pouch_geometry.py",
                    Path(__file__).with_name("film_material.py"),Path(__file__).with_name("tool_feedback.py"),
                    Path(__file__).with_name("substep_geometry.py"),Path(__file__).with_name("gpu_contact_checks.py"),
+                   Path(__file__).with_name("round_contact_checks.py"),
                    Path(__file__).with_name("assets")/"clip_thin_lower.xml"):
         shutil.copy2(source,sources/source.name)
     (a.output/"arguments.json").write_text(json.dumps(dict(vars(a),hz=20,fixture=True),default=str,indent=2))
@@ -124,7 +125,7 @@ def main():
         if step%5==0:
             data[f"q_{step:05d}"]=q;data[f"b_{step:05d}"]=b
         if step%10==0:print(row,flush=True)
-        if not row["finite"] or row["geometry"]["transverse_edge_crossings"] or row["geometry"]["film_box_intersections"]:break
+        if not row["finite"] or row["geometry"]["transverse_edge_crossings"] or row["geometry"]["film_box_intersections"] or row["geometry"]["film_round_intersections"]:break
     np.savez_compressed(a.output/"states.npz",**data)
     (a.output/"trace.json").write_text(json.dumps(trace))
     result=dict(scope=__doc__,ke=a.ke,frames=trace[-1]["step"],wall_s=time.monotonic()-started,

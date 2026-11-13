@@ -20,7 +20,7 @@ from finger_geometry import low_offset
 
 def main():
     p=argparse.ArgumentParser();p.add_argument("seed",type=Path);p.add_argument("output",type=Path)
-    p.add_argument("--grid",action="store_true");a=p.parse_args()
+    p.add_argument("--grid",action="store_true");p.add_argument("--sweep",action="store_true");a=p.parse_args()
     sim=make_environment(ready_start=True,rigid_only=True,with_clip=True,rigid_cpu=True,
                          workspace="raised_flat",clip_style="thin_lower",side_access=False,
                          control_hz=20,physics_hz=2400,support_extension=.014)
@@ -31,7 +31,7 @@ def main():
         state.joint_q.assign(initial);newton.eval_fk(sim.model,state.joint_q,state.joint_qd,state)
     output=[]
     for arm,sign in (("left",1.),("right",-1.)):
-        if a.grid and arm=="right":continue
+        if (a.grid or a.sweep) and arm=="right":continue
         ik=sim.arm(arm)
         candidates=[("reference",c.takes._fold_presser(arm))]
         for pitch in (15,25,35,45):
@@ -40,9 +40,11 @@ def main():
             for closing in (-1,1):
                 candidates.append((f"forward_{pitch}_{closing}",c.takes._frame_quat((np.cos(r),0,-np.sin(r)),(0,0,sign*closing))))
         for name,quat in candidates:
+            if a.sweep and name!="forward_25_1":continue
             offset=low_offset(sim,arm,quat,ik)
             points=([(.698,y,.970) for y in (sign*.055,sign*.070)] if not a.grid else
                     [(x,sign*.070,z) for x in (.60,.65,.70) for z in (.970,1.02,1.07,1.12)])
+            if a.sweep:points=[(.715,y,z) for y in (-.045,0.,.070) for z in (.970,1.020)]
             for x,y,z in points:
                 target=np.array([x,y,z])-offset
                 with ik.host_fk():solved=ik.solve_q_full(initial,target,quat)

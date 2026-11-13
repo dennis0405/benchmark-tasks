@@ -25,6 +25,8 @@ def main():
     parser.add_argument("--workspace",choices=("original","raised_forward","raised_flat"),default="original")
     parser.add_argument("--clip-style",choices=("standard","thin_lower"),default="standard")
     parser.add_argument("--carry-root",type=float,nargs=3,default=None)
+    parser.add_argument("--via-root",type=float,nargs=3,default=None)
+    parser.add_argument("--finger-friction",type=float,default=None)
     args=parser.parse_args()
     args.output.mkdir(parents=True,exist_ok=False)
     sources=args.output/"sources";sources.mkdir()
@@ -44,7 +46,7 @@ def main():
     started=time.monotonic()
     sim=make_environment(ready_start=True,with_clip=True,rigid_cpu=args.cpu,
                          rigid_only=True,control_hz=20,physics_hz=args.physics_hz,workspace=args.workspace,
-                         clip_style=args.clip_style)
+                         clip_style=args.clip_style,finger_friction=args.finger_friction)
     assert sim.model.particle_count==0
     solver=sim.pipeline.program.solver
     actual=getattr(solver,"rigid",solver)
@@ -55,6 +57,7 @@ def main():
     controller.plan_clip=args.plan
     if args.carry_root is not None:
         controller.carry_root=args.carry_root
+    if args.via_root is not None:controller.carry_via_root=args.via_root
     drive=clip_grasp_drive(controller)
     export_render_geometry(sim,args.output)
     preflight=inspect_tool(sim)

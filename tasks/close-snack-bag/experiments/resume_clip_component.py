@@ -63,6 +63,7 @@ def restore(sim,session,directory):
         coord=sim.scene.embodiment.arms[arm].gripper_coords[0]
         panel.grip_request=float(np.clip(1-targets[coord]/.0475,0,1))
     return dict(layout=metadata["layout"],source_step=metadata["step"],
+                left_cleared_for_clip=metadata.get("left_cleared_for_clip",False),
                 support_holds=metadata.get("support_holds",{}),
                 seed_sha256=hashlib.sha256(raw).hexdigest(),fk_position_error_m=pos_error,
                 target_source=target_source,target_q=targets.tolist(),

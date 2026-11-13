@@ -26,6 +26,10 @@ class FoldController:
         self.support_hold_enabled=False
         self.press_floor_m=.0025
 
+    def shape_forces(self):
+        average=getattr(self.sim,"snack_force_average",None)
+        return average.forces() if average is not None else self.sim.pipeline.program.solver.shape_contact_forces()
+
     def start_support(self,arm,*,floor_z=None,quat=None,filtered=0.):
         if not self.support_hold_enabled:return
         panel=self.session.arms[arm]
@@ -38,7 +42,7 @@ class FoldController:
     def update_support_holds(self):
         """Keep a pressing hand in light contact while the other hand works."""
         if not self.support_holds:return
-        solver=self.sim.pipeline.program.solver;forces=solver.shape_contact_forces()
+        forces=self.shape_forces()
         owners=self.sim.model.shape_body.numpy();hz=float(self.sim.request.physics.control_hz)
         for arm,hold in self.support_holds.items():
             fingers=[int(b) for side in self.sim.scene.embodiment.arms[arm].finger_bodies
@@ -196,10 +200,15 @@ class FoldController:
             self.phase = "fold_hold"
             yield from self.wait(180)
             return
+        if getattr(self,"table_insert",False) and getattr(self,"insert_mode","overhang")=="wedge":
+            from clip_controller import sequential_table_fold,seal_fold
+            held=yield from sequential_table_fold(self)
+            if held and self.after_fold=="seal":yield from seal_fold(self)
+            return
         # Keep whichever hand still has bilateral contact; a fixed left/right
         # order dropped the flap when the left grip had slipped during the turn.
         solver = self.sim.pipeline.program.solver
-        forces = solver.shape_contact_forces()
+        forces = self.shape_forces()
         owners = self.sim.model.shape_body.numpy()
         loads = {a:min(float(np.linalg.norm(forces[np.isin(owners, side)].sum(axis=0)))
                        for side in index.finger_bodies)
@@ -265,7 +274,7 @@ class FoldController:
         tcp, quat = panel.ik.ee_pose(self.sim.state)
         yield from self.takes._go_both(self.film, {arm:tcp+[0,0,.08]}, {arm:quat}, .10, self.frames(80), .003)
 
-    def press(self, arm, *, leave_down=False, near=.040, along_fold=False):
+    def press(self, arm, *, leave_down=False, near=.040, along_fold=False,sweep_end=None,at_rim=False):
         self.support_holds.pop(arm,None)
         self.phase = "press_"+arm
         panel = self.session.arms[arm]
@@ -302,6 +311,13 @@ class FoldController:
         q=self.sim.state.particle_q.numpy()[entity.particles]
         patch=select_press_patch(q,entity.grid,entity.faces,yc+sign*near,
                                  self.layout.get("support_front",line))
+        if at_rim:
+            rim=q[np.unique(entity.grid[:,-1,:])]
+            local=rim[abs(rim[:,1]-(yc+sign*near))<.018]
+            if not len(local):
+                self.failure="no measured free-rim points at the press entry";return
+            patch["x"]=float(np.median(local[:,0])-.002)
+            patch["kind"]="measured free rim, pressed vertically before creasing"
         self.marks.setdefault("press_plans",[]).append(dict(arm=arm,**patch))
         print("PRESS_PATCH",arm,patch,flush=True)
         point=np.array([patch["x"],yc+sign*near,top+.0035])-lowest
@@ -317,7 +333,7 @@ class FoldController:
                  for b in np.asarray(side).reshape(-1)}
         mask=np.isin(owners,list(fingers))
         def load_z():
-            return max(0.,float(solver.shape_contact_forces()[mask].sum(0)[2]))
+            return max(0.,float(self.shape_forces()[mask].sum(0)[2]))
         # A contact-limited vertical approach precedes the crease stroke.
         # Only arm targets change; no particle is attached or prescribed.
         for _ in self.move({arm:point},{arm:quat},.0125,30):
@@ -330,16 +346,17 @@ class FoldController:
         floor=self.takes._fold_targets(self.film,{arm:point-[0,0,.0035-self.press_floor_m]},{arm:quat})[arm][2]
         filtered=0.;z=float(start[2]);peak=0.
         hz=float(self.sim.request.physics.control_hz)
-        count=self.frames(300 if along_fold else 240)
+        sweep_seconds=(max(3.,abs(sweep_end-near)/.020) if sweep_end is not None else 3.)
+        count=(int(np.ceil((sweep_seconds+2.)*hz)) if sweep_end is not None else self.frames(300 if along_fold else 240))
         for k in range(count):
             force=load_z();peak=max(peak,force);filtered=.7*filtered+.3*force
             speed=float(np.clip((filtered-.8)*.008,-.004 if self.support_hold_enabled else -.006,.010))
             z=float(np.clip(z+speed/hz,floor,start[2]+.008))
-            fraction=min(1.,k/(3.*hz))
+            fraction=(float(np.clip((k/hz-1.)/sweep_seconds,0.,1.)) if sweep_end is not None else min(1.,k/(3.*hz)))
             # Keep the actual pressing tip on the 160 mm pouch. The former
             # side stroke ended at Y=95 mm, beyond its 80 mm half-width.
-            travel=min(.04,max(0.,.070-near))
-            stroke=[.006*fraction if along_fold else 0.,sign*travel*fraction,z-start[2]]
+            travel=(sweep_end-near if sweep_end is not None else min(.04,max(0.,.070-near)))
+            stroke=[.006*fraction if along_fold and not at_rim else 0.,sign*travel*fraction,z-start[2]]
             panel.aim(start+stroke,quat,moving=leave_down or k<count-1)
             yield
         self.marks.setdefault("press_diagnostics",[]).append(dict(
