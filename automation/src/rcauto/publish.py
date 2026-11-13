@@ -8,7 +8,7 @@ import subprocess
 from .engine import approval_valid, read
 from .gates import GateError, file_hash, manifest, validate_spec, verify_manifest
 from .runtime import capture
-from .store import write_json
+from .store import StateError, write_json
 
 
 class Publisher:
@@ -261,7 +261,7 @@ class Publisher:
         result = poll(self.store, rid, self.config.get("receipt_authors", []), timeout=180)
         try:
             self.checkpoint(rid)
-        except (GateError, OSError) as e:
+        except (StateError, OSError) as e:
             self.store.update(rid, preservation_error=str(e))
             result["preservation_error"] = str(e)
         return result
