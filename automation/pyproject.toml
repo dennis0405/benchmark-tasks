@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "robocurve-automation"
+version = "0.1.0"
+description = "Prompt-driven RoboCurve task production with evidence and human submission approval"
+requires-python = ">=3.10"
+dependencies = ["httpx>=0.28,<1", "jsonschema>=4.23,<5", "pypdf>=6,<8"]
+
+[project.scripts]
+rcauto = "rcauto.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rcauto"]
+
+[dependency-groups]
+dev = ["pytest>=8,<10", "ruff>=0.12"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
