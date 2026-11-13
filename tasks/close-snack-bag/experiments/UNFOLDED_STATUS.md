@@ -243,3 +243,42 @@ force-balance discrepancy is not just omitted palm contacts. All robot-body
 reaction sums are now recorded, and the core hands-free gate requires them to
 be unloaded. The physical interpretation/convergence of these solver forces
 is still unresolved. No force scaling or arbitrary reaction cap was applied.
+
+### Low transport diagnosis and pressure-pad comparisons
+
+The v19 component failed during low descent, before film insertion. Native
+MuJoCo contact reconstruction (`audit_rigid_contacts.py`) found the lower toe
+on the board edge. The outside descent was moved to at least 100 mm before
+the board front. With this clearance and the left arm parked, rigid-only
+pre-grasp resets v16/v17 still missed the flat low pose by 26/37 mm. Their
+contacts were the intended handle/finger pairs; the wrist saturated a joint
+limit. Planning from the **current** grasp, rather than the earlier lift
+transform, exposes this reachability change as the clip tilts in the pads.
+
+An 8-degree yaw/pitch comparison and damped pose corrections reduced the
+rigid-only low-pose error to about 2 mm. Tight settling and preserving the
+cursor through corrections still failed the unchanged 1 mm precision gate:
+`rigid-tight-angled-v22` ended at 2.4 mm/0.031 rad; the stronger passive spring
+comparison v23 ended at 1.7 mm/0.011 rad. Neither is a sealing result.
+Unreachable hand motions now stop the tool route instead of being silently
+treated as completed moves. Rigid traces include actual and commanded hand
+poses for this diagnosis.
+
+The `thin_strong` asset changes only passive hinge stiffness from 0.2 to
+0.6 N m/rad. Its analytical handle-end load remains below 5 N over the
+authored range; this is not a hardware measurement. Experimental `thin_broad`
+and `thin_aligned` assets additionally widen the pressure pads from 16 to
+40 mm along X; the latter aligns the upper pressure face with the lower one
+at the nominal -0.32 rad opening. These comparisons retain free tool dynamics,
+the same masses, contact checks and gripper effort limit. They have not yet
+established retention. A wider-pad trial resumed at the old tool parking pose
+was rejected for rail interference; `--reset-tool` explicitly uses the new
+asset's authored parking pose at a rigid-only reset, never during an action.
+
+Coordinate-only `--rebase-z` and the isolated no-self-contact rest audit did
+not solve force balance: total rest reactions remained about 12 N. The
+default coordinate frame and enabled self-contact are unchanged. The pinned
+RSS `shape_contact_forces` documentation itself warns that a resting sheet's
+weight is not read correctly. Loads remain numerical observations, not a
+physical calibration. The focused CPU/CUDA suite passed 28 tests before the
+two additional pressure-pad geometry cases.

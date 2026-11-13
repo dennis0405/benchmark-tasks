@@ -63,7 +63,8 @@ class FoldController:
     def frames(self, at_60_hz):
         return max(1, round(at_60_hz*self.sim.request.physics.control_hz/60))
 
-    def move(self, points, quats, speed=.05, settle=100):
+    def move(self, points, quats, speed=.05, settle=100, *, keep_target=False,
+             position_tolerance=.003, angle_tolerance=.05):
         targets = self.takes._fold_targets(self.film, points, quats)
         panels={arm:self.session.arms[arm] for arm in targets}
         starts={arm:np.array(panel.cursor_pos) for arm,panel in panels.items()}
@@ -85,14 +86,14 @@ class FoldController:
         for _ in range(self.frames(settle)):
             yield
             poses={a:p.ik.ee_pose(self.sim.state) for a,p in panels.items()}
-            if all(np.linalg.norm(poses[a][0]-targets[a])<.003 and
-                   angle(poses[a][1],quats[a])<.05 for a in panels):
+            if all(np.linalg.norm(poses[a][0]-targets[a])<position_tolerance and
+                   angle(poses[a][1],quats[a])<angle_tolerance for a in panels):
                 break
         poses={a:p.ik.ee_pose(self.sim.state) for a,p in panels.items()}
         errors={a:dict(position_m=float(np.linalg.norm(poses[a][0]-targets[a])),
                        angle_rad=float(angle(poses[a][1],quats[a]))) for a in panels}
         reached=all(e["position_m"]<.006 and e["angle_rad"]<.08 for e in errors.values())
-        for arm,panel in panels.items():panel.aim(targets[arm],quats[arm],moving=False)
+        for arm,panel in panels.items():panel.aim(targets[arm],quats[arm],moving=keep_target)
         if not reached:self.marks["last_move_error"]=errors
         return reached
 

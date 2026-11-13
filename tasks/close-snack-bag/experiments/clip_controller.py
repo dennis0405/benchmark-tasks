@@ -109,7 +109,12 @@ def grasp_clip(controller, arm="right"):
 
 
 def clip_grasp_drive(controller):
-    yield from controller.retract_grasp("right")
+    if not getattr(controller,"right_already_clear",False):
+        yield from controller.retract_grasp("right")
+    if getattr(controller,"clear_left_first",False):
+        controller.layout=dict(center_y=0.,board_top=.728+controller.sim.snack_board_height+
+                               controller.sim.snack_world_z_offset)
+        if not (yield from clear_left_for_clip(controller)):return
     grasp=yield from grasp_clip(controller)
     if grasp is not None:
         if getattr(controller,"plan_clip",False):
@@ -125,25 +130,42 @@ def clip_grasp_drive(controller):
             if not (yield from move_clip_root(controller,np.asarray(via),Rotation.identity(),grasp,.05)):
                 return
             controller.phase="clip_carry_rotate"
-        reached=yield from move_clip_root(controller,root,Rotation.identity(),grasp,.05)
+        rotation=Rotation.from_euler("zy",getattr(controller,"carry_angles",(0.,0.)),degrees=True)
+        reached=yield from move_clip_root(controller,root,rotation,grasp,.05,
+                                         precise=getattr(controller,"precise_carry",False))
         if not reached:
             return
         measured=clip_pose(controller)
         miss=float(np.linalg.norm(measured[:3]-root))
-        turn=float(Rotation.from_quat(measured[3:]).magnitude())
+        turn=float((rotation.inv()*Rotation.from_quat(measured[3:])).magnitude())
         print("CLIP_CARRY",dict(position_error_m=miss,angle_error_rad=turn),flush=True)
         if miss>.006 or turn>.10:
             controller.failure="clip carry did not reach the requested pose"
             return
         controller.phase="clip_grasp_watch"
-        yield from controller.wait(180)
+        for _ in controller.wait(180):
+            yield
+            if getattr(controller,"precise_carry",False):
+                pose=clip_pose(controller)
+                if np.linalg.norm(pose[:3]-root)>.003 or (rotation.inv()*Rotation.from_quat(pose[3:])).magnitude()>.05:
+                    controller.failure="precision carry drifted during the 3 s hold";return
 
 
 def move_clip_root(c,target,rotation,grasp,speed=.025,precise=False):
     """Measured-pose corrections act on the robot cursor, never the clip."""
     quat=(rotation*grasp["relative_rotation"]).as_quat()
     def guarded(point,quat,speed,settle):
-        for _ in c.move({"right":point},{"right":quat},speed,settle):
+        motion=c.move({"right":point},{"right":quat},speed,settle,keep_target=True,
+                      position_tolerance=.0002 if precise else .003,
+                      angle_tolerance=.005 if precise else .05)
+        while True:
+            try:next(motion)
+            except StopIteration as done:
+                if not done.value:
+                    error=c.marks.get("last_move_error",{}).get("right",{})
+                    c.failure=f"right hand did not reach {c.phase}: {error}"
+                    return False
+                break
             yield
             pose=clip_pose(c)
             expected=pose[:3]+Rotation.from_quat(pose[3:]).apply(grasp["offset"])
@@ -163,8 +185,12 @@ def move_clip_root(c,target,rotation,grasp,speed=.025,precise=False):
         jaw=c.takes._fold_jaws(c.film,"right")
         ee_rotation=Rotation.from_quat(c.session.arms["right"].ik.ee_pose(c.sim.state)[1])
         relative=actual_rotation.inv()*ee_rotation
-        quat=(rotation*relative).as_quat()
-        if not (yield from guarded(jaw+np.clip(error,-.008,.008),quat,min(speed,.015),100)):
+        # Damped feedback avoids chasing the transient compliant grasp with
+        # full pose corrections. The clip and all object states stay free.
+        desired=rotation*relative
+        correction=desired*ee_rotation.inv()
+        quat=(Rotation.from_rotvec(.4*correction.as_rotvec())*ee_rotation).as_quat()
+        if not (yield from guarded(jaw+.4*np.clip(error,-.008,.008),quat,min(speed,.015),100)):
             return False
     pose=clip_pose(c)
     miss=float(np.linalg.norm(np.asarray(target)-pose[:3]))
@@ -439,7 +465,10 @@ def insert_over_support(c,grasp,center):
     rotation=Rotation.identity();top=c.layout["board_top"];front=c.layout.get("support_front",c.layout["line"])
     final_x=float(center[0]-.035)
     lift_x=min(final_x-.008,front-.045)
-    outside_x=lift_x-.025
+    # Keep the entire tip outside even if the still-held clip shifts by
+    # the 30 mm grasp guard. The former 26 mm clearance let a tilted toe
+    # touch the board during the supposedly free descent (native audit).
+    outside_x=min(lift_x-.025,front-.100)
     # First finish rotation in the validated high workspace. Rotating
     # while approaching the lower stage let the handle slip in rigid-only
     # tests; the high-then-low route retained the spring-limited grip.
@@ -543,6 +572,7 @@ def clear_left_for_clip(c):
         c.failure="left arm did not reach its clear side park";return False
     c.marks["left_cleared_for_clip"]=True
     c.marks["left_press_hold"]=False
+    if c.sim.snack_rigid_only:return True
     from fold_metrics import fold_metrics
     entity=c.sim.scene.by_name["pouch"]
     q=c.sim.state.particle_q.numpy()[entity.particles]

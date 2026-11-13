@@ -101,7 +101,7 @@ class PouchEntity(EntityPaper):
             particle_radius=material.particle_radius, label=self.name)
 
 
-def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None,self_filter_rings=0,self_radius=.0005):
+def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None,self_filter_rings=0,self_radius=.0005,rebase_z=False):
     if embodiment != "yam_bimanual":
         raise ValueError("This research scene currently supports yam_bimanual only")
     if not 0<=support_extension<=.014:
@@ -157,7 +157,22 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         if coupling!="one_way":
             raise ValueError("Native MuJoCo control requires the one_way research path")
         physics=physics.with_backend("articulated",rss.backend("mujoco",use_mujoco_cpu=rigid_cpu))
-    scene = rss.Scene(cell="bench_0728", physics=physics, name="snack_unfolded")
+    cell_name="bench_0728"
+    z_offset=-(.728+height) if rebase_z else 0.
+    if rebase_z:
+        # Coordinate change only: put the thin film near z=0 so float32
+        # can resolve nanometre-scale compliant contact deflections.
+        from robosimstudio.scene.registry import get_cell,register_cell
+        base=get_cell("bench_0728")
+        cell_name=f"snack_rebased_{workspace}_{int(round(height*1000))}"
+        statics=tuple(rss.replace(item,xform=(*item.xform[:2],item.xform[2]+z_offset,*item.xform[3:]))
+                      for item in base.statics)
+        candidate=rss.replace(base,name=cell_name,ground_z=base.ground_z+z_offset,
+                              surface_z=base.surface_z+z_offset,statics=statics,
+                              provenance="bench_0728 translated vertically; physical dimensions and relative poses unchanged")
+        try:get_cell(cell_name)
+        except KeyError:register_cell(candidate)
+    scene = rss.Scene(cell=cell_name, physics=physics, name="snack_unfolded")
     grip = rss.ActuationSpec(target_ke=1e5, target_kd=20., effort_limit=10., joint_damping=100.)
     robot = get_embodiment(embodiment)
     if ready_start:
@@ -224,6 +239,7 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         env.pipeline.reset_solvers(flags=0)
         env.pipeline.reset_finite_flags()
         env.pipeline.invalidate_graph()
+    env.snack_world_z_offset=z_offset
     env.snack_board_height = height
     env.snack_ready_start = ready_start
     env.snack_with_clip = with_clip

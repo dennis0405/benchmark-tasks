@@ -27,13 +27,15 @@ def main():
     parser.add_argument("--stage",choices=("fold","fold_hold","regrasp","seal","clip_grasp","rest"),default="fold")
     parser.add_argument("--self-filter-rings",type=int,choices=(0,2),default=0)
     parser.add_argument("--self-radius-mm",type=float,default=.5)
+    parser.add_argument("--rebase-z",action="store_true")
     parser.add_argument("--hz",type=int,choices=(20,60),default=60)
     parser.add_argument("--physics-hz",type=int,choices=(600,1200,2400),default=None)
     parser.add_argument("--check-substeps",action="store_true")
     parser.add_argument("--side-access",action="store_true")
     parser.add_argument("--rigid-cpu",action="store_true")
     parser.add_argument("--workspace",choices=("original","raised_forward","raised_flat"),default="original")
-    parser.add_argument("--clip-style",choices=("standard","thin_lower"),default="standard")
+    parser.add_argument("--clip-style",choices=("standard","thin_lower","thin_strong","thin_broad","thin_aligned"),default="standard")
+    parser.add_argument("--override-clip-spring",action="store_true")
     parser.add_argument("--table-insert",action="store_true")
     parser.add_argument("--insert-mode",choices=("overhang","wedge"),default="overhang")
     parser.add_argument("--force-readout",choices=("last","mean"),default="last")
@@ -51,7 +53,7 @@ def main():
     args = parser.parse_args()
     if args.stage=="clip_grasp" and not (args.clip and args.drive):
         parser.error("clip_grasp requires --clip --drive")
-    if args.table_insert and (args.clip_style!="thin_lower" or args.workspace!="raised_flat"):
+    if args.table_insert and (args.clip_style not in ("thin_lower","thin_strong","thin_broad","thin_aligned") or args.workspace!="raised_flat"):
         parser.error("table-insert requires the thin lower blade and raised_flat workspace")
     if args.clip_component_seed:
         if not (args.stage=="seal" and args.table_insert and args.clip and args.drive):
@@ -59,8 +61,11 @@ def main():
         seed_meta=json.loads((args.clip_component_seed/"clip-entry.json").read_text())
         for key in ("workspace","clip_style","material_profile","hz","physics_hz","coupling"):
             if seed_meta["arguments"][key]!=getattr(args,key):
+                if key=="clip_style" and args.override_clip_spring and {
+                    seed_meta["arguments"][key],args.clip_style}=={"thin_lower","thin_strong"}:
+                    continue
                 parser.error(f"checkpoint scene mismatch: {key}")
-        for key,default in (("mouth_support","narrow"),("support_extension_mm",0.)):
+        for key,default in (("mouth_support","narrow"),("support_extension_mm",0.),("rebase_z",False)):
             if seed_meta["arguments"].get(key,default)!=getattr(args,key):
                 parser.error(f"checkpoint support geometry mismatch: {key}")
         for key,default in (("board_friction",1.),("finger_friction",None),("self_filter_rings",0),("self_radius_mm",.5)):
@@ -99,8 +104,8 @@ def main():
                        Path(__file__).with_name("plan_clip_poses.py"),
                        Path(__file__).with_name("assets")/"clip_spring_v2.xml"):
             shutil.copy2(source, sources/source.name)
-        if args.clip_style=="thin_lower":
-            source=Path(__file__).with_name("assets")/"clip_thin_lower.xml"
+        if args.clip_style!="standard":
+            source=Path(__file__).with_name("assets")/{"thin_lower":"clip_thin_lower.xml","thin_strong":"clip_thin_strong.xml","thin_broad":"clip_thin_broad.xml","thin_aligned":"clip_thin_aligned.xml"}[args.clip_style]
             shutil.copy2(source,sources/source.name)
     (args.output/"arguments.json").write_text(json.dumps(vars(args), default=str, indent=2))
     if args.clip_component_seed:
@@ -115,7 +120,8 @@ def main():
                            physics_hz=args.physics_hz,rigid_cpu=args.rigid_cpu,workspace=args.workspace,
                            clip_style=args.clip_style,support_extension=args.support_extension_mm/1000.,
                            board_friction=args.board_friction,finger_friction=args.finger_friction,
-                           self_filter_rings=args.self_filter_rings,self_radius=args.self_radius_mm/1000.)
+                           self_filter_rings=args.self_filter_rings,self_radius=args.self_radius_mm/1000.,
+                           rebase_z=args.rebase_z)
     timings = dict(build_s=time.monotonic()-started, driver_tick_s=0., readback_and_metrics_s=0., recording_s=0.)
     entity = sim.scene.by_name["pouch"]
     export_render_geometry(sim, args.output)
@@ -376,6 +382,7 @@ def main():
                   control_hz=args.hz,
                   rigid_backend=sim.snack_rigid_backend,
                   workspace=sim.snack_workspace,
+                  world_z_offset_m=sim.snack_world_z_offset,
                   clip_style=args.clip_style,table_insert=args.table_insert,
                   material_profile=args.material_profile,
                   material=sim.snack_material_parameters,

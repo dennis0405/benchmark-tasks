@@ -28,7 +28,7 @@ class ClipEntity(rss.Entity):
         start_b, start_s, start_j = builder.body_count, builder.shape_count, builder.joint_count
         start_q = len(builder.joint_q)
         frame = self.placed((*self.spec.at, *self.spec.quat))
-        filenames={"standard":"clip_spring_v2.xml","thin_lower":"clip_thin_lower.xml"}
+        filenames={"standard":"clip_spring_v2.xml","thin_lower":"clip_thin_lower.xml","thin_strong":"clip_thin_strong.xml","thin_broad":"clip_thin_broad.xml","thin_aligned":"clip_thin_aligned.xml"}
         builder.add_mjcf(str(Path(__file__).parent/"experiments/assets"/filenames[self.spec.style]),
                          floating=True, override_root_xform=True,
                          xform=wp.transform(wp.vec3(*map(float,frame[:3])), wp.quat(*map(float,frame[3:]))))

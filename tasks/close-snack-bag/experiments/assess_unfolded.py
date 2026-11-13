@@ -54,7 +54,7 @@ def main():
                          hinge_rad=t["clip_angle_rad"],
                          mean_abs_jaw_normal_load_N=mean_loads,
                          jaw_load_ok=valid_window and min(mean_loads.values())>.005,
-                         bag_on_table=bool(q[:,2].min()>.72 and (q[:,0]>.2).all() and (q[:,0]<1.2).all() and (abs(q[:,1])<.6).all())))
+                         bag_on_table=bool(q[:,2].min()>.72+result.get("world_z_offset_m",0.) and (q[:,0]>.2).all() and (q[:,0]<1.2).all() and (abs(q[:,1])<.6).all())))
     geometry=result.get("substep_geometry") or {}
     checks=dict(controller_completed=result["controller_completed"] and result["controller_failure"] is None,
                 full_episode_without_component_reset=not result.get("initial_fold_imposed",False) and result.get("component_reset") is None,

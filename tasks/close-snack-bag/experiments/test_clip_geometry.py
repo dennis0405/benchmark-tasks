@@ -15,6 +15,28 @@ class ClipGeometryTests(unittest.TestCase):
     def test_thin_blade_joint_range_has_no_opposing_box_overlap(self):
         self.check_asset("clip_thin_lower.xml")
 
+    def test_broad_pressure_pad_joint_range_has_no_opposing_box_overlap(self):
+        self.check_asset("clip_thin_broad.xml")
+
+    def test_aligned_pressure_pad_joint_range_has_no_opposing_box_overlap(self):
+        self.check_asset("clip_thin_aligned.xml")
+
+    def test_stronger_variant_only_changes_passive_stiffness(self):
+        directory=Path(__file__).with_name("assets")
+        original=ET.parse(directory/"clip_thin_lower.xml").getroot()
+        stronger=ET.parse(directory/"clip_thin_strong.xml").getroot()
+        joint=stronger.find("worldbody/body/body/joint")
+        stiffness=float(joint.get("stiffness"))
+        position=np.fromstring(stronger.find("worldbody/body/body/geom[@name='upper_handle_end']").get("pos"),sep=" ")
+        lower,upper=np.fromstring(joint.get("range"),sep=" ")
+        forces=[]
+        for angle in np.linspace(lower,upper,81):
+            lever=abs(Rotation.from_euler("y",angle).apply(position)[0])
+            forces.append(stiffness*abs(angle)/lever)
+        self.assertLess(max(forces),5.,"analytical end-pad force, not a hardware calibration")
+        joint.set("stiffness",original.find("worldbody/body/body/joint").get("stiffness"))
+        self.assertEqual(ET.tostring(original),ET.tostring(stronger))
+
     def check_asset(self,filename):
         root=ET.parse(Path(__file__).with_name("assets")/filename).getroot()
         lower=root.find("worldbody/body")
