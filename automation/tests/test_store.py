@@ -4,7 +4,7 @@ import sys
 
 import pytest
 
-from rcauto.store import Store, Busy, StateError
+from rcauto.store import Busy, StateError, Store
 
 
 def test_run_reopens_without_losing_step_or_prompt(tmp_path):
@@ -25,21 +25,18 @@ with s.lock("instance-vm"):
  print(r["id"],flush=True)
  os._exit(9)
 '''
-    p = subprocess.run([sys.executable, "-c", script, str(tmp_path)], capture_output=True, text=True)
+    p = subprocess.run([sys.executable, "-c", script, str(tmp_path)], capture_output=True, text=True, check=False)
     assert p.returncode == 9
     rid = p.stdout.strip()
     s = Store(tmp_path)
-    with s.lock("instance-vm"):
-        with pytest.raises(StateError, match="already"):
-            s.reserve_effect(rid, "dream", {"cap_usd": 2})
+    with s.lock("instance-vm"), pytest.raises(StateError, match="already"):
+        s.reserve_effect(rid, "dream", {"cap_usd": 2})
 
 
 def test_same_instance_cannot_have_two_owners(tmp_path):
     s = Store(tmp_path)
-    with s.lock("vm"):
-        with pytest.raises(Busy):
-            with Store(tmp_path).lock("vm"):
-                pass
+    with s.lock("vm"), pytest.raises(Busy), Store(tmp_path).lock("vm"):
+        pass
 
 
 def test_backup_includes_committed_wal_data(tmp_path):

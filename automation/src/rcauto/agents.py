@@ -1,14 +1,14 @@
 """Sequential Codex role invocations and bounded process-group execution."""
 import json
 import os
-from pathlib import Path
 import signal
 import subprocess
+from pathlib import Path
 
-from jsonschema import validate, ValidationError
+from jsonschema import ValidationError, validate
 
-from .store import StateError, now, write_json
 from .gates import digest
+from .store import StateError, now, write_json
 
 
 def clean_environment(extra=None):

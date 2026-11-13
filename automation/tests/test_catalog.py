@@ -1,6 +1,6 @@
 import pytest
 
-from rcauto.catalog import collect_pages, CatalogError, normalize_board, get_source
+from rcauto.catalog import CatalogError, collect_pages, get_source, normalize_board
 
 
 def test_pagination_does_not_publish_partial_catalog():

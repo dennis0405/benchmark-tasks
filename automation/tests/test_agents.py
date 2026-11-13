@@ -1,9 +1,7 @@
-import os
-from pathlib import Path
 
 import pytest
 
-from rcauto.agents import Agent, command, clean_environment
+from rcauto.agents import Agent, clean_environment, command
 from rcauto.store import StateError
 
 

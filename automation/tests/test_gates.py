@@ -1,8 +1,7 @@
-from pathlib import Path
 
 import pytest
 
-from rcauto.gates import manifest, verify_manifest, validate_evidence, validate_checks, GateError
+from rcauto.gates import GateError, manifest, validate_checks, validate_evidence, verify_manifest
 
 
 def test_changed_or_added_release_file_invalidates_approval(tmp_path):

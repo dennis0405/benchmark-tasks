@@ -3,10 +3,10 @@ import contextlib
 import fcntl
 import json
 import os
-from pathlib import Path
 import sqlite3
 import uuid
 from datetime import datetime, timezone
+from pathlib import Path
 
 
 class StateError(RuntimeError):
@@ -59,6 +59,28 @@ class Store:
             self._event(rid, {"event": "created", "instance": instance})
         self.run_dir(rid).mkdir(parents=True)
         return value
+
+    def register(self, value):
+        """Import a controller-issued run on its bound worker, without inventing a second id."""
+        self.run_dir(value["id"])
+        existing = self.db.execute("SELECT data FROM runs WHERE id=?", (value["id"],)).fetchone()
+        if existing:
+            if json.loads(existing[0])["prompt"] != value["prompt"]:
+                raise StateError("worker run identity changed")
+            return self.get(value["id"])
+        with self.db:
+            self.db.execute("INSERT INTO runs VALUES(?,?)", (value["id"], json.dumps(value)))
+            self._event(value["id"], {"event": "registered"})
+        return value
+
+    def invalidate(self, rid, stages):
+        with self.db:
+            for stage in stages:
+                self.db.execute("DELETE FROM stages WHERE run=? AND stage=?", (rid, stage))
+            value = self.get(rid)
+            value.pop("approval", None)
+            self.db.execute("UPDATE runs SET data=? WHERE id=?", (json.dumps(value), rid))
+            self._event(rid, {"invalidated": list(stages)})
 
     def run_dir(self, rid):
         if not rid or any(c not in "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_" for c in rid):

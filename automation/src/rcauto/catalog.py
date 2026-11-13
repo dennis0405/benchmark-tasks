@@ -1,19 +1,19 @@
 """Source acquisition and conservative GitHub catalog. Never publish partial snapshots."""
 import hashlib
-from html.parser import HTMLParser
-from io import BytesIO
 import ipaddress
 import json
-from pathlib import Path
 import socket
 import subprocess
+from html.parser import HTMLParser
+from io import BytesIO
+from pathlib import Path
 from urllib.parse import urlparse
 
 import httpx
 from pypdf import PdfReader
 
-from .store import StateError, now, write_json
 from .gates import digest
+from .store import StateError, now, write_json
 
 
 class CatalogError(StateError):
@@ -121,7 +121,7 @@ class GitHub:
         key = self.cache / (hashlib.sha256(endpoint.encode()).hexdigest() + ".json")
         if cached and key.exists():
             return json.loads(key.read_text())
-        p = subprocess.run(["gh", "api", endpoint], capture_output=True, text=True, timeout=120)
+        p = subprocess.run(["gh", "api", endpoint], capture_output=True, text=True, timeout=120, check=False)
         if p.returncode:
             raise CatalogError(f"GitHub request failed: {endpoint}: {p.stderr[-600:]}")
         value = json.loads(p.stdout)
