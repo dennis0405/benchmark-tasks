@@ -1,5 +1,6 @@
 """Preserve in the fork; publish only the exact reviewed task after explicit approval."""
 
+import json
 import os
 import shutil
 import subprocess
@@ -32,7 +33,10 @@ class Publisher:
     def checkout(self, rid, kind):
         root = self.store.run_dir(rid)
         repo = root / (kind + "-checkout")
+        expected = f"{kind}/{rid}"
+        initializing = root / (kind + "-initializing")
         if not repo.exists():
+            initializing.touch()
             capture(
                 [
                     "git",
@@ -44,8 +48,16 @@ class Publisher:
                 ],
                 timeout=300,
             )
+        current = self.git(repo, "branch", "--show-current").strip()
+        if current != expected and not initializing.exists():
+            raise GateError("private checkout branch mismatch; refusing to push a different branch")
+        if current != expected:
             self.git(repo, "fetch", "https://github.com/robocurve/benchmark-tasks.git", "main")
-            self.git(repo, "checkout", "-b", f"{kind}/{rid}", "FETCH_HEAD")
+            self.git(repo, "sparse-checkout", "init", "--cone")
+            self.git(repo, "sparse-checkout", "set", "tools")
+            self.git(repo, "checkout", "-b", expected, "FETCH_HEAD")
+            self.git(repo, "config", "rcauto.base", self.git(repo, "rev-parse", "HEAD").strip())
+        if initializing.exists():
             self.git(
                 repo, "config", "user.name", self.config.get("git_name", "RoboCurve contributor")
             )
@@ -55,6 +67,15 @@ class Publisher:
                 "user.email",
                 self.config.get("git_email", "contributor@users.noreply.github.com"),
             )
+            initializing.unlink()
+        origin = (
+            self.git(repo, "remote", "get-url", "origin")
+            .strip()
+            .replace("git@github.com:", "https://github.com/")
+            .removesuffix(".git")
+        )
+        if origin != "https://github.com/" + self.config["fork"]:
+            raise GateError("checkpoint remote does not match registered fork")
         return repo
 
     def push(self, repo):
@@ -76,10 +97,19 @@ class Publisher:
         if release.exists():
             verify_manifest(release, read(root / "release-manifest.json"))
         repo = self.checkout(rid, "automation")
+        if (release / "tasks").exists():
+            for task in (release / "tasks").iterdir():
+                target = repo / "tasks" / task.name
+                if target.exists():
+                    shutil.rmtree(target)
+                shutil.copytree(task, repo / "tasks" / task.name, dirs_exist_ok=True)
+                self.git(repo, "add", "--sparse", "--", "tasks/" + task.name)
         destination = repo / "automation-results" / rid
+        if destination.exists():
+            shutil.rmtree(destination)
         destination.mkdir(parents=True, exist_ok=True)
         # Preserve only explicit output files. Never rsync credentials/state/home into a public fork.
-        for name in ["release", "release-manifest.json", "report.json"]:
+        for name in ["release", "release-manifest.json", "report.json", "report.html", "report.md"]:
             source = root / name
             target = destination / name
             if source.is_dir():
@@ -89,12 +119,47 @@ class Publisher:
         artifacts = root / "workspace" / "artifacts"
         if artifacts.exists():
             shutil.copytree(artifacts, destination / "artifacts", dirs_exist_ok=True)
+        for source, name in [
+            (root / "workspace/measurements", "measurements"),
+            (root / "logs", "logs"),
+        ]:
+            if source.exists():
+                shutil.copytree(source, destination / name, dirs_exist_ok=True)
+        dream = root / "dream-result"
+        if dream.exists():
+            for p in dream.rglob("*"):
+                if p.is_file() and p.suffix in {".json", ".jsonl", ".mp4"}:
+                    target = destination / "dream-result" / p.relative_to(dream)
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(p, target)
+        # A commit cannot contain its own SHA. Omit bookkeeping-only push events from its payload.
+        journal_run = {
+            k: v for k, v in self.store.get(rid).items() if k not in {"checkpoint", "updated_at"}
+        }
+        journal_events = [
+            e for e in self.store.events(rid) if set(json.loads(e["data"])) != {"checkpoint"}
+        ]
+        write_json(
+            destination / "execution-journal.json",
+            {
+                "run": journal_run,
+                "events": journal_events,
+                "effects": {k: self.store.effect(rid, k) for k in ["dream", "upload", "pr"]},
+            },
+        )
         if not any(destination.iterdir()):
             write_json(destination / "status.json", self.store.get(rid))
         m = manifest(destination)
-        if sum(x["bytes"] for x in m["files"].values()) > 100 * 1024 * 1024:
+        total_bytes = sum(x["bytes"] for x in m["files"].values())
+        if (release / "tasks").exists():
+            total_bytes += sum(
+                v["bytes"]
+                for task in (release / "tasks").iterdir()
+                for v in manifest(task)["files"].values()
+            )
+        if total_bytes > 100 * 1024 * 1024:
             raise GateError("checkpoint exceeds 100MB; storage decision required before push")
-        self.git(repo, "add", "--", str(destination.relative_to(repo)))
+        self.git(repo, "add", "--sparse", "--", str(destination.relative_to(repo)))
         if self.git(repo, "status", "--porcelain").strip():
             self.git(repo, "commit", "-m", "Preserve RoboCurve production " + rid)
         result = self.push(repo)
@@ -156,7 +221,7 @@ class Publisher:
         elif self.store.effect(rid, "upload")["status"] != "finished":
             raise GateError("media upload status unknown; reconcile before continuing")
         validate_spec(read(target / "task.json"), require_media=True)
-        self.git(repo, "add", "--", "tasks/" + folders[0].name)
+        self.git(repo, "add", "--sparse", "--", "tasks/" + folders[0].name)
         changed = self.git(repo, "diff", "--cached", "--name-only").splitlines()
         if any(not p.startswith("tasks/" + folders[0].name + "/") for p in changed):
             raise GateError("submission contains unapproved paths")
@@ -191,4 +256,12 @@ class Publisher:
         ).strip()
         self.store.finish_effect(rid, "pr", {"url": url})
         self.store.update(rid, status="submitted-awaiting-receipt", pr=url)
-        return {"pr": url, "status": "submitted-awaiting-receipt"}
+        from .receipt import poll
+
+        result = poll(self.store, rid, self.config.get("receipt_authors", []), timeout=180)
+        try:
+            self.checkpoint(rid)
+        except (GateError, OSError) as e:
+            self.store.update(rid, preservation_error=str(e))
+            result["preservation_error"] = str(e)
+        return result
