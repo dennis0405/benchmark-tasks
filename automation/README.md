@@ -14,6 +14,7 @@
 - [Brev 사전 준비: 도구·인증·사용자 결정](docs/design/brev-readiness.md)
 - [CLI·전용 skill·Brev start/stop·fork 결과 보존](docs/design/cli-skill-and-lifecycle.md)
 - [전용 Brev 환경 준비 점검 기록](docs/design/environment-bootstrap-status.md)
+- [실제 환경 설정·의존성·검증 자료](environment/README.md)
 
 범위는 실제 산업 근거에 기반한 AI timelines 태스크의 후보 다수 검토·단일
 태스크 제작·승인 후 제출이다. 강체를 기본으로 하되 검증 가능한 기존 연성

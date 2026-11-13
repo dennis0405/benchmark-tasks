@@ -92,3 +92,55 @@ brev create robocurve-automation --type gpu-l40s-d.1gpu-16vcpu-96gb --provider n
 
 로그인 cache·토큰·browser session은 Git 보존 대상이 아니다. 인증 진행을 위해
 사용자가 브라우저에서 직접 로그인해야 할 수 있다.
+
+
+## 사용자 지정 Crusoe 환경으로 전환
+
+사용자가 Crusoe L40S와 256GiB 설정을 지정했고 이전 대체 인스턴스는 직접
+삭제했다고 알렸다. `l40s-48gb.1x`는 검색 목록에 없어도 CLI `--type` 지정으로
+생성 가능했다. 다만 CLI 소스와 실제 디스크 확인 결과, 명시적인 `--type`에서는
+`--min-disk`가 allocation 크기로 전달되지 않는다. 이 방식의 첫 빈 VM
+`powkoyto9`는 설치/자료 저장 전에 CLI로 정리했다.
+
+스토리지는 공식 CLI의 JSON stdin 계약 `target_disk_gb`를 직접 사용한다.
+dry-run 출력에서 `l40s-48gb.1x (256GB disk)`를 확인한 뒤 다음과 같이 요청했다.
+
+```python
+import json
+import subprocess
+
+spec = [{"type": "l40s-48gb.1x", "provider": "crusoe", "target_disk_gb": 256}]
+subprocess.run(
+    ["brev", "create", "robocurve-automation-256", "--stdin",
+     "--jupyter=false", "--timeout", "600"],
+    input=json.dumps(spec), text=True, check=True,
+)
+```
+
+이 코드는 환경 생성 명령의 기록이며 자동화 CLI 구현이 아니다. 새 instance의
+실제 block device·mount·stop/start 보존을 다시 확인한다.
+참고: [공식 CLI 소스](https://github.com/brevdev/brev-cli/blob/main/pkg/cmd/gpucreate/gpucreate.go).
+
+## 현재 사용하는 최종 Crusoe 환경
+
+| 항목 | 실제 확인 결과 |
+|---|---|
+| 이름 / ID | robocurve-automation-256 / th9ih02z4 |
+| GPU / driver | L40S 46068MiB / 565.57.01 |
+| RAM | 약 144GiB |
+| data disk | /dev/vdb, 274877906944 bytes = 256GiB, /data에 ext4 mount |
+| 작업 공간 | /data/robocurve-automation, ~/workspace/robocurve-automation으로 연결 |
+| CPU 환경 | envs/control, HTTPS 200·SQLite FTS5·필수 import 통과 |
+| Codex | CLI 0.147.0, ChatGPT 일반 브라우저 로그인 성공·최소 JSON 응답 성공 |
+| GPU Docker | CDI 호환성 수정 후 실제 container에서 L40S 인식 |
+| simulator | 고정 Arena/Isaac Lab/YAM의 native uv 설치 진행 중 |
+| stop/start 보존 | 아직 미검증 |
+| 자동화 구현·Dream·제출 | 수행하지 않음 |
+
+Codex 기기 코드 인증은 계정 설정으로 제한돼 있었으므로 보안 설정을 변경하지
+않고 SSH callback 포워딩으로 로그인했다. OAuth URL·인증 cache는 저장소에 넣지 않는다.
+
+Container Toolkit 1.20.1의 장치 검색이 driver 565.57.01의 sandboxutils 종료
+함수에서 충돌했다. NVML 탐색을 사용하는 공식 기능 플래그로 CDI 생성에
+성공했고, 새 Toolkit과 기존 Brev unit의 Docker 시작 순서도 정리했다.
+실제 설정·버전·진단 결과는 [환경 자료](../../environment/README.md)에 보존한다.
