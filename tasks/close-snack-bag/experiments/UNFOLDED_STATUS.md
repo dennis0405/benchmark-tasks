@@ -282,3 +282,19 @@ RSS `shape_contact_forces` documentation itself warns that a resting sheet's
 weight is not read correctly. Loads remain numerical observations, not a
 physical calibration. The focused CPU/CUDA suite passed 28 tests before the
 two additional pressure-pad geometry cases.
+
+The later `rigid-integral-aligned-v28` passed the unchanged 1 mm / 0.02 rad
+low-carry gate at a flat root target (0.576,0,0.9694): measured error was
+0.459 mm / 0.00190 rad, followed by a 3 s watched hold. It used a recorded
+pre-grasp robot reset, no film, and the selected tool's authored parking
+pose. Compact evidence is in `evidence/unfolded-20261114/rigid-aligned-v28`.
+The controller integrates object-pose errors into the previous **command**;
+rebuilding small corrections from the measured hand kept reintroducing a
+roughly 0.8 mm loaded-hand tracking bias. Regression tests cover that bias
+and a failed-hand-motion refusal. The focused suite now passes 32 tests.
+
+`film-aligned-insert-v20` tests the same policy on the recorded folded film,
+with an explicit clip-asset/parking reset. `unfolded-aligned-v14` starts from
+the unfolded reset with the aligned-pad asset. They are running candidates,
+not completed sealing evidence. The final film/clip contact and hands-free
+assessment remain required before calling either a completed demo.

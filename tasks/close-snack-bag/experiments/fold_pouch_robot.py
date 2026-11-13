@@ -36,6 +36,9 @@ def main():
     parser.add_argument("--workspace",choices=("original","raised_forward","raised_flat"),default="original")
     parser.add_argument("--clip-style",choices=("standard","thin_lower","thin_strong","thin_broad","thin_aligned"),default="standard")
     parser.add_argument("--override-clip-spring",action="store_true")
+    parser.add_argument("--override-clip-geometry",action="store_true")
+    parser.add_argument("--reset-tool",action="store_true",
+                        help="At a component reset only, restore the selected tool's authored parking pose")
     parser.add_argument("--table-insert",action="store_true")
     parser.add_argument("--insert-mode",choices=("overhang","wedge"),default="overhang")
     parser.add_argument("--force-readout",choices=("last","mean"),default="last")
@@ -51,6 +54,8 @@ def main():
     parser.add_argument("--finger-friction",type=float,default=None)
     parser.add_argument("--override-contact-materials",action="store_true")
     args = parser.parse_args()
+    if args.reset_tool and not args.clip_component_seed:
+        parser.error("reset-tool is only for an explicit clip component seed")
     if args.stage=="clip_grasp" and not (args.clip and args.drive):
         parser.error("clip_grasp requires --clip --drive")
     if args.table_insert and (args.clip_style not in ("thin_lower","thin_strong","thin_broad","thin_aligned") or args.workspace!="raised_flat"):
@@ -61,6 +66,9 @@ def main():
         seed_meta=json.loads((args.clip_component_seed/"clip-entry.json").read_text())
         for key in ("workspace","clip_style","material_profile","hz","physics_hz","coupling"):
             if seed_meta["arguments"][key]!=getattr(args,key):
+                if key=="clip_style" and args.override_clip_geometry and args.reset_tool and {
+                    seed_meta["arguments"][key],args.clip_style}.issubset({"thin_lower","thin_strong","thin_broad","thin_aligned"}):
+                    continue
                 if key=="clip_style" and args.override_clip_spring and {
                     seed_meta["arguments"][key],args.clip_style}=={"thin_lower","thin_strong"}:
                     continue
@@ -135,7 +143,9 @@ def main():
         session = open_session(sim, 9764)
         if args.clip_component_seed:
             from resume_clip_component import restore
-            component_reset=restore(sim,session,args.clip_component_seed)
+            component_reset=restore(sim,session,args.clip_component_seed,reset_tool=args.reset_tool)
+            component_reset["clip_asset_change"]=dict(from_style=seed_meta["arguments"]["clip_style"],
+                                                     to_style=args.clip_style)
         controller = FoldController(sim, session)
         controller.table_insert=args.table_insert
         controller.insert_mode=args.insert_mode

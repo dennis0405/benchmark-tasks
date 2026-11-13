@@ -11,7 +11,7 @@ import numpy as np
 import newton
 
 
-def restore(sim,session,directory):
+def restore(sim,session,directory,*,reset_tool=False):
     directory=Path(directory)
     raw=(directory/"clip-entry.npz").read_bytes()
     metadata=json.loads((directory/"clip-entry.json").read_text())
@@ -25,14 +25,21 @@ def restore(sim,session,directory):
         raise ValueError("checkpoint topology differs from the rebuilt scene")
     if len(data["j"])!=len(sim.state.joint_q) or data["b"].shape!=sim.state.body_q.numpy().shape:
         raise ValueError("checkpoint rigid model differs from the rebuilt scene")
+    joints,velocities=data["j"].copy(),data["d"].copy()
+    if reset_tool:
+        tool=sim.scene.by_name["clip"]
+        joints[tool.coords]=sim.model.joint_q.numpy()[tool.coords]
+        velocities[-7:]=0.
     for state in (sim.pipeline.state_0,sim.pipeline.state_1):
         q=state.particle_q.numpy();q[entity.particles]=data["q"];state.particle_q.assign(q)
         v=state.particle_qd.numpy();v[entity.particles]=data["v"];state.particle_qd.assign(v)
         state.particle_f.zero_();state.body_f.zero_()
-        state.joint_q.assign(data["j"]);state.joint_qd.assign(data["d"])
+        state.joint_q.assign(joints);state.joint_qd.assign(velocities)
         newton.eval_fk(sim.model,state.joint_q,state.joint_qd,state)
-    pos_error=float(abs(sim.state.body_q.numpy()[:,:3]-data["b"][:,:3]).max())
-    quaternion_dot=abs((sim.state.body_q.numpy()[:,3:]*data["b"][:,3:]).sum(1))
+    compare=np.ones(sim.model.body_count,bool)
+    if reset_tool:compare[list(tool.bodies)]=False
+    pos_error=float(abs(sim.state.body_q.numpy()[compare,:3]-data["b"][compare,:3]).max())
+    quaternion_dot=abs((sim.state.body_q.numpy()[compare,3:]*data["b"][compare,3:]).sum(1))
     if pos_error>1e-5 or np.any(quaternion_dot<1-1e-5):
         raise ValueError("checkpoint FK is inconsistent with the rebuilt model")
     rest=entity._rest.numpy();rest[entity.rows]=data["r"];entity._rest.assign(rest)
@@ -63,6 +70,7 @@ def restore(sim,session,directory):
         coord=sim.scene.embodiment.arms[arm].gripper_coords[0]
         panel.grip_request=float(np.clip(1-targets[coord]/.0475,0,1))
     return dict(layout=metadata["layout"],source_step=metadata["step"],
+                tool_authored_parking_reset=reset_tool,
                 left_cleared_for_clip=metadata.get("left_cleared_for_clip",False),
                 support_holds=metadata.get("support_holds",{}),
                 seed_sha256=hashlib.sha256(raw).hexdigest(),fk_position_error_m=pos_error,

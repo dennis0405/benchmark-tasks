@@ -183,14 +183,19 @@ def move_clip_root(c,target,rotation,grasp,speed=.025,precise=False):
         if np.linalg.norm(error)<(.0005 if precise else .002) and angle<(.01 if precise else .08):
             break
         jaw=c.takes._fold_jaws(c.film,"right")
-        ee_rotation=Rotation.from_quat(c.session.arms["right"].ik.ee_pose(c.sim.state)[1])
-        relative=actual_rotation.inv()*ee_rotation
-        # Damped feedback avoids chasing the transient compliant grasp with
-        # full pose corrections. The clip and all object states stay free.
-        desired=rotation*relative
-        correction=desired*ee_rotation.inv()
-        quat=(Rotation.from_rotvec(.4*correction.as_rotvec())*ee_rotation).as_quat()
-        if not (yield from guarded(jaw+.4*np.clip(error,-.008,.008),quat,min(speed,.015),100)):
+        panel=c.session.arms["right"]
+        tcp,ee_quat=panel.ik.ee_pose(c.sim.state)
+        ee_rotation=Rotation.from_quat(ee_quat)
+        # Integrate the measured object error into the previous COMMAND.
+        # Rebuilding every small correction from the measured hand left a
+        # steady ~0.8 mm hand tracking bias uncorrected (and divided by gain).
+        correction=rotation*actual_rotation.inv()
+        quat=(Rotation.from_rotvec(.4*correction.as_rotvec())*
+              Rotation.from_quat(panel.cursor_quat)).as_quat()
+        local_jaw=ee_rotation.inv().apply(jaw-tcp)
+        command_tcp=np.asarray(panel.cursor_pos)+.4*np.clip(error,-.008,.008)
+        command_jaw=command_tcp+Rotation.from_quat(quat).apply(local_jaw)
+        if not (yield from guarded(command_jaw,quat,min(speed,.015),100)):
             return False
     pose=clip_pose(c)
     miss=float(np.linalg.norm(np.asarray(target)-pose[:3]))
