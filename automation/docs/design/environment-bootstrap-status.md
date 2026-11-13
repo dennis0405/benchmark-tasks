@@ -136,7 +136,8 @@ subprocess.run(
 | simulator | Isaac Sim 6.1.0.0·Arena 0.3.0·Isaac Lab 17.0.2·YAM 0.1.0 native uv 설치 완료 |
 | 실제 렌더·관절 시험 | upstream stage5 카메라/그리퍼 추종 검사 8 pass / 0 fail |
 | 실행기·데모·채점 | upstream stack_cubes, yam_scripted, task_score 1.0, 1 trial 성공 |
-| stop/start 보존 | 아직 미검증 |
+| stop/start 보존 | 실제 STOPPED → start 후 root/data marker hash 일치, 로그인·GPU·SDK 환경 유지 |
+| 재시작 후 실행 | 같은 stack_cubes 예제 재실행, task_score 1.0 성공 |
 | 자동화 구현·Dream·제출 | 수행하지 않음 |
 
 Codex 기기 코드 인증은 계정 설정으로 제한돼 있었으므로 보안 설정을 변경하지
@@ -152,3 +153,11 @@ Container Toolkit 1.20.1의 장치 검색이 driver 565.57.01의 sandboxutils �
 각 189프레임·20fps이며, 원본 결과 JSON과 함께 보존한다. driver 565에서는
 DLSS Responsive Denoising이 preset D로 fallback된 경고가 있었다. 실제 사용한
 driver/render 경로를 기록하며 최신 공식 driver 검증을 대신했다고 주장하지 않는다.
+
+전용 인스턴스의 실제 stop/start를 한 번 수행했다. 중지 명령 반환 후에도
+provider 상태가 STOPPING으로 몇 분 남아 있었고, STOPPED를 확인한 뒤 start했다.
+실행 전후 root/data marker SHA-256이 모두 일치했다. 재시작 후 GPU container와
+기존 예제 1.0점도 다시 확인했다. 마지막에는 보존 후 stop으로 둔다.
+
+이것은 VM과 기본 런타임의 재개 시험이다. 아직 구현하지 않은 workflow의
+중단 복구·사용자 승인·Dream·실제 제출 경로를 검증했다는 뜻은 아니다.

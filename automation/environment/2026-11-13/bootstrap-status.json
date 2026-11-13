@@ -32,7 +32,7 @@
     "purpose": "environment_smoke_check"
   },
   "cpu_venv": "/data/robocurve-automation/envs/control",
-  "simulator_runtime_mode": "uv native planned; Docker GPU independently verified",
+  "simulator_runtime_mode": "uv native, installed and tested; Docker GPU independently verified",
   "github_remote_auth": "not_configured; public fork clone works; publisher uses local account",
   "search_api": "not_configured",
   "submission_credentials": "not_configured",
@@ -53,7 +53,7 @@
     "sha256_before": "f1bd36e12bd9b9bb898ae3cef0b4ef6d7ee29e4cf2302e2d1eaaac72d5f4c20d",
     "root_path": "/home/ubuntu/.local/state/robocurve-automation/persistence-marker.json",
     "data_path": "/data/robocurve-automation/checkpoints/persistence-marker.json",
-    "status": "not_tested"
+    "status": "passed"
   },
   "simulator_versions": {
     "isaacsim": "6.1.0.0",
@@ -64,5 +64,12 @@
     "inspect-robots-dream": "0.1.0",
     "dreamlabs-client": "1.1.3",
     "torch": "2.11.0+cu128"
-  }
+  },
+  "stop_start_checks": "stop-start-checks.json",
+  "post_restart_demo": {
+    "status": "success",
+    "task_score": 1.0,
+    "log": "stack-demo-after-restart-log.json"
+  },
+  "final_instance_state": "RUNNING before final stop"
 }

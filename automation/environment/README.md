@@ -108,6 +108,44 @@ YAM에 불필요한 GR00T 외부 시뮬레이터 다운로드는 로컬 git conf
 자세한 설치·실행 결과와 stop/start 검증 여부는 날짜별 준비 기록을 따른다.
 패키지 설치 완료만으로 모델 평가·대회 제출까지 검증했다고 간주하지 않는다.
 
+`simulator-requirements.txt`는 설치 결과의 기록이다. 단독 `pip install -r`로
+모든 source package·uv override·driver·asset을 복구하는 파일은 아니다.
+고정한 source checkout과 해당 setup/lock을 먼저 준비해야 한다.
+
+## 검증 결과와 재개
+
+2026-11-13 기본 카메라 검사는 8 pass / 0 fail이었다. 기존 `stack_cubes.py`를
+`yam_scripted`로 실행해 재시작 전후 두 번 모두 `task_score=1.0`을 확인했다.
+3개 카메라 영상은 H.264, 320×176, 20fps, 189프레임(9.45초)이다.
+새 산업 태스크나 Dream 평가로 계산하지 않는다.
+
+실제 STOPPED 상태에서 다시 start한 뒤 root/data marker의 hash, Codex 로그인,
+GPU container·simulator package·source revision이 유지됐고 예제도 성공했다.
+이는 **stop/start 한 사이클**의 검증이다. 인스턴스 삭제 후 복구나 workflow의
+외부 요청 중복 방지·승인·제출 복구까지 검증한 것은 아니다.
+
+로컬에서 다음과 같이 재개한다.
+
+```sh
+brev start robocurve-automation-256
+brev open robocurve-automation-256 code --dir /data/robocurve-automation
+```
+
+원격 simulator shell에서는 다음 환경을 활성화한다. CPU 조정기용 control
+venv와 구별하며, 설치 cache/venv를 Git에 넣지 않는다.
+
+```sh
+source /data/robocurve-automation/sources/IsaacLab-Arena/yam.env
+```
+
+작업 종료 후 로컬의 `brev stop robocurve-automation-256`을 사용하고, 명령 반환과
+실제 STOPPED를 구분한다. 준비 시험에서는 STOPPING이 몇 분 유지됐다.
+
+Inspect Robots 1.0의 기본 record는 이벤트·종료/guard 결과를 남기지만 이 파일을
+전체 물리 상태·접촉 trace나 scorer replay의 검증으로 취급하지 않는다.
+또한 record의 `approval` 이벤트는 action guard의 수정 판정이며 **사용자의 제출
+승인과 무관하다**. 향후 pipeline은 별도 계측 recorder와 승인 계약을 사용해야 한다.
+
 ## 출처
 
 - [Brev CLI create 구현](https://github.com/brevdev/brev-cli/blob/main/pkg/cmd/gpucreate/gpucreate.go)
