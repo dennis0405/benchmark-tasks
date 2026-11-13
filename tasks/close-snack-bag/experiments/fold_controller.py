@@ -189,15 +189,15 @@ class FoldController:
         yield from self.wait(45)
         quat = panel.ik.ee_pose(self.sim.state)[1]
         point = self.takes._fold_jaws(self.film, arm)+[0, .10 if arm=="left" else -.10, .06]
-        yield from self.move({arm:point}, {arm:quat}, .05, 80)
+        yield from self.move({arm:point}, {arm:quat}, .10, 80)
 
     def lift_press(self, arm):
         self.phase = "lift_press_"+arm
         panel = self.session.arms[arm]
         tcp, quat = panel.ik.ee_pose(self.sim.state)
-        yield from self.takes._go_both(self.film, {arm:tcp+[0,0,.08]}, {arm:quat}, .04, self.frames(80), .003)
+        yield from self.takes._go_both(self.film, {arm:tcp+[0,0,.08]}, {arm:quat}, .10, self.frames(80), .003)
 
-    def press(self, arm, *, leave_down=False):
+    def press(self, arm, *, leave_down=False, near=.040, along_fold=False):
         self.phase = "press_"+arm
         panel = self.session.arms[arm]
         sign = 1. if arm=="left" else -1.
@@ -205,16 +205,31 @@ class FoldController:
         panel.grip_request = .6
         top, line, yc = (self.layout[k] for k in ("board_top", "line", "center_y"))
         yield from self.move({arm:(line+.010, yc+sign*.14, top+.12)}, {arm:quat}, .06, 100)
-        low = self.takes._fold_low(self.film, arm)
-        tcp = panel.ik.ee_pose(self.sim.state)[0]
-        target = tcp + np.array([line+.012, yc+sign*.025, top+.0035])-low
-        yield from self.takes._go_both(self.film, {arm:target}, {arm:quat}, .025, self.frames(100), .003)
-        yield from self.wait(45)
+        jaws = self.takes._fold_jaws(self.film, arm)
+        from scipy.spatial.transform import Rotation
+        actual_quat=panel.ik.ee_pose(self.sim.state)[1]
+        _,corners,_=self.takes._fold_pads(self.film,arm)
+        # Predict the pad envelope in the TARGET wrist orientation. Using
+        # the current lowest corner mixed two wrist frames and moved the
+        # press into the other hand as the wrist finished turning.
+        delta=Rotation.from_quat(quat)*Rotation.from_quat(actual_quat).inv()
+        lowest=float(delta.apply(corners-jaws)[:,2].min())
+        # The first side press leaves the other rim grip unobstructed.
+        # After that raw rim is released, sweep a centre pad along X over
+        # the remaining upright strip, instead of leaving a central gap.
+        point=np.array([line+(.002 if along_fold else .012),yc+sign*near,
+                        top+(.0031 if along_fold else .0035)-lowest])
+        yield from self.move({arm:point+[0,0,.0215]},{arm:quat},.12,60)
+        yield from self.move({arm:point},{arm:quat},.025,30)
+        yield from self.wait(20)
         # A modest compliant push, then a stroke along the fold. It acts
         # through the free finger slide; no film point is prescribed.
-        start = target + [0, 0, -.001]
+        start = np.asarray(panel.cursor_pos).copy()+[0,0,-.001]
         for t in np.linspace(0, 1, self.frames(180)):
-            panel.aim(start + [0, sign*.04*t, 0], quat, moving=True)
+            stroke=[.024*t,0,0] if along_fold else [0,sign*.04*t,0]
+            panel.aim(start + stroke, quat, moving=True)
             yield
+        if along_fold:
+            yield from self.wait(30)
         if not leave_down:
             yield from self.lift_press(arm)

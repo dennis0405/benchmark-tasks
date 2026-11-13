@@ -23,12 +23,14 @@ def main():
     parser.add_argument("--ready-start", action="store_true")
     parser.add_argument("--clip", action="store_true")
     parser.add_argument("--checkpoint-every",type=int,default=120)
-    parser.add_argument("--material-profile",choices=("derived","paper_matched"),default="derived")
+    parser.add_argument("--material-profile",choices=("derived","permanent","laminate","paper_matched"),default="derived")
     parser.add_argument("--stage",choices=("fold","fold_hold","regrasp","seal","clip_grasp"),default="fold")
     parser.add_argument("--hz",type=int,choices=(20,60),default=60)
     parser.add_argument("--physics-hz",type=int,choices=(600,1200,2400),default=None)
     parser.add_argument("--check-substeps",action="store_true")
     parser.add_argument("--side-access",action="store_true")
+    parser.add_argument("--rigid-cpu",action="store_true")
+    parser.add_argument("--workspace",choices=("original","raised_forward"),default="original")
     args = parser.parse_args()
     if args.stage=="clip_grasp" and not (args.clip and args.drive):
         parser.error("clip_grasp requires --clip --drive")
@@ -45,20 +47,31 @@ def main():
                    Path(__file__).resolve().parents[1]/"fold_metrics.py",
                    Path(__file__).with_name("assets")/"yam_ready_pose.json"):
         shutil.copy2(source, sources/source.name)
+    if args.workspace=="raised_forward":
+        source=Path(__file__).with_name("assets")/"yam_raised_forward_pose.json"
+        shutil.copy2(source,sources/source.name)
     if args.clip:
         # Eagerly import optional controllers before stepping. A later rsync
         # must not change a running experiment at its first delayed import.
         import clip_controller
+        import check_rigid_tool
+        import stack_grasp
+        import plan_clip_poses
         for source in (Path(__file__).resolve().parents[1]/"deformable_clip.py",
                        Path(__file__).with_name("tool_feedback.py"),
                        Path(__file__).with_name("clip_controller.py"),
+                       Path(__file__).with_name("check_rigid_tool.py"),
+                       Path(__file__).with_name("gpu_contact_checks.py"),
+                       Path(__file__).with_name("stack_grasp.py"),
+                       Path(__file__).with_name("plan_clip_poses.py"),
                        Path(__file__).with_name("assets")/"clip_spring_v2.xml"):
             shutil.copy2(source, sources/source.name)
     (args.output/"arguments.json").write_text(json.dumps(vars(args), default=str, indent=2))
     started = time.monotonic()
     sim = make_environment(coupling=args.coupling, ready_start=args.ready_start,
                            with_clip=args.clip, material_profile=args.material_profile, control_hz=args.hz,
-                           side_access=args.side_access or args.stage in ("regrasp","seal"),physics_hz=args.physics_hz)
+                           side_access=args.side_access or args.stage in ("regrasp","seal"),
+                           physics_hz=args.physics_hz,rigid_cpu=args.rigid_cpu,workspace=args.workspace)
     timings = dict(build_s=time.monotonic()-started, driver_tick_s=0., readback_and_metrics_s=0., recording_s=0.)
     entity = sim.scene.by_name["pouch"]
     export_render_geometry(sim, args.output)
@@ -78,6 +91,13 @@ def main():
         else:
             drive = controller.drive()
     snapshots, trace = {}, []
+    rest_initial=entity._rest.numpy()[entity.rows].copy()
+    stepping=entity.stepping_model if entity.stepping_model is not None else sim.model
+    edges=stepping.edge_indices.numpy()[entity.rows,2:4]
+    midpoints=sim.state.particle_q.numpy()[edges].mean(axis=1)
+    q_initial=sim.state.particle_q.numpy()[entity.particles]
+    mouth_x=float(np.median(q_initial[entity.grid[:,-1,:],0]))
+    neck_edges=(midpoints[:,0]<mouth_x+.070)&(abs(midpoints[:,1])<.07)
     watcher=None
     if args.check_substeps:
         from substep_geometry import SubstepGeometry
@@ -90,7 +110,10 @@ def main():
     def save_record():
         before=time.monotonic()
         temporary=args.output/"states.tmp.npz"
-        np.savez_compressed(temporary, faces=entity.faces,grid=entity.grid, **snapshots)
+        np.savez_compressed(temporary,faces=entity.faces,grid=entity.grid,
+                            edge_rows=entity.rows,neck_edge_mask=neck_edges,
+                            edge_rest_initial=rest_initial,
+                            edge_rest_current=entity._rest.numpy()[entity.rows],**snapshots)
         temporary.replace(args.output/"states.npz")
         temporary=args.output/"trace.tmp.json"
         temporary.write_text(json.dumps(trace));temporary.replace(args.output/"trace.json")
@@ -114,11 +137,21 @@ def main():
         state = read_object_states(sim)
         snapshots[f"q_{step:05d}"] = state["pouch"]
         snapshots[f"b_{step:05d}"] = state["bodies"]
+        snapshots[f"j_{step:05d}"] = sim.state.joint_q.numpy().copy()
+        snapshots[f"d_{step:05d}"] = sim.state.joint_qd.numpy().copy()
         trace.append(dict(step=step, finite=bool(sim.state_is_finite()),
                           phase=controller.phase if controller else "rest",
                           z_min=float(state["pouch"][:, 2].min()),
                           z_max=float(state["pouch"][:, 2].max())))
         trace[-1]["fold"] = fold_metrics(state["pouch"], entity.grid, [(34, 28, 40)])
+        rest=entity._rest.numpy()[entity.rows]
+        change=np.abs(np.arctan2(np.sin(rest-rest_initial),np.cos(rest-rest_initial)))[neck_edges]
+        trace[-1]["neck_plastic_rest_change"]=dict(edges_above_005_rad=int((change>.05).sum()),
+            max_rad=float(change.max(initial=0.)),p95_rad=float(np.quantile(change,.95)) if len(change) else 0.)
+        if not trace[-1]["finite"]:
+            if controller:
+                controller.failure="non-finite simulation state"
+            break
         if watcher:
             trace[-1]["substep_geometry"]=watcher.report()
         if args.clip:
@@ -145,6 +178,13 @@ def main():
             if any(row["penetrating_triangles"] for row in preflight):
                 save_record()
                 raise RuntimeError("Initial pouch/box intersection; reject before robot motion")
+            if args.clip:
+                from check_rigid_tool import inspect_tool
+                tool_check=inspect_tool(sim)
+                (args.output/"rigid-tool-preflight.json").write_text(json.dumps(tool_check,indent=2))
+                if tool_check["intersections"]:
+                    save_record()
+                    raise RuntimeError("Initial rigid clip/BOX intersection; reject before motion")
         if controller:
             target_q=sim.control.joint_target_q.numpy()
             trace[-1]["robot_targets"]={a:dict(joints=target_q[sim.arm(a).arm_coords].tolist(),
@@ -187,7 +227,10 @@ def main():
                   coupling=args.coupling, ready_start=args.ready_start,
                   clip=args.clip, physics_substeps=sim.request.physics.substeps,
                   control_hz=args.hz,
+                  rigid_backend=sim.snack_rigid_backend,
+                  workspace=sim.snack_workspace,
                   material_profile=args.material_profile,
+                  material=sim.snack_material_parameters,
                   timings=timings,
                   interrupted=interrupted[0],
                   controller_failure=controller.failure if controller else None,

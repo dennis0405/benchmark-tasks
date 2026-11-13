@@ -21,18 +21,40 @@ def grasp_clip(controller, arm="right"):
     c=controller
     panel=c.session.arms[arm]
     c.phase="clip_approach"
-    panel.grip_request=.4
+    panel.grip_request=0.
     # +X approach with pads parting along Y is reachable at this bench.
     # A downward tool axis saturated the wrist limits without approaching
     # the handle, so verify the measured pad location before closing.
-    quat=c.takes._frame_quat((1,0,0),(0,1,0))
-    pose=clip_pose(c)
-    handle=pose[:3]+Rotation.from_quat(pose[3:]).apply([-.050,0,0])
-    yield from c.move({arm:handle+[0,0,.15]},{arm:quat},.08,100)
+    nominal=Rotation.from_quat(c.takes._frame_quat((1,0,0),(0,1,0)))
+    parking=clip_pose(c)[:3].copy()
+    def target():
+        pose=clip_pose(c)
+        rotation=Rotation.from_quat(pose[3:])
+        quat=(rotation*Rotation.from_euler("x",-np.pi/2)*nominal).as_quat()
+        return pose[:3]+rotation.apply([-.060,0,0]),quat
+    handle,quat=target()
+    yield from c.move({arm:handle+[0,0,.15]},{arm:quat},.15,100)
+    if np.linalg.norm(clip_pose(c)[:3]-parking)>.05:
+        c.failure="clip displaced more than 50 mm before descent"
+        return None
     # Read the pose again: a free upright clip may settle or tilt slightly.
-    pose=clip_pose(c)
-    handle=pose[:3]+Rotation.from_quat(pose[3:]).apply([-.050,0,0])
+    handle,quat=target()
+    yield from c.move({arm:handle+[0,0,.020]},{arm:quat},.10,80)
+    if np.linalg.norm(clip_pose(c)[:3]-parking)>.05:
+        c.failure="clip displaced more than 50 mm during approach"
+        return None
+    handle,quat=target()
     yield from c.move({arm:handle},{arm:quat},.025,100)
+    for _ in range(3):
+        if np.linalg.norm(clip_pose(c)[:3]-parking)>.05:
+            c.failure="clip displaced more than 50 mm before grasp"
+            return None
+        handle,quat=target()
+        if np.linalg.norm(c.takes._fold_jaws(c.film,arm)-handle)<.003:
+            break
+        yield from c.move({arm:handle},{arm:quat},.015,80)
+    # Validate against the CURRENT object pose, not the earlier cursor goal.
+    handle,quat=target()
     miss=float(np.linalg.norm(c.takes._fold_jaws(c.film,arm)-handle))
     print("CLIP_REACH_ERROR_M",miss,flush=True)
     if miss > .006:
@@ -40,9 +62,13 @@ def grasp_clip(controller, arm="right"):
         return None
     c.phase="clip_squeeze_handles"
     hz=float(c.sim.request.physics.control_hz)
-    request=.4
+    request=0.
+    closing_start=clip_pose(c)[:3].copy()
     for _ in range(c.frames(240)):
-        if clip_angle(c)<=-.34:
+        if np.linalg.norm(clip_pose(c)[:3]-closing_start)>.05:
+            c.failure="clip displaced more than 50 mm while squeezing"
+            return None
+        if clip_angle(c)<=-.32:
             # Hold the measured slide position instead of driving through
             # the clip's hinge limit. The 0.1 mm relief avoids extra squeeze.
             coords=c.sim.scene.embodiment.arms[arm].gripper_coords
@@ -55,7 +81,7 @@ def grasp_clip(controller, arm="right"):
     yield from c.wait(30)
     angle=clip_angle(c)
     print("CLIP_OPEN",angle,clip_pose(c).tolist(),flush=True)
-    if not -.445 <= angle <= -.15:
+    if not -.405 <= angle <= -.15:
         c.failure=f"handle squeeze did not retain a valid opening: {angle:.3f} rad"
         return None
     pose=clip_pose(c)
@@ -66,12 +92,18 @@ def grasp_clip(controller, arm="right"):
                relative_rotation=rotation.inv()*Rotation.from_quat(grip_quat),
                start_z=float(pose[2]))
     c.phase="clip_lift"
-    yield from c.move({arm:jaws+[0,0,.09]},{arm:grip_quat},.035,100)
+    yield from c.move({arm:jaws+[0,0,.020]},{arm:grip_quat},.035,80)
+    yield from c.move({arm:jaws+[0,0,.09]},{arm:grip_quat},.10,100)
     pose=clip_pose(c)
     print("CLIP_LIFT",pose.tolist(),"angle",clip_angle(c),flush=True)
     if pose[2]-grasp["start_z"] < .05:
         c.failure="clip did not rise at least 50 mm with the gripper"
         return None
+    rotation=Rotation.from_quat(pose[3:])
+    grasp["offset"]=rotation.inv().apply(c.takes._fold_jaws(c.film,arm)-pose[:3])
+    grasp["relative_rotation"]=rotation.inv()*Rotation.from_quat(panel.ik.ee_pose(c.sim.state)[1])
+    c.marks["clip_grasp_transform"]=dict(offset=grasp["offset"].tolist(),
+        relative_quat=grasp["relative_rotation"].as_quat().tolist(),clip_pose=pose.tolist())
     return grasp
 
 
@@ -79,8 +111,13 @@ def clip_grasp_drive(controller):
     yield from controller.retract_grasp("right")
     grasp=yield from grasp_clip(controller)
     if grasp is not None:
+        if getattr(controller,"plan_clip",False):
+            from plan_clip_poses import plan_clip_poses
+            controller.phase="clip_pose_plan"
+            controller.marks["clip_pose_plan"]=plan_clip_poses(controller,grasp)
+            return
         controller.phase="clip_carry_rotate"
-        root=np.array([.55,-.005,.90])
+        root=np.asarray(getattr(controller,"carry_root",(.66,-.02,.95)),dtype=float)
         reached=yield from move_clip_root(controller,root,Rotation.identity(),grasp,.05)
         if not reached:
             return
@@ -98,7 +135,17 @@ def clip_grasp_drive(controller):
 def move_clip_root(c,target,rotation,grasp,speed=.025):
     """Measured-pose corrections act on the robot cursor, never the clip."""
     quat=(rotation*grasp["relative_rotation"]).as_quat()
-    yield from c.move({"right":target+rotation.apply(grasp["offset"])},{"right":quat},speed,150)
+    def guarded(point,quat,speed,settle):
+        for _ in c.move({"right":point},{"right":quat},speed,settle):
+            yield
+            pose=clip_pose(c)
+            expected=pose[:3]+Rotation.from_quat(pose[3:]).apply(grasp["offset"])
+            if np.linalg.norm(expected-c.takes._fold_jaws(c.film,"right"))>.030:
+                c.failure=f"clip slipped more than 30 mm during {c.phase}"
+                return False
+        return True
+    if not (yield from guarded(target+rotation.apply(grasp["offset"]),quat,speed,150)):
+        return False
     for _ in range(4):
         pose=clip_pose(c)
         actual_rotation=Rotation.from_quat(pose[3:])
@@ -110,7 +157,8 @@ def move_clip_root(c,target,rotation,grasp,speed=.025):
         ee_rotation=Rotation.from_quat(c.session.arms["right"].ik.ee_pose(c.sim.state)[1])
         relative=actual_rotation.inv()*ee_rotation
         quat=(rotation*relative).as_quat()
-        yield from c.move({"right":jaw+np.clip(error,-.008,.008)},{"right":quat},min(speed,.015),100)
+        if not (yield from guarded(jaw+np.clip(error,-.008,.008),quat,min(speed,.015),100)):
+            return False
     pose=clip_pose(c)
     miss=float(np.linalg.norm(np.asarray(target)-pose[:3]))
     actual_rotation=Rotation.from_quat(pose[3:])
@@ -134,46 +182,87 @@ def regrasp_fold(c, holder, presser):
         yield from c.lift_press(arm)
     else:
         yield from c.retract_grasp(arm)
-        yield from c.press(arm,leave_down=True)
+        yield from c.press(arm,leave_down=True,near=.010,along_fold=True)
         yield from c.lift_press(arm)
     c.phase="fold_stack_approach"
     panel=c.session.arms[arm]
     panel.grip_request=.6
     quat=c.takes._fold_hand(arm)
     top,line,yc=(c.layout[k] for k in ("board_top","line","center_y"))
+    from stack_grasp import select_stack_grasp,captured_plies
+    entity=c.sim.scene.by_name["pouch"]
+    def measured_point():
+        q=c.sim.state.particle_q.numpy()[entity.particles]
+        selected=select_stack_grasp(q,entity.grid,entity.faces)
+        if selected is not None:
+            c.marks["stack_grasp_plan"]=selected
+            print("STACK_PLAN",selected,flush=True)
+            return np.asarray(selected["point"])
+        c.failure="no accessible four-ply side patch in the measured folded film"
+        return None
+    point=measured_point()
+    if point is None:return False
     # In this reachable side-facing wrist frame the 80 mm pad axis is Y.
     # Its inner end must clear the board at Y=60 mm; the 12 mm pad width
     # along X must overlap the folded band beyond the X=570 mm crease.
-    yield from c.move({arm:(line+.010,yc+.18,top+.10)},{arm:quat},.05,100)
-    yield from c.move({arm:(line+.010,yc+.16,top+.010)},{arm:quat},.025,100)
-    point=np.array([line+.010,yc+.105,top+.010])
-    yield from c.move({arm:point},{arm:quat},.015,100)
+    yield from c.move({arm:(point[0],yc+.18,top+.10)},{arm:quat},.10,100)
+    point=measured_point()
+    if point is None:return False
+    yield from c.move({arm:(point[0],yc+.14,point[2])},{arm:quat},.10,100)
+    point=measured_point()
+    if point is None:return False
+    yield from c.move({arm:point},{arm:quat},.025,100)
     miss=float(np.linalg.norm(c.takes._fold_jaws(c.film,arm)-point))
     print("STACK_REACH_ERROR_M",miss,flush=True)
     if miss>.006:
         c.failure=f"fold stack reach error {miss:.4f} m exceeds 6 mm"
         return
     c.phase="fold_stack_pinch"
-    panel.grip_request=1.
-    yield from c.wait(90)
+    for request in np.linspace(.6,1.,c.frames(45)):
+        panel.grip_request=float(request)
+        yield
     solver=c.sim.pipeline.program.solver
-    forces=solver.shape_contact_forces()
     owners=c.sim.model.shape_body.numpy()
-    loads=[float(np.linalg.norm(forces[np.isin(owners,side)].sum(axis=0)))
-           for side in c.sim.scene.embodiment.arms[arm].finger_bodies]
-    print("STACK_PINCH_LOADS_N",loads,flush=True)
+    samples=[]
+    for _ in c.wait(45):
+        yield
+        forces=solver.shape_contact_forces()
+        samples.append([float(np.linalg.norm(forces[np.isin(owners,side)].sum(axis=0)))
+                       for side in c.sim.scene.embodiment.arms[arm].finger_bodies])
+    loads=np.mean(samples,axis=0).tolist()
+    print("STACK_PINCH_CONTROL_SAMPLE_MEAN_N",loads,flush=True)
+    captured=captured_plies(c,arm)
+    print("STACK_CAPTURED_PLY_AREA_MM2",captured,flush=True)
     if min(loads)<.05:
-        c.failure="folded stack has no measured bilateral finger contact"
+        c.failure="folded stack has no bilateral contact across the observation window"
         return
+    if min(captured)<.5:
+        c.failure="gripper gap does not contain all four measured film ply groups"
+        return False
     if holder=="right":
         yield from c.retract_grasp("right")
-        yield from c.press("right",leave_down=True)
+        yield from c.press("right",leave_down=True,near=.010,along_fold=True)
         yield from c.lift_press("right")
     else:
         yield from c.lift_press("right")
     c.phase="fold_stack_lift"
     jaw=c.takes._fold_jaws(c.film,arm)
-    yield from c.move({arm:jaw+[0,0,.025]},{arm:quat},.015,100)
+    yield from c.move({arm:jaw+[0,0,.040]},{arm:quat},.025,100)
+    # Check actual film clearance for the 6 mm lower jaw. A one-sided lift
+    # tilts the band; its lower end, not its centre, determines insertion room.
+    for _ in range(4):
+        q=c.sim.state.particle_q.numpy()[entity.particles]
+        band=q[entity.grid[:,32:39,:]].reshape(-1,3)
+        center_y=float(np.median(q[entity.grid[:,34,:]][:,:,1]))
+        selected=band[abs(band[:,1]-center_y)<.055]
+        clearance=float(selected[:,2].min()-top) if len(selected) else -1.
+        print("STACK_LOWEST_CLEARANCE_M",clearance,flush=True)
+        if clearance>=.014:break
+        jaw=c.takes._fold_jaws(c.film,arm)
+        yield from c.move({arm:jaw+[0,0,.020]},{arm:quat},.025,80)
+    else:
+        c.failure="insufficient measured clearance for the lower clip jaw"
+        return False
     from fold_metrics import fold_metrics
     entity=c.sim.scene.by_name["pouch"]
     q=c.sim.state.particle_q.numpy()[entity.particles]
@@ -219,7 +308,7 @@ def seal_fold(c):
         return
     bottom=float(local[near,2].min())
     # The closed lower inner face is -0.2 mm in clip_spring_v2.xml.
-    target=center+rotation.apply([-.035,0,bottom-.0003])
+    target=center+rotation.apply([-.035,0,bottom-.003])
     stage=target-x_axis*.040+z_axis*.040
     c.phase="clip_stage"
     if not (yield from move_clip_root(c,stage,rotation,grasp,.045)):
@@ -238,7 +327,8 @@ def seal_fold(c):
         return
     c.phase="clip_release"
     quat=c.session.arms["right"].ik.ee_pose(c.sim.state)[1]
-    c.session.arms["right"].grip_request=.7
+    # End pads are 86 mm apart when closed: use the full 95 mm opening.
+    c.session.arms["right"].grip_request=0.
     yield from c.wait(60)
     jaw=c.takes._fold_jaws(c.film,"right")
     yield from c.move({"right":jaw-x_axis*.080+z_axis*.020},{"right":quat},.025,80)
