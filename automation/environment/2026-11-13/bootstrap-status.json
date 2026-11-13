@@ -9,7 +9,7 @@
   "workspace": "/data/robocurve-automation",
   "pipeline_implemented": false,
   "dream_evaluated": false,
-  "simulation_install": "in_progress",
+  "simulation_install": "installed",
   "gpu": {
     "exit_code": 0,
     "stdout": "NVIDIA L40S, 565.57.01, 46068 MiB",
@@ -36,5 +36,33 @@
   "github_remote_auth": "not_configured; public fork clone works; publisher uses local account",
   "search_api": "not_configured",
   "submission_credentials": "not_configured",
-  "dream_credentials": "not_configured"
+  "dream_credentials": "not_configured",
+  "camera_smoke": {
+    "pass": 8,
+    "fail": 0,
+    "summary_path": "artifacts/yam-camera-smoke/stage5_cameras_link_summary.json"
+  },
+  "stack_smoke": {
+    "status": "completed",
+    "outcome": "succeeded",
+    "task_score": 1.0,
+    "policy": "yam_scripted",
+    "log": "artifacts/yam-stack-smoke/adhoc_27b1f8f3.json"
+  },
+  "persistence_probe": {
+    "sha256_before": "f1bd36e12bd9b9bb898ae3cef0b4ef6d7ee29e4cf2302e2d1eaaac72d5f4c20d",
+    "root_path": "/home/ubuntu/.local/state/robocurve-automation/persistence-marker.json",
+    "data_path": "/data/robocurve-automation/checkpoints/persistence-marker.json",
+    "status": "not_tested"
+  },
+  "simulator_versions": {
+    "isaacsim": "6.1.0.0",
+    "isaaclab": "17.0.2",
+    "isaaclab-arena": "0.3.0",
+    "yam-arena": "0.1.0",
+    "inspect-robots": "1.0.0",
+    "inspect-robots-dream": "0.1.0",
+    "dreamlabs-client": "1.1.3",
+    "torch": "2.11.0+cu128"
+  }
 }

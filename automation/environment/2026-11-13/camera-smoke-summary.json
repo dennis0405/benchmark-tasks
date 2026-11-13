@@ -1,0 +1,63 @@
+{
+  "stage": "stage5_cameras_link",
+  "verdict": "PASS",
+  "results": [
+    {
+      "check": "top_cam: 224x224 uint8 RGB, not blank",
+      "status": "PASS",
+      "detail": "render (360, 640, 3), obs (224, 224, 3) uint8, std 47.8, mean 204.7"
+    },
+    {
+      "check": "left_cam: 224x224 uint8 RGB, not blank",
+      "status": "PASS",
+      "detail": "render (360, 640, 3), obs (224, 224, 3) uint8, std 13.1, mean 219.3"
+    },
+    {
+      "check": "right_cam: 224x224 uint8 RGB, not blank",
+      "status": "PASS",
+      "detail": "render (360, 640, 3), obs (224, 224, 3) uint8, std 15.6, mean 220.5"
+    },
+    {
+      "check": "the three cameras see different views",
+      "status": "PASS",
+      "detail": "{'top_cam-left_cam': 21.1, 'top_cam-right_cam': 21.7, 'left_cam-right_cam': 10.0}"
+    },
+    {
+      "check": "left_cam reported pose sits on its gripper mount (all 5 captures)",
+      "status": "PASS",
+      "detail": "worst 0.000 mm / 0.000 deg"
+    },
+    {
+      "check": "left_cam image changes as the arm moves (t=0.5 vs 2.5 s)",
+      "status": "PASS",
+      "detail": "mean abs diff 12.6"
+    },
+    {
+      "check": "right_cam reported pose sits on its gripper mount (all 5 captures)",
+      "status": "PASS",
+      "detail": "worst 0.000 mm / 0.000 deg"
+    },
+    {
+      "check": "right_cam image changes as the arm moves (t=0.5 vs 2.5 s)",
+      "status": "PASS",
+      "detail": "mean abs diff 14.4"
+    }
+  ],
+  "info": {
+    "env build s": 24.6,
+    "camera classes": {
+      "top_cam": "TiledCamera",
+      "left_cam": "TiledCamera",
+      "right_cam": "TiledCamera",
+      "overview_cam": "TiledCamera"
+    },
+    "camera prim paths": {
+      "top_cam": "/World/envs/env_[^/]+/TopCam",
+      "left_cam": "/World/envs/env_[^/]+/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/left_wrist_cam",
+      "right_cam": "/World/envs/env_[^/]+/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/right_wrist_cam",
+      "overview_cam": "/World/envs/env_[^/]+/OverviewCam"
+    },
+    "mean env.step with 4 cameras (s)": 0.179,
+    "images": "/data/robocurve-automation/artifacts/yam-camera-smoke/stage5_cameras_link"
+  }
+}

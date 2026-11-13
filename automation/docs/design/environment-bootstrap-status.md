@@ -133,7 +133,9 @@ subprocess.run(
 | CPU 환경 | envs/control, HTTPS 200·SQLite FTS5·필수 import 통과 |
 | Codex | CLI 0.147.0, ChatGPT 일반 브라우저 로그인 성공·최소 JSON 응답 성공 |
 | GPU Docker | CDI 호환성 수정 후 실제 container에서 L40S 인식 |
-| simulator | 고정 Arena/Isaac Lab/YAM의 native uv 설치 진행 중 |
+| simulator | Isaac Sim 6.1.0.0·Arena 0.3.0·Isaac Lab 17.0.2·YAM 0.1.0 native uv 설치 완료 |
+| 실제 렌더·관절 시험 | upstream stage5 카메라/그리퍼 추종 검사 8 pass / 0 fail |
+| 실행기·데모·채점 | upstream stack_cubes, yam_scripted, task_score 1.0, 1 trial 성공 |
 | stop/start 보존 | 아직 미검증 |
 | 자동화 구현·Dream·제출 | 수행하지 않음 |
 
@@ -144,3 +146,9 @@ Container Toolkit 1.20.1의 장치 검색이 driver 565.57.01의 sandboxutils �
 함수에서 충돌했다. NVML 탐색을 사용하는 공식 기능 플래그로 CDI 생성에
 성공했고, 새 Toolkit과 기존 Brev unit의 Docker 시작 순서도 정리했다.
 실제 설정·버전·진단 결과는 [환경 자료](../../environment/README.md)에 보존한다.
+
+기본 YAM 검증은 새 산업 태스크가 아니다. 기존 upstream 예제를 사용했고 Dream
+호출·새 scorer·과자봉지 실험·대회 제출은 하지 않았다. 생성 영상은 3개 카메라
+각 189프레임·20fps이며, 원본 결과 JSON과 함께 보존한다. driver 565에서는
+DLSS Responsive Denoising이 preset D로 fallback된 경고가 있었다. 실제 사용한
+driver/render 경로를 기록하며 최신 공식 driver 검증을 대신했다고 주장하지 않는다.
