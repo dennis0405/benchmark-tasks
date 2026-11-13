@@ -1,6 +1,6 @@
 # RoboCurve 자동화: 확정한 제작 의도
 
-상태: 사용자 확정. 현재는 기획·설계 단계이며 구현은 시작하지 않는다.
+상태: 사용자 확정. 2026-11-14 CLI MVP 구현·환경 검증을 진행했다. 최신 상태는 [구현 현황](../../tasks/implementation-status.md)을 따른다.
 확정일 및 갱신일: 2026-11-13 (Asia/Seoul).
 관리 위치: `/Users/dennis0405/Workspace/SNU-PI/robocurve/automation`.
 

@@ -1,6 +1,6 @@
 # MVP 구현 순서와 검증 계획
 
-상태: 검토 초안. 2026-11-13 (Asia/Seoul). **계획 문서이며 구현을 시작하지 않았다.**
+상태: 2026-11-13의 최초 구현 계획. 2026-11-14 구현·검증 상태는 [구현 현황](implementation-status.md)을 따른다.
 구현 체크리스트는 [todo.md](todo.md), 사전 준비와 사용자 결정은
 [Brev 준비 문서](../docs/design/brev-readiness.md)에 기록한다.
 상위 기준은 [제작 의도](../docs/intent/robocurve-automation.md)와

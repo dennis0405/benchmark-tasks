@@ -1,7 +1,7 @@
 # 자동화용 환경 준비 기록
 
 이 디렉터리는 설치·검증·재현에 필요한 **비밀정보 없는 환경 자료**를 보존한다.
-자동화 workflow의 CLI·skill·에이전트 구현은 아직 시작하지 않았다.
+이 파일은 최초 환경 준비 기록이다. 현재 CLI·skill·에이전트 구현과 검증 상태는 [프로젝트 README](../README.md)와 [구현 현황](../tasks/implementation-status.md)을 따른다.
 날짜별 상태는 해당 `bootstrap-status.json` 및 준비 보고서와 함께 확인한다.
 모델 로그인 cache, API key, browser session, venv·패키지 cache는 포함하지 않는다.
 
