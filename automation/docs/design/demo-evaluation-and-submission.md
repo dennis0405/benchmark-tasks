@@ -170,6 +170,11 @@ ReportBundle에는 산업 근거, 장비 setup, 조작 난도, 최신 중복 검
 관련 NoveltyReport ID, 제출 대상 repo/base/branch와 수행할 동작을 참조한다.
 에이전트나 report-builder는 승인 값을 생성할 권한을 갖지 않는다.
 
+환경 준비 중 확인한 Inspect Robots 1.0의 record에도 `approval` 이벤트가 있지만,
+이는 action guard의 수정/허용 판정이다. 제출 승인으로 읽지 않는다. 제출용 승인
+계약은 목적·작성 주체·사용자·ReleaseManifest digest를 검사하며 SDK 이벤트나
+모델 출력의 같은 이름 필드로 대체할 수 없다.
+
 - 대화의 일반적인 긍정 표현을 미래의 모든 결과에 대한 제출 승인으로 해석하지 않는다.
 - 사용자가 본 결과물 digest가 변경되면 의미 변화와 허용 메타데이터 변경을 구분한다.
 - 새로운 중복 차단 사유가 발견되면 기존 승인이 있어도 제출 대기/재검토한다.

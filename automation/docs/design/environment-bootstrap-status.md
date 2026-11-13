@@ -157,7 +157,9 @@ driver/render 경로를 기록하며 최신 공식 driver 검증을 대신했다
 전용 인스턴스의 실제 stop/start를 한 번 수행했다. 중지 명령 반환 후에도
 provider 상태가 STOPPING으로 몇 분 남아 있었고, STOPPED를 확인한 뒤 start했다.
 실행 전후 root/data marker SHA-256이 모두 일치했다. 재시작 후 GPU container와
-기존 예제 1.0점도 다시 확인했다. 마지막에는 보존 후 stop으로 둔다.
+기존 예제 1.0점도 다시 확인했다. 결과를 fork origin에 보존한 뒤 다시 stop했고,
+최종 `brev ls`에서 `robocurve-automation-256`의 **STOPPED**를 확인했다.
+다른 실험 인스턴스는 변경하지 않았다.
 
 이것은 VM과 기본 런타임의 재개 시험이다. 아직 구현하지 않은 workflow의
 중단 복구·사용자 승인·Dream·실제 제출 경로를 검증했다는 뜻은 아니다.

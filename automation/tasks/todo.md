@@ -234,6 +234,7 @@ run/stage/attempt/journal을 저장하고 같은 실행의 중복 소유를 막�
 - [ ] 승인 후 소스/영상 변경·새 중복·에이전트 위조 승인을 차단한다.
 
 검증: fake 결과 보고서의 로컬 검토와 승인/수정/보류·digest 변경 fixture.
+SDK action-guard의 approval 이벤트를 제출 승인으로 주입하는 경우도 차단한다.
 의존: T06, 결과 manifest 규약. 예상 파일: report builder·HTML template·approval handler·tests.
 
 ### T19. 승인 후 제출·접수의 fake 경로 — M
