@@ -1,5 +1,10 @@
 # Close a snack bag with a spring clip — experimental work in progress
 
+The unfolded-mouth YAM continuation runs in a separate RoboSimStudio research
+scene; its evidence and remaining limitations are in
+[UNFOLDED_STATUS.md](experiments/UNFOLDED_STATUS.md). It does not replace the
+rigid Arena task or establish a deformable submission score.
+
 **Not ready for submission.** Instruction: “Keep the chips from going stale.” The 160 mm wide packet rests on a 25 mm support board on the table, leaving its mouth overhanging the front edge, and starts with its mouth folded twice. It should gradually reopen unless it is pressed down or held shut with a clip. One YAM arm holds the fold while the other squeezes a spring clip's handles, inserts the folded mouth between its jaws, releases the clip, and withdraws. A 100 mm-wide main clip, a wide clothespeg-style alternative, a small paper clip and a rubber-band-shaped distractor are part of the intended scene. Both wide clips use the same scoring rule.
 
 For environment versions, setup on a new GPU machine, preserved evidence and
