@@ -3,6 +3,7 @@
 import json
 import re
 import shutil
+import subprocess
 import uuid
 from pathlib import Path
 
@@ -19,8 +20,11 @@ from .gates import (
     inside,
     manifest,
     require_fields,
+    validate_assets,
     validate_checks,
+    validate_controls,
     validate_evidence,
+    validate_media,
     validate_spec,
     verify_manifest,
 )
@@ -150,7 +154,13 @@ class Production:
 
     def ask(self, role, instruction, schema, writable=False):
         return self.agent.run(
-            role, C.SCENARIO_POLICY + "\n" + instruction, self.workspace, schema, writable=writable
+            role,
+            C.SCENARIO_POLICY
+            + "\nRead input/last-failure.json if present and address that failure.\n"
+            + instruction,
+            self.workspace,
+            schema,
+            writable=writable,
         )
 
     def review(self, name, instruction):
@@ -193,17 +203,13 @@ class Production:
             self.store.update(self.rid, status="working", stage=stage)
             checkpoint = self.root / "worker-status.json"
             write_json(checkpoint, {"status": "working", "stage": stage, "at": now()})
-            attempts = (
-                self.config.get("repair_attempts", 2)
-                if stage in {"environment", "demo", "export"}
-                else 0
-            )
+            attempts = self.config.get("repair_attempts", 2) if stage != "novelty" else 0
             for attempt in range(attempts + 1):
                 try:
                     receipt = getattr(self, stage)()
                     self.store.stage_done(self.rid, stage, receipt)
                     break
-                except GateError as e:
+                except StateError as e:
                     write_json(
                         self.workspace / "input" / "last-failure.json",
                         {"stage": stage, "attempt": attempt, "reason": str(e)},
@@ -212,6 +218,15 @@ class Production:
                         raise
             write_json(checkpoint, {"status": "working", "completed": stage, "at": now()})
         self.store.update(self.rid, status="pre-evaluation-ready", stage="export")
+        write_json(
+            self.root / "production-receipt.json",
+            {
+                "run": self.rid,
+                "revision": self.store.get(self.rid).get("revision", 0),
+                "release_digest": read(self.root / "release-manifest.json")["digest"],
+                "at": now(),
+            },
+        )
         write_json(
             self.root / "worker-status.json", {"status": "pre-evaluation-ready", "at": now()}
         )
@@ -276,22 +291,39 @@ class Production:
         return {"selected": selected[0]["id"]}
 
     def novelty(self):
-        result = compare_catalog(
-            self.agent,
-            self.workspace,
-            read(self.artifact("selected")),
-            read(self.workspace / "input" / "catalog.json"),
+        selected = read(self.artifact("selected"))
+        pool = read(self.artifact("candidates"))["candidates"]
+        pool = [selected] + [c for c in pool if c["id"] != selected["id"]]
+        rejected = []
+        for candidate in pool:
+            write_json(self.artifact("selected"), candidate)
+            try:
+                result = compare_catalog(
+                    self.agent,
+                    self.workspace,
+                    candidate,
+                    read(self.workspace / "input" / "catalog.json"),
+                )
+                self.review(
+                    "novelty-critic",
+                    "Read artifacts/selected.json, artifacts/novelty.json, "
+                    "input/catalog.json and input/benchmark-sources.json. Challenge superficial distinctions "
+                    "and compare against LIBERO, RoboCasa, SimplerEnv, BEHAVIOR, DataCenterBench and RoboDojo "
+                    "using original suite definitions. Search original task definitions as needed. "
+                    "If coverage or a potentially similar objective is unknown, block. Record source URLs "
+                    "and specific task names in findings even when passing.",
+                )
+                write_json(
+                    self.artifact("selection-history"),
+                    {"rejected": rejected, "selected": candidate["id"]},
+                )
+                return {"catalog_digest": result["catalog_digest"], "compared": result["compared"]}
+            except GateError as e:
+                rejected.append({"candidate": candidate["id"], "reason": str(e)})
+        write_json(self.artifact("selection-history"), {"rejected": rejected, "selected": None})
+        raise GateError(
+            "all proposed candidates duplicate/uncertain; inspect selection-history.json"
         )
-        self.review(
-            "novelty-critic",
-            "Read artifacts/selected.json, artifacts/novelty.json, "
-            "input/catalog.json and input/benchmark-sources.json. Challenge superficial distinctions "
-            "and compare against LIBERO, RoboCasa, SimplerEnv, BEHAVIOR, DataCenterBench and RoboDojo "
-            "using original suite definitions. Search and acquire additional original task definitions "
-            "where needed. If benchmark coverage or any potentially similar objective is unknown, block. "
-            "Record source URLs and specific task names in findings even when passing.",
-        )
-        return {"catalog_digest": result["catalog_digest"], "compared": result["compared"]}
 
     def contract(self):
         result = self.ask(
@@ -307,16 +339,25 @@ class Production:
             raise GateError("invalid task slug or run limit")
         if len(result["physics_checks"]) < 4 or not result["required_controls"]:
             raise GateError("insufficient physics checks/negative controls")
+        suffix = "-" + self.rid.rsplit("-", 1)[-1]
+        if not result["slug"].endswith(suffix):
+            result["slug"] += suffix
         write_json(self.artifact("contract"), result)
         return {"contract_digest": digest(result)}
 
     def execute_scripts(self, plan, requirements=None):
         receipts = []
+        if len({s["id"] for s in plan["scripts"]}) != len(plan["scripts"]):
+            raise GateError("duplicate diagnostic script ids")
         for script in plan["scripts"]:
+            if not re.fullmatch(r"[a-z][a-z0-9_-]{0,60}", script["id"]):
+                raise GateError("invalid diagnostic id")
             path = inside(self.workspace / "task", script["script"])
             if path.suffix != ".py" or not path.is_file():
                 raise GateError("runner accepts existing task-local Python scripts only")
             report_path = inside(self.workspace, script["report"])
+            if not report_path.is_relative_to((self.workspace / "measurements").resolve()):
+                raise GateError("diagnostic reports must stay in measurements/")
             if report_path.exists():
                 report_path.unlink()
             # CLI/python path and EULA flags are controlled by runtime config, not by generated argv.
@@ -329,13 +370,23 @@ class Production:
                     "PRIVACY_CONSENT": "Y",
                 }
             )
+            source_before = manifest(self.workspace / "task")
+            protected = {
+                str(p): file_hash(p)
+                for base in ["input", "artifacts"]
+                for p in (self.workspace / base).rglob("*")
+                if p.is_file()
+            }
             receipt = command(
                 [runtime["python"], str(path), *script["args"]],
                 self.workspace / "task",
-                self.root / "logs" / (script["id"] + ".log"),
+                self.root / "logs" / (script["id"] + "-" + uuid.uuid4().hex[:10] + ".log"),
                 timeout=self.config.get("sim_timeout", 1800),
                 env=env,
             )
+            verify_manifest(self.workspace / "task", source_before)
+            if any(not Path(p).is_file() or file_hash(p) != h for p, h in protected.items()):
+                raise GateError("diagnostic modified frozen controller inputs/contracts")
             if not report_path.is_file():
                 raise GateError("script did not produce a fresh report")
             report = read(report_path)
@@ -344,18 +395,45 @@ class Production:
                 artifact = inside(self.workspace, relative)
                 if not artifact.is_file() or artifact.stat().st_size == 0:
                     raise GateError("missing/empty measured artifact")
+                if artifact.suffix.lower() == ".mp4":
+                    self.sample_video(artifact)
             receipts.append(
                 dict(
                     receipt,
                     id=script["id"],
                     report=script["report"],
                     report_sha256=file_hash(report_path),
+                    source_digest=source_before["digest"],
                     measurements=report,
                 )
             )
         if not receipts:
             raise GateError("no runtime checks executed")
         return receipts
+
+    def sample_video(self, path):
+        """Review roles remain read-only; the controller prepares images they can actually inspect."""
+        out = self.workspace / "measurements/samples" / file_hash(path)[:16]
+        if (out / "samples.json").exists():
+            return read(out / "samples.json")
+        out.mkdir(parents=True, exist_ok=True)
+        probe = subprocess.run(["ffprobe", "-v", "error", "-show_format", "-of", "json", str(path)],
+                               capture_output=True, text=True, check=False)
+        if probe.returncode:
+            raise GateError("cannot decode actual demo video")
+        duration = float(json.loads(probe.stdout)["format"]["duration"])
+        samples = []
+        for i in range(4):
+            at = max(0, duration - 0.05) * i / 3
+            target = out / f"frame-{i}.png"
+            command(["ffmpeg", "-loglevel", "error", "-ss", str(at), "-i", str(path),
+                     "-frames:v", "1", "-y", str(target)], self.workspace, out / f"ffmpeg-{i}.log", timeout=60)
+            if not target.is_file() or not target.stat().st_size:
+                raise GateError("video sample missing")
+            samples.append({"at_seconds": at, "path": str(target.relative_to(self.workspace))})
+        value = {"video": str(Path(path).relative_to(self.workspace)), "sha256": file_hash(path), "samples": samples}
+        write_json(out / "samples.json", value)
+        return value
 
     def environment(self):
         contract = read(self.artifact("contract"))
@@ -365,6 +443,9 @@ class Production:
             "component physics checks for artifacts/contract.json. Read pinned runtime source and "
             "examples using paths in input/runtime.json; use public task.py YAM interface. "
             "No complete demo yet. Return Python diagnostic scripts and relative report paths. "
+            "Create task/asset-manifest.json with assets [{path,sha256,source_url,license,license_reference,"
+            "units:'m',dimensions_m:[x,y,z],geometry_kind}]. Include license text and actual geometry files, "
+            "or procedural geometry source. Asset hashes must match. "
             "Each script must write JSON {checks:[{name,measured,operator,threshold,unit}],artifacts:[...]} "
             "with actual numerical readings. Use all frozen contract checks in one aggregate report, "
             "not fabricated constants. Reports and render images go under ../measurements/. "
@@ -372,6 +453,7 @@ class Production:
             C.BUILD,
             True,
         )
+        validate_assets(self.workspace / "task", read(self.workspace / "task/asset-manifest.json"))
         receipts = self.execute_scripts(plan, contract["physics_checks"])
         write_json(self.artifact("environment-plan"), plan)
         write_json(self.artifact("environment"), receipts)
@@ -392,7 +474,9 @@ class Production:
             "all contract negative controls and trace replay. Required script ids: demo, controls, "
             "replay. Each writes checks+requirements arrays and actual artifacts as environment scripts. "
             "Demo checks must include full_score_episode_count >= 2 and object_pose_injections == 0. "
-            "Controls checks include incorrect_nonzero_count == 0; replay includes score_error <= 1e-6. "
+            "Controls report includes cases [{name,score}] for EVERY frozen required_control, including "
+            "partial credit and damage/forbidden zero scores; wrong_score_count == 0. "
+            "Replay includes score_error <= 1e-6. "
             "Provide H264 MP4 video, initial setup screenshot, raw action/state trace and episode logs. "
             "Do not use diagnostic fixtures as robot success. Keep script criteria in contract. "
             "task/task.json must contain official required fields, category Impact on AI timelines, "
@@ -405,6 +489,7 @@ class Production:
         required = {"demo", "controls", "replay"}
         if not required.issubset({s["id"] for s in plan["scripts"]}):
             raise GateError("demo/controls/replay scripts missing")
+        write_json(self.artifact("demo-plan"), plan)
         receipts = self.execute_scripts(plan)
         fixed = {
             "demo": [
@@ -423,7 +508,7 @@ class Production:
             ],
             "controls": [
                 {
-                    "name": "incorrect_nonzero_count",
+                    "name": "wrong_score_count",
                     "operator": "==",
                     "threshold": 0,
                     "unit": "episodes",
@@ -436,6 +521,10 @@ class Production:
         for receipt in receipts:
             if receipt["id"] in fixed:
                 numerical_report(receipt["measurements"], fixed[receipt["id"]])
+            if receipt["id"] == "controls":
+                validate_controls(
+                    receipt["measurements"], read(self.artifact("contract"))["required_controls"]
+                )
         write_json(self.artifact("demo"), receipts)
         self.review(
             "demo-scoring-critic",
@@ -472,11 +561,28 @@ class Production:
             read(self.artifact("contract"))["physics_checks"],
         )
         write_json(self.artifact("environment-final"), refreshed)
+        final_demo = self.execute_scripts(read(self.artifact("demo-plan")))
+        previous = {row["id"]: row for row in read(self.artifact("demo"))}
+        for receipt in final_demo:
+            requirements = [
+                {k: c[k] for k in ["name", "operator", "threshold", "unit"]}
+                for c in previous[receipt["id"]]["measurements"]["checks"]
+            ]
+            numerical_report(receipt["measurements"], requirements)
+            if receipt["id"] == "controls":
+                validate_controls(
+                    receipt["measurements"], read(self.artifact("contract"))["required_controls"]
+                )
+        write_json(self.artifact("demo-final"), final_demo)
+        validate_assets(self.workspace / "task", read(self.workspace / "task/asset-manifest.json"))
         mapping = read(self.workspace / "release-map.json")
         require_fields(mapping, ["demo_video", "screenshot", "trace", "episode_log"])
         for p in mapping.values():
             if not inside(self.workspace, p).is_file():
                 raise GateError("missing release evidence")
+        validate_media(inside(self.workspace, mapping["demo_video"]), "video")
+        self.sample_video(inside(self.workspace, mapping["demo_video"]))
+        validate_media(inside(self.workspace, mapping["screenshot"]), "image")
         self.review(
             "release-critic",
             "Review all artifacts, code, README, task.json, licenses, "

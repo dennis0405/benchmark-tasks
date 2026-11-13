@@ -3,6 +3,7 @@
 import contextlib
 import fcntl
 import json
+import math
 import os
 import sqlite3
 import uuid
@@ -75,7 +76,11 @@ class Store:
         if existing:
             if json.loads(existing[0])["prompt"] != value["prompt"]:
                 raise StateError("worker run identity changed")
-            return self.get(value["id"])
+            return self.update(
+                value["id"],
+                revision=value.get("revision", 0),
+                revision_request=value.get("revision_request"),
+            )
         with self.db:
             self.db.execute("INSERT INTO runs VALUES(?,?)", (value["id"], json.dumps(value)))
             self._event(value["id"], {"event": "registered"})
@@ -151,7 +156,21 @@ class Store:
                 raise StateError(
                     f"{kind} already reserved/executed; reconcile, never retry automatically"
                 )
+            if kind == "dream" and data.get("input_digest"):
+                for row in self.db.execute("SELECT data FROM effects WHERE kind='dream'"):
+                    if json.loads(row[0]).get("input_digest") == data["input_digest"]:
+                        raise StateError(
+                            "same Dream inputs already attempted under another run name"
+                        )
             if budget is not None:
+                if (
+                    type(budget) not in (int, float)
+                    or not math.isfinite(budget)
+                    or budget <= 0
+                    or type(data.get("cap_usd")) not in (int, float)
+                    or not math.isfinite(data["cap_usd"])
+                ):
+                    raise StateError("budget must be finite positive currency")
                 reserved = 0
                 for row in self.db.execute("SELECT status,data FROM effects WHERE kind=?", (kind,)):
                     entry = json.loads(row[1])
@@ -168,6 +187,12 @@ class Store:
             raise
 
     def finish_effect(self, rid, kind, result):
+        if "actual_usd" in result and (
+            type(result["actual_usd"]) not in (int, float)
+            or not math.isfinite(result["actual_usd"])
+            or result["actual_usd"] < 0
+        ):
+            raise StateError("actual billing must be finite and nonnegative")
         with self.db:
             row = self.effect(rid, kind)
             if not row:

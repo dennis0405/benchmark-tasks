@@ -62,7 +62,7 @@ CONTRACT = obj(
     assets=array(S),
     approximations=array(S),
     scoring_spec=S,
-    required_controls=array(S),
+    required_controls=array(obj(name=S, expected_score=N, reason=S)),
 )
 SCRIPT = obj(id=S, script=S, args=array(S), report=S)
 BUILD = obj(summary=S, scripts=array(SCRIPT), files=array(S))

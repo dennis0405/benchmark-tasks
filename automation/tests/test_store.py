@@ -66,3 +66,13 @@ def test_journal_is_readable_json(tmp_path):
     s = Store(tmp_path)
     r = s.create("x", instance="vm")
     assert json.loads(s.events(r["id"])[0]["data"])["instance"] == "vm"
+
+
+def test_nan_cannot_bypass_cumulative_budget(tmp_path):
+    s = Store(tmp_path)
+    r = s.create("x", instance="vm")
+    with pytest.raises(StateError):
+        s.reserve_effect(r["id"], "dream", {"cap_usd": float("nan")}, budget=20)
+    s.reserve_effect(r["id"], "dream", {"cap_usd": 20}, budget=20)
+    with pytest.raises(StateError):
+        s.finish_effect(r["id"], "dream", {"actual_usd": float("nan")})

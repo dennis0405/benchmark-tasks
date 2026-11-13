@@ -61,3 +61,21 @@ def test_fixture_run_and_sdk_guard_event_cannot_be_submission_approval(tmp_path)
     s.update(r["id"], status="awaiting-review")
     with pytest.raises(GateError):
         approve(s, r["id"], "sdk-guard", "approval")
+
+
+def test_presentation_changes_can_reuse_episode_but_physics_changes_cannot(tmp_path):
+    from rcauto.gates import evaluation_identity
+
+    task = tmp_path / "tasks/example"
+    task.mkdir(parents=True)
+    write_json(
+        task / "task.json",
+        {"instruction": "insert", "setup": "fixture", "scoring": "depth", "run_limit": "10"},
+    )
+    (task / "task.py").write_text("depth = 0.1")
+    (task / "README.md").write_text("old command")
+    before = evaluation_identity(tmp_path)
+    (task / "README.md").write_text("corrected command")
+    assert evaluation_identity(tmp_path) == before
+    (task / "task.py").write_text("depth = 0.2")
+    assert evaluation_identity(tmp_path) != before

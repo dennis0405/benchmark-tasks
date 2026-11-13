@@ -68,14 +68,37 @@ class FixtureAgent:
                 "assets": ["fixture"],
                 "approximations": ["all synthetic"],
                 "scoring_spec": "fixture",
-                "required_controls": ["fixture"],
+                "required_controls": [
+                    {"name": "fixture-control", "expected_score": 0, "reason": "fixture"}
+                ],
             }
         if role in {"environment-builder", "demo-and-scoring-builder", "export-builder"}:
             if role == "environment-builder":
                 requirements = json.loads((workspace / "artifacts/contract.json").read_text())[
                     "physics_checks"
                 ]
-                return self.scripts(workspace, {"environment": requirements})
+                plan = self.scripts(workspace, {"environment": requirements})
+                from .gates import file_hash
+
+                (workspace / "task/LICENSE").write_text("Synthetic test fixture only.\n")
+                write_json(
+                    workspace / "task/asset-manifest.json",
+                    {
+                        "assets": [
+                            {
+                                "path": "environment.py",
+                                "sha256": file_hash(workspace / "task/environment.py"),
+                                "source_url": "https://example.com/fixture",
+                                "license": "fixture",
+                                "license_reference": "LICENSE",
+                                "units": "m",
+                                "dimensions_m": [0.1, 0.1, 0.1],
+                                "geometry_kind": "procedural",
+                            }
+                        ]
+                    },
+                )
+                return plan
             if role == "demo-and-scoring-builder":
                 write_json(
                     workspace / "task/task.json",
@@ -113,7 +136,7 @@ class FixtureAgent:
                         ],
                         "controls": [
                             {
-                                "name": "incorrect_nonzero_count",
+                                "name": "wrong_score_count",
                                 "operator": "==",
                                 "threshold": 0,
                                 "unit": "episodes",
@@ -201,6 +224,8 @@ class FixtureAgent:
             report = "measurements/" + name + ".json"
             checks = [dict(r, measured=r["threshold"]) for r in requirements]
             payload = {"checks": checks, "requirements": requirements, "artifacts": []}
+            if name == "controls":
+                payload["cases"] = [{"name": "fixture-control", "score": 0}]
             code = (
                 "import json\nfrom pathlib import Path\n"
                 "root=Path(__file__).resolve().parent.parent\n"
