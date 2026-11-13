@@ -5,6 +5,7 @@ import ipaddress
 import json
 import socket
 import subprocess
+import sys
 from html.parser import HTMLParser
 from io import BytesIO
 from pathlib import Path
@@ -19,6 +20,10 @@ from .store import StateError, now, write_json
 
 class CatalogError(StateError):
     pass
+
+
+class RateLimited(StateError):
+    """Abort collection without advancing the last complete snapshot."""
 
 
 class Text(HTMLParser):
@@ -127,23 +132,30 @@ class GitHub:
         self.cache = Path(cache)
         self.cache.mkdir(parents=True, exist_ok=True)
 
-    def get(self, endpoint, cached=False):
-        key = self.cache / (hashlib.sha256(endpoint.encode()).hexdigest() + ".json")
+    def get(self, endpoint, cached=False, revision=None):
+        key = self.cache / (
+            hashlib.sha256((endpoint + (":" + revision if revision else "")).encode()).hexdigest()
+            + ".json"
+        )
         if cached and key.exists():
             return json.loads(key.read_text())
         p = subprocess.run(
             ["gh", "api", endpoint], capture_output=True, text=True, timeout=120, check=False
         )
         if p.returncode:
+            if "rate limit" in p.stderr.lower() or "HTTP 429" in p.stderr:
+                raise RateLimited(
+                    "GitHub rate limit reached; retain old snapshot and resume after reset"
+                )
             raise CatalogError(f"GitHub request failed: {endpoint}: {p.stderr[-600:]}")
         value = json.loads(p.stdout)
         if cached:
             write_json(key, value)
         return value
 
-    def pages(self, endpoint, cached=False):
+    def pages(self, endpoint, cached=False, revision=None):
         def fetch(page):
-            items = self.get(page, cached=cached)
+            items = self.get(page, cached=cached, revision=revision)
             if not isinstance(items, list):
                 raise CatalogError("expected GitHub array")
             page_number = int(page.rsplit("page=", 1)[1])
@@ -158,7 +170,9 @@ class GitHub:
         started = now()
         pulls = self.pages(f"repos/{repo}/pulls?state=all&sort=created&direction=asc")
         records, missing = [], []
-        for pr in pulls:
+        for index, pr in enumerate(pulls):
+            if index % 25 == 0:
+                print(f"catalog: {index}/{len(pulls)} PRs inspected", file=sys.stderr, flush=True)
             active = pr["state"] == "open" or bool(pr.get("merged_at"))
             record = {
                 "id": f"pr-{pr['number']}",
@@ -177,20 +191,38 @@ class GitHub:
             }
             if active or record["own_team"]:
                 try:
-                    files = self.pages(f"repos/{repo}/pulls/{pr['number']}/files", cached=False)
+                    files = self.pages(
+                        f"repos/{repo}/pulls/{pr['number']}/files",
+                        cached=True,
+                        revision=pr["head"]["sha"],
+                    )
                     if len(files) >= 3000:
                         raise CatalogError("PR file list truncated")
                     paths = [f["filename"] for f in files if f["filename"].endswith("/task.json")]
                     if not paths:
-                        raise CatalogError("active PR has no accessible task.json")
+                        if not any(f["filename"].startswith("tasks/") for f in files):
+                            record["excluded_detail_reason"] = (
+                                "non-task PR; metadata still compared"
+                            )
+                            records.append(record)
+                            continue
+                        raise CatalogError("active task PR has no accessible task.json")
                     head_repo = pr["head"].get("repo")
+                    if not head_repo and pr.get("merged_at"):
+                        head_repo = {"full_name": repo}
                     if not head_repo:
                         raise CatalogError("head repository deleted")
                     revisions = [pr["head"]["sha"]]
                     if pr["state"] == "open":
                         commits = self.pages(
-                            f"repos/{repo}/pulls/{pr['number']}/commits", cached=False
+                            f"repos/{repo}/pulls/{pr['number']}/commits",
+                            cached=True,
+                            revision=pr["head"]["sha"],
                         )
+                        if len(commits) >= 250:
+                            raise CatalogError(
+                                "PR commit history may be truncated at GitHub's 250-commit limit"
+                            )
                         revisions = list(dict.fromkeys(c["sha"] for c in commits))
                     for sha in revisions:
                         for path in paths:

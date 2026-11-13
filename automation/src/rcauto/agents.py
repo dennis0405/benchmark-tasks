@@ -32,6 +32,7 @@ def clean_environment(extra=None):
     }
     env = {k: v for k, v in os.environ.items() if k in allowed}
     env["PATH"] = str(Path.home() / ".local/bin") + os.pathsep + env.get("PATH", "/usr/bin:/bin")
+    env["PYTHONDONTWRITEBYTECODE"] = "1"
     if extra:
         env.update(extra)
     return env
@@ -67,8 +68,9 @@ def command(argv, cwd, log, timeout=1800, env=None, stdin=None):
 
 
 class Agent:
-    def __init__(self, executable="codex", model=None, timeout=1800):
+    def __init__(self, executable="codex", model=None, timeout=1800, deny_paths=()):
         self.executable, self.model, self.timeout = executable, model, timeout
+        self.deny_paths = deny_paths
 
     def run(self, role, prompt, workspace, schema, writable=False):
         workspace = Path(workspace)
@@ -77,6 +79,27 @@ class Agent:
         schema_path, result_path = directory / "schema.json", directory / "result.json"
         write_json(schema_path, schema)
         (directory / "prompt.txt").write_text(prompt)
+        denied = [
+            str(Path.home() / p)
+            for p in [
+                ".ssh",
+                ".aws",
+                ".codex",
+                ".dreamlabs",
+                ".config/gh",
+                ".local/state/rcauto/private",
+            ]
+        ] + [str(p) for p in self.deny_paths]
+        filesystem = {str(workspace / "input"): "read", str(workspace / "artifacts"): "read"}
+        filesystem.update({p: "deny" for p in denied})
+        table = ", ".join(json.dumps(k) + "=" + json.dumps(v) for k, v in filesystem.items())
+        profile = (
+            "{extends="
+            + json.dumps(":workspace" if writable else ":read-only")
+            + ",filesystem={"
+            + table
+            + "},network={enabled=true}}"
+        )
         argv = [
             self.executable,
             "exec",
@@ -84,14 +107,14 @@ class Agent:
             "--ephemeral",
             "--json",
             "--skip-git-repo-check",
-            "--sandbox",
-            "workspace-write" if writable else "read-only",
+            "-c",
+            'default_permissions="rcauto"',
+            "-c",
+            "permissions.rcauto=" + profile,
             "-c",
             'web_search="live"',
             "-c",
             "features.multi_agent=false",
-            "-c",
-            "sandbox_workspace_write.network_access=true",
             "-C",
             str(workspace),
             "--output-schema",
