@@ -5,6 +5,11 @@ import numpy as np
 from itertools import product
 from scipy.spatial.transform import Rotation
 
+def closing_face_mask(normals_world,body_quat,shape_quat,sign):
+    """Outward normal of the gripping face: lower +Z, upper -Z."""
+    direction=(Rotation.from_quat(body_quat)*Rotation.from_quat(shape_quat)).apply([0.,0.,sign])
+    return np.asarray(normals_world)@direction > .7
+
 def penetrating_triangles(q,faces,half,tolerance=1e-7):
     half=np.asarray(half)-tolerance
     tri=q[faces]

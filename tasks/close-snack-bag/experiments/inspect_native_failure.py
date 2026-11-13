@@ -43,5 +43,10 @@ for sid, (owner, local, half) in enumerate(zip(shapes['shape_body'], shapes['sha
         'max_inside_vertex_depth_m': float(np.max(depth)) if len(depth) else None})
 report = {'scope': 'CPU SAT; vertex depth is not a triangle minimum-translation depth', 'rows': reports,
           'ground':ground_clearance(data['q'],data['bodies'],shapes)}
+if 'rigid_flags' in data:
+    owners=np.asarray(shapes['shape_body']);pairs=[(int(i),int(j)) for i in np.flatnonzero(owners>=0)
+        for j in np.flatnonzero(owners>=0) if i<j and owners[i]!=owners[j]]
+    report['rigid_pairs']=[{'shapes':pairs[i],'bodies':[shapes['body_labels'][owners[sid]] for sid in pairs[i]]}
+        for i in np.flatnonzero(data['rigid_flags'])]
 (a.run/'failure-cpu-check.json').write_text(json.dumps(report, indent=2))
 print(json.dumps(report, indent=2))

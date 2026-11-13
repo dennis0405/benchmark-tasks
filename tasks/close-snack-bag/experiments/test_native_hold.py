@@ -6,7 +6,7 @@ from verify_native_hold import evaluate
 
 class HoldGateTest(unittest.TestCase):
     def example(self):
-        result = {'all_finite': True, 'substeps': 10, 'geometry': {'states_checked': 1811,
+        result = {'all_finite': True, 'opposed_contact_faces':True,'substeps': 10, 'geometry': {'states_checked': 1811,
                   'checks_per_state_min':1,'checks_per_state_max':1,
                   'clip_intrusion_states': 0, 'self_crossing_states': 0, 'ground_intrusion_states': 0,
                   'clip_self_intrusion_states':0}}
@@ -62,6 +62,17 @@ class HoldGateTest(unittest.TestCase):
             result['geometry'][field]=value
             with self.subTest(field=field):
                 self.assertFalse(evaluate(result,trace,shapes)['passed'])
+
+    def test_segmented_jaw_requires_load_on_every_pad(self):
+        result,trace,shapes=self.example()
+        shapes['jaw_shape_groups']=[[0],[1,2,3,4,5]]
+        for row in trace:
+            for sid,y in enumerate((-.04,-.02,0,.02,.04),start=1):
+                row['shape_fold_contacts'][str(sid)]={'active_fold_contacts':2,
+                    'fold_contact_y_span_m':.018,'fold_contact_y_min_m':y-.009,'fold_contact_y_max_m':y+.009}
+        self.assertTrue(evaluate(result,trace,shapes)['passed'])
+        trace[90]['shape_fold_contacts']['3']['active_fold_contacts']=0
+        self.assertFalse(evaluate(result,trace,shapes)['passed'])
 
 
 if __name__ == '__main__':

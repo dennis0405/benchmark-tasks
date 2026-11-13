@@ -11,6 +11,19 @@ from pathlib import Path
 import numpy as np
 
 
+def contact_span(row, group):
+    """Every constituent pad must bear load; span uses one common clip frame."""
+    reports=[row['shape_fold_contacts'][sid] for sid in group]
+    if not all(report['active_fold_contacts']>0 for report in reports):
+        return None
+    if len(reports)==1:
+        return reports[0]['fold_contact_y_span_m']
+    bounds=[(report.get('fold_contact_y_min_m'),report.get('fold_contact_y_max_m')) for report in reports]
+    if any(lo is None or hi is None or not np.isfinite([lo,hi]).all() for lo,hi in bounds):
+        return None
+    return max(hi for lo,hi in bounds)-min(lo for lo,hi in bounds)
+
+
 def evaluate(result, trace, shapes, *, seconds=3., slip_limit=.002):
     report = {'required_hold_seconds': seconds, 'slip_limit_m': slip_limit,
               'contact_span_min_m': .08, 'scope': 'stationary table-supported closing only'}
@@ -25,20 +38,23 @@ def evaluate(result, trace, shapes, *, seconds=3., slip_limit=.002):
         np.isfinite(row.get('clip_root_pose', [np.nan])).all() and
         np.isfinite(row.get('fold_centroid_clip_local_m', [np.nan])).all() and
         np.isfinite(row.get('jaw_angle_rad', np.nan)) for row in trace))
+    report['opposed_contact_faces_verified']=bool(result.get('opposed_contact_faces'))
     jaw_shapes = [str(i) for i, (owner, local, half) in enumerate(zip(
         shapes['shape_body'], shapes['shape_local'], shapes['shape_scale']))
         if owner >= 0 and local[0] > 0 and half[1] >= .045]
+    groups=[[str(sid) for sid in group] for group in shapes.get('jaw_shape_groups',[[int(sid)] for sid in jaw_shapes])]
+    jaw_shapes=[sid for group in groups for sid in group]
     report['jaw_shape_ids'] = jaw_shapes
+    report['jaw_shape_groups']=groups
     n = int(round(seconds*60))+1
     windows = []
-    if len(jaw_shapes) == 2:
+    if len(groups)==2 and all(groups):
         for start in range(len(trace)-n+1):
             window = trace[start:start+n]
             if any('shape_fold_contacts' not in row for row in window):
                 continue
-            contact = all(all(row['shape_fold_contacts'][sid]['active_fold_contacts'] > 0 and
-                row['shape_fold_contacts'][sid]['fold_contact_y_span_m'] >= .08
-                for sid in jaw_shapes) for row in window)
+            spans=[contact_span(row,group) for row in window for group in groups]
+            contact=all(span is not None and np.isfinite(span) and span>=.08 for span in spans)
             if not contact:
                 continue
             fold = np.array([row['fold_centroid_clip_local_m'] for row in window])
@@ -52,11 +68,10 @@ def evaluate(result, trace, shapes, *, seconds=3., slip_limit=.002):
                 'hold_seconds': (window[-1]['step']-window[0]['step'])/60,
                 'max_relative_slip_m': slip, 'max_root_drift_m': drift,
                 'jaw_range_rad': [float(jaw.min()), float(jaw.max())],
-                'minimum_contact_span_m': min(row['shape_fold_contacts'][sid]['fold_contact_y_span_m']
-                    for row in window for sid in jaw_shapes)})
+                'minimum_contact_span_m': float(min(spans))})
     report['qualified_window_count'] = len(windows)
     report['best_window'] = min(windows, key=lambda w: w['max_relative_slip_m']) if windows else None
-    report['passed'] = bool(report['all_step_geometry_passed'] and report['all_finite'] and windows)
+    report['passed'] = bool(report['all_step_geometry_passed'] and report['all_finite'] and report['opposed_contact_faces_verified'] and windows)
     report['limitations'] = ['No coplanar-overlap or continuous inter-step collision certificate',
         'Pre-folded reset and open clip already around mouth; no insertion or YAM',
         'Uncalibrated material and force telemetry; no air, contents, lift or airtightness test']

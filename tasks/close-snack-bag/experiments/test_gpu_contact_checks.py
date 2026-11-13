@@ -6,7 +6,7 @@ import sys
 import numpy as np
 import warp as wp
 from scipy.spatial.transform import Rotation
-from check_native_clip import penetrating_triangles
+from check_native_clip import penetrating_triangles,closing_face_mask
 from gpu_contact_checks import boxes, plane_points, plane_boxes, rigid_boxes, GeometryChecks
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -125,6 +125,13 @@ class GPUChecksTest(unittest.TestCase):
             body=wp.array([[0,0,0,0,0,0,1],np.r_[[x,0,0],quat]],dtype=wp.transform,device=self.device)
             wp.launch(rigid_boxes,dim=1,inputs=[body,owners,local,scale,pairs,slot,counts,flags],device=self.device)
         np.testing.assert_array_equal(counts.numpy(),[1,0,0])
+
+    def test_gripping_face_normal_uses_world_orientation(self):
+        body=Rotation.from_euler('xyz',[.3,.7,-1.2]);shape=Rotation.from_euler('y',-.4)
+        direction=(body*shape).apply([0,0,1]);side=(body*shape).apply([1,0,0])
+        normals=np.array([direction,-direction,side])
+        np.testing.assert_array_equal(closing_face_mask(normals,body.as_quat(),shape.as_quat(),1),[True,False,False])
+        np.testing.assert_array_equal(closing_face_mask(normals,body.as_quat(),shape.as_quat(),-1),[False,True,False])
 
 
 if __name__ == '__main__':

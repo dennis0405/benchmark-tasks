@@ -18,9 +18,14 @@ p.add_argument("--nx",type=int,default=40);p.add_argument("--ny",type=int,defaul
 p.add_argument("--material-profile",choices=("derived","legacy"),default="derived")
 p.add_argument("--prepare-only",action="store_true")
 p.add_argument("--clip",action="store_true",help="Free spring clip initially open around the fold; closing-only diagnostic")
+p.add_argument("--compliant-jaw",action="store_true",help="Five independently spring-loaded upper pads")
+p.add_argument("--pad-stiffness",type=float,default=50.)
+p.add_argument("--pad-target",type=float,default=-.002)
+p.add_argument("--pad-damping",type=float,default=.5)
 p.add_argument("--folded",action="store_true");p.add_argument("--yield-angle",type=float)
 p.add_argument("--seconds",type=float,default=3);p.add_argument("--self-contact",type=int,choices=(0,1),default=1)
 p.add_argument("--verify-every-step",action="store_true")
+p.add_argument("--topology-filter",type=int,default=2,help="Self-contact ring exclusion; 1 retains only incident-primitive filtering")
 p.add_argument("--record-every",type=int,default=15)
 p.add_argument("--substeps",type=int,default=10)
 p.add_argument("--iterations",type=int,help="VBD iterations per physics step")
@@ -31,6 +36,7 @@ p.add_argument("--initial-open-angle",type=float,default=-.55)
 p.add_argument("--open-limit",type=float,default=-.55)
 p.add_argument("--mouth-drop",type=float,default=0.,help="Resting pouch neck descends over x=120..140 mm, metres")
 p.add_argument("--spring-damping",type=float,default=.003)
+p.add_argument("--spring-stiffness",type=float,default=.13)
 p.add_argument("--contact-stiffness",type=float,default=1e4)
 p.add_argument("--rigid-contact-stiffness",type=float,help="Override all rigid shape contact stiffness, including ground")
 p.add_argument("--clip-contact-margin",type=float,default=0.,help="Conservative numerical clip contact skin, metres; geometry checks still use actual box surfaces")
@@ -41,14 +47,18 @@ a=p.parse_args()
 if a.seconds<=0 and not a.prepare_only:p.error("positive duration required")
 if a.substeps<1 or a.record_every<1:p.error("substeps and record-every must be positive")
 if a.rigid_soft_dat and a.collision_refresh==0:p.error("rigid-soft-dat requires owned collision refresh")
+if a.compliant_jaw and not a.clip:p.error("compliant-jaw needs clip")
 if a.cuda_graph and (not a.verify_every_step or a.substeps%2 or a.stop_on_geometry_error or not a.device.startswith('cuda')):
     p.error("cuda-graph requires CUDA, even substeps, verify-every-step, and no stop-on-geometry-error")
 a.output.mkdir(parents=True,exist_ok=False)
 source_dir=a.output/"sources";source_dir.mkdir()
 for name in (Path(__file__),Path(__file__).with_name("gpu_contact_checks.py"),
+             Path(__file__).with_name('check_native_clip.py'),
              Path(__file__).with_name("film_material.py"),Path(__file__).resolve().parents[1]/"pouch_geometry.py",
              Path(__file__).resolve().parents[1]/"bag_surface_mesh.py"):
     shutil.copy2(name,source_dir/name.name)
+if a.compliant_jaw:
+    shutil.copy2(Path(__file__).with_name('assets')/'clip_compliant_v1.xml',source_dir/'clip_compliant_v1.xml')
 (a.output/"arguments.json").write_text(json.dumps(vars(a),default=str,indent=2))
 wp.init();wp.set_device(a.device)
 q,f,g=open_pouch(nx=a.nx,ny=a.ny,mouth_half_gap=.0003,foldable_mouth=True)
@@ -67,21 +77,42 @@ b.add_cloth_mesh(scale=1.0,pos=wp.vec3(0,0,.025),rot=wp.quat_identity(),vel=wp.v
     vertices=[wp.vec3(*map(float,x)) for x in q],indices=f.ravel().tolist(),density=coeff["areal_density"],
     tri_ke=coeff["tri_ke"],tri_ka=coeff["tri_ka"],tri_kd=.01,edge_ke=coeff["edge_ke"],edge_kd=.0001,particle_radius=.0001)
 clip_root = clip_upper = None
+jaw_groups=[]
 if a.clip:
     asset=Path(__file__).resolve().parents[1]/"assets/clip_v5/clip_v5.usda"
     clip_pos=np.array([.184,0,.0252])+a.clip_offset
-    b.add_usd(str(asset),floating=True,xform=wp.transform(wp.vec3(*clip_pos),wp.quat(0,0,1,0)),
-              override_root_xform=True)
+    clip_xform=wp.transform(wp.vec3(*clip_pos),wp.quat(0,0,1,0))
+    if a.compliant_jaw:
+        b.add_mjcf(str(Path(__file__).with_name('assets')/'clip_compliant_v1.xml'),
+            floating=True,xform=clip_xform,override_root_xform=True,parse_visuals=False)
+    else:
+        b.add_usd(str(asset),floating=True,xform=clip_xform,override_root_xform=True)
     for sid,owner in enumerate(b.shape_body):
         if owner>=0:b.shape_margin[sid]=a.clip_contact_margin
     hinge=next(i for i,label in enumerate(b.joint_label) if label.endswith("clip_hinge"))
     dof=b.joint_qd_start[hinge]
     b.joint_limit_lower[dof]=a.open_limit
+    if a.compliant_jaw:b.joint_limit_upper[dof]=0.
     b.joint_target_q[b.joint_q_start[hinge]]=0.
-    b.joint_target_ke[dof]=.13
+    b.joint_target_ke[dof]=a.spring_stiffness
     b.joint_target_kd[dof]=a.spring_damping
     b.joint_target_mode[dof]=newton.JointTargetMode.POSITION
     clip_root,clip_upper=b.joint_parent[hinge],b.joint_child[hinge]
+    lower_jaw=[sid for sid,owner in enumerate(b.shape_body) if owner==clip_root and wp.transform_get_translation(b.shape_transform[sid])[0]>0]
+    if a.compliant_jaw:
+        pad_joints=[j for j,label in enumerate(b.joint_label) if 'pad_slide_' in label]
+        if len(pad_joints)!=5:raise RuntimeError('expected five compliant pad joints')
+        pad_bodies=[b.joint_child[j] for j in pad_joints]
+        for j in pad_joints:
+            qi,di=b.joint_q_start[j],b.joint_qd_start[j]
+            if abs(b.joint_q[qi])>1e-7:raise RuntimeError('pad authored rest pose must be zero')
+            b.joint_target_q[qi]=a.pad_target;b.joint_target_ke[di]=a.pad_stiffness;b.joint_target_kd[di]=a.pad_damping
+            b.joint_target_mode[di]=newton.JointTargetMode.POSITION
+            b.joint_limit_ke[di]=1e6
+        upper_jaw=[sid for sid,owner in enumerate(b.shape_body) if owner in pad_bodies]
+    else:
+        upper_jaw=[sid for sid,owner in enumerate(b.shape_body) if owner==clip_upper and wp.transform_get_translation(b.shape_transform[sid])[0]>0]
+    jaw_groups=[lower_jaw,upper_jaw]
 if a.rigid_contact_stiffness is not None:
     b.shape_material_ke[:]=[a.rigid_contact_stiffness]*len(b.shape_material_ke)
 b.color(include_bending=True)
@@ -104,7 +135,7 @@ if a.collision_refresh!=0:
 iterations=a.iterations if a.iterations is not None else (50 if a.clip else 20)
 solver=newton.solvers.SolverVBD(m,iterations=iterations,rigid_body_particle_contact_buffer_size=16384 if a.clip else 256,rigid_compliant_alm=True,particle_enable_self_contact=bool(a.self_contact),
     particle_self_contact_margin=.001,particle_self_contact_gap=.0005,
-    particle_topological_contact_filter_threshold=2,particle_rest_shape_contact_exclusion_radius=0.,
+    particle_topological_contact_filter_threshold=a.topology_filter,particle_rest_shape_contact_exclusion_radius=0.,
     particle_vertex_contact_buffer_size=64,particle_edge_contact_buffer_size=128,**owned)
 s0,s1=m.state(),m.state();ctrl=m.control()
 if a.clip:
@@ -138,6 +169,7 @@ if a.clip:
         "shape_scale":m.shape_scale.numpy().tolist(),"shape_type":m.shape_type.numpy().tolist(),
         "shape_margin":m.shape_margin.numpy().tolist(),
         "shape_contact_stiffness":m.shape_material_ke.numpy().tolist(),
+        "jaw_shape_groups":jaw_groups,
         "root":clip_root,"upper":clip_upper},indent=2))
 if a.clip:
     from check_native_clip import inspect_state
@@ -226,14 +258,24 @@ for frame in range(round(a.seconds*60)):
         weights=contacts.soft_contact_barycentric.numpy()[:n]
         contact_points=(measured[np.maximum(indices,0)]*weights[:,:,None]).sum(axis=1)
         contact_local=Rotation.from_quat(body[clip_root,3:]).inv().apply(contact_points-body[clip_root,:3])
+        normals=contacts.soft_contact_normal.numpy()[:n]
+        shape_local=m.shape_transform.numpy()
         shape_reports={}
         for sid in np.flatnonzero(shape_body>=0):
             mask=(ids==sid)&(np.linalg.norm(forces,axis=1)>1e-5)
             in_fold=np.any((indices>=0)&(q[np.maximum(indices,0),0]>=.16),axis=1)
-            active=mask&in_fold
+            raw_active=mask&in_fold
+            active=raw_active.copy()
+            if sid in jaw_groups[0] or sid in jaw_groups[1]:
+                from check_native_clip import closing_face_mask
+                sign=1. if sid in jaw_groups[0] else -1.
+                active&=closing_face_mask(normals,body[shape_body[sid],3:],shape_local[sid,3:],sign)
             shape_reports[str(sid)]={"active_fold_contacts":int(active.sum()),
+                "raw_active_fold_contacts":int(raw_active.sum()),
                 "force_norm_sum_N":float(np.linalg.norm(forces[active],axis=1).sum()),
-                "fold_contact_y_span_m":float(np.ptp(contact_local[active,1])) if active.any() else 0.}
+                "fold_contact_y_span_m":float(np.ptp(contact_local[active,1])) if active.any() else 0.,
+                "fold_contact_y_min_m":float(contact_local[active,1].min()) if active.any() else None,
+                "fold_contact_y_max_m":float(contact_local[active,1].max()) if active.any() else None}
         trace[-1]["shape_fold_contacts"]=shape_reports
         fold_local=Rotation.from_quat(body[clip_root,3:]).inv().apply(measured[fold_ids]-body[clip_root,:3])
         trace[-1]["fold_centroid_clip_local_m"]=fold_local.mean(axis=0).tolist()
@@ -260,6 +302,11 @@ result.update(substeps=a.substeps,physics_dt_s=dt,clip_offset_m=a.clip_offset,re
 result.update(initial_open_angle=a.initial_open_angle,open_limit=a.open_limit,mouth_drop_m=a.mouth_drop)
 result['ground_contact_margin_m']=a.ground_contact_margin
 result['cuda_graph']=a.cuda_graph
+result['compliant_jaw']=a.compliant_jaw
+result['opposed_contact_faces']=bool(a.clip)
+result['spring_stiffness']=a.spring_stiffness
+result['topology_filter']=a.topology_filter
+result.update(pad_stiffness=a.pad_stiffness,pad_target=a.pad_target,pad_damping=a.pad_damping)
 if geometry:
     values={name:np.asarray(history[name]) if graph else buffer.numpy() for name,buffer in buffers.items()}
     box_counts,self_counts=values['clip'],values['self']

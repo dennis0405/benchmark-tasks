@@ -1,0 +1,40 @@
+<mujoco model="clip_compliant_v1">
+  <compiler angle="radian" balanceinertia="true" />
+  <option gravity="0 0 -9.81" />
+  <default>
+    <geom type="box" friction=".5 .005 .0001" rgba=".2 .3 .4 1" />
+  </default>
+  <worldbody>
+    <body name="clip">
+      <freejoint name="clip_free" />
+      <geom name="lower_jaw" pos=".022 0 -.004" size=".022 .05 .003" mass=".008" />
+      <geom name="lower_handle" pos="-.015 0 -0.008" size=".015 .012 .003" mass=".004" />
+      <body name="upper">
+        <joint name="clip_hinge" type="hinge" axis="0 1 0" range="-.27 .02" stiffness=".3" springref="0" damping=".01" />
+        <geom name="upper_frame" pos=".022 0 .015" size=".022 .05 .001" mass=".008" />
+        <geom name="upper_handle" pos="-.015 0 0.008" size=".015 .012 .003" mass=".004" />
+        <body name="pad_0" pos=".025 -0.04 .004">
+          <joint name="pad_slide_0" type="slide" axis="0 0 1" range="-.0015 .004" stiffness="50" springref="-.002" damping=".5" />
+          <geom name="pad_contact_0" size=".019 .00985 .003" mass=".0016" />
+        </body>
+        <body name="pad_1" pos=".025 -0.02 .004">
+          <joint name="pad_slide_1" type="slide" axis="0 0 1" range="-.0015 .004" stiffness="50" springref="-.002" damping=".5" />
+          <geom name="pad_contact_1" size=".019 .00985 .003" mass=".0016" />
+        </body>
+        <body name="pad_2" pos=".025 0 .004">
+          <joint name="pad_slide_2" type="slide" axis="0 0 1" range="-.0015 .004" stiffness="50" springref="-.002" damping=".5" />
+          <geom name="pad_contact_2" size=".019 .00985 .003" mass=".0016" />
+        </body>
+        <body name="pad_3" pos=".025 0.02 .004">
+          <joint name="pad_slide_3" type="slide" axis="0 0 1" range="-.0015 .004" stiffness="50" springref="-.002" damping=".5" />
+          <geom name="pad_contact_3" size=".019 .00985 .003" mass=".0016" />
+        </body>
+        <body name="pad_4" pos=".025 0.04 .004">
+          <joint name="pad_slide_4" type="slide" axis="0 0 1" range="-.0015 .004" stiffness="50" springref="-.002" damping=".5" />
+          <geom name="pad_contact_4" size=".019 .00985 .003" mass=".0016" />
+        </body>
+        <geom name="upper_web" pos=".0025 0 .0115" size=".0025 .012 .0035" mass=".001" />
+      </body>
+    </body>
+  </worldbody>
+</mujoco>
