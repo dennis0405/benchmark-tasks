@@ -243,6 +243,7 @@ def regrasp_fold(c, holder, presser):
     if holder=="right":
         yield from c.retract_grasp("right")
         yield from c.press("right",leave_down=True,near=.010,along_fold=True)
+        if c.failure:return False
         yield from c.lift_press("right")
     else:
         yield from c.lift_press("right")
@@ -293,6 +294,7 @@ def prepare_table_fold(c,holder,presser):
         # the centre. Then place the left pad beyond the clip's width.
         yield from c.retract_grasp("left")
         yield from c.press("left",leave_down=True,near=.010,along_fold=True)
+        if c.failure:return False
         c.phase="left_side_press_transfer"
         held_config=c.support_holds.pop("left",None)
         quat=c.takes._fold_hand("left")
@@ -348,6 +350,7 @@ def drag_fold_to_edge(c):
 def centre_press_component(c):
     """Continue from a recorded state after the right raw-rim release."""
     yield from c.press("right",leave_down=True,near=.010,along_fold=True)
+    if c.failure:return
     yield from c.lift_press("right")
     held=yield from table_fold_gate(c)
     if held:yield from seal_fold(c)
@@ -376,6 +379,17 @@ def edge_drag_component(c):
         yield from c.wait(90)
     held=yield from table_fold_gate(c)
     if held:yield from seal_fold(c)
+
+
+def press_drag_component(c):
+    """Re-seat the left support with its actual pitched pressing geometry."""
+    right=c.session.arms["right"]
+    quat=right.ik.ee_pose(c.sim.state)[1]
+    jaw=c.takes._fold_jaws(c.film,"right")
+    yield from c.move({"right":jaw+[0,-.12,.04]},{"right":quat},.12,100)
+    yield from c.press("left",leave_down=True,near=.055)
+    if c.failure:return
+    yield from edge_drag_component(c)
 
 
 def blade_offsets(c,rotation):

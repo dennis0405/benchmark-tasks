@@ -31,8 +31,7 @@ class FoldController:
         panel=self.session.arms[arm]
         tcp,actual=panel.ik.ee_pose(self.sim.state)
         if floor_z is None:
-            _,corners,_=self.takes._fold_pads(self.film,arm)
-            floor_z=self.layout["board_top"]+self.press_floor_m-float((corners-tcp)[:,2].min())
+            floor_z=self.layout["board_top"]+self.press_floor_m-float(self.takes._fold_low(self.film,arm)[2]-tcp[2])
         self.support_holds[arm]=dict(floor_z=float(floor_z),quat=list(quat if quat is not None else actual),
                                      filtered=float(filtered))
 
@@ -77,7 +76,7 @@ class FoldController:
             t=k/count
             for arm,panel in panels.items():
                 panel.aim(starts[arm]+t*(targets[arm]-starts[arm]),
-                          self.takes._slerp(turns[arm],quats[arm],t),moving=k<count)
+                          self.takes._slerp(turns[arm],quats[arm],t),moving=True)
             yield
         for _ in range(self.frames(settle)):
             yield
@@ -85,6 +84,13 @@ class FoldController:
             if all(np.linalg.norm(poses[a][0]-targets[a])<.003 and
                    angle(poses[a][1],quats[a])<.05 for a in panels):
                 break
+        poses={a:p.ik.ee_pose(self.sim.state) for a,p in panels.items()}
+        errors={a:dict(position_m=float(np.linalg.norm(poses[a][0]-targets[a])),
+                       angle_rad=float(angle(poses[a][1],quats[a]))) for a in panels}
+        reached=all(e["position_m"]<.006 and e["angle_rad"]<.08 for e in errors.values())
+        for arm,panel in panels.items():panel.aim(targets[arm],quats[arm],moving=False)
+        if not reached:self.marks["last_move_error"]=errors
+        return reached
 
     def drive(self):
         self.phase = "settle"
@@ -208,6 +214,7 @@ class FoldController:
         yield from self.retract_grasp(presser)
         yield from self.press(presser, leave_down=True,
                               near=.055 if getattr(self,"table_insert",False) else .040)
+        if self.failure:return
         if self.after_fold in ("regrasp", "seal"):
             if getattr(self,"table_insert",False):
                 from clip_controller import prepare_table_fold,seal_fold
@@ -263,19 +270,30 @@ class FoldController:
         self.phase = "press_"+arm
         panel = self.session.arms[arm]
         sign = 1. if arm=="left" else -1.
-        quat = self.takes._fold_hand(arm)
+        # Keep the pinch pose's closing-axis sign. The upstream paper
+        # presser reverses it, requiring an unreachable wrist branch in
+        # this raised workspace. Offline FK/IK validated this 25-deg tip.
+        pitch=np.deg2rad(25.)
+        quat=self.takes._frame_quat((np.cos(pitch),0.,-np.sin(pitch)),(0.,0.,sign))
         panel.grip_request = .6
         top, line, yc = (self.layout[k] for k in ("board_top", "line", "center_y"))
-        yield from self.move({arm:(line+.010, yc+sign*.14, top+.12)}, {arm:quat}, .06, 100)
+        old_quat=panel.ik.ee_pose(self.sim.state)[1]
+        current_jaw=self.takes._fold_jaws(self.film,arm)
+        reached=yield from self.move({arm:current_jaw+[0,0,.10]}, {arm:old_quat}, .10, 100)
+        if not reached:
+            self.failure=f"{arm} pressing hover is unreachable: {self.marks.get('last_move_error')}"
+            return
         jaws = self.takes._fold_jaws(self.film, arm)
+        # The horizontal pinch pose puts the bulky rear capsules below its
+        # pad. Use the upstream pitched pressing pose and the WHOLE finger's
+        # lowest collider, not just the long pad boxes. Re-evaluate after
+        # reaching that wrist pose; the approach stays well above the flap.
+        from finger_geometry import low_offset
         from scipy.spatial.transform import Rotation
-        actual_quat=panel.ik.ee_pose(self.sim.state)[1]
-        _,corners,_=self.takes._fold_pads(self.film,arm)
-        # Predict the pad envelope in the TARGET wrist orientation. Using
-        # the current lowest corner mixed two wrist frames and moved the
-        # press into the other hand as the wrist finished turning.
+        tcp,actual_quat=panel.ik.ee_pose(self.sim.state)
         delta=Rotation.from_quat(quat)*Rotation.from_quat(actual_quat).inv()
-        lowest=float(delta.apply(corners-jaws)[:,2].min())
+        jaw_offset=delta.apply(jaws-tcp)
+        lowest=low_offset(self.sim,arm,quat,panel.ik)-jaw_offset
         # The first side press leaves the other rim grip unobstructed.
         # After that raw rim is released, sweep a centre pad along X over
         # the remaining upright strip, instead of leaving a central gap.
@@ -286,10 +304,13 @@ class FoldController:
                                  self.layout.get("support_front",line))
         self.marks.setdefault("press_plans",[]).append(dict(arm=arm,**patch))
         print("PRESS_PATCH",arm,patch,flush=True)
-        point=np.array([patch["x"],yc+sign*near,top+.0035-lowest])
+        point=np.array([patch["x"],yc+sign*near,top+.0035])-lowest
         # Complete XY travel above the highest possible upright rim. The
         # former 25 mm pre-hover entered a 27 mm flap from its side.
-        yield from self.move({arm:point+[0,0,.0465]},{arm:quat},.12,60)
+        reached=yield from self.move({arm:point+[0,0,.0465]},{arm:quat},.12,60)
+        if not reached:
+            self.failure=f"{arm} pressing approach is unreachable: {self.marks.get('last_move_error')}"
+            return
         solver=self.sim.pipeline.program.solver
         owners=self.sim.model.shape_body.numpy()
         fingers={int(b) for side in self.sim.scene.embodiment.arms[arm].finger_bodies
@@ -315,8 +336,11 @@ class FoldController:
             speed=float(np.clip((filtered-.8)*.008,-.004 if self.support_hold_enabled else -.006,.010))
             z=float(np.clip(z+speed/hz,floor,start[2]+.008))
             fraction=min(1.,k/(3.*hz))
-            stroke=[.006*fraction if along_fold else 0.,sign*.04*fraction,z-start[2]]
-            panel.aim(start+stroke,quat,moving=k<count-1)
+            # Keep the actual pressing tip on the 160 mm pouch. The former
+            # side stroke ended at Y=95 mm, beyond its 80 mm half-width.
+            travel=min(.04,max(0.,.070-near))
+            stroke=[.006*fraction if along_fold else 0.,sign*travel*fraction,z-start[2]]
+            panel.aim(start+stroke,quat,moving=leave_down or k<count-1)
             yield
         self.marks.setdefault("press_diagnostics",[]).append(dict(
             arm=arm,centre_pass=along_fold,peak_sampled_upward_force_N=peak,

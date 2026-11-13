@@ -53,6 +53,8 @@ def main():
                 all_substeps_observed=geometry.get("checked_substeps")==result["frames"]*result["physics_substeps"],
                 no_observed_transverse_crossings=geometry.get("transverse_edge_crossings")==0,
                 no_observed_box_intersections=geometry.get("film_box_intersections")==0,
+                round_shapes_checked=geometry.get("checked_round_shapes",0)>0,
+                no_observed_round_intersections=geometry.get("film_round_intersections")==0,
                 hands_free_hold_3s=summarize_hold(rows,hz)>=3.)
     held=[t for t in trace if t["phase"]=="hands_free_hold"]
     loads={jaw:float(np.mean([abs(t["clip_film_force"][jaw]["normal_N"]) for t in held])) if held else 0.

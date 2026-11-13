@@ -14,7 +14,7 @@ establish public Isaac/Arena compatibility.
 | `fixed-clip-closure-ke1e6-v1` | Passive upper-jaw closure on four film layers; 3 s / 7,200 substeps, zero scoped intersections | Lower clip body fixed to a fixture |
 | `fixed-clip-closure-ke1e4-v2` | Same fixture for 4 s / 9,600 substeps, zero scoped intersections | Fixed base; not free-tool retention |
 | `unfolded-supported-press-v7` | Continuous unfolded start; folding proceeds; rejected at frame 494, with 428 substep BOX hits | Narrow neck support side-edge failure |
-| `unfolded-full-support-v8` | Continuous unfolded start, folding and pressing; median fold 2.63 rad, 90% folded columns; 90,960 substeps with zero detected crossings/BOX hits | Frictional transfer to the board edge failed; no clip attempt |
+| `unfolded-full-support-v8` | Continuous unfolded start, folding and commanded press sweeps (zero measured press load); median fold 2.63 rad, 90% folded columns; 90,960 substeps with zero detected crossings/BOX hits | Frictional transfer to the board edge failed; no clip attempt |
 | `press-component-force-v2` | Resumed physical checkpoint, 28,080 substeps with zero scoped hits | Nominal press missed the folded patch; fold gate failed |
 | `release-component-sliding-v3` | Resumed pre-release checkpoint, 33,720 substeps with zero scoped hits | Fold gate failed on the former narrow support |
 
@@ -142,9 +142,32 @@ measured four-ply jaw coverage >=96 mm, retained fold, loaded jaws and both
 hands clear continuously for >=3 s. It always leaves `submission_score`
 unknown while air/contents and the public scorer are absent.
 
-The independent observer covers strict transverse self-crossings and
-film/BOX intersections after every solved physics substep. It excludes
-coplanar overlap, non-BOX colliders and motion within a substep. The renderer
+The current independent observer covers strict transverse self-crossings and
+film penetration into BOX, capsule and sphere solids after every solved physics
+substep. Capsule checks use exact segment/triangle minimum distances. It excludes
+coplanar overlap, other collider types and motion within a substep. Older results
+without `checked_round_shapes` only checked BOXes; their scope is unchanged. The renderer
 uses actual recorded coordinates without interpolation; printed outer film and
 silver inner lining affect appearance only. A core-demo caption requires an
 assessment matching the exact recording and trace hashes.
+
+## Press contact diagnosis and current retry
+
+The old horizontal pinch wrist pose was also used for pressing. Its rear
+finger capsules extend below the selected pad and hit the 240 mm support
+before the pad reaches the pouch. At the v10 checkpoint, one lower-finger
+capsule was in board contact while the pad remained about 24 mm above it.
+A continuous cursor fix alone therefore did not establish film load.
+
+The upstream forward-pointing paper presser reverses the closing-axis sign
+and was unreachable in this workspace (169 mm offline position error). A
+156-pose FK/IK comparison found a forward-pointing, 25-degree-down variant
+with the original closing-axis sign reaches the desired tip within a
+micrometre. This is kinematic evidence only. `press-drag-tip-v12` and
+`unfolded-tip-press-v11` now test its actual collision and contact behaviour.
+All BOX/capsule/sphere finger geometry is used to place the pressing tip;
+the tip's side sweep ends at Y=70 mm, inside the 80 mm pouch half-width.
+
+`fold_pouch_robot.py` now saves physical component seeds at stage boundaries
+under `seeds/`, including target controls, velocities and crease rest angles.
+These reduce repeated prefix simulation and remain labelled component resets.

@@ -35,7 +35,7 @@ def main():
     parser.add_argument("--table-insert",action="store_true")
     parser.add_argument("--release-style",choices=("wide","sliding"),default="sliding")
     parser.add_argument("--clip-component-seed",type=Path,default=None)
-    parser.add_argument("--component-start",choices=("clip","centre_press","raw_release","edge_drag"),default="clip")
+    parser.add_argument("--component-start",choices=("clip","centre_press","raw_release","edge_drag","press_drag"),default="clip")
     parser.add_argument("--mouth-support",choices=("narrow","full"),default="narrow")
     parser.add_argument("--support-extension-mm",type=float,default=0.)
     parser.add_argument("--support-hold",choices=("static","admittance"),default="static")
@@ -119,6 +119,7 @@ def main():
         import stack_grasp
         from tests.fixtures.grasp import open_session, tick
         from fold_controller import FoldController
+        shutil.copy2(Path(__file__).with_name("finger_geometry.py"),sources/"finger_geometry.py")
         session = open_session(sim, 9764)
         if args.clip_component_seed:
             from resume_clip_component import restore
@@ -133,13 +134,13 @@ def main():
         elif args.stage in ("regrasp","seal"):
             controller.after_fold=args.stage
         if args.clip_component_seed:
-            from clip_controller import seal_fold,centre_press_component,raw_release_component,edge_drag_component
+            from clip_controller import seal_fold,centre_press_component,raw_release_component,edge_drag_component,press_drag_component
             controller.layout=component_reset["layout"]
             controller.marks["left_press_hold"]=True
             controller.support_holds=component_reset.get("support_holds",{})
             if not controller.support_holds:controller.start_support("left")
             controller.phase="clip_component_reset"
-            stages={"clip":seal_fold,"centre_press":centre_press_component,"raw_release":raw_release_component,"edge_drag":edge_drag_component}
+            stages={"clip":seal_fold,"centre_press":centre_press_component,"raw_release":raw_release_component,"edge_drag":edge_drag_component,"press_drag":press_drag_component}
             drive=stages[args.component_start](controller)
         elif args.stage=="clip_grasp":
             from clip_controller import clip_grasp_drive
@@ -158,12 +159,27 @@ def main():
     if args.check_substeps:
         from substep_geometry import SubstepGeometry
         shutil.copy2(Path(__file__).with_name("substep_geometry.py"),sources/"substep_geometry.py")
+        shutil.copy2(Path(__file__).with_name("round_contact_checks.py"),sources/"round_contact_checks.py")
         shutil.copy2(Path(__file__).with_name("gpu_contact_checks.py"),sources/"gpu_contact_checks.py")
         watcher=SubstepGeometry(sim,entity)
         sim.pipeline.hooks.add("post_solve",watcher.check,name="independent-film-geometry",cadence=1)
         sim.pipeline.invalidate_graph()
     controller_completed = False
     clip_entry_saved=False
+    saved_stages=set()
+    def save_component_seed(directory,step):
+        directory.mkdir(parents=True,exist_ok=True)
+        seed={name:snapshots[f"{name}_{step:05d}"] for name in ("q","b","j","d","v","r")}
+        seed["targets"]=sim.control.joint_target_q.numpy().copy()
+        seed.update(faces=entity.faces,grid=entity.grid,edge_rows=entity.rows)
+        np.savez_compressed(directory/"clip-entry.npz",**seed)
+        (directory/"clip-entry.json").write_text(json.dumps(dict(
+            step=step,layout=controller.layout,arguments=vars(args),
+            support_holds=controller.support_holds,source=str(args.output),
+            phase=controller.phase,
+            scope="Observed physical component reset; velocities and plastic rest preserved, solver caches rebuilt; not an uninterrupted episode"),default=str,indent=2))
+        if directory!=args.output:
+            (directory/"trace.json").write_text(json.dumps([trace[-1]]))
     def save_record():
         before=time.monotonic()
         temporary=args.output/"states.tmp.npz"
@@ -257,6 +273,11 @@ def main():
                               float(controller.session.arms[a].grip_request))) for a in ("left","right")}
             trace[-1]["jaws"] = {a:controller.takes._fold_jaws(controller.film,a).tolist()
                                  for a in ("left", "right")}
+            trace[-1]["hand_tracking"]={
+                a:dict(tcp_m=panel.ik.ee_pose(sim.state)[0].tolist(),
+                       cursor_m=np.asarray(panel.cursor_pos).tolist(),
+                       moving=bool(panel.dragging))
+                for a,panel in controller.session.arms.items()}
             solver = sim.pipeline.program.solver
             if hasattr(solver, "shape_contact_forces"):
                 forces = solver.shape_contact_forces()
@@ -278,17 +299,18 @@ def main():
                         clip_forces[label]=dict(world_N=force.tolist(),normal_N=float(force@normal))
                     trace[-1]["clip_film_force"]=clip_forces
         timings["readback_and_metrics_s"]+=time.monotonic()-before
-        if controller and controller.phase=="table_fold_ready" and not clip_entry_saved:
+        if controller and hasattr(controller,"layout"):
             geometry=watcher.report() if watcher else None
-            if geometry and not (geometry["transverse_edge_crossings"] or geometry["film_box_intersections"]):
-                seed={name:snapshots[f"{name}_{step:05d}"] for name in ("q","b","j","d","v","r")}
-                seed["targets"]=sim.control.joint_target_q.numpy().copy()
-                seed.update(faces=entity.faces,grid=entity.grid,edge_rows=entity.rows)
-                np.savez_compressed(args.output/"clip-entry.npz",**seed)
-                (args.output/"clip-entry.json").write_text(json.dumps(dict(
-                    step=step,layout=controller.layout,arguments=vars(args),
-                    support_holds=controller.support_holds,
-                    scope="Physical reset seed for clip-only component tests; solver caches are not serialized; not an end-to-end continuation certificate"),default=str,indent=2))
+            clean=geometry and not (geometry["transverse_edge_crossings"] or geometry["film_box_intersections"] or geometry["film_round_intersections"])
+            phase=controller.phase
+            if clean and phase not in saved_stages and phase in (
+                    "release_left","release_right","press_left","press_right",
+                    "lift_press_right","fold_drag_to_edge","table_fold_ready",
+                    "clip_approach","clip_stage","clip_close_release","hands_free_hold"):
+                save_component_seed(args.output/"seeds"/phase,step)
+                saved_stages.add(phase)
+            if clean and phase=="table_fold_ready" and not clip_entry_saved:
+                save_component_seed(args.output,step)
                 print("CLIP_ENTRY_SAVED",step,flush=True)
                 clip_entry_saved=True
         if step % 30 == 0:
@@ -298,7 +320,8 @@ def main():
         if step % args.checkpoint_every == 0:
             save_record()
         if watcher and (trace[-1]["substep_geometry"]["transverse_edge_crossings"] or
-                        trace[-1]["substep_geometry"]["film_box_intersections"]):
+                        trace[-1]["substep_geometry"]["film_box_intersections"] or
+                        trace[-1]["substep_geometry"]["film_round_intersections"]):
             if controller:
                 controller.failure="independent substep geometry observer detected an intersection"
             break

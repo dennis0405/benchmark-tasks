@@ -1,12 +1,13 @@
 """Observe every solved substep; never move a particle or rigid object.
 
-Strict transverse self-crossings and film/BOX intersections only. Coplanar
-overlap, non-box colliders and motion within a substep are outside this scope.
+Strict transverse self-crossings and film/BOX/capsule/sphere intersections.
+Coplanar overlap, other colliders and within-substep motion are outside scope.
 """
 import numpy as np
 import newton
 import warp as wp
 from gpu_contact_checks import _box_hit, self_crossings, stamp
+from round_contact_checks import scene_round
 
 
 @wp.kernel
@@ -44,6 +45,10 @@ class SubstepGeometry:
         self.ids=wp.array(np.flatnonzero(mask).astype(np.int32),dtype=int,device=self.device)
         self.self_count=wp.zeros(1,dtype=int,device=self.device)
         self.box_count=wp.zeros(self.model.shape_count,dtype=int,device=self.device)
+        round_mask=np.isin(self.model.shape_type.numpy(),[int(newton.GeoType.CAPSULE),int(newton.GeoType.SPHERE)]) & (
+            (self.model.shape_flags.numpy() & int(newton.ShapeFlags.COLLIDE_PARTICLES))!=0)
+        self.round_ids=wp.array(np.flatnonzero(round_mask).astype(np.int32),dtype=int,device=self.device)
+        self.round_count=wp.zeros(self.model.shape_count,dtype=int,device=self.device)
         self.checked=wp.zeros(1,dtype=int,device=self.device)
         self.flags=wp.zeros(len(edges),dtype=int,device=self.device)
 
@@ -57,12 +62,21 @@ class SubstepGeometry:
             wp.launch(scene_boxes,len(self.faces)*len(self.ids),inputs=[state.particle_q,self.faces,
                 state.body_q,self.model.shape_body,self.model.shape_transform,self.model.shape_scale,
                 self.ids,len(self.faces),self.box_count],device=self.device)
+        if len(self.round_ids):
+            wp.launch(scene_round,len(self.round_ids),inputs=[state.particle_q,self.faces,mesh.id,
+                state.body_q,self.model.shape_body,self.model.shape_transform,self.model.shape_scale,
+                self.model.shape_type,self.round_ids,self.round_count],device=self.device)
         wp.launch(stamp,1,inputs=[0,self.checked],device=self.device)
 
     def report(self):
         box_counts=self.box_count.numpy()
+        round_counts=self.round_count.numpy()
         return dict(checked_substeps=int(self.checked.numpy()[0]),
                     transverse_edge_crossings=int(self.self_count.numpy()[0]),
                     film_box_intersections=int(box_counts.sum()),
+                    checked_round_shapes=len(self.round_ids),
+                    film_round_intersections=int(round_counts.sum()),
+                    hit_round_shapes=[dict(shape=int(i),label=str(self.model.shape_label[i]),
+                                    intersections=int(round_counts[i])) for i in np.flatnonzero(round_counts)],
                     hit_boxes=[dict(shape=int(i),label=str(self.model.shape_label[i]),
                                     intersections=int(box_counts[i])) for i in np.flatnonzero(box_counts)])
