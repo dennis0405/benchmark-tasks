@@ -115,6 +115,10 @@ class Agent:
             'web_search="live"',
             "-c",
             "features.multi_agent=false",
+            "-c",
+            "features.apps=false",
+            "-c",
+            "features.plugins=false",
             "-C",
             str(workspace),
             "--output-schema",
@@ -126,6 +130,21 @@ class Agent:
         if self.model:
             argv[2:2] = ["--model", self.model]
         receipt = command(argv, workspace, directory / "events.jsonl", self.timeout, stdin=prompt)
+        for line in (directory / "events.jsonl").read_text().splitlines():
+            try:
+                event = json.loads(line)
+            except ValueError:
+                continue
+            item = event.get("item", {})
+            if item.get("type") == "error" and any(
+                marker in item.get("message", "")
+                for marker in [
+                    "Code Mode is unavailable",
+                    "failed to spawn code-mode host",
+                    "host executable was not found",
+                ]
+            ):
+                raise StateError(f"agent tool runtime unavailable; inspect {directory}")
         try:
             result = json.loads(result_path.read_text())
             validate(result, schema)

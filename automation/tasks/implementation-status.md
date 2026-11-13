@@ -6,7 +6,7 @@
 |---|---|---|
 | CLI·이력·lock·backup | 구현 | 실제 프로세스 종료·DB 재개·중복 소유·일관된 backup 검사 |
 | Brev supervisor·worker·stop | 구현 | 실제 전용 VM에서 합성 7단계 worker·파일 반출·STOPPED 확인 |
-| Codex 역할·schema·권한 | 구현 | 로컬/원격 응답, Mac deny-read 시험, 비밀 env 제외·timeout·잘못된 JSON 차단 |
+| Codex 역할·schema·권한 | 구현 | 로컬/원격 응답·실제 파일 쓰기/셸 검증, Mac deny-read, 비밀 env 제외·timeout·잘못된 JSON 차단 |
 | GitHub 목록·명세 | 구현 | 전체 PR 1,919개, 명세 revision 1,049개·필수 누락 0. 최신 날짜별 기록 참조 |
 | 산업 근거·후보·중복 | 구현 | 원문/PDF·인용 검사·전수 대조·반박·후보 대체. 후보 품질은 첫 실제 프롬프트에서 확인 |
 | 에셋·환경·물리 | 구현 | hash·출처·라이선스·치수 계약, 실제 script 수치와 고정 기준 검사. 새 장비 물리는 미검증 |

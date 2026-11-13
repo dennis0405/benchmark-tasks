@@ -43,6 +43,22 @@ subprocess.run(
 
 ## 도구와 인증
 
+2026-11-14 추가 점검에서 Codex 본체의 JSON 응답 성공만으로는 파일·셸 도구를 사용할 수
+있다는 증거가 아님을 확인했다. standalone 본체만 설치하면 code-mode host와 Linux
+bubblewrap이 누락될 수 있다. 두 companion을 공식 배포 checksum으로 확인해 설치했고,
+실제 파일 생성·셸 내용 검증까지 통과했다. `rcauto doctor --remote --agent`도 이 쓰기 시험을
+수행하며, 배포 전에는 host 존재와 실제 sandbox 명령을 검사한다.
+
+Linux x86_64에서 전체 도구를 다시 설치하려면 저장소의 다음 스크립트를 사용한다.
+인증 파일은 읽거나 복사하지 않는다. 실행 파일·download cache는 Git에 넣지 않는다.
+
+```sh
+python3 automation/environment/install_codex_tools.py --cache-dir /data/robocurve-automation/cache/codex-tools
+```
+
+출처: [공식 Codex 0.147.0 배포](https://github.com/openai/codex/releases/tag/rust-v0.147.0).
+component URL과 SHA-256은 위 스크립트에 고정했다.
+
 OS 도구는 `python3-venv`, `python3-pip`, `ffmpeg`, `gh`, `jq`, `cmake`,
 `build-essential`, `pkg-config`, `libegl1`, `libgl1`, `libvulkan1`을 준비했다.
 CPU 패키지는 날짜별 `control-requirements.txt`에 기록한다. simulator와 같은

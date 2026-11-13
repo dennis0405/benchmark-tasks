@@ -109,6 +109,11 @@ class Brev:
 
     def deploy(self, source):
         base = self.config["remote_root"]
+        # A JSON-only model reply does not prove that its file/shell tools are available.
+        self.ssh(
+            "test -x /home/ubuntu/.local/bin/codex-code-mode-host && "
+            "/home/ubuntu/.local/bin/codex sandbox -- /usr/bin/true"
+        )
         self.ssh("mkdir -p " + shlex.quote(base + "/pipeline"))
         for relative in ["src", "config", "pyproject.toml", "uv.lock"]:
             self.rsync(Path(source) / relative, base + "/pipeline/")

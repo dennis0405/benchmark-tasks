@@ -35,3 +35,16 @@ def test_invalid_agent_output_never_becomes_success(tmp_path):
     a = Agent(str(executable), timeout=3)
     with pytest.raises(StateError, match="JSON"):
         a.run("research", "test", tmp_path, {"type": "object"})
+
+
+def test_missing_tool_runtime_cannot_be_hidden_by_success_json(tmp_path):
+    executable = tmp_path / "fake-codex"
+    executable.write_text("""#!/usr/bin/env python3
+import pathlib,sys,json
+p=sys.argv[sys.argv.index('-o')+1]
+pathlib.Path(p).write_text('{"ok":true}')
+print(json.dumps({'type':'item.completed','item':{'type':'error','message':'Code Mode is unavailable because host executable was not found'}}))
+""")
+    executable.chmod(0o700)
+    with pytest.raises(StateError, match="tool runtime"):
+        Agent(str(executable), timeout=3).run("smoke", "test", tmp_path, {"type": "object"})

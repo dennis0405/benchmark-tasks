@@ -259,8 +259,13 @@ def dispatch(args, store, config):
                     script = (
                         "from pathlib import Path;from rcauto.agents import Agent;import json;"
                         "p=Path('/data/robocurve-automation/connection-smoke/workspace');p.mkdir(parents=True,exist_ok=True);"
-                        "r=Agent(timeout=120).run('connection-smoke','Return only {\\\"ok\\\":true}. Do not use tools.',p,"
-                        "{'type':'object','properties':{'ok':{'type':'boolean'}},'required':['ok'],'additionalProperties':False});print(json.dumps(r))"
+                        "(p/'input').mkdir(exist_ok=True);(p/'artifacts').mkdir(exist_ok=True);"
+                        "probe=p/'probe.txt';probe.unlink(missing_ok=True);"
+                        "r=Agent(timeout=120).run('connection-smoke','Write probe.txt with exactly rcauto-connection-ok. "
+                        "Verify its contents using a shell tool, then return ok=true.',p,"
+                        "{'type':'object','properties':{'ok':{'type':'boolean'}},'required':['ok'],'additionalProperties':False},writable=True);"
+                        "assert probe.read_text().strip()=='rcauto-connection-ok';"
+                        "print(json.dumps({'response':r,'tool_write_verified':True}))"
                     )
                     import shlex
 
