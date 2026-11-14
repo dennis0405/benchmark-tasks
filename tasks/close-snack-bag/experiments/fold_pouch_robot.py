@@ -27,6 +27,7 @@ def main():
     parser.add_argument("--checkpoint-every",type=int,default=120)
     parser.add_argument("--material-profile",choices=("derived","permanent","laminate","paper_matched"),default="derived")
     parser.add_argument("--stage",choices=("fold","fold_hold","regrasp","seal","clip_grasp","rest"),default="fold")
+    parser.add_argument("--fold-handoff",choices=("overfold","upright_press"),default="overfold")
     parser.add_argument("--self-filter-rings",type=int,choices=(0,2),default=0)
     parser.add_argument("--self-radius-mm",type=float,default=.5)
     parser.add_argument("--press-passes",type=int,choices=(1,2,3),default=1)
@@ -67,7 +68,7 @@ def main():
     parser.add_argument("--record-force-means",action="store_true")
     parser.add_argument("--release-style",choices=("wide","sliding"),default="sliding")
     parser.add_argument("--clip-component-seed",type=Path,default=None)
-    parser.add_argument("--component-start",choices=("clip","centre_press","raw_release","edge_drag","press_drag","insert","continue_insert","prepare","repress"),default="clip")
+    parser.add_argument("--component-start",choices=("clip","centre_press","raw_release","edge_drag","press_drag","insert","continue_insert","prepare","bimanual_prepare","continue_bimanual","repress"),default="clip")
     parser.add_argument("--mouth-support",choices=("narrow","full"),default="narrow")
     parser.add_argument("--support-extension-mm",type=float,default=0.)
     parser.add_argument("--support-hold",choices=("static","admittance"),default="static")
@@ -190,6 +191,7 @@ def main():
             component_reset["clip_asset_change"]=dict(from_style=seed_meta["arguments"]["clip_style"],
                                                      to_style=args.clip_style)
         controller = FoldController(sim, session)
+        controller.fold_handoff=args.fold_handoff
         controller.press_passes=args.press_passes
         controller.table_insert=args.table_insert
         controller.insert_mode=args.insert_mode
@@ -202,7 +204,7 @@ def main():
         elif args.stage in ("regrasp","seal"):
             controller.after_fold=args.stage
         if args.clip_component_seed:
-            from clip_controller import repress_component,seal_fold,centre_press_component,raw_release_component,edge_drag_component,press_drag_component,insert_component,sequential_component,continue_insertion_component
+            from clip_controller import continue_bimanual_component,bimanual_component,repress_component,seal_fold,centre_press_component,raw_release_component,edge_drag_component,press_drag_component,insert_component,sequential_component,continue_insertion_component
             controller.layout=component_reset["layout"]
             controller.marks["left_press_hold"]=True
             if component_reset.get("left_cleared_for_clip"):
@@ -212,7 +214,7 @@ def main():
             if not controller.support_holds and not controller.marks.get("left_cleared_for_clip"):
                 controller.start_support("left")
             controller.phase="clip_component_reset"
-            stages={"clip":seal_fold,"centre_press":centre_press_component,"raw_release":raw_release_component,"edge_drag":edge_drag_component,"press_drag":press_drag_component,"insert":insert_component,"continue_insert":continue_insertion_component,"prepare":sequential_component,"repress":repress_component}
+            stages={"clip":seal_fold,"centre_press":centre_press_component,"raw_release":raw_release_component,"edge_drag":edge_drag_component,"press_drag":press_drag_component,"insert":insert_component,"continue_insert":continue_insertion_component,"prepare":sequential_component,"bimanual_prepare":bimanual_component,"continue_bimanual":continue_bimanual_component,"repress":repress_component}
             drive=stages[args.component_start](controller)
         elif args.stage=="clip_grasp":
             from clip_controller import clip_grasp_drive

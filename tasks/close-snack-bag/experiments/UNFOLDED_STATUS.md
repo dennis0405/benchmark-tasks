@@ -501,3 +501,46 @@ unfolded, without imposed folds or tool attachments.
 The core assessor now also requires complete per-substep contact-capacity
 observation and zero persisted overflow events. Six hold/negative-control
 tests pass. No completed seal or final demonstration video is available yet.
+
+### Guided free-tool carry and held-rim crease work
+
+The v54 flat contact patch still slips. Shallow physical side ribs around the
+handle pad provide geometric resistance to normal-axis rotation. With a
+14 mm slot, v55 physically lifts the free tool about 78 mm, carries it to the
+flat approach pose, and completes 60 controlled hold steps (3 s) without the
+controller's drift failure. It has 920 finite control frames; it contains no
+film and is not a sealing demo. Compact measured evidence and frozen source
+are under `evidence/unfolded-20261114/unified-guided-carry-v55`.
+
+The repeated rigid insertion attempt v56 stops before insertion: 2.0 mm / 0.054
+rad final carry error exceeds the unchanged precision gate. A 12.5 mm slot with
+longer rails is the next explicit geometry comparison (v57). Both guide
+versions retain the free root, passive hinge and finite gripper forces.
+Current tool geometry passes all eight range and analytical force tests.
+
+Stiff finger contacts in v23 complete 20,160 observed physics steps without a
+film intersection or contact overflow, but finish at only 1.71 rad fold.
+The 16-column / 1,200 Hz comparison v24 folds poorly and is not selected.
+The upright-press handoff is a separate intermediate procedure: it does not
+change the post-press fold gate or final core assessor. v28 stays geometrically
+clear but fails this handoff because the median rim advances only 3.4 mm past
+the crease, below its explicit 5 mm trigger.
+
+Releasing both grips loses this partial fold. v27 instead retains the right
+rim pinch during the left press. Its first pressing load is about 0.7 N, but
+the released left rim recoils before the crease: purely vertical pressing
+does not finish folding it. v31 tests a measured 24 mm forward finger stroke
+at this observed contact state; it is a declared component reset, not a
+stitched episode. A future fresh full episode is still required.
+
+Offline IK can reach 175-degree wrist poses, but native collision queries
+find board contacts in low wrap poses. This is not a validated full-wrap
+route or a changed fixture. The fixed 100 mm pressing hover has instead been
+replaced with a clearance based on the actual flap height, to avoid repeated
+unreachable upward moves.
+
+`launch_isolated.py` copies the runnable task tree and hashes it before a new
+episode, excluding experiment evidence. This prevents lazy imports from
+reading edited live sources. New v28/v31/v57 execution trees are private
+copies. Earlier mutable-tree runs remain diagnostics with the frozen-source
+and import-timing limitation. No full fresh fold/clip/release/3 s result exists.

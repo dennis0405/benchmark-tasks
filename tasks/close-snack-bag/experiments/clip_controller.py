@@ -3,6 +3,11 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 
 
+def middle_width(grid):
+    ny=grid.shape[2]-1
+    return ny//4,3*ny//4
+
+
 def clip_pose(controller):
     entity=controller.sim.scene.by_name["clip"]
     body=controller.sim.state.body_q.numpy()
@@ -197,8 +202,8 @@ def move_clip_root(c,target,rotation,grasp,speed=.025,precise=False):
     quat=(rotation*grasp["relative_rotation"]).as_quat()
     def guarded(point,quat,speed,settle):
         motion=c.move({"right":point},{"right":quat},speed,settle,keep_target=True,
-                      position_tolerance=.0002 if precise else .003,
-                      angle_tolerance=.005 if precise else .05)
+                      position_tolerance=.001 if precise else .003,
+                      angle_tolerance=.02 if precise else .05)
         while True:
             try:next(motion)
             except StopIteration as done:
@@ -221,7 +226,7 @@ def move_clip_root(c,target,rotation,grasp,speed=.025,precise=False):
         actual_rotation=Rotation.from_quat(pose[3:])
         error=np.asarray(target)-pose[:3]
         angle=float((rotation.inv()*actual_rotation).magnitude())
-        if np.linalg.norm(error)<(.0005 if precise else .002) and angle<(.01 if precise else .08):
+        if np.linalg.norm(error)<(.0008 if precise else .002) and angle<(.018 if precise else .08):
             break
         jaw=c.takes._fold_jaws(c.film,"right")
         panel=c.session.arms["right"]
@@ -429,6 +434,43 @@ def sequential_component(c):
     if held:yield from seal_fold(c)
 
 
+def bimanual_table_fold(c):
+    """Keep the opposite rim pinch until a first side crease supports it."""
+    yield from c.retract_grasp("left")
+    yield from c.press("left",leave_down=True,near=.055,at_rim=True,advance=.024)
+    if c.failure:return False
+    yield from c.retract_grasp("right")
+    yield from c.press("right",leave_down=True,near=.055,at_rim=True,advance=.024)
+    if c.failure:return False
+    yield from c.lift_press("right")
+    return (yield from crease_table_fold(c))
+
+
+def bimanual_component(c):
+    if (yield from bimanual_table_fold(c)):yield from seal_fold(c)
+
+
+def continue_bimanual_component(c):
+    """Diagnostic continuation of an already touching left pressing finger."""
+    arm="left";panel=c.session.arms[arm]
+    c.support_holds.pop("right",None)
+    c.start_support(arm,filtered=.8)
+    c.phase="fold_forward_push"
+    start=np.asarray(panel.cursor_pos).copy();quat=np.asarray(panel.cursor_quat).copy()
+    count=c.frames(240)
+    for frame in range(1,count+1):
+        target=np.asarray(panel.cursor_pos).copy()
+        target[0]=start[0]+.024*frame/count
+        panel.aim(target,quat,moving=True)
+        yield
+    yield from c.wait(30)
+    yield from c.retract_grasp("right")
+    yield from c.press("right",leave_down=True,near=.055,at_rim=True,advance=.024)
+    if c.failure:return
+    yield from c.lift_press("right")
+    if (yield from crease_table_fold(c)):yield from seal_fold(c)
+
+
 def table_fold_gate(c):
     entity=c.sim.scene.by_name["pouch"]
     from fold_metrics import fold_metrics
@@ -456,7 +498,8 @@ def drag_fold_to_edge(c):
     c.phase="fold_drag_to_edge"
     for _ in range(35):
         q=c.sim.state.particle_q.numpy()[entity.particles]
-        crease=float(np.median(q[entity.grid[:,34,8:25],0]))
+        a,b=middle_width(entity.grid)
+        crease=float(np.median(q[entity.grid[:,34,a:b+1],0]))
         if initial is None:initial=crease
         if crease<=front-.0045:
             c.marks["fold_drag_m"]=initial-crease
@@ -618,7 +661,8 @@ def continue_insertion_component(c):
         relative_rotation=rotation.inv()*Rotation.from_quat(c.session.arms["right"].ik.ee_pose(c.sim.state)[1]))
     entity=c.sim.scene.by_name["pouch"]
     q=c.sim.state.particle_q.numpy()[entity.particles]
-    center=np.median(q[entity.grid[:,34,8:25]],axis=(0,1))
+    a,b=middle_width(entity.grid)
+    center=np.median(q[entity.grid[:,34,a:b+1]],axis=(0,1))
     c.phase="clip_insert"
     result=yield from insert_with_blade_clearance(c,grasp,float(center[0]-.035),
         float(center[1]),Rotation.identity(),c.layout["board_top"])
@@ -759,10 +803,11 @@ def seal_fold(c,grasp=None):
     entity=c.sim.scene.by_name["pouch"]
     q=c.sim.state.particle_q.numpy()[entity.particles]
     crease=q[entity.grid[:,34,:]]
-    center=np.median(crease[:,8:25],axis=(0,1))
-    y_axis=np.mean(crease[:,24],axis=0)-np.mean(crease[:,8],axis=0)
+    a,b=middle_width(entity.grid)
+    center=np.median(crease[:,a:b+1],axis=(0,1))
+    y_axis=np.mean(crease[:,b],axis=0)-np.mean(crease[:,a],axis=0)
     y_axis/=np.linalg.norm(y_axis)
-    body=np.median(q[entity.grid[:,28,8:25]],axis=(0,1))
+    body=np.median(q[entity.grid[:,28,a:b+1]],axis=(0,1))
     x_axis=body-center
     x_axis-=y_axis*np.dot(x_axis,y_axis)
     x_axis/=np.linalg.norm(x_axis)

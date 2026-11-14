@@ -182,7 +182,14 @@ class FoldController:
             q = self.sim.state.particle_q.numpy()[entity.particles]
             fold = fold_metrics(q, entity.grid, [(34, 28, 40)])["folds"][0]
             # This is a pre-press handoff trigger, not the final fold score.
-            if fold["median_angle_rad"] >= 2.2 and fold["folded_fraction"] >= .6:
+            if getattr(self,"fold_handoff","overfold")=="upright_press":
+                rim=q[np.unique(entity.grid[:,-1,:])]
+                handoff=(fold["valid"] and fold["median_angle_rad"]>=1.4 and
+                         float(np.median(rim[:,0]))>line+.005 and
+                         float(rim[:,2].max())<self.layout["board_top"]+.035)
+            else:
+                handoff=fold["median_angle_rad"]>=2.2 and fold["folded_fraction"]>=.6
+            if handoff:
                 print("FOLD_REACHED", fold, flush=True)
                 reached = True
                 # Stop at the measured folded state instead of driving on
@@ -193,7 +200,7 @@ class FoldController:
                 break
             yield
         if not reached:
-            self.failure = "pre-press fold did not reach a 2.2 rad median and 60 percent folded columns"
+            self.failure = f"pre-press fold did not reach the {getattr(self,'fold_handoff','overfold')} handoff"
             self.phase = "fold_failed"
             return
         self.marks["carried"] = self.sim.state.particle_q.numpy()[entity.particles].copy()
@@ -202,8 +209,9 @@ class FoldController:
             yield from self.wait(180)
             return
         if getattr(self,"table_insert",False) and getattr(self,"insert_mode","overhang")=="wedge":
-            from clip_controller import sequential_table_fold,seal_fold
-            held=yield from sequential_table_fold(self)
+            from clip_controller import sequential_table_fold,bimanual_table_fold,seal_fold
+            procedure=bimanual_table_fold if getattr(self,"fold_handoff","overfold")=="upright_press" else sequential_table_fold
+            held=yield from procedure(self)
             if held and self.after_fold=="seal":yield from seal_fold(self)
             return
         # Keep whichever hand still has bilateral contact; a fixed left/right
@@ -275,7 +283,7 @@ class FoldController:
         tcp, quat = panel.ik.ee_pose(self.sim.state)
         yield from self.takes._go_both(self.film, {arm:tcp+[0,0,.08]}, {arm:quat}, .10, self.frames(80), .003)
 
-    def press(self, arm, *, leave_down=False, near=.040, along_fold=False,sweep_end=None,at_rim=False):
+    def press(self, arm, *, leave_down=False, near=.040, along_fold=False,sweep_end=None,at_rim=False,advance=None):
         self.support_holds.pop(arm,None)
         number=getattr(self,"press_pass_index",1)
         self.phase = "press_"+arm+(f"_repeat_{number}" if number>1 else "")
@@ -290,7 +298,13 @@ class FoldController:
         top, line, yc = (self.layout[k] for k in ("board_top", "line", "center_y"))
         old_quat=panel.ik.ee_pose(self.sim.state)[1]
         current_jaw=self.takes._fold_jaws(self.film,arm)
-        reached=yield from self.move({arm:current_jaw+[0,0,.10]}, {arm:old_quat}, .10, 100)
+        entity=self.sim.scene.by_name["pouch"]
+        q=self.sim.state.particle_q.numpy()[entity.particles]
+        safe_low=max(top+.05,float(q[:,2].max())+.015)
+        rise=max(0.,safe_low-float(self.takes._fold_low(self.film,arm)[2]))
+        # Clear the measured flap without adding another fixed 100 mm
+        # rise on every repeated stroke at the edge of the arm workspace.
+        reached=yield from self.move({arm:current_jaw+[0,0,rise]}, {arm:old_quat}, .10, 100)
         if not reached:
             self.failure=f"{arm} pressing hover is unreachable: {self.marks.get('last_move_error')}"
             return
@@ -358,7 +372,8 @@ class FoldController:
             # Keep the actual pressing tip on the 160 mm pouch. The former
             # side stroke ended at Y=95 mm, beyond its 80 mm half-width.
             travel=(sweep_end-near if sweep_end is not None else min(.04,max(0.,.070-near)))
-            stroke=[.006*fraction if along_fold and not at_rim else 0.,sign*travel*fraction,z-start[2]]
+            dx=advance if advance is not None else (.006 if along_fold and not at_rim else 0.)
+            stroke=[dx*fraction,sign*travel*fraction,z-start[2]]
             panel.aim(start+stroke,quat,moving=leave_down or k<count-1)
             yield
         self.marks.setdefault("press_diagnostics",[]).append(dict(

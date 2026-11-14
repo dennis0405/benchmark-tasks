@@ -1,0 +1,29 @@
+<mujoco model="snack_clip_thin_buttons">
+  <compiler angle="radian" balanceinertia="true" />
+  <default>
+    <geom type="box" friction=".6 .005 .0001" rgba=".16 .32 .65 1" />
+  </default>
+  <worldbody>
+    <body name="snack_clip">
+      <!--Shallow physical guide ribs leave a 14 mm slot for the 12 mm finger. No attachment or adhesion.-->
+      <freejoint name="clip_free" />
+      <geom name="lower_jaw" pos=".020 0 -.0006" size=".020 .05 .0004" mass=".0015" rgba=".65 .68 .72 1" />
+      <geom name="lower_tip_0" pos=".0405 0 -.000675" size=".0005 .05 .000325" mass=".00002" />
+      <geom name="lower_tip_1" pos=".0415 0 -.00075" size=".0005 .05 .00025" mass=".00002" />
+      <geom name="lower_tip_2" pos=".0425 0 -.000825" size=".0005 .05 .000175" mass=".00002" />
+      <geom name="lower_tip_3" pos=".0435 0 -.0009" size=".0005 .05 .0001" mass=".00002" />
+      <geom name="lower_handle" pos="-.0425 0 -.0216" euler="0 -.4086 0" size=".0463166 .012 .003" mass=".006" friction="1.2 .005 .0001" />
+      <geom name="lower_handle_end" pos="-.083 0 -.040" size=".008 .006 .003" mass=".0009" friction="1.2 .005 .0001" />
+      <geom name="lower_handle_guide_a" pos="-.083 -.008 -.0445" size=".008 .001 .0015" mass=".00005" friction="1.2 .005 .0001" />
+      <geom name="lower_handle_guide_b" pos="-.083 .008 -.0445" size=".008 .001 .0015" mass=".00005" friction="1.2 .005 .0001" />
+      <body name="upper">
+        <joint name="clip_hinge" type="hinge" axis="0 1 0" range="-.40 .006" stiffness=".95" springref="0" damping=".01" />
+        <geom name="upper_jaw" pos=".022 0 .0032" size=".022 .05 .003" mass=".008" />
+        <geom name="upper_handle" pos="-.0425 0 .0216" euler="0 .4086 0" size=".0463166 .012 .003" mass=".006" friction="1.2 .005 .0001" />
+        <geom name="upper_handle_end" pos="-.083 0 .040" euler="0 .32 0" size=".008 .006 .003" mass=".0009" friction="1.2 .005 .0001" />
+        <geom name="upper_handle_guide_a" pos="-.08158445 -.008 .04427156" euler="0 .32 0" size=".008 .001 .0015" mass=".00005" friction="1.2 .005 .0001" />
+        <geom name="upper_handle_guide_b" pos="-.08158445 .008 .04427156" euler="0 .32 0" size=".008 .001 .0015" mass=".00005" friction="1.2 .005 .0001" />
+      </body>
+    </body>
+  </worldbody>
+</mujoco>
