@@ -5,7 +5,7 @@
     "instance": "robocurve-automation-256",
     "created_at": "2026-11-14T03:17:27.802644+00:00",
     "status": "blocked",
-    "stage": null,
+    "stage": "contract",
     "mode": "production",
     "config": {
       "instance": "robocurve-automation-256",
@@ -47,21 +47,20 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 28348,
+    "supervisor_pid": 33715,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log",
-    "error": "failed check completed-insert-strike-count-minimum: 0.0 >= 1",
+    "error": "worker paused at stage boundary",
     "approval": null,
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb",
     "remote_status": {
-      "status": "blocked",
-      "error": "failed check completed-insert-strike-count-minimum: 0.0 >= 1",
-      "type": "GateError",
-      "at": "2026-11-14T18:57:10.726552+00:00"
+      "status": "paused",
+      "stage": "contract",
+      "at": "2026-11-14T19:10:18.404018+00:00"
     },
     "compute": "running",
-    "revision": 32,
-    "revision_request": "SAME selected ODRI HELICOIL task, run20261114T031727-dc73f2bb and origin branch. Resume ENVIRONMENT; approved contract digest687a48e54f41aec6de7e7070ad876a09a87bce7c1b319c02da55ed5053fbc323 stays unchanged. No repeated ideation/selection or prospective math rewrites. Quality/numerical/native evidence and later YAM/replay/portability/final novelty gates remain.\n\nURGENT ACTUAL FAILURE: native force API indices/buffer repairs now get past the previous API exceptions, but RGB-D capture hangs. Root inspected pinned SDK code, not guesses:\n- IsaacLab source/isaaclab/isaaclab/sim/simulation_context.py lines780-795: SimulationContext.step calls self.physics_manager.wait_for_playing().\n- isaaclab_physx/physics/physx_manager.py wait_for_playing loops app.update until timeline plays.\n- IsaacSim extscache/omni.replicator.core-1.13.36+110.3.0.lx64.r.cp312/omni/replicator/core/scripts/orchestrator.py step signature is step(rt_subframes=-1,pause_timeline=True,delta_time=None,wait_for_render=True). Docs explicitly state default pause_timeline=True pauses timeline after step and delta_time=0.0 does not advance time.\n- BOTH current attempts still use rep.orchestrator.step(rt_subframes=1) with defaults, followed by sim.step. The first native log recorded Orchestrator failed to schedule capture after1000 app updates (Status.STEPPING). It then ran active without a result for >6min. A scoped SIGINT was swallowed in a Kit async callback; only that run child was SIGTERM-terminated, leaving controller intact. The second unchanged-capture attempt was also terminated after CLI pause was requested. These are OPERATOR-TERMINATED incomplete native probes, not random GPU absence, crashes proving physical infeasibility, numerical success, or permission to ignore capture. See ../logs/operator-native-interrupt.json and operator-native-interrupt-2.json plus raw-component/native-240hz.log.\n\nFIX THE CAMERA/TIMELINE CONFLICT before repeating long rollouts. Use the actual pinned SDK/working YAM camera rendering path; inspect source. If raw Replicator orchestration is retained, explicitly control capture-on-play, pause_timeline=False, delta_time=0.0 and the live timeline lifecycle according to actual SDK implementation, and verify fresh frame timestamps and no extra physics advancement. Do not rerun the unchanged default call. Do not render at every physics substep just to obtain one20Hz observation: step native physics with render=False and render/acquire a fresh frame at the actual control boundary with the supported API. Preserve the required41 unique frames/two-second continuous hold and all native-camera criteria; do not lower thresholds or count a stale/bare visibility frame.\n\nImprove THE TASK diagnostic's failure visibility: persist real initial state, native contact/joint events and PRE/POST pose/twist samples BEFORE camera acquisition, then flush phase/progress records and raw data after bounded intervals. Use fresh per-attempt outputs and actual native step/dt/source hash; no stale raw files from old failed workers. Preserve incomplete evidence with explicit status/missing-observable names, not infinities that destroy JSON or made-up finite pass values. Normalize --output relative to workspace ROOT before writing/relative_to; do not write measurements inside task/. Material actuation rigs remain separate from robot success. This is not permission to fake any of33 checks.\n\nContinue all genuine mechanism issues recorded in v16 and contract: correct notch/coil direction and contact clearance, actual native breaks independent of scoring, signed tang-side impulse episodes, retained inserts and shell work, GJK/EPA penetration, physical whole-fragment tray recovery/support/rest, reset,240/480Hz convergence and actual observability. Existing camera/work/containment/raw-trace improvements should be preserved if correct. No injected object poses/velocities, hidden grasp weld, disabled collisions, SDK/guard edits or invented forces/rate dependence.\n\nINDUSTRIAL FIDELITY: actually view input/source-visuals/manifest.json images (especially shell_preparation_2_1.png and finished-base photos) and original actuator overview. The source is an elongated open actuator case with four specific boss locations, not a generic nearly square five-box enclosure. Match important overall form, recess/access topology and dimensions supported by sources; disclose inferred/prototype dimensions. The outdated STL is qualitative shape context, not proof of current CAD or scale. Do not add unsupported through-holes or a nonexistent collection route just to obtain a tray count. Demonstrate a real source-faithful recovery mechanism consistent with the approved fixture-carrying/damage rules, or expose actual evidence of the blocker.\n\nAfter all native component/physics checks pass: two real clean-reset full-score YAM demos,17 controls, independent replay, H264/video/images, clean-directory portability and actual-built full accepted/pending/team catalog plus six original-suite novelty refresh. ExactlyONE final Dream episode only after ALL native gates; no automatic retry/attempt reset,20USD cumulative ledger. Preserve same fork branch, discuss >50MB/file or >100MB checkpoint, exclude secrets/whole manuals, verify provider STOPPED for pre-submission review. No contest submission/media upload/PR or snack checkout/VM edits.\n\nADDITIONAL REAL TRACE AUDIT (incomplete, NOT a pass): the preserved measurements/raw-component/native-240hz-events.jsonl has SHA256 bc88345cafc2f197ec843cc06e3c8ee5c0aa70b631239c05c73e4154414cc6df,1736 body_state rows (PRE/POST for native steps1..868, lastPOSTtime3.6166667s) and6 native joint_break events at steps1,1,1,1,1,71, BEFORE the commanded strike after step240. Their current joint fields are encoded strings (144897,0),(144641,0),(144385,0),(144129,0),(143873,0),(154625,0). Decode real native joint paths using the installed PhysicsSchemaTools API and body/joint metadata, not substring matching a stringified encoded tuple. Never report initial-native-fractured-tang-count0 as a constant or count all generic break events as successful tang fractures. Determine which joints broke and fix actual initial instability. The suspected static/world-anchor and scaled-rigid-root frame issue is a HYPOTHESIS, not a measured mapping: inspect proper world anchor representation and non-scaled rigid Xform roots with scaled collision children in actual pinned SDK examples and test before choosing a repair.\n\nThe previous r31 restart failed BEFORE remote production because an operator added a JSON diagnostic memo to a queue that only permits novelty-review-notes.json and pr-N-*.txt. That unsupported attachment has been moved to a separate local operator-audits folder; allowlists/authority safeguards remain unchanged. The audit facts above travel in this authorized revision prompt and are independently inspectable in the preserved actual trace. This input-transport error is not a GPU physics failure and must not change the source/novelty/physical bar. All prior physical gates, exactly-one final Dream and pre-submission stop/preservation constraints remain.\n",
-    "resume_from_stage": "environment"
+    "revision": 33,
+    "revision_request": "SAME selected ODRI HELICOIL objective, run20261114T031727-dc73f2bb and result branch. Resume from CONTRACT for the explicit evidence-driven corrections below, then rebuild/validate native environment. No new ideation or repeat selection comparison: objective remains four M2.5 tangs removed with a manual mandrel/hammer and all fragments recovered, with inserts/case intact. Final actual-built full catalog+six-suite comparison remains mandatory. No Dream attempt has occurred.\n\nFIRST COMPLETED NATIVE AGGREGATE: measurements/component-physics-aggregate.json (r32) and raw-component/native-{240,480}hz.json/events/logs plus component-rgb.png/depth.npy. Both independent simulations and genuine640x480RGB-D acquisition completed. They DID NOT PASS: zero completed force paths, zero valid/native tang fractures, zero contained fragments; no native contact rows; five named J_shell_0..4 breaks at native step1; camera workspace valid-depth fraction0.745833 vs0.99, cornersfalse, valid holdframes0. Some empty-set/hardcoded zeroes pass numerical inequalities but are not physical validation. RGB is dark, and walls have collapsed into a flat generic deck, inconsistent with original case form. Read actual report/traces and image. Do not treat19 numerically passing checks as19 independently verified mechanisms.\n\nEXPLICIT PROSPECTIVE CONTRACT REVISION, independently review before construction:\n1) Preserve actual target timing: control20Hz, physics240Hz, refinement480Hz,7200controlsteps/360s. Native callback reports are float32: observed dt0.004166666883975267 and0.0020833334419876337 differ from Python double1/240 and1/480 by about2.17e-10 and1.09e-10s. Literal double equality can never pass the correct native wire representation. Replace ONLY those two dt-equality checks with uniquely named production-postphysics-callback-dt-error and refinement-postphysics-callback-dt-error, measured MAXIMUM abs(dt_n-1/hz) across every actual unique POST interval, each <=1e-9s. Retain every original observed dt in raw evidence and verify step freshness/counts. Do not round the measured value, substitute config values, globally weaken equality or change physical frequencies. This is an explicit native-precision specification, not fitting thresholds to a changed clock.\n2) Distinguish the static station fixture from the ACTUAL portable shell-base workpiece. The ODRI primary procedure prepares a standalone printed base/cover, requires no tangs remain inside, later explicitly turns the shell around, and reports the whole shell assembly weight61g. There is no sourced industrial requirement that the empty shell itself be world-welded forever. Permit legitimate native grasp/reorientation of the intact case to remove fragments, such as physically tipping it over the tray. Fixture carrying/striking restrictions apply to the stationary fixture, not legitimate workpiece handling. This is prospective and source-grounded; do not silently retain a world-welded shell then move it by pose writes. The scripted demo still MUST perform valid native tang fractures and physical fragment recovery. All damage/loss/forbidden strike and native-grasp rules remain. Alternative valid strategies remain allowed without artificial hand-identity/order gates.\n3) For a mobile workpiece, retained-insert displacement/rotation MUST be measured relative to its case/seat frame, preserving the0.25mm and3degree damage limits. Initial0.1mm retention check also uses the actual source case frame. Rigidly carrying the intact case is not stripped thread damage; an insert moving relative to its seat is. Define exact PRE/POST relative transforms, shared axes, initial baselines and reset. Structural J_shell joints connect actual case parts; a stationary jig and its integrity remain separately modeled. At terminal all physical bodies including case/tools/fragments are released, supported and at the original rest limits for2s; do not count an actively carried case as settled.\n4) ADD explicit initial-shell-integrity-joint-break-count==0 and initial-insert-seat-joint-break-count==0. The original contract already required no initial damage; five step1 shell breaks cannot be hidden by untouched-score0 or a tang-only break counter. All native callback exceptions must invalidate measurement availability rather than silently become zero events. Preserve every OTHER numerical tolerance, energy/impulse window, contact path, GJK/EPA penetration, camera condition, source/novelty standard,17 control outcome scores and full scoring formula. The two new checks strengthen the initial validity bar. Recompute all control outcomes and preserve valid alternative characterizations. Freeze and independently review the revised contract honestly; never use a prior digest/pass for modified inputs.\n\nACTUAL IMPLEMENTATION BUGS TO FIX AFTER THE NEW CONTRACT PASSES:\n- Native material hammers are authored with AddScaleOp BEFORE AddTranslateOp; this scales their supposed world translation. The raw last4 body poses start near x0.0037,y-0.0003,z-0.006 rather than intended x0.305,y-0.025,z0.830. Confirm actual view body names/order and authored/native transforms. Use non-scaled rigid Xform roots plus scaled collision children and correct transform order/world anchoring. Do not fix after measurement start by pose injection.\n- The shared INSERT_XY has already changed to approximately(.285,-.032),(.315,.032),(.365,-.032),(.405,.032), while the material rig and radial calculations still copy old(.305,+/- .025),(.355,+/- .025) literals. Derive ALL rig targets/axes/contact sets/scorer locations from one shared actual geometry definition. Verify native initial body poses before any force. Correct the notch/shaft-tip direction and all real clearances. No source/API success claim substitutes for a measured contact force path.\n- Native report proves five named shell joints break at step1 even after prior anchor repairs. Inspect correct world/static representation and unscaled rigid frames; for a portable case, connect structural parts to its proper case body and leave actual workpiece free. A fixed station jig may be static. Do not suppress events, give joints infinite strength to conceal initialization stress, drop shell damage, or disable collisions.\n- Zero contact rows plus positive nominal force schedules do not prove contact. Register the actual pinned native stream at the correct lifecycle point; retain callbacks/errors; verify actual hit/body-contact IDs/force units/signs with a simple native material contact before claiming four-target success. Keep real native breaks independent of scoring eligibility.\n- Actually view original source photos and current rendered RGB. Reproduce the elongated actuator case with correct qualitative bosses/access/recesses and defensible dimensions; current nearly square generic flat deck is not sufficient. The full prepared shell assembly is61g; a current320g empty surrogate is not a sourced mass. Use clearly declared reasonable empty-base mass informed by this bound, no exact CAD/physical calibration claim. Old unitless STL is qualitative shape context only. Give the scene real lighting/materials and actual camera framing/geometry masks; do not shrink or fill the mask, replace missing depth, count stale frames, or lower0.99/corner/41frame criteria to fit results.\n- Physical cleanup must have a real source-faithful path. The legitimately movable case can be tipped by native contact/gravity into the tray after tools are parked; no fragment teleportation or unsupported through-hole, artificial magnetic/airflow forces, hidden grasp weld, collision suppression or SDK/guard/action/observation changes. Material rigs are not YAM episodes. Genuinely valid alternatives must be characterized honestly.\n\nKeep the corrected Isaac Lab Camera sensor capture path (not default Replicator orchestrator.step), float32(4,3) actuation buffers/uint32 indices, depthH×W normalization and valid mask checks, native phase/progress/raw trace persistence and exact body/joint metadata. Use fresh per-attempt outputs/source hashes so interrupted stale records cannot be accepted. A tested stop-before-native-launch guard is now active. Report actual failed mechanics and repair them without fabricating counts or scores.\n\nE2E still required: all revised native component checks+independent physics review; two actual clean-reset full-score YAM episodes, all17 controls, independent trace scorer replay, H264 video/setup screenshots and clean-directory portability; fresh final all-category accepted/pending/team and six-original-suite novelty comparison against ACTUAL built ability. ExactlyONE final Dream episode only after ALL native gates, no automatic repeat/attempt reset even failed/unknown,20USD cumulative ledger. Preserve same origin automation/20261114T031727-dc73f2bb. Discuss >50MB/file or >100MB checkpoint, exclude secrets/whole manuals, provider-confirm STOPPED for pre-submission review. No actual contest submission/media upload/PR and no snack VM/checkout edits.\n",
+    "resume_from_stage": "contract"
   },
   "events": [
     {
@@ -17241,6 +17240,168 @@
       "run": "20261114T031727-dc73f2bb",
       "at": "2026-11-14T18:58:00.815875+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"failed check completed-insert-strike-count-minimum: 0.0 >= 1\"}"
+    },
+    {
+      "seq": 2906,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T18:58:40.955274+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 2907,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:02:53.058699+00:00",
+      "data": "{\"revision\": 33, \"revision_request\": \"SAME selected ODRI HELICOIL objective, run20261114T031727-dc73f2bb and result branch. Resume from CONTRACT for the explicit evidence-driven corrections below, then rebuild/validate native environment. No new ideation or repeat selection comparison: objective remains four M2.5 tangs removed with a manual mandrel/hammer and all fragments recovered, with inserts/case intact. Final actual-built full catalog+six-suite comparison remains mandatory. No Dream attempt has occurred.\\n\\nFIRST COMPLETED NATIVE AGGREGATE: measurements/component-physics-aggregate.json (r32) and raw-component/native-{240,480}hz.json/events/logs plus component-rgb.png/depth.npy. Both independent simulations and genuine640x480RGB-D acquisition completed. They DID NOT PASS: zero completed force paths, zero valid/native tang fractures, zero contained fragments; no native contact rows; five named J_shell_0..4 breaks at native step1; camera workspace valid-depth fraction0.745833 vs0.99, cornersfalse, valid holdframes0. Some empty-set/hardcoded zeroes pass numerical inequalities but are not physical validation. RGB is dark, and walls have collapsed into a flat generic deck, inconsistent with original case form. Read actual report/traces and image. Do not treat19 numerically passing checks as19 independently verified mechanisms.\\n\\nEXPLICIT PROSPECTIVE CONTRACT REVISION, independently review before construction:\\n1) Preserve actual target timing: control20Hz, physics240Hz, refinement480Hz,7200controlsteps/360s. Native callback reports are float32: observed dt0.004166666883975267 and0.0020833334419876337 differ from Python double1/240 and1/480 by about2.17e-10 and1.09e-10s. Literal double equality can never pass the correct native wire representation. Replace ONLY those two dt-equality checks with uniquely named production-postphysics-callback-dt-error and refinement-postphysics-callback-dt-error, measured MAXIMUM abs(dt_n-1/hz) across every actual unique POST interval, each <=1e-9s. Retain every original observed dt in raw evidence and verify step freshness/counts. Do not round the measured value, substitute config values, globally weaken equality or change physical frequencies. This is an explicit native-precision specification, not fitting thresholds to a changed clock.\\n2) Distinguish the static station fixture from the ACTUAL portable shell-base workpiece. The ODRI primary procedure prepares a standalone printed base/cover, requires no tangs remain inside, later explicitly turns the shell around, and reports the whole shell assembly weight61g. There is no sourced industrial requirement that the empty shell itself be world-welded forever. Permit legitimate native grasp/reorientation of the intact case to remove fragments, such as physically tipping it over the tray. Fixture carrying/striking restrictions apply to the stationary fixture, not legitimate workpiece handling. This is prospective and source-grounded; do not silently retain a world-welded shell then move it by pose writes. The scripted demo still MUST perform valid native tang fractures and physical fragment recovery. All damage/loss/forbidden strike and native-grasp rules remain. Alternative valid strategies remain allowed without artificial hand-identity/order gates.\\n3) For a mobile workpiece, retained-insert displacement/rotation MUST be measured relative to its case/seat frame, preserving the0.25mm and3degree damage limits. Initial0.1mm retention check also uses the actual source case frame. Rigidly carrying the intact case is not stripped thread damage; an insert moving relative to its seat is. Define exact PRE/POST relative transforms, shared axes, initial baselines and reset. Structural J_shell joints connect actual case parts; a stationary jig and its integrity remain separately modeled. At terminal all physical bodies including case/tools/fragments are released, supported and at the original rest limits for2s; do not count an actively carried case as settled.\\n4) ADD explicit initial-shell-integrity-joint-break-count==0 and initial-insert-seat-joint-break-count==0. The original contract already required no initial damage; five step1 shell breaks cannot be hidden by untouched-score0 or a tang-only break counter. All native callback exceptions must invalidate measurement availability rather than silently become zero events. Preserve every OTHER numerical tolerance, energy/impulse window, contact path, GJK/EPA penetration, camera condition, source/novelty standard,17 control outcome scores and full scoring formula. The two new checks strengthen the initial validity bar. Recompute all control outcomes and preserve valid alternative characterizations. Freeze and independently review the revised contract honestly; never use a prior digest/pass for modified inputs.\\n\\nACTUAL IMPLEMENTATION BUGS TO FIX AFTER THE NEW CONTRACT PASSES:\\n- Native material hammers are authored with AddScaleOp BEFORE AddTranslateOp; this scales their supposed world translation. The raw last4 body poses start near x0.0037,y-0.0003,z-0.006 rather than intended x0.305,y-0.025,z0.830. Confirm actual view body names/order and authored/native transforms. Use non-scaled rigid Xform roots plus scaled collision children and correct transform order/world anchoring. Do not fix after measurement start by pose injection.\\n- The shared INSERT_XY has already changed to approximately(.285,-.032),(.315,.032),(.365,-.032),(.405,.032), while the material rig and radial calculations still copy old(.305,+/- .025),(.355,+/- .025) literals. Derive ALL rig targets/axes/contact sets/scorer locations from one shared actual geometry definition. Verify native initial body poses before any force. Correct the notch/shaft-tip direction and all real clearances. No source/API success claim substitutes for a measured contact force path.\\n- Native report proves five named shell joints break at step1 even after prior anchor repairs. Inspect correct world/static representation and unscaled rigid frames; for a portable case, connect structural parts to its proper case body and leave actual workpiece free. A fixed station jig may be static. Do not suppress events, give joints infinite strength to conceal initialization stress, drop shell damage, or disable collisions.\\n- Zero contact rows plus positive nominal force schedules do not prove contact. Register the actual pinned native stream at the correct lifecycle point; retain callbacks/errors; verify actual hit/body-contact IDs/force units/signs with a simple native material contact before claiming four-target success. Keep real native breaks independent of scoring eligibility.\\n- Actually view original source photos and current rendered RGB. Reproduce the elongated actuator case with correct qualitative bosses/access/recesses and defensible dimensions; current nearly square generic flat deck is not sufficient. The full prepared shell assembly is61g; a current320g empty surrogate is not a sourced mass. Use clearly declared reasonable empty-base mass informed by this bound, no exact CAD/physical calibration claim. Old unitless STL is qualitative shape context only. Give the scene real lighting/materials and actual camera framing/geometry masks; do not shrink or fill the mask, replace missing depth, count stale frames, or lower0.99/corner/41frame criteria to fit results.\\n- Physical cleanup must have a real source-faithful path. The legitimately movable case can be tipped by native contact/gravity into the tray after tools are parked; no fragment teleportation or unsupported through-hole, artificial magnetic/airflow forces, hidden grasp weld, collision suppression or SDK/guard/action/observation changes. Material rigs are not YAM episodes. Genuinely valid alternatives must be characterized honestly.\\n\\nKeep the corrected Isaac Lab Camera sensor capture path (not default Replicator orchestrator.step), float32(4,3) actuation buffers/uint32 indices, depthH\\u00d7W normalization and valid mask checks, native phase/progress/raw trace persistence and exact body/joint metadata. Use fresh per-attempt outputs/source hashes so interrupted stale records cannot be accepted. A tested stop-before-native-launch guard is now active. Report actual failed mechanics and repair them without fabricating counts or scores.\\n\\nE2E still required: all revised native component checks+independent physics review; two actual clean-reset full-score YAM episodes, all17 controls, independent trace scorer replay, H264 video/setup screenshots and clean-directory portability; fresh final all-category accepted/pending/team and six-original-suite novelty comparison against ACTUAL built ability. ExactlyONE final Dream episode only after ALL native gates, no automatic repeat/attempt reset even failed/unknown,20USD cumulative ledger. Preserve same origin automation/20261114T031727-dc73f2bb. Discuss >50MB/file or >100MB checkpoint, exclude secrets/whole manuals, provider-confirm STOPPED for pre-submission review. No actual contest submission/media upload/PR and no snack VM/checkout edits.\\n\", \"approval\": null}"
+    },
+    {
+      "seq": 2908,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:02:53.059164+00:00",
+      "data": "{\"resume_from_stage\": \"contract\"}"
+    },
+    {
+      "seq": 2909,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:02:53.062500+00:00",
+      "data": "{\"supervisor_pid\": 33715, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log\"}"
+    },
+    {
+      "seq": 2910,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:02:53.142201+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 2911,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:04:05.529371+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 2912,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:04:44.720935+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 2913,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:05:51.021352+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb\"}"
+    },
+    {
+      "seq": 2914,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:06:07.051024+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2915,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:06:22.616174+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2916,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:06:38.180181+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2917,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:06:53.643992+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2918,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:07:09.109266+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2919,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:07:24.568828+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2920,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:07:40.028828+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2921,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:07:55.512175+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2922,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:08:11.058479+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2923,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:08:26.624912+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2924,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:08:42.701755+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2925,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:08:58.675978+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2926,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:09:14.615774+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2927,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:09:30.473119+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2928,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:09:46.398225+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2929,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:10:02.269809+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2930,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:10:18.184855+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:05:51.451766+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2931,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:10:34.220781+00:00",
+      "data": "{\"remote_status\": {\"status\": \"paused\", \"stage\": \"contract\", \"at\": \"2026-11-14T19:10:18.404018+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2932,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T19:11:13.670290+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"worker paused at stage boundary\"}"
     }
   ],
   "effects": {
