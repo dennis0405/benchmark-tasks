@@ -1,31 +1,26 @@
 {
   "verdict": "repair",
   "findings": [
-    "The global physics_checks list has no per-control or phase applicability, yet it combines mutually incompatible requirements. For example, untouched-initial-zero-score requires zero fractures and fragments, while the same list requires four fractures, four contained fragments, terminal hold, and completed strikes. It also simultaneously requires qualified off-axis impulse <=0.008 N*s and invalid-strike off-axis impulse >0.008 N*s. Define an explicit check-to-control/phase matrix or separate initialization, success, and adversarial-control checks. input/last-failure.json demonstrates the practical ambiguity: an environment attempt failed the globally stated completed-insert-strike-count-minimum even though that check cannot apply to untouched, slow-press, or other zero-strike controls.",
-    "completed-insert-strike-count-minimum is internally contradictory. Its scalar threshold is >=1, but damage_rules says each of all four inserts must have at least one closed strike causing its credited transition. Specify either a completed-insert count with threshold >=4 or four per-insert Boolean/count observables, including aggregation and applicability. The current name, threshold, and prose cannot all be true.",
-    "Several extrema are undefined for controls with empty qualifying sets, including credited-impact-axis-angle-maximum, credited-impact-radial-offset-maximum, and qualified-strike impulse extrema. The contract correctly says callback/contact-stream failure cannot silently become zero, but it does not define whether genuinely empty eligible sets are not-applicable, unavailable, or assigned a sentinel. Explicit empty-set and availability rules are required per control to prevent numerical vacuous passes like those described in input/request.json.",
-    "The 17 scores otherwise recompute correctly in stated order as 0.00, 0.20, 0.00, 0.00, 0.00, 0.00, 0.30, 0.85, 0.00, 0.00, 0.00, 0.00, 1.00, 1.00, 1.00, 0.20, 0.20. R first becomes available only after the fourth credited fracture; full score is 0.10+0.10+0.40+0.10+0.20+0.10=1.00. Timeout changes the inaccessible-fragment control by evaluating geometric inaccessibility first and setting H, producing zero.",
-    "Timing is consistent: 7,200 controls at 20 Hz is 360 s; production/refinement use 240/480 Hz; 300 s corresponds to POST 72,000/144,000 and timeout to POST 86,400/172,800. PRE/POST freshness, force-versus-impulse conversion, float32 dt-error maxima <=1e-9 s, reset clearing, callback-exception invalidation, portable-case handling, case-relative insert transforms, and initial shell/seat integrity are explicitly specified.",
-    "Primary evidence supports four M2.5 x 3.75 mm inserts, tang removal, ensuring tangs do not remain, notch fracture, portable shell reorientation, the 61 g completed shell assembly, and M2.5 tang-break mandrel 0158 040 1000. Unpublished forces, tolerances, geometry, and masses remain disclosed as prototype assumptions. The pinned PhysxManager snapshot hash matches its index and confirms dt-bearing PRE_PHYSICS_STEP/POST_PHYSICS_STEP subscriptions and removable callback handles; this establishes API availability only, as the contract correctly states."
+    "All 15 required-control scores recompute correctly from S=0.125*N_removed+0.10*N_collected+0.10*T with H overriding to zero: 0, 0, 0.125, 0.225, 0.50, 0.80, 0.90, 0.90, 1.00, 1.00, 1.00, 0, 0, 0, 0.70. The bonus first becomes available at 41 fresh 20 Hz observations spanning at least 2.0 s; timeout alone preserves earned partial credit.",
+    "The previous terminal aggregation and contact-name failures are repaired: terminal/rest and camera values now use explicit worst-case aggregation across required runs, and `nominal-contact-stream-row-count-total` accurately names its suite-wide sum.",
+    "One material aggregation ambiguity remains. The sole physics check `lifecycle-registered-task-callback-handle-count` is mapped to samples taken after registration and every reset, but the mapping says to report both maximum and minimum separately while defining neither which scalar supplies that single check nor two correspondingly named checks. Define the check as an all-samples predicate, specify one aggregation such as maximum absolute error from 2, or add explicit minimum and maximum checks.",
+    "Timing is otherwise internally consistent: 7,200 control steps at 20 Hz equals 360 seconds, distinct from 240 Hz production and 480 Hz refinement physics. Callback-dt checks consume actual float32 POST values, and missing, duplicate, stale, non-finite, or exception-producing evidence fails rather than passing vacuously.",
+    "Damage and loss are evaluated independently of desired actions. Safe alternative strategies receive the same outcome score, while native insert/shell damage, fragment loss, forbidden penetration, unsafe collision, invalid state, and simulation cheats force zero.",
+    "The indexed PhysxManager snapshot matches its SHA-256 and supports dt-bearing PRE_PHYSICS_STEP and POST_PHYSICS_STEP callback registration, returned handles, and deregistration. This establishes prospective API availability only.",
+    "Primary industrial evidence supports four M2.5 × 3.75 mm shell-base inserts, tang removal with a tang-break tool, fragment accountability, notch fracture, and the listed M2.5 mandrel. Unsupported geometry, force, mass, tolerance, and damage values are disclosed as prototype assumptions."
   ],
   "evidence_paths": [
+    "artifacts/contract.json",
+    "artifacts/selected.json",
+    "artifacts/contract-critic.json",
     "input/request.json",
+    "input/repository-AGENTS.md",
+    "input/review-prompt.txt",
     "input/last-failure.json",
     "input/runtime-api-preflight.json",
     "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py",
-    "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py.provenance.json",
-    "input/pinned-runtime-sources/4a7638c3890522bbe7c25600c0090e6cb7f403550ccb8be7641bf84034213b83-generatedSchema.usda",
-    "input/pinned-runtime-sources/4a7638c3890522bbe7c25600c0090e6cb7f403550ccb8be7641bf84034213b83-generatedSchema.usda.provenance.json",
     "input/sources/s-df759bd2377bbb57.json",
     "input/sources/s-6195df1bebbb33ef.json",
-    "input/sources/s-c392a734cb5007d7.json",
-    "input/novelty-batch.json",
-    "input/novelty-records/933193e3e336fb78a08abd7787cf15f7f0986f1ac42a0f1d8bd7c0bf2e65d198.json",
-    "input/novelty-records/d96bb55ec62a15647200dd251bc75445f2b9b7e69dc970c4110619431e42103f.json",
-    "input/novelty-records/73480ddab9f306b339941c7950847f52e21de242ad49a46e8d7c294cba31c42d.json",
-    "input/novelty-records/d5ee3a2a32d7494d0d67cc8d90131616d341b5f7ae229b7a936340bce8a33b59.json",
-    "input/novelty-records/d3f0d61f8b29d25000cc0592ce29c18178a71fdbc0edba7298ae1b612cd781ae.json",
-    "artifacts/selected.json",
-    "artifacts/contract.json"
+    "input/novelty-batch.json"
   ]
 }
