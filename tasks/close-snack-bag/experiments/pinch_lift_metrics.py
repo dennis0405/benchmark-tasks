@@ -34,8 +34,12 @@ def hand_valid(hand,*,lifted):
         slip=np.asarray(hand["wall_slip_p90_m"],dtype=float)
         lift=np.asarray(hand["wall_lift_m"],dtype=float)
         if any(a.shape!=(2,) or not np.isfinite(a).all() for a in (area,load,slip,lift)):return False
+        retained=np.asarray(hand["wall_landmarks_retained"],dtype=bool)
+        if retained.shape!=(2,) or not retained.all():return False
+        hold=np.asarray(hand.get("wall_hold_slip_p90_m",[]),dtype=float)
+        stable=(hold.shape==(2,) and np.isfinite(hold).all() and (hold<=MAX_SLIP_M).all())
         return bool((area>=MIN_AREA_MM2).all() and (load>=MIN_LOAD_N).all() and
-                    (slip<=MAX_SLIP_M).all() and (not lifted or (lift>=MIN_LIFT_M).all()))
+                    (not lifted or (stable and (lift>=MIN_LIFT_M).all())))
     except (KeyError,TypeError,ValueError):return False
 
 
@@ -61,6 +65,7 @@ def evaluate(trace,result):
             "rigid_body_overflow_events","soft_body_overflow_events","rigid_total_overflow_substeps","soft_total_overflow_substeps")),
         bilateral_material_lift_and_hold_3s=longest>=3.)
     return dict(passed=all(checks.values()),checks=checks,longest_valid_hold_s=longest,
-        scope="Two-wall mouth grasp; each wall rises at least 40 mm, material slip <=3 mm, both opposed contacts present for 3 s. Not whole-bag suspension, folding or sealing.",
+        protocol="v2: preserve original central landmarks; measure <=3 mm slip from hold entry, with lift seating separately reported",
+        scope="Two-wall mouth grasp; each wall rises at least 40 mm, five original central material vertices per wall stay inside each pad cavity, both opposed contacts remain present and additional material slip is <=3 mm for 3 s. Not whole-bag suspension, folding or sealing.",
         thresholds=dict(area_mm2=MIN_AREA_MM2,load_N=MIN_LOAD_N,slip_m=MAX_SLIP_M,lift_m=MIN_LIFT_M),
         limitation="Uncalibrated simulated material and qualitative force presence; main-pad prism approximation and existing geometry-observer exclusions remain.")

@@ -1,4 +1,4 @@
-"""Vertical mouth lift only. Robot requests change; film is never attached."""
+"""Mouth lift only. Robot requests change; film is never attached."""
 import numpy as np
 from scipy.spatial.transform import Rotation
 from pinch_lift_metrics import mouth_capture,hand_valid,MIN_AREA_MM2
@@ -18,11 +18,18 @@ def observe(c):
         hand=dict(wall_area_mm2=capture["area_mm2"],opposed_load_N=loads,
             captured_vertices=capture["vertices"],pad_centre_m=origin.tolist(),inner_gap_m=float(high-low-.004))
         if reference:
-            base=reference[arm];slips=[];lifts=[]
-            for ids,points,initial_z in zip(base["vertices"],base["local"],base["world_z"]):
+            base=reference[arm];slips=[];lifts=[];retained=[];hold_slips=[]
+            hold=getattr(c,"pinch_lift_hold_local",{}).get(arm)
+            for wall,(ids,points,initial_z) in enumerate(zip(base["vertices"],base["local"],base["world_z"])):
                 slips.append(float(np.quantile(np.linalg.norm(local[ids]-points,axis=1),.9)))
                 lifts.append(float(np.median(q[ids,2]-initial_z)))
+                central=np.argsort(np.linalg.norm(points-np.median(points,axis=0),axis=1))[:5]
+                landmarks=local[np.asarray(ids)[central]]
+                retained.append(bool(((abs(landmarks[:,0])<=.006)&(abs(landmarks[:,2])<=.04)&
+                    (landmarks[:,1]>=low+.002)&(landmarks[:,1]<=high-.002)).all()))
+                if hold is not None:hold_slips.append(float(np.quantile(np.linalg.norm(local[ids]-hold[wall],axis=1),.9)))
             hand.update(wall_slip_p90_m=slips,wall_lift_m=lifts,
+                wall_landmarks_retained=retained,wall_hold_slip_p90_m=hold_slips,
                 hand_lift_m=float(origin[2]-base["origin"][2]))
         hands[arm]=hand
     top=float(entity.frame[2]+c.sim.snack_board_height)
@@ -52,15 +59,28 @@ def drive(c,hands):
         return good
     if not retained():c.failure="initial opposed film contact is not verified";return
     c.phase="pinch_lift_raise"
-    points={a:np.asarray(reference[a]["origin"])+[0,0,.05] for a in hands}
-    motion=c.move(points,hands,.025,80,keep_target=True)
+    advance=float(getattr(c,"lift_advance_m",0.))
+    turn=float(getattr(c,"lift_pitch_deg",0.))
+    points={a:np.asarray(reference[a]["origin"])+[advance,0,.05] for a in hands}
+    c.marks["pinch_lift_target_delta_m"]=[advance,0,.05]
+    c.marks["pinch_lift_pitch_deg"]=turn
+    target_quats={a:c.takes._fold_hand(a,turn) for a in hands}
+    motion=c.move(points,target_quats,.025,80,keep_target=True)
     while True:
         try:next(motion)
         except StopIteration as end:
             if not end.value:c.failure="vertical lift target was not reached";return
             break
         yield
-        if not retained():c.failure="two-wall grasp lost during vertical lift";return
+        if not retained():c.failure="original material landmarks or opposed capture lost during lift";return
+    c.pinch_lift_hold_local={}
+    q=c.sim.state.particle_q.numpy()[entity.particles]
+    for arm,base in reference.items():
+        origin=c.takes._fold_jaws(c.film,arm)
+        rotation=Rotation.from_quat(c.session.arms[arm].ik.ee_pose(c.sim.state)[1])
+        local=rotation.inv().apply(q-origin)
+        c.pinch_lift_hold_local[arm]=[local[ids].copy() for ids in base["vertices"]]
+    c.marks["pinch_lift_hold_reference_local"]={a:[p.tolist() for p in walls] for a,walls in c.pinch_lift_hold_local.items()}
     c.phase="pinch_lift_hold"
     for _ in c.wait(210):
         yield

@@ -32,6 +32,8 @@ def main():
     parser.add_argument("--stage",choices=("fold","fold_hold","regrasp","seal","clip_grasp","rest","pinch_lift"),default="fold")
     parser.add_argument("--fold-handoff",choices=("overfold","upright_press"),default="overfold")
     parser.add_argument("--grasp-inset-mm",type=float,default=8.)
+    parser.add_argument("--lift-advance-mm",type=float,default=0.)
+    parser.add_argument("--lift-pitch-deg",type=float,default=0.)
     parser.add_argument("--body-anchor",action="store_true")
     parser.add_argument("--self-filter-rings",type=int,choices=(0,2),default=0)
     parser.add_argument("--self-radius-mm",type=float,default=.5)
@@ -83,6 +85,10 @@ def main():
     parser.add_argument("--finger-friction",type=float,default=None)
     parser.add_argument("--override-contact-materials",action="store_true")
     args = parser.parse_args()
+    if not 0.<=args.lift_advance_mm<=16.:
+        parser.error("lift-advance-mm must be in 0..16")
+    if not 0.<=args.lift_pitch_deg<=50.:
+        parser.error("lift-pitch-deg must be in 0..50")
     if args.stage=="pinch_lift" and (not args.drive or args.clip or args.body_anchor or args.clip_component_seed):
         parser.error("pinch_lift requires --drive, no clip, no body anchor and a fresh reset")
     if not -5.<=args.grasp_inset_mm<=8.:
@@ -208,6 +214,8 @@ def main():
         controller = FoldController(sim, session)
         controller.fold_handoff=args.fold_handoff
         controller.grasp_inset_m=args.grasp_inset_mm/1000.
+        controller.lift_advance_m=args.lift_advance_mm/1000.
+        controller.lift_pitch_deg=args.lift_pitch_deg
         controller.body_anchor=args.body_anchor
         controller.press_passes=args.press_passes
         controller.table_insert=args.table_insert
@@ -537,7 +545,7 @@ def main():
                   controller_diagnostics=({k:controller.marks[k] for k in (
                       "press_plans","press_ik_plans","press_diagnostics","crease_passes","fold_drag_m","clip_grasp_transform",
                       "left_clear_kinematic_plan","left_cleared_for_clip","last_move_error","blade_insertion_servo",
-                      "pinch_lift_reference","pinch_lift_failure_measurement")
+                      "pinch_lift_reference","pinch_lift_failure_measurement","pinch_lift_target_delta_m","pinch_lift_pitch_deg","pinch_lift_hold_reference_local")
                       if k in controller.marks} if controller else {}),
                   contact_capacity=capacity.report() if capacity else None,
                   contents_damage=fracture.report() if fracture else None,
