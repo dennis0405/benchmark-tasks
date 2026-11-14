@@ -1,0 +1,228 @@
+{
+  "slug": "odri-m25-helicoil-tang-break-and-recover-dc73f2bb",
+  "objective": "Finish four already-installed M2.5 × 3.75 mm HELICOIL inserts in a representative ODRI actuator shell-base fixture. With one arm, keep the straight tang break-off mandrel coaxial in each recessed insert; with the other, deliver a controlled hammer strike that fractures the tang at its modeled manufactured notch. Withdraw the mandrel without moving the retained coil, then physically recover all four free tangs into the tray. Full success requires four contact-caused fractures, four retained undamaged inserts, four fragments resting in the tray, released tools, and a stable two-second final state.",
+  "instruction": "Break the tang from each of the four installed thread inserts using the straight mandrel and hammer. Keep every insert and the shell undamaged. Find each released tang and place all four in the collection tray, then release both tools.",
+  "industrial_mapping": "The pinned Open Dynamic Robot Initiative actuator-module-v1 shell-preparation instructions specify four M2.5 × 3.75 mm HELICOIL inserts in the shell base, removal of their tangs with a tang break-off tool, and verification that tangs do not remain inside the part (source s-df759bd2377bbb57, commit 66af1522b4fba0ec4a1d7790e66f5e4652208d30). The Böllhoff HELICOIL Plus catalog states that the tang is broken at its notch, depicts hammer actuation of a straight mandrel on page 17, and lists straight mandrel 0158 040 1000 for M2.5 on page 55 (source s-6195df1bebbb33ef). The fixture is an independently authored representative training fixture, not an exact current ODRI product or asserted scale reconstruction of the unitless outdated STL.",
+  "run_steps": 7200,
+  "physics_checks": [
+    {
+      "name": "settled fixture linear speed",
+      "operator": "<=",
+      "threshold": 0.002,
+      "unit": "m/s"
+    },
+    {
+      "name": "settled loose-tool linear speed",
+      "operator": "<=",
+      "threshold": 0.01,
+      "unit": "m/s"
+    },
+    {
+      "name": "initial fractured tang count",
+      "operator": "==",
+      "threshold": 0,
+      "unit": "count"
+    },
+    {
+      "name": "initial fragments in tray",
+      "operator": "==",
+      "threshold": 0,
+      "unit": "count"
+    },
+    {
+      "name": "initial insert axial displacement from authored seat",
+      "operator": "<=",
+      "threshold": 0.0001,
+      "unit": "m"
+    },
+    {
+      "name": "maximum initial rigid-body interpenetration",
+      "operator": "<=",
+      "threshold": 0.0002,
+      "unit": "m"
+    },
+    {
+      "name": "mandrel-to-insert axis angle at qualifying impact",
+      "operator": "<=",
+      "threshold": 5,
+      "unit": "deg"
+    },
+    {
+      "name": "mandrel radial offset at qualifying impact",
+      "operator": "<=",
+      "threshold": 0.00035,
+      "unit": "m"
+    },
+    {
+      "name": "hammer-to-mandrel head contact events per completed insert",
+      "operator": ">=",
+      "threshold": 1,
+      "unit": "count"
+    },
+    {
+      "name": "contact-derived axial fracture impulse per tang",
+      "operator": ">=",
+      "threshold": 0.012,
+      "unit": "N*s"
+    },
+    {
+      "name": "contact-derived axial fracture impulse per tang",
+      "operator": "<=",
+      "threshold": 0.035,
+      "unit": "N*s"
+    },
+    {
+      "name": "off-axis impulse at any insert",
+      "operator": "<=",
+      "threshold": 0.008,
+      "unit": "N*s"
+    },
+    {
+      "name": "fractured tang count at full success",
+      "operator": "==",
+      "threshold": 4,
+      "unit": "count"
+    },
+    {
+      "name": "free fragments physically resting in tray at full success",
+      "operator": "==",
+      "threshold": 4,
+      "unit": "count"
+    },
+    {
+      "name": "retained insert axial displacement",
+      "operator": "<=",
+      "threshold": 0.00025,
+      "unit": "m"
+    },
+    {
+      "name": "retained insert angular displacement",
+      "operator": "<=",
+      "threshold": 3,
+      "unit": "deg"
+    },
+    {
+      "name": "shell damage energy accumulator",
+      "operator": "<=",
+      "threshold": 0.02,
+      "unit": "J"
+    },
+    {
+      "name": "post-fracture mandrel penetration into shell or retained coil",
+      "operator": "<=",
+      "threshold": 0.0002,
+      "unit": "m"
+    },
+    {
+      "name": "camera finite RGB-depth frame fraction",
+      "operator": ">=",
+      "threshold": 0.99,
+      "unit": "fraction"
+    },
+    {
+      "name": "task workspace projected inside camera image",
+      "operator": "==",
+      "threshold": 1,
+      "unit": "boolean"
+    },
+    {
+      "name": "final stable hold duration",
+      "operator": ">=",
+      "threshold": 2,
+      "unit": "s"
+    },
+    {
+      "name": "final fragment linear speed",
+      "operator": "<=",
+      "threshold": 0.01,
+      "unit": "m/s"
+    }
+  ],
+  "damage_rules": [
+    "Any shell-damage accumulator above 0.02 J, visible shell fracture state, or forbidden hammer-head contact with the shell is irreversible failure and sets the score to 0.",
+    "Any insert translating more than 0.25 mm or rotating more than 3 degrees from its authored seat, or any coil fracture or unthreading, is irreversible failure and sets the score to 0.",
+    "A tang may transition from attached to free only when fresh native contact data show the mandrel within both alignment limits and contact-derived axial impulse inside the fracture window. Waypoint-, timer-, pose-, velocity-, weld-, or grasp-state-triggered fracture is forbidden and scores 0.",
+    "A released fragment leaving the bounded workcell, remaining inaccessible inside the shell at timeout, disappearing, being deleted, or being counted without physically resting in the tray sets the score to 0.",
+    "More than three hammer-to-mandrel impacts on one insert, any qualifying impact after its tang is free, or an impact above the maximum impulse is unsafe repeated or excessive impact and sets the score to 0.",
+    "Direct hammer contact with a tang, insert, or shell; using a robot link instead of the mandrel; or carrying the shell fixture are prohibited shortcuts and set the score to 0.",
+    "Task objects may move only through robot contact, native rigid-body contact, and gravity. Runtime pose or velocity writes, teleportation, hidden attachment, collision suppression, scripted grasp welds, or deletion invalidate the episode.",
+    "Dropping a tool outside the table catch surface, unsafe robot self-collision, or non-finite state, contact, or camera data sets the score to 0."
+  ],
+  "assets": [
+    "Independently authored representative rigid shell-base fixture with four recessed M2.5 insert bosses and an open recovery cavity",
+    "Four retained HELICOIL proxy bodies with separate modeled tang bodies and explicit manufactured-notch break joints",
+    "Representative straight tang break-off mandrel based on Böllhoff item family 0158 040 1000",
+    "Representative small hammer with separate rigid head and handle",
+    "Rigid four-fragment containment tray with raised walls",
+    "Table and bounded catch surface",
+    "YAM dual-arm robot and grippers",
+    "Fixed RGB-D task camera"
+  ],
+  "approximations": [
+    "The ODRI procedure sources M2.5 × 3.75 mm inserts and four shell-base locations but does not publish local boss CAD in the acquired instructions. Fixture boss spacing, recess depth, and access clearance are frozen representative dimensions, not exact ODRI geometry.",
+    "The historical shell-base STL is explicitly outdated and unitless and is used only as qualitative shape context, never as proof of current dimensions or exact scale.",
+    "The 0.012–0.035 N*s axial fracture window, 0.008 N*s off-axis limit, 0.02 J shell-damage limit, notch section, wire diameter, masses, friction, restitution, and tool-handle dimensions are explicit prototype assumptions because the acquired manufacturer sources do not publish M2.5 tang fracture calibration.",
+    "The 0.35 mm radial and 5 degree angular alignment limits, 0.25 mm and 3 degree insert-retention limits, 0.2 mm penetration limit, and two-second hold are frozen scoring assumptions requiring native component validation; they are not manufacturer tolerances.",
+    "Fracture is approximated by a native breakable fixed joint at the modeled notch, monitored using fresh PhysX contact impulse. After fracture, the tang remains a freely simulated rigid body and is never hidden or deleted.",
+    "All geometry uses rigid-body PhysX. No deformable solver or exact helical-wire contact is claimed; the retained-coil proxy preserves the central fracture, retention, collision, and damage constraints.",
+    "One physics step is assumed to be 1/60 s, so run_steps permits 120 seconds. Component tests must repeat at 1/120 s and retain equivalent classifications before robot-demo development."
+  ],
+  "scoring_spec": "Score is measured only from native simulator state and fresh contact records. Any hard-failure or shortcut rule overrides partial credit and sets score to 0. Otherwise: 0.10 for safely grasping the mandrel and hammer; 0.10 for a valid coaxial mandrel placement at an unbroken insert; 0.40 total for contact-valid tang fractures, 0.10 each and awarded once only while its insert remains retained; 0.20 total for physical fragment containment, 0.05 each and revoked if the fragment leaves the tray; 0.10 for all four inserts remaining within retention limits; and 0.10 for the terminal state where all four fragments rest in the tray, neither tool is held, stability and camera checks pass, and the state persists for 2.0 seconds. Full score additionally requires exactly four distinct qualifying fracture events and four distinct fragment bodies in the tray. Progress from valid fractures is retained, but safety, insert retention, and containment are continuously rechecked.",
+  "required_controls": [
+    {
+      "name": "untouched initial-state rollout",
+      "expected_score": 0,
+      "reason": "Proves no initial success, spontaneous joint break, pre-contained fragment, unstable settling, or invalid camera state."
+    },
+    {
+      "name": "sub-threshold aligned tap",
+      "expected_score": 0.2,
+      "reason": "Safe grasps and alignment may score, but impulse below 0.012 N*s must not fracture or create containment credit."
+    },
+    {
+      "name": "off-axis glancing strike",
+      "expected_score": 0,
+      "reason": "Off-axis impulse above 0.008 N*s must trigger failure rather than successful fracture."
+    },
+    {
+      "name": "over-impact or repeated-impact strike",
+      "expected_score": 0,
+      "reason": "Impulse above 0.035 N*s or excessive or repeated strikes must be rejected and cannot farm fracture credit."
+    },
+    {
+      "name": "direct hammer-to-tang shortcut",
+      "expected_score": 0,
+      "reason": "Confirms the required indirect mandrel force path and rejects direct fracture."
+    },
+    {
+      "name": "one valid fracture with fragment left in shell",
+      "expected_score": 0.3,
+      "reason": "Credits safe grasping, alignment, and one fracture but withholds containment and terminal completion credit."
+    },
+    {
+      "name": "four valid fractures with one fragment outside tray",
+      "expected_score": 0.85,
+      "reason": "Credits grasping, alignment, four valid fractures, three contained fragments, and retained inserts, but withholds missing containment and terminal success."
+    },
+    {
+      "name": "insert-displacement strike",
+      "expected_score": 0,
+      "reason": "Confirms that moving or unthreading a retained coil is damage, never task progress."
+    },
+    {
+      "name": "fragment escape from bounded workcell",
+      "expected_score": 0,
+      "reason": "Confirms loss is irreversible failure and fragments cannot disappear into a scripted flag."
+    },
+    {
+      "name": "reset and replay determinism",
+      "expected_score": 1,
+      "reason": "After clean reset, the reference real-action trajectory must reproduce full score without stale fracture state, stale contacts, or duplicate callbacks."
+    },
+    {
+      "name": "120 Hz timestep replay",
+      "expected_score": 1,
+      "reason": "The reference real-action trajectory must retain event ordering, containment, damage classification, and full score at the finer timestep before YAM integration."
+    }
+  ]
+}

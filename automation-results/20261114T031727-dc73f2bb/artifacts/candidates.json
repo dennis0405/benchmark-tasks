@@ -2,33 +2,33 @@
   "candidates": [
     {
       "id": "odri-m25-helicoil-tang-removal",
-      "title": "Break and recover M2.5 HELICOIL tangs from an ODRI actuator shell",
-      "objective": "Use the specified straight tang-break-off mandrel to fracture the tangs of four already-installed M2.5 × 3.75 mm HELICOIL inserts in an actual robot actuator shell, then recover every free tang without damaging the inserts or printed shell.",
+      "title": "Break and recover four M2.5 HELICOIL tangs from an ODRI actuator shell base",
+      "objective": "Finish four already-installed M2.5 × 3.75 mm HELICOIL inserts in a representative ODRI actuator shell base: align and hold the specified straight tang break-off mandrel in each insert, strike it with a separately manipulated hammer to fracture the tang at its manufactured notch, then physically recover every released tang into a tray without damaging the retained inserts or shell.",
       "skills": [
-        "small-tool grasping",
-        "coaxial mandrel alignment",
-        "contact-driven impact application",
-        "force and impulse control",
-        "sequential fragment recovery",
-        "visual inspection of recessed holes"
+        "precision grasping of a narrow mandrel",
+        "coaxial alignment with recessed M2.5 inserts",
+        "bimanual mandrel stabilization and hammering",
+        "impact and lateral-force regulation",
+        "tool withdrawal without coil displacement",
+        "millimetre-scale fragment search and recovery"
       ],
-      "success_conditions": "Full success requires four contact-driven notch fractures, four independently simulated tang fragments recovered into a tray, no fragment remaining in the shell, no insert displacement, no shell damage, and a stable two-second final inspection. Off-axis loading, insufficient impulse, excessive impulse, retained fragments, damaged coils, or any pose/velocity injection fail or reduce the score.",
-      "industrial_value": "The ODRI shell-preparation procedure explicitly requires these inserts in a robot actuator shell, removal with a tang-break-off tool, and verification that no tang remains inside the part.",
-      "dexterity": "The robot must repeatedly align a narrow mandrel with recessed M2.5 inserts, transmit a controlled axial impulse through physical contact, withdraw without snagging the coil, and retrieve millimetre-scale loose fragments. The evidence does not justify requiring two arms.",
+      "success_conditions": "Full success requires four contact-loaded fractures at the modeled notches, four independently simulated free tangs physically deposited in a containment tray, no tang remaining in or escaping from the shell, every insert retained within frozen pose tolerances, no shell or coil damage, all tools released, and a two-second stable final state. Partial credit may cover safe alignment or fewer completed fractures only while every released fragment remains contained. Insufficient or repeated impacts, glancing blows, off-axis overload, insert displacement, shell damage, tool jamming, fragment loss, or any pose/velocity injection invalidates full success.",
+      "industrial_value": "The pinned ODRI robot-actuator procedure requires four M2.5 × 3.75 mm inserts in the shell base, removal of their tangs, and verification that tangs do not remain inside the part. Böllhoff documents notch fracture and identifies the M2.5 straight tang break-off mandrel.",
+      "dexterity": "One arm must maintain a narrow mandrel coaxially inside a small recessed insert while the other delivers a controlled hammer impact. The robot must avoid lateral loading of the retained coil and printed boss, withdraw the mandrel without snagging, and recover four small loose metal fragments from an open shell cavity.",
       "evidence": [
         {
           "source_id": "s-df759bd2377bbb57",
-          "locator": "Details Shell Preparation, “Installing the Helicoil Inserts,” Shell Base",
+          "locator": "Details Shell Preparation, “Installing the Helicoil Inserts,” shell-base step",
           "quote_sha256": "64253869545fb5f306ad3a0515b17c2d59f6b28ddde42c205a17bf5eb51b08e4"
         },
         {
           "source_id": "s-df759bd2377bbb57",
-          "locator": "Details Shell Preparation, “Installing the Helicoil Inserts,” Shell Base",
+          "locator": "Details Shell Preparation, “Installing the Helicoil Inserts,” shell-base step",
           "quote_sha256": "2f831484053c44174f7775195ef67869a07588a81e37a54b7ad6a36c6749efe1"
         },
         {
           "source_id": "s-df759bd2377bbb57",
-          "locator": "Details Shell Preparation, “Installing the Helicoil Inserts,” Shell Base",
+          "locator": "Details Shell Preparation, “Installing the Helicoil Inserts,” shell-base step",
           "quote_sha256": "ab11aa977c8a5cde65af28ab4773d5d8d25a18294fc4708dae4485eb4ef45ff7"
         },
         {
@@ -38,40 +38,45 @@
         },
         {
           "source_id": "s-6195df1bebbb33ef",
-          "locator": "HELICOIL Plus manufacturer catalog, page 55, tang break-off tool table",
+          "locator": "HELICOIL Plus manufacturer catalog, page 55, M2.5 tang break-off tool row",
           "quote_sha256": "9d2706184ef14ebd66d4b1c1edfb9051f5dd3fd64bafd508d5e0dea405fa3a45"
+        },
+        {
+          "source_id": "s-c392a734cb5007d7",
+          "locator": "Pinned ODRI repository LICENSE, BSD 3-Clause License",
+          "quote_sha256": "d5c22c75f54623d0c00cd65d119bdc89f755463a4f1992744c7fdce6d5ffe0fc"
         }
       ],
-      "asset_plan": "Use rigid native PhysX bodies for the shell, installed coils, straight M2.5 mandrel, and free tang fragments. Represent each manufactured notch with a physically loaded breakable constraint; freeze prototype force/impulse/energy thresholds before testing and label them as uncalibrated assumptions. Validate axial fracture, off-axis and insufficient-load controls, excessive-load damage, fragment collision and containment, reset freshness, substep-force measurement, and timestep convergence before YAM integration. The pinned PhysxManager PRE_PHYSICS_STEP and POST_PHYSICS_STEP callbacks are only prospective measurement hooks and require native verification.",
-      "risk": "The procedure, insert size, fracture notch, and correct straight-mandrel family are supported. However, the acquired evidence still lacks an independently inspected shell image, shell CAD/STL, or drawing that establishes the four-hole layout, access direction, boss heights, cavity boundaries, and fragment escape paths. The 160 mm module segment length does not establish those local features. Novelty also remains unresolved against the cited punch, hammering, rivet-stem disposal, fracture, snapping, and slide-hammer families.",
-      "feasibility_status": "research-needed",
-      "missing_evidence": [
-        "Acquired and independently inspected ODRI shell image or pinned CAD/STL establishing insert layout and tool access",
-        "Verified local cavity and fragment-escape geometry at faithful scale",
-        "Complete current-catalog comparison against pr-1205, pr-142, pr-143, pr-1468, pr-921, pr-1121, pr-1497, and pr-1491",
-        "Native component tests establishing plausible fracture scale, physical load coupling, damage behavior, and timestep convergence"
-      ]
+      "asset_plan": "Build an independently authored representative rigid fixture rather than claiming an exact current-product replica. The four inspected pinned ODRI images establish four marked shell-base insert bosses, vertical installation access, the open cavity and large through-openings, and completed inserts. Use the documented M2.5 × 3.75 mm insert and Böllhoff M2.5 mandrel family to anchor the local interaction. Treat the historical unitless STL and 2019 v1 overview only as explicitly outdated geometry references. Model retained coil proxies, separate tangs, manufactured notches, mandrel, hammer, shell, and tray as native rigid PhysX bodies. Freeze and disclose uncited wire, notch, handle, friction, fracture-load, impulse, damage, and tolerance values as prototype assumptions. Before YAM integration, validate contact-driven axial fracture, insufficient and repeated impacts, glancing blows, off-axis damage, coil retention, freely moving fragment containment, reset freshness, callback timing, force/impulse/energy logging, timestep convergence, and failure controls in the pinned runtime.",
+      "risk": "Exact notch strength and tool-handle dimensions are not published and must remain frozen testable assumptions. The inspected images support a representative accessible cavity fixture but not exact CAD correspondence to the outdated STL. Native PhysX may fail to provide stable millimetre-scale impact fracture or fragment behavior; that is a later component-test rejection condition. Early comparison found different central outcomes from automatic center punching (one dent), nail hammering (fastener penetration), blind riveting (joining plus spent-stem disposal), PCB/tile depaneling (supported bulk fracture), and slide-hammer extraction (momentum-driven pin removal). Full fresh catalog, board, team, and six-suite novelty review remains mandatory after selection.",
+      "feasibility_status": "ready",
+      "missing_evidence": []
     },
     {
       "id": "odri-m3-manual-thread-cutting",
-      "title": "Manually tap the M3 encoder and belt-tensioner holes in an ODRI actuator shell",
-      "objective": "Hold an M3 tap vertically, start it in each prescribed actuator-shell hole, cut the thread completely through using physical torque and axial control, and withdraw it without cross-threading, stripping, or cracking the printed shell.",
+      "title": "Manually tap the four prescribed M3 holes in an ODRI actuator shell",
+      "objective": "Start an M3 tap in each of the two encoder-mount and two belt-tensioner holes, maintain vertical alignment while applying coordinated axial feed and torque, cut through the shell, and reverse-extract the tap without cross-threading, stripping, cracking, or leaving it jammed.",
       "skills": [
         "tap-to-hole alignment",
-        "axial-force and torque coordination",
+        "coupled axial-force and torque control",
         "multi-turn tool manipulation",
         "alignment-preserving regrasping",
-        "jam detection",
+        "resistance and jam detection",
         "controlled reverse extraction"
       ],
-      "success_conditions": "Full success requires all four prescribed M3 holes to accept a representative verification screw through the intended threaded depth, with bounded axis error, no cross-threading, stripped material, cracked shell, stuck tap, or prohibited state writes. Partial credit distinguishes correct starting, partial thread depth, and safe withdrawal.",
-      "industrial_value": "The ODRI robot actuator instructions prescribe manual M3 thread cutting for the encoder mount and belt tensioners and warn that printed-part threads can strip.",
-      "dexterity": "A robot must establish the thread without cross-threading, maintain tap verticality while producing coupled rotation and feed, periodically regrasp or use a tap holder, sense increasing resistance, and reverse out safely.",
+      "success_conditions": "Full success requires four usable through-threads that accept a representative verification screw to the frozen target depth, with bounded axis error and no stripped material, shell crack, stuck tap, or prohibited state write. Partial credit distinguishes a correct thread start, safe partial depth, and undamaged withdrawal. Cross-threading, excessive torque, shell damage, or tool breakage fails the affected hole.",
+      "industrial_value": "ODRI's actuator-shell preparation procedure explicitly prescribes manual M3 tapping for the encoder mount and belt tensioners, requires verticality and through-cutting, and warns that threads in the printed parts strip easily.",
+      "dexterity": "The robot must establish a thread without cross-threading, coordinate rotation with axial advancement, preserve tool verticality through multiple turns and regrasps, detect rising resistance, and reverse the tool without damaging a relatively weak printed shell.",
       "evidence": [
         {
           "source_id": "s-df759bd2377bbb57",
           "locator": "Details Shell Preparation, “Cutting the Metric Threads”",
           "quote_sha256": "4f5c6e3c6500abaf9389675447daaca385ded2aecbf9d75d43348d9fafef9b14"
+        },
+        {
+          "source_id": "s-df759bd2377bbb57",
+          "locator": "Details Shell Preparation, “Cutting the Metric Threads”",
+          "quote_sha256": "577203bd9f4aeaaec8c8a9cda42143f8352ae46bb77758a95f5520978dc1a862"
         },
         {
           "source_id": "s-df759bd2377bbb57",
@@ -89,31 +94,31 @@
           "quote_sha256": "94a1027b70dd07dde0ead0244b3c7e1ebfbd081f13cd8fca2c5e48fc15af5a1d"
         }
       ],
-      "asset_plan": "Author a rigid representative tap and shell only after acquiring the referenced hole-location images or CAD. Use a contact-driven helical advancement model whose rotation, axial feed, resistance, and damage arise from physical coupling; validate clean starts, tilted starts, over-torque stripping, jams, reverse extraction, reset behavior, and timestep sensitivity before robot integration.",
-      "risk": "The prescribed operation and failure mode are supported, but the acquired text omits the referenced location images and local hole geometry. A credible native thread-cutting interaction may also demand finer contact fidelity than the pinned runtime can stably provide. It is plausibly close to existing fastening, screw-starting, and machining tasks, so novelty is not established.",
+      "asset_plan": "Use the inspected shell imagery and, only where consistent, the explicitly outdated historical mesh to author a representative rigid shell fixture. Acquire or derive the exact four M3 hole locations and local wall depths before construction. Implement contact-driven rotational advancement and resistance, with physical tilted-start, jam, stripping, crack, and reverse-extraction outcomes. Validate clean starts, misalignment, over-torque damage, reset behavior, and timestep sensitivity before robot integration.",
+      "risk": "The procedure and failure mode are grounded, but the acquired visuals primarily establish HELICOIL locations rather than the exact encoder and tensioner tapping geometry. Local hole axes, wall depths, and material strength remain essential for a faithful interaction. Fine contact-driven cutting may also be unstable or collapse into an abstract screw-coordinate model, and novelty against existing tapping, drilling, and screw-starting tasks is unresolved.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
-        "Referenced ODRI images or CAD identifying the encoder and tensioner hole locations and access geometry",
-        "Shell material and local wall geometry sufficient to bound damage behavior",
-        "Native proof that contact-driven tapping can distinguish clean, tilted, stripped, and jammed outcomes without abstract screw-coordinate scoring",
-        "Complete novelty comparison with fastening, screw-starting, drilling, and tapping records"
+        "Exact encoder-mount and belt-tensioner M3 hole locations, axes, access, and local wall depths",
+        "A defensible shell material and thread-damage model",
+        "Native proof that physical coupling distinguishes clean starts, cross-threading, stripping, jams, and reverse extraction",
+        "Complete novelty comparison against tapping, drilling, machining, and screw-starting records"
       ]
     },
     {
       "id": "odri-bearing-seat-installation",
-      "title": "Seat five bearings horizontally in an ODRI actuator shell using moderate force",
-      "objective": "Place three 8 × 4 × 2 mm transmission bearings and two 32 × 25 × 4 mm output bearings over their correct actuator-shell seats, keep each bearing horizontal, and press each fully into its light press-fit without cocking or damaging the shell.",
+      "title": "Press five bearings level into an ODRI actuator shell",
+      "objective": "Identify three 8 × 4 × 2 mm transmission bearings and two 32 × 25 × 4 mm output bearings, place each over its correct shell seat, maintain horizontal alignment, and press it fully into the specified light press-fit using moderate force without cocking or damaging the bearing or printed shell.",
       "skills": [
         "size-dependent part identification",
-        "coaxial bearing-seat alignment",
-        "planarity control",
+        "coaxial bearing-to-seat alignment",
+        "planarity control during insertion",
         "force-limited press fitting",
         "regrasping across two bearing scales",
-        "seating-depth inspection"
+        "seating-depth and cocking inspection"
       ],
-      "success_conditions": "Full success requires every bearing in its correct seat, fully seated and within a frozen angular tolerance for two seconds, with no cocked bearing, wrong-seat placement, excessive press force, cracked seat, deformed bearing, dropped component, or direct state write. Safe alignment and partial seating receive partial credit.",
-      "industrial_value": "The ODRI actuator-shell preparation procedure specifies the bearing dimensions, describes a light press-fit, requires horizontal installation, and identifies the prepared shell as part of robot actuator assembly.",
-      "dexterity": "The robot must handle two substantially different bearing sizes, align thin rings to close-fitting seats, regulate insertion force, detect cocking, and recover safely before damage.",
+      "success_conditions": "Full success requires all five bearings in the correct seats, fully seated within frozen depth and angular tolerances for two seconds, with no cocked or wrong-seat bearing, excessive force, cracked seat, deformed bearing, dropped component, or direct state write. Safe alignment and partial seating may receive partial credit; continued pressing after detected cocking is a failure.",
+      "industrial_value": "ODRI's actuator-shell preparation procedure specifies the two bearing sizes and quantities, describes a light press-fit removable with moderate manual force, and explicitly requires keeping each bearing horizontal during installation.",
+      "dexterity": "The robot must manipulate thin rings at two scales, center them over close-fitting seats, regulate insertion force, detect incipient cocking, and stop or recover before damaging the printed seat.",
       "evidence": [
         {
           "source_id": "s-df759bd2377bbb57",
@@ -141,17 +146,17 @@
           "quote_sha256": "1ada518b7a2eccb4351565b8b1026441578660aaf767e793fa7ac12655c3df94"
         }
       ],
-      "asset_plan": "Use rigid bearing rings and a representative printed shell with physically modeled seat interference. Freeze uncited clearance, friction, angular tolerance, and damage thresholds as prototype assumptions. Before YAM integration, test free alignment, correct seating, cocking, wrong-size placement, excessive-force damage, removal force, reset freshness, and timestep convergence.",
-      "risk": "Bearing sizes and handling requirements are well supported, but the acquired record contains only text placeholders for the bearing-location images. Seat diameters, depths, access, and interference are not established. Without that geometry this could collapse into a generic peg/ring insertion task, and current-catalog novelty has not been demonstrated.",
+      "asset_plan": "Use rigid bearing rings and a representative printed-shell fixture. Obtain and inspect the referenced bearing-location images or verified seat geometry before modeling. Freeze unpublished interference, friction, press force, damage, and seating tolerances as prototype assumptions. Component tests must cover free alignment, correct seating, cocking, wrong-size placement, excessive-force damage, removal force, reset freshness, and timestep convergence before YAM integration.",
+      "risk": "Bearing dimensions, quantities, press-fit character, and handling instructions are supported, but the acquired visual supplement does not establish all bearing-seat diameters, depths, spacing, or approach constraints. Without those features the task risks becoming generic ring insertion, and novelty against bearing insertion and press-fit objectives remains unresolved.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
-        "Acquired bearing-location images or shell CAD/STL with seat diameters, depths, spacing, and approach access",
-        "A defensible representative interference/contact model and native press-fit validation",
-        "Complete novelty comparison against bearing insertion, press-fit, ring placement, and generic insertion tasks",
-        "Evidence that the resulting objective differs in ability and outcome rather than only part geometry"
+        "Verified bearing-seat diameters, depths, locations, and approach access for all five bearings",
+        "A defensible representative interference and damage model",
+        "Native press-fit tests distinguishing seating, cocking, wrong-size placement, and excessive-force damage",
+        "Complete novelty comparison against bearing insertion, press-fit, ring-placement, and generic insertion tasks"
       ]
     }
   ],
-  "selected_id": "",
-  "selection_reason": "No candidate is ready. The strongest candidate is ODRI M2.5 HELICOIL tang removal, but the prior failure remains unresolved: acquired evidence still does not establish the actual shell’s local insert-access and fragment-escape geometry, and no native fracture/contact validation exists. Selecting it as ready would contradict the requirement that a ready candidate have no critical missing evidence. The tapping and bearing alternatives are industrially grounded but have still larger geometry, physics, and novelty gaps."
+  "selected_id": "odri-m25-helicoil-tang-removal",
+  "selection_reason": "Selected because the repaired evidence now establishes the industrial procedure, four shell-base insert locations, accessible open-cavity geometry, manufactured notch fracture, hammer-actuated straight-mandrel mechanism, M2.5 tool family, retained-coil outcome, and mandatory fragment removal. This is sufficient for a representative rigid-PhysX build and component-test attempt with openly frozen calibration assumptions. The tapping and bearing objectives are industrially meaningful but retain critical local-geometry and physics gaps. Selection is factual readiness only: comprehensive fresh novelty review, native component validation, two full-score real-action YAM demonstrations, controls, replay/portability checks, and the single permitted final Dream episode remain later mandatory gates."
 }

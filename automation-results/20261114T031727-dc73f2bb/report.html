@@ -14,51 +14,46 @@
 - 결과는 이 run의 새로운 origin 브랜치에 보존한다. 원본 매뉴얼 전체/인증 정보는 공개하지 않는다. 50MB/file 또는 100MB checkpoint 초과는 먼저 보고한다.
 - 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
-</p><p>candidate selection ambiguous</p><p>Release digest: none</p><h2>last_candidate</h2><pre>{
-  &quot;id&quot;: &quot;odri-helicoil-tang-removal&quot;,
-  &quot;title&quot;: &quot;Break and recover HELICOIL tangs from an ODRI actuator shell&quot;,
-  &quot;objective&quot;: &quot;Finish four already-installed M2.5 × 3.75 mm HELICOIL inserts in a representative ODRI actuator shell base: coaxially place a straight tang break-off mandrel, strike it with a separately manipulated hammer to fracture each tang at its notch, then recover every free fragment without damaging or displacing the inserts or shell.&quot;,
+</p><p>runner accepts existing task-local Python scripts only</p><p>Release digest: none</p><h2>selected</h2><pre>{
+  &quot;id&quot;: &quot;odri-m25-helicoil-tang-removal&quot;,
+  &quot;title&quot;: &quot;Break and recover four M2.5 HELICOIL tangs from an ODRI actuator shell base&quot;,
+  &quot;objective&quot;: &quot;Finish four already-installed M2.5 × 3.75 mm HELICOIL inserts in a representative ODRI actuator shell base: align and hold the specified straight tang break-off mandrel in each insert, strike it with a separately manipulated hammer to fracture the tang at its manufactured notch, then physically recover every released tang into a tray without damaging the retained inserts or shell.&quot;,
   &quot;skills&quot;: [
     &quot;precision grasping of a narrow mandrel&quot;,
-    &quot;coaxial insertion into recessed M2.5 inserts&quot;,
-    &quot;bimanual mandrel stabilization and controlled hammering&quot;,
-    &quot;impulse and lateral-force regulation&quot;,
-    &quot;tool withdrawal without coil disturbance&quot;,
+    &quot;coaxial alignment with recessed M2.5 inserts&quot;,
+    &quot;bimanual mandrel stabilization and hammering&quot;,
+    &quot;impact and lateral-force regulation&quot;,
+    &quot;tool withdrawal without coil displacement&quot;,
     &quot;millimetre-scale fragment search and recovery&quot;
   ],
-  &quot;success_conditions&quot;: &quot;Full success requires four contact-loaded notch fractures, four freely moving tang fragments deposited in the recovery tray, no fragment remaining in the shell cavity, every insert retained within frozen pose tolerances, no shell/coil damage, and a two-second hands-off hold. Partial credit covers safe alignment or fewer than four completed fractures when every released fragment remains contained. Failure includes an unrecovered fragment, off-axis overload, insert displacement, shell damage, tool jamming, or fragment escape. Pose/velocity writes, waypoint-triggered fracture, permanent grasp welds, fixed fragments, or manufactured collision suppression invalidate the attempt. Initial prototype assumptions—0.55 mm wire diameter, 1.8 mm tang chord, 18 N equivalent axial break threshold over a 20 ms window, and 8 N radial-damage threshold—are explicitly uncalibrated and must be frozen before native testing.&quot;,
-  &quot;industrial_value&quot;: &quot;The pinned ODRI robot-actuator preparation procedure expressly requires four M2.5 × 3.75 mm inserts in the shell base, removal with a tang break-off tool, and no tangs left inside the part. Manufacturer documentation identifies the notch as the predetermined fracture location and provides a size-matched M2.5 straight mandrel.&quot;,
-  &quot;dexterity&quot;: &quot;The robot must preserve coaxial alignment in a roughly 2.6 mm insert crest opening while another hand delivers a controlled impact, avoid loading the surrounding printed boss, withdraw the tool, and recover small free debris from a cavity. Bimanual use is grounded in the manufacturer diagram showing one hand holding the straight mandrel while a hammer strikes it; it is not imposed on the alternative spring-loaded tool mechanism.&quot;,
+  &quot;success_conditions&quot;: &quot;Full success requires four contact-loaded fractures at the modeled notches, four independently simulated free tangs physically deposited in a containment tray, no tang remaining in or escaping from the shell, every insert retained within frozen pose tolerances, no shell or coil damage, all tools released, and a two-second stable final state. Partial credit may cover safe alignment or fewer completed fractures only while every released fragment remains contained. Insufficient or repeated impacts, glancing blows, off-axis overload, insert displacement, shell damage, tool jamming, fragment loss, or any pose/velocity injection invalidates full success.&quot;,
+  &quot;industrial_value&quot;: &quot;The pinned ODRI robot-actuator procedure requires four M2.5 × 3.75 mm inserts in the shell base, removal of their tangs, and verification that tangs do not remain inside the part. Böllhoff documents notch fracture and identifies the M2.5 straight tang break-off mandrel.&quot;,
+  &quot;dexterity&quot;: &quot;One arm must maintain a narrow mandrel coaxially inside a small recessed insert while the other delivers a controlled hammer impact. The robot must avoid lateral loading of the retained coil and printed boss, withdraw the mandrel without snagging, and recover four small loose metal fragments from an open shell cavity.&quot;,
   &quot;evidence&quot;: [
     {
       &quot;source_id&quot;: &quot;s-df759bd2377bbb57&quot;,
-      &quot;locator&quot;: &quot;ODRI actuator-module shell preparation, “Installing the Helicoil Inserts,” shell-base step&quot;,
+      &quot;locator&quot;: &quot;Details Shell Preparation, “Installing the Helicoil Inserts,” shell-base step&quot;,
       &quot;quote_sha256&quot;: &quot;64253869545fb5f306ad3a0515b17c2d59f6b28ddde42c205a17bf5eb51b08e4&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-df759bd2377bbb57&quot;,
-      &quot;locator&quot;: &quot;ODRI actuator-module shell preparation, “Installing the Helicoil Inserts,” shell-base step&quot;,
+      &quot;locator&quot;: &quot;Details Shell Preparation, “Installing the Helicoil Inserts,” shell-base step&quot;,
       &quot;quote_sha256&quot;: &quot;2f831484053c44174f7775195ef67869a07588a81e37a54b7ad6a36c6749efe1&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-df759bd2377bbb57&quot;,
-      &quot;locator&quot;: &quot;ODRI actuator-module shell preparation, “Installing the Helicoil Inserts,” shell-base step&quot;,
+      &quot;locator&quot;: &quot;Details Shell Preparation, “Installing the Helicoil Inserts,” shell-base step&quot;,
       &quot;quote_sha256&quot;: &quot;ab11aa977c8a5cde65af28ab4773d5d8d25a18294fc4708dae4485eb4ef45ff7&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-6195df1bebbb33ef&quot;,
-      &quot;locator&quot;: &quot;Böllhoff HELICOIL Plus catalog, page 17, “Breaking off the tang”&quot;,
+      &quot;locator&quot;: &quot;HELICOIL Plus manufacturer catalog, page 17, “Breaking off the tang”&quot;,
       &quot;quote_sha256&quot;: &quot;546c8e46c17cb3ac989938505e76679ff273e01c17dc6465ac408d24cbe36c28&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-6195df1bebbb33ef&quot;,
-      &quot;locator&quot;: &quot;Böllhoff HELICOIL Plus catalog, page 55, M2.5 row in tang break-off tool table&quot;,
+      &quot;locator&quot;: &quot;HELICOIL Plus manufacturer catalog, page 55, M2.5 tang break-off tool row&quot;,
       &quot;quote_sha256&quot;: &quot;9d2706184ef14ebd66d4b1c1edfb9051f5dd3fd64bafd508d5e0dea405fa3a45&quot;
-    },
-    {
-      &quot;source_id&quot;: &quot;s-6195df1bebbb33ef&quot;,
-      &quot;locator&quot;: &quot;Böllhoff HELICOIL Plus catalog, page 19, M2.5 × 1.5d technical-data row&quot;,
-      &quot;quote_sha256&quot;: &quot;371d2667a866a9461effefe5f2899139fd3e8ffbb33015b7aa38b3afbe9142b6&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-c392a734cb5007d7&quot;,
@@ -66,42 +61,241 @@
       &quot;quote_sha256&quot;: &quot;d5c22c75f54623d0c00cd65d119bdc89f755463a4f1992744c7fdce6d5ffe0fc&quot;
     }
   ],
-  &quot;asset_plan&quot;: &quot;Use an independently authored representative shell-base fixture, not an exact-product claim. Ground it in the inspected pinned ODRI images: four marked M2.5 bosses are distributed around the open shell-base cavity; the installation photograph shows vertical tool access to a perimeter boss; the completed-shell photograph confirms the cavity, large through-openings, boss heights, and fragment escape paths. Anchor scale with the documented M2.5 × 3.75 mm insert, 2.60 mm crest diameter, four-hole count, and 160 mm actuator-module segment length. Model each retained coil proxy and its separate tang at the visually verified notch anatomy. Use a representative straight M2.5 mandrel corresponding to item 0158 040 1000 and hammer actuation matching Böllhoff page-17 diagram h; do not mix it with the TB-M spring tool. Disclose all unsourced handle dimensions. Before robot integration, verify native PhysX axial-impact fracture, insufficient-energy and glancing-blow controls, off-axis damage, wrong-hole strikes, coil retention, free-fragment collision/containment, reset freshness, substep force/impulse/energy logging, and timestep convergence using retained PRE/POST PhysxManager callback handles. Reject or revise the assumptions if stable contact coupling is not demonstrated.&quot;,
-  &quot;risk&quot;: &quot;The closest prior families include nail hammering, automatic center-punch use, pop-rivet stem disposal, panel/tile fracture, and slide-hammer extraction. Novelty depends on the combined installed-insert access, bimanual alignment-preserving impulse, preservation of a functional coil in a robot shell, and mandatory recovery of every internal fragment—not on debris or industrial naming alone. Exact notch strength and tool-handle dimensions remain prototype assumptions, but the essential retention, fracture location, actuation mode, insert size, access orientation, shell cavity, and required fragment outcome are evidenced.&quot;,
+  &quot;asset_plan&quot;: &quot;Build an independently authored representative rigid fixture rather than claiming an exact current-product replica. The four inspected pinned ODRI images establish four marked shell-base insert bosses, vertical installation access, the open cavity and large through-openings, and completed inserts. Use the documented M2.5 × 3.75 mm insert and Böllhoff M2.5 mandrel family to anchor the local interaction. Treat the historical unitless STL and 2019 v1 overview only as explicitly outdated geometry references. Model retained coil proxies, separate tangs, manufactured notches, mandrel, hammer, shell, and tray as native rigid PhysX bodies. Freeze and disclose uncited wire, notch, handle, friction, fracture-load, impulse, damage, and tolerance values as prototype assumptions. Before YAM integration, validate contact-driven axial fracture, insufficient and repeated impacts, glancing blows, off-axis damage, coil retention, freely moving fragment containment, reset freshness, callback timing, force/impulse/energy logging, timestep convergence, and failure controls in the pinned runtime.&quot;,
+  &quot;risk&quot;: &quot;Exact notch strength and tool-handle dimensions are not published and must remain frozen testable assumptions. The inspected images support a representative accessible cavity fixture but not exact CAD correspondence to the outdated STL. Native PhysX may fail to provide stable millimetre-scale impact fracture or fragment behavior; that is a later component-test rejection condition. Early comparison found different central outcomes from automatic center punching (one dent), nail hammering (fastener penetration), blind riveting (joining plus spent-stem disposal), PCB/tile depaneling (supported bulk fracture), and slide-hammer extraction (momentum-driven pin removal). Full fresh catalog, board, team, and six-suite novelty review remains mandatory after selection.&quot;,
   &quot;feasibility_status&quot;: &quot;ready&quot;,
   &quot;missing_evidence&quot;: []
 }</pre><h2>selection_history</h2><pre>{
-  &quot;rejected&quot;: [
+  &quot;rejected&quot;: [],
+  &quot;skipped&quot;: [],
+  &quot;selected&quot;: &quot;odri-m25-helicoil-tang-removal&quot;
+}</pre><h2>contract</h2><pre>{
+  &quot;slug&quot;: &quot;odri-m25-helicoil-tang-break-and-recover-dc73f2bb&quot;,
+  &quot;objective&quot;: &quot;Finish four already-installed M2.5 × 3.75 mm HELICOIL inserts in a representative ODRI actuator shell-base fixture. With one arm, keep the straight tang break-off mandrel coaxial in each recessed insert; with the other, deliver a controlled hammer strike that fractures the tang at its modeled manufactured notch. Withdraw the mandrel without moving the retained coil, then physically recover all four free tangs into the tray. Full success requires four contact-caused fractures, four retained undamaged inserts, four fragments resting in the tray, released tools, and a stable two-second final state.&quot;,
+  &quot;instruction&quot;: &quot;Break the tang from each of the four installed thread inserts using the straight mandrel and hammer. Keep every insert and the shell undamaged. Find each released tang and place all four in the collection tray, then release both tools.&quot;,
+  &quot;industrial_mapping&quot;: &quot;The pinned Open Dynamic Robot Initiative actuator-module-v1 shell-preparation instructions specify four M2.5 × 3.75 mm HELICOIL inserts in the shell base, removal of their tangs with a tang break-off tool, and verification that tangs do not remain inside the part (source s-df759bd2377bbb57, commit 66af1522b4fba0ec4a1d7790e66f5e4652208d30). The Böllhoff HELICOIL Plus catalog states that the tang is broken at its notch, depicts hammer actuation of a straight mandrel on page 17, and lists straight mandrel 0158 040 1000 for M2.5 on page 55 (source s-6195df1bebbb33ef). The fixture is an independently authored representative training fixture, not an exact current ODRI product or asserted scale reconstruction of the unitless outdated STL.&quot;,
+  &quot;run_steps&quot;: 7200,
+  &quot;physics_checks&quot;: [
     {
-      &quot;candidate&quot;: &quot;thk-hsr12x-block-jig-transfer&quot;,
-      &quot;reason&quot;: &quot;novelty overlap/uncertainty: 1 records; inspect novelty.json&quot;
-    }
-  ],
-  &quot;skipped&quot;: [
-    {
-      &quot;candidate&quot;: &quot;abb-external-dresspack-section-replacement&quot;,
-      &quot;reason&quot;: &quot;not build-ready&quot;,
-      &quot;missing_evidence&quot;: [
-        &quot;manufacturer clamp and latch geometry&quot;,
-        &quot;adjustable-bracket travel and retention mechanism&quot;,
-        &quot;bundle diameters, section lengths, connector geometry, and bend limits&quot;,
-        &quot;validated pinned-runtime representation of bending, snagging, and clamp escape&quot;
-      ]
+      &quot;name&quot;: &quot;settled fixture linear speed&quot;,
+      &quot;operator&quot;: &quot;&lt;=&quot;,
+      &quot;threshold&quot;: 0.002,
+      &quot;unit&quot;: &quot;m/s&quot;
     },
     {
-      &quot;candidate&quot;: &quot;dell-2u-readyrails-system-loading&quot;,
-      &quot;reason&quot;: &quot;not build-ready&quot;,
-      &quot;missing_evidence&quot;: [
-        &quot;matching ReadyRails model and Rack Installation Guide&quot;,
-        &quot;rack-post hook and blue-latch geometry&quot;,
-        &quot;system mounting-nut and rail capture-slot dimensions&quot;,
-        &quot;inner-member lock and metal release-clip mechanism&quot;,
-        &quot;verified rack spacing, rail travel, equipment envelope, mass, and center of mass&quot;,
-        &quot;pinned-YAM reach and safe scale study&quot;
-      ]
+      &quot;name&quot;: &quot;settled loose-tool linear speed&quot;,
+      &quot;operator&quot;: &quot;&lt;=&quot;,
+      &quot;threshold&quot;: 0.01,
+      &quot;unit&quot;: &quot;m/s&quot;
+    },
+    {
+      &quot;name&quot;: &quot;initial fractured tang count&quot;,
+      &quot;operator&quot;: &quot;==&quot;,
+      &quot;threshold&quot;: 0,
+      &quot;unit&quot;: &quot;count&quot;
+    },
+    {
+      &quot;name&quot;: &quot;initial fragments in tray&quot;,
+      &quot;operator&quot;: &quot;==&quot;,
+      &quot;threshold&quot;: 0,
+      &quot;unit&quot;: &quot;count&quot;
+    },
+    {
+      &quot;name&quot;: &quot;initial insert axial displacement from authored seat&quot;,
+      &quot;operator&quot;: &quot;&lt;=&quot;,
+      &quot;threshold&quot;: 0.0001,
+      &quot;unit&quot;: &quot;m&quot;
+    },
+    {
+      &quot;name&quot;: &quot;maximum initial rigid-body interpenetration&quot;,
+      &quot;operator&quot;: &quot;&lt;=&quot;,
+      &quot;threshold&quot;: 0.0002,
+      &quot;unit&quot;: &quot;m&quot;
+    },
+    {
+      &quot;name&quot;: &quot;mandrel-to-insert axis angle at qualifying impact&quot;,
+      &quot;operator&quot;: &quot;&lt;=&quot;,
+      &quot;threshold&quot;: 5,
+      &quot;unit&quot;: &quot;deg&quot;
+    },
+    {
+      &quot;name&quot;: &quot;mandrel radial offset at qualifying impact&quot;,
+      &quot;operator&quot;: &quot;&lt;=&quot;,
+      &quot;threshold&quot;: 0.00035,
+      &quot;unit&quot;: &quot;m&quot;
+    },
+    {
+      &quot;name&quot;: &quot;hammer-to-mandrel head contact events per completed insert&quot;,
+      &quot;operator&quot;: &quot;&gt;=&quot;,
+      &quot;threshold&quot;: 1,
+      &quot;unit&quot;: &quot;count&quot;
+    },
+    {
+      &quot;name&quot;: &quot;contact-derived axial fracture impulse per tang&quot;,
+      &quot;operator&quot;: &quot;&gt;=&quot;,
+      &quot;threshold&quot;: 0.012,
+      &quot;unit&quot;: &quot;N*s&quot;
+    },
+    {
+      &quot;name&quot;: &quot;contact-derived axial fracture impulse per tang&quot;,
+      &quot;operator&quot;: &quot;&lt;=&quot;,
+      &quot;threshold&quot;: 0.035,
+      &quot;unit&quot;: &quot;N*s&quot;
+    },
+    {
+      &quot;name&quot;: &quot;off-axis impulse at any insert&quot;,
+      &quot;operator&quot;: &quot;&lt;=&quot;,
+      &quot;threshold&quot;: 0.008,
+      &quot;unit&quot;: &quot;N*s&quot;
+    },
+    {
+      &quot;name&quot;: &quot;fractured tang count at full success&quot;,
+      &quot;operator&quot;: &quot;==&quot;,
+      &quot;threshold&quot;: 4,
+      &quot;unit&quot;: &quot;count&quot;
+    },
+    {
+      &quot;name&quot;: &quot;free fragments physically resting in tray at full success&quot;,
+      &quot;operator&quot;: &quot;==&quot;,
+      &quot;threshold&quot;: 4,
+      &quot;unit&quot;: &quot;count&quot;
+    },
+    {
+      &quot;name&quot;: &quot;retained insert axial displacement&quot;,
+      &quot;operator&quot;: &quot;&lt;=&quot;,
+      &quot;threshold&quot;: 0.00025,
+      &quot;unit&quot;: &quot;m&quot;
+    },
+    {
+      &quot;name&quot;: &quot;retained insert angular displacement&quot;,
+      &quot;operator&quot;: &quot;&lt;=&quot;,
+      &quot;threshold&quot;: 3,
+      &quot;unit&quot;: &quot;deg&quot;
+    },
+    {
+      &quot;name&quot;: &quot;shell damage energy accumulator&quot;,
+      &quot;operator&quot;: &quot;&lt;=&quot;,
+      &quot;threshold&quot;: 0.02,
+      &quot;unit&quot;: &quot;J&quot;
+    },
+    {
+      &quot;name&quot;: &quot;post-fracture mandrel penetration into shell or retained coil&quot;,
+      &quot;operator&quot;: &quot;&lt;=&quot;,
+      &quot;threshold&quot;: 0.0002,
+      &quot;unit&quot;: &quot;m&quot;
+    },
+    {
+      &quot;name&quot;: &quot;camera finite RGB-depth frame fraction&quot;,
+      &quot;operator&quot;: &quot;&gt;=&quot;,
+      &quot;threshold&quot;: 0.99,
+      &quot;unit&quot;: &quot;fraction&quot;
+    },
+    {
+      &quot;name&quot;: &quot;task workspace projected inside camera image&quot;,
+      &quot;operator&quot;: &quot;==&quot;,
+      &quot;threshold&quot;: 1,
+      &quot;unit&quot;: &quot;boolean&quot;
+    },
+    {
+      &quot;name&quot;: &quot;final stable hold duration&quot;,
+      &quot;operator&quot;: &quot;&gt;=&quot;,
+      &quot;threshold&quot;: 2,
+      &quot;unit&quot;: &quot;s&quot;
+    },
+    {
+      &quot;name&quot;: &quot;final fragment linear speed&quot;,
+      &quot;operator&quot;: &quot;&lt;=&quot;,
+      &quot;threshold&quot;: 0.01,
+      &quot;unit&quot;: &quot;m/s&quot;
     }
   ],
-  &quot;selected&quot;: null
+  &quot;damage_rules&quot;: [
+    &quot;Any shell-damage accumulator above 0.02 J, visible shell fracture state, or forbidden hammer-head contact with the shell is irreversible failure and sets the score to 0.&quot;,
+    &quot;Any insert translating more than 0.25 mm or rotating more than 3 degrees from its authored seat, or any coil fracture or unthreading, is irreversible failure and sets the score to 0.&quot;,
+    &quot;A tang may transition from attached to free only when fresh native contact data show the mandrel within both alignment limits and contact-derived axial impulse inside the fracture window. Waypoint-, timer-, pose-, velocity-, weld-, or grasp-state-triggered fracture is forbidden and scores 0.&quot;,
+    &quot;A released fragment leaving the bounded workcell, remaining inaccessible inside the shell at timeout, disappearing, being deleted, or being counted without physically resting in the tray sets the score to 0.&quot;,
+    &quot;More than three hammer-to-mandrel impacts on one insert, any qualifying impact after its tang is free, or an impact above the maximum impulse is unsafe repeated or excessive impact and sets the score to 0.&quot;,
+    &quot;Direct hammer contact with a tang, insert, or shell; using a robot link instead of the mandrel; or carrying the shell fixture are prohibited shortcuts and set the score to 0.&quot;,
+    &quot;Task objects may move only through robot contact, native rigid-body contact, and gravity. Runtime pose or velocity writes, teleportation, hidden attachment, collision suppression, scripted grasp welds, or deletion invalidate the episode.&quot;,
+    &quot;Dropping a tool outside the table catch surface, unsafe robot self-collision, or non-finite state, contact, or camera data sets the score to 0.&quot;
+  ],
+  &quot;assets&quot;: [
+    &quot;Independently authored representative rigid shell-base fixture with four recessed M2.5 insert bosses and an open recovery cavity&quot;,
+    &quot;Four retained HELICOIL proxy bodies with separate modeled tang bodies and explicit manufactured-notch break joints&quot;,
+    &quot;Representative straight tang break-off mandrel based on Böllhoff item family 0158 040 1000&quot;,
+    &quot;Representative small hammer with separate rigid head and handle&quot;,
+    &quot;Rigid four-fragment containment tray with raised walls&quot;,
+    &quot;Table and bounded catch surface&quot;,
+    &quot;YAM dual-arm robot and grippers&quot;,
+    &quot;Fixed RGB-D task camera&quot;
+  ],
+  &quot;approximations&quot;: [
+    &quot;The ODRI procedure sources M2.5 × 3.75 mm inserts and four shell-base locations but does not publish local boss CAD in the acquired instructions. Fixture boss spacing, recess depth, and access clearance are frozen representative dimensions, not exact ODRI geometry.&quot;,
+    &quot;The historical shell-base STL is explicitly outdated and unitless and is used only as qualitative shape context, never as proof of current dimensions or exact scale.&quot;,
+    &quot;The 0.012–0.035 N*s axial fracture window, 0.008 N*s off-axis limit, 0.02 J shell-damage limit, notch section, wire diameter, masses, friction, restitution, and tool-handle dimensions are explicit prototype assumptions because the acquired manufacturer sources do not publish M2.5 tang fracture calibration.&quot;,
+    &quot;The 0.35 mm radial and 5 degree angular alignment limits, 0.25 mm and 3 degree insert-retention limits, 0.2 mm penetration limit, and two-second hold are frozen scoring assumptions requiring native component validation; they are not manufacturer tolerances.&quot;,
+    &quot;Fracture is approximated by a native breakable fixed joint at the modeled notch, monitored using fresh PhysX contact impulse. After fracture, the tang remains a freely simulated rigid body and is never hidden or deleted.&quot;,
+    &quot;All geometry uses rigid-body PhysX. No deformable solver or exact helical-wire contact is claimed; the retained-coil proxy preserves the central fracture, retention, collision, and damage constraints.&quot;,
+    &quot;One physics step is assumed to be 1/60 s, so run_steps permits 120 seconds. Component tests must repeat at 1/120 s and retain equivalent classifications before robot-demo development.&quot;
+  ],
+  &quot;scoring_spec&quot;: &quot;Score is measured only from native simulator state and fresh contact records. Any hard-failure or shortcut rule overrides partial credit and sets score to 0. Otherwise: 0.10 for safely grasping the mandrel and hammer; 0.10 for a valid coaxial mandrel placement at an unbroken insert; 0.40 total for contact-valid tang fractures, 0.10 each and awarded once only while its insert remains retained; 0.20 total for physical fragment containment, 0.05 each and revoked if the fragment leaves the tray; 0.10 for all four inserts remaining within retention limits; and 0.10 for the terminal state where all four fragments rest in the tray, neither tool is held, stability and camera checks pass, and the state persists for 2.0 seconds. Full score additionally requires exactly four distinct qualifying fracture events and four distinct fragment bodies in the tray. Progress from valid fractures is retained, but safety, insert retention, and containment are continuously rechecked.&quot;,
+  &quot;required_controls&quot;: [
+    {
+      &quot;name&quot;: &quot;untouched initial-state rollout&quot;,
+      &quot;expected_score&quot;: 0,
+      &quot;reason&quot;: &quot;Proves no initial success, spontaneous joint break, pre-contained fragment, unstable settling, or invalid camera state.&quot;
+    },
+    {
+      &quot;name&quot;: &quot;sub-threshold aligned tap&quot;,
+      &quot;expected_score&quot;: 0.2,
+      &quot;reason&quot;: &quot;Safe grasps and alignment may score, but impulse below 0.012 N*s must not fracture or create containment credit.&quot;
+    },
+    {
+      &quot;name&quot;: &quot;off-axis glancing strike&quot;,
+      &quot;expected_score&quot;: 0,
+      &quot;reason&quot;: &quot;Off-axis impulse above 0.008 N*s must trigger failure rather than successful fracture.&quot;
+    },
+    {
+      &quot;name&quot;: &quot;over-impact or repeated-impact strike&quot;,
+      &quot;expected_score&quot;: 0,
+      &quot;reason&quot;: &quot;Impulse above 0.035 N*s or excessive or repeated strikes must be rejected and cannot farm fracture credit.&quot;
+    },
+    {
+      &quot;name&quot;: &quot;direct hammer-to-tang shortcut&quot;,
+      &quot;expected_score&quot;: 0,
+      &quot;reason&quot;: &quot;Confirms the required indirect mandrel force path and rejects direct fracture.&quot;
+    },
+    {
+      &quot;name&quot;: &quot;one valid fracture with fragment left in shell&quot;,
+      &quot;expected_score&quot;: 0.3,
+      &quot;reason&quot;: &quot;Credits safe grasping, alignment, and one fracture but withholds containment and terminal completion credit.&quot;
+    },
+    {
+      &quot;name&quot;: &quot;four valid fractures with one fragment outside tray&quot;,
+      &quot;expected_score&quot;: 0.85,
+      &quot;reason&quot;: &quot;Credits grasping, alignment, four valid fractures, three contained fragments, and retained inserts, but withholds missing containment and terminal success.&quot;
+    },
+    {
+      &quot;name&quot;: &quot;insert-displacement strike&quot;,
+      &quot;expected_score&quot;: 0,
+      &quot;reason&quot;: &quot;Confirms that moving or unthreading a retained coil is damage, never task progress.&quot;
+    },
+    {
+      &quot;name&quot;: &quot;fragment escape from bounded workcell&quot;,
+      &quot;expected_score&quot;: 0,
+      &quot;reason&quot;: &quot;Confirms loss is irreversible failure and fragments cannot disappear into a scripted flag.&quot;
+    },
+    {
+      &quot;name&quot;: &quot;reset and replay determinism&quot;,
+      &quot;expected_score&quot;: 1,
+      &quot;reason&quot;: &quot;After clean reset, the reference real-action trajectory must reproduce full score without stale fracture state, stale contacts, or duplicate callbacks.&quot;
+    },
+    {
+      &quot;name&quot;: &quot;120 Hz timestep replay&quot;,
+      &quot;expected_score&quot;: 1,
+      &quot;reason&quot;: &quot;The reference real-action trajectory must retain event ordering, containment, damage classification, and full score at the finer timestep before YAM integration.&quot;
+    }
+  ]
 }</pre><h2>sources</h2><pre>[
   {
     &quot;id&quot;: &quot;s-df759bd2377bbb57&quot;,

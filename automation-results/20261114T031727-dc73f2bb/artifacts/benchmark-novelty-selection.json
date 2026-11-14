@@ -2,216 +2,182 @@
   "comparisons": [
     {
       "suite": "LIBERO",
-      "coverage_method": "Verified the complete manifest (135 exact local_path entries) against selectors libero/libero/bddl_files/*.bddl, libero/libero/benchmark/*.py, and libero/libero/envs/predicates/*.py. Enumerated the original BDDL inventory, checked libero_suite_task_map.py, searched all selected originals for rail/bearing/ball/jig/carriage/slide/align/insert/transfer/mount/block/track/drawer mechanisms, and read the closest BDDL and Open predicate implementation completely.",
-      "objective": "The candidate transfers a detachable, uncaged recirculating-ball LM block from a rail onto a physically butted jig. LIBERO's closest task only opens a cabinet drawer.",
-      "physical_skill": "Both involve constrained linear motion, but LIBERO tests pulling a captive articulated drawer. It does not test bimanual end-face mating, maintaining parallel continuous support across two bodies, regrasping during transfer, or retaining freely simulated rolling elements.",
-      "success_condition": "The candidate requires complete rail-to-jig transfer with physical interface contact and every ball retained, plus no gap, jam, contamination, impact, or unsafe inclination. LIBERO requires only the drawer region's Open state; Open delegates to arg.is_open().",
+      "coverage_method": "Verified the complete manifest of 135 exact local_path entries against the recorded BDDL, benchmark-registry, and predicate selectors. Searched the complete selected originals for hammering, impact, fracture, tang, mandrel, punch, tool-use, fragment-recovery, and containment mechanisms; then read the closest multi-object containment definition completely.",
+      "objective": "The candidate finishes four installed HELICOIL inserts by breaking each tang with an aligned mandrel and hammer, then recovering the released tangs. LIBERO's closest objective merely places two intact grocery objects into a basket.",
+      "physical_skill": "The candidate tests bimanual coaxial mandrel stabilization, controlled indirect impact, notch fracture without damaging the surrounding insert, and subsequent millimetre-scale fragment recovery. LIBERO tests ordinary sequential pick-and-place containment without tool-mediated transformation or force regulation.",
+      "success_condition": "Candidate success requires four contact-loaded fractures, all four free tangs physically contained, retained inserts within tolerance, no shell or coil damage, tools released, and a stable final state. LIBERO requires two named objects to satisfy In predicates for the basket containment region.",
       "evidence_paths": [
         "input/benchmark-corpora/LIBERO/manifest.json",
-        "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/benchmark/libero_suite_task_map.py",
-        "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/envs/predicates/base_predicates.py"
+        "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_10/LIVING_ROOM_SCENE2_put_both_the_cream_cheese_box_and_the_butter_in_the_basket.bddl"
       ],
       "closest_tasks": [
         {
-          "name": "Open the middle drawer of the cabinet",
-          "source_path": "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_goal/open_the_middle_drawer_of_the_cabinet.bddl",
-          "quote": "(:goal\n    (And (Open wooden_cabinet_1_middle_region))\n  )",
-          "objective": "Open the middle drawer of a wooden cabinet.",
-          "physical_skill": "Pull a captive prismatic drawer along its existing guide.",
-          "success_condition": "The wooden_cabinet_1_middle_region satisfies Open.",
-          "reason": "The shared linear sliding primitive is insufficient overlap. The LIBERO object remains captive and there is no transfer across a separately aligned interface or rolling-element preservation outcome.",
+          "name": "put both the cream cheese box and the butter in the basket",
+          "source_path": "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_10/LIVING_ROOM_SCENE2_put_both_the_cream_cheese_box_and_the_butter_in_the_basket.bddl",
+          "quote": "(:goal\n    (And (In cream_cheese_1 basket_1_contain_region) (In butter_1 basket_1_contain_region))\n  )",
+          "objective": "Place two intact objects into a basket.",
+          "physical_skill": "Sequential grasping, transport, and receptacle placement.",
+          "success_condition": "Both named objects are inside the basket containment region.",
+          "reason": "It is the closest fragment-containment analogue, but the contained objects pre-exist and the task does not test impact, fracture, an aligned intermediate tool, protection of a retained component, or recovery of newly released fragments.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "The complete selected LIBERO corpus contains drawer motion and ordinary placement but no task whose central tested ability is continuous-support transfer of an uncaged bearing block while preserving loose circulating elements."
+      "reason": "Across the complete selected LIBERO registry, containment and pick-and-place are present, but no task tests controlled indirect impact fracture followed by recovery of the resulting small fragments."
     },
     {
       "suite": "RoboCasa",
-      "coverage_method": "Verified the complete manifest (381 exact local_path entries) against robocasa/environments/kitchen/*.py, robocasa/environments/__init__.py, and robocasa/utils/dataset_registry.py. Enumerated every selected original, reviewed registry-visible task classes, searched the full inventory for the candidate's mechanism, and completely read the closest rack-placement and captive-rack sliding implementations, including their success checks.",
-      "objective": "The candidate removes an LM block from one support and transfers it onto a separately held jig without exposing unsupported ball rows. RoboCasa's closest tasks either slide a captive dishwasher rack or place food containers onto fixed appliance racks.",
-      "physical_skill": "SlideDishwasherRack shares guided translation, while rack-placement tasks share placement onto a support. Neither combines bimanual flush end-face alignment, continuous cross-interface support, force-limited bearing-block translation, alignment-preserving regrasping, and containment of free rolling elements.",
-      "success_condition": "Candidate success requires complete transfer, physical end-face contact, parallel axes, all balls retained, safe release, and absence of gap, jam, contamination, impact, or inclination. SlideDishwasherRack checks only normalized rack position; ToastOnCorrectRack checks rack contact and gripper distance.",
+      "coverage_method": "Verified the complete manifest of 381 exact local_path entries against the recorded kitchen-task, environment-registration, and dataset-registry selectors. Searched every selected original for cutting, tenderizing, hammering, impact, fracture, fragment, punch, and tool-use tasks; read the closest cutting-labelled and tenderizing-labelled implementations completely, including their actual success checks.",
+      "objective": "The candidate performs the physical finishing operation on four installed inserts. RoboCasa's closest cutting-labelled task only retrieves and stages a pizza cutter, while PrepForTenderizing only stages a rolling pin beside meat.",
+      "physical_skill": "The candidate requires bimanual tool coordination and regulated hammer-to-mandrel impact that creates a free tang while preserving the surrounding coil and shell. The RoboCasa neighbors require cabinet opening and object placement; neither executes cutting, tenderizing, impact, or material separation.",
+      "success_condition": "Candidate success measures four fractures, fragment containment, insert retention, damage exclusions, released tools, and stability. CutBuffetPizza checks that the cutter and pizza contact the dining counter and that the gripper is far away.",
       "evidence_paths": [
         "input/benchmark-corpora/RoboCasa/manifest.json",
         "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/utils/dataset_registry.py"
       ],
       "closest_tasks": [
         {
-          "name": "SlideDishwasherRack",
-          "source_path": "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/atomic/kitchen_drawer.py",
-          "quote": "ep_meta[\"lang\"] = f\"Fully slide the top dishwasher rack {direction}.\"",
-          "objective": "Fully slide the top dishwasher rack in or out.",
-          "physical_skill": "Translate a captive rack along its installed guide.",
-          "success_condition": "For pulling, current_pos >= 0.95; for pushing, current_pos <= 0.05.",
-          "reason": "This is the strongest guided-sliding neighbor, but it does not transfer a carriage between independently aligned supports or test loss of internal rolling elements.",
+          "name": "CutBuffetPizza",
+          "source_path": "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/composite/arranging_buffet/cut_buffet_pizza.py",
+          "quote": "return pizza_cutter_on_counter and pizza_on_counter and gripper_far",
+          "objective": "Retrieve a pizza cutter and place it on the dining counter where a pizza is already present.",
+          "physical_skill": "Open a drawer, retrieve a tool, and place it on a surface.",
+          "success_condition": "The cutter and pizza contact the counter and the gripper is far from both.",
+          "reason": "Despite the class name, the original implementation does not cut anything and has no impact, state transformation, fragment creation, or containment requirement.",
           "verdict": "distinct"
         },
         {
-          "name": "ToastOnCorrectRack",
-          "source_path": "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/composite/toasting_bread/toast_on_correct_rack.py",
-          "quote": "bread_on_rack = self.toaster_oven.check_rack_contact(\n            self, \"bread\", rack_level=self.bread_rack_level\n        )",
-          "objective": "Open a toaster oven and place bread and meat on specified fixed racks.",
-          "physical_skill": "Pick and place objects onto selected supports in an appliance.",
-          "success_condition": "Both objects contact their assigned racks and the gripper is far from them.",
-          "reason": "Rack contact is ordinary placement, not a continuous-support handoff of a recirculating carriage with a no-loss constraint.",
+          "name": "PrepForTenderizing",
+          "source_path": "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/composite/meat_preparation/prep_for_tenderizing.py",
+          "quote": "Retrieve a rolling pin from the cabinet and place it next to the meat on\n        the cutting board to prepare for tenderizing.",
+          "objective": "Stage a rolling pin next to meat in preparation for later tenderizing.",
+          "physical_skill": "Cabinet opening, retrieval, and placement.",
+          "success_condition": "The rolling pin and meat are in the designated receptacle and the gripper is far away.",
+          "reason": "The original explicitly stops at preparation; it does not apply an impact or score deformation, fracture, damage avoidance, or debris recovery.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "RoboCasa contains captive guided motion and rack placement, but no original task tests the candidate's combined support-interface construction and rolling-element-containment ability."
+      "reason": "The complete RoboCasa inventory contains tools and preparation contexts but no task whose tested outcome is contact-driven indirect fracture with retained-part protection and physical fragment recovery."
     },
     {
       "suite": "SimplerEnv",
-      "coverage_method": "Verified all 11 manifest local_path entries against simpler_env/__init__.py, env_builder.py, and every selected ManiSkill2_real2sim env file. Read the registration sources and the complete closest articulated-drawer implementations, including reset and evaluate logic.",
-      "objective": "The candidate transfers a detachable bearing block between a service rail and mating jig. SimplerEnv's closest registered family opens or closes a cabinet drawer, optionally placing an object in it.",
-      "physical_skill": "SimplerEnv tests manipulation of one captive drawer joint and generic placement. It does not require a second hand to butt and stabilize a jig, bridge two guide surfaces, preserve parallelism during regrasping, or contain free balls.",
-      "success_condition": "Candidate success includes complete block transfer and retention of every ball with damage and unsafe-motion exclusions. OpenDrawer succeeds from one joint coordinate threshold; PlaceIntoClosedDrawer additionally requires a staged flag and at least one object-drawer contact.",
+      "coverage_method": "Verified all 11 manifest entries against the complete SimplerEnv registration, builder, and selected ManiSkill2-real2sim environment inventory. Read the registration sources and the complete closest receptacle-placement implementation, including its geometric and contact-based evaluator.",
+      "objective": "The candidate breaks four attached tangs and recovers the resulting free pieces into a tray. SimplerEnv's closest task places one pre-existing eggplant into a basket.",
+      "physical_skill": "Both include final containment, but SimplerEnv tests single-object pick-and-place. It does not test coaxial tool alignment, bimanual stabilization and striking, contact-load fracture, protected retained hardware, or searching for newly released small fragments.",
+      "success_condition": "Candidate success requires all four fractures and all released tangs in containment with no damage or insert displacement. PutEggplantInBasket uses the generic PutOn evaluator's source-on-target spatial test with relaxed complete-support and height requirements.",
       "evidence_paths": [
         "input/benchmark-corpora/SimplerEnv/manifest.json",
-        "input/benchmark-corpora/SimplerEnv/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/__init__.py",
-        "input/benchmark-corpora/SimplerEnv/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/utils/env/env_builder.py"
+        "input/benchmark-corpora/SimplerEnv/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/__init__.py"
       ],
       "closest_tasks": [
         {
-          "name": "OpenDrawerCustomInScene-v0",
-          "source_path": "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/open_drawer_in_scene.py",
-          "quote": "return dict(success=qpos >= 0.15, qpos=qpos, episode_stats=self.episode_stats)",
-          "objective": "Open the selected top, middle, or bottom cabinet drawer.",
-          "physical_skill": "Pull a captive articulated drawer against joint friction.",
-          "success_condition": "The target drawer joint position is at least 0.15.",
-          "reason": "The task shares guided linear motion only. It has no detachable carriage, support handoff, bimanual interface alignment, or loose-element loss mode.",
-          "verdict": "distinct"
-        },
-        {
-          "name": "PlaceIntoClosedDrawerCustomInScene-v0",
-          "source_path": "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/place_in_closed_drawer_in_scene.py",
-          "quote": "success = (self.cur_subtask_id == 1) and (qpos >= 0.05) and (self.episode_stats[\"has_contact\"] >= 1)",
-          "objective": "Open a drawer and place an object into it.",
-          "physical_skill": "Sequential articulated opening and generic object placement.",
-          "success_condition": "The second subtask is active, drawer qpos is at least 0.05, and object-drawer contact occurred.",
-          "reason": "Contact with a receptacle does not test continuous bearing-race support or preservation of circulating elements during a rail-to-jig transfer.",
+          "name": "PutEggplantInBasketScene-v0",
+          "source_path": "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/put_on_in_scene.py",
+          "quote": "return \"put eggplant into yellow basket\"",
+          "objective": "Put one intact eggplant into a basket.",
+          "physical_skill": "Grasp, transport, and receptacle placement.",
+          "success_condition": "The source passes the generic source-on-target XY/Z test; this subclass relaxes complete-support and permits a 0.06 height offset.",
+          "reason": "It shares only the ubiquitous terminal containment primitive. There is no preceding tool-mediated fracture, multi-fragment accounting, force control, or protected-component constraint.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "The complete SimplerEnv inventory is small and fully resolved; its closest mechanisms are captive drawer articulation and generic placement, not the candidate's central ability."
+      "reason": "The complete small registry resolves to grasping, relative placement, stacking, and drawer articulation; none tests the candidate's central indirect-impact finishing operation."
     },
     {
       "suite": "BEHAVIOR",
-      "coverage_method": "Verified the complete manifest (1,122 exact local_path entries) against both recorded BDDL activity-definition selectors and the selected task/state backend files. Enumerated both complete activity inventories, searched all originals for bearing, rail, installation, attachment, transfer, and repair neighbors, read the closest BDDL definitions completely, and read all 573 lines of attached_to.py to resolve the abstract attached predicate's actual mechanism.",
-      "objective": "The candidate performs a reversible service transfer of an uncaged recirculating-ball block onto a physically butted jig. BEHAVIOR's closest bearing-named task cleans attached skateboard wheels, while its closest installation task attaches a hitch to a pickup.",
-      "physical_skill": "Cleaning skateboard bearings is represented as removing grease coverage, not bearing removal or element handling. Trailer-hitch installation uses proximity/orientation meta-links and backend attachment creation; it does not test sliding a carriage across a continuously supported interface while retaining free balls.",
-      "success_condition": "Candidate success is based on measured support contact, parallelism, transfer completion, ball count/containment, damage exclusions, and stable release. The cleaning task only negates Covered; the hitch task requires Attached, whose backend aligns poses and creates a fixed or spherical joint after threshold checks.",
+      "coverage_method": "Verified the complete 1,122-entry manifest across both recorded BDDL activity inventories and the selected OmniGibson task/state backend files. Searched all activity originals for chopping, cutting, hammering, nails, installation, fracture, and fragment outcomes. Read chopping_wood completely and inspected bddl_utils.py to resolve its abstract future/real predicates: Future evaluates when the entity is absent, while Real evaluates when it exists.",
+      "objective": "The candidate fractures four manufactured tang notches with a mandrel and hammer and recovers each tang. BEHAVIOR's closest semantic objective is chopping four logs into eight half-logs.",
+      "physical_skill": "Both concern material separation, but the candidate's central ability is precision indirect impact: keep a narrow mandrel coaxial in a recessed M2.5 insert while a second hand strikes it, avoid lateral damage, then recover four tiny fragments. Chopping wood semantically uses an axe for direct splitting, while its recorded goal does not enforce the axe, impact, alignment, or containment mechanism.",
+      "success_condition": "Candidate success requires measured contact-loaded fractures, retained insert and shell integrity, four tangs in a tray, and stable tool release. ChoppingWood's goal only requires eight future half-log entities to become Real; the backend defines Real as entity existence, not a verified fracture action.",
       "evidence_paths": [
         "input/benchmark-corpora/BEHAVIOR/manifest.json",
-        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/tasks/behavior_task.py",
-        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/utils/bddl_utils.py",
-        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/object_states/attached_to.py"
+        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/utils/bddl_utils.py"
       ],
       "closest_tasks": [
         {
-          "name": "clean_skateboard_bearings-0",
-          "source_path": "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/clean_skateboard_bearings/problem0.bddl",
-          "quote": "(not \n                    (covered ?skateboard_wheel.n.01 ?grease.n.01_1)\n                )",
-          "objective": "Clean grease from skateboard wheels described by the activity name as bearing cleaning.",
-          "physical_skill": "Remove a covering substance from attached wheels.",
-          "success_condition": "No skateboard wheel remains Covered by grease.",
-          "reason": "The bearing label does not encode removal, rail transfer, circulation, or rolling-element containment; the original goal is solely a coverage-state change.",
-          "verdict": "distinct"
-        },
-        {
-          "name": "installing_a_trailer_hitch-0",
-          "source_path": "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/installing_a_trailer_hitch/problem0.bddl",
-          "quote": "(attached ?hitch.n.04_1 ?pickup.n.01_1)",
-          "objective": "Attach a trailer hitch to a pickup.",
-          "physical_skill": "Bring compatible attachment meta-links within position and orientation thresholds.",
-          "success_condition": "The hitch's AttachedTo parent is the pickup; the backend then creates a fixed or spherical joint.",
-          "reason": "This tests terminal attachment, and the backend explicitly pose-aligns the child before creating a joint. It does not model a contact-preserving rail handoff or free rolling-element retention.",
+          "name": "chopping_wood-0",
+          "source_path": "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/chopping_wood/problem0.bddl",
+          "quote": "(real ?half__log.n.01_1)\n            (real ?half__log.n.01_2)",
+          "objective": "Transform four logs into eight half-logs.",
+          "physical_skill": "Semantically, direct axe splitting; the original goal itself specifies only realization of half-log objects.",
+          "success_condition": "All eight initially future half-log entities satisfy Real.",
+          "reason": "This is the strongest material-separation neighbor. Backend inspection shows that Real only tests whether each entity exists, so the recorded task does not require bimanual indirect impact, coaxial mandrel support, retained-component protection, or recovery of the separated pieces into containment.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "Neither the bearing-named activity nor the resolved attachment implementation exercises the candidate's central continuous-support transfer ability. The backend inspection removes ambiguity that Attached might implicitly represent such a mechanism."
+      "reason": "BEHAVIOR includes a semantic fracture objective, but its tested predicate is object realization. The candidate adds a meaningfully different central ability—precision bimanual indirect impact on retained hardware—and explicitly scores force-path validity, damage avoidance, and fragment recovery."
     },
     {
       "suite": "DataCenterBench",
-      "coverage_method": "Verified the single complete manifest entry and read published-task-definitions.txt in full. The original publication explicitly enumerates all 19 considered tasks, identifies the ten retained tasks, and describes their physical abstractions, allowing complete registry-level comparison without relying on the manifest as task evidence.",
-      "objective": "The candidate is an LM-guide service operation: align a removing/mounting jig to a rail and transfer an uncaged bearing block without ball loss. DataCenterBench's nearest retained task is moving a slider; its considered connection tasks cover plugs, clips, and keyed or fastened parts.",
-      "physical_skill": "Move a slider shares one-dimensional hand motion, but the publication says its tabletop dimmer copies only the sliding motion. It does not require bimanual alignment of separate supports, continuous bearing-race support, controlled carriage handoff, regrasping, or ball containment.",
-      "success_condition": "Candidate success requires exact physical support continuity, completed transfer, all balls retained, safe inclination, no damage/contamination, and stable release. The published slider task tests moving a two-position control; no published task scores rolling-element preservation or rail-to-jig transfer.",
+      "coverage_method": "Verified the single complete manifest entry and read published-task-definitions.txt in full. The original publication enumerates all 19 considered tasks, identifies the ten retained tasks, and describes each physical abstraction, providing complete registry-level coverage.",
+      "objective": "The candidate finishes installed threaded inserts through tang fracture and debris recovery. DataCenterBench's closest considered maintenance tasks are tightening a fastener and holding an obstruction aside while another hand works; neither performs fracture or fragment removal.",
+      "physical_skill": "The candidate requires coordinated two-tool use, coaxial stabilization, controlled impact, and recovery of small released metal pieces. The closest published tasks test ordinary fastener rotation or generic bimanual access management.",
+      "success_condition": "Candidate success requires four valid fractures, complete fragment containment, retained hardware within tolerance, no damage, and stable release. The published fastener task concerns clamping a part with a nut and washer; no listed task scores fracture, loose debris, or retained-insert integrity.",
       "evidence_paths": [
         "input/benchmark-corpora/DataCenterBench/manifest.json"
       ],
       "closest_tasks": [
         {
-          "name": "Move a slider",
+          "name": "Fasten a nut down onto a washer",
           "source_path": "input/benchmark-corpora/DataCenterBench/published-task-definitions.txt",
-          "quote": "Real UPS mode selector has two fixed positions. Our dimmer copies only the sliding motion.",
-          "objective": "Move a tabletop slider standing in for a UPS mode selector.",
-          "physical_skill": "Single-axis actuation of a fixed control.",
-          "success_condition": "Move the control to the requested fixed position.",
-          "reason": "The source itself limits this task to copied sliding motion. The candidate's tested outcome depends on constructing and maintaining a continuous support path and preventing loss of independent bearing elements.",
+          "quote": "Real step clamps a part with a bolted joint. Ours keeps the clamping, drops the torque wrench.",
+          "objective": "Fasten a nut onto a washer to clamp a part; this candidate task was left out.",
+          "physical_skill": "Align and rotate threaded hardware to create clamping force.",
+          "success_condition": "A clamped bolted joint, without torque-wrench use.",
+          "reason": "It is the closest threaded-hardware service objective, but fastening by rotation does not test impact-driven notch fracture, a separately stabilized mandrel, or debris recovery.",
           "verdict": "distinct"
         },
         {
-          "name": "Insert a battery the right way round",
+          "name": "Hold something aside while the other hand works",
           "source_path": "input/benchmark-corpora/DataCenterBench/published-task-definitions.txt",
-          "quote": "Real polarity-dependent step. Our AA holder stands in for the coin-cell holder.",
-          "objective": "Insert a battery with correct polarity; this task was considered but left out.",
-          "physical_skill": "Orient and insert one rigid item into a holder.",
-          "success_condition": "Battery is seated in the correct orientation.",
-          "reason": "This is insertion into a terminal receptacle, not a sliding handoff between aligned guide surfaces, and it has no continuous-support or element-containment outcome.",
+          "quote": "The manual says to lift a cable arm out of the way, not to hold it while the other hand works.",
+          "objective": "Considered bimanual access-management task, ultimately left out.",
+          "physical_skill": "One hand moves an obstruction while the other performs an unspecified operation.",
+          "success_condition": "Not defined as a retained benchmark task.",
+          "reason": "It shares generic bimanual coordination only; the source explicitly rejects the proposed simultaneous-holding interpretation and supplies no impact, fracture, or fragment outcome.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "The publication's complete retained-and-considered list contains generic sliding and insertion but no task matching the candidate's central maintenance mechanism."
+      "reason": "The complete retained-and-considered list covers controls, connectors, basic fastening, and access management but not controlled tang break-off or recovery of released hardware fragments."
     },
     {
       "suite": "RoboDojo",
-      "coverage_method": "Verified all 110 manifest local_path entries against task/RoboDojo/tasks/*.py, task/RoboDojo/config/*.yml, and task_registry.py. Enumerated every registered task/config, searched all originals for alignment, insertion, rack, ball, guided motion, and transfer mechanisms, and completely read both the task and configuration files for the strongest insertion and loose-ball neighbors.",
-      "objective": "The candidate transfers one recirculating bearing carriage between aligned support profiles while preserving all its balls. RoboDojo's closest tasks insert three separate tubes into a rack and pour seven balls from a cup into a vase.",
-      "physical_skill": "InsertTubes tests repeated axis alignment and depth insertion into terminal slots. PourBallsIntoVase tests bulk transfer of free spheres between containers. Neither requires bimanual butt alignment of two supports, sliding a carriage across their boundary, preserving a closed circulation path, or maintaining every ball inside that carriage during regrasping.",
-      "success_condition": "Candidate success requires physical rail-jig contact and parallelism, complete carriage transfer, retention of every ball in four circulating rows, no gap/jam/damage, and stable release. InsertTubes checks depth, containment, upright orientation, and robot return; PourBalls checks each sphere inside the vase, cup upright, and robot return.",
+      "coverage_method": "Verified all 110 exact manifest entries against the recorded task, configuration, and task-registry selectors. Searched every selected original for hammer, impact, fracture, punch, nail, mandrel, fragment, insertion, and containment mechanisms. Read the complete task and configuration files for the strongest hammer-object neighbor.",
+      "objective": "The candidate uses a hammer functionally to drive a mandrel, fracture four tangs, and recover them. RoboDojo's closest task treats a hammer only as one of four objects to store in matching toolbox positions.",
+      "physical_skill": "The candidate requires functional hammer striking coordinated with a second hand stabilizing a narrow aligned tool, followed by fragment search and recovery. RoboDojo tests grasping and pose-aligned placement of the hammer without striking anything.",
+      "success_condition": "Candidate success measures four contact-loaded fractures, fragment containment, retained-part tolerances, damage exclusions, tool release, and stability. StoreToolsInToolbox checks hammer-slot point proximity, toolbox coverage, gripper release, and robot return.",
       "evidence_paths": [
         "input/benchmark-corpora/RoboDojo/manifest.json",
         "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/task_registry.py"
       ],
       "closest_tasks": [
         {
-          "name": "insert_tubes",
-          "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/insert_tubes.py",
-          "quote": "templates = [\"Insert the three tubes into the rack one by one.\"]",
-          "objective": "Insert three test tubes into a rack one by one.",
-          "physical_skill": "Align separate elongated objects with receptacle slots and insert them to depth.",
-          "success_condition": "Each tube is inside the slot, reaches 0.045 depth, is upright within 30 degrees, and the robot returns to origin for the completion check.",
-          "reason": "This is a plausible precision-insertion neighbor, but it terminates each object in a receptacle and does not test a guide-to-guide handoff or preservation of independent internal elements.",
-          "verdict": "distinct"
-        },
-        {
-          "name": "pour_balls_into_vase",
-          "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/pour_balls_into_vase.py",
-          "quote": "templates = [\"Pour all the balls from the cup into the vase.\"]",
-          "objective": "Pour seven free balls from a cup into a vase.",
-          "physical_skill": "Manipulate and tilt a container to transfer loose spheres in bulk.",
-          "success_condition": "All seven spheres are inside the vase, the cup is upright, and the robot returns to origin.",
-          "reason": "Both tasks make loss of free balls observable, but RoboDojo intentionally transfers the balls out of their original container. The candidate must keep balls contained within a moving recirculating block while its support changes; that is a different central ability and outcome.",
+          "name": "store_tools_in_toolbox",
+          "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/store_tools_in_toolbox.py",
+          "quote": "templates = [\"Place each tool into its matching position in the toolbox, then reset the robot arm.\"]",
+          "objective": "Place a hammer, pliers, tape measure, and wrench into matching toolbox positions.",
+          "physical_skill": "Grasp, orient, and place tools into shaped storage locations.",
+          "success_condition": "Each tool is near its matching functional point and covered by the toolbox; full score also requires open grippers and robot return.",
+          "reason": "The common hammer object does not establish overlap: RoboDojo never uses it to strike, transmit load through another tool, fracture a component, protect retained hardware, or create and recover fragments.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "RoboDojo separately covers precision insertion and loose-ball pouring, but no registered task combines them into continuous-support carriage transfer with no rolling-element loss."
+      "reason": "The complete RoboDojo registry includes hammer transport, insertion, fastening, and loose-object placement, but no task tests functional bimanual indirect-impact fracture and post-fracture fragment accounting."
     }
   ],
-  "candidate_digest": "ebe443d5dbf5df59f172c1c27be3442ac69f3bb5cedc8ab2e5f72765a0fa966b",
-  "at": "2026-11-14T12:58:57.266286+00:00",
+  "candidate_digest": "d23f2032540a93558934aea0117eac9c92fd0761385f2d0609001c77ae143183",
+  "at": "2026-11-14T14:25:02.752539+00:00",
   "definition_manifests": {
-    "LIBERO": "4f3e0508924bd03815e7bbf5203ecebce8c9dc3f83686acbc4c16eefdc5d9534",
-    "RoboCasa": "89b265640feb438586ebcd27f95b4247c28803e2a0e686618e78568053d52186",
-    "SimplerEnv": "c1cf9070768ddcfb0bf210ff304bf285d5d9505ed2fe3206edecc120842add18",
-    "BEHAVIOR": "7360944c8b02566eac96d1a57060dd9433615601fb585453ce4c1259b53e7714",
-    "DataCenterBench": "5ba4193e4d9f2e875efe21f3fef9eb13e0e9b093ef04fdc73cadcf750ace0bdd",
-    "RoboDojo": "cc88ad10c149019f89223a59ff7550fcdb8b86d2610107947830414513d2e1d0"
+    "LIBERO": "7d8af6e88f7a767294a0285eed6d10119a6d6f9214a82962452cc0fd8d7eab2b",
+    "RoboCasa": "f9e7e7e3cc821cfbba556feffcf7d8705bb31ef93e05c683b9a6828baa59f2de",
+    "SimplerEnv": "475b57e6b16c4346b24618a8fb18c6613771691e30d6ee96b819fef3662ab57c",
+    "BEHAVIOR": "aef13936a5d027dc7b581e93efe4285ae740d4dc7a02b202d0790f269004b0fc",
+    "DataCenterBench": "2e69d413fa0c07cce00c7ae79445d4d3030e6d7676edfe55936a87c5c14ab2c3",
+    "RoboDojo": "c080787adf385192853dae6e956366e5da6fb210326aac204af977a4c527581d"
   }
 }
