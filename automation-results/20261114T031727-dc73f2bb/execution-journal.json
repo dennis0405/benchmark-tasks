@@ -47,19 +47,19 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 29871,
+    "supervisor_pid": 36654,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log",
-    "error": "novelty cancelled at batch boundary; partial evidence preserved",
+    "error": "all proposed candidates duplicate/uncertain; inspect selection-history.json",
     "approval": null,
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb",
     "remote_status": {
       "status": "blocked",
-      "error": "novelty cancelled at batch boundary; partial evidence preserved",
-      "type": "StateError",
-      "at": "2026-11-14T07:42:18.887672+00:00"
+      "error": "all proposed candidates duplicate/uncertain; inspect selection-history.json",
+      "type": "GateError",
+      "at": "2026-11-14T09:11:24.614063+00:00"
     },
     "compute": "running",
-    "revision": 11,
+    "revision": 12,
     "revision_request": "User objective remains: exclude connector insertion/release families, find a different industrial robot assembly/data-center maintenance task, retain industrial evidence + meaningful dexterity + all accepted/pending/team/benchmark novelty gates, and finish ONE environment/YAM demo/scorer/final Dream episode for pre-submission human review. No actual contest submission.\n\nRevision7: broaden the search again. Do not recycle blocked ER collet preassembly or clearance-setting/sensor-registering variants. In rev6, AZ-100 proximity switch registration overlapped active PR671 (bench-grinder rest/guard clearance adjustment and locking). ER32 still lacks the essential eccentric retention mechanism/compliance; AZ100 vertical screw adjustment had unsourced geometry. Source absence is not a novelty verdict. The automation now requires explicit feasibility_status and missing_evidence, and will NOT promote blocked/research-needed fallback candidates.\n\nFind several genuinely different work families with real primary procedures and enough geometry for a representative mechanically faithful full-scale fixture. Prioritize industrial robot end-stop shock absorber commissioning as ONE promising new lead, not mandatory selection:\n- Actual robot use: AAC AZ-100 Installation and Maintenance Manual section4.2.4 explicitly adjusts robot X/Z shock absorbers. https://www.peakstarps.com/specsheets/AAC_Series_AZ100_Manual.pdf\n- Manufacturer Enidine adjustable hydraulic shock absorber procedure: align impact surfaces, secure body, external stop before bottoming, begin adjustment0, cycle, increase if too soft, lock setting with hex-key set screw. https://www.enidine.com/getmedia/e5522e87-cf7c-4f9f-b124-f96a003d353f/Shock_Instructions.pdf\n- Manufacturer catalog has actual dimensions, stroke, energy/velocity rating and adjustment lock geometry: https://www.enidine.com/getmedia/a7869d50-7e11-41ab-80f5-7d788e925ec7/A4_Shock_Catalog_EN.pdf\nTest dynamic energy absorption/avoiding bottoming and setting retention rather than rebranding static gap setting or generic knob rotation. Validate whether physically actuating the numbered collar and hex-key lock while preserving setting presents a real dexterous task for YAM. A purely cognitive tuning exercise is not enough. Do not claim manufacturer's force curve was calibrated if using a disclosed representative damper model; actual motion, contacts and measurable stopping behavior must be simulated. If not valid/distinct/feasible, reject and choose other sourced work.\n\nExplore other independently documented families as needed, such as robot-tool spring balancer preload/lock adjustment, linear guide carriage/dummy-rail transfer preserving rolling elements, or other rigid-body tool/fixture maintenance operations with official full geometry. These are search leads only, NOT preapproved sources, physics, novelty or industrial importance. Avoid merely restyling rejected latch-and-pull, insertion, clearance-alignment, generic bolt tightening, generic gear meshing or module swapping.\n\nImportant feasibility interpretation: user allows new procedural assets and disclosed physical approximations. An exact manufacturer CAD or empirical force calibration is NOT categorically mandatory if actual industrial form/essential mechanics are reproduced in an explicitly representative fixture with numeric modeling assumptions and real simulation validation. Do not call an independently authored representative mechanism an exact product replica. Conversely missing essential mechanics, deleting important deformation, toy placeholders, fake latches, direct object state writes, dropping damage conditions or changing task objective to get success are forbidden. Obtain primary geometry/dimension evidence; isolate any model assumptions and validate their relevant behaviors and sensitivity before full demos.\n\nKeep at least3 distinct documented objectives, but do not pad with near-variants or knowingly blocked designs and then select them. If all sources currently acquired are insufficient, extend the primary-source search for different families. Existing sources/index and operator-source-notes are available; source originals are private reference only. Ready requires sufficient essential geometry and runtime feasibility; missing critical facts -> research-needed/blocked. Recheck all required catalog records and six suites. One final Dream episode only after all real physics/YAM demo/scorer/replay/controls/export gates. Preserve same run/branch, stop GPU for review, no media upload/PR until explicit approval.\n\n\nRevision10 primary-source refinement (supersedes any stale selected/candidate artifacts):\nThe acquired Enidine manufacturer-authored catalog mirror is now source_id s-90765d9ec51b37b3 in input/sources.json, actual PDF SHA2569391dbf7de519a46b5bcde585cfe3cd085df219f616826ad332c2b3b42955544, URL https://www.omni-tec.it/wp-content/uploads/2017/11/enidine-catalog_en.pdf . Treat original Enidine getmedia URLs as failed acquisitions. Reference the actual acquired catalog edition; original PDF/CAD must remain private reference, author procedural task assets independently.\n\nThe previous HDA proposal mixed HDA3.0 dimensions with a HDA4.0 control description, and failed to consider the catalog's 5%-of-rated-energy operating minimum, large nominal return force and actuator loads. Do not build that mixed model. Prefer researching one consistently documented SMALL ECO OEM model for a compact representative robot-axis commissioning test fixture, rather than pretending it is an exact AAC EFM replacement. AAC establishes real robot maintenance relevance; Enidine independently defines the selected actual damper geometry and mechanism. Do not assert the two manufacturers' parts are interchangeable.\n\nRelevant acquired catalog pages: printed17 (PDF20) gives small-model stroke/energy ratings; printed19-21 (PDF22-24) gives mechanism and dimensions/data; printed35 (PDF38) explicitly documents 180-degree adjustment with setscrew locking for ECO OEM0.1M-0.5M and 360-degree adjustment with setscrew locking for ECO OEM1.0M. Actual excerpt: '180° adjustment with setscrew locking ECO OEM 0.1M - ECO OEM 0.5M'. Use the real collar and set-screw mechanism for the selected small model, not the HDA separate metering screw copied to an OEM body.\nSmall examples: ECO OEM0.15M/0.25M have 10mm stroke and7Nm/c capacity; OEM0.35M has12mm and19Nm/c; OEM0.5M has12mm and31Nm/c; OEM1.0M has25mm and81Nm/c. Verify exact selected-model rows, return force, dimensions and setting/velocity chart in source, do not rely on this operator lead alone. Observe the published minimum-energy rule (e.g.5% where applicable), relevant velocity range, return force and all limits; merely being below a very large maximum rating does not validate an arbitrarily weak toy damper. A compact guarded native PhysX motor/spring carriage may supply repeatable physically modeled test impacts, triggered by an actual robot-operated control with hands clear. No direct pose/velocity injections or hidden demo-stage flags; manipulation must physically turn the collar and lock its set screw. Disclose the lumped hydraulic approximation, validate contact, energy balance, soft/overdamped controls and setting retention before full YAM demos.\n\nFeasibility_status ready means sufficient primary geometry/mechanism and a plausible pinned-YAM plan to ATTEMPT component physics construction. It is not a claim the later mandatory physics/YAM tests already passed. Do not require completion of those downstream tests as a prerequisite for ideation readiness. Conversely genuinely missing essential geometry/mechanics must remain blocked. Unpublished friction/force coefficients may be bounded explicit modeling assumptions subjected to measured simulation checks; do not claim manufacturer calibration.\n\nCurrent failure: an unselected EWA15 table quote was not actually present verbatim ('EWA-15 9~15 1.3 Approx.4.7'). Read the actual source and copy a genuine supported snippet preserving Unicode and cell order; do not fabricate a flattened table quote. Keep alternate ideas industrially sourced but never promote blocked alternatives. Reuse current acquired benchmark sources. Full all-category accepted/pending/team/benchmark novelty checks remain mandatory at selection and completion. No connector/ER32/sensor-gap/copy variants. Finish one genuine environment, YAM demos, scorer, single final Dream episode and stopped-for-review preserved fork branch; no actual contest upload/PR.\n",
     "resume_from_stage": "novelty"
   },
@@ -4935,6 +4935,2034 @@
       "run": "20261114T031727-dc73f2bb",
       "at": "2026-11-14T07:42:38.083715+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"novelty cancelled at batch boundary; partial evidence preserved\"}"
+    },
+    {
+      "seq": 836,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:43:12.168657+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 837,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:43:44.692468+00:00",
+      "data": "{\"revision\": 12, \"revision_request\": \"User objective remains: exclude connector insertion/release families, find a different industrial robot assembly/data-center maintenance task, retain industrial evidence + meaningful dexterity + all accepted/pending/team/benchmark novelty gates, and finish ONE environment/YAM demo/scorer/final Dream episode for pre-submission human review. No actual contest submission.\\n\\nRevision7: broaden the search again. Do not recycle blocked ER collet preassembly or clearance-setting/sensor-registering variants. In rev6, AZ-100 proximity switch registration overlapped active PR671 (bench-grinder rest/guard clearance adjustment and locking). ER32 still lacks the essential eccentric retention mechanism/compliance; AZ100 vertical screw adjustment had unsourced geometry. Source absence is not a novelty verdict. The automation now requires explicit feasibility_status and missing_evidence, and will NOT promote blocked/research-needed fallback candidates.\\n\\nFind several genuinely different work families with real primary procedures and enough geometry for a representative mechanically faithful full-scale fixture. Prioritize industrial robot end-stop shock absorber commissioning as ONE promising new lead, not mandatory selection:\\n- Actual robot use: AAC AZ-100 Installation and Maintenance Manual section4.2.4 explicitly adjusts robot X/Z shock absorbers. https://www.peakstarps.com/specsheets/AAC_Series_AZ100_Manual.pdf\\n- Manufacturer Enidine adjustable hydraulic shock absorber procedure: align impact surfaces, secure body, external stop before bottoming, begin adjustment0, cycle, increase if too soft, lock setting with hex-key set screw. https://www.enidine.com/getmedia/e5522e87-cf7c-4f9f-b124-f96a003d353f/Shock_Instructions.pdf\\n- Manufacturer catalog has actual dimensions, stroke, energy/velocity rating and adjustment lock geometry: https://www.enidine.com/getmedia/a7869d50-7e11-41ab-80f5-7d788e925ec7/A4_Shock_Catalog_EN.pdf\\nTest dynamic energy absorption/avoiding bottoming and setting retention rather than rebranding static gap setting or generic knob rotation. Validate whether physically actuating the numbered collar and hex-key lock while preserving setting presents a real dexterous task for YAM. A purely cognitive tuning exercise is not enough. Do not claim manufacturer's force curve was calibrated if using a disclosed representative damper model; actual motion, contacts and measurable stopping behavior must be simulated. If not valid/distinct/feasible, reject and choose other sourced work.\\n\\nExplore other independently documented families as needed, such as robot-tool spring balancer preload/lock adjustment, linear guide carriage/dummy-rail transfer preserving rolling elements, or other rigid-body tool/fixture maintenance operations with official full geometry. These are search leads only, NOT preapproved sources, physics, novelty or industrial importance. Avoid merely restyling rejected latch-and-pull, insertion, clearance-alignment, generic bolt tightening, generic gear meshing or module swapping.\\n\\nImportant feasibility interpretation: user allows new procedural assets and disclosed physical approximations. An exact manufacturer CAD or empirical force calibration is NOT categorically mandatory if actual industrial form/essential mechanics are reproduced in an explicitly representative fixture with numeric modeling assumptions and real simulation validation. Do not call an independently authored representative mechanism an exact product replica. Conversely missing essential mechanics, deleting important deformation, toy placeholders, fake latches, direct object state writes, dropping damage conditions or changing task objective to get success are forbidden. Obtain primary geometry/dimension evidence; isolate any model assumptions and validate their relevant behaviors and sensitivity before full demos.\\n\\nKeep at least3 distinct documented objectives, but do not pad with near-variants or knowingly blocked designs and then select them. If all sources currently acquired are insufficient, extend the primary-source search for different families. Existing sources/index and operator-source-notes are available; source originals are private reference only. Ready requires sufficient essential geometry and runtime feasibility; missing critical facts -> research-needed/blocked. Recheck all required catalog records and six suites. One final Dream episode only after all real physics/YAM demo/scorer/replay/controls/export gates. Preserve same run/branch, stop GPU for review, no media upload/PR until explicit approval.\\n\\n\\nRevision10 primary-source refinement (supersedes any stale selected/candidate artifacts):\\nThe acquired Enidine manufacturer-authored catalog mirror is now source_id s-90765d9ec51b37b3 in input/sources.json, actual PDF SHA2569391dbf7de519a46b5bcde585cfe3cd085df219f616826ad332c2b3b42955544, URL https://www.omni-tec.it/wp-content/uploads/2017/11/enidine-catalog_en.pdf . Treat original Enidine getmedia URLs as failed acquisitions. Reference the actual acquired catalog edition; original PDF/CAD must remain private reference, author procedural task assets independently.\\n\\nThe previous HDA proposal mixed HDA3.0 dimensions with a HDA4.0 control description, and failed to consider the catalog's 5%-of-rated-energy operating minimum, large nominal return force and actuator loads. Do not build that mixed model. Prefer researching one consistently documented SMALL ECO OEM model for a compact representative robot-axis commissioning test fixture, rather than pretending it is an exact AAC EFM replacement. AAC establishes real robot maintenance relevance; Enidine independently defines the selected actual damper geometry and mechanism. Do not assert the two manufacturers' parts are interchangeable.\\n\\nRelevant acquired catalog pages: printed17 (PDF20) gives small-model stroke/energy ratings; printed19-21 (PDF22-24) gives mechanism and dimensions/data; printed35 (PDF38) explicitly documents 180-degree adjustment with setscrew locking for ECO OEM0.1M-0.5M and 360-degree adjustment with setscrew locking for ECO OEM1.0M. Actual excerpt: '180\\u00b0 adjustment with setscrew locking ECO OEM 0.1M - ECO OEM 0.5M'. Use the real collar and set-screw mechanism for the selected small model, not the HDA separate metering screw copied to an OEM body.\\nSmall examples: ECO OEM0.15M/0.25M have 10mm stroke and7Nm/c capacity; OEM0.35M has12mm and19Nm/c; OEM0.5M has12mm and31Nm/c; OEM1.0M has25mm and81Nm/c. Verify exact selected-model rows, return force, dimensions and setting/velocity chart in source, do not rely on this operator lead alone. Observe the published minimum-energy rule (e.g.5% where applicable), relevant velocity range, return force and all limits; merely being below a very large maximum rating does not validate an arbitrarily weak toy damper. A compact guarded native PhysX motor/spring carriage may supply repeatable physically modeled test impacts, triggered by an actual robot-operated control with hands clear. No direct pose/velocity injections or hidden demo-stage flags; manipulation must physically turn the collar and lock its set screw. Disclose the lumped hydraulic approximation, validate contact, energy balance, soft/overdamped controls and setting retention before full YAM demos.\\n\\nFeasibility_status ready means sufficient primary geometry/mechanism and a plausible pinned-YAM plan to ATTEMPT component physics construction. It is not a claim the later mandatory physics/YAM tests already passed. Do not require completion of those downstream tests as a prerequisite for ideation readiness. Conversely genuinely missing essential geometry/mechanics must remain blocked. Unpublished friction/force coefficients may be bounded explicit modeling assumptions subjected to measured simulation checks; do not claim manufacturer calibration.\\n\\nCurrent failure: an unselected EWA15 table quote was not actually present verbatim ('EWA-15 9~15 1.3 Approx.4.7'). Read the actual source and copy a genuine supported snippet preserving Unicode and cell order; do not fabricate a flattened table quote. Keep alternate ideas industrially sourced but never promote blocked alternatives. Reuse current acquired benchmark sources. Full all-category accepted/pending/team/benchmark novelty checks remain mandatory at selection and completion. No connector/ER32/sensor-gap/copy variants. Finish one genuine environment, YAM demos, scorer, single final Dream episode and stopped-for-review preserved fork branch; no actual contest upload/PR.\\n\", \"approval\": null}"
+    },
+    {
+      "seq": 838,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:43:44.692902+00:00",
+      "data": "{\"resume_from_stage\": \"novelty\"}"
+    },
+    {
+      "seq": 839,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:43:44.695682+00:00",
+      "data": "{\"supervisor_pid\": 36654, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log\"}"
+    },
+    {
+      "seq": 840,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:43:44.771473+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 841,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:45:01.131449+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 842,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:46:03.283957+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 843,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:46:40.697266+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb\"}"
+    },
+    {
+      "seq": 844,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:46:56.636265+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 845,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:47:12.098051+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 846,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:47:27.548115+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 847,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:47:43.008298+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 848,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:47:58.485734+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 849,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:48:13.941581+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 850,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:48:29.397844+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 851,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:48:44.809446+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 852,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:49:00.233572+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 853,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:49:15.695448+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 854,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:49:31.158258+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 855,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:49:46.612962+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 856,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:50:02.083956+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 857,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:50:17.536850+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 858,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:50:33.009468+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 859,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:50:48.471901+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 860,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:51:03.934946+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 861,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:51:19.397123+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 862,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:51:34.858734+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 863,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:51:50.322609+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 864,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:52:05.783847+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 865,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:52:21.349167+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 866,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:52:36.797240+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 867,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:52:52.275012+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 868,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:53:07.693516+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 869,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:53:23.200328+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 870,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:53:38.648698+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 871,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:53:54.069966+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 872,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:54:09.486894+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 873,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:54:24.948211+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 874,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:54:40.364012+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 875,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:54:55.860704+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 876,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:55:11.279583+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 877,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:55:26.696197+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 878,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:55:42.158805+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 879,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:55:57.622111+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 880,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:56:13.084033+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 881,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:56:28.546522+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 882,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:56:44.009951+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 883,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:56:59.571746+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 884,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:57:15.036794+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 885,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:57:30.499319+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 886,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:57:45.961886+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 887,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:58:01.425130+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 888,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:58:16.874306+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 889,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:58:32.351472+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 890,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:58:47.799888+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 891,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:59:03.262186+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 892,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:59:18.737319+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 893,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:59:34.159383+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 894,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T07:59:49.662629+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 895,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:00:05.084245+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 896,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:00:20.584975+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 897,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:00:36.048995+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 898,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:00:51.501952+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 899,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:01:06.997771+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 900,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:01:22.538044+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 901,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:01:38.004038+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 902,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:01:53.469025+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 903,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:02:08.893424+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 904,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:02:24.377402+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 905,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:02:39.853612+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 906,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:02:55.319850+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 907,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:03:10.784132+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 908,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:03:26.244086+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 909,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:03:41.703888+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 910,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:03:57.166759+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 911,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:04:12.629310+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 912,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:04:28.091578+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 913,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:04:43.506172+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 914,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:04:59.003287+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 915,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:05:14.415086+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 916,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:05:29.941271+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 917,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:05:45.503950+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 918,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:06:00.969863+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 919,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:06:16.431341+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 920,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:06:31.883582+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 921,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:06:47.356495+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 922,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:07:02.820289+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 923,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:07:18.271384+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 924,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:07:33.746192+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 925,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:07:49.207675+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 926,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:08:04.625954+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 927,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:08:20.133550+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 928,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:08:35.595816+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 929,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:08:51.057784+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 930,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:09:06.519645+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 931,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:09:21.973126+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 932,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:09:37.545695+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 933,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:09:53.004829+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 934,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:10:08.577066+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 935,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:10:24.024013+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 936,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:10:39.501150+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 937,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:10:54.956479+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 938,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:11:10.417874+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 939,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:11:25.991267+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 940,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:11:41.553130+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 941,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:11:56.982439+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 942,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:12:12.481743+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 943,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:12:27.902652+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 944,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:12:43.406019+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 945,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:12:58.862672+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 946,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:13:14.328235+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 947,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:13:29.751151+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 948,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:13:45.257355+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 949,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:14:00.820061+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 950,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:14:16.386285+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 951,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:14:31.941617+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 952,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:14:47.367417+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 953,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:15:02.979154+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 954,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:15:18.448429+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 955,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:15:34.004560+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 956,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:15:49.469863+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 957,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:16:04.900196+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 958,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:16:20.496645+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 959,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:16:35.959871+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 960,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:16:51.524329+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 961,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:17:06.937879+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 962,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:17:22.448663+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 963,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:17:37.891652+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 964,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:17:53.477498+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 965,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:18:08.942920+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 966,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:18:24.508352+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 967,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:18:39.955860+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 968,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:18:55.431301+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 969,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:19:10.893125+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 970,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:19:26.356333+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 971,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:19:41.819145+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 972,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:19:57.267825+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 973,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:20:12.730144+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 974,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:20:28.175766+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 975,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:20:43.653068+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 976,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:20:59.069255+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 977,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:21:14.487142+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 978,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:21:29.935736+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 979,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:21:45.416722+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 980,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:22:00.878865+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 981,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:22:16.292859+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 982,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:22:31.795938+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 983,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:22:47.248337+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 984,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:23:02.707128+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 985,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:23:18.175090+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 986,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:23:33.640261+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 987,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:23:49.087602+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 988,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:24:04.494189+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 989,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:24:19.913727+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 990,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:24:35.330451+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 991,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:24:50.752665+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 992,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:25:06.198139+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 993,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:25:21.661153+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 994,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:25:37.072418+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 995,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:25:52.473624+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 996,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:26:07.881145+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 997,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:26:23.293812+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 998,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:26:38.704323+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 999,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:26:54.111357+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1000,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:27:09.600301+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1001,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:27:25.065576+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1002,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:27:40.517669+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1003,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:27:55.990631+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1004,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:28:11.453047+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1005,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:28:26.874990+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1006,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:28:42.377798+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1007,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:28:57.797321+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1008,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:29:13.209935+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1009,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:29:28.617930+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1010,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:29:44.125837+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1011,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:29:59.528796+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1012,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:30:14.950034+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1013,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:30:30.411101+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1014,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:30:45.873494+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1015,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:31:01.439262+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1016,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:31:16.900745+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1017,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:31:32.363363+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1018,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:31:47.811618+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1019,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:32:03.286511+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1020,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:32:18.751011+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1021,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:32:34.153459+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1022,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:32:49.567798+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1023,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:33:05.020524+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1024,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:33:20.426114+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1025,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:33:35.849619+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1026,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:33:51.311533+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1027,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:34:06.730512+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1028,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:34:22.142843+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1029,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:34:37.596395+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1030,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:34:53.069979+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1031,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:35:08.528921+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1032,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:35:23.982461+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1033,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:35:39.446336+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1034,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:35:54.918648+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1035,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:36:10.381747+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1036,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:36:25.831380+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1037,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:36:41.306351+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1038,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:36:56.756027+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1039,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:37:12.231824+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1040,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:37:27.681915+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1041,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:37:43.101560+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1042,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:37:58.619228+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1043,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:38:14.081827+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1044,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:38:29.627756+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1045,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:38:45.081035+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1046,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:39:00.492547+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1047,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:39:15.920265+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1048,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:39:31.384684+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1049,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:39:46.842171+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1050,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:40:02.319349+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1051,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:40:17.767805+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1052,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:40:33.244511+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1053,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:40:48.694528+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1054,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:41:04.110406+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1055,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:41:19.527689+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1056,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:41:34.993078+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1057,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:41:50.454548+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1058,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:42:05.917588+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1059,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:42:21.380020+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1060,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:42:36.830683+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1061,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:42:52.304652+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1062,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:43:07.753735+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1063,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:43:23.229179+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1064,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:43:38.655687+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1065,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:43:54.154828+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1066,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:44:09.616491+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1067,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:44:25.082500+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1068,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:44:40.532015+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1069,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:44:56.004542+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1070,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:45:11.467212+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1071,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:45:26.891217+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1072,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:45:42.392393+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1073,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:45:57.839877+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1074,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:46:13.318055+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1075,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:46:28.780012+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1076,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:46:44.228493+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1077,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:46:59.704846+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1078,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:47:15.121863+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1079,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:47:30.629136+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1080,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:47:46.093121+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1081,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:48:01.555083+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1082,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:48:16.978423+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1083,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:48:32.479756+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1084,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:48:47.896704+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1085,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:49:03.307527+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1086,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:49:18.771696+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1087,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:49:34.227482+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1088,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:49:49.643402+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1089,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:50:05.152308+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1090,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:50:20.571271+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1091,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:50:36.077733+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1092,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:50:51.540277+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1093,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:51:06.963907+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1094,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:51:22.465320+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1095,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:51:37.886719+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1096,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:51:53.308052+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1097,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:52:08.749991+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1098,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:52:24.201072+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1099,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:52:39.777007+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1100,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:52:55.202231+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1101,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:53:10.692596+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1102,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:53:26.154884+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1103,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:53:41.627596+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1104,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:53:57.048820+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1105,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:54:12.472771+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1106,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:54:27.882408+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1107,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:54:43.375688+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1108,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:54:58.835766+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1109,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:55:14.285011+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1110,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:55:29.750916+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1111,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:55:45.163339+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1112,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:56:00.571671+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1113,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:56:16.047836+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1114,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:56:31.502194+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1115,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:56:46.918476+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1116,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:57:02.436506+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1117,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:57:17.870147+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1118,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:57:33.359758+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1119,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:57:48.823691+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1120,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:58:04.258553+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1121,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:58:19.734711+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1122,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:58:35.211751+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1123,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:58:50.659069+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1124,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:59:06.135930+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1125,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:59:21.598279+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1126,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:59:37.060433+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1127,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T08:59:52.621880+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1128,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:00:08.034100+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1129,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:00:23.640508+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1130,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:00:39.061221+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1131,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:00:54.480478+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1132,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:01:09.894502+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1133,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:01:25.401403+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1134,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:01:40.850649+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1135,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:01:56.325552+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1136,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:02:11.790913+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1137,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:02:27.253521+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1138,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:02:42.713354+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1139,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:02:58.116331+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1140,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:03:13.539862+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1141,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:03:28.998673+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1142,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:03:44.415408+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1143,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:03:59.821013+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1144,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:04:15.235150+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1145,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:04:30.743628+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1146,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:04:46.208928+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1147,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:05:01.668736+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1148,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:05:17.133227+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1149,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:05:32.596625+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1150,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:05:48.009378+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1151,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:06:03.521395+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1152,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:06:18.938600+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1153,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:06:34.434575+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1154,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:06:49.906248+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1155,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:07:05.371196+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1156,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:07:20.834494+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1157,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:07:36.296843+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1158,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:07:51.704979+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1159,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:08:07.222199+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1160,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:08:22.684075+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1161,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:08:38.147385+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1162,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:08:53.594651+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1163,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:09:09.061466+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1164,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:09:24.475957+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1165,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:09:39.982254+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1166,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:09:55.459344+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1167,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:10:10.924638+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1168,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:10:26.345164+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1169,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:10:41.846621+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1170,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:10:57.249463+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1171,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:11:12.674346+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T07:46:41.248116+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 1172,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:11:28.084603+00:00",
+      "data": "{\"remote_status\": {\"status\": \"blocked\", \"error\": \"all proposed candidates duplicate/uncertain; inspect selection-history.json\", \"type\": \"GateError\", \"at\": \"2026-11-14T09:11:24.614063+00:00\"}, \"stage\": null}"
+    },
+    {
+      "seq": 1173,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T09:11:47.450266+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"all proposed candidates duplicate/uncertain; inspect selection-history.json\"}"
     }
   ],
   "effects": {

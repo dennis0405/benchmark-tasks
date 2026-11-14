@@ -1,0 +1,31 @@
+{
+  "verdict": "blocked",
+  "findings": [
+    "Novelty is unresolved against “Calibrate a torque limiting clutch against two proof loads” (https://github.com/robocurve/benchmark-tasks/pull/1110). Both tasks iteratively adjust and lock a mechanical setting using repeated physical proof responses, while PR 1110 has no available specification, procedure, thresholds, or scoring rubric; distinction cannot be established.",
+    "Coverage is likewise unresolved for “Commission a linear encoder after a readhead adjustment” (https://github.com/robocurve/benchmark-tasks/pull/811) and “Commission a camera at two inspection depths” (https://github.com/robocurve/benchmark-tasks/pull/819). Their available records omit every specification version and the physical adjustment/verification rubrics needed for comparison.",
+    "The six-suite gate is incomplete. The acquired LIBERO source is benchmark registration code rather than the complete task definitions; the RoboCasa source is a benchmarking overview rather than its registered task list; and the RoboDojo source is only a directory listing. Therefore potentially similar objectives cannot be excluded from LIBERO, RoboCasa, or RoboDojo using original suite definitions. DataCenterBench does explicitly list “Turn a knob” and “Tighten a thumbscrew” (https://robocurve.org/datacenterbench/); these are simpler static operations and are distinct from iterative dynamic damper commissioning, but this does not cure the missing suite coverage.",
+    "The existing novelty artifact reports 2,210/2,210 catalog comparisons, yet retains explicit uncertainty for PR 1110 and other records. A complete comparison count cannot support a pass where potentially overlapping source evidence remains unavailable.",
+    "The candidate rubric is not implementation-ready as written: “excessive rebound,” “overload,” collar-drift tolerance, witness torque, and allowable locking torque/thread damage remain nonnumeric or deferred. These unresolved success conditions prevent an evidence-backed claim that the eventual scorer will preserve the stated industrial objective without lowering criteria.",
+    "The current batch records—Connect four winning move (PR 1701), Jigsaw final piece (PR 1719), Matchstick math (PR 1721), Rush hour red car (PR 1722), Kerplunk (PR 1736), Buzz wire (PR 1737), Pick up sticks (PR 1738), Move a stereo microscope into its storage tray (PR 1783), Reconnect a car battery's positive cable (PR 1945), and Filter-cake scrape (PR 1983)—are distinct in objective, manipulation mechanism, and terminal outcome. Their record files were read completely, but they do not resolve the blockers above.",
+    "No environment code, component-physics validation, YAM demonstrations, scorer evidence, traces, videos, control runs, or final evaluation artifacts exist in the inspected artifact set; consequently no downstream physics or full-demo success can be asserted."
+  ],
+  "evidence_paths": [
+    "input/request.json",
+    "input/last-failure.json",
+    "artifacts/selected.json",
+    "artifacts/novelty.json",
+    "input/catalog.json",
+    "input/benchmark-sources.json",
+    "input/novelty-batch.json",
+    "input/novelty-records/6a8081cfee839879a1a41abc319c4d92f79954631ba64b28439c3e91176cce42.json",
+    "input/novelty-records/ef9212ba7a010d8a8f48bea70a443559c6186caec1690edd7c974f2543fe8521.json",
+    "input/novelty-records/28350c711dcd7e9946f8f0ec678b57d19a1eadb62846905b39f39396d0959a2a.json",
+    "input/novelty-records/c333bffab32384a100ac29d657dc9f473dbbf3ea090023467ca5448ffebe1262.json",
+    "input/novelty-records/1b56bd7fd87c5d824dda2704fd2931871c464e370f9bd225e734292ad492fb25.json",
+    "input/novelty-records/d1c1ab09db272eac293db65f1ffc89ff38ceaf6a73f1c474def7279209c16316.json",
+    "input/novelty-records/5784da573abd5d1678726db3fba0943e3410f29643342f230589b1936e652820.json",
+    "input/novelty-records/c856f687df69c92cefab1cbe47724a2737805879ccf89f29d0b5c82b95bf1223.json",
+    "input/novelty-records/a6d86355a64a50134b3463a85876e75d8e6db4ad267b0299f1afca88687c58bf.json",
+    "input/novelty-records/4dc2cdcb4c62e0e8664f38ae7733e34c4448f512f11ae6b043ff98b54fd047bc.json"
+  ]
+}

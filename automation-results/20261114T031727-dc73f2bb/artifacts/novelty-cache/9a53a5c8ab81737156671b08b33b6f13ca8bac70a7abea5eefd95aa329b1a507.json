@@ -1,0 +1,13 @@
+{
+  "context": "65efaad60d65c70f7b546f5faef2843a08710888247c5b874b6199a9b11fd4ab",
+  "record_digest": "136089a8fa69869383ff9ded3926310f40a82846c42c3f13c5cc49941f0fdee2",
+  "comparison": {
+    "id": "pr-1985",
+    "objective": "Distinct: reset loose tongue-and-groove pliers from groove 1 to groove 5 and leave them flat, versus commission and lock a robot-axis damper through repeated guarded impact cycles.",
+    "physical_skill": "Pliers require opening a hinged tool past 72°, sliding its joint 24 mm, reseating the tongue, and releasing it. Candidate requires recessed hex-key engagement, setscrew loosening/retightening, counterholding, fine collar rotation, physical cycle-control actuation, and feedback-driven adjustment from dynamic impacts. Generic bimanual stabilization is the only material shared primitive.",
+    "success_condition": "Pliers: groove-5 seating within 1.5 mm, withstand a 5 N lock test with under 1 mm motion, lie flat and untouched for 1 s. Candidate: two consecutive ≥0.85 J cycles within the rated velocity range, ≤12 mm piston travel, no hard-stop strike/bottoming/overload/excessive rebound, and retained collar setting after witness torque. Candidate omits numeric thresholds for excessive rebound, overload, and collar-drift tolerance, but these gaps do not plausibly make it the pliers-reset task.",
+    "verdict": "distinct",
+    "reason": "The tested ability changes from one-shot passive hand-tool joint reconfiguration to tool-mediated locking plus iterative dynamic-response commissioning under energy, stroke, rebound, and retention constraints. Both complete indexed spec versions were read and describe the same pliers task; geometry or industrial naming is not the basis for this distinction."
+  },
+  "review_notes": null
+}
