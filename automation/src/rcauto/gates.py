@@ -38,6 +38,33 @@ def inside(root, relative):
     return p
 
 
+def discard_generated_bytecode(root):
+    """Discard only recognizable caches for owned Python sources, never other data."""
+    root = Path(root).resolve()
+    directories = list(root.rglob("__pycache__"))
+    files = []
+    for directory in directories:
+        if directory.is_symlink() or not directory.is_dir():
+            raise GateError("unsafe Python cache directory")
+        for path in directory.iterdir():
+            match = re.fullmatch(r"(.+)\.cpython-\d+(?:\.opt-[0-2])?\.pyc", path.name)
+            source = directory.parent / (match[1] + ".py") if match else None
+            if (
+                path.is_symlink()
+                or not path.is_file()
+                or source is None
+                or source.is_symlink()
+                or not source.is_file()
+            ):
+                raise GateError("unrecognized file in Python cache: " + str(path))
+            files.append(path)
+    for path in files:
+        path.unlink()
+    for directory in directories:
+        directory.rmdir()
+    return [str(path.relative_to(root)) for path in files]
+
+
 def manifest(root, max_file_mb=50):
     root = Path(root)
     files = {}

@@ -20,6 +20,7 @@ from .catalog import get_source
 from .gates import (
     GateError,
     digest,
+    discard_generated_bytecode,
     file_hash,
     inside,
     manifest,
@@ -974,6 +975,7 @@ class Production:
                     "PRIVACY_CONSENT": "Y",
                 }
             )
+            discarded = discard_generated_bytecode(self.workspace / "task")
             source_before = manifest(self.workspace / "task")
             protected = {
                 str(p): file_hash(p)
@@ -988,6 +990,7 @@ class Production:
                 timeout=self.config.get("sim_timeout", 1800),
                 env=env,
             )
+            discarded += discard_generated_bytecode(self.workspace / "task")
             verify_manifest(self.workspace / "task", source_before)
             if any(not Path(p).is_file() or file_hash(p) != h for p, h in protected.items()):
                 raise GateError("diagnostic modified frozen controller inputs/contracts")
@@ -1008,6 +1011,7 @@ class Production:
                     report=script["report"],
                     report_sha256=file_hash(report_path),
                     source_digest=source_before["digest"],
+                    discarded_bytecode=discarded,
                     measurements=report,
                 )
             )
