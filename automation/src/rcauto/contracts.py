@@ -29,6 +29,8 @@ CANDIDATE = obj(
     evidence=array(EVIDENCE),
     asset_plan=S,
     risk=S,
+    feasibility_status={"type": "string", "enum": ["ready", "research-needed", "blocked"]},
+    missing_evidence=array(S),
 )
 CANDIDATES = obj(candidates=array(CANDIDATE), selected_id=S, selection_reason=S)
 REVIEW = obj(

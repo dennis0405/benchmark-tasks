@@ -441,6 +441,13 @@ class Production:
             "industrially meaningful manipulation objectives and select one. Cite exact verbatim "
             "source snippets with source_id and page/section. Keep extreme difficulty subordinate "
             "to validity and a feasible real robot demo. Match actual equipment geometry. "
+            "Mark feasibility_status ready only when source/geometry/mechanism evidence is "
+            "sufficient to build and test; list critical gaps in missing_evidence. Missing "
+            "manufacturer calibration can be an explicit testable modeling assumption, but "
+            "an unknown essential retention/contact mechanism cannot. An independently authored "
+            "representative fixture is allowed if its form and operation are grounded and it "
+            "does not claim an exact unverified product replica. Select only a ready candidate "
+            "with no critical missing_evidence. Unsupported alternatives must not be filler. "
             "Consider available pinned YAM runtime in input/runtime.json.",
             C.CANDIDATES,
         )
@@ -449,10 +456,12 @@ class Production:
         sources = read(self.workspace / "input" / "sources.json")
         for c in result["candidates"]:
             validate_evidence(c["evidence"], sources)
+        write_json(self.artifact("candidates"), result)
         selected = [c for c in result["candidates"] if c["id"] == result["selected_id"]]
         if len(selected) != 1:
             raise GateError("candidate selection ambiguous")
-        write_json(self.artifact("candidates"), result)
+        if selected[0].get("feasibility_status") != "ready" or selected[0].get("missing_evidence"):
+            raise GateError("selected candidate lacks build-ready industrial/physics evidence")
         write_json(self.artifact("selected"), selected[0])
         return {"selected": selected[0]["id"]}
 
@@ -460,8 +469,17 @@ class Production:
         selected = read(self.artifact("selected"))
         pool = read(self.artifact("candidates"))["candidates"]
         pool = [selected] + [c for c in pool if c["id"] != selected["id"]]
-        rejected = []
+        rejected, skipped = [], []
         for candidate in pool:
+            if candidate.get("feasibility_status") != "ready" or candidate.get("missing_evidence"):
+                skipped.append(
+                    {
+                        "candidate": candidate["id"],
+                        "reason": "not build-ready",
+                        "missing_evidence": candidate.get("missing_evidence", []),
+                    }
+                )
+                continue
             write_json(self.artifact("selected"), candidate)
             try:
                 result = compare_catalog(
@@ -481,12 +499,19 @@ class Production:
                 )
                 write_json(
                     self.artifact("selection-history"),
-                    {"rejected": rejected, "selected": candidate["id"]},
+                    {"rejected": rejected, "skipped": skipped, "selected": candidate["id"]},
                 )
                 return {"catalog_digest": result["catalog_digest"], "compared": result["compared"]}
             except GateError as e:
                 rejected.append({"candidate": candidate["id"], "reason": str(e)})
-        write_json(self.artifact("selection-history"), {"rejected": rejected, "selected": None})
+        write_json(
+            self.artifact("selection-history"),
+            {
+                "rejected": rejected,
+                "skipped": skipped,
+                "selected": None,
+            },
+        )
         raise GateError(
             "all proposed candidates duplicate/uncertain; inspect selection-history.json"
         )

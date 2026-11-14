@@ -191,6 +191,62 @@ def test_known_overlap_stops_before_unnecessary_batches_and_keeps_partial_eviden
     assert agent.calls == 1
 
 
+def test_novelty_fallback_never_promotes_a_candidate_with_missing_physics_evidence(tmp_path):
+    import json
+
+    from rcauto.engine import Production
+
+    store = Store(tmp_path / "state")
+    run = store.create("industrial task", instance="test")
+    production = Production(store, run["id"], None, {})
+    pool = [
+        {"id": "first", "feasibility_status": "ready", "missing_evidence": []},
+        {"id": "blocked", "feasibility_status": "blocked", "missing_evidence": ["retention lip"]},
+        {"id": "alternative", "feasibility_status": "ready", "missing_evidence": []},
+    ]
+    write_json(production.artifact("selected"), pool[0])
+    write_json(production.artifact("candidates"), {"candidates": pool})
+    write_json(
+        production.workspace / "input/catalog.json",
+        {
+            "complete": True,
+            "digest": "catalog",
+            "records": [{"id": "existing"}],
+        },
+    )
+
+    class Reviewer:
+        def __init__(self):
+            self.seen = []
+
+        def run(self, *args, **kwargs):
+            batch = json.loads((production.workspace / "input/novelty-batch.json").read_text())
+            candidate = batch["candidate"]["id"]
+            self.seen.append(candidate)
+            assert candidate != "blocked", "missing mechanism must not reach novelty fallback"
+            return {
+                "comparisons": [
+                    {
+                        "id": "existing",
+                        "objective": "Objective comparison",
+                        "physical_skill": "Skill comparison",
+                        "success_condition": "Outcome comparison",
+                        "reason": "Actual three-axis analysis",
+                        "verdict": "overlap" if candidate == "first" else "distinct",
+                    }
+                ]
+            }
+
+    reviewer = Reviewer()
+    production.agent = reviewer
+    production.review = lambda *args: {"verdict": "pass"}
+    production.novelty()
+    history = json.loads(production.artifact("selection-history").read_text())
+    assert history["selected"] == "alternative"
+    assert reviewer.seen == ["first", "alternative"]
+    assert history["skipped"][0]["candidate"] == "blocked"
+
+
 def test_approval_is_bound_to_report_and_payload(tmp_path):
     s = Store(tmp_path / "state")
     r = s.create("task", instance="vm")

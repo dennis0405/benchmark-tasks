@@ -30,6 +30,8 @@ class FixtureAgent:
                     ],
                     "asset_plan": "fixture",
                     "risk": "none",
+                    "feasibility_status": "ready",
+                    "missing_evidence": [],
                 }
                 for i in range(3)
             ]
