@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import signal
 import subprocess
 import sys
 
@@ -30,14 +31,19 @@ def main():
         source=str(source),files=hashes,runner=args.runner,arguments=remaining,
         note="Private execution copy; no running episode imports the mutable source task tree"),indent=2))
     env=dict(os.environ,PYTHONDONTWRITEBYTECODE="1")
-    result=subprocess.run([sys.executable,str(destination/"experiments"/args.runner),*remaining],env=env)
+    child=subprocess.Popen([sys.executable,str(destination/"experiments"/args.runner),*remaining],env=env)
+    def relay(signum,frame):
+        del frame
+        if child.poll() is None:child.send_signal(signum)
+    for signum in (signal.SIGINT,signal.SIGTERM):signal.signal(signum,relay)
+    returncode=child.wait()
     changed=[name for name,digest in hashes.items()
              if not (destination/name).is_file() or
              hashlib.sha256((destination/name).read_bytes()).hexdigest()!=digest]
     (destination/"post-run-source-check.json").write_text(json.dumps(dict(
-        unchanged=not changed,changed_files=changed,child_exit_code=result.returncode),indent=2))
+        unchanged=not changed,changed_files=changed,child_exit_code=returncode),indent=2))
     if changed:raise SystemExit("Execution source snapshot changed during the episode")
-    raise SystemExit(result.returncode)
+    raise SystemExit(returncode)
 
 
 if __name__=="__main__":main()

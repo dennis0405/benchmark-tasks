@@ -44,7 +44,7 @@ def main():
         for step in sorted(set(args.steps)):
             if f"b_{step:05d}" not in states:
                 raise KeyError(f"No recorded step {step}")
-            for prefix in ("q","b","j","d","w","v","r"):
+            for prefix in ("q","b","j","d","w","v","r","e","cp","cg"):
                 key=f"{prefix}_{step:05d}"
                 if key in states:
                     selected[key]=states[key]

@@ -64,3 +64,27 @@ def scene_round(points:wp.array[wp.vec3],faces:wp.array[wp.vec3i],mesh:wp.uint64
         distance=triangle_segment_distance_sq(points[f[0]],points[f[1]],points[f[2]],p,q)
         if distance<radius*radius:hits+=1
     if hits:wp.atomic_add(counts,sid,hits)
+
+
+@wp.kernel
+def scene_ellipsoids(points:wp.array[wp.vec3],faces:wp.array[wp.vec3i],mesh:wp.uint64,
+                     body_q:wp.array[wp.transform],owners:wp.array[int],
+                     local:wp.array[wp.transform],scale:wp.array[wp.vec3],
+                     ids:wp.array[int],counts:wp.array[int]):
+    sid=ids[wp.tid()]
+    transform=local[sid]
+    if owners[sid]>=0:transform=wp.transform_multiply(body_q[owners[sid]],transform)
+    inverse=wp.transform_inverse(transform)
+    center=wp.transform_get_translation(transform)
+    axes=scale[sid]-wp.vec3(1.e-7)
+    radius=wp.max(axes[0],wp.max(axes[1],axes[2]))
+    query=wp.mesh_query_aabb(mesh,center-wp.vec3(radius),center+wp.vec3(radius))
+    hits=int(0)
+    for face_id in query:
+        f=faces[face_id]
+        a=wp.cw_div(wp.transform_point(inverse,points[f[0]]),axes)
+        b=wp.cw_div(wp.transform_point(inverse,points[f[1]]),axes)
+        c=wp.cw_div(wp.transform_point(inverse,points[f[2]]),axes)
+        nearest,_,__=triangle_closest_point(a,b,c,wp.vec3(0.))
+        if wp.dot(nearest,nearest)<1.:hits+=1
+    if hits:wp.atomic_add(counts,sid,hits)

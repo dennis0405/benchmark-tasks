@@ -313,7 +313,7 @@ class FoldController:
         # pad. Use the upstream pitched pressing pose and the WHOLE finger's
         # lowest collider, not just the long pad boxes. Re-evaluate after
         # reaching that wrist pose; the approach stays well above the flap.
-        from finger_geometry import low_offset
+        from finger_geometry import low_offset,plan_press_pose
         from scipy.spatial.transform import Rotation
         tcp,actual_quat=panel.ik.ee_pose(self.sim.state)
         delta=Rotation.from_quat(quat)*Rotation.from_quat(actual_quat).inv()
@@ -336,7 +336,15 @@ class FoldController:
             patch["kind"]="measured free rim, pressed vertically before creasing"
         self.marks.setdefault("press_plans",[]).append(dict(arm=arm,**patch))
         print("PRESS_PATCH",arm,patch,flush=True)
-        point=np.array([patch["x"],yc+sign*near,top+.0035])-lowest
+        travel=(sweep_end-near if sweep_end is not None else min(.04,max(0.,.070-near)))
+        dx=advance if advance is not None else (.006 if along_fold and not at_rim else 0.)
+        pose_plan=plan_press_pose(self.sim,arm,panel.ik,self.takes,self.film,
+            np.array([patch["x"],yc+sign*near,top+.0035]),top+self.press_floor_m,dx,sign*travel)
+        self.marks.setdefault("press_ik_plans",[]).append(dict(arm=arm,attempts=pose_plan["attempts"],selected=pose_plan["selected"]))
+        if pose_plan["selected"] is None:
+            self.failure=f"no reachable {arm} pressing approach/contact/stroke pose";return
+        quat,point,lowest=pose_plan["quat"],pose_plan["point"],pose_plan["lowest"]
+        print("PRESS_IK_PLAN",arm,pose_plan["selected"],flush=True)
         # Complete XY travel above the highest possible upright rim. The
         # former 25 mm pre-hover entered a 27 mm flap from its side.
         reached=yield from self.move({arm:point+[0,0,.0465]},{arm:quat},.12,60)
@@ -371,8 +379,6 @@ class FoldController:
             fraction=(float(np.clip((k/hz-1.)/sweep_seconds,0.,1.)) if sweep_end is not None else min(1.,k/(3.*hz)))
             # Keep the actual pressing tip on the 160 mm pouch. The former
             # side stroke ended at Y=95 mm, beyond its 80 mm half-width.
-            travel=(sweep_end-near if sweep_end is not None else min(.04,max(0.,.070-near)))
-            dx=advance if advance is not None else (.006 if along_fold and not at_rim else 0.)
             stroke=[dx*fraction,sign*travel*fraction,z-start[2]]
             panel.aim(start+stroke,quat,moving=leave_down or k<count-1)
             yield

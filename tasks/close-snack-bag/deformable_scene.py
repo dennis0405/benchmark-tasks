@@ -125,7 +125,7 @@ class PouchEntity(EntityPaper):
             particle_radius=material.particle_radius, label=self.name)
 
 
-def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None,self_filter_rings=0,self_radius=.0005,rebase_z=False,rigid_contact_ke=None,body_particle_buffer=None,board_skin_mm=0.,rigid_contact_threads=4,rigid_soft_dat=True,proxy_iterations=2,tool_rack_style="wide",proxy_mass_scale=1.,arm_gain_scale=1.,tool_parking_shift_x=0.,rigid_contact_model="alm",finger_contact_ke=None):
+def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None,self_filter_rings=0,self_radius=.0005,rebase_z=False,rigid_contact_ke=None,body_particle_buffer=None,board_skin_mm=0.,rigid_contact_threads=4,rigid_soft_dat=True,proxy_iterations=2,tool_rack_style="wide",proxy_mass_scale=1.,arm_gain_scale=1.,tool_parking_shift_x=0.,rigid_contact_model="alm",finger_contact_ke=None,with_contents=False,yield_curvature=100.,contents_mode="body_only"):
     from vbd_parallel import configure as configure_parallel
     contact_parallel=configure_parallel(rigid_contact_threads)
     if not 0.<=tool_parking_shift_x<=.06:raise ValueError("parking shift must be 0..6 cm")
@@ -150,7 +150,7 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
     # 1 GPa is a comparison hypothesis for a laminate, not a measured
     # bag. It remains below the 2.507 GPa MD value in the cited BOPP sheet.
     # Retaining rest-angle changes represents irreversible crease memory.
-    film=FilmMaterial(young=1e9 if material_profile=="laminate" else 1e8,
+    film=FilmMaterial(young=1e9 if material_profile=="laminate" else 1e8,yield_curvature=yield_curvature,
                       recovery_per_second=0. if material_profile in ("permanent","laminate") else .1)
     coeff = film.coefficients(min(.2 / cells[0], .16 / cells[1]))
     material = rss.replace(
@@ -258,6 +258,11 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
                             cells=cells, size=(.2, .16), material=material,
                             color=(.96, .58, .08), settle_frames=0, ready_start=ready_start,
                             structural_fk=coupling=="unified",finger_friction=finger_friction,contact_ke=contact_ke,arm_gain_scale=arm_gain_scale,finger_contact_ke=finger_contact_ke))
+    if with_contents:
+        if coupling!="unified" or workspace!="raised_flat" or rigid_only:
+            raise ValueError("Rigid contents currently require unified raised_flat film physics")
+        from deformable_contents import ContentsSpec
+        scene.add(ContentsSpec(board_height=height,coordinate_model=contents_mode))
     if with_clip:
         if coupling not in ("one_way","unified","hybrid"):
             raise ValueError("Clip contact requires one_way or fully unified VBD")
@@ -323,11 +328,19 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
     if ready_start:
         # Start-pose construction can warm the rigid solver. Restore this
         # declared episode reset once, then reset its internal state as well.
+        if with_contents:
+            # Studio's start-pose warmup settles free bodies. Do not pair
+            # those settled chip poses with a separately reset open film.
+            contents=env.scene.by_name["contents"]
+            coordinates=env.model.joint_q.numpy().copy()
+            coordinates[contents.coords]=contents.initial_coordinates
+            env.model.joint_q.assign(coordinates)
         for state in (env.pipeline.state_0, env.pipeline.state_1):
             state.joint_q.assign(env.model.joint_q)
             state.joint_qd.zero_()
             state.body_qd.zero_()
             newton.eval_fk(env.model, env.model.joint_q, env.model.joint_qd, state)
+        if with_contents:env.scene.by_name["contents"].reset(env.pipeline,None)
         env.pipeline.reset_solvers(flags=0)
         env.pipeline.reset_finite_flags()
         env.pipeline.invalidate_graph()
@@ -342,6 +355,14 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
     env.snack_board_height = height
     env.snack_ready_start = ready_start
     env.snack_with_clip = with_clip
+    env.snack_contents=dict(enabled=with_contents,fracture=False,calibrated=False)
+    if with_contents:
+        contents=env.scene.by_name["contents"]
+        geometry=("12 flat crackers, each two 24 x 36 x 2.4 mm fragments and a compliant seam; density 524 kg/m3"
+                  if contents_mode=="brittle" else "12 free ellipsoids, 48 x 36 x 2.4 mm; density 1000 kg/m3")
+        env.snack_contents.update(count=len(contents.chip_groups),total_mass_kg=float(env.model.body_mass.numpy()[list(contents.bodies)].sum()),
+            geometry=geometry,bodies=list(contents.bodies),chip_groups=contents.chip_groups,seams=contents.seams,
+            authored_reset=True,coordinate_model=contents_mode,joint_coordinate_count=len(contents.coords))
     env.snack_material_parameters=dict(profile=material_profile,**vars(film),**coeff,
         particle_radius_m=.0003,self_contact_interaction_m=self_radius)
     env.snack_material_parameters.update(tri_ke=material.tri_ke,tri_ka=material.tri_ka,

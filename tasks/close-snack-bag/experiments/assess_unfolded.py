@@ -65,6 +65,7 @@ def main():
                          bag_on_table=bool(q[:,2].min()>.72+result.get("world_z_offset_m",0.) and (q[:,0]>.2).all() and (q[:,0]<1.2).all() and (abs(q[:,1])<.6).all())))
     geometry=result.get("substep_geometry") or {}
     checks=dict(controller_completed=result["controller_completed"] and result["controller_failure"] is None,
+                contents_evaluation_in_scope=not result.get("contents",{}).get("enabled",False),
                 full_episode_without_component_reset=not result.get("initial_fold_imposed",False) and result.get("component_reset") is None,
                 uninterrupted=not result["interrupted"],all_finite=result["all_finite"],
                 initial_unfolded=trace[0]["fold"]["folds"][0]["median_angle_rad"]<.1,
@@ -75,6 +76,7 @@ def main():
                 no_observed_box_intersections=geometry.get("film_box_intersections")==0,
                 round_shapes_checked=geometry.get("checked_round_shapes",0)>0,
                 no_observed_round_intersections=geometry.get("film_round_intersections")==0,
+                no_observed_ellipsoid_intersections=geometry.get("film_ellipsoid_intersections",0)==0,
                 every_hold_force_window_observed=bool(rows) and all(
                     abs(t.get("force_window_s",0.)-1/hz)<1e-5 for t in trace if t["phase"]=="hands_free_hold"),
                 hands_free_hold_3s=summarize_hold(rows,hz)>=3.)

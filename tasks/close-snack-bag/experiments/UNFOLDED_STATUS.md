@@ -544,3 +544,59 @@ episode, excluding experiment evidence. This prevents lazy imports from
 reading edited live sources. New v28/v31/v57 execution trees are private
 copies. Earlier mutable-tree runs remain diagnostics with the frozen-source
 and import-timing limitation. No full fresh fold/clip/release/3 s result exists.
+
+### Contents, fracture fixtures and current limits
+
+The v57 tighter-guide experiment completes grasp/carry/blade placement and
+60 controlled watch steps. The gripper STILL HOLDS the clip throughout: this
+is neither tool release nor hands-free retention. Evidence is saved under
+`held-insert-v57`, with the exact execution tree in a verified source archive.
+The earlier verbal description including release was incorrect.
+
+Adding contents exposed duplicate FREE joints from `add_body()` plus an
+explicit free joint, and a reset that paired settled bodies with freshly
+reset film. Both were fixed using `add_link()` and explicit authored reset
+poses. `body-contents-rest-v39` has twelve free rigid ellipsoids, 26.06 g;
+2,400 observed steps have zero film/solid crossings and no contact overflow.
+A gravity-only test verifies that bodies without generalized coordinates
+remain dynamic. This avoids expanding the robot IK from 24 to 108 coordinates.
+The exact rest execution tree and selected states are archived in evidence.
+
+The independent observer now includes ellipsoid/triangle intersections;
+positive face-crossing and separated/translated controls pass on CPU/CUDA.
+Full v40/v41 folding nevertheless stops at 75/82 frames on two observed
+film/ellipsoid hits. These trajectories are invalid; tolerances were not
+relaxed. The next contents geometry uses flat cracker plates, two box-shaped
+fragments per cracker. v44 passes its 2,400-step resting geometry/capacity
+check with twelve crackers (26.08 g). Its seams are compliant but not yet
+fracture-enabled in that specific frozen run.
+
+A public Newton rod seam prototype passes negative/positive load controls:
+0.0001 Nm reaches 0.00182 rad and returns elastically; 0.01 Nm exceeds the
+0.12 rad threshold and remains disabled after unloading. No body pose is
+driven; material values and fracture thresholds are uncalibrated. Two seam
+bookkeeping tests verify irreversibility, unchanged fragment poses on model
+updates and preservation of unrelated joints. Rod material slots count as
+four coordinates per seam in the installed builder, so this richer model
+can trigger the studio's slower IK fallback again.
+
+The integrated fracture observer measures every physics step and commits
+joint disabling at the next control boundary (at most 50 ms at 20 Hz), then
+notifies VBD and invalidates its graph. Joint-enable flags and seam peaks are
+now recorded and restored with component checkpoints. v45 checks this
+integration. Contents grading, spillage and the final release are NOT yet
+validated. The current core assessor explicitly rejects contents-enabled
+episodes until their evaluation is implemented.
+
+The forward-stroke continuation v31 stays clear for 24,120 observed steps
+but does not finish folding and later fails a right-arm pressing pose.
+A host IK search finds a reachable right press by changing its closing-axis
+orientation; all approach/contact/stroke goals have sub-micrometre FK
+residuals. This is kinematic evidence only. The new pressing controller uses
+this selection and retains its actual-motion and geometry guards.
+
+The film's yield curvature is now explicit. The 10 /m candidate retains more
+plastic rest-angle change but v37 still fails the original overfold handoff
+at 1.66 rad. It is not a calibrated packaging material or a finished demo.
+The original 100 /m default is preserved for comparisons. No air-pressure
+model, public Arena integration, Dream inference or submission is completed.

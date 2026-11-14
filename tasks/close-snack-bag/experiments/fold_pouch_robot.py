@@ -24,8 +24,11 @@ def main():
     parser.add_argument("--coupling", choices=("one_way", "proxy", "unified", "hybrid"), default="one_way")
     parser.add_argument("--ready-start", action="store_true")
     parser.add_argument("--clip", action="store_true")
+    parser.add_argument("--contents",action="store_true")
+    parser.add_argument("--contents-mode",choices=("body_only","free_joint","brittle"),default="body_only")
     parser.add_argument("--checkpoint-every",type=int,default=120)
     parser.add_argument("--material-profile",choices=("derived","permanent","laminate","paper_matched"),default="derived")
+    parser.add_argument("--yield-curvature",type=float,default=100.)
     parser.add_argument("--stage",choices=("fold","fold_hold","regrasp","seal","clip_grasp","rest"),default="fold")
     parser.add_argument("--fold-handoff",choices=("overfold","upright_press"),default="overfold")
     parser.add_argument("--self-filter-rings",type=int,choices=(0,2),default=0)
@@ -95,6 +98,11 @@ def main():
         if not (args.stage=="seal" and args.table_insert and args.clip and args.drive):
             parser.error("a clip component seed requires --stage seal --table-insert --clip --drive")
         seed_meta=json.loads((args.clip_component_seed/"clip-entry.json").read_text())
+        previous_contents_mode=seed_meta["arguments"].get("contents_mode","free_joint" if args.contents else "body_only")
+        if args.contents and previous_contents_mode!=args.contents_mode:
+            parser.error("checkpoint contents coordinates differ")
+        if seed_meta["arguments"].get("contents",False)!=args.contents:
+            parser.error("checkpoint contents topology differs")
         if seed_meta["arguments"].get("mesh_y",32)!=args.mesh_y:
             parser.error("checkpoint mesh width resolution differs")
         for key in ("workspace","clip_style","material_profile","hz","physics_hz","coupling"):
@@ -113,7 +121,7 @@ def main():
         for key,default in (("mouth_support","narrow"),("support_extension_mm",0.),("rebase_z",False),("board_skin_mm",0.)):
             if seed_meta["arguments"].get(key,default)!=getattr(args,key):
                 parser.error(f"checkpoint support geometry mismatch: {key}")
-        for key,default in (("board_friction",1.),("finger_friction",None),("finger_contact_ke",None),("self_filter_rings",0),("self_radius_mm",.5)):
+        for key,default in (("board_friction",1.),("finger_friction",None),("finger_contact_ke",None),("yield_curvature",100.),("self_filter_rings",0),("self_radius_mm",.5)):
             if seed_meta["arguments"].get(key,default)!=getattr(args,key) and not args.override_contact_materials:
                 parser.error(f"checkpoint material change requires --override-contact-materials: {key}")
     interrupted = [False]
@@ -164,7 +172,7 @@ def main():
         shutil.copy2(Path(__file__).with_name("resume_clip_component.py"),sources/"resume_clip_component.py")
     started = time.monotonic()
     sim = make_environment(cells=(40,args.mesh_y),coupling=args.coupling, ready_start=args.ready_start,
-                           with_clip=args.clip, material_profile=args.material_profile, control_hz=args.hz,
+                           with_clip=args.clip,with_contents=args.contents,contents_mode=args.contents_mode,yield_curvature=args.yield_curvature, material_profile=args.material_profile, control_hz=args.hz,
                            side_access=args.mouth_support=="narrow" and (args.side_access or args.stage in ("regrasp","seal")),
                            physics_hz=args.physics_hz,rigid_cpu=args.rigid_cpu,workspace=args.workspace,
                            clip_style=args.clip_style,support_extension=args.support_extension_mm/1000.,
@@ -259,11 +267,25 @@ def main():
         sim.pipeline.hooks.add("post_solve",average.observe,name="substep-contact-average",cadence=1)
         sim.pipeline.invalidate_graph()
     controller_completed = False
+    fracture=None
+    if args.contents and args.contents_mode=="brittle":
+        from brittle_seams import BrittleSeams
+        shutil.copy2(Path(__file__).with_name("brittle_seams.py"),sources/"brittle_seams.py")
+        initial_peaks=None
+        if args.clip_component_seed:
+            with np.load(args.clip_component_seed/"clip-entry.npz") as seed:
+                if "cp" in seed:initial_peaks=seed["cp"].copy()
+        fracture=BrittleSeams(sim,initial_peaks=initial_peaks)
+        sim.pipeline.hooks.add("post_solve",fracture.observe,name="cracker-fracture-observer",cadence=1)
+        sim.snack_contents["fracture"]=True
+        sim.pipeline.invalidate_graph()
     clip_entry_saved=False
     saved_stages=set()
     def save_component_seed(directory,step):
         directory.mkdir(parents=True,exist_ok=True)
         seed={name:snapshots[f"{name}_{step:05d}"] for name in ("q","b","j","d","w","v","r")}
+        for name in ("e","cp","cg"):
+            if f"{name}_{step:05d}" in snapshots:seed[name]=snapshots[f"{name}_{step:05d}"]
         seed["targets"]=sim.control.joint_target_q.numpy().copy()
         seed.update(faces=entity.faces,grid=entity.grid,edge_rows=entity.rows)
         np.savez_compressed(directory/"clip-entry.npz",**seed)
@@ -304,6 +326,7 @@ def main():
                 if average:average.reset()
                 sim.run(1).sync()
             timings["driver_tick_s"]+=time.monotonic()-before
+            if fracture:fracture.commit(step)
         before=time.monotonic()
         state = read_object_states(sim)
         snapshots[f"q_{step:05d}"] = state["pouch"]
@@ -311,12 +334,17 @@ def main():
         snapshots[f"j_{step:05d}"] = sim.state.joint_q.numpy().copy()
         snapshots[f"d_{step:05d}"] = sim.state.joint_qd.numpy().copy()
         snapshots[f"w_{step:05d}"] = sim.state.body_qd.numpy().copy()
+        if fracture:
+            snapshots[f"e_{step:05d}"]=sim.model.joint_enabled.numpy().copy()
+            snapshots[f"cp_{step:05d}"]=fracture.peak_angle.numpy().copy()
+            snapshots[f"cg_{step:05d}"]=fracture.peak_gap.numpy().copy()
         snapshots[f"v_{step:05d}"] = sim.state.particle_qd.numpy()[entity.particles].copy()
         trace.append(dict(step=step, finite=bool(sim.state_is_finite()),
                           phase=controller.phase if controller else "rest",
                           z_min=float(state["pouch"][:, 2].min()),
                           z_max=float(state["pouch"][:, 2].max())))
         trace[-1]["fold"] = fold_metrics(state["pouch"], entity.grid, [(34, 28, 40)])
+        if fracture:trace[-1]["contents_damage"]=fracture.report()
         rest=entity._rest.numpy()[entity.rows]
         snapshots[f"r_{step:05d}"]=rest.copy()
         change=np.abs(np.arctan2(np.sin(rest-rest_initial),np.cos(rest-rest_initial)))[neck_edges]
@@ -352,6 +380,17 @@ def main():
             if any(row["penetrating_triangles"] for row in preflight):
                 save_record()
                 raise RuntimeError("Initial pouch/box intersection; reject before robot motion")
+            if watcher:
+                watcher.check(sim.state,0.)
+                complete_preflight=watcher.report()
+                (args.output/"preflight-complete.json").write_text(json.dumps(complete_preflight,indent=2))
+                if any(complete_preflight.get(key,0) for key in (
+                    "transverse_edge_crossings","film_box_intersections","film_round_intersections","film_ellipsoid_intersections")):
+                    controller.failure="initial complete geometry preflight detected an intersection"
+                    break
+                # Initial geometry is saved separately; physical-step counts
+                # begin at zero and still cover exactly frames * substeps.
+                watcher.checked.zero_()
             if args.clip:
                 from check_rigid_tool import inspect_tool
                 tool_check=inspect_tool(sim)
@@ -422,7 +461,7 @@ def main():
         timings["readback_and_metrics_s"]+=time.monotonic()-before
         if controller and hasattr(controller,"layout"):
             geometry=watcher.report() if watcher else None
-            clean=geometry and not (geometry["transverse_edge_crossings"] or geometry["film_box_intersections"] or geometry["film_round_intersections"])
+            clean=geometry and not (geometry["transverse_edge_crossings"] or geometry["film_box_intersections"] or geometry["film_round_intersections"] or geometry.get("film_ellipsoid_intersections",0))
             phase=controller.phase
             if clean and phase not in saved_stages and phase in (
                     "release_left","release_right","press_left","press_right",
@@ -445,7 +484,8 @@ def main():
             break
         if watcher and (trace[-1]["substep_geometry"]["transverse_edge_crossings"] or
                         trace[-1]["substep_geometry"]["film_box_intersections"] or
-                        trace[-1]["substep_geometry"]["film_round_intersections"]):
+                        trace[-1]["substep_geometry"]["film_round_intersections"] or
+                        trace[-1]["substep_geometry"].get("film_ellipsoid_intersections",0)):
             if controller:
                 controller.failure="independent substep geometry observer detected an intersection"
             break
@@ -455,7 +495,7 @@ def main():
                   initial_fold_imposed=bool(args.clip_component_seed), object_pose_writes_during_rollout=False,
                   component_reset=component_reset,
                   coupling=args.coupling, ready_start=args.ready_start,
-                  clip=args.clip, physics_substeps=sim.request.physics.substeps,
+                  clip=args.clip,contents=sim.snack_contents, physics_substeps=sim.request.physics.substeps,
                   control_hz=args.hz,
                   rigid_backend=sim.snack_rigid_backend,
                   workspace=sim.snack_workspace,
@@ -478,12 +518,14 @@ def main():
                   controller_failure=controller.failure if controller else None,
                   controller_completed=controller_completed,
                   controller_diagnostics=({k:controller.marks[k] for k in (
-                      "press_plans","press_diagnostics","crease_passes","fold_drag_m","clip_grasp_transform",
+                      "press_plans","press_ik_plans","press_diagnostics","crease_passes","fold_drag_m","clip_grasp_transform",
                       "left_clear_kinematic_plan","left_cleared_for_clip","last_move_error","blade_insertion_servo")
                       if k in controller.marks} if controller else {}),
                   contact_capacity=capacity.report() if capacity else None,
+                  contents_damage=fracture.report() if fracture else None,
+                  fracture_events=fracture.events if fracture else [],
                   substep_geometry=watcher.report() if watcher else None,
-                  limitation="Uncalibrated material; contents/air not integrated; ready-start places open hands around the unfolded rim at reset; controller completion is not a physical success assessment")
+                  limitation="Uncalibrated material; optional rigid contents have no fracture; air not integrated; ready-start places open hands around the unfolded rim at reset; controller completion is not a physical success assessment")
     (args.output / "result.json").write_text(json.dumps(result, indent=2))
     print("RESULT", result, flush=True)
     if session:

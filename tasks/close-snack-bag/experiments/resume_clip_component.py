@@ -83,6 +83,9 @@ def restore(sim,session,directory,*,reset_tool=False,gripper_relief_m=0.,tool_li
     if pos_error>1e-5 or np.any(quaternion_dot<1-1e-5):
         raise ValueError("checkpoint FK is inconsistent with the rebuilt model")
     rest=entity._rest.numpy();rest[entity.rows]=data["r"];entity._rest.assign(rest)
+    if "e" in data:
+        if data["e"].shape!=sim.model.joint_enabled.numpy().shape:raise ValueError("checkpoint joint flags differ")
+        sim.model.joint_enabled.assign(data["e"])
     if "targets" in data:
         targets=data["targets"].copy()
         target_source="checkpoint array"
@@ -100,6 +103,7 @@ def restore(sim,session,directory,*,reset_tool=False,gripper_relief_m=0.,tool_li
     if not np.isfinite(targets).all():raise ValueError("invalid checkpoint controls")
     sim.control.joint_target_q.assign(targets)
     sim.pipeline.reset_solvers(flags=0);sim.pipeline.reset_finite_flags()
+    if "e" in data:sim.pipeline.solver.notify_model_changed(newton.ModelFlags.JOINT_PROPERTIES)
     sim.pipeline.invalidate_graph()
     for arm,panel in session.arms.items():
         panel.on_reset({}, {})
