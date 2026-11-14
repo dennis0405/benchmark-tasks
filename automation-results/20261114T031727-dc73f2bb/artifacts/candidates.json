@@ -1,0 +1,116 @@
+{
+  "candidates": [
+    {
+      "id": "pcie-expansion-card-seat-latch",
+      "title": "Seat and latch a server PCIe expansion card",
+      "objective": "With the server electrically isolated and open, grasp the expansion card only by its edges, align its card-edge connector with the riser connector, press it to full seating, and close the expansion-card latch.",
+      "skills": [
+        "edge-only grasping and regrasping",
+        "six-degree-of-freedom connector alignment",
+        "constrained rigid insertion",
+        "force-controlled seating",
+        "latch closure",
+        "collision avoidance around the riser"
+      ],
+      "success_conditions": "Proposed rubric: connector reaches the fixture-calibrated fully seated pose; the card remains within 2 mm translation and 2 degrees rotation of that pose; the latch reaches its closed detent and remains closed for 3 seconds. Zero score for connector bypass, broken or displaced parts, unsafe powered-state setup, or moving the card by teleportation/state overwrite. Exact insertion-force and damage thresholds remain blocked until the physical proxy is measured.",
+      "industrial_value": "This reproduces Dell's documented server expansion-card installation sequence, including connector alignment, firm seating, and mechanical latching. It exercises maintenance manipulation beyond generic pick-and-place.",
+      "dexterity": "High. The robot must preserve a thin edge grasp, visually align a long keyed connector, regulate insertion force without rocking the PCB, then regrasp or use the second arm to close the latch while stabilizing the assembly.",
+      "evidence": [
+        {
+          "source_id": "s-91ac4f79da494329",
+          "quote": "Holding the card by its edges, position the card so that the card-edge connector aligns with the expansion-card connector on the expansion-card riser.",
+          "locator": "PowerEdge R510 Hardware Owner's Manual, Installing an Expansion Card, page 125, step 6"
+        },
+        {
+          "source_id": "s-91ac4f79da494329",
+          "quote": "Insert the card-edge connector firmly into the expansion-card connector until the card is fully seated.",
+          "locator": "PowerEdge R510 Hardware Owner's Manual, Installing an Expansion Card, page 125, step 7"
+        },
+        {
+          "source_id": "s-91ac4f79da494329",
+          "quote": "Close the expansion-card latch.",
+          "locator": "PowerEdge R510 Hardware Owner's Manual, Installing an Expansion Card, page 125, step 8"
+        }
+      ],
+      "asset_plan": "Build rigid, dimensioned proxy assets for the riser connector, PCB, bracket, chassis obstacles, and revolute latch from the manual's Figure 3-20 and measured reference hardware. Use PhysX contact and joint constraints; do not weld the card into place. Validate connector clearance, insertion resistance, latch detent, collision behavior, and failure recovery before integrating the pinned Isaac Sim 6.1.0/YAM runtime. No acquired public asset establishes suitable PCIe geometry, so asset dimensions and license provenance must be completed before development proceeds.",
+      "risk": "Medium. The acquired manual proves the procedure but does not provide complete connector, bracket, or latch dimensions or insertion-force limits. Reference hardware measurement or an authoritative mechanical specification is required. The complete 1,970-record catalog contained no text match for expansion-card, PCIe-card, or card-edge-connector insertion, but semantic and post-build comparison is still required."
+    },
+    {
+      "id": "hot-swap-drive-carrier-lock",
+      "title": "Insert and cam-lock a hot-swap server drive carrier",
+      "objective": "With the carrier lever open, align the drive carrier to the correct bay, slide it until it contacts the backplane, and close the handle to lock it.",
+      "skills": [
+        "bay alignment",
+        "long-stroke constrained insertion",
+        "contact detection at the backplane",
+        "bimanual stabilization",
+        "cam-handle closure",
+        "force control near adjacent carriers"
+      ],
+      "success_conditions": "Proposed rubric: carrier reaches the calibrated backplane-contact depth, its handle closes into the locked detent, and it remains locked for 3 seconds. Zero score for closing the handle before backplane contact, disturbing an adjacent carrier, damage, unsafe shortcuts, or state overwrite. Force limits require physical calibration.",
+      "industrial_value": "Dell documents this as the installation procedure for a server hot-swap drive. The task captures alignment, backplane contact, and cam locking while making adjacent-carrier damage a scored failure.",
+      "dexterity": "Moderate to high. It combines narrow-tolerance rail insertion with contact detection and a change from pushing the carrier body to rotating its handle.",
+      "evidence": [
+        {
+          "source_id": "s-91ac4f79da494329",
+          "quote": "With the lever on the hard drive carrier open, slide the hard drive into the drive bay until the carrier contacts the backplane.",
+          "locator": "PowerEdge R510 Hardware Owner's Manual, Installing a Hot-Swap Hard Drive, page 94, step 4"
+        },
+        {
+          "source_id": "s-91ac4f79da494329",
+          "quote": "Close the handle to lock the drive in place.",
+          "locator": "PowerEdge R510 Hardware Owner's Manual, Installing a Hot-Swap Hard Drive, page 94, step 5"
+        },
+        {
+          "source_id": "s-91ac4f79da494329",
+          "quote": "attempting to lock its handle next to a partially installed carrier can damage the partially installed carrier's shield spring",
+          "locator": "PowerEdge R510 Hardware Owner's Manual, Installing a Hot-Swap Hard Drive, page 93, caution"
+        }
+      ],
+      "asset_plan": "Create rigid carrier, bay rails, backplane stop, neighboring carrier, and articulated cam handle using measured reference geometry. Validate rail capture, backplane contact, handle mechanics, and adjacent-carrier damage conditions before robot integration.",
+      "risk": "High novelty risk: catalog record pr-146 is open and titled \"Seat a hot-swap drive carrier with its cam handle,\" which is substantively the same objective. This candidate must not proceed."
+    },
+    {
+      "id": "ddr5-dimm-dual-end-seat",
+      "title": "Align and seat a keyed DDR5 server DIMM with both latches",
+      "objective": "Hold a DDR5 RDIMM by its edges, orient its off-center key to the socket, insert both ends simultaneously, apply balanced end pressure, and seat it until both ejectors close.",
+      "skills": [
+        "thin-object edge grasp",
+        "keyed orientation",
+        "submillimeter slot alignment",
+        "balanced bimanual force application",
+        "simultaneous insertion",
+        "dual-latch engagement"
+      ],
+      "success_conditions": "Proposed rubric: key orientation is correct; both module ends reach the calibrated seated depth within 1 mm of one another; both ejectors reach their closed detents; the module remains seated for 3 seconds. Zero score for center pressing, bending beyond the measured elastic limit, metallic-contact grasping, damage, or state overwrite. Force limits require physical calibration.",
+      "industrial_value": "Dell explicitly prescribes keyed alignment, simultaneous insertion of both ends, balanced pressure, and ejector closure for server memory installation.",
+      "dexterity": "High. A long, thin PCB must remain unflexed while two ends enter a keyed socket and receive balanced force sufficient to close two latches.",
+      "evidence": [
+        {
+          "source_id": "s-944b7661517cebfe",
+          "quote": "Align the edge connector of the memory module with the alignment key of the memory module socket",
+          "locator": "PowerEdge XR8620t Installation and Service Manual, Installing a memory module, step 2"
+        },
+        {
+          "source_id": "s-944b7661517cebfe",
+          "quote": "do not bend or flex the memory module; insert both ends of the memory module simultaneously.",
+          "locator": "PowerEdge XR8620t Installation and Service Manual, Installing a memory module, caution after step 2"
+        },
+        {
+          "source_id": "s-944b7661517cebfe",
+          "quote": "Do not apply pressure at the center of the memory module; apply pressure at both ends of the memory module evenly.",
+          "locator": "PowerEdge XR8620t Installation and Service Manual, Installing a memory module, caution"
+        },
+        {
+          "source_id": "s-6076f9237bbf153d",
+          "quote": "DIMM dimensions (nominal) 133.35mm x 31.25mm",
+          "locator": "Micron 288-Pin DDR5 RDIMM Core, page 2, Table 1"
+        }
+      ],
+      "asset_plan": "Use the Micron 133.35 mm by 31.25 mm nominal module envelope and model its key and end notches explicitly. The acquired CC0 RAM asset may provide visual meshes, but its heat spreader must be removed or revised to match server RDIMM geometry. Build a rigid socket and articulated ejectors; validate clearances, balanced insertion, latch contacts, and bending/damage detection before YAM integration.",
+      "risk": "Disqualifying novelty risk. Catalog records pr-1874 and pr-1875 already describe installing and replacing a memory module, and pr-398 covers server DIMM population. New geometry or a stricter force rubric would not establish novelty."
+    }
+  ],
+  "selected_id": "pcie-expansion-card-seat-latch",
+  "selection_reason": "Selected because it has direct manufacturer procedure evidence, uses feasible rigid-body PhysX mechanics, and requires meaningful alignment, insertion, force control, and latching. The complete catalog is marked complete with no missing records; text screening found no matching PCIe expansion-card objective, while the drive and DIMM candidates have direct catalog overlaps. Selection remains conditional on authoritative geometry or measured reference hardware, physics validation, and a second full novelty review before any submission-stage work."
+}

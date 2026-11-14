@@ -1,0 +1,35 @@
+{
+  "id": "pcie-expansion-card-seat-latch",
+  "title": "Seat and latch a server PCIe expansion card",
+  "objective": "With the server electrically isolated and open, grasp the expansion card only by its edges, align its card-edge connector with the riser connector, press it to full seating, and close the expansion-card latch.",
+  "skills": [
+    "edge-only grasping and regrasping",
+    "six-degree-of-freedom connector alignment",
+    "constrained rigid insertion",
+    "force-controlled seating",
+    "latch closure",
+    "collision avoidance around the riser"
+  ],
+  "success_conditions": "Proposed rubric: connector reaches the fixture-calibrated fully seated pose; the card remains within 2 mm translation and 2 degrees rotation of that pose; the latch reaches its closed detent and remains closed for 3 seconds. Zero score for connector bypass, broken or displaced parts, unsafe powered-state setup, or moving the card by teleportation/state overwrite. Exact insertion-force and damage thresholds remain blocked until the physical proxy is measured.",
+  "industrial_value": "This reproduces Dell's documented server expansion-card installation sequence, including connector alignment, firm seating, and mechanical latching. It exercises maintenance manipulation beyond generic pick-and-place.",
+  "dexterity": "High. The robot must preserve a thin edge grasp, visually align a long keyed connector, regulate insertion force without rocking the PCB, then regrasp or use the second arm to close the latch while stabilizing the assembly.",
+  "evidence": [
+    {
+      "source_id": "s-91ac4f79da494329",
+      "quote": "Holding the card by its edges, position the card so that the card-edge connector aligns with the expansion-card connector on the expansion-card riser.",
+      "locator": "PowerEdge R510 Hardware Owner's Manual, Installing an Expansion Card, page 125, step 6"
+    },
+    {
+      "source_id": "s-91ac4f79da494329",
+      "quote": "Insert the card-edge connector firmly into the expansion-card connector until the card is fully seated.",
+      "locator": "PowerEdge R510 Hardware Owner's Manual, Installing an Expansion Card, page 125, step 7"
+    },
+    {
+      "source_id": "s-91ac4f79da494329",
+      "quote": "Close the expansion-card latch.",
+      "locator": "PowerEdge R510 Hardware Owner's Manual, Installing an Expansion Card, page 125, step 8"
+    }
+  ],
+  "asset_plan": "Build rigid, dimensioned proxy assets for the riser connector, PCB, bracket, chassis obstacles, and revolute latch from the manual's Figure 3-20 and measured reference hardware. Use PhysX contact and joint constraints; do not weld the card into place. Validate connector clearance, insertion resistance, latch detent, collision behavior, and failure recovery before integrating the pinned Isaac Sim 6.1.0/YAM runtime. No acquired public asset establishes suitable PCIe geometry, so asset dimensions and license provenance must be completed before development proceeds.",
+  "risk": "Medium. The acquired manual proves the procedure but does not provide complete connector, bracket, or latch dimensions or insertion-force limits. Reference hardware measurement or an authoritative mechanical specification is required. The complete 1,970-record catalog contained no text match for expansion-card, PCIe-card, or card-edge-connector insertion, but semantic and post-build comparison is still required."
+}
