@@ -31,7 +31,24 @@ v67 at 1,200 Hz detects a contents/film intersection and is rejected. Further
 tests use the unchanged 2,400 Hz geometry guards. v71's 12 mm inward translation
 does not improve its v1 result. v72 tests the 6 mm-inset grasp with protocol v2;
 v73 additionally tilts the held strip by 35 degrees while lifting, without a
-fold-over trajectory. Their results are pending at this checkpoint.
+fold-over trajectory. v72 stops at 131 frames on original landmark escape;
+v73 stops at frame 63 on a contents/film intersection before lifting.
+
+The repeated 35-degree trials finish as failed component tests: loaded v74
+stops at 137 frames, empty v75 at 133. In v74, original film actually rises
+36.4-36.9 mm; raw physical pad transforms confirm 5/5 original central points
+inside on each left wall, and 4/5 plus 5/5 on the two right walls. One point
+exceeds the main pad's 6 mm half-width by about 29 micrometres. This is a
+conservative footprint-gate failure, NOT proof of complete physical release.
+No three-second hold is observed, so retention remains unverified.
+
+v74 checks all 16,440 physics steps with zero observed intersections, no
+contact-capacity overflow, and no recorded cracker seam failure. This is
+one diagnostic run, not robustness or physical-material validation. Its
+6.9-second recorded video, complete raw states (9.97 MiB), frozen sources
+and raw geometry audit are under `evidence/pinch-lift-20261114`.
+
+No further trial is running after this review checkpoint. Brev remains on.
 
 Focused tests: 12 pass, including moving-empty-hand, single-wall, lost-original-
 landmark, ongoing hold creep, missing-frame and interruption controls. The
