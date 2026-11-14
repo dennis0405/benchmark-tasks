@@ -949,7 +949,7 @@ class Production:
         receipts = []
         if len({s["id"] for s in plan["scripts"]}) != len(plan["scripts"]):
             raise GateError("duplicate diagnostic script ids")
-        for script in plan["scripts"]:
+        for index, script in enumerate(plan["scripts"]):
             if (self.root / "cancel.json").exists():
                 raise StateError("diagnostic cancelled before native launch")
             if not re.fullmatch(r"[a-z][a-z0-9_-]{0,60}", script["id"]):
@@ -999,7 +999,20 @@ class Production:
             if not report_path.is_file():
                 raise GateError("script did not produce a fresh report")
             report = read(report_path)
-            numerical_report(report, requirements or report.get("requirements", []))
+            validation_scope = "script-requirements"
+            expected = requirements or report.get("requirements", [])
+            if requirements:
+                if index == len(plan["scripts"]) - 1:
+                    validation_scope = "frozen-physics-aggregate"
+                else:
+                    # A small API/mechanism preflight has its own checks. It
+                    # cannot replace the final report's full frozen contract.
+                    validation_scope = "auxiliary-preflight"
+                    expected = [
+                        {k: c.get(k) for k in ("name", "operator", "threshold", "unit")}
+                        for c in report.get("checks", [])
+                    ]
+            numerical_report(report, expected)
             for relative in report.get("artifacts", []):
                 artifact = inside(self.workspace, relative)
                 if not artifact.is_file() or artifact.stat().st_size == 0:
@@ -1013,6 +1026,7 @@ class Production:
                     report=script["report"],
                     report_sha256=file_hash(report_path),
                     source_digest=source_before["digest"],
+                    validation_scope=validation_scope,
                     discarded_bytecode=discarded,
                     measurements=report,
                 )
@@ -1094,6 +1108,9 @@ class Production:
             "or procedural geometry source. Asset hashes must match. "
             "Each script must write JSON {checks:[{name,measured,operator,threshold,unit}],artifacts:[...]} "
             "with actual numerical readings. Use all frozen contract checks in one aggregate report, "
+            "which must be the FINAL script in the plan. Earlier scripts may be auxiliary API "
+            "preflights with their own nonempty numerical checks; those never replace any frozen "
+            "check in the final aggregate. "
             "not fabricated constants. Reports and render images go under ../measurements/. "
             "On repair read input/last-failure.json; retain criteria and fix the mechanism.",
             C.BUILD,
