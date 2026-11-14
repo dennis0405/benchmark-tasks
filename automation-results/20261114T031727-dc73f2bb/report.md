@@ -20,7 +20,7 @@ Status: **blocked**
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 
 
-command exited 2; inspect /data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb/logs/component-physics-86934f5bfe.log
+diagnostic cancelled before native launch
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`

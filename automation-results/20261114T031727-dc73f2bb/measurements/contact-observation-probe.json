@@ -1,0 +1,41 @@
+{
+  "status": "complete",
+  "scope": "contact-observation API probe only; not component certification",
+  "checks": [
+    {
+      "name": "known-pair-tensor-contact-row-count-minimum",
+      "measured": 152,
+      "operator": ">=",
+      "threshold": 1,
+      "unit": "rows"
+    },
+    {
+      "name": "postphysics-callback-exception-count-maximum",
+      "measured": 0,
+      "operator": "<=",
+      "threshold": 0,
+      "unit": "exceptions"
+    },
+    {
+      "name": "known-pair-maximum-observed-impulse-minimum",
+      "measured": 0.12671268781026204,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "N*s"
+    }
+  ],
+  "provenance": {
+    "event_api": "omni.physx.get_physx_simulation_interface().subscribe_contact_report_events",
+    "tensor_api": "PhysxManager physics_sim_view.create_rigid_contact_view/get_contact_data(dt)",
+    "callback_api": "PhysxManager.register_callback(IsaacEvents.POST_PHYSICS_STEP)",
+    "device": "cuda:0",
+    "physics_hz": 240,
+    "actor_order": "sensor then filter",
+    "event_row_count": 0,
+    "tensor_row_count": 152
+  },
+  "artifacts": [
+    "measurements/contact-observation-probe.json",
+    "measurements/raw-component/contact-observation-probe.jsonl"
+  ]
+}

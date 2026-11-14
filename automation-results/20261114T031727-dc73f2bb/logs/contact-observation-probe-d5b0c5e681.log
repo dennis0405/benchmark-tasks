@@ -1,0 +1,19 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1794687261.349898    6038 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto
+W0000 00:00:1794687261.351059    6038 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto
+[ISAACLAB] AppLauncher initialization complete
+[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl
+[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl
+[ISAACLAB] Kit hash:    00c488ae
+Warp 1.16.0 initialized:
+   CUDA Toolkit 12.9, Driver 12.7
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA L40S" (44 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /home/ubuntu/.cache/warp/1.16.0
+{"status": "complete", "scope": "contact-observation API probe only; not component certification", "checks": [{"name": "known-pair-tensor-contact-row-count-minimum", "measured": 152, "operator": ">=", "threshold": 1, "unit": "rows"}, {"name": "postphysics-callback-exception-count-maximum", "measured": 0, "operator": "<=", "threshold": 0, "unit": "exceptions"}, {"name": "known-pair-maximum-observed-impulse-minimum", "measured": 0.12671268781026204, "operator": ">", "threshold": 0, "unit": "N*s"}], "provenance": {"event_api": "omni.physx.get_physx_simulation_interface().subscribe_contact_report_events", "tensor_api": "PhysxManager physics_sim_view.create_rigid_contact_view/get_contact_data(dt)", "callback_api": "PhysxManager.register_callback(IsaacEvents.POST_PHYSICS_STEP)", "device": "cuda:0", "physics_hz": 240, "actor_order": "sensor then filter", "event_row_count": 0, "tensor_row_count": 152}, "artifacts": ["measurements/contact-observation-probe.json", "measurements/raw-component/contact-observation-probe.jsonl"]}
+Loading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'
+2026-11-14T20:14:21Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.
+2026-11-14T20:14:22Z [33ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX
+2026-11-14T20:14:35Z [13,119ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?
