@@ -1,13 +1,12 @@
 {
-  "verdict": "pass",
+  "verdict": "blocked",
   "findings": [
-    "All 17 required controls recompute consistently: 0.00 untouched; 0.20 aligned subthreshold; eight hard-failure controls at 0.00; 0.30 one fracture without containment; 0.85 four fractures with exactly three contained; three terminal/replay controls at 1.00; and two characterization controls at 0.20. R first becomes available only after all four credited fractures. Timeout changes only the inaccessible-fragment case by setting H before final scoring.",
-    "Timing is internally consistent: 7,200 control steps at 20 Hz equal 360 s; production and refinement use 240 Hz and 480 Hz respectively; 300 s samples occur after POST(72000)/POST(144000), and timeout after POST(86400)/POST(172800). The first completed native interval is explicitly tagged n=1, resolving the prior off-by-one ambiguity.",
-    "The prior specification failures are resolved: contacts are step-tagged and consumed once; force and impulse units are distinguished; strike gaps are normalized by physical time; off-axis impulse uses a non-cancelling sum of transverse magnitudes; shell incident work has an explicit joule-valued formula; penetration uses deterministic convex GJK/EPA with a signed convention; containment, loss, and timeout inaccessibility use complete geometry; and reset, revocation, extrema, and bad-event retention rules are explicit.",
-    "Physical damage and invalid breakage remain simulated outcomes and set irreversible H rather than being suppressed by desired-action or credit conditions. Physically valid slow-press and one-hand alternatives remain permitted and are specified as outcome-bounded characterization controls.",
-    "The terminal score requires 41 unique 20 Hz RGB-D observations spanning the same continuous two-second physical-rest hold. Missing, late, duplicate, stale, or invalid frames reset the hold, and repeated score/success reads cannot advance state.",
-    "The pinned PhysxManager source hash matches the preflight and exposes PRE_PHYSICS_STEP and POST_PHYSICS_STEP subscriptions receiving dt. The contract correctly treats this as prospective API availability only, not proof of contact fields, physics behavior, or task success.",
-    "Primary industrial evidence supports four M2.5 × 3.75 mm inserts, tang removal, checking that tangs do not remain in the part, notch-based tang fracture, and the listed M2.5 tang break-off mandrel. Unpublished geometry, strength, impulse, damage, and tolerance values are clearly disclosed as prototype assumptions requiring later native validation."
+    "The prior evidence-location failure remains unresolved: input/runtime-api-preflight.json identifies two absolute SDK sources, but the promised input/pinned-runtime-sources snapshots are absent. Direct inspection confirmed both SHA256 values and the callback implementation, but those absolute files are outside the permitted final evidence locations.",
+    "All 17 required-control scores recompute from score=min(1,G+A+F+R+C+T), with irreversible H overriding to zero: 0.00, 0.20, 0.00, 0.00, 0.00, 0.00, 0.30, 0.85, 0.00, 0.00, 0.00, 0.00, 1.00, 1.00, 1.00, 0.20, and 0.20 in contract order. R first becomes available only after the fourth credited fracture. Timeout changes the inaccessible-fragment control by evaluating inaccessibility and setting H before final scoring.",
+    "Control and physics timing is consistent: 7,200 controls at 20 Hz equals 360 s; production/refinement use 240/480 Hz; 300 s sampling follows POST(72000)/POST(144000), and timeout follows POST(86400)/POST(172800). Step-tagged contacts are consumed once, force is converted to impulse once, PRE state supplies contact-point velocity, and repeated score/success reads cannot advance state.",
+    "Bad physical events are simulated before scoring consequences: native joint transitions and invalid fractures remain represented, while overload, off-axis impact, direct hammer contact, insert/shell damage, penetration, fragment loss, unsafe self-contact, and true timeout inaccessibility set H. Slow pressing, sequential one-arm use, and other physically valid alternatives remain permitted and can trigger reassessment.",
+    "Several physics-check observables remain underspecified despite the requirement for computable aggregation rules: the contract gives no duration or exact POST sampling boundary for the “settled” speed maxima or the “initial” penetration/contact/count checks, and “completed-insert-strike-count-minimum” does not define whether it is per insert, per control, or episode-wide. These ambiguous measurement names require explicit sampling and aggregation definitions without changing their numerical thresholds.",
+    "Primary industrial evidence supports four M2.5 × 3.75 mm shell-base inserts, tang removal, checking that tangs do not remain, notch fracture, and M2.5 mandrel 0158 040 1000. Unpublished geometry, forces, damage limits, and tolerances are disclosed as prototype assumptions rather than industrial facts."
   ],
   "evidence_paths": [
     "input/request.json",
@@ -15,10 +14,7 @@
     "input/runtime-api-preflight.json",
     "input/sources/s-df759bd2377bbb57.json",
     "input/sources/s-6195df1bebbb33ef.json",
-    "input/sources/s-c392a734cb5007d7.json",
     "artifacts/selected.json",
-    "artifacts/contract.json",
-    "artifacts/contract-critic.json",
-    "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab_physx/isaaclab_physx/physics/physx_manager.py"
+    "artifacts/contract.json"
   ]
 }

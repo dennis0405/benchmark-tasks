@@ -5,7 +5,7 @@
     "instance": "robocurve-automation-256",
     "created_at": "2026-11-14T03:17:27.802644+00:00",
     "status": "blocked",
-    "stage": null,
+    "stage": "contract",
     "mode": "production",
     "config": {
       "instance": "robocurve-automation-256",
@@ -47,20 +47,19 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 1127,
+    "supervisor_pid": 7948,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log",
-    "error": "review evidence missing or outside approved run directories",
+    "error": "worker paused at stage boundary",
     "approval": null,
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb",
     "remote_status": {
-      "status": "blocked",
-      "error": "review evidence missing or outside approved run directories",
-      "type": "GateError",
-      "at": "2026-11-14T17:29:17.913330+00:00"
+      "status": "paused",
+      "stage": "contract",
+      "at": "2026-11-14T17:47:56.575500+00:00"
     },
     "compute": "running",
-    "revision": 26,
-    "revision_request": "SAME run20261114T031727-dc73f2bb, SAME selected objective/candidate and origin branch. Continue the prior v11 repair from CONTRACT. Do not re-ideate or repeat the already passed selection comparison just because implementation is incomplete. Candidate odri-m25-helicoil-tang-removal passed factual preflight, six original-suite comparisons,2,130 selection comparisons and independent novelty review;17 incomplete closed/unmerged other-team non-board-required records remain uncertain with scope proofs. All required-scope uncertainty and known-overlap rules remain. The final ACTUAL built task still needs fresh full novelty checks.\n\nNEW VERIFIED FACT: input/host-gpu-preflight.json records real host L40S, torch2.11.0+cu128, CUDA12.8, one available CUDA device and an executed CUDA scalar result1.0. This is hardware/runtime readiness, NOT IsaacSim physics or a task result. The zero-step “No CUDA GPUs” record came from an earlier command inside a restricted Codex role. Complete GPU diagnostics must be returned for the trusted controller to execute outside that role sandbox; do not execute GPU rollouts in the role, infer host absence from its sandbox, return a stale-log reader/null measurements, or claim native success from this readiness probe.\n\nREVIEW-SCOPE CORRECTION (not a requested favorable verdict): the first contract critic correctly checked score arithmetic/timebase and found missing mathematical measurement definitions. It also demanded that historical task/task.py already implement the proposed future contract, which is a circular precondition: contract-writing and its reviewer are read-only and construction is the NEXT stage. The controller now gives the contract critic an explicit prospective-specification scope. It must still reject missing essential definitions, contradictions, unsupported source claims and unbuildable mechanisms. Existing static tangs, oversized mandrel body, one-box hammer, score0/successFalse and the blocked diagnostic reader are KNOWN unfinished r24 scaffold, not assertions that the contract was implemented. The environment stage MUST replace them with real mechanisms and pass independent actual-physics review later. Do not confuse correcting review scope with accepting that scaffold.\n\nPRESERVE v11'S QUALITY AND NUMERICAL BAR:\n- run_steps7200, control_hz20, physics_hz240, refinement_physics_hz480, episode_seconds360; actual dt1/240 and1/480, not physics steps mistaken for policy steps.\n- Impulse window0.012–0.035N*s, off-axis limit0.008N*s, shell damage proxy0.02J; all stated alignment, retention, penetration and two-second stability criteria remain. Distinct lower/upper measurement names; report actual minima/maxima across relevant events.\n- Initial0; safe grasp/alignment without fracture0.20; one valid fracture without containment0.30; four valid fractures with exactly three contained0.85; complete stable terminal1.0. Retained-insert bonus begins only after all four credited fractures. Define pre-timeout partial controls and every hard-failure override unambiguously. Preserve all negative/damage/reset/timestep controls; do not change their expected scores to fit an implementation.\n- Actual bad strikes may break/displace native bodies; their outcome then fails scoring. Only CREDITED fractures are conditioned on valid force path/alignment/window. Do not suppress a physical event because it is invalid. Do not use waypoint/timer/grasp-state transitions or injected object state as physical success.\n\nCOMPLETE THE MISSING COMPUTABLE SPECIFICATION before construction. Use the existing scoring_spec, damage_rules and approximations fields; no special code or native result must already exist. Every observable needs its body/contact set, units, sampling, aggregation, reset and eligibility/revocation rules. Resolve these genuine review findings:\n1. Contact freshness: define a PRE snapshot of fresh native rigid poses/twists and a POST_PHYSICS_STEP read of contacts from THAT solver step. Identify force N versus impulse N*s and integrate exactly once with actual callback dt where needed. Timestamp/tag the current native physics step; reject/clear stale contacts and repeated callback registration. Clear all contact episodes, accumulators and bonus state once per actual episode reset; this is a specified lifecycle plan, not a claim current callbacks exist.\n2. Impact segmentation: describe how native compressive contact begins/ends a physical strike and how continuous solver samples are grouped. Use physical contact separation/gap time consistently across240/480Hz; a physics tick is not a new hammer strike. An episode clock may segment/integrate real contacts, never schedule fracture by elapsed time. Define the hammer→mandrel→tang force-path evidence from real contact pairs. Actual native breakage remains ungated by the desired action or score.\n3. Axial/off-axis impulse: provide signed projection/norm and an exact integration/contact set for each tang, including what the min/max checks aggregate and how bad events are retained. Distinguish valid nominal component probes from bad-strike controls so their deliberately invalid impulses are not falsely reported as nominal success.\n4. Shell damage ENERGY PROXY: give an explicit measurable contact-work/incident-energy formula in J, its relevant tool/shell/retained-coil pairs and exclusions for intended hammer-head and tang contact, and reset/monotonic accumulation. For example, a contact-work proxy may use actual native impulse and PRE/POST relative contact-point velocities (including angular terms), not commanded forces or a hardcoded success bit. Choose and document one computable definition; do not call it empirically calibrated shell cracking.\n5. Penetration: define signed surface/contact separation and which native collision geometries/pairs are measured, excluding intentional connected geometry. State how maximum positive penetration is accumulated at initial settle and post-fracture, in meters, rather than an undefined “penetration” flag.\n6. Containment/loss/inaccessibility: use entire fragment geometry, physical tray support/rest and declared bounds. Define a deterministic geometric predicate for any actual closed trap regions at timeout; merely “not yet in tray” is unfinished work, not automatically inaccessible. Do not invent fake traps or a hidden planner/waypoint label. Preserve true outside-workcell/disappeared/nonfinite loss as hard failure. State exactly when a partial-state control is sampled versus timeout.\n7. Grasp/alignment/retention bonuses: define native contact/geometric evidence, when progress first becomes eligible, which states persist after legitimate tool release, and which damage/loss conditions revoke/override it. A pre-existing retained insert cannot earn initial progress. Define physical rest including relevant translational/angular state and the two-second hold without counting multiple score()/success() reads in one physics tick.\n\nThese are prospective measurable definitions and disclosed prototype assumptions. Pinned API/source inspection may ground the construction plan, but the contract reviewer must NOT require that the next-stage code, native measurements or demos have already been produced. Conversely, a contract pass must never be reported as physics success. Respect physically valid alternative strategies and characterize a plausible slow-press/one-hand route in later component diagnostics without inventing material rate dependence solely to force bimanuality; final novelty must describe the actual built/scored ability.\n\nE2E still required: faithful industrial assets; real native fracture/contact/retention/damage/penetration/camera/reset/timestep validation before complete YAM demo/scorer development; then two real clean-reset full-score YAM episodes, all controls, independent raw-trace scorer replay, H264 video/setup image, clean-directory portability and runtime pins. Use task-local public TaskFile/adapters, no shared SDK or guard edits, object-pose/velocity injection, fake grasps/welds, collision suppression or fabricated measurements. Component physical actuation rigs are material/contact tests, NOT robot success.\n\nExactlyONE final Dream episode only after all native gates; no automatic retry/attempt reset; cumulative20USD ledger. Preserve all outputs to the same fork branch, discuss >50MB/file or >100MB checkpoint, exclude secrets/whole proprietary manuals, and provider-confirm STOPPED for user pre-submission review. No actual contest upload/media submission/PR. No changes to the snack-bag checkout/VM. Actual PR971 originals and source-review leads remain available for the next comparison; no verdict override is requested.\n",
+    "revision": 27,
+    "revision_request": "Continue SAME run20261114T031727-dc73f2bb, SAME candidate and result branch from CONTRACT. Preserve the CURRENT contract.json EXACTLY, including all mathematically approved measurement definitions,17 controls,7200 control steps at20Hz/360s,240/480Hz physics and all quantitative bars. The latest contract-critic verdict is pass: the prior stop was ONLY the controller rejecting an absolute pinned SDK evidence source. The controller now snapshots only EXACT source paths and SHA256 values listed in input/runtime-api-preflight.json into input/pinned-runtime-sources and canonicalizes citations. It never grants arbitrary external access or changes a verdict. TaskSpecifier should return the existing current contract unchanged, then receive a fresh independent prospective review; no re-ideation, numerical relaxation or repeat selection scan for this citation fix. This is not a request to force a favorable review.\n\nAfter real contract preflight passes, REPLACE the unfinished r24 task scaffold with complete task-local native PhysX mechanisms and diagnostic scripts. Static tangs, oversized single-cylinder mandrel, one-box hammer, constant score0/successFalse and stale-log/null diagnostic readers are KNOWN unfinished code. Host L40S/CUDA readiness was verified; GPU diagnostics execute only through the trusted controller outside the restricted Codex role. Return complete runnable scripts and actual report paths for host execution; no GPU rollouts in role sandbox. Native logs are actual evidence, not proof from source inspection.\n\nPreserve source-grounded representative ODRI four-M2.5-insert shell-base form and Böllhoff01580401000 manual hammer/mandrel, all actual geometry/contact/force-path, valid free fragments, retained inserts, damage/penetration/rest/observability/reset/timestep requirements. No native event suppression to make a strike invalid, material rate dependence invented to force two hands, injected object pose/velocity success, grasp weld, collision suppression, shared SDK/guard/action/observation changes or fabricated numbers. Component material rigs are not YAM demos. Characterize valid alternatives honestly and compare the final actual ability.\n\nThen two real clean-reset full-score YAM demos, all17 controls with raw traces, independent scorer replay, H264 video/setup images and clean-directory portability. ExactlyONE final Dream episode only after ALL native gates; no automatic retry even failed/unknown,20USD cumulative ledger. Final full catalog+six-original-suite duplicate comparison still mandatory. Selection previously passed2130 records (2113 distinct;17 proven closed/unmerged other-team non-board-required records retain uncertainty), known overlap never exempt. Preserve to origin automation/20261114T031727-dc73f2bb, discuss >50MB/file or >100MB checkpoint, exclude secrets/whole private manuals, verify provider STOPPED for pre-submission review. NO actual contest submission/media upload/PR. Do not touch snack-bag checkout/VM.\n",
     "resume_from_stage": "contract"
   },
   "events": [
@@ -15711,6 +15710,216 @@
       "run": "20261114T031727-dc73f2bb",
       "at": "2026-11-14T17:30:03.757297+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"review evidence missing or outside approved run directories\"}"
+    },
+    {
+      "seq": 2646,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:30:40.716132+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 2647,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:38:28.506357+00:00",
+      "data": "{\"revision\": 27, \"revision_request\": \"Continue SAME run20261114T031727-dc73f2bb, SAME candidate and result branch from CONTRACT. Preserve the CURRENT contract.json EXACTLY, including all mathematically approved measurement definitions,17 controls,7200 control steps at20Hz/360s,240/480Hz physics and all quantitative bars. The latest contract-critic verdict is pass: the prior stop was ONLY the controller rejecting an absolute pinned SDK evidence source. The controller now snapshots only EXACT source paths and SHA256 values listed in input/runtime-api-preflight.json into input/pinned-runtime-sources and canonicalizes citations. It never grants arbitrary external access or changes a verdict. TaskSpecifier should return the existing current contract unchanged, then receive a fresh independent prospective review; no re-ideation, numerical relaxation or repeat selection scan for this citation fix. This is not a request to force a favorable review.\\n\\nAfter real contract preflight passes, REPLACE the unfinished r24 task scaffold with complete task-local native PhysX mechanisms and diagnostic scripts. Static tangs, oversized single-cylinder mandrel, one-box hammer, constant score0/successFalse and stale-log/null diagnostic readers are KNOWN unfinished code. Host L40S/CUDA readiness was verified; GPU diagnostics execute only through the trusted controller outside the restricted Codex role. Return complete runnable scripts and actual report paths for host execution; no GPU rollouts in role sandbox. Native logs are actual evidence, not proof from source inspection.\\n\\nPreserve source-grounded representative ODRI four-M2.5-insert shell-base form and B\\u00f6llhoff01580401000 manual hammer/mandrel, all actual geometry/contact/force-path, valid free fragments, retained inserts, damage/penetration/rest/observability/reset/timestep requirements. No native event suppression to make a strike invalid, material rate dependence invented to force two hands, injected object pose/velocity success, grasp weld, collision suppression, shared SDK/guard/action/observation changes or fabricated numbers. Component material rigs are not YAM demos. Characterize valid alternatives honestly and compare the final actual ability.\\n\\nThen two real clean-reset full-score YAM demos, all17 controls with raw traces, independent scorer replay, H264 video/setup images and clean-directory portability. ExactlyONE final Dream episode only after ALL native gates; no automatic retry even failed/unknown,20USD cumulative ledger. Final full catalog+six-original-suite duplicate comparison still mandatory. Selection previously passed2130 records (2113 distinct;17 proven closed/unmerged other-team non-board-required records retain uncertainty), known overlap never exempt. Preserve to origin automation/20261114T031727-dc73f2bb, discuss >50MB/file or >100MB checkpoint, exclude secrets/whole private manuals, verify provider STOPPED for pre-submission review. NO actual contest submission/media upload/PR. Do not touch snack-bag checkout/VM.\\n\", \"approval\": null}"
+    },
+    {
+      "seq": 2648,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:38:28.506680+00:00",
+      "data": "{\"resume_from_stage\": \"contract\"}"
+    },
+    {
+      "seq": 2649,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:38:28.511789+00:00",
+      "data": "{\"supervisor_pid\": 7948, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log\"}"
+    },
+    {
+      "seq": 2650,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:38:28.585947+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 2651,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:39:36.609872+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 2652,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:40:15.492422+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 2653,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:41:12.901344+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb\"}"
+    },
+    {
+      "seq": 2654,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:41:28.735040+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2655,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:41:44.274587+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2656,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:41:59.730048+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2657,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:42:15.298891+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2658,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:42:30.756034+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2659,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:42:46.326152+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2660,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:43:01.790850+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2661,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:43:17.251996+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2662,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:43:32.710371+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2663,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:43:48.125819+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2664,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:44:03.631094+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2665,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:44:19.103774+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2666,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:44:34.554668+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2667,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:44:50.027395+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2668,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:45:05.577697+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2669,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:45:20.995946+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2670,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:45:36.922320+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2671,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:45:52.758266+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2672,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:46:08.772270+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2673,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:46:24.745845+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2674,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:46:40.674402+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2675,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:46:56.506750+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2676,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:47:12.670727+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2677,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:47:28.540814+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2678,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:47:44.412809+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:41:13.488325+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2679,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:48:00.271694+00:00",
+      "data": "{\"remote_status\": {\"status\": \"paused\", \"stage\": \"contract\", \"at\": \"2026-11-14T17:47:56.575500+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 2680,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T17:48:33.740602+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"worker paused at stage boundary\"}"
     }
   ],
   "effects": {
