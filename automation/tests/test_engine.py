@@ -1,6 +1,6 @@
 import pytest
 
-from rcauto.engine import approval_valid, approve, compare_catalog, numerical_report
+from rcauto.engine import CoverageError, approval_valid, approve, compare_catalog, numerical_report
 from rcauto.gates import GateError, manifest
 from rcauto.store import Store, write_json
 
@@ -29,8 +29,48 @@ def test_catalog_coverage_requires_every_record_and_every_comparison_axis(tmp_pa
             return {"comparisons": []}
 
     cat = {"complete": True, "records": [{"id": "a"}], "digest": "d"}
-    with pytest.raises(GateError, match="coverage"):
+    with pytest.raises(CoverageError, match="coverage"):
         compare_catalog(TruncatedAgent(), tmp_path, {"objective": "x"}, cat)
+
+
+def test_novelty_repairs_only_missing_rows_and_reuses_exact_evidence_on_resume(tmp_path):
+    import json
+
+    class PartialAgent:
+        def __init__(self):
+            self.sizes = []
+
+        def run(self, *args, **kwargs):
+            records = json.loads((tmp_path / "input/novelty-batch.json").read_text())["records"]
+            self.sizes.append(len(records))
+            if len(self.sizes) == 1:
+                records = records[:-1]
+            return {
+                "comparisons": [
+                    {
+                        "id": r["id"],
+                        "objective": "Different objective",
+                        "physical_skill": "Different ability",
+                        "success_condition": "Different goal",
+                        "verdict": "distinct",
+                        "reason": "Distinct tested ability",
+                    }
+                    for r in records
+                ]
+            }
+
+    (tmp_path / "input").mkdir()
+    (tmp_path / "artifacts").mkdir()
+    cat = {"complete": True, "digest": "d", "records": [{"id": str(n)} for n in range(5)]}
+    agent = PartialAgent()
+    report = compare_catalog(agent, tmp_path, {"objective": "x"}, cat, batch_size=3)
+    assert report["complete"] and report["compared"] == 5
+    assert agent.sizes == [3, 1, 2]
+    report = compare_catalog(agent, tmp_path, {"objective": "x"}, cat, batch_size=3)
+    assert report["complete"] and agent.sizes == [3, 1, 2]
+    cat["records"][0]["body"] = "changed task specification"
+    compare_catalog(agent, tmp_path, {"objective": "x"}, cat, batch_size=3)
+    assert agent.sizes[-1] == 1
 
 
 def test_missing_catalog_cannot_mean_novel(tmp_path):

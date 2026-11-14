@@ -168,6 +168,7 @@ class Coordinator:
                 self.store.update(rid, status="starting")
                 started = True
                 b.start()
+                self.store.update(rid, compute="running", remote_status=None, stage=None)
                 b.ssh("mkdir -p " + shlex.quote(self.config["remote_root"] + "/worker-state"))
                 # A dedicated instance still may have an old worker. Never stop/redeploy over it.
                 busy = b.ssh(

@@ -8,6 +8,7 @@ import uuid
 from pathlib import Path
 
 import httpx
+from jsonschema import ValidationError, validate
 from pypdf.errors import PdfReadError
 
 from . import contracts as C
@@ -46,6 +47,10 @@ def numerical_report(report, requirements):
         if not actual or any(actual.get(k) != v for k, v in expected.items()):
             raise GateError("measurement contract changed/missing: " + expected["name"])
     validate_checks(report)
+
+
+class CoverageError(StateError):
+    """Reviewer transport/coverage failure, never evidence a candidate is a duplicate."""
 
 
 def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
@@ -112,39 +117,121 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
             )
         return report
 
+    policy = (
+        C.SCENARIO_POLICY + "\nRead input/novelty-batch.json. "
+        "The candidate in that file is authoritative. Compare EVERY requested record on "
+        "objective, physical skill and success conditions. Different geometry/tool names "
+        "are not sufficient. Shared generic primitives alone do not prove overlap. Distinct "
+        "requires a meaningfully different tested ability, not an industrial label. Explicitly "
+        "record missing rubric details; missing numeric thresholds for a clearly unrelated "
+        "objective are not by themselves a plausible duplicate. Use uncertain when available "
+        "evidence cannot establish a meaningful distinction. Return one comparison per exact "
+        "requested id. Keep each comparison axis concise."
+    )
+    request_path = Path(workspace) / "input/request.json"
+    request = read(request_path) if request_path.exists() else {}
+    context_key = digest(
+        {
+            "candidate": candidate,
+            "policy": policy,
+            "request": {k: request.get(k) for k in ("prompt", "revision_request")},
+        }
+    )
+    cache = Path(workspace) / "artifacts/novelty-cache"
+    cache.mkdir(parents=True, exist_ok=True)
+
+    def cache_path(record):
+        return cache / (digest({"context": context_key, "record": record}) + ".json")
+
+    def valid(row, expected):
+        try:
+            validate({"comparisons": [row]}, C.NOVELTY)
+        except ValidationError:
+            return False
+        return row["id"] == expected and all(
+            row[k].strip() for k in ("objective", "physical_skill", "success_condition", "reason")
+        )
+
     for i in range(0, len(records), batch_size):
         if (Path(workspace).parent / "cancel.json").exists():
             raise StateError("novelty cancelled at batch boundary; partial evidence preserved")
         batch = records[i : i + batch_size]
-        data = {"candidate": candidate, "records": batch}
-        filename = Path(workspace) / "input" / "novelty-batch.json"
-        write_json(filename, data)
-        result = agent.run(
-            "novelty-reviewer",
-            C.SCENARIO_POLICY + "\nRead input/novelty-batch.json. "
-            "Compare EVERY record on objective, physical skill and success conditions. "
-            "Different geometry/tool names are not sufficient. Mark insufficient data uncertain. "
-            "Shared generic primitives alone do not prove an overlap. Distinct requires a "
-            "meaningfully different tested ability, not an industrial label. Explicitly record "
-            "missing rubric details; missing numeric thresholds for a clearly unrelated "
-            "objective are not by themselves a plausible duplicate. Use uncertain when the "
-            "available evidence cannot establish a meaningful distinction. "
-            "Return one comparison per exact record id. Keep each comparison axis concise.",
-            workspace,
-            C.NOVELTY,
-        )
-        rows = result["comparisons"]
-        if len(rows) != len(batch) or {r["id"] for r in rows} != {b["id"] for b in batch}:
-            raise GateError("novelty comparison coverage incomplete")
-        if any(
-            not all(
-                r.get(k) for k in ("objective", "physical_skill", "success_condition", "reason")
+        accepted = {}
+        for record in batch:
+            path = cache_path(record)
+            if path.exists():
+                try:
+                    saved = read(path)
+                    if (
+                        saved["context"] == context_key
+                        and saved["record_digest"] == digest(record)
+                        and valid(saved["comparison"], record["id"])
+                    ):
+                        accepted[record["id"]] = saved["comparison"]
+                except (OSError, ValueError, KeyError, TypeError):
+                    pass  # Recompute damaged cache entries; never turn them into a pass.
+        for attempt in range(3):
+            missing = [r for r in batch if r["id"] not in accepted]
+            if not missing:
+                break
+            write_json(
+                Path(workspace) / "input/novelty-batch.json",
+                {"candidate": candidate, "records": missing},
             )
-            for r in rows
-        ):
-            raise GateError("novelty comparison axes missing")
-        comparisons.extend(rows)
+            ids = [r["id"] for r in missing]
+            result = agent.run(
+                "novelty-reviewer",
+                policy
+                + "\nRequired exact IDs: "
+                + json.dumps(ids)
+                + ". Repair attempt "
+                + str(attempt)
+                + "; do not omit any id.",
+                workspace,
+                C.NOVELTY,
+            )
+            rows = result["comparisons"]
+            for record in missing:
+                matches = [row for row in rows if row.get("id") == record["id"]]
+                if len(matches) == 1 and valid(matches[0], record["id"]):
+                    row = matches[0]
+                    accepted[record["id"]] = row
+                    write_json(
+                        cache_path(record),
+                        {
+                            "context": context_key,
+                            "record_digest": digest(record),
+                            "comparison": row,
+                        },
+                    )
+            partial = [accepted[r["id"]] for r in batch if r["id"] in accepted]
+            base = len(comparisons)
+            comparisons.extend(partial)
+            checkpoint()  # Known overlaps reject immediately, even if other rows are missing.
+            del comparisons[base:]
+            remaining = [r["id"] for r in batch if r["id"] not in accepted]
+            if remaining:
+                with (cache.parent / "novelty-coverage-errors.jsonl").open("a") as stream:
+                    stream.write(
+                        json.dumps(
+                            {
+                                "context": context_key,
+                                "offset": i,
+                                "attempt": attempt,
+                                "missing_ids": remaining,
+                                "at": now(),
+                            }
+                        )
+                        + "\n"
+                    )
+                if attempt == 2:
+                    raise CoverageError(
+                        "novelty comparison coverage incomplete after bounded repairs: "
+                        + ", ".join(remaining)
+                    )
+        comparisons.extend(accepted[r["id"]] for r in batch)
         report = checkpoint()
+
     return report
 
 
