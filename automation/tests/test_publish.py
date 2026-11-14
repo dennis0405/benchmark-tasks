@@ -50,6 +50,7 @@ def test_existing_main_checkout_is_never_reused_for_push(tmp_path):
 
 
 def test_fork_checkpoint_pushes_exact_task_and_verifies_remote_sha(tmp_path):
+    import json
     import subprocess
 
     from rcauto.gates import manifest
@@ -77,6 +78,9 @@ def test_fork_checkpoint_pushes_exact_task_and_verifies_remote_sha(tmp_path):
     task.mkdir(parents=True)
     (task / "task.py").write_text("# fixture")
     write_json(root / "release-manifest.json", manifest(root / "release"))
+    quotation = " ".join(["private-source-word"] * 40)
+    research = {"evidence": [{"source_id": "source-1", "quote": quotation, "locator": "p2"}]}
+    write_json(root / "workspace/artifacts/candidates.json", research)
 
     class LocalPublisher(Publisher):
         def checkout(self, *args):
@@ -86,4 +90,9 @@ def test_fork_checkpoint_pushes_exact_task_and_verifies_remote_sha(tmp_path):
     first = publisher.checkpoint(r["id"])
     assert first["sha"] == git("--git-dir", origin, "rev-parse", "refs/heads/automation/fixture")
     assert (work / "tasks/fixture/task.py").read_text() == "# fixture"
+    published = work / "automation-results" / r["id"] / "artifacts/candidates.json"
+    public = json.loads(published.read_text())["evidence"][0]
+    assert "quote" not in public and public["quote_sha256"]
+    assert quotation not in published.read_text()
+    assert json.loads((root / "workspace/artifacts/candidates.json").read_text()) == research
     assert publisher.checkpoint(r["id"])["sha"] == first["sha"]

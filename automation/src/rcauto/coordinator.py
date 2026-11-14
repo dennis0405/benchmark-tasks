@@ -15,7 +15,7 @@ from .board import collect_board, merge_board_catalog, recover_own_history
 from .catalog import GitHub, get_source
 from .engine import Production, compare_catalog, read
 from .gates import GateError, evaluation_identity, manifest, validate_media, verify_manifest
-from .publish import Publisher
+from .publish import Publisher, public_evidence
 from .runtime import Brev
 from .store import StateError, now, write_json
 
@@ -525,7 +525,15 @@ class Coordinator:
         ]:
             p = artifact_root / (key + ".json")
             if p.exists():
-                payload[key] = read(p)
+                payload[key] = public_evidence(read(p))
+        history = artifact_root / "selection-history.json"
+        if history.exists():
+            payload["selection_history"] = read(history)
+            if payload["selection_history"].get("selected") is None and "selected" in payload:
+                payload["last_candidate"] = payload.pop("selected")
+        outcome = artifact_root / "pilot-outcome.json"
+        if outcome.exists():
+            payload["pilot_outcome"] = read(outcome)
         evidence = root / "workspace/input/sources.json"
         if evidence.exists():
             payload["sources"] = [
@@ -559,6 +567,9 @@ class Coordinator:
             for key in [
                 "task",
                 "selected",
+                "last_candidate",
+                "selection_history",
+                "pilot_outcome",
                 "contract",
                 "sources",
                 "physics-reviewer",

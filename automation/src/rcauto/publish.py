@@ -1,5 +1,7 @@
 """Preserve in the fork; publish only the exact reviewed task after explicit approval."""
 
+import hashlib
+import html
 import json
 import os
 import shutil
@@ -9,6 +11,22 @@ from .engine import approval_valid, read
 from .gates import GateError, file_hash, manifest, validate_spec, verify_manifest
 from .runtime import capture
 from .store import StateError, write_json
+
+
+def public_evidence(value):
+    """Keep source locators/digests public; preserve exact quotations in private evidence."""
+    if isinstance(value, list):
+        return [public_evidence(item) for item in value]
+    if isinstance(value, dict):
+        result = {
+            k: public_evidence(v)
+            for k, v in value.items()
+            if not (k == "quote" and "source_id" in value and isinstance(v, str))
+        }
+        if "source_id" in value and isinstance(value.get("quote"), str):
+            result["quote_sha256"] = hashlib.sha256(value["quote"].encode()).hexdigest()
+        return result
+    return value
 
 
 class Publisher:
@@ -119,6 +137,34 @@ class Publisher:
         artifacts = root / "workspace" / "artifacts"
         if artifacts.exists():
             shutil.copytree(artifacts, destination / "artifacts", dirs_exist_ok=True)
+        public_json = list((destination / "artifacts").rglob("*.json"))
+        if (destination / "report.json").exists():
+            public_json.append(destination / "report.json")
+        for path in public_json:
+            write_json(path, public_evidence(read(path)))
+        if (root / "report.json").exists() and (destination / "report.html").exists():
+            page = (destination / "report.html").read_text()
+            for item in read(root / "report.json").values():
+                original = html.escape(json.dumps(item, indent=2, ensure_ascii=False), quote=True)
+                safe = html.escape(
+                    json.dumps(public_evidence(item), indent=2, ensure_ascii=False), quote=True
+                )
+                if original != safe:
+                    page = page.replace(original, safe)
+            (destination / "report.html").write_text(page)
+        source_index = root / "workspace/input/sources.json"
+        if source_index.exists():
+            write_json(
+                destination / "artifacts/sources-index.json",
+                [
+                    {
+                        k: source[k]
+                        for k in ("id", "url", "title", "publisher", "kind", "sha256")
+                        if k in source
+                    }
+                    for source in read(source_index).values()
+                ],
+            )
         for source, name in [
             (root / "workspace/measurements", "measurements"),
             (root / "logs", "logs"),
