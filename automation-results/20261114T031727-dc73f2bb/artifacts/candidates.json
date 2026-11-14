@@ -1,140 +1,157 @@
 {
   "candidates": [
     {
-      "id": "robot-joint-shaft-low-frequency-demagnetization",
-      "title": "Demagnetize a solid robot-joint shaft through a low-frequency tunnel",
-      "objective": "Grasp a representative solid ferromagnetic robot-joint shaft, align it with a round low-frequency demagnetizing tunnel, physically carry its full length through the alternating-field region, and place it in a clean output cradle with reduced simulated remanence, without collision, dropping, reversal-induced remagnetization, or particle recontamination.",
+      "id": "odri-m25-helicoil-tang-removal",
+      "title": "Break and recover M2.5 HELICOIL tangs from an ODRI actuator shell",
+      "objective": "Use the specified straight tang-break-off mandrel to fracture the tangs of four already-installed M2.5 × 3.75 mm HELICOIL inserts in an actual robot actuator shell, then recover every free tang without damaging the inserts or printed shell.",
       "skills": [
-        "stable grasping of an elongated rigid shaft",
-        "six-degree-of-freedom aperture alignment",
-        "clearance-preserving controlled passage",
-        "orientation control under pose-dependent magnetic forces",
-        "clean output placement"
+        "small-tool grasping",
+        "coaxial mandrel alignment",
+        "contact-driven impact application",
+        "force and impulse control",
+        "sequential fragment recovery",
+        "visual inspection of recessed holes"
       ],
-      "success_conditions": "Full success requires every shaft material cell to traverse the effective field, a validated hysteresis calculation to finish below the frozen representative remanence threshold, stable placement in the clean cradle, and no tunnel contact, drop, unsafe release, contamination-zone contact, or excessive device thermal load. Alignment and incomplete treatment earn partial credit. Waypoint traversal alone, direct magnetic-state writes, pose or velocity injection, collision suppression, or a hidden success flag cannot score. A physically valid one-arm strategy receives full credit.",
-      "industrial_value": "The manufacturer identifies shafts as suitable products for low-frequency tunnel demagnetization. Separate bearing-industry guidance requires demagnetizing components that contact bearings and documents particle adhesion, denting, vibration, and wear from residual magnetism. A representative robot-joint shaft treated before bearing assembly therefore has direct robot-building relevance.",
-      "dexterity": "The central manipulation is carrying a long, solid part through a confined aperture while preserving clearance and orientation as its magnetic state and field-derived forces evolve. It is materially harder than pick-and-place, yet remains a rigid-body task within pinned-YAM reach after fixture scaling; no artificial bimanual requirement is imposed.",
+      "success_conditions": "Full success requires four contact-driven notch fractures, four independently simulated tang fragments recovered into a tray, no fragment remaining in the shell, no insert displacement, no shell damage, and a stable two-second final inspection. Off-axis loading, insufficient impulse, excessive impulse, retained fragments, damaged coils, or any pose/velocity injection fail or reduce the score.",
+      "industrial_value": "The ODRI shell-preparation procedure explicitly requires these inserts in a robot actuator shell, removal with a tang-break-off tool, and verification that no tang remains inside the part.",
+      "dexterity": "The robot must repeatedly align a narrow mandrel with recessed M2.5 inserts, transmit a controlled axial impulse through physical contact, withdraw without snagging the coil, and retrieve millimetre-scale loose fragments. The evidence does not justify requiring two arms.",
       "evidence": [
         {
-          "source_id": "s-0a3d1688171454d0",
-          "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Low-frequency demagnetizing tunnels”",
-          "quote_sha256": "9347502825a699f92ae99c312e3815de872d649ae2ec3cc2ddeae5f9c55bf674"
+          "source_id": "s-df759bd2377bbb57",
+          "locator": "Details Shell Preparation, “Installing the Helicoil Inserts,” Shell Base",
+          "quote_sha256": "64253869545fb5f306ad3a0515b17c2d59f6b28ddde42c205a17bf5eb51b08e4"
         },
         {
-          "source_id": "s-0a3d1688171454d0",
-          "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Low-frequency demagnetizing tunnels”",
-          "quote_sha256": "d476f0bd2498a0544cde8371332318bb3e6638a67676bfa8aad33864bfc60f06"
+          "source_id": "s-df759bd2377bbb57",
+          "locator": "Details Shell Preparation, “Installing the Helicoil Inserts,” Shell Base",
+          "quote_sha256": "2f831484053c44174f7775195ef67869a07588a81e37a54b7ad6a36c6749efe1"
         },
         {
-          "source_id": "s-96228576f368ce64",
-          "locator": "Demagnetization of assembled bearings, page 3",
-          "quote_sha256": "951c80708981594870a4484aeee307d8737d2ae2ae3f8d6eb156bd556a778668"
+          "source_id": "s-df759bd2377bbb57",
+          "locator": "Details Shell Preparation, “Installing the Helicoil Inserts,” Shell Base",
+          "quote_sha256": "ab11aa977c8a5cde65af28ab4773d5d8d25a18294fc4708dae4485eb4ef45ff7"
         },
         {
-          "source_id": "s-73ad8f4348851bfc",
-          "locator": "Modelica Magnetic FluxTubes UsersGuide, StaticHysteresis.Tellinen, “The Tellinen hysteresis model”",
-          "quote_sha256": "95205827e47f7e5bdd2264544c8b45e4053e28c22bd72d0591ad170137a6d3fe"
+          "source_id": "s-6195df1bebbb33ef",
+          "locator": "HELICOIL Plus manufacturer catalog, page 17, “Breaking off the tang”",
+          "quote_sha256": "546c8e46c17cb3ac989938505e76679ff273e01c17dc6465ac408d24cbe36c28"
+        },
+        {
+          "source_id": "s-6195df1bebbb33ef",
+          "locator": "HELICOIL Plus manufacturer catalog, page 55, tang break-off tool table",
+          "quote_sha256": "9d2706184ef14ebd66d4b1c1edfb9051f5dd3fd64bafd508d5e0dea405fa3a45"
         }
       ],
-      "asset_plan": "Author a representative, explicitly non-product-replica rigid tunnel, 320 mm solid shaft, input stand, clean output cradle, and guarded field enclosure. Freeze aperture, shaft diameter and mass, field-zone length, material envelope curve, remanence limit, force ceiling, thermal duty, and reach bounds before development. Use a Tellinen hysteresis state per axial shaft cell, driven only by simulated coil field evaluated from actual poses and time in the verified native PRE/POST physics callback. Couple a bounded field-gradient force and torque into PhysX; never overwrite shaft pose, velocity, or magnetic state. Before YAM integration, test major and minor loops, proper and incomplete passage, reversal, stopping, timestep/rate convergence, force and energy finiteness, thermal accumulation, reset freshness, collision response, and reachable clean placement. The representative field calibration and protocol are disclosed prototype assumptions, not manufacturer specifications.",
-      "risk": "No acquired source supplies a specific tunnel model’s proprietary aperture, waveform, field calibration, or operating speed. Those values must remain frozen representative assumptions and cannot be advertised as Goudsmit performance. Static Tellinen behavior does not by itself establish dynamic eddy-current accuracy, so the selected solid shaft must use a conservative low-frequency regime and pass convergence and improper-treatment controls. Catalog neighbor pr-1810 tests controlled passage through a narrow slot; final novelty depends on the independently validated remanence outcome and magnetic force interaction, not on the passage trajectory alone. Full catalog and six-suite clearance remains a mandatory downstream gate.",
-      "feasibility_status": "ready",
-      "missing_evidence": []
-    },
-    {
-      "id": "thin-gear-plate-demagnetization",
-      "title": "Demagnetize a thin robot-reducer gear blank over a plate device",
-      "objective": "Pick a representative sub-10-mm ferromagnetic robot-reducer gear blank, expose its complete area to a plate demagnetizer through a controlled parallel sweep and retreat, then place it in a clean inspection tray with physically reduced remanence and no plate strike, drop, untreated region, or thermal overload.",
-      "skills": [
-        "thin-part edge grasping",
-        "parallelism and stand-off control",
-        "full-area surface coverage",
-        "controlled retreat from an alternating field",
-        "clean-side placement"
-      ],
-      "success_conditions": "Full success requires every discretized gear region to receive sufficient pose-derived alternating-field exposure, final remanence below a frozen threshold, stable clean placement, and no plate contact, drop, missed sector, reversal-induced remagnetization, or duty-limit violation. Mere tabletop placement or coverage waypoints do not score.",
-      "industrial_value": "The manufacturer describes plate demagnetizers for flat magnetic products and machine construction, while its industrial report identifies bearing wear, adhering chips, and magnetic-sensor errors as consequences of unwanted magnetism. A thin precision gear is geometrically compatible, but the acquired evidence does not specifically identify robot-reducer gears.",
-      "dexterity": "The robot must hold a broad, thin part nearly parallel to the plate while controlling stand-off, coverage, and retreat. This tests surface-following and orientation control rather than generic transport.",
-      "evidence": [
-        {
-          "source_id": "s-0a3d1688171454d0",
-          "locator": "Industrial magnetic handling and demagnetization brochure, page 19, “Plate demagnetizers”",
-          "quote_sha256": "e6cbde937e6bf0e7eedff2c2464217bbbfe66bb7ae048672107df7316c1c519b"
-        },
-        {
-          "source_id": "s-0a3d1688171454d0",
-          "locator": "Industrial magnetic handling and demagnetization brochure, page 19, “Plate demagnetizers”",
-          "quote_sha256": "67b9a5a3ba66fa90115fdd3a1120f6fa5dce1b399ac12d4bf281f3b19f1e2e1c"
-        },
-        {
-          "source_id": "s-0a3d1688171454d0",
-          "locator": "Industrial magnetic handling and demagnetization brochure, page 17, “Demagnetizing”",
-          "quote_sha256": "3f6b0893a1bbd6bc2d9d43a2202d899e1d28eb4560406b44431520e112c71e03"
-        },
-        {
-          "source_id": "s-0a3d1688171454d0",
-          "locator": "Industrial magnetic handling and demagnetization brochure, page 17, “Demagnetizing”",
-          "quote_sha256": "4e1bd164eecea68e804addb19fa145728514534656f6255f08a8699d00eb005f"
-        }
-      ],
-      "asset_plan": "Use a rigid procedural plate device and thin gear blank. If pursued, distribute hysteresis cells over the gear, derive exposure from actual pose and field decay, and validate missed-sector, excessive-height, reversal, contact, thermal, reset, and timestep controls before robot integration.",
-      "risk": "The acquired manufacturer material establishes product class and thickness but not a manual treatment path, working stand-off, retreat distance, field profile, device geometry, or duty cycle. Direct robot-reducer manufacturing relevance is also inferential rather than explicitly sourced. A coverage counter would be an invalid substitute for the missing physical mechanism.",
+      "asset_plan": "Use rigid native PhysX bodies for the shell, installed coils, straight M2.5 mandrel, and free tang fragments. Represent each manufactured notch with a physically loaded breakable constraint; freeze prototype force/impulse/energy thresholds before testing and label them as uncalibrated assumptions. Validate axial fracture, off-axis and insufficient-load controls, excessive-load damage, fragment collision and containment, reset freshness, substep-force measurement, and timestep convergence before YAM integration. The pinned PhysxManager PRE_PHYSICS_STEP and POST_PHYSICS_STEP callbacks are only prospective measurement hooks and require native verification.",
+      "risk": "The procedure, insert size, fracture notch, and correct straight-mandrel family are supported. However, the acquired evidence still lacks an independently inspected shell image, shell CAD/STL, or drawing that establishes the four-hole layout, access direction, boss heights, cavity boundaries, and fragment escape paths. The 160 mm module segment length does not establish those local features. Novelty also remains unresolved against the cited punch, hammering, rivet-stem disposal, fracture, snapping, and slide-hammer families.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
-        "A model-consistent plate-demagnetizer operating procedure and verified diagram",
-        "Direct primary-source evidence that the selected robot-reducer component requires this treatment",
-        "Validated field-versus-height and spatial hysteresis behavior for full-area treatment",
-        "Complete catalog comparison against surface-processing and magnetic-fixturing tasks"
+        "Acquired and independently inspected ODRI shell image or pinned CAD/STL establishing insert layout and tool access",
+        "Verified local cavity and fragment-escape geometry at faithful scale",
+        "Complete current-catalog comparison against pr-1205, pr-142, pr-143, pr-1468, pr-921, pr-1121, pr-1497, and pr-1491",
+        "Native component tests establishing plausible fracture scale, physical load coupling, damage behavior, and timestep convergence"
       ]
     },
     {
-      "id": "bearing-tool-portable-bar-demagnetization",
-      "title": "Demagnetize a bearing-assembly mandrel with a portable bar",
-      "objective": "Manipulate a portable demagnetizing bar around the accessible cylindrical and shoulder surfaces of a fixtured bearing-assembly mandrel, maintaining the required pose and coverage so all remanent hot spots are physically reduced without tool contact, missed regions, overheating, or unsafe release.",
+      "id": "odri-m3-manual-thread-cutting",
+      "title": "Manually tap the M3 encoder and belt-tensioner holes in an ODRI actuator shell",
+      "objective": "Hold an M3 tap vertically, start it in each prescribed actuator-shell hole, cut the thread completely through using physical torque and axial control, and withdraw it without cross-threading, stripping, or cracking the printed shell.",
       "skills": [
-        "six-degree-of-freedom tool manipulation",
-        "curved-surface following",
-        "stand-off and orientation control",
-        "overlapping coverage planning",
-        "collision-free retreat"
+        "tap-to-hole alignment",
+        "axial-force and torque coordination",
+        "multi-turn tool manipulation",
+        "alignment-preserving regrasping",
+        "jam detection",
+        "controlled reverse extraction"
       ],
-      "success_conditions": "Full success requires all initially magnetized mandrel regions to finish below a frozen remanence limit, the bar to remain collision-free and within its thermal duty, and both objects to end stably placed. Missed hot spots, excessive stand-off, contact, drop, or direct state mutation fail or receive partial credit.",
-      "industrial_value": "The bearing-industry application note explicitly requires checking and demagnetizing bearing-contact tools. The equipment manufacturer identifies demagnetizing bars for tools and machine parts in difficult-to-reach locations, including machine building and toolmaking shops.",
-      "dexterity": "This tests controlled tool orientation and curved-surface coverage in constrained access. It can require a real regrasp to reach the mandrel shoulder, but one-arm completion must score if the sourced physical treatment is achieved.",
+      "success_conditions": "Full success requires all four prescribed M3 holes to accept a representative verification screw through the intended threaded depth, with bounded axis error, no cross-threading, stripped material, cracked shell, stuck tap, or prohibited state writes. Partial credit distinguishes correct starting, partial thread depth, and safe withdrawal.",
+      "industrial_value": "The ODRI robot actuator instructions prescribe manual M3 thread cutting for the encoder mount and belt tensioners and warn that printed-part threads can strip.",
+      "dexterity": "A robot must establish the thread without cross-threading, maintain tap verticality while producing coupled rotation and feed, periodically regrasp or use a tap holder, sense increasing resistance, and reverse out safely.",
       "evidence": [
         {
-          "source_id": "s-96228576f368ce64",
-          "locator": "Demagnetization of assembled bearings, page 3",
-          "quote_sha256": "951c80708981594870a4484aeee307d8737d2ae2ae3f8d6eb156bd556a778668"
+          "source_id": "s-df759bd2377bbb57",
+          "locator": "Details Shell Preparation, “Cutting the Metric Threads”",
+          "quote_sha256": "4f5c6e3c6500abaf9389675447daaca385ded2aecbf9d75d43348d9fafef9b14"
         },
         {
-          "source_id": "s-0a3d1688171454d0",
-          "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Demagnetization bars”",
-          "quote_sha256": "851fbabcbd91a876df164a3e19497df89c9b577fd6b5dc39a038994e03262b23"
+          "source_id": "s-df759bd2377bbb57",
+          "locator": "Details Shell Preparation, “Cutting the Metric Threads”",
+          "quote_sha256": "4163aa591b4c316333332696de86ea1295f55a00c2d9fc69276c30650a5ca008"
         },
         {
-          "source_id": "s-0a3d1688171454d0",
-          "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Demagnetization bars”",
-          "quote_sha256": "981c75c227cc62e229d3c686957b6341f034084e78b7a33b29aedd41bc34d124"
+          "source_id": "s-df759bd2377bbb57",
+          "locator": "Details Shell Preparation, “Cutting the Metric Threads”",
+          "quote_sha256": "d7489e604eb473a8ff019d78bdbe1e6299268b2377251aeb04c93a0d26466e6a"
         },
         {
-          "source_id": "s-96228576f368ce64",
-          "locator": "Demagnetization of assembled bearings, page 3, “Damage mechanisms caused by residual magnetism in bearings”",
-          "quote_sha256": "d5dfd8c1000003a02d093f3e2570e0b7cbfad05b791c39f87f45c3ee30311e0c"
+          "source_id": "s-df759bd2377bbb57",
+          "locator": "Details Shell Preparation, “Installing the Helicoil Inserts” warning",
+          "quote_sha256": "94a1027b70dd07dde0ead0244b3c7e1ebfbd081f13cd8fca2c5e48fc15af5a1d"
         }
       ],
-      "asset_plan": "Author a rigid representative bearing-contact mandrel and portable bar only after obtaining the matching device instructions. Use spatial hysteresis cells and pose-derived fields, then validate coverage sensitivity, retreat behavior, magnetic forces, thermal duty, contact failures, and reset determinism.",
-      "risk": "The brochure does not provide bar dimensions, stand-off, orientation, sweep speed, overlap, retreat method, field calibration, or duty limit. The bearing note’s instruction to scan an entire surface concerns measurement and cannot be reused as a treatment procedure. Without a bar manual, the essential treatment action would be invented.",
+      "asset_plan": "Author a rigid representative tap and shell only after acquiring the referenced hole-location images or CAD. Use a contact-driven helical advancement model whose rotation, axial feed, resistance, and damage arise from physical coupling; validate clean starts, tilted starts, over-torque stripping, jams, reverse extraction, reset behavior, and timestep sensitivity before robot integration.",
+      "risk": "The prescribed operation and failure mode are supported, but the acquired text omits the referenced location images and local hole geometry. A credible native thread-cutting interaction may also demand finer contact fidelity than the pinned runtime can stably provide. It is plausibly close to existing fastening, screw-starting, and machining tasks, so novelty is not established.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
-        "Portable-bar manufacturer operating instructions and independently verified diagram",
-        "Sourced stand-off, orientation, sweep, retreat, and duty constraints",
-        "Validated spatial field and hysteresis model",
-        "Pinned-YAM reach and collision-clearance test",
-        "Complete catalog comparison against inspection and surface-coverage objectives"
+        "Referenced ODRI images or CAD identifying the encoder and tensioner hole locations and access geometry",
+        "Shell material and local wall geometry sufficient to bound damage behavior",
+        "Native proof that contact-driven tapping can distinguish clean, tilted, stripped, and jammed outcomes without abstract screw-coordinate scoring",
+        "Complete novelty comparison with fastening, screw-starting, drilling, and tapping records"
+      ]
+    },
+    {
+      "id": "odri-bearing-seat-installation",
+      "title": "Seat five bearings horizontally in an ODRI actuator shell using moderate force",
+      "objective": "Place three 8 × 4 × 2 mm transmission bearings and two 32 × 25 × 4 mm output bearings over their correct actuator-shell seats, keep each bearing horizontal, and press each fully into its light press-fit without cocking or damaging the shell.",
+      "skills": [
+        "size-dependent part identification",
+        "coaxial bearing-seat alignment",
+        "planarity control",
+        "force-limited press fitting",
+        "regrasping across two bearing scales",
+        "seating-depth inspection"
+      ],
+      "success_conditions": "Full success requires every bearing in its correct seat, fully seated and within a frozen angular tolerance for two seconds, with no cocked bearing, wrong-seat placement, excessive press force, cracked seat, deformed bearing, dropped component, or direct state write. Safe alignment and partial seating receive partial credit.",
+      "industrial_value": "The ODRI actuator-shell preparation procedure specifies the bearing dimensions, describes a light press-fit, requires horizontal installation, and identifies the prepared shell as part of robot actuator assembly.",
+      "dexterity": "The robot must handle two substantially different bearing sizes, align thin rings to close-fitting seats, regulate insertion force, detect cocking, and recover safely before damage.",
+      "evidence": [
+        {
+          "source_id": "s-df759bd2377bbb57",
+          "locator": "Details Shell Preparation, “Adjusting the Bearing Seats”",
+          "quote_sha256": "61d6ba810fa151ea16406c51ac3c13ba89285cc2388c0bbe7ed696f9c33a31c4"
+        },
+        {
+          "source_id": "s-df759bd2377bbb57",
+          "locator": "Details Shell Preparation, “Adjusting the Bearing Seats”",
+          "quote_sha256": "62c7ff28c477b812b43bce7af36bbdc5fc794e7b99dd76084adf61976baa2afe"
+        },
+        {
+          "source_id": "s-df759bd2377bbb57",
+          "locator": "Details Shell Preparation, “Installing the Bearings”",
+          "quote_sha256": "3979a27c96e6983722668dfb24c8b2683993fd3484a6930afc2ea0da923ece45"
+        },
+        {
+          "source_id": "s-df759bd2377bbb57",
+          "locator": "Details Shell Preparation, “Installing the Bearings”",
+          "quote_sha256": "1082d08c2f31df89f244b217ea1234a134727f63d037c1214439752342c029ec"
+        },
+        {
+          "source_id": "s-df759bd2377bbb57",
+          "locator": "Details Shell Preparation, “Installing the Bearings”",
+          "quote_sha256": "1ada518b7a2eccb4351565b8b1026441578660aaf767e793fa7ac12655c3df94"
+        }
+      ],
+      "asset_plan": "Use rigid bearing rings and a representative printed shell with physically modeled seat interference. Freeze uncited clearance, friction, angular tolerance, and damage thresholds as prototype assumptions. Before YAM integration, test free alignment, correct seating, cocking, wrong-size placement, excessive-force damage, removal force, reset freshness, and timestep convergence.",
+      "risk": "Bearing sizes and handling requirements are well supported, but the acquired record contains only text placeholders for the bearing-location images. Seat diameters, depths, access, and interference are not established. Without that geometry this could collapse into a generic peg/ring insertion task, and current-catalog novelty has not been demonstrated.",
+      "feasibility_status": "research-needed",
+      "missing_evidence": [
+        "Acquired bearing-location images or shell CAD/STL with seat diameters, depths, spacing, and approach access",
+        "A defensible representative interference/contact model and native press-fit validation",
+        "Complete novelty comparison against bearing insertion, press-fit, ring placement, and generic insertion tasks",
+        "Evidence that the resulting objective differs in ability and outcome rather than only part geometry"
       ]
     }
   ],
-  "selected_id": "robot-joint-shaft-low-frequency-demagnetization",
-  "selection_reason": "The shaft-tunnel objective is the only candidate whose acquired manufacturer evidence directly matches both the component form—solid shafts—and the required device class—low-frequency tunnels—while bearing-industry evidence supplies direct robot-joint manufacturing significance. Its essential material-state mechanism has an established hysteresis formulation and can be driven from real simulated pose and time rather than a waypoint flag. Unknown proprietary calibration and exact product dimensions are bounded, disclosed prototype assumptions suitable for component testing, not unknown retention or contact mechanisms. The plate and portable-bar alternatives lack sourced treatment procedures and component-specific grounding, so they remain research-needed. Selection is readiness to attempt native component validation; it does not assert completed physics tests, YAM demos, or final catalog and six-suite novelty clearance."
+  "selected_id": "",
+  "selection_reason": "No candidate is ready. The strongest candidate is ODRI M2.5 HELICOIL tang removal, but the prior failure remains unresolved: acquired evidence still does not establish the actual shell’s local insert-access and fragment-escape geometry, and no native fracture/contact validation exists. Selecting it as ready would contradict the requirement that a ready candidate have no critical missing evidence. The tapping and bearing alternatives are industrially grounded but have still larger geometry, physics, and novelty gaps."
 }

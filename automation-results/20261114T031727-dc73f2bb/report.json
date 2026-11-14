@@ -2,8 +2,8 @@
   "run": "20261114T031727-dc73f2bb",
   "status": "blocked",
   "prompt": "사용자 요청 원문:\n좋아. 이제 인스턴스를 다시 켜고 첫 태스크를 만들어보자.\n필요한 CLI 인증부터 확인하고, 로봇 조립·데이터센터 정비 분야에서 산업 근거가 있고 기존 제출과 겹치지 않는 후보를 골라 제출 전 검토 단계까지 진행해줘.\n\n확정된 제작 조건:\n- Category: Impact on AI timelines. 로봇 조립 또는 데이터센터 정비 중 실제 산업에서 자동화할 의미가 있는 물리 조작 하나를 선택한다.\n- 제조사 설치·정비 매뉴얼, 공식 조립 절차, 공개 설계, 실제 작업 영상·보고서의 원문으로 작업과 장비 형상·치수·절차를 입증한다. 추측이나 가상 산업 용도를 만들어내지 않는다.\n- 여러 후보를 비교하고 목적·물리 기술·성공 조건의 신규성과 로봇의 어려운 조작 능력을 함께 검토하여 하나만 제작한다. 조작의 어려움은 극단적일 필요는 없지만 단순 물체 옮기기를 산업 이름만 바꾼 작업은 피한다.\n- 모든 분야의 기존 accepted/pending/open 제출 및 우리 팀 기존 제출, 지정된 기존 벤치마크와 비교한다. 기하·색상·배치·시작 자세·난도만 다른 것은 새 태스크가 아니다. 선정 시점 및 완성 후 다시 전수 비교한다. 불확실한 중복을 통과시키지 않는다.\n- 가능한 강체 PhysX 작업을 선택한다. 기존의 검증된 연성 에셋이 없다면 새 연성 솔버 연구는 하지 않는다. 실제 산업 장비의 형태와 중요한 물리 제약을 재현한다. 공개 에셋은 라이선스·출처·치수를 기록하고 적합하지 않으면 직접 제작한다.\n- objective와 환경·부품 물리를 먼저 완성·진단한 뒤 YAM 전체 데모·채점기를 연결한다. 물체 순간이동/상태 덮어쓰기로 성공을 만들지 않는다. 관련 부품 파손·금지 동작·실패·부분 점수와 성공 유지 시간을 수치로 평가한다.\n- 실제 simulator 측정·두 번의 full-score YAM 데모·실패/부분 점수 대조군·영상/원시 trace 및 깨끗한 경로 재현 검사를 수행한다. 미검증 수치와 성공을 만들어 보고하지 않는다.\n- 모든 제작·검증을 마친 후에만 Dream 최종 평가 episode 1회. 실패나 불명 결과도 자동 재평가하지 않는다. 누적 $20 ledger를 준수하고 인증이 없으면 제작을 보존한 뒤 평가 대기한다.\n- 결과는 이 run의 새로운 origin 브랜치에 보존한다. 원본 매뉴얼 전체/인증 정보는 공개하지 않는다. 50MB/file 또는 100MB checkpoint 초과는 먼저 보고한다.\n- 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.\n- 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.\n",
-  "at": "2026-11-14T13:42:32.733086+00:00",
-  "error": "candidate-critic: The selected candidate is not factually ready. The Goudsmit brochure identifies low-frequency tunnels as suitable for solid objects, including shafts, but supplies no operating sequence requiring full-length passage, withdrawal behavior, motion speed, orientation, aperture clearance, waveform, field-zone geometry, duty limit, or thermal limit. These unsupported constraints are central to the proposed manipulation and scoring, so they cannot all be treated as noncritical prototype assumptions while feasibility_status remains \"ready\" and missing_evidence is empty.; Direct robot-building significance is not established. The Maurer note says tools and components contacting bearings should be checked and demagnetized, but it does not identify robot-joint shafts, shaft material, or a robot-joint manufacturing demagnetization step. The claim that a representative robot-joint shaft therefore has \"direct\" relevance is an inference, not sourced evidence.; The proposed magnetic-force interaction is unsupported. Tellinen provides a static hysteresis-state model, while the selected plan additionally requires spatial coil fields, gradients, forces, torque, and rate-dependent treatment of a solid shaft. No acquired source validates the proposed tunnel field geometry or the coupling from the hysteresis model to bounded rigid-body force/torque. Those are essential mechanisms rather than mere proprietary calibration details.; Primary diagram verification is incomplete. The run contains the raw Goudsmit and Maurer PDFs but no acquired page images for the relevant pages. Because page 18 is a multi-product layout, its column-to-caption association and any depicted tunnel geometry were not independently preserved or verified as required.; artifacts/candidate-preflight.json and artifacts/candidate-critic.json are stale THK HSR12X reviews and incorrectly report pass for a rejected prior candidate. They do not review the current demagnetization selection and should be regenerated or clearly archived before candidate readiness is asserted.; Resolve the prior ambiguous-selection failure by either acquiring a model-consistent low-frequency tunnel manual plus direct robot-joint manufacturing evidence and marking the unsupported numerical values as explicit testable assumptions, or downgrade this candidate to research-needed and continue source-first candidate research.",
+  "at": "2026-11-14T14:14:44.428100+00:00",
+  "error": "candidate selection ambiguous",
   "mode": "production",
   "dream": null,
   "release": null,
@@ -1669,95 +1669,118 @@
     "selected": null
   },
   "last_candidate": {
-    "id": "robot-joint-shaft-low-frequency-demagnetization",
-    "title": "Demagnetize a solid robot-joint shaft through a low-frequency tunnel",
-    "objective": "Grasp a representative solid ferromagnetic robot-joint shaft, align it with a round low-frequency demagnetizing tunnel, physically carry its full length through the alternating-field region, and place it in a clean output cradle with reduced simulated remanence, without collision, dropping, reversal-induced remagnetization, or particle recontamination.",
+    "id": "odri-helicoil-tang-removal",
+    "title": "Break and recover HELICOIL tangs from an ODRI actuator shell",
+    "objective": "Finish four already-installed M2.5 × 3.75 mm HELICOIL inserts in a representative ODRI actuator shell base: coaxially place a straight tang break-off mandrel, strike it with a separately manipulated hammer to fracture each tang at its notch, then recover every free fragment without damaging or displacing the inserts or shell.",
     "skills": [
-      "stable grasping of an elongated rigid shaft",
-      "six-degree-of-freedom aperture alignment",
-      "clearance-preserving controlled passage",
-      "orientation control under pose-dependent magnetic forces",
-      "clean output placement"
+      "precision grasping of a narrow mandrel",
+      "coaxial insertion into recessed M2.5 inserts",
+      "bimanual mandrel stabilization and controlled hammering",
+      "impulse and lateral-force regulation",
+      "tool withdrawal without coil disturbance",
+      "millimetre-scale fragment search and recovery"
     ],
-    "success_conditions": "Full success requires every shaft material cell to traverse the effective field, a validated hysteresis calculation to finish below the frozen representative remanence threshold, stable placement in the clean cradle, and no tunnel contact, drop, unsafe release, contamination-zone contact, or excessive device thermal load. Alignment and incomplete treatment earn partial credit. Waypoint traversal alone, direct magnetic-state writes, pose or velocity injection, collision suppression, or a hidden success flag cannot score. A physically valid one-arm strategy receives full credit.",
-    "industrial_value": "The manufacturer identifies shafts as suitable products for low-frequency tunnel demagnetization. Separate bearing-industry guidance requires demagnetizing components that contact bearings and documents particle adhesion, denting, vibration, and wear from residual magnetism. A representative robot-joint shaft treated before bearing assembly therefore has direct robot-building relevance.",
-    "dexterity": "The central manipulation is carrying a long, solid part through a confined aperture while preserving clearance and orientation as its magnetic state and field-derived forces evolve. It is materially harder than pick-and-place, yet remains a rigid-body task within pinned-YAM reach after fixture scaling; no artificial bimanual requirement is imposed.",
+    "success_conditions": "Full success requires four contact-loaded notch fractures, four freely moving tang fragments deposited in the recovery tray, no fragment remaining in the shell cavity, every insert retained within frozen pose tolerances, no shell/coil damage, and a two-second hands-off hold. Partial credit covers safe alignment or fewer than four completed fractures when every released fragment remains contained. Failure includes an unrecovered fragment, off-axis overload, insert displacement, shell damage, tool jamming, or fragment escape. Pose/velocity writes, waypoint-triggered fracture, permanent grasp welds, fixed fragments, or manufactured collision suppression invalidate the attempt. Initial prototype assumptions—0.55 mm wire diameter, 1.8 mm tang chord, 18 N equivalent axial break threshold over a 20 ms window, and 8 N radial-damage threshold—are explicitly uncalibrated and must be frozen before native testing.",
+    "industrial_value": "The pinned ODRI robot-actuator preparation procedure expressly requires four M2.5 × 3.75 mm inserts in the shell base, removal with a tang break-off tool, and no tangs left inside the part. Manufacturer documentation identifies the notch as the predetermined fracture location and provides a size-matched M2.5 straight mandrel.",
+    "dexterity": "The robot must preserve coaxial alignment in a roughly 2.6 mm insert crest opening while another hand delivers a controlled impact, avoid loading the surrounding printed boss, withdraw the tool, and recover small free debris from a cavity. Bimanual use is grounded in the manufacturer diagram showing one hand holding the straight mandrel while a hammer strikes it; it is not imposed on the alternative spring-loaded tool mechanism.",
     "evidence": [
       {
-        "source_id": "s-0a3d1688171454d0",
-        "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Low-frequency demagnetizing tunnels”",
-        "quote_sha256": "9347502825a699f92ae99c312e3815de872d649ae2ec3cc2ddeae5f9c55bf674"
+        "source_id": "s-df759bd2377bbb57",
+        "locator": "ODRI actuator-module shell preparation, “Installing the Helicoil Inserts,” shell-base step",
+        "quote_sha256": "64253869545fb5f306ad3a0515b17c2d59f6b28ddde42c205a17bf5eb51b08e4"
       },
       {
-        "source_id": "s-0a3d1688171454d0",
-        "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Low-frequency demagnetizing tunnels”",
-        "quote_sha256": "d476f0bd2498a0544cde8371332318bb3e6638a67676bfa8aad33864bfc60f06"
+        "source_id": "s-df759bd2377bbb57",
+        "locator": "ODRI actuator-module shell preparation, “Installing the Helicoil Inserts,” shell-base step",
+        "quote_sha256": "2f831484053c44174f7775195ef67869a07588a81e37a54b7ad6a36c6749efe1"
       },
       {
-        "source_id": "s-96228576f368ce64",
-        "locator": "Demagnetization of assembled bearings, page 3",
-        "quote_sha256": "951c80708981594870a4484aeee307d8737d2ae2ae3f8d6eb156bd556a778668"
+        "source_id": "s-df759bd2377bbb57",
+        "locator": "ODRI actuator-module shell preparation, “Installing the Helicoil Inserts,” shell-base step",
+        "quote_sha256": "ab11aa977c8a5cde65af28ab4773d5d8d25a18294fc4708dae4485eb4ef45ff7"
       },
       {
-        "source_id": "s-73ad8f4348851bfc",
-        "locator": "Modelica Magnetic FluxTubes UsersGuide, StaticHysteresis.Tellinen, “The Tellinen hysteresis model”",
-        "quote_sha256": "95205827e47f7e5bdd2264544c8b45e4053e28c22bd72d0591ad170137a6d3fe"
+        "source_id": "s-6195df1bebbb33ef",
+        "locator": "Böllhoff HELICOIL Plus catalog, page 17, “Breaking off the tang”",
+        "quote_sha256": "546c8e46c17cb3ac989938505e76679ff273e01c17dc6465ac408d24cbe36c28"
+      },
+      {
+        "source_id": "s-6195df1bebbb33ef",
+        "locator": "Böllhoff HELICOIL Plus catalog, page 55, M2.5 row in tang break-off tool table",
+        "quote_sha256": "9d2706184ef14ebd66d4b1c1edfb9051f5dd3fd64bafd508d5e0dea405fa3a45"
+      },
+      {
+        "source_id": "s-6195df1bebbb33ef",
+        "locator": "Böllhoff HELICOIL Plus catalog, page 19, M2.5 × 1.5d technical-data row",
+        "quote_sha256": "371d2667a866a9461effefe5f2899139fd3e8ffbb33015b7aa38b3afbe9142b6"
+      },
+      {
+        "source_id": "s-c392a734cb5007d7",
+        "locator": "Pinned ODRI repository LICENSE, BSD 3-Clause License",
+        "quote_sha256": "d5c22c75f54623d0c00cd65d119bdc89f755463a4f1992744c7fdce6d5ffe0fc"
       }
     ],
-    "asset_plan": "Author a representative, explicitly non-product-replica rigid tunnel, 320 mm solid shaft, input stand, clean output cradle, and guarded field enclosure. Freeze aperture, shaft diameter and mass, field-zone length, material envelope curve, remanence limit, force ceiling, thermal duty, and reach bounds before development. Use a Tellinen hysteresis state per axial shaft cell, driven only by simulated coil field evaluated from actual poses and time in the verified native PRE/POST physics callback. Couple a bounded field-gradient force and torque into PhysX; never overwrite shaft pose, velocity, or magnetic state. Before YAM integration, test major and minor loops, proper and incomplete passage, reversal, stopping, timestep/rate convergence, force and energy finiteness, thermal accumulation, reset freshness, collision response, and reachable clean placement. The representative field calibration and protocol are disclosed prototype assumptions, not manufacturer specifications.",
-    "risk": "No acquired source supplies a specific tunnel model’s proprietary aperture, waveform, field calibration, or operating speed. Those values must remain frozen representative assumptions and cannot be advertised as Goudsmit performance. Static Tellinen behavior does not by itself establish dynamic eddy-current accuracy, so the selected solid shaft must use a conservative low-frequency regime and pass convergence and improper-treatment controls. Catalog neighbor pr-1810 tests controlled passage through a narrow slot; final novelty depends on the independently validated remanence outcome and magnetic force interaction, not on the passage trajectory alone. Full catalog and six-suite clearance remains a mandatory downstream gate.",
+    "asset_plan": "Use an independently authored representative shell-base fixture, not an exact-product claim. Ground it in the inspected pinned ODRI images: four marked M2.5 bosses are distributed around the open shell-base cavity; the installation photograph shows vertical tool access to a perimeter boss; the completed-shell photograph confirms the cavity, large through-openings, boss heights, and fragment escape paths. Anchor scale with the documented M2.5 × 3.75 mm insert, 2.60 mm crest diameter, four-hole count, and 160 mm actuator-module segment length. Model each retained coil proxy and its separate tang at the visually verified notch anatomy. Use a representative straight M2.5 mandrel corresponding to item 0158 040 1000 and hammer actuation matching Böllhoff page-17 diagram h; do not mix it with the TB-M spring tool. Disclose all unsourced handle dimensions. Before robot integration, verify native PhysX axial-impact fracture, insufficient-energy and glancing-blow controls, off-axis damage, wrong-hole strikes, coil retention, free-fragment collision/containment, reset freshness, substep force/impulse/energy logging, and timestep convergence using retained PRE/POST PhysxManager callback handles. Reject or revise the assumptions if stable contact coupling is not demonstrated.",
+    "risk": "The closest prior families include nail hammering, automatic center-punch use, pop-rivet stem disposal, panel/tile fracture, and slide-hammer extraction. Novelty depends on the combined installed-insert access, bimanual alignment-preserving impulse, preservation of a functional coil in a robot shell, and mandatory recovery of every internal fragment—not on debris or industrial naming alone. Exact notch strength and tool-handle dimensions remain prototype assumptions, but the essential retention, fracture location, actuation mode, insert size, access orientation, shell cavity, and required fragment outcome are evidenced.",
     "feasibility_status": "ready",
     "missing_evidence": []
   },
   "sources": [
     {
-      "id": "s-96228576f368ce64",
-      "title": "Demagnetization of assembled bearings",
-      "publisher": "Maurer Magnetic AG",
-      "url": "https://maurermagnetic.com/wp-content/uploads/2020/04/Application-note-demagnetization-of-assembled-bearings-EN.pdf",
-      "sha256": "12566db1c75be9faf313230a00c9b9d4e415045996f7f21548a10b973cc50459"
+      "id": "s-df759bd2377bbb57",
+      "title": "ODRI actuator-module shell preparation",
+      "publisher": "Open Dynamic Robot Initiative",
+      "url": "https://github.com/open-dynamic-robot-initiative/open_robot_actuator_hardware/blob/66af1522b4fba0ec4a1d7790e66f5e4652208d30/mechanics/actuator_module_v1/details/details_shell_preparation.md",
+      "sha256": "943f03330457a97e19aa1b8aae6e6f313369867e2b4d5a0a36c1992d680c762b"
     },
     {
-      "id": "s-0a3d1688171454d0",
-      "title": "Industrial magnetic handling and demagnetization brochure",
-      "publisher": "Goudsmit Magnetics",
-      "url": "https://www.goudsmitmagnetics.com/uploads/pdf/brochure-handling-en.pdf",
-      "sha256": "7f61dfc25d93ab52c79aa8718f98ad9c7cf08f6d7ad0b857b8d3b27e4318b27b"
+      "id": "s-569187001f8c3978",
+      "title": "Installation of HELICOIL thread inserts",
+      "publisher": "Böllhoff",
+      "url": "https://www.boellhoff.com/de-en/products/assembly-technology/installation-of-helicoil-thread-inserts/",
+      "sha256": "fe0bd53b744a25016a73b28107ee8584611ca477ccd96d81ff1286879291e4ee"
     },
     {
-      "id": "s-fb839e55cda4c53b",
-      "title": "CC0 asset license",
-      "publisher": "ambientCG",
-      "url": "https://ambientcg.com/license",
-      "sha256": "86d690c1384e979c84fcb607c66dcd4802ff75f917a2fbef1658add632d1b11b"
+      "id": "s-27e9832170aeb95b",
+      "title": "Brushless actuator module core v1: dimensions, parts and STL links",
+      "publisher": "Open Dynamic Robot Initiative",
+      "url": "https://github.com/open-dynamic-robot-initiative/open_robot_actuator_hardware/blob/66af1522b4fba0ec4a1d7790e66f5e4652208d30/mechanics/actuator_module_v1/README.md",
+      "sha256": "4094df3181caa77f619f7e3d52ddaa5e67800f6aef150eb4d322b7c193cf0d3b"
     },
     {
-      "id": "s-0e2dbc39a87eed72",
-      "title": "LIBERO original BDDL task definitions",
+      "id": "s-c392a734cb5007d7",
+      "title": "ODRI repository LICENSE: BSD 3-Clause License",
+      "publisher": "Open Dynamic Robot Initiative",
+      "url": "https://github.com/open-dynamic-robot-initiative/open_robot_actuator_hardware/blob/66af1522b4fba0ec4a1d7790e66f5e4652208d30/LICENSE",
+      "sha256": "f4e5355f27e0bd4abac0d438f9b8b866e15eba9d75fa64a264b92901b8407380"
+    },
+    {
+      "id": "s-863944427b8e3519",
+      "title": "LIBERO original BDDL task definition",
       "publisher": "Lifelong Robot Learning",
-      "url": "https://github.com/Lifelong-Robot-Learning/LIBERO/tree/master/libero/libero/bddl_files",
-      "sha256": "7892009d6d727766013e1b5f3d818a6906caa38d69aff210163ddef37e8f5edf"
+      "url": "https://raw.githubusercontent.com/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.bddl",
+      "sha256": "491835cc2eb6956f7ce3d1ee4e266377116168fe453e6529fe105e3b0333635d"
     },
     {
-      "id": "s-d96edf36132218e4",
-      "title": "RoboCasa original kitchen task implementations",
+      "id": "s-0839942e794e7f8e",
+      "title": "RoboCasa original environment registry",
       "publisher": "RoboCasa",
-      "url": "https://github.com/robocasa/robocasa/tree/main/robocasa/environments/kitchen",
-      "sha256": "968cd658185c950a4c21675630b81c8e3d1d3e7367537c81177066fc268e4c73"
+      "url": "https://raw.githubusercontent.com/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/__init__.py",
+      "sha256": "db2b99b1555167a2a7f7c93024e84e7e6fef41b739f7f4520a5a1ddfb0c24e17"
     },
     {
-      "id": "s-d13271bd3025d4f4",
-      "title": "SimplerEnv original real-to-sim environment definitions",
+      "id": "s-396760d996a2e1d5",
+      "title": "SimplerEnv original task registry",
       "publisher": "SimplerEnv",
-      "url": "https://github.com/simpler-env/ManiSkill2_real2sim/tree/main/mani_skill2_real2sim/envs",
-      "sha256": "35a2b590ecd122b762133b2aeca513e88bd902df667cfd5032c89130ca51b1db"
+      "url": "https://raw.githubusercontent.com/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/__init__.py",
+      "sha256": "ed5079f2aa8d9c85938f86440195ecdf90c4ee3afebb96b778375aad7cccac25"
     },
     {
-      "id": "s-660b48d08ce51e54",
-      "title": "BEHAVIOR-1K original BDDL activity definitions",
+      "id": "s-92e8044e74199c7c",
+      "title": "BEHAVIOR-1K original BDDL activity definition",
       "publisher": "Stanford Vision and Learning Lab",
-      "url": "https://github.com/StanfordVL/BEHAVIOR-1K/tree/main/bddl3/bddl/activity_definitions",
-      "sha256": "cd31fc546da7ddc51effecf218231f9e878bdb86352e1825a9cd292e6090dc4f"
+      "url": "https://raw.githubusercontent.com/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/assembling_gift_baskets/problem0.bddl",
+      "sha256": "6e6c82bae96d3b4efaf3026ed84c2e0ea1aefa57e2f4763c51d2c2fe7b96267e"
     },
     {
       "id": "s-6ed524b5f205e074",
@@ -1767,32 +1790,32 @@
       "sha256": "8a8351a763ba4a806d420d435b5df0188c496a29e9f30f026e06d8569619baf5"
     },
     {
-      "id": "s-5d66f9b402b33e5c",
-      "title": "RoboDojo original task logic and configurations",
+      "id": "s-508a257a209ad599",
+      "title": "RoboDojo original fasten-screws task definition",
       "publisher": "RoboDojo Benchmark",
-      "url": "https://github.com/robodojo-benchmark/RoboDojo/tree/main/task/RoboDojo",
-      "sha256": "8757974cd69a46178397974e0f313add0d6643804b6277f39ed4ed4380cf993b"
+      "url": "https://raw.githubusercontent.com/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/config/fasten_screws.yml",
+      "sha256": "5fbe4cf5b3ee2eafc2771137b13176f01617f8b2131f02503e676a7b62e2eabf"
     },
     {
-      "id": "s-73ad8f4348851bfc",
-      "title": "Modelica Association static hysteresis: Tellinen and Preisach models",
-      "publisher": "Modelica Association",
-      "url": "https://doc.modelica.org/Modelica%203.2.3/Resources/helpDymola/Modelica_Magnetic_FluxTubes_UsersGuide_Hysteresis_StaticHysteresis.html",
-      "sha256": "074d3bf863ddd59ea557e7f9a1ec8c06ff906007ef5a94827daf7045fd7e0e82"
+      "id": "s-6195df1bebbb33ef",
+      "title": "HELICOIL Plus manufacturer catalog",
+      "publisher": "Bollhoff",
+      "url": "https://media.boellhoff.com/files/pdf1/0100-helicoil-plus-en.pdf",
+      "sha256": "79c31a1d8cdc5a361c77b9f0980d5a192f9966ea684cf7ff901675162bd1a8df"
     },
     {
-      "id": "s-b871f48280fcd511",
-      "title": "Modelica Models for Magnetic Hysteresis, Materials and Transformers",
-      "publisher": "Ziske and Boedrich; Modelica Conference2014",
-      "url": "https://ep.liu.se/ecp/096/017/ecp14096017.pdf",
-      "sha256": "6e8c4fea14fe41e1f81a2424345b919a9486663f60df091a957ac55359049367"
+      "id": "s-23ad7bc62bf91e58",
+      "title": "Heli-Coil HC2000 revision12 catalog",
+      "publisher": "Stanley Engineered Fastening",
+      "url": "https://www.stanleyengineeredfastening.com/-/media/web/sef/resources/docs/heli-coil/heli-coil_catalog_hc2000_rev12.pdf",
+      "sha256": "e117911c7e0655a16b385d3da6a6b8363e025190f91cb171e71e40b6259a422a"
     },
     {
-      "id": "s-6c420615dfaade7b",
-      "title": "Magpylib6.1 current-loop SI field classes",
-      "publisher": "Magpylib",
-      "url": "https://magpylib.readthedocs.io/en/6.1.0/_pages/user_guide/docs/docs_classes.html",
-      "sha256": "aa550a7f8b16117b045130a66332332171a313e295646c73ac0d961b962a2300"
+      "id": "s-c7d2ba6a6bae616b",
+      "title": "Manufacturer thread gauge inspection procedure",
+      "publisher": "Volkel",
+      "url": "https://voelkel.com/en/voelkel-precision-thread-plug-gauge",
+      "sha256": "c0b5448361fcb0dd05f43b08eec0fa586c578571138057183ad9c173f49a89e5"
     }
   ]
 }

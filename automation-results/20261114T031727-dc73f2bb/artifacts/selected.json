@@ -1,41 +1,57 @@
 {
-  "id": "robot-joint-shaft-low-frequency-demagnetization",
-  "title": "Demagnetize a solid robot-joint shaft through a low-frequency tunnel",
-  "objective": "Grasp a representative solid ferromagnetic robot-joint shaft, align it with a round low-frequency demagnetizing tunnel, physically carry its full length through the alternating-field region, and place it in a clean output cradle with reduced simulated remanence, without collision, dropping, reversal-induced remagnetization, or particle recontamination.",
+  "id": "odri-helicoil-tang-removal",
+  "title": "Break and recover HELICOIL tangs from an ODRI actuator shell",
+  "objective": "Finish four already-installed M2.5 × 3.75 mm HELICOIL inserts in a representative ODRI actuator shell base: coaxially place a straight tang break-off mandrel, strike it with a separately manipulated hammer to fracture each tang at its notch, then recover every free fragment without damaging or displacing the inserts or shell.",
   "skills": [
-    "stable grasping of an elongated rigid shaft",
-    "six-degree-of-freedom aperture alignment",
-    "clearance-preserving controlled passage",
-    "orientation control under pose-dependent magnetic forces",
-    "clean output placement"
+    "precision grasping of a narrow mandrel",
+    "coaxial insertion into recessed M2.5 inserts",
+    "bimanual mandrel stabilization and controlled hammering",
+    "impulse and lateral-force regulation",
+    "tool withdrawal without coil disturbance",
+    "millimetre-scale fragment search and recovery"
   ],
-  "success_conditions": "Full success requires every shaft material cell to traverse the effective field, a validated hysteresis calculation to finish below the frozen representative remanence threshold, stable placement in the clean cradle, and no tunnel contact, drop, unsafe release, contamination-zone contact, or excessive device thermal load. Alignment and incomplete treatment earn partial credit. Waypoint traversal alone, direct magnetic-state writes, pose or velocity injection, collision suppression, or a hidden success flag cannot score. A physically valid one-arm strategy receives full credit.",
-  "industrial_value": "The manufacturer identifies shafts as suitable products for low-frequency tunnel demagnetization. Separate bearing-industry guidance requires demagnetizing components that contact bearings and documents particle adhesion, denting, vibration, and wear from residual magnetism. A representative robot-joint shaft treated before bearing assembly therefore has direct robot-building relevance.",
-  "dexterity": "The central manipulation is carrying a long, solid part through a confined aperture while preserving clearance and orientation as its magnetic state and field-derived forces evolve. It is materially harder than pick-and-place, yet remains a rigid-body task within pinned-YAM reach after fixture scaling; no artificial bimanual requirement is imposed.",
+  "success_conditions": "Full success requires four contact-loaded notch fractures, four freely moving tang fragments deposited in the recovery tray, no fragment remaining in the shell cavity, every insert retained within frozen pose tolerances, no shell/coil damage, and a two-second hands-off hold. Partial credit covers safe alignment or fewer than four completed fractures when every released fragment remains contained. Failure includes an unrecovered fragment, off-axis overload, insert displacement, shell damage, tool jamming, or fragment escape. Pose/velocity writes, waypoint-triggered fracture, permanent grasp welds, fixed fragments, or manufactured collision suppression invalidate the attempt. Initial prototype assumptions—0.55 mm wire diameter, 1.8 mm tang chord, 18 N equivalent axial break threshold over a 20 ms window, and 8 N radial-damage threshold—are explicitly uncalibrated and must be frozen before native testing.",
+  "industrial_value": "The pinned ODRI robot-actuator preparation procedure expressly requires four M2.5 × 3.75 mm inserts in the shell base, removal with a tang break-off tool, and no tangs left inside the part. Manufacturer documentation identifies the notch as the predetermined fracture location and provides a size-matched M2.5 straight mandrel.",
+  "dexterity": "The robot must preserve coaxial alignment in a roughly 2.6 mm insert crest opening while another hand delivers a controlled impact, avoid loading the surrounding printed boss, withdraw the tool, and recover small free debris from a cavity. Bimanual use is grounded in the manufacturer diagram showing one hand holding the straight mandrel while a hammer strikes it; it is not imposed on the alternative spring-loaded tool mechanism.",
   "evidence": [
     {
-      "source_id": "s-0a3d1688171454d0",
-      "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Low-frequency demagnetizing tunnels”",
-      "quote_sha256": "9347502825a699f92ae99c312e3815de872d649ae2ec3cc2ddeae5f9c55bf674"
+      "source_id": "s-df759bd2377bbb57",
+      "locator": "ODRI actuator-module shell preparation, “Installing the Helicoil Inserts,” shell-base step",
+      "quote_sha256": "64253869545fb5f306ad3a0515b17c2d59f6b28ddde42c205a17bf5eb51b08e4"
     },
     {
-      "source_id": "s-0a3d1688171454d0",
-      "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Low-frequency demagnetizing tunnels”",
-      "quote_sha256": "d476f0bd2498a0544cde8371332318bb3e6638a67676bfa8aad33864bfc60f06"
+      "source_id": "s-df759bd2377bbb57",
+      "locator": "ODRI actuator-module shell preparation, “Installing the Helicoil Inserts,” shell-base step",
+      "quote_sha256": "2f831484053c44174f7775195ef67869a07588a81e37a54b7ad6a36c6749efe1"
     },
     {
-      "source_id": "s-96228576f368ce64",
-      "locator": "Demagnetization of assembled bearings, page 3",
-      "quote_sha256": "951c80708981594870a4484aeee307d8737d2ae2ae3f8d6eb156bd556a778668"
+      "source_id": "s-df759bd2377bbb57",
+      "locator": "ODRI actuator-module shell preparation, “Installing the Helicoil Inserts,” shell-base step",
+      "quote_sha256": "ab11aa977c8a5cde65af28ab4773d5d8d25a18294fc4708dae4485eb4ef45ff7"
     },
     {
-      "source_id": "s-73ad8f4348851bfc",
-      "locator": "Modelica Magnetic FluxTubes UsersGuide, StaticHysteresis.Tellinen, “The Tellinen hysteresis model”",
-      "quote_sha256": "95205827e47f7e5bdd2264544c8b45e4053e28c22bd72d0591ad170137a6d3fe"
+      "source_id": "s-6195df1bebbb33ef",
+      "locator": "Böllhoff HELICOIL Plus catalog, page 17, “Breaking off the tang”",
+      "quote_sha256": "546c8e46c17cb3ac989938505e76679ff273e01c17dc6465ac408d24cbe36c28"
+    },
+    {
+      "source_id": "s-6195df1bebbb33ef",
+      "locator": "Böllhoff HELICOIL Plus catalog, page 55, M2.5 row in tang break-off tool table",
+      "quote_sha256": "9d2706184ef14ebd66d4b1c1edfb9051f5dd3fd64bafd508d5e0dea405fa3a45"
+    },
+    {
+      "source_id": "s-6195df1bebbb33ef",
+      "locator": "Böllhoff HELICOIL Plus catalog, page 19, M2.5 × 1.5d technical-data row",
+      "quote_sha256": "371d2667a866a9461effefe5f2899139fd3e8ffbb33015b7aa38b3afbe9142b6"
+    },
+    {
+      "source_id": "s-c392a734cb5007d7",
+      "locator": "Pinned ODRI repository LICENSE, BSD 3-Clause License",
+      "quote_sha256": "d5c22c75f54623d0c00cd65d119bdc89f755463a4f1992744c7fdce6d5ffe0fc"
     }
   ],
-  "asset_plan": "Author a representative, explicitly non-product-replica rigid tunnel, 320 mm solid shaft, input stand, clean output cradle, and guarded field enclosure. Freeze aperture, shaft diameter and mass, field-zone length, material envelope curve, remanence limit, force ceiling, thermal duty, and reach bounds before development. Use a Tellinen hysteresis state per axial shaft cell, driven only by simulated coil field evaluated from actual poses and time in the verified native PRE/POST physics callback. Couple a bounded field-gradient force and torque into PhysX; never overwrite shaft pose, velocity, or magnetic state. Before YAM integration, test major and minor loops, proper and incomplete passage, reversal, stopping, timestep/rate convergence, force and energy finiteness, thermal accumulation, reset freshness, collision response, and reachable clean placement. The representative field calibration and protocol are disclosed prototype assumptions, not manufacturer specifications.",
-  "risk": "No acquired source supplies a specific tunnel model’s proprietary aperture, waveform, field calibration, or operating speed. Those values must remain frozen representative assumptions and cannot be advertised as Goudsmit performance. Static Tellinen behavior does not by itself establish dynamic eddy-current accuracy, so the selected solid shaft must use a conservative low-frequency regime and pass convergence and improper-treatment controls. Catalog neighbor pr-1810 tests controlled passage through a narrow slot; final novelty depends on the independently validated remanence outcome and magnetic force interaction, not on the passage trajectory alone. Full catalog and six-suite clearance remains a mandatory downstream gate.",
+  "asset_plan": "Use an independently authored representative shell-base fixture, not an exact-product claim. Ground it in the inspected pinned ODRI images: four marked M2.5 bosses are distributed around the open shell-base cavity; the installation photograph shows vertical tool access to a perimeter boss; the completed-shell photograph confirms the cavity, large through-openings, boss heights, and fragment escape paths. Anchor scale with the documented M2.5 × 3.75 mm insert, 2.60 mm crest diameter, four-hole count, and 160 mm actuator-module segment length. Model each retained coil proxy and its separate tang at the visually verified notch anatomy. Use a representative straight M2.5 mandrel corresponding to item 0158 040 1000 and hammer actuation matching Böllhoff page-17 diagram h; do not mix it with the TB-M spring tool. Disclose all unsourced handle dimensions. Before robot integration, verify native PhysX axial-impact fracture, insufficient-energy and glancing-blow controls, off-axis damage, wrong-hole strikes, coil retention, free-fragment collision/containment, reset freshness, substep force/impulse/energy logging, and timestep convergence using retained PRE/POST PhysxManager callback handles. Reject or revise the assumptions if stable contact coupling is not demonstrated.",
+  "risk": "The closest prior families include nail hammering, automatic center-punch use, pop-rivet stem disposal, panel/tile fracture, and slide-hammer extraction. Novelty depends on the combined installed-insert access, bimanual alignment-preserving impulse, preservation of a functional coil in a robot shell, and mandatory recovery of every internal fragment—not on debris or industrial naming alone. Exact notch strength and tool-handle dimensions remain prototype assumptions, but the essential retention, fracture location, actuation mode, insert size, access orientation, shell cavity, and required fragment outcome are evidenced.",
   "feasibility_status": "ready",
   "missing_evidence": []
 }
