@@ -388,6 +388,9 @@ class Coordinator:
     def evaluate(self, rid, credentials=None):
         if self.store.get(rid).get("mode") == "selftest":
             raise GateError("selftest can never call Dream")
+        root = self.store.run_dir(rid)
+        if (root / "cancel-requested.json").exists():
+            raise GateError("stop requested before Dream; resume to evaluate")
         from .secrets import credentials as load_credentials
 
         credentials = credentials or load_credentials(self.store.root)
@@ -395,7 +398,6 @@ class Coordinator:
             raise GateError(
                 "production complete; Dream key missing: run rcauto auth dream then rcauto evaluate RUN"
             )
-        root = self.store.run_dir(rid)
         verify_manifest(root / "release", read(root / "release-manifest.json"))
         task = next((root / "release/tasks").iterdir())
         spec = read(task / "task.json")
@@ -415,6 +417,10 @@ class Coordinator:
         write_json(root / "evaluation-job.json", job)
         self.brev.rsync(root / "evaluation-job.json", remote + "/evaluation-job.json")
         with self.store.lock("dream-budget"):
+            # A stop may arrive while copying the validated job. Check again
+            # at the one-episode reservation boundary, before any paid effect.
+            if (root / "cancel-requested.json").exists():
+                raise GateError("stop requested before Dream; resume to evaluate")
             self.store.reserve_effect(
                 rid,
                 "dream",

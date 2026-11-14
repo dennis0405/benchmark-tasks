@@ -147,3 +147,47 @@ def test_downloaded_symlink_cannot_dereference_mac_credentials(tmp_path):
 
     with pytest.raises(GateError, match="symlink"):
         c.download_run(r["id"], "/remote")
+
+
+def test_pending_stop_prevents_dream_preparation_and_budget_reservation(tmp_path):
+    from rcauto.gates import GateError
+    from rcauto.store import write_json
+
+    s = Store(tmp_path / "state")
+    r = s.create("native production", instance="vm")
+    write_json(s.run_dir(r["id"]) / "cancel-requested.json", {"requested": "human"})
+    c = Coordinator(s, {"instance": "vm", "instance_id": "id"}, tmp_path)
+    with pytest.raises(GateError, match="stop requested before Dream"):
+        c.evaluate(r["id"], credentials={"DREAM_API_KEY": "unused-test-value"})
+    assert s.effect(r["id"], "dream") is None
+
+
+def test_stop_arriving_during_evaluation_transfer_prevents_dream_call(tmp_path):
+    from rcauto.gates import GateError, manifest
+    from rcauto.store import write_json
+
+    s = Store(tmp_path / "state")
+    r = s.create("native production", instance="vm")
+    root = s.run_dir(r["id"])
+    task = root / "release/tasks/probe"
+    task.mkdir(parents=True)
+    (task / "task.py").write_text("# validated fixture for cancellation test\n")
+    write_json(task / "task.json", {"instruction": "fixture", "setup": "fixture",
+                                    "scoring": "fixture", "run_limit": "7200"})
+    write_json(root / "release-manifest.json", manifest(root / "release"))
+    write_json(root / "workspace/artifacts/contract.json", {"run_steps": 7200})
+
+    class FakeBrev:
+        def rsync(self, *args, **kwargs):
+            write_json(root / "cancel-requested.json", {"requested": "human"})
+
+        def ssh(self, *args, **kwargs):
+            pytest.fail("Dream must not launch after a stop during transfer")
+
+    c = Coordinator(s, {"instance": "vm", "instance_id": "id", "remote_root": "/test",
+                         "dream_episode_reserve_usd": 20, "dream_cumulative_usd": 20,
+                         "runtime": {"python": "/usr/bin/python3"}}, tmp_path)
+    c.brev = FakeBrev()
+    with pytest.raises(GateError, match="stop requested before Dream"):
+        c.evaluate(r["id"], credentials={"DREAM_API_KEY": "unused-test-value"})
+    assert s.effect(r["id"], "dream") is None
