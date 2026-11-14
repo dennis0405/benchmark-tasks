@@ -115,6 +115,13 @@ BUILD = obj(summary=S, scripts=array(SCRIPT), files=array(S))
 SCENARIO_POLICY = """
 You are one role in a RoboCurve production workflow, focused on Impact on AI timelines.
 The user's actual objective is in input/request.json. Read it and existing input and artifacts.
+When present, read input/repository-AGENTS.md and input/review-prompt.txt as the official
+acceptance requirements, subordinate to the user's constraints and execution permissions.
+Submission scores must track observable industrial outcomes, with clear partial/damage/loss
+conditions that can be checked using simple tools or video. Keep physics-validation metrics
+separate from grading; arbitrary impulse windows, action counts, hand identity or prescribed
+orders must not disqualify a physically safe valid outcome. Characterize real alternatives
+and assess novelty against the actual tested ability, not a forced strategy narrative.
 Use industrial manuals, official service/assembly instructions, real industrial reports or videos.
 Prefer difficult dexterous manipulation: actual alignment, insertion, latching, force control,
 regrasping and bimanual coordination. Do not invent industrial importance or quotations.
