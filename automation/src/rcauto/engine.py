@@ -950,6 +950,8 @@ class Production:
         if len({s["id"] for s in plan["scripts"]}) != len(plan["scripts"]):
             raise GateError("duplicate diagnostic script ids")
         for script in plan["scripts"]:
+            if (self.root / "cancel.json").exists():
+                raise StateError("diagnostic cancelled before native launch")
             if not re.fullmatch(r"[a-z][a-z0-9_-]{0,60}", script["id"]):
                 raise GateError("invalid diagnostic id")
             relative = Path(script["script"])

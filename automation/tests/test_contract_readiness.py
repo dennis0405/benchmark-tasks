@@ -4,7 +4,7 @@ import pytest
 
 from rcauto.gates import GateError
 from rcauto.selftest import FixtureAgent, FixtureProduction
-from rcauto.store import Store, write_json
+from rcauto.store import StateError, Store, write_json
 
 
 def production(tmp_path):
@@ -153,3 +153,21 @@ def test_cancel_after_failed_attempt_prevents_automatic_retry(tmp_path):
     p.run(from_stage="environment")
     assert calls == [1]
     assert p.store.get(p.rid)["status"] == "paused"
+
+
+def test_cancel_after_codegen_prevents_native_launch(tmp_path):
+    import sys
+
+    p = production(tmp_path)
+    p.config["runtime"] = {"python": sys.executable}
+    marker = tmp_path / "native-was-launched"
+    (p.workspace / "task/probe.py").write_text(
+        "from pathlib import Path\n" + f"Path({str(marker)!r}).write_text('launched')\n"
+    )
+    write_json(p.root / "cancel.json", {"reason": "stop arrived during source generation"})
+    with pytest.raises(StateError, match="cancelled before native launch"):
+        p.execute_scripts(
+            {"scripts": [{"id": "probe", "script": "probe.py", "args": [],
+                          "report": "measurements/probe.json"}]}
+        )
+    assert not marker.exists()
