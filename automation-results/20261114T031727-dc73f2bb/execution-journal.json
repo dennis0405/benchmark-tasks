@@ -47,18 +47,18 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 70788,
+    "supervisor_pid": 75229,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log",
-    "error": "novelty cancelled at batch boundary; partial evidence preserved",
+    "error": "all proposed candidates duplicate/uncertain; inspect selection-history.json",
     "approval": null,
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb",
     "remote_status": {
       "status": "blocked",
-      "error": "novelty cancelled at batch boundary; partial evidence preserved",
-      "type": "StateError",
-      "at": "2026-11-14T04:14:05.393394+00:00"
+      "error": "all proposed candidates duplicate/uncertain; inspect selection-history.json",
+      "type": "GateError",
+      "at": "2026-11-14T04:37:58.137365+00:00"
     },
-    "compute": "stopped",
+    "compute": "running",
     "revision": 4,
     "revision_request": "공식 보드 인증 연동을 보강했다. accepted/pending/재검토 보유 이력, 공식 pilot 90건의 실제 정의, 우리 팀 전체 24건(철회 1건은 공식 접수 댓글과 접수 시점 커밋으로 복구)을 GitHub와 합쳐 전수 검사한다. exact title+instruction만 연결하며 다른 버전은 보존하고, 설정된 보드 인증을 역할에 전달하지 않는다. 보드의 빈 setup/scoring은 missing_fields로 명시하며 실제로 없는 수치를 만들지 않는다. 원문에 있는 명확한 목적/조작 능력이 서로 다르면 수치 세부가 없다는 이유만으로 자동 중복으로 보지 않되, 동일 능력 가능성을 배제할 수 없으면 uncertain으로 차단한다. 비교는 후보와 유사한 기록부터 처리하나 통과에는 전체 기록 확인이 필요하다. 마지막으로 선정한 minifit-5556-terminal-extraction 후보를 유지하여 novelty부터 재개한다. 기존 모든 물리·데모·Dream 1회·예산·제출 전 사용자 검토 조건을 유지한다.",
     "resume_from_stage": "novelty"
@@ -987,6 +987,480 @@
       "run": "20261114T031727-dc73f2bb",
       "at": "2026-11-14T04:14:18.804977+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"novelty cancelled at batch boundary; partial evidence preserved\"}"
+    },
+    {
+      "seq": 169,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:14:51.136098+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 170,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:17:28.875730+00:00",
+      "data": "{\"supervisor_pid\": 75229, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log\"}"
+    },
+    {
+      "seq": 171,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:17:28.941396+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 172,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:18:33.181921+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 173,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:19:13.605513+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 174,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:19:41.122733+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb\"}"
+    },
+    {
+      "seq": 175,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:19:41.574892+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 176,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:19:57.199723+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 177,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:20:12.779742+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 178,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:20:28.247203+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 179,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:20:43.792958+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 180,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:20:59.260057+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 181,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:21:14.708753+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 182,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:21:30.131118+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 183,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:21:45.633288+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 184,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:22:01.106627+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 185,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:22:16.569482+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 186,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:22:31.990884+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 187,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:22:47.407625+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 188,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:23:02.814480+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 189,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:23:18.232195+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 190,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:23:33.678493+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 191,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:23:49.095638+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 192,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:24:04.516867+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 193,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:24:19.964199+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 194,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:24:35.427436+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 195,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:24:50.843398+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 196,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:25:06.352046+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 197,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:25:21.765357+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 198,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:25:37.268509+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 199,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:25:52.841089+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 200,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:26:08.258443+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 201,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:26:23.769009+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 202,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:26:39.172889+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 203,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:26:54.593687+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 204,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:27:09.997619+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 205,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:27:25.437327+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 206,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:27:41.080642+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 207,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:27:56.531859+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 208,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:28:11.945218+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 209,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:28:27.463932+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 210,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:28:42.879075+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 211,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:28:58.396498+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 212,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:29:13.848785+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 213,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:29:29.321464+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 214,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:29:44.775299+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 215,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:30:00.248589+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 216,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:30:15.699637+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 217,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:30:31.173858+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 218,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:30:46.630783+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 219,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:31:02.099608+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 220,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:31:17.562085+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 221,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:31:33.124386+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 222,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:31:50.619725+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 223,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:32:06.038963+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 224,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:32:21.551839+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 225,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:32:36.970234+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 226,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:32:52.467511+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 227,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:33:07.890264+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 228,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:33:23.308080+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 229,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:33:38.734287+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 230,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:33:54.215104+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 231,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:34:09.626933+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 232,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:34:25.056252+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 233,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:34:40.467270+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 234,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:34:55.975617+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 235,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:35:11.394466+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 236,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:35:26.816288+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 237,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:35:42.255094+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 238,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:35:57.663590+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 239,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:36:13.083154+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 240,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:36:28.548215+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 241,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:36:44.009834+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 242,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:36:59.435406+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 243,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:37:14.848804+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 244,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:37:30.294768+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 245,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:37:45.707741+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:19:43.396042+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 246,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:38:01.221153+00:00",
+      "data": "{\"remote_status\": {\"status\": \"blocked\", \"error\": \"all proposed candidates duplicate/uncertain; inspect selection-history.json\", \"type\": \"GateError\", \"at\": \"2026-11-14T04:37:58.137365+00:00\"}, \"stage\": null}"
+    },
+    {
+      "seq": 247,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:38:09.459793+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"all proposed candidates duplicate/uncertain; inspect selection-history.json\"}"
     }
   ],
   "effects": {

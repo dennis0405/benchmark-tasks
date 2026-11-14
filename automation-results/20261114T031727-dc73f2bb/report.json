@@ -2,484 +2,252 @@
   "run": "20261114T031727-dc73f2bb",
   "status": "blocked",
   "prompt": "사용자 요청 원문:\n좋아. 이제 인스턴스를 다시 켜고 첫 태스크를 만들어보자.\n필요한 CLI 인증부터 확인하고, 로봇 조립·데이터센터 정비 분야에서 산업 근거가 있고 기존 제출과 겹치지 않는 후보를 골라 제출 전 검토 단계까지 진행해줘.\n\n확정된 제작 조건:\n- Category: Impact on AI timelines. 로봇 조립 또는 데이터센터 정비 중 실제 산업에서 자동화할 의미가 있는 물리 조작 하나를 선택한다.\n- 제조사 설치·정비 매뉴얼, 공식 조립 절차, 공개 설계, 실제 작업 영상·보고서의 원문으로 작업과 장비 형상·치수·절차를 입증한다. 추측이나 가상 산업 용도를 만들어내지 않는다.\n- 여러 후보를 비교하고 목적·물리 기술·성공 조건의 신규성과 로봇의 어려운 조작 능력을 함께 검토하여 하나만 제작한다. 조작의 어려움은 극단적일 필요는 없지만 단순 물체 옮기기를 산업 이름만 바꾼 작업은 피한다.\n- 모든 분야의 기존 accepted/pending/open 제출 및 우리 팀 기존 제출, 지정된 기존 벤치마크와 비교한다. 기하·색상·배치·시작 자세·난도만 다른 것은 새 태스크가 아니다. 선정 시점 및 완성 후 다시 전수 비교한다. 불확실한 중복을 통과시키지 않는다.\n- 가능한 강체 PhysX 작업을 선택한다. 기존의 검증된 연성 에셋이 없다면 새 연성 솔버 연구는 하지 않는다. 실제 산업 장비의 형태와 중요한 물리 제약을 재현한다. 공개 에셋은 라이선스·출처·치수를 기록하고 적합하지 않으면 직접 제작한다.\n- objective와 환경·부품 물리를 먼저 완성·진단한 뒤 YAM 전체 데모·채점기를 연결한다. 물체 순간이동/상태 덮어쓰기로 성공을 만들지 않는다. 관련 부품 파손·금지 동작·실패·부분 점수와 성공 유지 시간을 수치로 평가한다.\n- 실제 simulator 측정·두 번의 full-score YAM 데모·실패/부분 점수 대조군·영상/원시 trace 및 깨끗한 경로 재현 검사를 수행한다. 미검증 수치와 성공을 만들어 보고하지 않는다.\n- 모든 제작·검증을 마친 후에만 Dream 최종 평가 episode 1회. 실패나 불명 결과도 자동 재평가하지 않는다. 누적 $20 ledger를 준수하고 인증이 없으면 제작을 보존한 뒤 평가 대기한다.\n- 결과는 이 run의 새로운 origin 브랜치에 보존한다. 원본 매뉴얼 전체/인증 정보는 공개하지 않는다. 50MB/file 또는 100MB checkpoint 초과는 먼저 보고한다.\n- 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.\n- 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.\n",
-  "at": "2026-11-14T04:14:18.805086+00:00",
-  "error": "novelty cancelled at batch boundary; partial evidence preserved",
+  "at": "2026-11-14T04:38:09.459899+00:00",
+  "error": "all proposed candidates duplicate/uncertain; inspect selection-history.json",
   "mode": "production",
   "dream": null,
   "release": null,
   "review_path": "workspace/artifacts",
   "note": "local report; not a contest submission",
   "selected": {
-    "id": "minifit-5556-terminal-extraction",
-    "title": "Depin a Mini-Fit Jr. 5556 terminal from a 5557 housing",
-    "objective": "With a de-energized four-circuit Mini-Fit Jr. 39012040/5557 receptacle fixed in a service fixture, guide the HT60630B extraction tool around the selected 5556 terminal, depress both locking tangs, maintain tool engagement, push the wire toward the tool if needed, and then pull the wire and terminal from the rear without releasing neighboring terminals or damaging the reusable housing.",
+    "id": "robot-motion-connector-replacement",
+    "title": "Replace a drive-and-motion-control connector in a commercial cleaning robot",
+    "objective": "Remove a failed motion-control harness connector and install its replacement while preserving surrounding wiring and seals.",
     "skills": [
-      "precision tool-tip alignment with housing guide slots",
-      "constrained dual-blade insertion around a recessed contact",
-      "contact and force control while depressing two locking tangs",
-      "bimanual coordination between sustained tool engagement and opposite-side wire pull",
-      "directional push-then-pull load sequencing",
-      "regrasping a slender tool and wire",
-      "avoidance of neighboring terminals and housing walls"
+      "confined connector access",
+      "latch manipulation",
+      "connector extraction and alignment",
+      "controlled mating",
+      "cable and seal management"
     ],
-    "success_conditions": "Research-stage rubric: the designated terminal and its wire must exit through the rear of its original cavity through robot-applied contact forces; the housing stays fixed and reusable; all other terminals remain fully retained; the wire remains attached to the extracted terminal; and the tool, housing, insulation, contact body, and adjacent terminals show no prohibited displacement or damage. Success must persist for 3 seconds after both grippers release the extracted terminal and tool. Score zero for extracting the wrong or an additional terminal, pulling the wire out of its crimp, breaking or permanently displacing the housing, bypassing the tangs, or teleporting/welding/state-overwriting the terminal. Partial credit may distinguish correct tool entry, both tangs depressed, and partial rearward withdrawal, but no unmeasured numerical force or damage threshold is asserted. Development is blocked until the rigid tang/contact abstraction passes insertion, retention, overload, and reset tests with measured proxy hardware.",
-    "industrial_value": "Molex identifies HT60630B as tooling specifically designed to extract crimped Mini-Fit terminals, while TE identifies terminal extraction without housing damage as important to OEM and aftermarket rework and repair. Molex also lists Mini-Fit connectors for commercial-cleaning-robot drive and motion-control interconnects. This supports harness rework as an industrial manipulation objective, without claiming that every 39012040 housing is installed in that particular robot application.",
-    "dexterity": "High but feasible. The robot must enter narrow housing slots with two blades outside the contact, recognize terminal contact, maintain tang-depressing engagement, optionally unload the tangs by pushing the wire forward, and coordinate an opposing gentle pull. This is materially different from mating a completed connector or operating its external latch.",
+    "success_conditions": "Blocked: no defensible success rubric can be written from the acquired sources because they do not identify a cleaning-robot assembly, connector part number, access geometry, removal procedure, insertion procedure, or sealing inspection.",
+    "industrial_value": "Molex documents that commercial cleaning-robot motors and motion systems require reliable power and signal connectors in demanding environments, establishing the subsystem's industrial importance.",
+    "dexterity": "Potentially high, but currently unsubstantiated for any actual equipment geometry.",
     "evidence": [
-      {
-        "source_id": "s-c7c184615f4af9fb",
-        "quote": "This tool is designed to extract crimped Mini-Fit series terminals from their housings.",
-        "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 1, FEATURES"
-      },
-      {
-        "source_id": "s-c7c184615f4af9fb",
-        "quote": "Use the slots located on the inside of the housing to guide the extraction tool blades into the housing until contact is made with terminal.",
-        "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, OPERATION, step 2"
-      },
-      {
-        "source_id": "s-c7c184615f4af9fb",
-        "quote": "If the terminal locking tabs are still not totally depressed, hold on tight to the wire and push it toward the extraction tool.",
-        "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, OPERATION, step 4"
-      },
-      {
-        "source_id": "s-c7c184615f4af9fb",
-        "quote": "Grasp the terminal by the wire, and gently pull it out from the housing.",
-        "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, OPERATION, step 5"
-      },
-      {
-        "source_id": "s-c7c184615f4af9fb",
-        "quote": "Note: When a terminal is removed in this manner the locking tangs are damaged and the terminal is not reusable.",
-        "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, note below Terminal and Housing Application Chart"
-      },
-      {
-        "source_id": "s-f251010cce66cd83",
-        "quote": "Our insertion tools and extraction tools are designed to respectively insert and extract a terminal from the connector housing without damaging the terminal or housing—a key criteria in quality wire processing that is especially important for rework and repair at the OEM and in the after-market.",
-        "locator": "TE Connectivity, Insertion and Extraction Tools for Wire Processing, High-Precision Insertion and Extraction Tools section"
-      },
-      {
-        "source_id": "s-3b2ffb1f5e4549e5",
-        "quote": "Pitch Mating Interface 4.20mm",
-        "locator": "Molex part 39012040 product page, Physical Specifications"
-      },
       {
         "source_id": "s-b8dfc5566fdc008f",
         "quote": "Motors and motion systems in cleaning robots need vibration-resistant connectors to maintain reliable power and signal transmission despite exposure to moisture and cleaning chemicals.",
         "locator": "Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors section"
+      },
+      {
+        "source_id": "s-b8dfc5566fdc008f",
+        "quote": "Mini-Fit Connectors",
+        "locator": "Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors product-family listing"
       }
     ],
-    "asset_plan": "Use the documented four-circuit 39012040/5557 housing and a compatible 5556 terminal only; do not mix the 5378 geometry or another extraction-tool series. Build dimensioned rigid housing, terminal, crimp barrel, wire, and HT60630B proxy meshes from the acquired Molex drawing plus measurements of reference parts. Represent each terminal tang as a constrained articulated rigid leaf with calibrated detent and irreversible damage state rather than a deformable solver. The wire may initially be a short rigid handle for component-physics tests; any later segmented cable must use an already validated YAM-compatible model. Validate blade clearance, outside-contact guidance, tang release, retained-state pull resistance, extraction after release, neighbor retention, overload damage, and reset repeatability before attempting a full robot demo in pinned Isaac Sim 6.1.0/YAM 0059d02a1a91bc6834c1d0846022891df0c78730. No task object may be teleported or welded to produce extraction.",
-    "risk": "Medium-high implementation risk. The acquired sources establish procedure, pitch, compatible families, intended tooling, and terminal non-reusability, but do not provide blade thickness, tang stiffness, release force, pull-out force, or allowable housing-load limits. Those values require measured reference hardware. The catalog text screen found no direct depin/terminal-extraction objective, but this is not conclusive semantic proof; the complete accepted, pending, open, team, and benchmark comparison must be repeated after the objective and physics are implemented."
+    "asset_plan": "No asset development should begin. Obtain an OEM service manual or public assembly procedure naming the exact robot, Mini-Fit part set, access envelope, latch/seal configuration, and replacement inspection requirements.",
+    "risk": "Blocked and not selected. The source proves application relevance only; treating it as an assembly or service instruction would invent the task geometry and procedure."
   },
   "novelty": {
-    "catalog_digest": "ab51616567641bf30951008eeaf5d1f51d55550d28337b7676c6ab69a1a02553",
-    "candidate_digest": "1ebab4c0cab31f3cc7093703609a50a8ee9dcbc48aa646f18f3cd424b250ad05",
-    "catalog_total": 2086,
+    "catalog_digest": "417fe0b751d3b6da3ee76c5b0567ec985e0b9d4e8124054a91a710d8ce1d7d31",
+    "candidate_digest": "852c99173894c4b843904383d8cc2c2ceede9e10e32214b78c81054b704647b2",
+    "catalog_total": 2089,
     "complete": false,
-    "compared": 50,
+    "compared": 25,
     "comparisons": [
       {
         "id": "pr-92",
-        "objective": "Extract and recover a trapped spacer with a pusher versus depinning one connector terminal.",
-        "physical_skill": "Long-tool pushing and pick-place versus dual-blade tang depression and coordinated wire pull.",
-        "success_condition": "Spacer nested and pusher parked versus selected terminal removed with housing, wire crimp, and neighbors preserved.",
+        "objective": "Extract and recover a spacer with a pusher; candidate replaces a motion-control harness connector.",
+        "physical_skill": "Indirect tool pushing and part recovery versus connector unlatching, extraction, alignment, mating, and cable/seal management.",
+        "success_condition": "PR has measured exit, nest, tool-return, release, and containment gates; candidate lacks equipment geometry, procedure, and any defensible completion or damage rubric.",
         "verdict": "distinct",
-        "reason": "Generic tool-assisted extraction is shared, but the contact mechanics and required end state differ materially."
+        "reason": "The tested ability is constrained indirect extraction with a separate tool, not electrical connector replacement."
       },
       {
         "id": "pr-1524",
-        "objective": "Select a wrench, release a captive nut, and open an arm versus depinning a terminal.",
-        "physical_skill": "Tool-size selection and rotary torque versus recessed blade insertion, tang depression, and axial pull.",
-        "success_condition": "Nut released without rounding, arm open, tools returned, 20-second hold versus selective terminal removal and 3-second release hold.",
+        "objective": "Loosen a captive nut with a selected wrench and swing a latch arm open; candidate replaces a harness connector.",
+        "physical_skill": "Wrench fitting, torque-limited turning, and arm articulation versus connector latch manipulation and controlled mating.",
+        "success_condition": "PR measures nut backoff, arm angle, clearance, dwell, rounding, and force limits; candidate has no connector-specific thresholds or inspection criteria.",
         "verdict": "distinct",
-        "reason": "Fastener selection and rotary release do not test connector-terminal latch disengagement."
-      },
-      {
-        "id": "pr-1459",
-        "objective": "Remove a battery service plug and busbars in a safe order versus extracting one crimp terminal.",
-        "physical_skill": "Plug removal and collision-safe busbar handling versus fine dual-blade insertion and simultaneous tool-wire withdrawal.",
-        "success_condition": "Service plug removed before busbars, then bars safely trayed versus one terminal out with housing and neighbors intact.",
-        "verdict": "distinct",
-        "reason": "Both involve electrical-component removal, but their mechanisms, sequencing, and final states are meaningfully different."
-      },
-      {
-        "id": "pr-209",
-        "objective": "Release a spring clamp and recover its screwdriver versus depinning a connector terminal.",
-        "physical_skill": "Clamp actuation and tool recovery versus recessed tang depression with sustained tool engagement and wire pulling.",
-        "success_condition": "Screwdriver held by the left gripper without drop or base motion versus terminal removed without wrong-terminal release or damage.",
-        "verdict": "distinct",
-        "reason": "Shared release-and-pull primitives alone do not establish overlap; the tested contact strategy differs."
-      },
-      {
-        "id": "pr-861",
-        "objective": "Route, buckle, and tighten a child-seat harness versus depinning a rigid connector terminal.",
-        "physical_skill": "Deformable webbing routing, buckle latching, and tensioning versus rigid-tool insertion and latch release.",
-        "success_condition": "Correct untwisted routing, latched buckle and clip, fit and hold versus selective terminal extraction with neighboring contacts retained.",
-        "verdict": "distinct",
-        "reason": "The material mechanics, manipulation sequence, and functional outcome are unrelated."
-      },
-      {
-        "id": "pr-1797",
-        "objective": "Route a connected cable between posts and secure its final clip versus remove a terminal from a connector.",
-        "physical_skill": "Bimanual slack management and clip insertion versus dual-blade tang depression and coordinated extraction.",
-        "success_condition": "Preserve the existing fixing, follow the route, seat the final clip, release and hold versus remove only the designated terminal without damage.",
-        "verdict": "distinct",
-        "reason": "This record tests cable routing and retention, not terminal depinning."
-      },
-      {
-        "id": "pr-561",
-        "objective": "Sort cubes while yielding shared space to a person's hand versus depinning a terminal.",
-        "physical_skill": "Timed collision avoidance and resumed pick-place versus close-tolerance blade insertion and force-controlled release.",
-        "success_condition": "No safety-envelope violation and all cubes sorted versus selective terminal removal with component integrity.",
-        "verdict": "distinct",
-        "reason": "Human-aware temporal safety and connector servicing test different abilities."
-      },
-      {
-        "id": "pr-1411",
-        "objective": "Even wire tips and twist on a splice connector versus extract a crimp terminal from a housing.",
-        "physical_skill": "Wire-end alignment and torsional fastening versus tang release and coordinated linear withdrawal.",
-        "success_condition": "Tips even, splice snug, and conductors retained versus one terminal removed while its crimp and housing remain intact.",
-        "verdict": "distinct",
-        "reason": "Both manipulate wires, but splice formation is not latch-mediated depinning."
-      },
-      {
-        "id": "pr-1508",
-        "objective": "Drive a piston through a ring compressor into its bore versus extract a connector terminal.",
-        "physical_skill": "Maintain compression and coaxial insertion versus recessed blade alignment, tang depression, and withdrawal.",
-        "success_condition": "All rings enter without escape or snag and the tool is released versus only the designated terminal exits without damage.",
-        "verdict": "distinct",
-        "reason": "Compression-maintained insertion and latch-mediated removal are meaningfully different tested abilities."
-      },
-      {
-        "id": "pr-1733",
-        "objective": "Capture twelve-cell spring preload with a plate and cross-key versus depin one terminal.",
-        "physical_skill": "Uniform bimanual compression and transverse key insertion versus localized blade insertion and opposing wire pull.",
-        "success_condition": "All contacts compressed in range and key retained after release versus one terminal extracted while neighbors remain retained.",
-        "verdict": "distinct",
-        "reason": "Simultaneous preload capture differs from selective latch release."
-      },
-      {
-        "id": "pr-1912",
-        "objective": "Seat an ear thermometer, trigger and hold a reading, then lay it down versus depin a terminal.",
-        "physical_skill": "Anatomical insertion, button actuation, and pose holding versus tool-guided tang release and extraction.",
-        "success_condition": "Valid reading without excessive depth or motion, followed by safe placement versus intact selective terminal removal.",
-        "verdict": "distinct",
-        "reason": "The manipulation sequence and scored functional outcome are unrelated."
-      },
-      {
-        "id": "pr-1884",
-        "objective": "Lower a bent tube so four legs enter fixture slots together versus remove a terminal.",
-        "physical_skill": "Bimanual six-degree alignment and simultaneous multi-slot insertion versus fine latch-tool insertion and linear pulling.",
-        "success_condition": "All legs rest on slot floors after release without a damaging drop versus selected terminal removed with housing and neighbors intact.",
-        "verdict": "distinct",
-        "reason": "Multi-point gauging insertion is materially different from depinning."
-      },
-      {
-        "id": "pr-190",
-        "objective": "Release a camera from a cam-clamped mount and transfer it versus depin a connector terminal.",
-        "physical_skill": "Rotary cam release, rear-lip clearance, and supported transfer versus tang depression and wire-tool withdrawal.",
-        "success_condition": "Camera and plate remain joined and rest safely on the receiving pad versus terminal exits while housing and adjacent terminals remain sound.",
-        "verdict": "distinct",
-        "reason": "Both release retained parts, but the latch geometry, contact sequence, and final objective differ."
-      },
-      {
-        "id": "pr-1820",
-        "objective": "Immerse a wafer for a timed development interval and return it to heater pins versus depin a terminal.",
-        "physical_skill": "Plier grasping, vertical immersion, timer operation, and precision replacement versus blade insertion and latch release.",
-        "success_condition": "Continuous 28–32-second immersion with correct timer order and stable three-pin return versus selective damage-free extraction.",
-        "verdict": "distinct",
-        "reason": "Timed process handling does not test connector-terminal extraction."
-      },
-      {
-        "id": "pr-1882",
-        "objective": "Join chain ends and install a retaining plate versus remove one connector terminal.",
-        "physical_skill": "Bimanual two-pin alignment and side-entry keeper insertion versus localized tang release and axial extraction.",
-        "success_condition": "Both chain ends seated, keeper retained, assembly cradled and released versus one terminal removed with all other contacts retained.",
-        "verdict": "distinct",
-        "reason": "Multi-hole joint assembly is a different operation and tested geometry from depinning."
-      },
-      {
-        "id": "pr-834",
-        "objective": "Close double doors in order and engage their bolt and latch versus depin a terminal.",
-        "physical_skill": "Large articulated-leaf sequencing, sliding-bolt insertion, and rotary latching versus recessed micro-tool alignment and pulling.",
-        "success_condition": "Both leaves closed in the required order, bolt and latch engaged, then released and still versus selective terminal extraction.",
-        "verdict": "distinct",
-        "reason": "Sequential enclosure closure and connector depinning test different abilities."
-      },
-      {
-        "id": "pr-1405",
-        "objective": "Thread and hand-tighten an oil filter to a specified post-contact angle versus extract a terminal.",
-        "physical_skill": "Thread engagement, controlled rotation, and regrasping versus blade-guided tang release and linear withdrawal.",
-        "success_condition": "Filter ends 240–360 degrees past gasket contact without removal or overtightening versus clean selective depinning.",
-        "verdict": "distinct",
-        "reason": "Rotary threaded fastening and latch-mediated extraction are materially different."
-      },
-      {
-        "id": "pr-1969",
-        "objective": "Drive opposed tapered shims behind a door jamb until snug without bowing it versus depin a terminal.",
-        "physical_skill": "Bimanual wedge insertion and force balancing from opposite wall faces versus dual-blade tang depression and wire withdrawal.",
-        "success_condition": "Opposed shims overlap at least 70 mm, leave at most 0.05 mm free space, bow at most 0.4 mm, and hold 2 seconds versus selective extraction and a 3-second release hold.",
-        "verdict": "distinct",
-        "reason": "Although both require insertion and force control, wedge preload setting does not test latch disengagement or extraction."
-      },
-      {
-        "id": "pr-1818",
-        "objective": "Transfer and count nuts using a mechanical tally counter versus remove one connector terminal.",
-        "physical_skill": "Repeated bin picking and synchronized counter operation versus fine latch access and coordinated tool-wire extraction.",
-        "success_condition": "Counter reset, one click per nut, all nuts in tray, and matching count versus isolated terminal removal without damage.",
-        "verdict": "distinct",
-        "reason": "The record tests counting state and repeated transfer, not connector latch mechanics."
-      },
-      {
-        "id": "pr-1885",
-        "objective": "Retrieve one chip from an open packet while retaining the others versus extract one designated connector terminal.",
-        "physical_skill": "Confined grasping from a movable hinged container versus dual-blade insertion around a contact, tang depression, and opposing wire pull.",
-        "success_condition": "One chip rests on the plate, two remain contained, packet stable, hands clear for 1 second versus one terminal exits with neighbors retained and components undamaged for 3 seconds.",
-        "verdict": "distinct",
-        "reason": "Selective retrieval is shared abstractly, but the candidate uniquely tests mechanical latch release and sustained tool-wire coordination."
-      },
-      {
-        "id": "pr-579",
-        "objective": "Recover a drawer opening obstructed by a clothing proxy versus depin a connector terminal.",
-        "physical_skill": "Bimanual obstruction diagnosis, compliant-proxy compression, and resumed drawer pull versus rigid blade insertion and tang release.",
-        "success_condition": "Body text gives ordered jam, compression, clearance, opening, and stillness milestones; canonical instruction/setup/scoring fields are missing. Candidate requires selective intact extraction.",
-        "verdict": "distinct",
-        "reason": "Despite missing canonical rubric fields, the supplied objective clearly tests obstruction recovery rather than depinning."
-      },
-      {
-        "id": "pr-998",
-        "objective": "Secure a housing in a rollover fixture, invert it, lock it, and fit a pad versus depin a terminal.",
-        "physical_skill": "Sequential bar, rotary-axis, bolt, and pad manipulation versus recessed blade insertion and coordinated withdrawal.",
-        "success_condition": "Correctly retained housing, 180-degree inversion, bolt lock, and pad seating versus one selected terminal removed without collateral release.",
-        "verdict": "distinct",
-        "reason": "Multi-stage fixture operation is meaningfully different from connector depinning."
-      },
-      {
-        "id": "pr-1690",
-        "objective": "Hand-mount the final bicycle-tire bead section using rim-channel slack versus extract a terminal.",
-        "physical_skill": "Bimanual bead depression, slack propagation, and rolling over a flange versus blade alignment, tang depression, and axial pulling.",
-        "success_condition": "Bead seated with valve within 10 degrees, no lever pinch or forcing, and hands clear versus selective terminal removal without housing, crimp, or neighbor damage.",
-        "verdict": "distinct",
-        "reason": "Both demand force control, but deformable bead mounting and rigid latch extraction test different abilities."
-      },
-      {
-        "id": "pr-827",
-        "objective": "Calibrate a tool tip by touching one point from four angles versus extract a terminal.",
-        "physical_skill": "Repeated point registration with angular diversity and stillness versus tang-seeking blade insertion and coordinated pulling.",
-        "success_condition": "Four one-second poses at one point with specified lean and pairwise angular separation versus intact selective depinning.",
-        "verdict": "distinct",
-        "reason": "Multi-pose calibration is not extraction or latch release."
-      },
-      {
-        "id": "pr-1112",
-        "objective": "Seat a platform on cup, groove, and flat kinematic datums versus extract a connector terminal.",
-        "physical_skill": "Bimanual level lowering and simultaneous three-foot alignment versus dual-blade insertion, tang depression, and wire-tool withdrawal.",
-        "success_condition": "All three contacts within 0.20 mm, pose errors below 3 mm/3 degrees, stable release for 1 second versus one terminal out, neighbors retained, and 3-second release hold.",
-        "verdict": "distinct",
-        "reason": "Multi-datum precision seating tests alignment and support contact, not selective latch disengagement."
-      },
-      {
-        "id": "pr-1298",
-        "objective": "Prune a stem and dispose of the cutting; candidate depins an electrical terminal for connector rework.",
-        "physical_skill": "Secateur positioning/cutting and offcut retention versus recessed dual-blade insertion, tang depression, and opposing wire pull.",
-        "success_condition": "Good cut near the bud and safe disposal versus designated terminal extracted with housing, crimp, and neighbors preserved.",
-        "verdict": "distinct",
-        "reason": "Different transformation, tooling, contact mechanics, and failure modes. Both rubrics are detailed; the candidate alone lacks measured force/damage thresholds, which does not suggest duplication."
-      },
-      {
-        "id": "pr-1493",
-        "objective": "Perform a dipstick wipe–reseat–read procedure; candidate removes a retained connector terminal.",
-        "physical_skill": "Repeated axial sliding, wiping, and visual reporting versus precision blade guidance, sustained tang release, and bimanual extraction.",
-        "success_condition": "Valid oil reading and restored tools versus correct terminal removed without collateral release or damage.",
-        "verdict": "distinct",
-        "reason": "The maintenance sequence and tested abilities are unrelated beyond generic grasping and pulling. No material rubric details are missing from the record."
-      },
-      {
-        "id": "pr-1558",
-        "objective": "Latch a springform pan and fill it with batter; candidate depins a Mini-Fit terminal.",
-        "physical_skill": "Base seating, external clasp closure, and pouring versus narrow dual-blade insertion and internal detent release under opposing load.",
-        "success_condition": "Leak-resistant assembled pan containing batter versus one selected terminal extracted with connector integrity preserved.",
-        "verdict": "distinct",
-        "reason": "External pan assembly does not test recessed terminal release, tool engagement, or wire-side coordination. Record setup and scoring are present."
+        "reason": "Fastener release and arm opening test a different contact sequence from connector extraction and installation."
       },
       {
         "id": "pr-1576",
-        "objective": "Stretch and seat an O-ring on a threaded hydraulic plug; candidate extracts a latched electrical terminal.",
-        "physical_skill": "Controlled elastic expansion and untwisted groove seating versus rigid-tool alignment, dual-tang depression, and push–pull extraction.",
-        "success_condition": "O-ring seated square without excessive stretch or damage versus designated terminal removed without crimp, housing, or neighbor damage.",
+        "objective": "Stretch and seat an O-ring in a hydraulic-plug groove; candidate replaces a harness connector while preserving seals.",
+        "physical_skill": "Deformable-ring expansion, placement, and twist control versus rigid connector unlatching and mating with unspecified seal management.",
+        "success_condition": "PR defines maximum stretch, seating, tilt, twist, and release; candidate does not identify the seal type, handling requirement, or measurable acceptance state.",
         "verdict": "distinct",
-        "reason": "One tests deformable seal installation; the other tests rigid constrained depinning. Numeric omissions in the candidate’s force model do not make these plausibly duplicate."
+        "reason": "Seal preservation is only a constraint in the candidate; the PR directly tests deformable O-ring installation."
       },
       {
-        "id": "pr-1795",
-        "objective": "Break open an ampoule while retaining its cap; candidate releases and removes a connector terminal.",
-        "physical_skill": "Protective-opener placement and controlled fracture versus recessed blade insertion, detent depression, and wire extraction.",
-        "success_condition": "Open upright ampoule with cap captive and hands clear versus correct terminal removed and all other connector parts retained.",
+        "id": "pr-890",
+        "objective": "Start and tighten a bracket bolt with a ratchet in confined access; candidate replaces a confined harness connector.",
+        "physical_skill": "Thread starting and short-stroke ratcheting versus latch release, extraction, keyed alignment, mating, and cable handling.",
+        "success_condition": "PR proposes thread capture, seating, torque, tool return, and release, though its live scorer is unqualified; candidate lacks any executable connector rubric.",
         "verdict": "distinct",
-        "reason": "Fracture control and captive retention differ materially from reversible housing rework and internal latch manipulation. Record rubric is populated."
+        "reason": "Confined access is shared, but the central tested mechanics—threaded fastening versus connector mating—are meaningfully different."
       },
       {
-        "id": "pr-1968",
-        "objective": "Open breaker clamps, insert a comb busbar across several terminals, and tighten screws; candidate depins one crimp terminal.",
-        "physical_skill": "Multi-point busbar alignment, lowering, and screw fastening versus dual-blade insertion around a contact and sustained tang release during pullout.",
-        "success_condition": "All busbar pins clamped correctly versus one selected terminal extracted without releasing adjacent terminals.",
+        "id": "pr-1405",
+        "objective": "Hand-install a spin-on oil filter within a prescribed post-contact turn range; candidate replaces a harness connector.",
+        "physical_skill": "Thread engagement and controlled hand rotation versus connector latch manipulation and translational mating.",
+        "success_condition": "PR tracks thread retention, gasket contact, hand-driven rotation, and over-tightening; candidate lacks part, pose, latch, seal, and damage thresholds.",
         "verdict": "distinct",
-        "reason": "Although both involve electrical terminals, one tests multi-terminal insertion and screw torque while the candidate tests internal detent release and extraction. Rubric details are present."
-      },
-      {
-        "id": "pr-877",
-        "objective": "Configure a date stamp and stamp a work order; candidate performs connector-terminal extraction.",
-        "physical_skill": "Symbol selection, stamp adjustment, planar registration, and pressing versus constrained tool insertion and bimanual force sequencing.",
-        "success_condition": "Correct legible date in the marked box and stamp returned versus correct terminal removed with connector preserved.",
-        "verdict": "distinct",
-        "reason": "No meaningful overlap beyond generic tool handling. The record includes setup and scoring."
-      },
-      {
-        "id": "pr-1087",
-        "objective": "Release a detent latch to open a bottle while keeping it upright; candidate removes a recessed electrical contact.",
-        "physical_skill": "External latch actuation and bottle opening versus two-blade alignment around a hidden contact, dual-tang depression, and opposing wire pull.",
-        "success_condition": "Bottle open and upright versus designated terminal fully extracted without neighbor release or damage.",
-        "verdict": "distinct",
-        "reason": "Both contain latch release, but the candidate meaningfully adds recessed bilateral detent engagement, tool guidance, and coordinated extraction. Record rubric is complete enough to establish the distinction."
-      },
-      {
-        "id": "pr-1116",
-        "objective": "Reset a slide’s ball retainer and insert its inner rail through rollers; candidate depins a connector terminal.",
-        "physical_skill": "Long-axis rail alignment and rolling insertion versus fine dual-blade insertion, tang unloading, and rearward wire extraction.",
-        "success_condition": "Inner member seated in the slide versus selected terminal removed while housing and adjacent contacts remain intact.",
-        "verdict": "distinct",
-        "reason": "The record tests bearing-retainer sequencing and rail insertion, not detent release or terminal extraction. Setup and scoring are supplied."
-      },
-      {
-        "id": "pr-1160",
-        "objective": "Coordinate rinse and suction tools to clean highlighted teeth; candidate performs electrical connector rework.",
-        "physical_skill": "Bimanual path following and fluid-tool coordination versus constrained blade placement, contact-force maintenance, and opposing pull.",
-        "success_condition": "Specified teeth rinsed and mouth cleared with tools returned versus correct terminal extracted without collateral damage.",
-        "verdict": "distinct",
-        "reason": "Different objective, interaction physics, and endpoint. Generic bimanual coordination is insufficient to make them duplicates."
-      },
-      {
-        "id": "pr-1814",
-        "objective": "Unhook and remove an air-fryer basket, then place it on a mat; candidate removes a latched terminal from a housing.",
-        "physical_skill": "Basket handle/unhook manipulation and gross placement versus millimetric dual-blade guidance and sustained internal tang release.",
-        "success_condition": "Basket released on the mat with hands clear versus terminal and wire extracted while connector remains reusable.",
-        "verdict": "distinct",
-        "reason": "Both include release followed by removal, but the mechanisms, scale, precision, and tested force coordination differ materially. Record details are present."
-      },
-      {
-        "id": "pr-1835",
-        "objective": "Terminate and trim a wire on a 110 block; candidate extracts an existing crimp terminal from a connector.",
-        "physical_skill": "Orient and drive a punch-down blade to seat/cut wire versus guide two blades around a contact, depress tangs, and pull the wire/contact out.",
-        "success_condition": "Wire seated in the correct IDC contact with loose end trimmed versus designated terminal removed without separating its crimp or disturbing neighbors.",
-        "verdict": "distinct",
-        "reason": "This is the closest wire-tool record, but it tests termination by impact/insertion, not depinning through bilateral latch release. Both have sufficiently explicit rubrics."
-      },
-      {
-        "id": "pr-1970",
-        "objective": "Load four modules into a hinged frame and close it until latched; candidate removes one terminal from a connector housing.",
-        "physical_skill": "Repeated module alignment/insertion and frame squeeze-to-click versus recessed tool insertion, detent depression, and bimanual extraction.",
-        "success_condition": "All modules retained in a closed frame versus selected contact removed with housing and other contacts preserved.",
-        "verdict": "distinct",
-        "reason": "Assembly and latch closure test the opposite operation and different geometry from terminal-level detent release. Record setup and scoring are available."
-      },
-      {
-        "id": "pr-362",
-        "objective": "Assemble a bayonet-style retrieval tool and use it to pull a cartridge into a tray; candidate depins an electrical terminal.",
-        "physical_skill": "Release-control hold, slot/lug alignment, quarter-turn locking, hooking, and gross pull versus dual-blade slot guidance and opposing fine wire pull.",
-        "success_condition": "Tool remains locked and cartridge reaches the tray versus contact exits its cavity without damage or neighbor release.",
-        "verdict": "distinct",
-        "reason": "Both use a tool to retrieve an item, but the record primarily tests tool-head assembly and hook retrieval; it does not test terminal tang release. Rubric is detailed."
-      },
-      {
-        "id": "pr-370",
-        "objective": "Steer a laser with two mirrors while safely blocking the beam during adjustment; candidate performs mechanical terminal extraction.",
-        "physical_skill": "Mirror placement/orientation and beam-block sequencing versus contact-rich insertion, tang depression, and bimanual load control.",
-        "success_condition": "Beam reaches detector through both mirrors without unsafe exposure versus selected terminal is physically removed intact.",
-        "verdict": "distinct",
-        "reason": "Optical alignment and safety sequencing are unrelated to connector depinning mechanics. No material record fields are missing."
-      },
-      {
-        "id": "pr-857",
-        "objective": "Position and secure two snowboard bindings to a specified stance; candidate extracts a connector contact.",
-        "physical_skill": "Large-part pose alignment and screw fastening versus narrow-slot tool insertion and internal detent release under tension.",
-        "success_condition": "Bindings have specified spacing/orientation and are secured versus one terminal exits while surrounding connector geometry is preserved.",
-        "verdict": "distinct",
-        "reason": "Different assembly scale, fastening mechanism, and success state. Record setup and scoring are populated."
-      },
-      {
-        "id": "pr-1421",
-        "objective": "Sharpen both sides of a knife on a whetstone; candidate depins an electrical terminal.",
-        "physical_skill": "Maintain blade angle and contact during repeated strokes versus align twin extraction blades, depress tangs, and coordinate push–pull loads.",
-        "success_condition": "Required sharpening coverage with knife safely placed versus correct terminal extracted without prohibited damage.",
-        "verdict": "distinct",
-        "reason": "Shared force control is generic; the contact trajectories and tested outcomes are materially different. Record rubric is present."
+        "reason": "The PR tests threaded gasket compression, not electrical connector replacement."
       },
       {
         "id": "pr-1561",
-        "objective": "Spread a circlip, install it in a shaft groove, and verify seating; candidate releases and extracts a connector terminal.",
-        "physical_skill": "Pliers-tip engagement, controlled ring expansion, groove seating, and rotational check versus guided dual-blade insertion and sustained tang depression during pullout.",
-        "success_condition": "Circlip squarely retained without overstretch versus designated terminal removed with housing and neighbors retained.",
+        "objective": "Install a circlip in a shaft groove and verify it by turning; candidate replaces a harness connector.",
+        "physical_skill": "Pliers-driven elastic spreading, planar control, groove seating, and verification versus connector extraction and mating.",
+        "success_condition": "PR defines over-spread, twist, cocking, seating, tool release, and verification; candidate has no measurable connector acceptance rubric.",
         "verdict": "distinct",
-        "reason": "Both manipulate spring-like retention features, but one installs an exposed removable ring while the candidate releases two recessed integral tangs. These are meaningfully different tested abilities."
+        "reason": "Retaining-ring installation is a different force-control and geometry problem."
       },
       {
-        "id": "pr-1577",
-        "objective": "Bleed a brake caliper with correctly sequenced pedal and bleeder-valve cycles; candidate performs connector-terminal extraction.",
-        "physical_skill": "Bimanual valve/pedal timing, repeated cycling, and fluid-state control versus precision blade insertion and opposing mechanical extraction.",
-        "success_condition": "Air removed while the bleeder is closed before pedal return versus correct contact removed without connector damage.",
+        "id": "pr-1882",
+        "objective": "Join an open drive chain and slide a forked keeper under two pin heads; candidate replaces a harness connector.",
+        "physical_skill": "Aligning chain ends over pins and transverse keeper insertion versus connector latch release, axial extraction/mating, and cable/seal management.",
+        "success_condition": "PR measures pin/hole alignment, slot retention, cradle pose, release, stability, and containment; candidate lacks corresponding connector geometry and thresholds.",
         "verdict": "distinct",
-        "reason": "Different mechanism, temporal procedure, and physical endpoint. Record setup and scoring are present."
+        "reason": "Both include retention, but the PR tests multi-part chain-joint assembly rather than a plug-and-receptacle replacement."
       },
       {
-        "id": "pr-1870",
-        "objective": "Press two opposite-sense drawer-slide releases while pulling the drawer free; candidate depresses two terminal tangs while pulling a wire/contact free.",
-        "physical_skill": "Bimanual external lever actuation and large drawer pull versus a single fine tool’s dual blades inserted around a recessed contact plus opposite-side wire handling.",
-        "success_condition": "Drawer fully removed and set down versus only the selected terminal removed with its crimp and housing intact.",
+        "id": "pr-1820",
+        "objective": "Immerse, time, withdraw, and replace a wafer using pliers; candidate replaces a harness connector.",
+        "physical_skill": "Tool grasp, bath immersion, timed bimanual button operation, and precise wafer replacement versus connector service manipulation.",
+        "success_condition": "PR specifies immersion duration, timer timing, clearances, heater-pin placement, drops, and contamination hazards; candidate has no executable rubric.",
         "verdict": "distinct",
-        "reason": "The release-and-pull pattern overlaps, but the candidate tests millimetric tool insertion, bilateral tang engagement within one cavity, and wire/contact preservation—abilities absent from the drawer task."
-      },
-      {
-        "id": "pr-1871",
-        "objective": "Scribe a shelf profile against an uneven wall; candidate removes a connector terminal.",
-        "physical_skill": "Hold a shelf while tracing a compass continuously along a surface versus constrained extraction-tool insertion and detent-force control.",
-        "success_condition": "Continuous accurate scribe line with tools cleared versus designated terminal extracted without collateral displacement or damage.",
-        "verdict": "distinct",
-        "reason": "Different objective and contact mechanics; bimanual stabilization alone is generic. Record rubric is populated."
+        "reason": "The manipulation sequence and hazards are unrelated to connector replacement."
       },
       {
         "id": "pr-1891",
-        "objective": "Seat an add-on PCB onto two rows of header pins without bending them; candidate extracts a crimp terminal from a housing.",
-        "physical_skill": "Parallel multi-pin alignment and controlled board insertion versus twin-blade guidance outside one contact, tang depression, and rearward extraction.",
-        "success_condition": "Board fully seated with all pins straight versus selected terminal removed while adjacent terminals remain seated.",
-        "verdict": "distinct",
-        "reason": "Both concern electrical connectors, but one tests array insertion and pin protection while the other tests latch release and depinning. Complete record details establish the distinction."
+        "objective": "Seat an add-on circuit board over two rows of header pins without bending them; candidate replaces a motion-control harness connector.",
+        "physical_skill": "Both require fine multi-contact alignment and controlled electrical mating; the PR uses parallel board-to-header insertion, while the candidate additionally claims unlatching, extraction, cable, and seal handling.",
+        "success_condition": "PR measures board height, two-axis tilt, pin-bend history, release, and stability; candidate does not identify connector geometry, pins, latch, insertion depth, or damage/seal tests.",
+        "verdict": "uncertain",
+        "reason": "The core tested ability may reduce to alignment and controlled electrical mating, and the candidate lacks enough geometry or rubric to establish a meaningful distinction."
       },
       {
-        "id": "pr-1939",
-        "objective": "Place three consumer devices on their respective charging positions; candidate performs connector rework.",
-        "physical_skill": "Multi-object pose placement and charging-contact alignment versus fine extraction-tool insertion and bimanual force sequencing.",
-        "success_condition": "All devices remain charging after release versus one designated terminal remains extracted after release with no damage.",
+        "id": "pr-1969",
+        "objective": "Drive opposed tapered shims behind a door jamb until snug without bowing it; candidate replaces a harness connector.",
+        "physical_skill": "Bimanual opposed wedge insertion and structural-gap force control versus connector unlatching and mating.",
+        "success_condition": "PR defines orientation, overlap, snugness, jamb bow, release, and rest; candidate lacks any measurable service outcome or damage limits.",
         "verdict": "distinct",
-        "reason": "Charging placement does not test latch release, insertion around a recessed contact, or extraction. Record setup and scoring are present."
+        "reason": "Wedge loading and jamb deformation control are different from connector replacement."
       },
       {
-        "id": "pr-592",
-        "objective": "Hold a graphics-card slot latch and lift the card into a tray; candidate releases a terminal’s two locking tangs and pulls the contact from its cavity.",
-        "physical_skill": "External latch hold plus large rigid-card extraction versus guided dual-blade insertion around a recessed contact, possible forward unloading, and opposite-side wire pull.",
-        "success_condition": "Graphics card removed and placed in tray versus only the selected terminal and attached wire removed with housing and neighboring contacts preserved.",
+        "id": "pr-861",
+        "objective": "Latch two buckle tongues and a chest clip around a doll; candidate replaces a harness connector.",
+        "physical_skill": "Harness positioning and multiple buckle/clip closures versus confined electrical connector extraction, keyed mating, and cable/seal preservation.",
+        "success_condition": "PR measures tongue insertion, clip closure/location, seat motion, head clearance, release, and stillness; candidate lacks connector-specific success and safety gates.",
         "verdict": "distinct",
-        "reason": "This has the strongest semantic overlap, but it tests an accessible single slot latch and board removal; the candidate tests bilateral internal tang engagement, fine tool alignment, and crimp-preserving wire extraction. Both rubrics are sufficiently specified."
+        "reason": "Although both involve latches, the PR tests restraint placement and multiple buckle closures, not component replacement."
       },
       {
-        "id": "pr-624",
-        "objective": "Discharge a capacitor with a two-pin tool before removing a PSU board; candidate uses a dual-blade tool to depin one connector terminal.",
-        "physical_skill": "Align two pins to exposed pads, sustain electrical contact, then perform board removal versus insert blades into housing guide slots, mechanically depress tangs, and coordinate wire extraction.",
-        "success_condition": "Verified discharge precedes safe board placement in a box versus correct terminal exits its cavity without damage or neighbor release.",
+        "id": "pr-1825",
+        "objective": "Rotate and clamp an angle-grinder guard toward an operator position; candidate replaces a harness connector.",
+        "physical_skill": "Lever release, guarded rotation, and reclamping versus connector latch manipulation and controlled mating.",
+        "success_condition": "PR defines guard angles, lever state, grinder pose, hand clearance, and misuse faults; candidate has no comparable numeric rubric.",
         "verdict": "distinct",
-        "reason": "Both use two-pronged tools in electronics service, but one tests timed pad contact and safety sequencing while the candidate tests internal mechanical latch release. Record setup/scoring are present; candidate force limits remain explicitly unmeasured."
+        "reason": "Rotational guard adjustment is mechanically different from extracting and installing a connector."
+      },
+      {
+        "id": "pr-1838",
+        "objective": "Remove a coin cell, discard it, and latch a replacement in a socket; candidate replaces a harness connector.",
+        "physical_skill": "Small-cell extraction, polarity-aware placement, and socket-latch closure versus plug extraction/alignment/mating with cable and seal management.",
+        "success_condition": "PR measures disposal, cell pose, polarity, latch closure, release, stability, drops, and board damage; candidate lacks part identity, latch geometry, mating depth, seal inspection, and damage criteria.",
+        "verdict": "distinct",
+        "reason": "Both are replacement tasks with latching, but the PR specifically tests planar coin-cell handling and polarity, not cable-connector mating."
+      },
+      {
+        "id": "pr-1970",
+        "objective": "Load four connector modules into a hinged frame and squeeze the frame shut until it clicks; candidate replaces one motion-control harness connector.",
+        "physical_skill": "Both involve connector-component alignment, insertion, retention, and latching; the PR adds repeated module placement and frame closure, while the candidate claims extraction plus cable/seal management.",
+        "success_condition": "PR defines module seating, frame click, empty positions, trapped-module failure, clearance, and dwell; candidate provides no part, access, insertion, latch, seal, or damage rubric.",
+        "verdict": "uncertain",
+        "reason": "The tasks may share the same essential insertion-and-latching ability, and the underspecified candidate does not establish that its claimed extraction or seal work is actually tested."
+      },
+      {
+        "id": "pr-370",
+        "objective": "Aim a laser through two mirrors while blocking the beam during adjustments; candidate replaces a harness connector.",
+        "physical_skill": "Optical alignment, beam blocking, and safe mirror manipulation versus mechanical connector service.",
+        "success_condition": "PR continuously traces beam behavior and mirror motion with stray-beam and release rules; candidate lacks measurable completion and safety criteria.",
+        "verdict": "distinct",
+        "reason": "Optical path planning and beam safety are unrelated to connector extraction and mating."
+      },
+      {
+        "id": "pr-579",
+        "objective": "Recover drawer motion by compressing clothing that obstructs it; candidate replaces a harness connector.",
+        "physical_skill": "Bimanual drawer pulling and deformable-obstruction management versus rigid connector unlatching and mating.",
+        "success_condition": "Available PR text says scoring measures recovery progress rather than comprehensive safety compliance; candidate likewise lacks a valid rubric, but their physical outcomes are plainly different.",
+        "verdict": "distinct",
+        "reason": "The PR tests conditional bimanual recovery around a deformable obstruction, not connector servicing."
+      },
+      {
+        "id": "pr-877",
+        "objective": "Set date bands, ink a stamp, stamp a marked box, and return the tool; candidate replaces a harness connector.",
+        "physical_skill": "Detented band rotation, planar stamping, and tool return versus connector extraction and mating.",
+        "success_condition": "PR measures band readings, detents, ink compression, impression pose, and tool handling; candidate has no executable connector criteria.",
+        "verdict": "distinct",
+        "reason": "Date setting and stamping test a separate manipulation sequence."
+      },
+      {
+        "id": "pr-1814",
+        "objective": "Unhook a hot air-fryer basket and place it on a mat using only its handle; candidate replaces a harness connector.",
+        "physical_skill": "Hook clearance, load transport, placement, and hot-surface avoidance versus confined connector servicing.",
+        "success_condition": "PR defines unhooking, mat pose, release, stability, and permanent hot-contact faults; candidate lacks geometry, acceptance thresholds, and damage rules.",
+        "verdict": "distinct",
+        "reason": "The PR tests safe transport of a hooked vessel, not small-part connector replacement."
+      },
+      {
+        "id": "pr-1972",
+        "objective": "Heat-shrink a sleeve uniformly over a cable lug using coordinated cable rotation and heat-gun motion; candidate replaces a harness connector.",
+        "physical_skill": "Bimanual thermal processing, continuous rotation, and standoff control versus latch release and mechanical connector mating.",
+        "success_condition": "PR measures recovered/charred sleeve stations, nozzle and finger exposure, gun state, stand return, and falls; candidate lacks any connector or seal inspection rubric.",
+        "verdict": "distinct",
+        "reason": "A cable is shared context only; the tested thermal-processing ability is different."
+      },
+      {
+        "id": "pr-1116",
+        "objective": "Position a ball retainer and roll a slide member between its rollers until seated; candidate replaces a harness connector.",
+        "physical_skill": "Long-member alignment, constrained insertion, and rolling retainer engagement versus connector latch manipulation and mating.",
+        "success_condition": "PR measures riding pose, retainer position, rolling behavior, misses, and final seating; candidate supplies no insertion geometry or thresholds.",
+        "verdict": "distinct",
+        "reason": "Both include insertion, but roller-guided slide assembly tests a meaningfully different contact mechanism."
+      },
+      {
+        "id": "pr-1151",
+        "objective": "Orient a syringe, purge air while preserving liquid, and return it to saddles; candidate replaces a harness connector.",
+        "physical_skill": "Bimanual barrel stabilization, plunger force control, fluid/air management, and placement versus connector service.",
+        "success_condition": "PR quantifies residual air, sample loss, aspiration, pose, release, and containment; candidate has no defensible success rubric.",
+        "verdict": "distinct",
+        "reason": "Fluid dosing and plunger control are unrelated to connector extraction and mating."
+      },
+      {
+        "id": "pr-1289",
+        "objective": "Reattach a detached wrist camera to its original mount; candidate replaces a motion-control harness connector.",
+        "physical_skill": "Both can require confined alignment, insertion/attachment, and release; the PR's attachment mechanism is unspecified in the provided record, while the candidate's connector and latch geometry are also unspecified.",
+        "success_condition": "PR verifies mount pose, hand clearance, live optical-pose agreement, nonblank output, and dwell; candidate lacks mating pose, latch engagement, electrical-function, seal, and damage tests.",
+        "verdict": "uncertain",
+        "reason": "Both are component reattachment tasks, and missing attachment details on both sides prevent a confident determination of whether they test meaningfully different mechanics."
+      },
+      {
+        "id": "pr-1459",
+        "objective": "Pull a battery service plug before removing and safely tray-storing two busbars; candidate replaces a motion-control harness connector.",
+        "physical_skill": "Service-plug extraction plus rigid busbar lifting and clearance management versus failed-connector extraction followed by replacement mating and cable/seal management.",
+        "success_condition": "PR measures plug-out ordering, busbar motion, post clearances, tray placement, and irreversible electrical-safety failures; candidate lacks plug identity, removal/mating procedure, ordering, seal, and damage criteria.",
+        "verdict": "distinct",
+        "reason": "Connector extraction is shared, but the PR's central tested sequence is high-voltage isolation followed by safe busbar removal; it does not install a replacement connector."
+      },
+      {
+        "id": "pr-1493",
+        "objective": "Pull, wipe, reseat, reread, and finally reseat an engine dipstick; candidate replaces a harness connector.",
+        "physical_skill": "Repeated long-blade extraction/insertion and cloth wiping versus connector unlatching, mating, and cable/seal handling.",
+        "success_condition": "PR defines extraction height, seating, grasp, wipe contact and stroke coverage, and ordered history; candidate has no measurable connector rubric.",
+        "verdict": "distinct",
+        "reason": "Repeated dipstick inspection and wiping test different contact skills and sequencing."
+      },
+      {
+        "id": "pr-1797",
+        "objective": "Route a flexible wire between posts while retaining one clip, then seat its final clip; candidate replaces a harness connector while preserving surrounding wiring and seals.",
+        "physical_skill": "Bimanual deformable-cable routing and clip insertion versus an unspecified rigid connector's unlatching, extraction, alignment, and mating; cable management may overlap.",
+        "success_condition": "PR measures continuous clip retention, wire continuity, route crossings, bimanual contact, final seating, clearance, and motion; candidate lacks cable geometry, allowed displacement, latch/mating state, seal inspection, and damage thresholds.",
+        "verdict": "uncertain",
+        "reason": "The candidate explicitly includes cable management, but its absent geometry and rubric make it impossible to show whether that ability is more than the routing-and-retention skill already tested here."
       }
     ],
     "inactive_uncertainty": [],
-    "at": "2026-11-14T04:14:05.387221+00:00"
+    "at": "2026-11-14T04:37:58.127450+00:00"
   },
   "sources": [
     {
