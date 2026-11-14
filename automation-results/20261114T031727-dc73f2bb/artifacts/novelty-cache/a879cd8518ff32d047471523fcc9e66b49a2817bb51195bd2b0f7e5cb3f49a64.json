@@ -1,0 +1,13 @@
+{
+  "context": "bd12b234a1b2edfd30733ea316ceb8cb63f955b832f35ec5b299e07ea28a13df",
+  "record_digest": "ca9e1784480b7071b7f3e159335be9567ca5f9a7f61e337b7c350230b244a825",
+  "comparison": {
+    "id": "pr-1284",
+    "objective": "Replace two failed/predictive-failure drives in an order that preserves a RAID array.",
+    "physical_skill": "Extract and insert drives, monitor a rebuild lamp, wait, then replace the second drive.",
+    "success_condition": "Failed drive is replaced first; the amber drive is not removed until an eight-second rebuild completes and the lamp turns green.",
+    "verdict": "distinct",
+    "reason": "This tests ordered hot-swap insertion and system-state waiting, not fine rotary adjustment and repeated impact validation."
+  },
+  "review_notes": null
+}

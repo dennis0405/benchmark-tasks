@@ -1,0 +1,235 @@
+{
+  "comparisons": [
+    {
+      "suite": "LIBERO",
+      "coverage_method": "Verified the pinned manifest at commit 8f1084e3132a39270c3a13ebe37270a43ece2a01: all 135 selector-matched original files were present and matched their recorded SHA-256 values. Reviewed the benchmark registry files and searched the complete manifest-indexed inventory for adjustment, knob, lock, screw, damper, drawer, key, and control tasks. Inspected the closest stove definition completely.",
+      "objective": "The candidate commissions and locks an industrial shock absorber, then tests repeatable dynamic carriage stopping. LIBERO's nearest task only turns on a stove; it does not tune, secure, or dynamically validate a mechanism.",
+      "physical_skill": "Both involve rotary actuation, but LIBERO lacks recessed hex-bit alignment, bounded loosening/tightening, bit withdrawal, collar rotation, moving-socket reacquisition, setting preservation, and guarded test-control sequencing.",
+      "success_condition": "Candidate success requires a locked setting and two safe physical impact cycles within travel, rebound, force, drift, and damage limits. LIBERO succeeds solely when the stove's Turnon predicate is true.",
+      "evidence_paths": [
+        "input/benchmark-corpora/LIBERO/manifest.json",
+        "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_90/KITCHEN_SCENE3_turn_on_the_stove.bddl"
+      ],
+      "closest_tasks": [
+        {
+          "name": "KITCHEN_SCENE3_turn_on_the_stove",
+          "source_path": "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_90/KITCHEN_SCENE3_turn_on_the_stove.bddl",
+          "quote": "(:goal\n    (And (Turnon flat_stove_1))\n  )",
+          "objective": "Turn on a tabletop stove.",
+          "physical_skill": "Actuate a stove control to change its on/off state.",
+          "success_condition": "The flat stove satisfies Turnon.",
+          "reason": "Generic rotary/control actuation is shared, but the tested ability and outcome omit tool access, captive locking, reacquisition, dynamic response, and safety validation.",
+          "verdict": "distinct"
+        }
+      ],
+      "verdict": "distinct",
+      "reason": "The complete indexed suite exposes control rotation and drawer manipulation, but no task with the candidate's coupled unlock-adjust-relock-and-dynamic-commissioning objective."
+    },
+    {
+      "suite": "RoboCasa",
+      "coverage_method": "Verified the pinned manifest at commit 425684d332f135f5b30a40b321f52d15a0fe9250: all 381 selector-matched originals were present with no SHA-256 mismatch. Reviewed environments/__init__.py and dataset_registry.py coverage, searched every manifest-indexed source, and read the complete atomic stove task definition containing turn-on, turn-off, and low-heat variants.",
+      "objective": "The candidate tunes and locks an industrial damper based on measured stopping behavior. RoboCasa's closest tasks manipulate a kitchen stove knob to an on/off or low-heat state.",
+      "physical_skill": "RoboCasa tests knob rotation. The candidate additionally requires seating a 1.5 mm bit, captive-screw torque, withdrawing the bit, fine collar rotation, reacquiring the socket after it moves, relocking without drift, clearing the mechanism, and actuating a separate guarded control.",
+      "success_condition": "RoboCasa evaluates burner state or whether a knob value lies in a low-heat interval. The candidate requires two consecutive physical carriage stops without bottoming, hard-stop contact, excessive rebound, force-limit violations, damage, tool loss, or setting drift.",
+      "evidence_paths": [
+        "input/benchmark-corpora/RoboCasa/manifest.json",
+        "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/__init__.py",
+        "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/utils/dataset_registry.py",
+        "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/atomic/kitchen_stove.py"
+      ],
+      "closest_tasks": [
+        {
+          "name": "ManipulateStoveKnob / TurnOnStove / TurnOffStove",
+          "source_path": "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/atomic/kitchen_stove.py",
+          "quote": "burner_on = self.stove.is_burner_on(env=self, burner_loc=self.knob)",
+          "objective": "Turn a selected stove burner on or off.",
+          "physical_skill": "Rotate a stove knob.",
+          "success_condition": "The selected burner's Boolean state matches the requested behavior.",
+          "reason": "It shares rotary manipulation but not locking-tool use, moving-socket reacquisition, iterative dynamic commissioning, or failure-sensitive cycling.",
+          "verdict": "distinct"
+        },
+        {
+          "name": "LowerHeat",
+          "source_path": "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/atomic/kitchen_stove.py",
+          "quote": "return knob_at_low",
+          "objective": "Lower a kettle burner's heat by changing its knob setting.",
+          "physical_skill": "Rotate a knob into a target interval.",
+          "success_condition": "Absolute knob value lies between the defined low-heat bounds.",
+          "reason": "This is the strongest parameter-setting neighbor, but it scores static knob position only and has no lock, tool reacquisition, measured physical response, repeated test cycle, or damage constraints.",
+          "verdict": "distinct"
+        }
+      ],
+      "verdict": "distinct",
+      "reason": "The candidate is not distinguished merely by industrial geometry: it tests a coupled tool-mediated lock, fine adjustment, and measured dynamic commissioning loop absent from RoboCasa's static appliance controls."
+    },
+    {
+      "suite": "SimplerEnv",
+      "coverage_method": "Verified both pinned components and all 11 manifest entries: every original existed and matched its SHA-256. Checked the environment registration and builder files, searched the complete indexed inventory, and read the full open/close drawer implementation.",
+      "objective": "The candidate commissions a shock absorber through adjustment, locking, and impact testing. SimplerEnv's nearest articulated task opens or closes a cabinet drawer.",
+      "physical_skill": "Drawer tasks require grasping/pulling or pushing a prismatic articulation. They do not require fine tool insertion, screw torque, tool withdrawal/re-engagement, collar rotation, setting preservation, or test-control operation.",
+      "success_condition": "Drawer success is a single joint-position threshold. Candidate success depends on the locked setting plus two bounded, damage-free dynamic cycles and safe sequencing.",
+      "evidence_paths": [
+        "input/benchmark-corpora/SimplerEnv/manifest.json",
+        "input/benchmark-corpora/SimplerEnv/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/__init__.py",
+        "input/benchmark-corpora/SimplerEnv/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/utils/env/env_builder.py",
+        "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/open_drawer_in_scene.py"
+      ],
+      "closest_tasks": [
+        {
+          "name": "OpenDrawerInSceneEnv",
+          "source_path": "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/open_drawer_in_scene.py",
+          "quote": "return dict(success=qpos >= 0.15, qpos=qpos, episode_stats=self.episode_stats)",
+          "objective": "Open a selected cabinet drawer.",
+          "physical_skill": "Move a prismatic drawer joint through contact manipulation.",
+          "success_condition": "The drawer joint position reaches at least 0.15.",
+          "reason": "It tests articulated motion but not rotary setting, captive locking, fine tool alignment, or response-based commissioning.",
+          "verdict": "distinct"
+        },
+        {
+          "name": "CloseDrawerInSceneEnv",
+          "source_path": "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/open_drawer_in_scene.py",
+          "quote": "return dict(success=qpos <= 0.05, qpos=qpos, episode_stats=self.episode_stats)",
+          "objective": "Close a selected cabinet drawer.",
+          "physical_skill": "Push a prismatic drawer articulation closed.",
+          "success_condition": "The drawer joint position is at most 0.05.",
+          "reason": "A single prismatic threshold does not test the candidate's lock-adjust-test loop or dynamic safety outcome.",
+          "verdict": "distinct"
+        }
+      ],
+      "verdict": "distinct",
+      "reason": "No manifest-indexed SimplerEnv definition contains damper adjustment, fastener locking, tool reacquisition, or dynamic stopping validation."
+    },
+    {
+      "suite": "BEHAVIOR",
+      "coverage_method": "Verified both pinned BEHAVIOR components and all 1,121 manifest entries: no missing originals or SHA-256 mismatches. Checked the task/predicate implementation files, searched the complete indexed activity inventory, and read both original locking definitions completely. The apparent locking tasks are goal-specified as closing openings rather than operating a lock mechanism.",
+      "objective": "The candidate changes and secures a damper setting and validates physical stopping. BEHAVIOR's nearest named activities close every door or window.",
+      "physical_skill": "BEHAVIOR requires manipulation sufficient to make openings not open; its definitions do not specify key use, latch engagement, screw torque, fine collar adjustment, socket reacquisition, or dynamic force control.",
+      "success_condition": "The locking activities succeed when all relevant open predicates become false. The candidate requires a retained setting and two safe impact cycles within quantitative travel, rebound, force, and drift bounds.",
+      "evidence_paths": [
+        "input/benchmark-corpora/BEHAVIOR/manifest.json",
+        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/tasks/behavior_task.py",
+        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/utils/bddl_utils.py",
+        "input/benchmark-corpora/BEHAVIOR/StanfordVL/bddl/06bec10ca54c7f375a1f71da8b94f7e1896ff77a/bddl/activity_definitions/locking_every_door/problem0.bddl",
+        "input/benchmark-corpora/BEHAVIOR/StanfordVL/bddl/06bec10ca54c7f375a1f71da8b94f7e1896ff77a/bddl/activity_definitions/locking_every_window/problem0.bddl"
+      ],
+      "closest_tasks": [
+        {
+          "name": "locking_every_door_0",
+          "source_path": "input/benchmark-corpora/BEHAVIOR/StanfordVL/bddl/06bec10ca54c7f375a1f71da8b94f7e1896ff77a/bddl/activity_definitions/locking_every_door/problem0.bddl",
+          "quote": "(not \n                (open ?door.n.01_1)\n            )",
+          "objective": "Make both specified doors no longer open.",
+          "physical_skill": "Close door articulations; no lock actuation is required by the definition.",
+          "success_condition": "Both door open predicates are false.",
+          "reason": "Despite the activity name, the original goal contains only not-open predicates and does not test locking hardware, adjustment, tools, or dynamic response.",
+          "verdict": "distinct"
+        },
+        {
+          "name": "locking_every_window_0",
+          "source_path": "input/benchmark-corpora/BEHAVIOR/StanfordVL/bddl/06bec10ca54c7f375a1f71da8b94f7e1896ff77a/bddl/activity_definitions/locking_every_window/problem0.bddl",
+          "quote": "(not \n                (open ?window.n.01_1)\n            )",
+          "objective": "Make four specified windows no longer open.",
+          "physical_skill": "Close window articulations; no latch or key operation is encoded.",
+          "success_condition": "All four window open predicates are false.",
+          "reason": "The task's tested state is closure, not a retained mechanical setting or secured commissioning outcome.",
+          "verdict": "distinct"
+        }
+      ],
+      "verdict": "distinct",
+      "reason": "The closest nominal locking activities do not encode actual locking. No complete-inventory match tests the candidate's fine tool sequence and quantitative dynamic validation."
+    },
+    {
+      "suite": "DataCenterBench",
+      "coverage_method": "Verified the suite's sole published original against its manifest SHA-256. Read the entire published definition inventory, including all ten kept tasks and nine excluded candidates. This source is the complete available registry: it explicitly enumerates the retained controls/connections and excluded service steps.",
+      "objective": "The candidate performs multi-stage industrial damper commissioning. DataCenterBench keeps isolated tabletop steps such as turning a knob or key and explicitly excludes a non-functional thumbscrew prop.",
+      "physical_skill": "The suite includes rotary knob/key motion and considers tightening. It does not combine recessed tool seating, captive-screw loosening, bit withdrawal, moving-socket reacquisition, setting-preserving relock, and response-guided repeated cycling.",
+      "success_condition": "Kept controls are visually scored single steps; the excluded thumbscrew fastens nothing. Candidate success requires a functional retained adjustment and two quantitative, safe dynamic stops.",
+      "evidence_paths": [
+        "input/benchmark-corpora/DataCenterBench/manifest.json",
+        "input/benchmark-corpora/DataCenterBench/published-task-definitions.txt"
+      ],
+      "closest_tasks": [
+        {
+          "name": "Turn a knob",
+          "source_path": "input/benchmark-corpora/DataCenterBench/published-task-definitions.txt",
+          "quote": "Real rotary selector with two positions. Ours has no click stops.",
+          "objective": "Move a rotary selector between two control positions.",
+          "physical_skill": "Rotate a knob toward a marked state.",
+          "success_condition": "Complete the single visually scored control step.",
+          "reason": "Shares rotary control motion but lacks a fastener lock, tool handling, iterative adjustment, and functional stopping outcome.",
+          "verdict": "distinct"
+        },
+        {
+          "name": "Turn a key",
+          "source_path": "input/benchmark-corpora/DataCenterBench/published-task-definitions.txt",
+          "quote": "Real step unlocks a bypass breaker's key interlock before switching. Our key switch matches the motion.",
+          "objective": "Unlock a bypass-breaker interlock using a key-switch analogue.",
+          "physical_skill": "Align and rotate a key-like control.",
+          "success_condition": "Complete the single unlocking motion.",
+          "reason": "This is a tool/control-access neighbor, but it does not require withdrawal and reacquisition after a setting moves, relocking, or dynamic commissioning.",
+          "verdict": "distinct"
+        },
+        {
+          "name": "Tighten a thumbscrew (left out)",
+          "source_path": "input/benchmark-corpora/DataCenterBench/published-task-definitions.txt",
+          "quote": "Real step secures a server's card riser. Ours fastens nothing.",
+          "objective": "Considered analogue for securing a card riser, but excluded from the benchmark.",
+          "physical_skill": "Generic manual screw rotation.",
+          "success_condition": "No retained benchmark task or functional fastening criterion is defined.",
+          "reason": "Even as a considered task, it lacks functional clamping and does not test the candidate's unlock-adjust-reacquire-lock-test sequence.",
+          "verdict": "distinct"
+        }
+      ],
+      "verdict": "distinct",
+      "reason": "DataCenterBench contains overlapping primitives, but its own publication characterizes them as isolated simplified steps. Their objectives and scoring do not cover functional mechanical commissioning."
+    },
+    {
+      "suite": "RoboDojo",
+      "coverage_method": "Verified the pinned manifest at commit f57e1633ffed59761bc8e568cfe7530c4b33381c: all 110 registry/config/task files existed and matched SHA-256. Reviewed task_registry.py, searched the complete indexed inventory, and read the full Python and YAML definitions for fasten_screws and insert_key.",
+      "objective": "The candidate adjusts and locks one damper, then validates its dynamic stopping response. RoboDojo fasten_screws mates three color-matched nuts and bolts; insert_key inserts and nominally turns a key.",
+      "physical_skill": "fasten_screws overlaps threaded tightening, while insert_key overlaps alignment and insertion. Neither requires a hex bit in a recessed moving socket, captive fastener loosening, tool withdrawal before collar movement, socket reacquisition, setting retention, or guarded dynamic testing.",
+      "success_condition": "fasten_screws scores nut axis, 1 mm XY alignment, insertion depth, open grippers, and robot reset. insert_key scores lift, depth, XY distance, and orientation; its success checks do not encode the instructed turn. Candidate success instead depends on a locked setting and two force/travel/rebound-safe physical impact cycles.",
+      "evidence_paths": [
+        "input/benchmark-corpora/RoboDojo/manifest.json",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/task_registry.py",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/config/fasten_screws.yml",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/fasten_screws.py",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/config/insert_key.yml",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/insert_key.py"
+      ],
+      "closest_tasks": [
+        {
+          "name": "fasten_screws",
+          "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/fasten_screws.py",
+          "quote": "Insert and tighten each screw into the nut of the same color.",
+          "objective": "Insert and tighten three matching nut/bolt pairs.",
+          "physical_skill": "Align threaded parts and rotate them into engagement.",
+          "success_condition": "Each nut is upright, within 0.001 m XY of its bolt, reaches the specified depth, and the required release/reset conditions hold.",
+          "reason": "Threaded tightening is genuine overlap at the primitive level, but RoboDojo does not test loosening a captive lock, withdrawing/reacquiring a separate bit around an adjusted collar, preserving a setting, or measuring functional dynamic response.",
+          "verdict": "distinct"
+        },
+        {
+          "name": "insert_key",
+          "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/insert_key.py",
+          "quote": "Pick up the key, hand it over to the other hand, insert it into the keyhole, then turn it.",
+          "objective": "Pick up, hand over, insert, and nominally turn a key.",
+          "physical_skill": "Fine alignment, insertion, and bimanual handover.",
+          "success_condition": "The implemented full score checks insertion depth, XY proximity, upright orientation, and slot-axis alignment; it does not check key rotation.",
+          "reason": "It is a strong fine-alignment neighbor, but lacks torque-bounded captive locking, adjustment between tool engagements, setting retention, and response-based cycling.",
+          "verdict": "distinct"
+        }
+      ],
+      "verdict": "distinct",
+      "reason": "RoboDojo covers relevant primitives separately, especially fastening and insertion, but no original definition combines them into the candidate's mechanically coupled commissioning ability or quantitative outcome."
+    }
+  ],
+  "candidate_digest": "132d3b61fd433c217089e53972eed3f76a84a8b9d94db2dc2bd51e60b6838e4a",
+  "at": "2026-11-14T11:23:15.770805+00:00",
+  "definition_manifests": {
+    "LIBERO": "e942a231c19eb15db302c9ef67590734e8885ebe49aad45a9ffb565d453205a2",
+    "RoboCasa": "6ee536b06831de1c1e518c4af8a537c6b06f934af76ee8ca3adc5da339e1c1c2",
+    "SimplerEnv": "feea1aeb8b633e20fee485cd02bf13147d0344e85db798d9d9505aacfd48d983",
+    "BEHAVIOR": "360a4ab79297249a2d7fbf4e1fb7ece920fd51c60eb232962f1bae5cc3283da9",
+    "DataCenterBench": "ba132c3408e0c023435d561b6e72e11c99480ca44c23c3314967876311e987d3",
+    "RoboDojo": "c2c329847d5331b213099dbef43745e96b7afe92af6d5cc796531b27ae4d72a6"
+  }
+}
