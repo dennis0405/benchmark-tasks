@@ -130,7 +130,9 @@ def dispatch(args, store, config):
             store.update(
                 args.run,
                 revision=run.get("revision", 0) + 1,
-                revision_request=args.request,
+                revision_request=(
+                    args.request if args.request is not None else run.get("revision_request")
+                ),
                 approval=None,
             )
             store.update(
