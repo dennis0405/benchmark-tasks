@@ -2,6 +2,7 @@
 
 import json
 import math
+import os
 import re
 import shutil
 import subprocess
@@ -430,8 +431,11 @@ class Production:
             raise GateError(name + ": " + "; ".join(result["findings"]))
         if not result["evidence_paths"]:
             raise GateError("review missing evidence paths")
-        for path in result["evidence_paths"]:
-            self.evidence_file(path)
+        result["evidence_paths"] = [
+            Path(os.path.relpath(self.evidence_file(path), self.workspace)).as_posix()
+            for path in result["evidence_paths"]
+        ]
+        write_json(self.artifact(name), result)
         return result
 
     def evidence_file(self, path):
@@ -443,9 +447,53 @@ class Production:
             ):
                 allowed.append(directory.resolve())
         target = (self.workspace / path).resolve()
-        if not target.is_file() or not any(target.is_relative_to(root) for root in allowed):
-            raise GateError("review evidence missing or outside approved run directories")
-        return target
+        if target.is_file() and any(target.is_relative_to(root) for root in allowed):
+            return target
+        # Only the controller's pinned source index authorizes an external source.
+        # Copy it into the run so later local review needs no runtime mount.
+        index_path = self.workspace / "input/runtime-api-preflight.json"
+        if index_path.is_file():
+            index = read(index_path)
+            entries = [(index.get("source_path"), index.get("sha256"))]
+            joint = index.get("joint_schema_source", {})
+            entries.append((joint.get("path"), joint.get("sha256")))
+            for source, sha in entries:
+                if (
+                    not isinstance(source, str)
+                    or not Path(source).is_absolute()
+                    or Path(source).resolve() != target
+                    or not isinstance(sha, str)
+                    or not re.fullmatch(r"[a-f0-9]{64}", sha)
+                ):
+                    continue
+                relative = Path("input/pinned-runtime-sources") / (sha + "-" + target.name)
+                snapshot = inside(self.workspace, relative)
+                if snapshot.exists():
+                    if not snapshot.is_file() or file_hash(snapshot) != sha:
+                        raise GateError("pinned review evidence snapshot hash mismatch")
+                    return snapshot
+                if (
+                    not target.is_file()
+                    or target.stat().st_size > 25 * 1024 * 1024
+                    or file_hash(target) != sha
+                ):
+                    raise GateError("pinned review evidence source missing or hash mismatch")
+                snapshot.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(target, snapshot)
+                if file_hash(snapshot) != sha:
+                    snapshot.unlink()
+                    raise GateError("pinned review evidence changed during copy")
+                write_json(
+                    inside(self.workspace, str(relative) + ".provenance.json"),
+                    {
+                        "original_path": source,
+                        "sha256": sha,
+                        "source_index": "input/runtime-api-preflight.json",
+                        "isaaclab_commit": index.get("isaaclab_commit"),
+                    },
+                )
+                return snapshot
+        raise GateError(f"review evidence missing or outside approved run directories: {path}")
 
     def run(self, from_stage=None):
         completed = self.store.completed(self.rid)
