@@ -406,6 +406,15 @@ class Production:
         )
 
     def review(self, name, instruction, *, specification_only=False):
+        index_path = self.workspace / "input/runtime-api-preflight.json"
+        if index_path.is_file():
+            index = read(index_path)
+            for source in (
+                index.get("source_path"),
+                index.get("joint_schema_source", {}).get("path"),
+            ):
+                if source:
+                    self.evidence_file(source)
         scope = (
             "\nThis is a PROSPECTIVE specification review. Existing task/ code and native "
             "diagnostics may be an explicitly unfinished historical scaffold; their lack of "
@@ -423,7 +432,10 @@ class Production:
             name,
             instruction + scope + "Cite actual files relative to the workspace. Permitted "
             "evidence locations are this workspace and this run's ../logs, ../release and "
-            "../evaluation directories. Return pass only with no material unresolved issues.",
+            "../evaluation directories. Exact hash-verified runtime source snapshots, when "
+            "indexed by input/runtime-api-preflight.json, are prepared under "
+            "input/pinned-runtime-sources BEFORE this review. Their provenance records preserve "
+            "the original source paths. Return pass only with no material unresolved issues.",
             C.REVIEW,
         )
         write_json(self.artifact(name), result)

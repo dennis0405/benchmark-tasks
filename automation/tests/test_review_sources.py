@@ -23,11 +23,18 @@ def fixture(tmp_path):
 
 def test_review_mirrors_only_hash_verified_pinned_source_and_preserves_verdict(tmp_path):
     p, source = fixture(tmp_path)
-    p.ask = lambda *args, **kwargs: {
-        "verdict": "pass",
-        "findings": ["Source API exists; native behavior remains unvalidated."],
-        "evidence_paths": [str(source)],
-    }
+    def ask(*args, **kwargs):
+        # Read-only reviewers must be able to cite the source before returning.
+        copies = list((p.workspace / "input/pinned-runtime-sources").glob("*.py"))
+        assert len(copies) == 1
+        assert copies[0].read_bytes() == source.read_bytes()
+        return {
+            "verdict": "pass",
+            "findings": ["Source API exists; native behavior remains unvalidated."],
+            "evidence_paths": [str(source)],
+        }
+
+    p.ask = ask
     result = p.review("contract-critic", "Check the prospective API", specification_only=True)
     assert result["verdict"] == "pass"
     assert result["findings"] == ["Source API exists; native behavior remains unvalidated."]
