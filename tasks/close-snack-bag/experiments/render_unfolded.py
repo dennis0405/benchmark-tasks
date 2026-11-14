@@ -61,6 +61,7 @@ def main():
     data = np.load(io.BytesIO(recording_bytes))
     trace = json.loads(trace_bytes)
     arguments=json.loads((args.run/"arguments.json").read_text());hz=arguments.get("hz",60)
+    pinch_test=arguments.get("stage")=="pinch_lift"
     cracker=bool(arguments.get("contents") and arguments.get("contents_mode")=="brittle")
     geometry = np.load(args.run/"render-geometry.npz")
     parts = json.loads((args.run/"render-geometry.json").read_text())
@@ -76,8 +77,18 @@ def main():
     for eye in (center+[-.4, -.3, .8], center+[.3, .5, .6]):
         scene.add(pyrender.DirectionalLight(color=(1, 1, 1), intensity=2.5),
                   pose=camera_pose(eye, center))
-    renderer = pyrender.OffscreenRenderer(640, 540)
+    renderer = pyrender.OffscreenRenderer(640, 540,point_size=5.)
     film_nodes = []
+    tracked={}
+    if pinch_test and (args.run/"result.json").exists():
+        refs=json.loads((args.run/"result.json").read_text()).get("controller_diagnostics",{}).get("pinch_lift_reference",{})
+        for arm,base in refs.items():
+            selected=[]
+            for ids,points in zip(base["vertices"],base["local"]):
+                points=np.asarray(points)
+                central=np.argsort(np.linalg.norm(points-np.median(points,axis=0),axis=1))[:5]
+                selected.extend(np.asarray(ids)[central].tolist())
+            tracked[arm]=np.unique(selected)
     texture_image=wrapper_texture(cracker=cracker)
     texture_image.save(args.run/"wrapper-print.png")
     if has_film:
@@ -96,10 +107,17 @@ def main():
         validated=(report.get("core_passed") is True and
                    report.get("states_sha256")==hashlib.sha256(recording_bytes).hexdigest() and
                    report.get("trace_sha256")==hashlib.sha256(trace_bytes).hexdigest())
+    pinch_verified=False
+    if pinch_test and (args.run/"pinch-lift-assessment.json").exists():
+        report=json.loads((args.run/"pinch-lift-assessment.json").read_text())
+        pinch_verified=(report.get("passed") is True and
+            report.get("states_sha256")==hashlib.sha256(recording_bytes).hexdigest() and
+            report.get("trace_sha256")==hashlib.sha256(trace_bytes).hexdigest())
     keys = sorted(k for k in data.files if k.startswith("q_" if has_film else "b_") and
                   args.first_step<=int(k[2:])<len(trace) and
                   (args.last_step is None or int(k[2:])<=args.last_step))[::args.stride]
     output = args.run / f"{'unfolded-yam' if has_film else 'rigid-clip'}-{args.detail}-{'core-demo' if validated else 'diagnostic'}.mp4"
+    if pinch_test:output=args.run/f"pinch-lift-{args.detail}-{'pass' if pinch_verified else 'diagnostic'}.mp4"
     writer = imageio.get_writer(str(output), fps=hz/args.stride, codec="libx264",
                                quality=8, ffmpeg_params=["-pix_fmt", "yuv420p", "-movflags", "+faststart"])
     for key in keys:
@@ -114,6 +132,10 @@ def main():
             # physics surface remains the single frozen recorded mesh.
             liner=trimesh.Trimesh(vertices=data[key],faces=data["faces"][:,::-1],process=False)
             film_nodes.append(scene.add(pyrender.Mesh.from_trimesh(liner,smooth=False,material=liner_material)))
+            if pinch_test and trace[step].get("pinch_lift",{}).get("reference_locked"):
+                for arm,ids in tracked.items():
+                    color=[.1,.9,.2] if arm=="left" else [.15,.4,1.]
+                    film_nodes.append(scene.add(pyrender.Mesh.from_points(data[key][ids],colors=np.tile(color,(len(ids),1)))))
         bodies = data["b_"+key[2:]]
         for part, node in nodes:
             transform = np.array(part["local"])
@@ -147,19 +169,46 @@ def main():
             views.append(rgb)
             for material,color,mode in changed:
                 material.baseColorFactor=color;material.alphaMode=mode
-        canvas = np.full((640, 1280, 3), 245, np.uint8)
+        canvas = np.full((720 if pinch_test else 640, 1280, 3), 245, np.uint8)
         canvas[55:595] = np.concatenate(views, axis=1)
         if args.translucent_robot_detail:
             cv2.putText(canvas,"Close-up: robot translucent; recorded geometry unchanged",(655,80),
                         cv2.FONT_HERSHEY_SIMPLEX,.48,(30,40,50),1,cv2.LINE_AA)
+        if pinch_test:
+            cv2.putText(canvas,"Green / blue dots: original left / right film grasp points",(655,102),
+                        cv2.FONT_HERSHEY_SIMPLEX,.48,(30,40,50),1,cv2.LINE_AA)
         label = trace[step]["phase"]
         title="YAM + UNFOLDED FILM POUCH" if has_film else "YAM + SPRING CLIP | NO FILM"
         validation_label=(" | CONTENTS-PROTECTED MECHANICS" if cracker else " | EMPTY-POUCH MECHANICS")
+        if pinch_test:
+            title="YAM | TWO-HAND MOUTH GRASP + LIFT"
+            validation_label=" | WITH CONTENTS" if arguments.get("contents") else " | EMPTY BAG"
         cv2.putText(canvas, title+(validation_label if validated else " | contact-driven diagnostic"), (20, 32),
                     cv2.FONT_HERSHEY_SIMPLEX, .8, (30, 40, 50), 1, cv2.LINE_AA)
+        if pinch_test:
+            cv2.rectangle(canvas,(0,0),(1280,52),(245,245,245),-1)
+            cv2.putText(canvas,title+validation_label,(20,32),cv2.FONT_HERSHEY_SIMPLEX,.8,(30,40,50),1,cv2.LINE_AA)
         scope=("3s hold PASS; contents retained, no seam failure" if cracker else "3s hold PASS; empty pouch") if validated else "DIAGNOSTIC; sealing not validated"
+        if pinch_test:scope="MOUTH GRASP/LIFT 3s PASS" if pinch_verified else "MOUTH GRASP/LIFT NOT VERIFIED"
         cv2.putText(canvas, f"t={step/hz:.2f}s | {label} | recorded physics, 1x | {scope}",
                     (20, 625), cv2.FONT_HERSHEY_SIMPLEX, .60, (30, 40, 50), 1, cv2.LINE_AA)
+        if pinch_test:
+            measured=trace[step].get("pinch_lift",{})
+            for number,arm in enumerate(("left","right")):
+                hand=measured.get("hands",{}).get(arm,{})
+                area=hand.get("wall_area_mm2",[0.,0.])
+                contact="YES" if min(hand.get("opposed_load_N",[0.,0.]))>=.02 else "NO"
+                lift=hand.get("wall_lift_m");slip=hand.get("wall_slip_p90_m")
+                text=f"{arm.upper()}: wall capture {area[0]:.0f} / {area[1]:.0f} mm2 | opposed contacts {contact}"
+                if lift is not None:
+                    retained=hand.get("wall_landmarks_retained")
+                    marks="UNMEASURED" if retained is None else ("IN" if all(retained) else "OUT")
+                    hold=hand.get("wall_hold_slip_p90_m",[])
+                    creep=f"{max(hold)*1000:.1f} mm" if len(hold) else "--"
+                    text=f"{arm.upper()}: film rise {lift[0]*1000:.1f}/{lift[1]*1000:.1f} mm | original points {marks} | hold drift {creep} | total shift {max(slip)*1000:.1f} mm | contacts {contact}"
+                cv2.putText(canvas,text,(20,651+number*25),cv2.FONT_HERSHEY_SIMPLEX,.52,(30,40,50),1,cv2.LINE_AA)
+            cv2.putText(canvas,"NO FOLD / NO CLIP | mouth lift only; whole-bag suspension is a separate check",(20,703),
+                        cv2.FONT_HERSHEY_SIMPLEX,.52,(30,40,50),1,cv2.LINE_AA)
         writer.append_data(canvas)
         if args.stride>=30 or step in (0, 60, 300, 600, 900) or key == keys[-1]:
             imageio.imwrite(args.run/f"view-{step:05d}.png", canvas)
@@ -174,6 +223,8 @@ def main():
         physics_modified=False,position_interpolation=False,
         translucent_robot_in_closeup=args.translucent_robot_detail,
         core_assessment_verified=validated,
+        pinch_lift_assessment_verified=pinch_verified,
+        material_vertex_dots=pinch_test,
         wrapper_print="original procedural outer print, fixed UV, silver inner liner; no collision effect"),indent=2))
     print(output)
 
