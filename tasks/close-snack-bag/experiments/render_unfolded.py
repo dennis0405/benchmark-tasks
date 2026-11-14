@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from render_native_clip import pose, camera_pose
 
 
-def wrapper_texture():
+def wrapper_texture(cracker=False):
     """Original generic print; display only, fixed in material coordinates."""
     image=Image.new("RGB",(1024,1280),(233,139,31))
     draw=ImageDraw.Draw(image)
@@ -31,11 +31,16 @@ def wrapper_texture():
     draw.rounded_rectangle((75,360,949,650),radius=55,fill=(252,243,213))
     draw.text((512,500),"CHIPS",anchor="mm",font=ImageFont.load_default(size=170),
               fill=(159,56,25),stroke_width=2)
-    draw.text((512,710),"CRISPY POTATO SNACK",anchor="mm",
+    draw.text((512,710),"CRISPY CORN SNACK" if cracker else "CRISPY POTATO SNACK",anchor="mm",
               font=ImageFont.load_default(size=45),fill=(255,248,224))
     for x,y in ((320,940),(650,970),(490,875)):
-        draw.ellipse((x-145,y-70,x+145,y+70),fill=(165,94,17),outline=(255,219,103),width=6)
-        draw.ellipse((x-130,y-67,x+130,y+55),fill=(249,206,82))
+        if cracker:
+            draw.rounded_rectangle((x-105,y-80,x+105,y+80),radius=12,fill=(249,206,82),outline=(165,94,17),width=7)
+            for dx in (-65,0,65):
+                for dy in (-45,0,45):draw.ellipse((x+dx-5,y+dy-5,x+dx+5,y+dy+5),fill=(165,94,17))
+        else:
+            draw.ellipse((x-145,y-70,x+145,y+70),fill=(165,94,17),outline=(255,219,103),width=6)
+            draw.ellipse((x-130,y-67,x+130,y+55),fill=(249,206,82))
     draw.text((512,1110),"RESEAL AFTER OPENING",anchor="mm",
               font=ImageFont.load_default(size=38),fill=(255,248,224))
     return image
@@ -51,7 +56,8 @@ def main():
     trace_bytes=(args.run/"trace.json").read_bytes()
     data = np.load(io.BytesIO(recording_bytes))
     trace = json.loads(trace_bytes)
-    hz=json.loads((args.run/"arguments.json").read_text()).get("hz",60)
+    arguments=json.loads((args.run/"arguments.json").read_text());hz=arguments.get("hz",60)
+    cracker=bool(arguments.get("contents") and arguments.get("contents_mode")=="brittle")
     geometry = np.load(args.run/"render-geometry.npz")
     parts = json.loads((args.run/"render-geometry.json").read_text())
     scene = pyrender.Scene(bg_color=(.93, .95, .97, 1), ambient_light=(.70, .70, .70))
@@ -68,7 +74,7 @@ def main():
                   pose=camera_pose(eye, center))
     renderer = pyrender.OffscreenRenderer(640, 540)
     film_nodes = []
-    texture_image=wrapper_texture()
+    texture_image=wrapper_texture(cracker=cracker)
     texture_image.save(args.run/"wrapper-print.png")
     if has_film:
         q0=data["q_00000"]
@@ -125,9 +131,10 @@ def main():
         canvas[55:595] = np.concatenate(views, axis=1)
         label = trace[step]["phase"]
         title="YAM + UNFOLDED FILM POUCH" if has_film else "YAM + SPRING CLIP | NO FILM"
-        cv2.putText(canvas, title+(" | EMPTY-POUCH MECHANICS" if validated else " | contact-driven diagnostic"), (20, 32),
+        validation_label=(" | CONTENTS-PROTECTED MECHANICS" if cracker else " | EMPTY-POUCH MECHANICS")
+        cv2.putText(canvas, title+(validation_label if validated else " | contact-driven diagnostic"), (20, 32),
                     cv2.FONT_HERSHEY_SIMPLEX, .8, (30, 40, 50), 1, cv2.LINE_AA)
-        scope="3s hold PASS; empty pouch" if validated else "DIAGNOSTIC; sealing not validated"
+        scope=("3s hold PASS; contents retained, no seam failure" if cracker else "3s hold PASS; empty pouch") if validated else "DIAGNOSTIC; sealing not validated"
         cv2.putText(canvas, f"t={step/hz:.2f}s | {label} | recorded physics, 1x | {scope}",
                     (20, 625), cv2.FONT_HERSHEY_SIMPLEX, .60, (30, 40, 50), 1, cv2.LINE_AA)
         writer.append_data(canvas)

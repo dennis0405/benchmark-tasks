@@ -30,14 +30,14 @@ class FoldController:
         average=getattr(self.sim,"snack_force_average",None)
         return average.forces() if average is not None else self.sim.pipeline.program.solver.shape_contact_forces()
 
-    def start_support(self,arm,*,floor_z=None,quat=None,filtered=0.):
+    def start_support(self,arm,*,floor_z=None,quat=None,filtered=0.,target_force=.8):
         if not self.support_hold_enabled:return
         panel=self.session.arms[arm]
         tcp,actual=panel.ik.ee_pose(self.sim.state)
         if floor_z is None:
             floor_z=self.layout["board_top"]+self.press_floor_m-float(self.takes._fold_low(self.film,arm)[2]-tcp[2])
         self.support_holds[arm]=dict(floor_z=float(floor_z),quat=list(quat if quat is not None else actual),
-                                     filtered=float(filtered))
+                                     filtered=float(filtered),target_force=float(target_force))
 
     def update_support_holds(self):
         """Keep a pressing hand in light contact while the other hand works."""
@@ -49,7 +49,7 @@ class FoldController:
                      for b in np.asarray(side).reshape(-1)]
             force=max(0.,float(forces[np.isin(owners,fingers)].sum(0)[2]))
             hold["filtered"]=.7*hold["filtered"]+.3*force
-            speed=float(np.clip((hold["filtered"]-.8)*.008,-.004,.010))
+            speed=float(np.clip((hold["filtered"]-hold.get("target_force",.8))*.008,-.004,.010))
             panel=self.session.arms[arm];point=np.asarray(panel.cursor_pos).copy()
             point[2]=np.clip(point[2]+speed/hz,hold["floor_z"],hold["floor_z"]+.04)
             # This is a continuous force-control gesture. Ending the drag
@@ -114,6 +114,7 @@ class FoldController:
                            board_top=float(entity.frame[2] + self.sim.snack_board_height),
                            support_front=float(self.sim.snack_support_front_m))
         hands = {a: self.takes._fold_hand(a) for a in ("left", "right")}
+        grasp_inset=float(getattr(self,"grasp_inset_m",.008))
         # An 80 mm pad reaches 40 mm inward from its centre. Put the centre
         # outside the pouch, so its inner 15 mm pinches the free side margin
         # and its lower finger clears the board's 120 mm width.
@@ -128,6 +129,34 @@ class FoldController:
             yield from self.move({a: (mouth+.008, yc+(.14 if a=="left" else -.14), z)
                               for a in hands}, hands, .06, 100)
             yield from self.move({a: (mouth+.008, ys[a], z) for a in hands}, hands, .035, 100)
+        elif abs(grasp_inset-.008)>1e-8 and not getattr(self,"body_anchor",False):
+            self.phase="edge_grasp_align"
+            for panel in self.session.arms.values():panel.grip_request=.9053
+            # A shallow bite leaves more free film between the crease and
+            # the pad. Move only the open hands; never reposition the film.
+            for attempt in range(2):
+                q=self.sim.state.particle_q.numpy()[entity.particles]
+                rim=q[np.unique(entity.grid[:,-1,:])]
+                mouth=float(np.median(rim[:,0]));z=float(np.median(rim[:,2]))
+                neck=q[np.unique(entity.grid[:,38:,:])]
+                points={}
+                for arm in hands:
+                    local=rim[abs(rim[:,1]-ys[arm])<.02]
+                    x=float(np.median(local[:,0]))+grasp_inset
+                    patch=neck[(abs(neck[:,1]-ys[arm])<.02)&(abs(neck[:,0]-x)<.006)]
+                    if not len(patch):
+                        self.failure=f"no local mouth surface for {arm} alignment";return
+                    points[arm]=(x,ys[arm],float(np.median(patch[:,2])))
+                reached=yield from self.move(
+                    points,hands,
+                    .025,100,position_tolerance=.0005,angle_tolerance=.02)
+                if not reached:
+                    self.failure="open-hand edge alignment failed"
+                    self.phase="fold_failed"
+                    return
+            line=float(np.median(q[np.unique(entity.grid[:,34,:]),0]))
+            self.layout.update(mouth=mouth,line=line)
+            self.marks["grasp_inset_m"]=grasp_inset
         self.phase = "align"
         for _ in range(0 if ready else 3):
             points={}
@@ -142,11 +171,62 @@ class FoldController:
             yield from self.move(points, hands, .025, 40)
         self.phase = "pinch"
         print("PINCH_JAWS", {a:self.takes._fold_jaws(self.film,a).tolist() for a in hands}, flush=True)
+        if getattr(self,"body_anchor",False):
+            self.phase="body_anchor_clear"
+            self.session.arms["right"].grip_request=.9053
+            yield from self.retract_grasp("left")
+            yield from self.press("left",leave_down=True,near=.078,
+                surface_x=line+.110,target_force=.3,grip=.98,seconds=1.5,floor_height=.0005)
+            if self.failure:return
+            hands={"right":hands["right"]};ys={"right":yc}
+            self.phase="central_mouth_align"
+            q=self.sim.state.particle_q.numpy()[entity.particles]
+            rim=q[np.unique(entity.grid[:,-1,:])]
+            mouth=float(np.median(rim[:,0]));z=float(np.median(rim[:,2]))
+            neck=q[np.unique(entity.grid[:,38:,:])]
+            local=rim[abs(rim[:,1]-yc)<.02]
+            x=float(np.median(local[:,0]))+grasp_inset
+            patch=neck[(abs(neck[:,1]-yc)<.02)&(abs(neck[:,0]-x)<.006)]
+            if not len(patch):self.failure="no central mouth grasp patch";return
+            reached=yield from self.move({"right":(x,yc,float(np.median(patch[:,2])))},hands,
+                .025,100,position_tolerance=.0005,angle_tolerance=.02)
+            if not reached:
+                self.failure="central mouth alignment failed";return
+            line=float(np.median(q[np.unique(entity.grid[:,34,:]),0]))
+            self.layout.update(mouth=mouth,line=line)
+            self.phase="pinch"
         for request in np.linspace(.9053 if ready else .79,1.,self.frames(60)):
-            for panel in self.session.arms.values():
-                panel.grip_request=float(request)
+            for arm in hands:self.session.arms[arm].grip_request=float(request)
             yield
         yield from self.wait(30)
+        # Do not carry an empty hand through a nominal fold. Check physical
+        # opposed contact, then retry a missed local bite while its peer holds.
+        owners=self.sim.model.shape_body.numpy()
+        def grip_load(arm):
+            forces=self.shape_forces()
+            return min(float(np.linalg.norm(forces[np.isin(owners,side)].sum(0)))
+                for side in self.sim.scene.embodiment.arms[arm].finger_bodies)
+        for arm in hands:
+            for attempt in range(3):
+                if grip_load(arm)>.02:break
+                self.phase="recover_pinch_"+arm
+                panel=self.session.arms[arm];panel.grip_request=.89
+                yield from self.wait(30)
+                q=self.sim.state.particle_q.numpy()[entity.particles]
+                rim=q[np.unique(entity.grid[:,-1,:])]
+                local=rim[abs(rim[:,1]-ys[arm])<.02]
+                if not len(local):self.failure=f"lost {arm} rim during grasp recovery";return
+                x=float(np.median(local[:,0]))+max(.002,grasp_inset)
+                neck=q[np.unique(entity.grid[:,38:,:])]
+                patch=neck[(abs(neck[:,1]-ys[arm])<.02)&(abs(neck[:,0]-x)<.006)]
+                if not len(patch):self.failure=f"lost {arm} grasp patch";return
+                yield from self.move({arm:(x,ys[arm],float(np.median(patch[:,2])))},
+                    {arm:hands[arm]},.02,80)
+                panel.grip_request=1.
+                yield from self.wait(60)
+            if grip_load(arm)<=.02:
+                self.failure=f"no bilateral film contact at {arm} pinch";return
+        self.phase="pinch"
         self.marks["pinched"] = self.sim.state.particle_q.numpy()[entity.particles].copy()
         if not ready:
             self.phase = "lift_to_board"
@@ -283,7 +363,8 @@ class FoldController:
         tcp, quat = panel.ik.ee_pose(self.sim.state)
         yield from self.takes._go_both(self.film, {arm:tcp+[0,0,.08]}, {arm:quat}, .10, self.frames(80), .003)
 
-    def press(self, arm, *, leave_down=False, near=.040, along_fold=False,sweep_end=None,at_rim=False,advance=None):
+    def press(self, arm, *, leave_down=False, near=.040, along_fold=False,sweep_end=None,at_rim=False,advance=None,
+              surface_x=None,target_force=.8,grip=.6,seconds=None,floor_height=None):
         self.support_holds.pop(arm,None)
         number=getattr(self,"press_pass_index",1)
         self.phase = "press_"+arm+(f"_repeat_{number}" if number>1 else "")
@@ -294,8 +375,9 @@ class FoldController:
         # this raised workspace. Offline FK/IK validated this 25-deg tip.
         pitch=np.deg2rad(25.)
         quat=self.takes._frame_quat((np.cos(pitch),0.,-np.sin(pitch)),(0.,0.,sign))
-        panel.grip_request = .6
+        panel.grip_request = grip
         top, line, yc = (self.layout[k] for k in ("board_top", "line", "center_y"))
+        press_floor=self.press_floor_m if floor_height is None else float(floor_height)
         old_quat=panel.ik.ee_pose(self.sim.state)[1]
         current_jaw=self.takes._fold_jaws(self.film,arm)
         entity=self.sim.scene.by_name["pouch"]
@@ -327,6 +409,8 @@ class FoldController:
         q=self.sim.state.particle_q.numpy()[entity.particles]
         patch=select_press_patch(q,entity.grid,entity.faces,yc+sign*near,
                                  self.layout.get("support_front",line))
+        if surface_x is not None:
+            patch["x"]=float(surface_x);patch["kind"]="chip-free body side seam stabilization"
         if at_rim:
             rim=q[np.unique(entity.grid[:,-1,:])]
             local=rim[abs(rim[:,1]-(yc+sign*near))<.018]
@@ -339,7 +423,7 @@ class FoldController:
         travel=(sweep_end-near if sweep_end is not None else min(.04,max(0.,.070-near)))
         dx=advance if advance is not None else (.006 if along_fold and not at_rim else 0.)
         pose_plan=plan_press_pose(self.sim,arm,panel.ik,self.takes,self.film,
-            np.array([patch["x"],yc+sign*near,top+.0035]),top+self.press_floor_m,dx,sign*travel)
+            np.array([patch["x"],yc+sign*near,top+.0035]),top+press_floor,dx,sign*travel)
         self.marks.setdefault("press_ik_plans",[]).append(dict(arm=arm,attempts=pose_plan["attempts"],selected=pose_plan["selected"]))
         if pose_plan["selected"] is None:
             self.failure=f"no reachable {arm} pressing approach/contact/stroke pose";return
@@ -367,14 +451,15 @@ class FoldController:
                 break
             yield
         start=np.asarray(panel.cursor_pos).copy()
-        floor=self.takes._fold_targets(self.film,{arm:point-[0,0,.0035-self.press_floor_m]},{arm:quat})[arm][2]
+        floor=self.takes._fold_targets(self.film,{arm:point-[0,0,.0035-press_floor]},{arm:quat})[arm][2]
         filtered=0.;z=float(start[2]);peak=0.
         hz=float(self.sim.request.physics.control_hz)
         sweep_seconds=(max(3.,abs(sweep_end-near)/.020) if sweep_end is not None else 3.)
         count=(int(np.ceil((sweep_seconds+2.)*hz)) if sweep_end is not None else self.frames(300 if along_fold else 240))
+        if seconds is not None:count=max(1,int(np.ceil(seconds*hz)))
         for k in range(count):
             force=load_z();peak=max(peak,force);filtered=.7*filtered+.3*force
-            speed=float(np.clip((filtered-.8)*.008,-.004 if self.support_hold_enabled else -.006,.010))
+            speed=float(np.clip((filtered-target_force)*.008,-.004 if self.support_hold_enabled else -.006,.010))
             z=float(np.clip(z+speed/hz,floor,start[2]+.008))
             fraction=(float(np.clip((k/hz-1.)/sweep_seconds,0.,1.)) if sweep_end is not None else min(1.,k/(3.*hz)))
             # Keep the actual pressing tip on the 160 mm pouch. The former
@@ -387,6 +472,6 @@ class FoldController:
             filtered_end_force_N=filtered,final_cursor_z_m=z))
         yield from self.wait(30)
         if leave_down:
-            self.start_support(arm,floor_z=floor,quat=quat,filtered=filtered)
+            self.start_support(arm,floor_z=floor,quat=quat,filtered=filtered,target_force=target_force)
         else:
             yield from self.lift_press(arm)

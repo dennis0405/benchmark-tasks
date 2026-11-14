@@ -1,4 +1,4 @@
-"""Assess the empty-pouch folding/clip component, not the public task score."""
+"""Assess recorded folding, clip retention and optional cracker integrity."""
 import argparse
 import hashlib
 import json
@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 from scipy.spatial.transform import Rotation
 from clip_capture import clip_capture
+from contents_score import assess_contents
 
 
 def contact_capacity_valid(report, expected_substeps):
@@ -65,7 +66,6 @@ def main():
                          bag_on_table=bool(q[:,2].min()>.72+result.get("world_z_offset_m",0.) and (q[:,0]>.2).all() and (q[:,0]<1.2).all() and (abs(q[:,1])<.6).all())))
     geometry=result.get("substep_geometry") or {}
     checks=dict(controller_completed=result["controller_completed"] and result["controller_failure"] is None,
-                contents_evaluation_in_scope=not result.get("contents",{}).get("enabled",False),
                 full_episode_without_component_reset=not result.get("initial_fold_imposed",False) and result.get("component_reset") is None,
                 uninterrupted=not result["interrupted"],all_finite=result["all_finite"],
                 initial_unfolded=trace[0]["fold"]["folds"][0]["median_angle_rad"]<.1,
@@ -84,10 +84,20 @@ def main():
     loads={jaw:float(np.mean([r["mean_abs_jaw_normal_load_N"][jaw] for r in rows])) if rows else 0.
            for jaw in ("lower","upper")}
     checks["both_jaw_mean_observed_load"]=min(loads.values())>.005
+    mechanics_passed=all(checks.values())
+    contents=assess_contents(p,data,trace,result)
+    checks.update(contents_evaluation_in_scope=contents["in_scope"],
+                  contents_observation_complete=contents["observation_complete"],
+                  contents_initial_valid=contents["initial_valid"],
+                  contents_state_consistent=contents["state_consistent"],
+                  contents_retained=contents["no_spill"],contents_intact=contents["no_fracture"])
+    scored=contents["in_scope"] and contents["observation_complete"] and contents["state_consistent"] and contents["initial_valid"]
     report=dict(core_passed=all(checks.values()),checks=checks,
+                mechanics_passed=mechanics_passed,contents=contents,
+                experimental_score=float(mechanics_passed)*contents["multiplier"] if scored else None,
                 longest_valid_hold_s=summarize_hold(rows,hz),mean_abs_jaw_normal_load_N=loads,
                 required_width_m=.096,rows=rows,submission_score=None,
-                limitation="Empty-pouch mechanics only; no air/chip integrity or Arena integration. Hand clearance uses a 45 mm pad-centre bound. Geometry observer excludes coplanar overlap, colliders other than BOX/capsule/sphere and motion within a substep.",
+                limitation="Experimental mechanics and optional predefined-seam cracker integrity; no gas leakage, calibrated material fracture or Arena integration. Hand clearance uses a 45 mm pad-centre bound. Geometry observer covers BOX/capsule/sphere/ellipsoid but excludes coplanar overlap, other colliders and motion within a substep.",
                 states_sha256=hashlib.sha256(recording).hexdigest(),trace_sha256=hashlib.sha256(trace_bytes).hexdigest())
     (p/"core-assessment.json").write_text(json.dumps(report,indent=2))
     print(json.dumps({k:v for k,v in report.items() if k!="rows"},indent=2))

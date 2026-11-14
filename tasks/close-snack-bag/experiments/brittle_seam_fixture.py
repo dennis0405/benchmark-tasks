@@ -16,6 +16,7 @@ import warp as wp
 def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('output',type=Path);p.add_argument('--torque',type=float,default=.01)
+    p.add_argument('--pull-force',type=float,default=0.)
     p.add_argument('--steps',type=int,default=600)
     a=p.parse_args();a.output.mkdir(parents=True,exist_ok=False)
     builder=newton.ModelBuilder();bodies=[]
@@ -41,11 +42,14 @@ def main():
         poses=current.body_q.numpy();rates=current.body_qd.numpy()
         relative=Rotation.from_quat(poses[0,3:]).inv()*Rotation.from_quat(poses[1,3:])
         angle=float(relative.magnitude())
-        if not broken and angle>.12:
+        p0=poses[0,:3]+Rotation.from_quat(poses[0,3:]).apply([.012,0,0])
+        p1=poses[1,:3]+Rotation.from_quat(poses[1,3:]).apply([-.012,0,0])
+        gap=float(np.linalg.norm(p0-p1))
+        if not broken and (angle>.12 or gap>.0004):
             enabled=model.joint_enabled.numpy().copy();enabled[joint]=False;model.joint_enabled.assign(enabled)
             solver.notify_model_changed(newton.ModelFlags.JOINT_PROPERTIES)
-            broken=True;event=dict(step=step,time_s=step*dt,angle_rad=angle)
-        trace.append(dict(step=step,time_s=step*dt,angle_rad=angle,broken=broken,
+            broken=True;event=dict(step=step,time_s=step*dt,angle_rad=angle,anchor_gap_m=gap)
+        trace.append(dict(step=step,time_s=step*dt,angle_rad=angle,anchor_gap_m=gap,broken=broken,
             finite=bool(np.isfinite(poses).all() and np.isfinite(rates).all())))
         snapshots[f'b_{step:05d}']=poses.copy()
         if step==a.steps:break
@@ -55,10 +59,12 @@ def main():
         forces[:,3:]=-.00002*rates[:,3:]
         if not broken and step<240:
             forces[0,4]-=a.torque;forces[1,4]+=a.torque
+            forces[0,0]-=a.pull_force;forces[1,0]+=a.pull_force
         current.body_f.assign(forces)
         collision.collide(current,contacts);solver.step(current,following,control,contacts,dt)
         current,following=following,current
-    result=dict(scope=__doc__,torque_Nm=a.torque,threshold_rad=.12,event=event,
+    result=dict(scope=__doc__,torque_Nm=a.torque,pull_force_N=a.pull_force,threshold_rad=.12,
+        gap_threshold_m=.0004,event=event,max_anchor_gap_m=max(t['anchor_gap_m'] for t in trace),
         broken=broken,final_enabled=bool(model.joint_enabled.numpy()[joint]),
         all_finite=all(t['finite'] for t in trace),max_bend_rad=max(t['angle_rad'] for t in trace),
         final_bend_rad=trace[-1]['angle_rad'],joint_coordinates=model.joint_coord_count,

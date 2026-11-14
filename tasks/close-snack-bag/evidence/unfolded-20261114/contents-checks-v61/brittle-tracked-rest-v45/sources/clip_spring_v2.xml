@@ -1,0 +1,22 @@
+<mujoco model="snack_clip">
+  <compiler angle="radian" balanceinertia="true"/>
+  <default><geom type="box" friction=".6 .005 .0001" rgba=".16 .32 .65 1"/></default>
+  <worldbody>
+    <body name="snack_clip">
+      <freejoint name="clip_free"/>
+      <geom name="lower_jaw" pos=".022 0 -.0032" size=".022 .05 .003" mass=".008"/>
+      <!-- Diverging hollow levers and end pads keep contact at the ends. -->
+      <geom name="lower_handle" pos="-.0425 0 -.0216" euler="0 -.4086 0"
+            size=".0463166 .012 .003" mass=".006" friction="1.2 .005 .0001"/>
+      <geom name="lower_handle_end" pos="-.083 0 -.040" size=".008 .012 .003" mass=".001" friction="1.2 .005 .0001"/>
+      <body name="upper">
+        <joint name="clip_hinge" type="hinge" axis="0 1 0" range="-.40 .006"
+               stiffness=".2" springref="0" damping=".01"/>
+        <geom name="upper_jaw" pos=".022 0 .0032" size=".022 .05 .003" mass=".008"/>
+        <geom name="upper_handle" pos="-.0425 0 .0216" euler="0 .4086 0"
+              size=".0463166 .012 .003" mass=".006" friction="1.2 .005 .0001"/>
+        <geom name="upper_handle_end" pos="-.083 0 .040" size=".008 .012 .003" mass=".001" friction="1.2 .005 .0001"/>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>

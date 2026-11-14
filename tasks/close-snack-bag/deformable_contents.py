@@ -93,6 +93,12 @@ class ContentsEntity(rss.Entity):
 
     def reset(self,pipeline,episode,**kwargs):
         del episode,kwargs
+        if self.seams:
+            enabled=self.model.joint_enabled.numpy().copy()
+            if not enabled[self.seams].all():
+                enabled[self.seams]=True;self.model.joint_enabled.assign(enabled)
+                pipeline.solver.notify_model_changed(newton.ModelFlags.JOINT_PROPERTIES)
+                pipeline.invalidate_graph()
         for state in (pipeline.state_0,pipeline.state_1):
             coordinates=state.joint_q.numpy().copy()
             coordinates[self.coords]=self.initial_coordinates
@@ -102,3 +108,4 @@ class ContentsEntity(rss.Entity):
             state.body_q.assign(poses)
             rates=state.body_qd.numpy().copy();rates[list(self.bodies)]=0.
             state.body_qd.assign(rates)
+        if hasattr(self,"fracture_tracker"):self.fracture_tracker.reset()

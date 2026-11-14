@@ -436,7 +436,8 @@ def sequential_component(c):
 
 def bimanual_table_fold(c):
     """Keep the opposite rim pinch until a first side crease supports it."""
-    yield from c.retract_grasp("left")
+    if getattr(c,"body_anchor",False):yield from c.lift_press("left")
+    else:yield from c.retract_grasp("left")
     yield from c.press("left",leave_down=True,near=.055,at_rim=True,advance=.024)
     if c.failure:return False
     yield from c.retract_grasp("right")

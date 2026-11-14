@@ -45,6 +45,12 @@ class BrittleSeamTests(unittest.TestCase):
         state.body_q.assign(initial);tracker.observe(state,1/2400);tracker.commit(2)
         self.assertEqual(tracker.report()["broken_count"],1)
         self.assertEqual(len(tracker.events),1);self.assertEqual(len(invalidations),1)
+        tracker.reset()
+        self.assertEqual(tracker.report()["broken_count"],1,"bookkeeping cannot heal disabled material")
+        enabled=sim.model.joint_enabled.numpy().copy();enabled[0]=True;sim.model.joint_enabled.assign(enabled)
+        tracker.reset()
+        self.assertEqual(tracker.report()["broken_count"],0,"an explicit new intact episode clears damage")
+        self.assertEqual(tracker.report()["observed_substeps"],0)
 
     def test_small_bending_does_not_break(self):
         sim,state,tracker,unrelated,invalidations=self.make()

@@ -31,8 +31,11 @@ def main():
     parser.add_argument("--yield-curvature",type=float,default=100.)
     parser.add_argument("--stage",choices=("fold","fold_hold","regrasp","seal","clip_grasp","rest"),default="fold")
     parser.add_argument("--fold-handoff",choices=("overfold","upright_press"),default="overfold")
+    parser.add_argument("--grasp-inset-mm",type=float,default=8.)
+    parser.add_argument("--body-anchor",action="store_true")
     parser.add_argument("--self-filter-rings",type=int,choices=(0,2),default=0)
     parser.add_argument("--self-radius-mm",type=float,default=.5)
+    parser.add_argument("--mouth-half-gap-mm",type=float,default=.6)
     parser.add_argument("--press-passes",type=int,choices=(1,2,3),default=1)
     parser.add_argument("--tool-parking-shift-x",type=float,default=0.)
     parser.add_argument("--tool-rack-style",choices=("wide","end_access"),default="wide")
@@ -80,6 +83,8 @@ def main():
     parser.add_argument("--finger-friction",type=float,default=None)
     parser.add_argument("--override-contact-materials",action="store_true")
     args = parser.parse_args()
+    if not -5.<=args.grasp_inset_mm<=8.:
+        parser.error("grasp-inset-mm must be in -5..8")
     if args.override_physics and not args.clip_component_seed:
         parser.error("physics override requires an explicit component reset")
     if args.reset_tool and not args.clip_component_seed:
@@ -118,7 +123,7 @@ def main():
         for key,default in (("tool_rack_style","wide"),("tool_parking_shift_x",0.)):
             if seed_meta["arguments"].get(key,default)!=getattr(args,key) and not args.reset_tool:
                 parser.error(f"checkpoint fixture change requires --reset-tool: {key}")
-        for key,default in (("mouth_support","narrow"),("support_extension_mm",0.),("rebase_z",False),("board_skin_mm",0.)):
+        for key,default in (("mouth_support","narrow"),("support_extension_mm",0.),("rebase_z",False),("board_skin_mm",0.),("mouth_half_gap_mm",.6)):
             if seed_meta["arguments"].get(key,default)!=getattr(args,key):
                 parser.error(f"checkpoint support geometry mismatch: {key}")
         for key,default in (("board_friction",1.),("finger_friction",None),("finger_contact_ke",None),("yield_curvature",100.),("self_filter_rings",0),("self_radius_mm",.5)):
@@ -172,7 +177,7 @@ def main():
         shutil.copy2(Path(__file__).with_name("resume_clip_component.py"),sources/"resume_clip_component.py")
     started = time.monotonic()
     sim = make_environment(cells=(40,args.mesh_y),coupling=args.coupling, ready_start=args.ready_start,
-                           with_clip=args.clip,with_contents=args.contents,contents_mode=args.contents_mode,yield_curvature=args.yield_curvature, material_profile=args.material_profile, control_hz=args.hz,
+                           with_clip=args.clip,with_contents=args.contents,contents_mode=args.contents_mode,mouth_half_gap=args.mouth_half_gap_mm/1000.,yield_curvature=args.yield_curvature, material_profile=args.material_profile, control_hz=args.hz,
                            side_access=args.mouth_support=="narrow" and (args.side_access or args.stage in ("regrasp","seal")),
                            physics_hz=args.physics_hz,rigid_cpu=args.rigid_cpu,workspace=args.workspace,
                            clip_style=args.clip_style,support_extension=args.support_extension_mm/1000.,
@@ -200,6 +205,8 @@ def main():
                                                      to_style=args.clip_style)
         controller = FoldController(sim, session)
         controller.fold_handoff=args.fold_handoff
+        controller.grasp_inset_m=args.grasp_inset_mm/1000.
+        controller.body_anchor=args.body_anchor
         controller.press_passes=args.press_passes
         controller.table_insert=args.table_insert
         controller.insert_mode=args.insert_mode
@@ -276,6 +283,7 @@ def main():
             with np.load(args.clip_component_seed/"clip-entry.npz") as seed:
                 if "cp" in seed:initial_peaks=seed["cp"].copy()
         fracture=BrittleSeams(sim,initial_peaks=initial_peaks)
+        sim.scene.by_name["contents"].fracture_tracker=fracture
         sim.pipeline.hooks.add("post_solve",fracture.observe,name="cracker-fracture-observer",cadence=1)
         sim.snack_contents["fracture"]=True
         sim.pipeline.invalidate_graph()
@@ -525,7 +533,7 @@ def main():
                   contents_damage=fracture.report() if fracture else None,
                   fracture_events=fracture.events if fracture else [],
                   substep_geometry=watcher.report() if watcher else None,
-                  limitation="Uncalibrated material; optional rigid contents have no fracture; air not integrated; ready-start places open hands around the unfolded rim at reset; controller completion is not a physical success assessment")
+                  limitation="Uncalibrated material; contents may be rigid or use predefined brittle seams; air not integrated; ready-start places open hands around the unfolded rim at reset; controller completion is not a physical success assessment")
     (args.output / "result.json").write_text(json.dumps(result, indent=2))
     print("RESULT", result, flush=True)
     if session:

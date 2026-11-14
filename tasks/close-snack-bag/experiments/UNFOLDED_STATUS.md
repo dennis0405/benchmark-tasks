@@ -600,3 +600,46 @@ plastic rest-angle change but v37 still fails the original overfold handoff
 at 1.66 rad. It is not a calibrated packaging material or a finished demo.
 The original 100 /m default is preserved for comparisons. No air-pressure
 model, public Arena integration, Dream inference or submission is completed.
+
+### Contents evaluation and shallow-mouth grasp comparisons
+
+v45 completes 2,400 observed physics steps with all twelve cracker seams
+intact, no observed geometry hits and no contact overflow. The new contents
+evaluator checks each fragment's centre and eight box corners against the
+actual pouch, using a temporary mouth cap for classification only. Recorded
+joint-enable flags must match irreversible damage observations. Resting v45
+passes these contents-only checks; it is not a sealing success.
+
+The experimental score multiplies mechanics success by intact and retained
+mass fractions. Its strict core-demo gate additionally requires no fracture
+or spillage. The public submission score remains unset. Damage, containment
+and force parameters remain uncalibrated. A 0.5 N seam pull stays below the
+0.4 mm separation threshold (51.37 micrometres peak); 5 N crosses it at step 2
+and leaves the seam disabled. Numerical controls do not measure real snacks.
+The 32-test focused suite passes. Compact evidence and hashed evaluator
+sources are in `evidence/unfolded-20261114/contents-checks-v61`.
+
+Thin-contact v48 and stronger-arm v49 fail the upright handoff after 148/169
+control frames. Both have zero observed intersections over all 17,760/20,280
+physics steps. A 0.1 mm self-contact interaction and 0.2 mm initial mouth
+half-gap do not by themselves fix loss of grip. No geometry threshold was
+relaxed. v58/v59 compare a 4 mm shallow edge bite (hand centre 2 mm outside
+the mouth) instead of trapping a full 12 mm strip. v58 finishes at 186 frames
+but fails the same handoff (0.81 rad near its end), with zero observed geometry
+hits across 22,320 steps. v59 is stopped after its left grip loses contact;
+its interruption is explicit. Selected video frames confirm the unfurled
+left half. These are failed diagnostics.
+
+v65 now aligns each hand against its own local rim/neck patch, with an 8 mm
+bite (centre 2 mm inward). The current controller also checks opposed film
+contact and retries a missed pinch before carrying. No final gate changed.
+v65 was frozen before the retry addition and its result is pending.
+
+An optional body-anchor procedure is prepared: left hand presses a chip-free
+side seam at 0.3 N target while right hand folds the mouth centre. Its offline
+IK goals are reachable, but dynamic verification is still required. All
+control changes act on robot cursor/grip requests. A v64 preparation is
+explicitly interrupted before the body press; its 2.5 mm floor would have
+missed the flat side seam. v66 instead permits the seam toe to descend to
+0.5 mm and is running from a new unfolded reset. The scene still begins
+unfolded, without particle attachments or imposed object poses.

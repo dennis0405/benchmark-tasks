@@ -48,6 +48,13 @@ class BrittleSeams:
         self.broken=~sim.model.joint_enabled.numpy()[self.joints].astype(bool)
         self.events=[];self.threshold=.12;self.gap_threshold=.0004
 
+    def reset(self):
+        # Episode setup may re-enable authored intact seams. Bookkeeping
+        # alone never heals a seam that is still physically disabled.
+        self.broken=~self.sim.model.joint_enabled.numpy()[self.joints].astype(bool)
+        self.pending.zero_();self.peak_angle.zero_();self.peak_gap.zero_();self.counter.zero_()
+        self.first_hit.assign(np.full(len(self.joints),-1,dtype=np.int32));self.events.clear()
+
     def observe(self,state,dt):
         del dt
         wp.launch(observe_seams,len(self.joints),inputs=[state.body_q,self.pairs,self.indices,
