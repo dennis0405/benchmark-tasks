@@ -85,8 +85,21 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
         "comparisons": comparisons,
         "at": now(),
     }
+    by_id = {record["id"]: record for record in records}
+    # Closed, unmerged history remains in the comparison, but an empty withdrawn/test
+    # PR is not an accepted/pending claim. Preserve its uncertainty explicitly. An
+    # actual overlap still blocks; accepted/open/own/unknown records fail closed.
+    report["inactive_uncertainty"] = [
+        {"id": row["id"], "reason": "closed unmerged other-team history; uncertainty retained"}
+        for row in comparisons
+        if row["verdict"] == "uncertain"
+        and by_id[row["id"]].get("state") == "closed"
+        and by_id[row["id"]].get("status") == "closed"
+        and by_id[row["id"]].get("own_team") is False
+    ]
     write_json(Path(workspace) / "artifacts" / "novelty.json", report)
-    blockers = [r for r in comparisons if r["verdict"] != "distinct"]
+    inactive = {row["id"] for row in report["inactive_uncertainty"]}
+    blockers = [r for r in comparisons if r["verdict"] != "distinct" and r["id"] not in inactive]
     if blockers:
         raise GateError(
             f"novelty overlap/uncertainty: {len(blockers)} records; inspect novelty.json"

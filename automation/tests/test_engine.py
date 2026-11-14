@@ -38,6 +38,45 @@ def test_missing_catalog_cannot_mean_novel(tmp_path):
         compare_catalog(None, tmp_path, {}, {"complete": False})
 
 
+@pytest.mark.parametrize(
+    "record,blocks",
+    [
+        ({"state": "closed", "status": "closed", "own_team": False}, False),
+        ({"state": "closed", "status": "merged", "own_team": False}, True),
+        ({"state": "open", "status": "open-unclassified", "own_team": False}, True),
+        ({"state": "closed", "status": "closed", "own_team": True}, True),
+        ({}, True),
+    ],
+)
+def test_unavailable_inactive_history_is_not_an_active_novelty_claim(tmp_path, record, blocks):
+    class UncertainAgent:
+        def run(self, *args, **kwargs):
+            return {
+                "comparisons": [
+                    {
+                        "id": "pr-1",
+                        "objective": "Unknown",
+                        "physical_skill": "Unknown",
+                        "success_condition": "Unknown",
+                        "verdict": "uncertain",
+                        "reason": "Empty test PR has no task specification",
+                    }
+                ]
+            }
+
+    (tmp_path / "input").mkdir()
+    (tmp_path / "artifacts").mkdir()
+    catalog = {"complete": True, "digest": "catalog", "records": [{"id": "pr-1", **record}]}
+    if blocks:
+        with pytest.raises(GateError, match="uncertainty"):
+            compare_catalog(UncertainAgent(), tmp_path, {}, catalog)
+    else:
+        report = compare_catalog(UncertainAgent(), tmp_path, {}, catalog)
+        assert report["compared"] == 1
+        assert report["comparisons"][0]["verdict"] == "uncertain"
+        assert report["inactive_uncertainty"][0]["id"] == "pr-1"
+
+
 def test_approval_is_bound_to_report_and_payload(tmp_path):
     s = Store(tmp_path / "state")
     r = s.create("task", instance="vm")
