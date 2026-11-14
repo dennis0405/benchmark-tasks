@@ -43,7 +43,10 @@ NOVELTY = obj(
             objective=S,
             physical_skill=S,
             success_condition=S,
-            verdict={"type": "string", "enum": ["distinct", "overlap", "uncertain"]},
+            verdict={
+                "type": "string",
+                "enum": ["distinct", "overlap", "uncertain", "read_failure"],
+            },
             reason=S,
         )
     )

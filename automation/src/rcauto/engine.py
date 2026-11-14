@@ -127,6 +127,13 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
         "objective are not by themselves a plausible duplicate. Use uncertain when available "
         "evidence cannot establish a meaningful distinction. Return one comparison per exact "
         "requested id. Keep each comparison axis concise."
+        "\nThe batch also indexes separate complete JSON files in record_files. Start by "
+        "listing IDs/titles and read each record separately, extracting body and ALL spec "
+        "versions in bounded output chunks. Never dump the entire batch into a truncated "
+        "tool output. Output truncation or a record you have not read is a read_failure, "
+        "not evidence that its source lacks details and not an uncertain novelty verdict. "
+        "Retry bounded reads; if reading still fails return read_failure for that ID. "
+        "Reserve uncertain for genuine ambiguity after reading the available evidence."
     )
     request_path = Path(workspace) / "input/request.json"
     request = read(request_path) if request_path.exists() else {}
@@ -148,8 +155,13 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
             validate({"comparisons": [row]}, C.NOVELTY)
         except ValidationError:
             return False
-        return row["id"] == expected and all(
-            row[k].strip() for k in ("objective", "physical_skill", "success_condition", "reason")
+        return (
+            row["verdict"] != "read_failure"
+            and row["id"] == expected
+            and all(
+                row[k].strip()
+                for k in ("objective", "physical_skill", "success_condition", "reason")
+            )
         )
 
     for i in range(0, len(records), batch_size):
@@ -174,9 +186,16 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
             missing = [r for r in batch if r["id"] not in accepted]
             if not missing:
                 break
+            record_dir = Path(workspace) / "input/novelty-records"
+            record_dir.mkdir(parents=True, exist_ok=True)
+            record_files = {}
+            for record in missing:
+                path = record_dir / (digest(record) + ".json")
+                write_json(path, record)
+                record_files[record["id"]] = str(path.relative_to(workspace))
             write_json(
                 Path(workspace) / "input/novelty-batch.json",
-                {"candidate": candidate, "records": missing},
+                {"candidate": candidate, "records": missing, "record_files": record_files},
             )
             ids = [r["id"] for r in missing]
             result = agent.run(

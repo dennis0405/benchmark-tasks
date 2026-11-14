@@ -78,6 +78,44 @@ def test_missing_catalog_cannot_mean_novel(tmp_path):
         compare_catalog(None, tmp_path, {}, {"complete": False})
 
 
+def test_reader_failure_is_retried_without_rejecting_or_caching_the_candidate(tmp_path):
+    import json
+
+    class Reader:
+        calls = 0
+
+        def run(self, *args, **kwargs):
+            self.calls += 1
+            batch = json.loads((tmp_path / "input/novelty-batch.json").read_text())
+            record = batch["records"][0]
+            path = tmp_path / batch["record_files"][record["id"]]
+            assert json.loads(path.read_text()) == record
+            return {
+                "comparisons": [
+                    {
+                        "id": record["id"],
+                        "objective": "Rail installation versus uncorking wine",
+                        "physical_skill": "Mounting hardware versus corkscrew leverage",
+                        "success_condition": "Rail retained versus cork removed",
+                        "verdict": "read_failure" if self.calls == 1 else "distinct",
+                        "reason": "Aggregate output truncated"
+                        if self.calls == 1
+                        else "Different abilities",
+                    }
+                ]
+            }
+
+    (tmp_path / "input").mkdir()
+    (tmp_path / "artifacts").mkdir()
+    cat = {"complete": True, "digest": "d", "records": [{"id": "pr-685", "body": "a" * 40000}]}
+    agent = Reader()
+    report = compare_catalog(agent, tmp_path, {"objective": "rail"}, cat)
+    assert report["complete"] and agent.calls == 2
+    saved = list((tmp_path / "artifacts/novelty-cache").glob("*.json"))
+    assert len(saved) == 1
+    assert json.loads(saved[0].read_text())["comparison"]["verdict"] == "distinct"
+
+
 @pytest.mark.parametrize(
     "record,blocks",
     [
