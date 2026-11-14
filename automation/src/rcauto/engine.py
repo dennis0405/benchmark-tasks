@@ -457,7 +457,10 @@ class Production:
         result = self.ask(
             "industrial-researcher",
             "Read input/request.json and search original industrial "
-            "manuals/service procedures before proposing a task. Find at least 3 usable sources, "
+            "manuals/service procedures before proposing a task. Use input/catalog.json early to "
+            "identify covered work families and inspect concrete near-neighbor bodies/spec versions; "
+            "this retrieval does not replace the later full novelty gate. Follow the current revision "
+            "request rather than a rejected historical candidate's assumptions. Find at least 3 usable sources, "
             "including official equipment geometry/dimensions and relevant public asset/licensing "
             "pages. Also find original task-definition sources for each suite listed in "
             "input/runtime.json benchmarks, or these defaults: LIBERO, RoboCasa, SimplerEnv, "
@@ -550,8 +553,9 @@ class Production:
             "The full numerical contract follows. Evidence snippets are exact acquired-text excerpts; "
             "for PDF extraction spacing artifacts use a shorter clean excerpt and verify the numeric "
             "claim against the actual page image rather than falsely calling OCR spacing printed text. "
-            "Distinguish captive screw "
-            "loosening/bit withdrawal from full screw extraction. Block missing essential mechanics, "
+            "Verify the actual operation sequence and retained parts; where applicable distinguish "
+            "captive fastener loosening/tool withdrawal from full fastener removal. "
+            "Block missing essential mechanics, "
             "false quotations, unsourced exact-replica claims and unsupported selected readiness.",
         )
         write_json(
@@ -583,10 +587,10 @@ class Production:
             "excerpts, and a reasoned verdict. Inventories are "
             "navigation aids, not task-level evidence. Do not substitute industry names, geometry, "
             "harder parameters or a list of generic primitives for a meaningfully different tested "
-            "ability. Known near-neighbors to investigate include LIBERO turn_on_the_stove, "
-            "RoboCasa stove tasks, SimplerEnv drawer tasks, BEHAVIOR locking tasks, DataCenterBench "
-            "knob/key tasks and RoboDojo fasten_screws; these are search leads, not a requested "
-            "verdict or exhaustive neighbor list. Read complete original files for inspected "
+            "ability. Derive the closest neighbors from THIS candidate's objective, essential "
+            "mechanism and tested ability across each complete registry/inventory; do not copy "
+            "neighbors or conclusions from a rejected prior candidate family. Read complete "
+            "original files for inspected "
             "neighbors and quote short exact supporting excerpts. Report uncertain for genuine "
             "required coverage/ability ambiguity. Do not "
             "claim any simulator/demo/model success from this source comparison. This is the "

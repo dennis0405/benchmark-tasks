@@ -127,3 +127,16 @@ reconciliation. Known overlaps and required-scope uncertainty still block. Legit
 review evidence may cite actual files in this run's logs/release/evaluation directories,
 while arbitrary parent files and symlink escapes remain excluded. These software fixes
 and regression tests are not physical task validation or a model evaluation result.
+
+
+## Revision18: reject the damper after a substantive overlap
+
+The corrected candidate passed factual preflight and the explicit six-suite source
+comparison. The full catalog sweep then stopped at725/2,116 comparisons on PR1509,
+“Lower a fragile cabinet with a hydraulic release valve.” The judgment already considered
+continuous valve control versus offline locked damper adjustment and still found the
+central hydraulic/deceleration ability overlapping. This was not an omitted-mechanism
+source-reading error, so another favorable verdict was not requested. The candidate was
+rejected and its evidence archived; family-specific source-review leads were cleared
+before restarting industrial research. The preserved result checkpoint is e6ee89c.
+No new task environment, native demo/scorer or Dream evaluation was completed.
