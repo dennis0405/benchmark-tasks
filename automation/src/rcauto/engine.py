@@ -501,7 +501,10 @@ class Production:
             "task-ideator",
             "Read acquired input/sources.json. Generate at least three distinct "
             "industrially meaningful manipulation objectives and select one. Cite exact verbatim "
-            "source snippets with source_id and page/section. Keep extreme difficulty subordinate "
+            "source snippets with source_id and page/section. Use short exact excerpts from acquired "
+            "source text and independently verify diagrams; avoid long quotations with extraction "
+            "spacing errors. Do not correct OCR inside a verbatim acquired-text quotation. "
+            "Keep extreme difficulty subordinate "
             "to validity and a feasible real robot demo. Match actual equipment geometry. "
             "Mark feasibility_status ready only when source/geometry/mechanism evidence is "
             "sufficient to build and test; list critical gaps in missing_evidence. Missing "
