@@ -404,12 +404,23 @@ class Production:
             writable=writable,
         )
 
-    def review(self, name, instruction):
+    def review(self, name, instruction, *, specification_only=False):
+        scope = (
+            "\nThis is a PROSPECTIVE specification review. Existing task/ code and native "
+            "diagnostics may be an explicitly unfinished historical scaffold; their lack of "
+            "implementation does not refute the proposed contract. Inspect the actual contract, "
+            "primary evidence and pinned API/configuration sources. Require explicit computable "
+            "observables, units, aggregation/reset rules and internally consistent scores, but "
+            "do not demand that future code, native measurements or demos already exist. The "
+            "later environment/physics/demo reviewers independently enforce actual implementation "
+            "and measured success. Return repair/blocked for unresolved SPECIFICATION issues. "
+            if specification_only
+            else "\nInspect actual code and evidence files. Read images with image tools and "
+            "verify logs; do not infer a pass from another role's assertion. "
+        )
         result = self.ask(
             name,
-            instruction + "\nInspect actual code and evidence files. "
-            "Read images with image tools and verify logs; do not infer a pass from "
-            "another role's assertion. Cite actual files relative to the workspace. Permitted "
+            instruction + scope + "Cite actual files relative to the workspace. Permitted "
             "evidence locations are this workspace and this run's ../logs, ../release and "
             "../evaluation directories. Return pass only with no material unresolved issues.",
             C.REVIEW,
@@ -835,7 +846,13 @@ class Production:
             "from physics substeps. Check the untouched initial score and every expected partial "
             "score against the complete scoring formula and hard-failure timing. Bad physical "
             "events must remain possible in simulation and then fail scoring; do not prevent "
-            "physical breakage merely because the action is invalid. Slug must be lowercase "
+            "physical breakage merely because the action is invalid. In the scoring_spec, "
+            "damage_rules and approximations, define every measured observable mathematically, "
+            "including body/contact sets, force-versus-impulse units, physical step sampling "
+            "order, event segmentation, accumulation, reset, signed penetration and deterministic "
+            "loss/inaccessibility predicates. Define eligibility and revocation of each bonus. "
+            "This is the specification for later construction, not a claim the old task scaffold "
+            "already implements it. Slug must be lowercase "
             "kebab-case. Do not develop demo yet.",
             C.CONTRACT,
         )
@@ -859,6 +876,7 @@ class Production:
             "physically valid alternatives and preserve the selected essential ability. This "
             "is a specification consistency gate; native tests and demos come later. "
             "Do not lower validity, novelty, damage or numerical criteria to obtain a pass.",
+            specification_only=True,
         )
         write_json(
             self.artifact("contract-preflight"),

@@ -43,8 +43,9 @@ def test_control_steps_cannot_be_mistaken_for_physics_steps(tmp_path):
 def test_semantic_contract_rejection_blocks_environment(tmp_path):
     p = production(tmp_path)
 
-    def reject(role, instruction):
+    def reject(role, instruction, *, specification_only=False):
         assert role == "contract-critic"
+        assert specification_only
         assert "initial" in instruction and "partial" in instruction
         assert "physical" in instruction
         raise GateError("initial score contradicts controls")
@@ -68,6 +69,28 @@ def test_edited_contract_cannot_reuse_a_prior_review(tmp_path):
     write_json(path, changed)
     with pytest.raises(GateError, match="stale contract review"):
         p.environment()
+
+
+def test_contract_reviewer_checks_plan_without_demanding_future_code(tmp_path):
+    p = production(tmp_path)
+    original = p.agent.run
+
+    def reviewer(role, prompt, workspace, schema, writable=False):
+        if role == "contract-critic":
+            assert "PROSPECTIVE specification" in prompt
+            assert "historical scaffold" in prompt
+            assert "computable" in prompt
+            return {
+                "verdict": "repair",
+                "findings": ["damage energy formula is undefined"],
+                "evidence_paths": ["artifacts/contract.json"],
+            }
+        return original(role, prompt, workspace, schema, writable)
+
+    p.agent.run = reviewer
+    with pytest.raises(GateError, match="energy formula"):
+        p.contract()
+    assert not p.artifact("contract-preflight").exists()
 
 
 @pytest.mark.parametrize("reported", ["probe.py", "task/probe.py"])
