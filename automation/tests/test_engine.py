@@ -42,6 +42,7 @@ def test_missing_catalog_cannot_mean_novel(tmp_path):
     "record,blocks",
     [
         ({"state": "closed", "status": "closed", "own_team": False}, False),
+        ({"state": "closed", "status": "closed", "own_team": False, "board_required": True}, True),
         ({"state": "closed", "status": "merged", "own_team": False}, True),
         ({"state": "open", "status": "open-unclassified", "own_team": False}, True),
         ({"state": "closed", "status": "closed", "own_team": True}, True),

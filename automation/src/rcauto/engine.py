@@ -89,6 +89,7 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
             and by_id[row["id"]].get("state") == "closed"
             and by_id[row["id"]].get("status") == "closed"
             and by_id[row["id"]].get("own_team") is False
+            and not by_id[row["id"]].get("board_required")
         ]
         exempt = {row["id"] for row in inactive}
         blockers = [
@@ -123,6 +124,11 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
             C.SCENARIO_POLICY + "\nRead input/novelty-batch.json. "
             "Compare EVERY record on objective, physical skill and success conditions. "
             "Different geometry/tool names are not sufficient. Mark insufficient data uncertain. "
+            "Shared generic primitives alone do not prove an overlap. Distinct requires a "
+            "meaningfully different tested ability, not an industrial label. Explicitly record "
+            "missing rubric details; missing numeric thresholds for a clearly unrelated "
+            "objective are not by themselves a plausible duplicate. Use uncertain when the "
+            "available evidence cannot establish a meaningful distinction. "
             "Return one comparison per exact record id. Keep each comparison axis concise.",
             workspace,
             C.NOVELTY,

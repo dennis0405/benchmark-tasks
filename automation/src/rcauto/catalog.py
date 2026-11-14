@@ -123,7 +123,7 @@ def collect_pages(first, fetch):
 def normalize_board(task):
     for field in ["id", "status", "title", "instruction", "setup", "scoring"]:
         if not task.get(field):
-            raise CatalogError(f"board record lacks {field}")
+            raise CatalogError(f"board record {task.get('id', '(unknown)')} lacks {field}")
     return dict(task)
 
 

@@ -8,7 +8,10 @@ import shutil
 import time
 from pathlib import Path
 
+import httpx
+
 from .agents import Agent
+from .board import collect_board, merge_board_catalog, recover_own_history
 from .catalog import GitHub, get_source
 from .engine import Production, compare_catalog, read
 from .gates import GateError, evaluation_identity, manifest, validate_media, verify_manifest
@@ -28,6 +31,35 @@ class Coordinator:
             self.config.get("upstream", "robocurve/benchmark-tasks"),
             own_authors=self.config.get("own_authors", []),
         )
+        from .secrets import credentials
+
+        auth = credentials(self.store.root)
+        if snapshot["complete"] and auth.get("ROBOCURVE_TEAM") and auth.get("ROBOCURVE_TOKEN"):
+            try:
+
+                def archival_detail(metadata):
+                    number = self.config.get("board_history_receipts", {}).get(metadata["id"])
+                    if not number:
+                        raise GateError(
+                            "own board history requires a verified receipt: " + metadata["id"]
+                        )
+                    return recover_own_history(
+                        metadata,
+                        api,
+                        self.config["upstream"],
+                        number,
+                        self.config.get("receipt_authors", []),
+                    )
+
+                board = collect_board(
+                    auth["ROBOCURVE_TEAM"], auth["ROBOCURVE_TOKEN"], own_detail=archival_detail
+                )
+                snapshot = merge_board_catalog(snapshot, board)
+                snapshot["completed_at"] = now()
+                snapshot["source"] = "github-and-authenticated-board"
+            except (StateError, httpx.HTTPError, KeyError, TypeError, ValueError) as e:
+                snapshot["complete"] = False
+                snapshot["missing"].append({"source": "official-board", "reason": str(e)})
         path = self.store.root / "catalog.json"
         write_json(self.store.root / "catalog-attempt.json", snapshot)
         if not snapshot["complete"]:

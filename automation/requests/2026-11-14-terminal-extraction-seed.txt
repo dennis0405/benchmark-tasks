@@ -1,0 +1,16 @@
+PDF 행말 하이픈(clear- 줄바꿈 ance)이 인용 불일치의 원인이었다. 검증기를 수정했고 실제 실패 인용문과 56개 테스트를 통과했다. 산업 근거나 신규성 기준을 낮추지 않는다.
+
+새 조사 seed: 로봇 배선 하네스의 내부 단자를 전용 추출 공구로 해제하고 인출하여 하우징을 재사용하는 작업. 완성 커넥터의 삽입·외부 래치 조작이 아니라, 공구 끝으로 내부 리테이닝 탱을 해제한 채 반대쪽에서 와이어/단자를 당기는 재작업이다. 전체 카탈로그 제목에서 depin/terminal extraction의 직접 대응 과제는 찾지 못했지만 의미상 전수 비교를 거쳐야 한다.
+
+제조사 원문 출발점:
+- https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/applicationtoolingspecificationpdf/606/60630/ATS-011030044-001.pdf (Mini-Fit HT60630B 전용 공구, 적용 단자/하우징 도면과 사용 절차)
+- https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/applicationtoolingspecificationpdf/217/2174/ATS-011030016-001.pdf (안으로 밀기, 공구 삽입·피벗 유지와 반대편 당김)
+- https://www.molex.com/en-us/industries-applications/robotics-connectors/commercial-cleaning-robot (실제 로봇 구동·모션 제어에서 Mini-Fit 적용)
+- https://www.molex.com/en-us/industries-applications/humanoid-robotics/humanoid-robotics-connectors
+- https://www.te.com/en/products/application-tooling/insertion-and-extraction-tools.html (OEM 재작업에서 단자·하우징을 손상하지 않는 추출의 실제 목적)
+
+시리즈별 형상·치수·공구를 섞지 말고 실제 부품 세트 하나를 고른 후 제조사 치수도 확보한다. 강체/관절 근사를 쓰더라도 핵심 접촉·공구 해제 원리와 실제 손상 조건이 보존되어야 한다. 제조사가 추출 후 단자 재사용을 금지한다면 소모되는 탱 자체는 허용하며, 하우징 파손·접점 변형·절연 손상/와이어 인발·이웃 단자 이탈을 구분한다. YAM 공구 파지·끝점 정밀 동작과 반대쪽 인출의 물리 실현성을 진단한다.
+
+여러 후보를 비교하되 신규성 있는 실행 가능 후보 하나 확보가 목표다. 탈락한 다른 목적은 비교 대안으로 기록할 수 있지만 재선정하지 않는다. PCIe·메모리·드라이브 삽입/체결과 커플링 정렬·유격 조정은 기존 중복 위험으로 재선정하지 않는다. 이 seed도 유사한 기존 능력의 변형이거나 실제 물리 시연이 불가능하면 근거와 함께 차단한다. 산업 매뉴얼 근거 없는 새 작업을 상상해서 통과시키지 않는다.
+
+기존 조건: 전 분야 accepted/pending·우리 팀·기존 벤치마크 비교, 환경·물리 완성 후 데모, 실제 YAM 동작과 채점·대조군, Dream은 마지막 episode 1회만, origin 별도 브랜치 보존 후 GPU stop. 실제 미디어 업로드·대회 PR·제출 승인은 하지 않는다.
