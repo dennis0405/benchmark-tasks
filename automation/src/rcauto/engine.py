@@ -541,7 +541,13 @@ class Production:
             "A representative prototype and explicitly disclosed testable modeling assumptions "
             "are allowed; do not demand proprietary calibration or already completed physics/demos. "
             "This gate establishes sufficient factual evidence to attempt construction, not measured "
-            "physical success. The full numerical contract follows. Distinguish captive screw "
+            "physical success. Novelty is a SEPARATE NEXT stage: do not require benchmark/catalog "
+            "comparison reports or a novelty pass here, and do not reuse stale novelty-critic "
+            "findings as factual blockers. That next stage independently enforces all novelty gates. "
+            "The full numerical contract follows. Evidence snippets are exact acquired-text excerpts; "
+            "for PDF extraction spacing artifacts use a shorter clean excerpt and verify the numeric "
+            "claim against the actual page image rather than falsely calling OCR spacing printed text. "
+            "Distinguish captive screw "
             "loosening/bit withdrawal from full screw extraction. Block missing essential mechanics, "
             "false quotations, unsourced exact-replica claims and unsupported selected readiness.",
         )
