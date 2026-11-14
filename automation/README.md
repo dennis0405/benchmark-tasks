@@ -147,6 +147,7 @@ stop을 검증하지만 모델·Dream·대회 제출을 호출하지 않는다. 
 - [운영 설계 초안: 단계별 산출물·통과 조건·실패 처리](docs/design/mvp-workflow.md)
 - [기술 설계 초안: 에이전트·도구·Brev 실행 위치](docs/design/technical-architecture.md)
 - [상세 기술 설계: 자료·에셋 수집, 제출 동기화와 중복 검사](docs/design/sources-and-novelty.md)
+- [산업 원문·형상·실행기 사전 점검에서 확인한 사항](docs/design/industrial-preflight-lessons.md)
 - [상세 기술 설계: 환경·에셋 제작과 물리 검증](docs/design/environment-and-validation.md)
 - [상세 기술 설계: 데모·채점·Dream·승인 후 제출](docs/design/demo-evaluation-and-submission.md)
 - [MVP 구현 순서·단계별 검증 계획](tasks/plan.md)
