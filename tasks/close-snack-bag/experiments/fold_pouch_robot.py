@@ -27,6 +27,8 @@ def main():
     parser.add_argument("--stage",choices=("fold","fold_hold","regrasp","seal","clip_grasp","rest"),default="fold")
     parser.add_argument("--self-filter-rings",type=int,choices=(0,2),default=0)
     parser.add_argument("--self-radius-mm",type=float,default=.5)
+    parser.add_argument("--rigid-contact-ke",type=float,default=None)
+    parser.add_argument("--body-particle-buffer",type=int,default=None)
     parser.add_argument("--rebase-z",action="store_true")
     parser.add_argument("--hz",type=int,choices=(20,60),default=60)
     parser.add_argument("--physics-hz",type=int,choices=(600,1200,2400),default=None)
@@ -34,18 +36,23 @@ def main():
     parser.add_argument("--side-access",action="store_true")
     parser.add_argument("--rigid-cpu",action="store_true")
     parser.add_argument("--workspace",choices=("original","raised_forward","raised_flat"),default="original")
-    parser.add_argument("--clip-style",choices=("standard","thin_lower","thin_strong","thin_broad","thin_aligned"),default="standard")
+    parser.add_argument("--clip-style",choices=("standard","thin_lower","thin_strong","thin_broad","thin_aligned","thin_compact"),default="standard")
     parser.add_argument("--override-clip-spring",action="store_true")
     parser.add_argument("--override-clip-geometry",action="store_true")
     parser.add_argument("--reset-tool",action="store_true",
                         help="At a component reset only, restore the selected tool's authored parking pose")
+    parser.add_argument("--reset-gripper-relief-mm",type=float,default=0.,
+                        help="Component reset only: open each right finger by this distance")
+    parser.add_argument("--reset-tool-lift-mm",type=float,default=0.,
+                        help="Component reset only: lift the recorded free tool before strict preflight")
     parser.add_argument("--table-insert",action="store_true")
     parser.add_argument("--insert-mode",choices=("overhang","wedge"),default="overhang")
+    parser.add_argument("--blade-clearance-mm",type=float,default=.04)
     parser.add_argument("--force-readout",choices=("last","mean"),default="last")
     parser.add_argument("--record-force-means",action="store_true")
     parser.add_argument("--release-style",choices=("wide","sliding"),default="sliding")
     parser.add_argument("--clip-component-seed",type=Path,default=None)
-    parser.add_argument("--component-start",choices=("clip","centre_press","raw_release","edge_drag","press_drag","insert","prepare"),default="clip")
+    parser.add_argument("--component-start",choices=("clip","centre_press","raw_release","edge_drag","press_drag","insert","continue_insert","prepare"),default="clip")
     parser.add_argument("--mouth-support",choices=("narrow","full"),default="narrow")
     parser.add_argument("--support-extension-mm",type=float,default=0.)
     parser.add_argument("--support-hold",choices=("static","admittance"),default="static")
@@ -56,9 +63,15 @@ def main():
     args = parser.parse_args()
     if args.reset_tool and not args.clip_component_seed:
         parser.error("reset-tool is only for an explicit clip component seed")
+    if (args.reset_gripper_relief_mm or args.reset_tool_lift_mm) and not args.clip_component_seed:
+        parser.error("contact reliefs require an explicit component reset")
+    if not 0<=args.reset_gripper_relief_mm<=1. or not 0<=args.reset_tool_lift_mm<=.1:
+        parser.error("reset reliefs must be 0..1 mm per finger and 0..0.1 mm tool lift")
+    if not .02<=args.blade_clearance_mm<=.8:
+        parser.error("blade-clearance-mm must be in 0.02..0.8")
     if args.stage=="clip_grasp" and not (args.clip and args.drive):
         parser.error("clip_grasp requires --clip --drive")
-    if args.table_insert and (args.clip_style not in ("thin_lower","thin_strong","thin_broad","thin_aligned") or args.workspace!="raised_flat"):
+    if args.table_insert and (args.clip_style not in ("thin_lower","thin_strong","thin_broad","thin_aligned","thin_compact") or args.workspace!="raised_flat"):
         parser.error("table-insert requires the thin lower blade and raised_flat workspace")
     if args.clip_component_seed:
         if not (args.stage=="seal" and args.table_insert and args.clip and args.drive):
@@ -67,7 +80,7 @@ def main():
         for key in ("workspace","clip_style","material_profile","hz","physics_hz","coupling"):
             if seed_meta["arguments"][key]!=getattr(args,key):
                 if key=="clip_style" and args.override_clip_geometry and args.reset_tool and {
-                    seed_meta["arguments"][key],args.clip_style}.issubset({"thin_lower","thin_strong","thin_broad","thin_aligned"}):
+                    seed_meta["arguments"][key],args.clip_style}.issubset({"thin_lower","thin_strong","thin_broad","thin_aligned","thin_compact"}):
                     continue
                 if key=="clip_style" and args.override_clip_spring and {
                     seed_meta["arguments"][key],args.clip_style}=={"thin_lower","thin_strong"}:
@@ -93,6 +106,10 @@ def main():
                    Path(__file__).resolve().parents[1]/"fold_metrics.py",
                    Path(__file__).with_name("assets")/"yam_ready_pose.json"):
         shutil.copy2(source, sources/source.name)
+    if args.coupling=="unified":
+        for name in ("unified_contact.py","robot_gravity_compensation.py","passive_clip_spring.py","contact_average.py"):
+            source=Path(__file__).with_name(name)
+            shutil.copy2(source,sources/name)
     if args.workspace!="original":
         source=Path(__file__).with_name("assets")/f"yam_{args.workspace}_pose.json"
         shutil.copy2(source,sources/source.name)
@@ -113,7 +130,7 @@ def main():
                        Path(__file__).with_name("assets")/"clip_spring_v2.xml"):
             shutil.copy2(source, sources/source.name)
         if args.clip_style!="standard":
-            source=Path(__file__).with_name("assets")/{"thin_lower":"clip_thin_lower.xml","thin_strong":"clip_thin_strong.xml","thin_broad":"clip_thin_broad.xml","thin_aligned":"clip_thin_aligned.xml"}[args.clip_style]
+            source=Path(__file__).with_name("assets")/{"thin_lower":"clip_thin_lower.xml","thin_strong":"clip_thin_strong.xml","thin_broad":"clip_thin_broad.xml","thin_aligned":"clip_thin_aligned.xml","thin_compact":"clip_thin_compact.xml"}[args.clip_style]
             shutil.copy2(source,sources/source.name)
     (args.output/"arguments.json").write_text(json.dumps(vars(args), default=str, indent=2))
     if args.clip_component_seed:
@@ -129,7 +146,8 @@ def main():
                            clip_style=args.clip_style,support_extension=args.support_extension_mm/1000.,
                            board_friction=args.board_friction,finger_friction=args.finger_friction,
                            self_filter_rings=args.self_filter_rings,self_radius=args.self_radius_mm/1000.,
-                           rebase_z=args.rebase_z)
+                           rebase_z=args.rebase_z,rigid_contact_ke=args.rigid_contact_ke,
+                           body_particle_buffer=args.body_particle_buffer)
     timings = dict(build_s=time.monotonic()-started, driver_tick_s=0., readback_and_metrics_s=0., recording_s=0.)
     entity = sim.scene.by_name["pouch"]
     export_render_geometry(sim, args.output)
@@ -143,12 +161,14 @@ def main():
         session = open_session(sim, 9764)
         if args.clip_component_seed:
             from resume_clip_component import restore
-            component_reset=restore(sim,session,args.clip_component_seed,reset_tool=args.reset_tool)
+            component_reset=restore(sim,session,args.clip_component_seed,reset_tool=args.reset_tool,
+                gripper_relief_m=args.reset_gripper_relief_mm/1000.,tool_lift_m=args.reset_tool_lift_mm/1000.)
             component_reset["clip_asset_change"]=dict(from_style=seed_meta["arguments"]["clip_style"],
                                                      to_style=args.clip_style)
         controller = FoldController(sim, session)
         controller.table_insert=args.table_insert
         controller.insert_mode=args.insert_mode
+        controller.blade_clearance_m=args.blade_clearance_mm/1000.
         controller.release_style=args.release_style
         controller.support_hold_enabled=args.support_hold=="admittance"
         controller.press_floor_m=args.press_floor_mm/1000.
@@ -157,7 +177,7 @@ def main():
         elif args.stage in ("regrasp","seal"):
             controller.after_fold=args.stage
         if args.clip_component_seed:
-            from clip_controller import seal_fold,centre_press_component,raw_release_component,edge_drag_component,press_drag_component,insert_component,sequential_component
+            from clip_controller import seal_fold,centre_press_component,raw_release_component,edge_drag_component,press_drag_component,insert_component,sequential_component,continue_insertion_component
             controller.layout=component_reset["layout"]
             controller.marks["left_press_hold"]=True
             if component_reset.get("left_cleared_for_clip"):
@@ -167,7 +187,7 @@ def main():
             if not controller.support_holds and not controller.marks.get("left_cleared_for_clip"):
                 controller.start_support("left")
             controller.phase="clip_component_reset"
-            stages={"clip":seal_fold,"centre_press":centre_press_component,"raw_release":raw_release_component,"edge_drag":edge_drag_component,"press_drag":press_drag_component,"insert":insert_component,"prepare":sequential_component}
+            stages={"clip":seal_fold,"centre_press":centre_press_component,"raw_release":raw_release_component,"edge_drag":edge_drag_component,"press_drag":press_drag_component,"insert":insert_component,"continue_insert":continue_insertion_component,"prepare":sequential_component}
             drive=stages[args.component_start](controller)
         elif args.stage=="clip_grasp":
             from clip_controller import clip_grasp_drive
@@ -208,7 +228,7 @@ def main():
     saved_stages=set()
     def save_component_seed(directory,step):
         directory.mkdir(parents=True,exist_ok=True)
-        seed={name:snapshots[f"{name}_{step:05d}"] for name in ("q","b","j","d","v","r")}
+        seed={name:snapshots[f"{name}_{step:05d}"] for name in ("q","b","j","d","w","v","r")}
         seed["targets"]=sim.control.joint_target_q.numpy().copy()
         seed.update(faces=entity.faces,grid=entity.grid,edge_rows=entity.rows)
         np.savez_compressed(directory/"clip-entry.npz",**seed)
@@ -255,6 +275,7 @@ def main():
         snapshots[f"b_{step:05d}"] = state["bodies"]
         snapshots[f"j_{step:05d}"] = sim.state.joint_q.numpy().copy()
         snapshots[f"d_{step:05d}"] = sim.state.joint_qd.numpy().copy()
+        snapshots[f"w_{step:05d}"] = sim.state.body_qd.numpy().copy()
         snapshots[f"v_{step:05d}"] = sim.state.particle_qd.numpy()[entity.particles].copy()
         trace.append(dict(step=step, finite=bool(sim.state_is_finite()),
                           phase=controller.phase if controller else "rest",
@@ -402,7 +423,7 @@ def main():
                   controller_completed=controller_completed,
                   controller_diagnostics=({k:controller.marks[k] for k in (
                       "press_plans","press_diagnostics","fold_drag_m","clip_grasp_transform",
-                      "left_clear_kinematic_plan","left_cleared_for_clip","last_move_error")
+                      "left_clear_kinematic_plan","left_cleared_for_clip","last_move_error","blade_insertion_servo")
                       if k in controller.marks} if controller else {}),
                   substep_geometry=watcher.report() if watcher else None,
                   limitation="Uncalibrated material; contents/air not integrated; ready-start places open hands around the unfolded rim at reset; controller completion is not a physical success assessment")

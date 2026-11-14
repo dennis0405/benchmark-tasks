@@ -19,7 +19,7 @@ from film_material import FilmMaterial
 from pouch_geometry import open_pouch
 
 
-def configure_rigid_model(model,ready_start,structural_fk=False,finger_friction=None):
+def configure_rigid_model(model,ready_start,structural_fk=False,finger_friction=None,contact_ke=1e6):
     if ready_start:
         q=model.joint_q.numpy().copy()
         starts=model.joint_q_start.numpy()
@@ -31,7 +31,7 @@ def configure_rigid_model(model,ready_start,structural_fk=False,finger_friction=
         model.joint_q.assign(q)
     if structural_fk:
         newton.eval_fk(model,model.joint_q,model.joint_qd,model)
-    model.shape_material_ke.assign(np.full(model.shape_count,1e6,np.float32))
+    model.shape_material_ke.assign(np.full(model.shape_count,contact_ke,np.float32))
     if finger_friction is not None:
         mu=model.shape_material_mu.numpy().copy()
         for shape,body in enumerate(model.shape_body.numpy()):
@@ -45,6 +45,8 @@ class RigidSetupSpec:
     name:str="rigid_setup"
     ready_start:bool=True
     finger_friction:float|None=None
+    structural_fk:bool=False
+    contact_ke:float=1e6
     sim:object=field(default_factory=lambda:rss.SimRequirements(domain="articulated"))
 
 
@@ -56,7 +58,8 @@ class RigidSetupEntity(rss.Entity):
         pass
 
     def apply_model_materials(self,model):
-        configure_rigid_model(model,self.spec.ready_start,finger_friction=self.spec.finger_friction)
+        configure_rigid_model(model,self.spec.ready_start,self.spec.structural_fk,
+                              self.spec.finger_friction,self.spec.contact_ke)
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -65,6 +68,7 @@ class PouchSpec(PaperSpec):
     ready_start: bool = False
     structural_fk: bool = False
     finger_friction:float|None=None
+    contact_ke:float=1e6
 
 
 @rss.register_entity("snack_unfolded_pouch")
@@ -75,7 +79,8 @@ class PouchEntity(EntityPaper):
         super().apply_model_materials(model)
         # Newton 1.7 VBD requires body_q and joint_q to describe the SAME
         # structural rest pose before solver construction (not just State FK).
-        configure_rigid_model(model,self.spec.ready_start,self.spec.structural_fk,self.spec.finger_friction)
+        configure_rigid_model(model,self.spec.ready_start,self.spec.structural_fk,
+                              self.spec.finger_friction,self.spec.contact_ke)
 
     def surface(self):
         q, f, self.grid = open_pouch(
@@ -101,9 +106,12 @@ class PouchEntity(EntityPaper):
             particle_radius=material.particle_radius, label=self.name)
 
 
-def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None,self_filter_rings=0,self_radius=.0005,rebase_z=False):
+def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None,self_filter_rings=0,self_radius=.0005,rebase_z=False,rigid_contact_ke=None,body_particle_buffer=None):
     if embodiment != "yam_bimanual":
         raise ValueError("This research scene currently supports yam_bimanual only")
+    contact_ke=rigid_contact_ke if rigid_contact_ke is not None else (1e4 if coupling=="unified" else 1e6)
+    particle_buffer=body_particle_buffer or (4096 if coupling=="unified" else 16384)
+    if contact_ke<=0 or particle_buffer<=0:raise ValueError("positive contact stiffness and capacity required")
     if not 0<=support_extension<=.014:
         raise ValueError("support extension must stay within the reset finger clearance (0..14 mm)")
     if board_friction<0 or (finger_friction is not None and finger_friction<0):
@@ -148,12 +156,12 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         rigid_compliant_alm=True,
         particle_self_contact_radius=self_radius, particle_self_contact_margin=.002,
         particle_topological_contact_filter_threshold=self_filter_rings,
-        rigid_body_contact_buffer_size=2048, rigid_body_particle_contact_buffer_size=16384,
+        rigid_body_contact_buffer_size=2048, rigid_body_particle_contact_buffer_size=particle_buffer,
         particle_vertex_contact_buffer_size=64, particle_edge_contact_buffer_size=128)
     physics = physics.with_backend("*", backend)
     if coupling == "unified":
         physics = physics.with_backend("articulated", backend)
-    if rigid_cpu or rigid_only:
+    if rigid_cpu or (rigid_only and coupling!="unified"):
         if coupling!="one_way":
             raise ValueError("Native MuJoCo control requires the one_way research path")
         physics=physics.with_backend("articulated",rss.backend("mujoco",use_mujoco_cpu=rigid_cpu))
@@ -199,15 +207,16 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
     scene.add(rss.slab(name="board", half=half, at=at,
                        color=(.64, .47, .30), friction=board_friction))
     if rigid_only:
-        scene.add(RigidSetupSpec(ready_start=ready_start,finger_friction=finger_friction))
+        scene.add(RigidSetupSpec(ready_start=ready_start,finger_friction=finger_friction,
+                                structural_fk=coupling=="unified",contact_ke=contact_ke))
     else:
         scene.add(PouchSpec(name="pouch", pose=(.14+shift, 0, height+.0237), quat=(0, 0, 1, 0),
                             cells=cells, size=(.2, .16), material=material,
                             color=(.96, .58, .08), settle_frames=0, ready_start=ready_start,
-                            structural_fk=coupling=="unified",finger_friction=finger_friction))
+                            structural_fk=coupling=="unified",finger_friction=finger_friction,contact_ke=contact_ke))
     if with_clip:
-        if coupling!="one_way":
-            raise ValueError("Clip reaction hook currently requires the MuJoCo/VBD path")
+        if coupling not in ("one_way","unified"):
+            raise ValueError("Clip contact requires one_way or fully unified VBD")
         from deformable_clip import ClipSpec
         scene.add(rss.slab(name="tool_base",half=(.10,.07,.025),
                            at=(0,-.30,.025),color=(.64,.47,.30),friction=.6))
@@ -218,16 +227,32 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         for side in (-1,1):
             scene.add(rss.slab(name=f"tool_rail_{side}",half=(.035,.002,.002),
                 at=(-.03,-.30+side*.047,.090),color=(.64,.47,.30),friction=.6))
-        scene.add(ClipSpec(style=clip_style))
+        scene.add(ClipSpec(style=clip_style,unified_spring=coupling=="unified"))
     env = scene.build(device=device, control_mode="joint_position")
     if rigid_cpu:
         env.pipeline.use_cuda_graph=False
-    if with_clip and not rigid_only:
+    if with_clip and not rigid_only and coupling=="one_way":
         from tool_feedback import ToolFeedback
         reaction = ToolFeedback(env.pipeline.program.solver)
         env.pipeline.hooks.add("pre_solve", reaction.before_solve, name="clip-full-wrench", cadence=1)
         env.pipeline.invalidate_graph()
         env.snack_tool_feedback = reaction
+    if coupling=="unified":
+        from unified_contact import install,install_joint_encoder
+        if not rigid_only:env.snack_unified_readout=install(env)
+        install_joint_encoder(env)
+        from robot_gravity_compensation import RobotGravityCompensation
+        compensation=RobotGravityCompensation(env)
+        env.pipeline.hooks.add("pre_solve",compensation.before_solve,name="authored-robot-gravcomp",cadence=1)
+        env.snack_robot_gravcomp=compensation
+        env.pipeline.invalidate_graph()
+        if with_clip:
+            from passive_clip_spring import PassiveClipSpring
+            tool=env.scene.by_name["clip"]
+            spring=PassiveClipSpring(env,*tool.bodies,tool.spring_stiffness,tool.spring_damping)
+            env.pipeline.hooks.add("pre_solve",spring.before_solve,name="passive-clip-spring",cadence=1)
+            env.snack_passive_spring=spring
+            env.pipeline.invalidate_graph()
     if ready_start:
         # Start-pose construction can warm the rigid solver. Restore this
         # declared episode reset once, then reset its internal state as well.
@@ -249,13 +274,15 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         edge_ke=material.edge_ke,yield_angle=material.yield_angle,
         plastic_recovery=material.plastic_recovery)
     env.snack_material_parameters.update(board_shape_friction=board_friction,finger_shape_friction=finger_friction)
+    env.snack_material_parameters.update(rigid_contact_ke=contact_ke,body_particle_buffer=particle_buffer)
     env.snack_material_parameters["self_contact_filter_rings"]=self_filter_rings
     if not rigid_only:
         mass=env.model.particle_mass.numpy()[env.scene.by_name["pouch"].particles]
         env.snack_material_parameters.update(actual_pouch_mass_kg=float(mass.sum()),
             zero_mass_pouch_particles=int((mass==0).sum()),
             model_gravity=np.asarray(env.model.gravity.numpy()).tolist())
-    env.snack_rigid_backend="mujoco_native_cpu" if rigid_cpu else "mujoco_warp_gpu"
+    env.snack_rigid_backend="unified_vbd" if coupling=="unified" else ("mujoco_native_cpu" if rigid_cpu else "mujoco_warp_gpu")
+    env.snack_coupling=coupling
     env.snack_rigid_only=rigid_only
     env.snack_workspace=workspace
     env.snack_clip_style=clip_style

@@ -142,6 +142,12 @@ def clip_grasp_drive(controller):
         if miss>.006 or turn>.10:
             controller.failure="clip carry did not reach the requested pose"
             return
+        insert=getattr(controller,"supported_insert_xy",None)
+        if insert is not None:
+            controller.phase="clip_insert"
+            root=yield from insert_with_blade_clearance(controller,grasp,float(insert[0]),
+                float(insert[1]),rotation,controller.layout["board_top"])
+            if root is None:return
         controller.phase="clip_grasp_watch"
         for _ in controller.wait(180):
             yield
@@ -465,6 +471,105 @@ def blade_offsets(c,rotation):
     return np.asarray(corners)
 
 
+def insert_with_blade_clearance(c,grasp,target_x,center_y,rotation,top,speed=.003):
+    """Visual tool servo: keep the actual lowest blade corner above the board.
+
+    Long Cartesian hand interpolation let a submillimetre grasp drift lower
+    the toe onto the board edge. This controls the measured free tool on
+    every control frame, exclusively through the robot's TCP command.
+    """
+    panel=c.session.arms["right"];hz=float(c.sim.request.physics.control_hz)
+    front=c.layout.get("support_front")
+    if front is None:
+        board=next(i for i,label in enumerate(c.sim.model.shape_label) if str(label)=="board")
+        front=float(c.sim.model.shape_transform.numpy()[board,0]-c.sim.model.shape_scale.numpy()[board,0])
+    clearance_goal=float(getattr(c,"blade_clearance_m",.0004))
+    advance_clearance=min(.0002,clearance_goal/2)
+    pose=clip_pose(c);reference_x=float(pose[0]);start_x=reference_x
+    limit=int(np.ceil(max(0.,target_x-start_x)/speed*hz))+int(12*hz)
+    stable=0
+    diagnostics=dict(start_root_m=pose[:3].tolist(),target_x_m=float(target_x),
+                     desired_clearance_m=clearance_goal,advance_clearance_m=advance_clearance,
+                     native_board_contact_allowance_m=.000005,
+                     min_plane_clearance_m_including_outside=float("inf"),
+                     max_reference_lead_m=.0008,frames=0)
+    c.marks["blade_insertion_servo"]=diagnostics
+    for step in range(limit):
+        pose=clip_pose(c);actual=Rotation.from_quat(pose[3:])
+        offsets=blade_offsets(c,actual)
+        clearance=float(pose[2]+offsets[:,2].min()-top)
+        diagnostics["min_plane_clearance_m_including_outside"]=min(
+            diagnostics["min_plane_clearance_m_including_outside"],clearance)
+        diagnostics["frames"]=step
+        expected=pose[:3]+actual.apply(grasp["offset"])
+        if np.linalg.norm(expected-c.takes._fold_jaws(c.film,"right"))>.030:
+            c.failure="clip slipped more than 30 mm during blade-height servo";return None
+        angle=float((rotation*actual.inv()).magnitude())
+        # Advance only with measured vertical clearance, and never build a
+        # long position error against a blocked toe. This is a motion guard,
+        # not a change to any collision or assessment tolerance.
+        # Once the bevel is fully over the board, allow physical sliding
+        # contact with its top. Positive entry clearance is still required
+        # at the vertical edge. Film intersection checks stay unchanged.
+        bevel_inside=pose[0]+offsets[-8:,0].min()>=front+.001
+        # MuJoCo's compliant rigid contact was measured at about 0.6 um
+        # depth on the horizontal top. A 5 um control allowance permits
+        # that loaded sliding contact; it never applies at the board edge
+        # or to the independent film/rigid intersection observer.
+        required_clearance=-.000005 if bevel_inside else advance_clearance
+        if clearance>=required_clearance and angle<.02:
+            reference_x=min(target_x,reference_x+speed/hz,float(pose[0])+.0008)
+        else:
+            reference_x=min(reference_x,float(pose[0])+.0002)
+        goal=np.array([reference_x,center_y,top+clearance_goal-offsets[:,2].min()])
+        error=goal-pose[:3]
+        # Avoid integrating microradian contact bias into a large wrist
+        # turn while the board already constrains the free tool to be flat.
+        correction=.35*(rotation*actual.inv()).as_rotvec() if angle>=.001 else np.zeros(3)
+        magnitude=np.linalg.norm(correction)
+        if magnitude>.01:correction*=.01/magnitude
+        delta=Rotation.from_rotvec(correction)
+        cursor=np.asarray(panel.cursor_pos)
+        # Rotate the TCP command about the measured tool root, preserving
+        # the lever arm, then integrate the object's translation error.
+        tcp=pose[:3]+delta.apply(cursor-pose[:3])+.35*np.clip(error,-.001,.001)
+        quat=(delta*Rotation.from_quat(panel.cursor_quat)).as_quat()
+        panel.aim(tcp,quat,moving=True)
+        if (abs(pose[0]-target_x)<.0006 and abs(pose[1]-center_y)<.0006 and
+                required_clearance<=clearance<=clearance_goal+.0004 and angle<.01):
+            stable+=1
+        else:stable=0
+        if stable>=max(3,int(.5*hz)):
+            diagnostics["final_root_m"]=pose[:3].tolist()
+            diagnostics["final_clearance_m"]=clearance
+            diagnostics["final_angle_rad"]=angle
+            grasp["offset"]=actual.inv().apply(c.takes._fold_jaws(c.film,"right")-pose[:3])
+            grasp["relative_rotation"]=actual.inv()*Rotation.from_quat(panel.ik.ee_pose(c.sim.state)[1])
+            return np.array([target_x,center_y,pose[2]])
+        yield
+    c.failure="blade-height servo did not reach a stable insertion pose"
+    return None
+
+
+def continue_insertion_component(c):
+    """Short diagnostic after a declared contact-relief reset, never E2E."""
+    c.phase="clip_reset_regrasp"
+    initial=clip_pose(c).copy()
+    yield from c.wait(12)
+    pose=clip_pose(c);rotation=Rotation.from_quat(pose[3:])
+    if np.linalg.norm(pose[:3]-initial[:3])>.005:
+        c.failure="tool moved more than 5 mm while re-establishing the reset grip";return
+    grasp=dict(offset=rotation.inv().apply(c.takes._fold_jaws(c.film,"right")-pose[:3]),
+        relative_rotation=rotation.inv()*Rotation.from_quat(c.session.arms["right"].ik.ee_pose(c.sim.state)[1]))
+    entity=c.sim.scene.by_name["pouch"]
+    q=c.sim.state.particle_q.numpy()[entity.particles]
+    center=np.median(q[entity.grid[:,34,8:25]],axis=(0,1))
+    c.phase="clip_insert"
+    result=yield from insert_with_blade_clearance(c,grasp,float(center[0]-.035),
+        float(center[1]),Rotation.identity(),c.layout["board_top"])
+    if result is not None:yield from release_clip(c,Rotation.identity())
+
+
 def insert_over_support(c,grasp,center):
     """Enter below an overhanging fold, lift clear, then advance over the board."""
     rotation=Rotation.identity();top=c.layout["board_top"];front=c.layout.get("support_front",c.layout["line"])
@@ -500,10 +605,7 @@ def insert_over_support(c,grasp,center):
         else:
             c.failure="wedge lower blade did not clear the board";return None
         c.phase="clip_insert"
-        target=np.array([final_x,center[1],safe_z])
-        if not (yield from move_clip_root(c,target,rotation,grasp,.003,precise=True)):
-            return None
-        return target
+        return (yield from insert_with_blade_clearance(c,grasp,final_x,center[1],rotation,top))
     entity=c.sim.scene.by_name["pouch"]
     q=c.sim.state.particle_q.numpy()[entity.particles]
     near=(abs(q[:,1]-center[1])<.052)&(q[:,0]>center[0]-.006)&(q[:,0]<center[0]+.012)

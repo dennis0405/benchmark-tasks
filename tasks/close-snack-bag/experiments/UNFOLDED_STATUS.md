@@ -298,3 +298,87 @@ with an explicit clip-asset/parking reset. `unfolded-aligned-v14` starts from
 the unfolded reset with the aligned-pad asset. They are running candidates,
 not completed sealing evidence. The final film/clip contact and hands-free
 assessment remain required before calling either a completed demo.
+
+### Continuous blade-height servo
+
+`film-aligned-insert-v20` was stopped at 1,244 frames: the blade stalled at
+the board edge before touching film. Native rigid contact reconstruction at
+frame 1,080 found the toe against the board (~7.5 micrometres compliant
+penetration). The film observer recorded 149,280 substeps with zero scoped
+hits. The fresh `unfolded-aligned-v14` prefix was also stopped at 1,238 frames,
+with a retained ~2.72 rad fold and 148,560 substeps without scoped hits.
+Neither interrupted prefix is a completed demo.
+
+The new insertion servo measures the free tool every control frame, rotates
+the TCP command about its measured root, and integrates object-pose error
+into the previous command. It pauses forward reference motion when the
+actual lowest blade corner lacks clearance and bounds forward lead to
+0.8 mm. It never moves cloth or tool states directly and leaves the
+independent film intersection checks unchanged.
+
+`rigid-height-servo-v29` crossed the board edge to X=0.66 and held 3 s without
+a controller error (1,169 frames). Its target clearance was 0.4 mm. A
+read-only control-frame audit gives a minimum conservative lower-blade
+clearance of 0.362 mm for the 253 insertion/hold frames overlapping the board.
+This is a sampled convex-corner bound, not a substep swept-volume proof.
+Compact evidence is in `evidence/unfolded-20261114/rigid-height-v29`.
+
+That height is too high for reliable entry below the bottom film: measured
+film vertices near entry start about 0.300 mm above the board, whereas the
+0.2 mm toe's upper face would be 0.600 mm above it. A 0.040 mm clearance
+comparison puts that upper face at 0.240 mm. The smaller forward-motion
+height guard is a trajectory setting, not a relaxation of film intersection
+or final four-ply capture requirements.
+
+`rigid-low-clearance-v30` instead failed the unchanged approach gate at
+6.4 mm. Native reconstruction found pressure-pad/wrist and open-finger
+contacts. `thin_compact` retains the 0.6 N m/rad spring and upper pad alignment
+but restores the 16 mm pressure-pad length, avoiding the large 40 mm pad
+envelope. Its full joint-range opposing-box geometry case passes.
+`rigid-compact-low-v31` then completed the 40 micrometre target-clearance
+insertion and 3 s watched hold without failure (1,152 frames). The sampled
+lower-bound clearance over the board was positive, with a 6 micrometre minimum
+over 268 insertion/hold frames; it is not a substep proof. The film v21
+attempt was stopped before contact to make these geometry changes. The
+compact-tool film continuation is `film-compact-low-v22`, using the measured
+fold from v14 with an explicit asset/parking reset. No new film retention or
+submission result is claimed yet.
+
+The separate closure stress fixture now supports a free root on a passive
+heel stand. An instant spring release with split MuJoCo/VBD feedback became
+non-finite in its first control frame, including a 10 kN/m film-contact
+comparison. A no-feedback negative control remained finite but forced jaws
+through the layers; it is not an acceptable retention solution. The recorder
+now saves invalid final states instead of trying to normalize a zero
+quaternion. Intersection counts after non-finite states are not physical
+penetration measurements. A fully coupled VBD fixture comparison is being
+tested independently; none of these stress fixtures is a YAM task demo.
+
+### Unified solver port (ongoing, no completed film demo)
+
+`film-compact-low-v22` reached first film contact with the compact blade but
+stalled before capture. A declared component reset opened the two right
+fingers by 0.3 mm each and lifted the free tool 0.02 mm; particle positions,
+velocities and plastic rest angles were preserved. v24 remained geometrically
+clear but stalled. v25 permitted 5 micrometres of native board contact in the
+motion controller; the unchanged film observer then rejected actual tool/film
+intersections at frame 79. This is a failure, not a retained seal.
+
+The alternative unified Newton VBD path now uses intrinsic rigid/film contact,
+read-only contact observables, body-pose-derived joint encoders, and an explicit
+passive spring/damper with equal/opposite torques. The imported MuJoCo-only
+spring is disabled in this path to avoid double actuation. The standalone
+passive heel-stand closure v9 was finite and had zero observed intersections
+for one second with expanded rigid contact capacity. It is neither an
+unsupported hold nor a YAM task demonstration.
+
+The first unified robot comparison v32 sagged because VBD does not consume the
+imported MuJoCo per-body gravity-compensation attribute. The adapter now applies
+the same authored coefficients as COM forces, retaining gravity on the free
+tool and film. Native YAM actuator gains and mimic constraints are preserved.
+Rigid and film tests of this port are ongoing. New full recordings also save
+body velocities, since a body-primary solver cannot be resumed faithfully by
+projecting compliant body poses through forward kinematics.
+
+Focused geometry/material/controller suite: 34 tests passed on the Brev CPU/GPU.
+These checks do not establish successful film capture or physical calibration.

@@ -54,7 +54,7 @@ def main():
     hz=json.loads((args.run/"arguments.json").read_text()).get("hz",60)
     geometry = np.load(args.run/"render-geometry.npz")
     parts = json.loads((args.run/"render-geometry.json").read_text())
-    scene = pyrender.Scene(bg_color=(.93, .95, .97, 1), ambient_light=(.85, .85, .85))
+    scene = pyrender.Scene(bg_color=(.93, .95, .97, 1), ambient_light=(.70, .70, .70))
     nodes = []
     for i, part in enumerate(parts):
         mesh = trimesh.Trimesh(vertices=geometry[f"v_{i}"], faces=geometry[f"f_{i}"],
@@ -111,7 +111,8 @@ def main():
         views=[]
         detail_eye,detail_target=center+[-.10,-.03,.40],center+[-.065,0,0]
         if args.detail=="mouth_side":
-            detail_eye=center+[.20,-.15,.25]
+            # Oblique side view of the mouth, away from the torso and elbow.
+            detail_eye=center+[.05,-.28,.28]
         if args.detail=="clip":
             detail_target=np.asarray(trace[step]["clip_root_pose"][:3])
             detail_eye=detail_target+[.18,-.25,.20]
@@ -126,9 +127,9 @@ def main():
         title="YAM + UNFOLDED FILM POUCH" if has_film else "YAM + SPRING CLIP | NO FILM"
         cv2.putText(canvas, title+(" | EMPTY-POUCH MECHANICS" if validated else " | contact-driven diagnostic"), (20, 32),
                     cv2.FONT_HERSHEY_SIMPLEX, .8, (30, 40, 50), 1, cv2.LINE_AA)
-        scope="3s hands-free core check PASS; no contents/air" if validated else "not a completed sealing demo"
-        cv2.putText(canvas, f"t={step/hz:.2f}s | phase={label} | recorded physics, 1x playback | {scope}",
-                    (20, 625), cv2.FONT_HERSHEY_SIMPLEX, .65, (30, 40, 50), 1, cv2.LINE_AA)
+        scope="3s hold PASS; empty pouch" if validated else "DIAGNOSTIC; sealing not validated"
+        cv2.putText(canvas, f"t={step/hz:.2f}s | {label} | recorded physics, 1x | {scope}",
+                    (20, 625), cv2.FONT_HERSHEY_SIMPLEX, .60, (30, 40, 50), 1, cv2.LINE_AA)
         writer.append_data(canvas)
         if args.stride>=30 or step in (0, 60, 300, 600, 900) or key == keys[-1]:
             imageio.imwrite(args.run/f"view-{step:05d}.png", canvas)

@@ -21,6 +21,9 @@ class ClipGeometryTests(unittest.TestCase):
     def test_aligned_pressure_pad_joint_range_has_no_opposing_box_overlap(self):
         self.check_asset("clip_thin_aligned.xml")
 
+    def test_compact_aligned_pressure_pad_joint_range_has_no_opposing_box_overlap(self):
+        self.check_asset("clip_thin_compact.xml")
+
     def test_stronger_variant_only_changes_passive_stiffness(self):
         directory=Path(__file__).with_name("assets")
         original=ET.parse(directory/"clip_thin_lower.xml").getroot()

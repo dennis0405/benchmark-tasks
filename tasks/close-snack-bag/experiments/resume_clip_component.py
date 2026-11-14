@@ -1,6 +1,7 @@
 """Reset a clip-only diagnostic from an observed fold checkpoint.
 
-Particle/joint velocities and plastic rest angles are preserved. Solver
+Velocities and plastic rest angles are preserved except explicitly reported
+gripper/parking reliefs at reset. Solver
 contact/friction caches are rebuilt, so this is a component reset, never a
 claim of an uninterrupted end-to-end demonstration.
 """
@@ -11,7 +12,7 @@ import numpy as np
 import newton
 
 
-def restore(sim,session,directory,*,reset_tool=False):
+def restore(sim,session,directory,*,reset_tool=False,gripper_relief_m=0.,tool_lift_m=0.):
     directory=Path(directory)
     raw=(directory/"clip-entry.npz").read_bytes()
     metadata=json.loads((directory/"clip-entry.json").read_text())
@@ -26,10 +27,38 @@ def restore(sim,session,directory,*,reset_tool=False):
     if len(data["j"])!=len(sim.state.joint_q) or data["b"].shape!=sim.state.body_q.numpy().shape:
         raise ValueError("checkpoint rigid model differs from the rebuilt scene")
     joints,velocities=data["j"].copy(),data["d"].copy()
+    excluded=set();relieved=[]
     if reset_tool:
         tool=sim.scene.by_name["clip"]
         joints[tool.coords]=sim.model.joint_q.numpy()[tool.coords]
         velocities[-7:]=0.
+        excluded.update(tool.bodies)
+    if tool_lift_m:
+        tool=sim.scene.by_name["clip"]
+        joints[tool.coords[2]]+=tool_lift_m
+        excluded.update(tool.bodies)
+    if gripper_relief_m:
+        fingers={int(b) for side in sim.scene.embodiment.arms["right"].finger_bodies
+                 for b in np.asarray(side).reshape(-1)}
+        child=sim.model.joint_child.numpy();kind=sim.model.joint_type.numpy()
+        qstart=sim.model.joint_q_start.numpy();dstart=sim.model.joint_qd_start.numpy()
+        low=sim.model.joint_limit_lower.numpy();high=sim.model.joint_limit_upper.numpy()
+        for joint in np.flatnonzero(np.isin(child,list(fingers)) & (kind==int(newton.JointType.PRISMATIC))):
+            coord,dof=int(qstart[joint]),int(dstart[joint])
+            before=float(joints[coord])
+            # The mimic slider's generic limits can be unbounded. In the
+            # recorded YAM grasp, signed distance from zero identifies the
+            # opening direction of the opposed slides.
+            sign=float(np.sign(before)) if abs(before)>1e-6 else (
+                1. if low[dof]>=0 else -1. if high[dof]<=0 else 0.)
+            if not sign:raise ValueError("ambiguous gripper relief direction")
+            bounds=(0.,.0475) if sign>0 else (-.0475,0.)
+            joints[coord]=np.clip(joints[coord]+sign*gripper_relief_m,
+                                  max(low[dof],bounds[0]),min(high[dof],bounds[1]))
+            velocities[dof]=0.
+            relieved.append(dict(joint=int(joint),coord=coord,before=before,after=float(joints[coord])))
+        if len(relieved)!=2:raise ValueError("expected two YAM finger slides")
+        excluded.update(fingers)
     for state in (sim.pipeline.state_0,sim.pipeline.state_1):
         q=state.particle_q.numpy();q[entity.particles]=data["q"];state.particle_q.assign(q)
         v=state.particle_qd.numpy();v[entity.particles]=data["v"];state.particle_qd.assign(v)
@@ -37,7 +66,7 @@ def restore(sim,session,directory,*,reset_tool=False):
         state.joint_q.assign(joints);state.joint_qd.assign(velocities)
         newton.eval_fk(sim.model,state.joint_q,state.joint_qd,state)
     compare=np.ones(sim.model.body_count,bool)
-    if reset_tool:compare[list(tool.bodies)]=False
+    if excluded:compare[list(excluded)]=False
     pos_error=float(abs(sim.state.body_q.numpy()[compare,:3]-data["b"][compare,:3]).max())
     quaternion_dot=abs((sim.state.body_q.numpy()[compare,3:]*data["b"][compare,3:]).sum(1))
     if pos_error>1e-5 or np.any(quaternion_dot<1-1e-5):
@@ -71,6 +100,8 @@ def restore(sim,session,directory,*,reset_tool=False):
         panel.grip_request=float(np.clip(1-targets[coord]/.0475,0,1))
     return dict(layout=metadata["layout"],source_step=metadata["step"],
                 tool_authored_parking_reset=reset_tool,
+                tool_vertical_relief_m=tool_lift_m,gripper_relief_m_each=gripper_relief_m,
+                relieved_gripper_joints=relieved,
                 left_cleared_for_clip=metadata.get("left_cleared_for_clip",False),
                 support_holds=metadata.get("support_holds",{}),
                 seed_sha256=hashlib.sha256(raw).hexdigest(),fk_position_error_m=pos_error,

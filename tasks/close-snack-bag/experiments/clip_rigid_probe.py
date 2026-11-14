@@ -20,11 +20,14 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("output",type=Path)
     parser.add_argument("--cpu",action="store_true")
+    parser.add_argument("--coupling",choices=("one_way","unified"),default="one_way")
+    parser.add_argument("--rigid-contact-ke",type=float,default=None)
+    parser.add_argument("--body-particle-buffer",type=int,default=None)
     parser.add_argument("--plan",action="store_true")
     parser.add_argument("--frames",type=int,default=1000)
     parser.add_argument("--physics-hz",type=int,default=1200)
     parser.add_argument("--workspace",choices=("original","raised_forward","raised_flat"),default="original")
-    parser.add_argument("--clip-style",choices=("standard","thin_lower","thin_strong","thin_broad","thin_aligned"),default="standard")
+    parser.add_argument("--clip-style",choices=("standard","thin_lower","thin_strong","thin_broad","thin_aligned","thin_compact"),default="standard")
     parser.add_argument("--precise-carry",action="store_true")
     parser.add_argument("--clear-left",action="store_true")
     parser.add_argument("--rigid-seed",type=Path,default=None,
@@ -34,31 +37,44 @@ def main():
     parser.add_argument("--carry-root",type=float,nargs=3,default=None)
     parser.add_argument("--via-root",type=float,nargs=3,default=None)
     parser.add_argument("--carry-angles",type=float,nargs=2,default=(0.,0.),metavar=("YAW","PITCH"))
+    parser.add_argument("--insert-xy",type=float,nargs=2,default=None,
+                        help="After carry, test the measured blade-height servo over the board")
+    parser.add_argument("--blade-clearance-mm",type=float,default=.4)
+    parser.add_argument("--support-extension-mm",type=float,default=0.)
     parser.add_argument("--finger-friction",type=float,default=None)
     args=parser.parse_args()
+    if args.insert_xy is not None and not args.clear_left:
+        parser.error("insert-xy requires --clear-left for a clear insertion corridor")
+    if args.reset_tool and args.rigid_seed is None:
+        parser.error("reset-tool requires a rigid-seed comparison")
+    if not .02<=args.blade_clearance_mm<=.8:
+        parser.error("blade-clearance-mm must be in 0.02..0.8")
     args.output.mkdir(parents=True,exist_ok=False)
     sources=args.output/"sources";sources.mkdir()
     root=Path(__file__).resolve().parents[1]
     for name in ("deformable_scene.py","deformable_clip.py","pouch_geometry.py"):
         shutil.copy2(root/name,sources/name)
     for name in ("clip_rigid_probe.py","fold_controller.py","clip_controller.py","check_rigid_tool.py",
-                 "gpu_contact_checks.py","film_material.py","plan_clip_poses.py","assets/clip_spring_v2.xml","assets/yam_ready_pose.json"):
+                 "gpu_contact_checks.py","film_material.py","plan_clip_poses.py","passive_clip_spring.py",
+                 "unified_contact.py","robot_gravity_compensation.py","contact_average.py","assets/clip_spring_v2.xml","assets/yam_ready_pose.json"):
         shutil.copy2(root/"experiments"/name,sources/Path(name).name)
     if args.workspace!="original":
         name=f"assets/yam_{args.workspace}_pose.json"
         shutil.copy2(root/"experiments"/name,sources/Path(name).name)
     if args.clip_style!="standard":
-        name="assets/"+{"thin_lower":"clip_thin_lower.xml","thin_strong":"clip_thin_strong.xml","thin_broad":"clip_thin_broad.xml","thin_aligned":"clip_thin_aligned.xml"}[args.clip_style]
+        name="assets/"+{"thin_lower":"clip_thin_lower.xml","thin_strong":"clip_thin_strong.xml","thin_broad":"clip_thin_broad.xml","thin_aligned":"clip_thin_aligned.xml","thin_compact":"clip_thin_compact.xml"}[args.clip_style]
         shutil.copy2(root/"experiments"/name,sources/Path(name).name)
     (args.output/"arguments.json").write_text(json.dumps(dict(vars(args),hz=20),default=str,indent=2))
     started=time.monotonic()
-    sim=make_environment(ready_start=True,with_clip=True,rigid_cpu=args.cpu,
+    sim=make_environment(ready_start=True,with_clip=True,rigid_cpu=args.cpu,coupling=args.coupling,
                          rigid_only=True,control_hz=20,physics_hz=args.physics_hz,workspace=args.workspace,
-                         clip_style=args.clip_style,finger_friction=args.finger_friction)
+                         clip_style=args.clip_style,finger_friction=args.finger_friction,
+                         support_extension=args.support_extension_mm/1000.,
+                         rigid_contact_ke=args.rigid_contact_ke,body_particle_buffer=args.body_particle_buffer)
     assert sim.model.particle_count==0
     solver=sim.pipeline.program.solver
     actual=getattr(solver,"rigid",solver)
-    assert bool(actual.use_mujoco_cpu)==args.cpu
+    if args.coupling=="one_way":assert bool(actual.use_mujoco_cpu)==args.cpu
     from tests.fixtures.grasp import open_session,tick
     session=open_session(sim,9766)
     seed_reset=None
@@ -94,6 +110,8 @@ def main():
     controller.plan_clip=args.plan
     controller.precise_carry=args.precise_carry
     controller.carry_angles=args.carry_angles
+    controller.supported_insert_xy=args.insert_xy
+    controller.blade_clearance_m=args.blade_clearance_mm/1000.
     controller.clear_left_first=args.clear_left
     controller.right_already_clear=bool(args.rigid_seed)
     if args.carry_root is not None:
