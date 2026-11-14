@@ -8,6 +8,14 @@ from scipy.spatial.transform import Rotation
 from clip_capture import clip_capture
 
 
+def contact_capacity_valid(report, expected_substeps):
+    if not report or report.get("checked_substeps")!=expected_substeps:
+        return False
+    fields=("rigid_body_overflow_events","soft_body_overflow_events",
+            "rigid_total_overflow_substeps","soft_total_overflow_substeps")
+    return all(report.get(name)==0 for name in fields)
+
+
 def summarize_hold(rows,hz,required_width=.096):
     longest=0.;start=None;previous=None
     for row in rows:
@@ -61,6 +69,8 @@ def main():
                 uninterrupted=not result["interrupted"],all_finite=result["all_finite"],
                 initial_unfolded=trace[0]["fold"]["folds"][0]["median_angle_rad"]<.1,
                 all_substeps_observed=geometry.get("checked_substeps")==result["frames"]*result["physics_substeps"],
+                contact_capacity_observed_without_overflow=contact_capacity_valid(
+                    result.get("contact_capacity"),result["frames"]*result["physics_substeps"]),
                 no_observed_transverse_crossings=geometry.get("transverse_edge_crossings")==0,
                 no_observed_box_intersections=geometry.get("film_box_intersections")==0,
                 round_shapes_checked=geometry.get("checked_round_shapes",0)>0,

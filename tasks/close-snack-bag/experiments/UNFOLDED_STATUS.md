@@ -472,3 +472,32 @@ hybrid v20 nevertheless stopped on a board intersection at frame 2, so it is
 not a validated fix. The fully coupled, DAT-enabled path is also being
 retested with stronger arm tracking, 2,400 Hz physics and the reachable button
 grip. No current end-to-end fold/clip/release/3 s success exists.
+
+### Grip patch and thin-contact comparisons
+
+The squeeze target now anchors the free root at the start of closing while
+following the relative lever midpoint. This removes the previous root-chasing
+feedback. v50/v51/v52 open the hinge but still fail the 50 mm lift check.
+v52 records actual rigid contact forces: approximately 2 N per handle, initially
+on slanted wing meshes rather than the main flat pad. The narrow 2 mm buttons
+also provide little moment resistance while carrying the forward-heavy tool.
+
+The revised button contact patch is 16 x 8 mm: narrower than the 12 mm main
+finger width, with a longer torque-bearing patch. Spring stiffness is now
+0.95 Nm/rad; the full-range analytical end-force check remains below 5 N.
+Eight geometry/force-bound tests pass; these are not a physical calibration.
+v54 tests this asset with exactly the original 50 mm lift and carry guards.
+
+Rigid contact-history matching alone did not fix slipping. A separate legacy
+soft-contact diagnostic v53 also fails lift; it is not selected as a solution.
+The DAT/log-barrier/interval full film run v22 stops at frame 119 with 53
+observed right-finger/film intersections and no contact-buffer overflow.
+The next explicit comparison stiffens only finger contacts, leaving the light
+tool's contact stiffness unchanged. Width-resolution options keep 40 cells in
+the fold direction; a 16-cell width / 1,200 Hz run checks faster iteration
+without relaxing the independent intersection tests. Both full episodes start
+unfolded, without imposed folds or tool attachments.
+
+The core assessor now also requires complete per-substep contact-capacity
+observation and zero persisted overflow events. Six hold/negative-control
+tests pass. No completed seal or final demonstration video is available yet.

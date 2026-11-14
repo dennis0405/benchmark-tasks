@@ -1,5 +1,5 @@
 import unittest
-from assess_unfolded import summarize_hold
+from assess_unfolded import summarize_hold,contact_capacity_valid
 
 
 class HoldChecks(unittest.TestCase):
@@ -23,6 +23,19 @@ class HoldChecks(unittest.TestCase):
     def test_unloaded_jaw_breaks_continuity(self):
         rows=self.rows(100);rows[45]["jaw_load_ok"]=False
         self.assertLess(summarize_hold(rows,20),3.)
+
+    def test_missing_or_partial_contact_observation_cannot_pass(self):
+        self.assertFalse(contact_capacity_valid(None,100))
+        self.assertFalse(contact_capacity_valid(dict(checked_substeps=100),100))
+
+    def test_transient_contact_overflow_cannot_pass(self):
+        report=dict(checked_substeps=100,rigid_body_overflow_events=0,soft_body_overflow_events=0,
+                    rigid_total_overflow_substeps=0,soft_total_overflow_substeps=0)
+        self.assertTrue(contact_capacity_valid(report,100))
+        self.assertFalse(contact_capacity_valid(report,101))
+        for field in list(report)[1:]:
+            with self.subTest(field=field):
+                self.assertFalse(contact_capacity_valid(dict(report,**{field:1}),100))
 
 
 if __name__=="__main__":unittest.main()

@@ -19,7 +19,7 @@ from film_material import FilmMaterial
 from pouch_geometry import open_pouch
 
 
-def configure_rigid_model(model,ready_start,structural_fk=False,finger_friction=None,contact_ke=1e6,arm_gain_scale=1.):
+def configure_rigid_model(model,ready_start,structural_fk=False,finger_friction=None,contact_ke=1e6,arm_gain_scale=1.,finger_contact_ke=None):
     if arm_gain_scale!=1.:
         ke=model.joint_target_ke.numpy().copy();kd=model.joint_target_kd.numpy().copy()
         starts=model.joint_qd_start.numpy()
@@ -41,6 +41,12 @@ def configure_rigid_model(model,ready_start,structural_fk=False,finger_friction=
         configure(model)
         newton.eval_fk(model,model.joint_q,model.joint_qd,model)
     model.shape_material_ke.assign(np.full(model.shape_count,contact_ke,np.float32))
+    if finger_contact_ke is not None:
+        if finger_contact_ke<=0:raise ValueError("positive finger contact stiffness required")
+        values=model.shape_material_ke.numpy().copy()
+        for shape,body in enumerate(model.shape_body.numpy()):
+            if body>=0 and "finger" in str(model.body_label[body]):values[shape]=finger_contact_ke
+        model.shape_material_ke.assign(values)
     if finger_friction is not None:
         mu=model.shape_material_mu.numpy().copy()
         for shape,body in enumerate(model.shape_body.numpy()):
@@ -56,6 +62,7 @@ class RigidSetupSpec:
     finger_friction:float|None=None
     structural_fk:bool=False
     contact_ke:float=1e6
+    finger_contact_ke:float|None=None
     arm_gain_scale:float=1.
     sim:object=field(default_factory=lambda:rss.SimRequirements(domain="articulated"))
 
@@ -69,7 +76,7 @@ class RigidSetupEntity(rss.Entity):
 
     def apply_model_materials(self,model):
         configure_rigid_model(model,self.spec.ready_start,self.spec.structural_fk,
-                              self.spec.finger_friction,self.spec.contact_ke,self.spec.arm_gain_scale)
+                              self.spec.finger_friction,self.spec.contact_ke,self.spec.arm_gain_scale,self.spec.finger_contact_ke)
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -79,6 +86,7 @@ class PouchSpec(PaperSpec):
     structural_fk: bool = False
     finger_friction:float|None=None
     contact_ke:float=1e6
+    finger_contact_ke:float|None=None
     arm_gain_scale:float=1.
 
 
@@ -91,7 +99,7 @@ class PouchEntity(EntityPaper):
         # Newton 1.7 VBD requires body_q and joint_q to describe the SAME
         # structural rest pose before solver construction (not just State FK).
         configure_rigid_model(model,self.spec.ready_start,self.spec.structural_fk,
-                              self.spec.finger_friction,self.spec.contact_ke,self.spec.arm_gain_scale)
+                              self.spec.finger_friction,self.spec.contact_ke,self.spec.arm_gain_scale,self.spec.finger_contact_ke)
 
     def surface(self):
         q, f, self.grid = open_pouch(
@@ -117,7 +125,7 @@ class PouchEntity(EntityPaper):
             particle_radius=material.particle_radius, label=self.name)
 
 
-def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None,self_filter_rings=0,self_radius=.0005,rebase_z=False,rigid_contact_ke=None,body_particle_buffer=None,board_skin_mm=0.,rigid_contact_threads=4,rigid_soft_dat=True,proxy_iterations=2,tool_rack_style="wide",proxy_mass_scale=1.,arm_gain_scale=1.,tool_parking_shift_x=0.):
+def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None,self_filter_rings=0,self_radius=.0005,rebase_z=False,rigid_contact_ke=None,body_particle_buffer=None,board_skin_mm=0.,rigid_contact_threads=4,rigid_soft_dat=True,proxy_iterations=2,tool_rack_style="wide",proxy_mass_scale=1.,arm_gain_scale=1.,tool_parking_shift_x=0.,rigid_contact_model="alm",finger_contact_ke=None):
     from vbd_parallel import configure as configure_parallel
     contact_parallel=configure_parallel(rigid_contact_threads)
     if not 0.<=tool_parking_shift_x<=.06:raise ValueError("parking shift must be 0..6 cm")
@@ -168,12 +176,18 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
     physics = rss.replace(
         rss.GENERIC, control_hz=float(control_hz), substeps=physics_rate//control_hz,
         coupling=coupling_spec,
-        collision=rss.CollisionSpec(full_surface_contact=True))
+        collision=rss.CollisionSpec(full_surface_contact=True,
+            contact_matching="latest" if coupling in ("unified","hybrid") else "disabled"))
+    if rigid_contact_model not in ("alm","soft"):
+        raise ValueError("unknown rigid contact model")
     dat_enabled=coupling=="unified" and rigid_soft_dat and not rigid_only
     backend = rss.backend(
         "unified_vbd_solver.OwnedVBD" if dat_enabled else "vbd", iterations=30,
         particle_enable_self_contact=not rigid_only,rigid_soft_enable_dat=dat_enabled, friction_epsilon=1e-3,
-        rigid_compliant_alm=True,
+        rigid_compliant_alm=rigid_contact_model=="alm",rigid_contact_hard=rigid_contact_model=="alm",
+        rigid_contact_history=coupling in ("unified","hybrid"),
+        rigid_soft_contact_use_log_barrier=coupling in ("unified","hybrid"),
+        rigid_soft_dat_use_interval_arithmetic=dat_enabled,
         particle_self_contact_radius=self_radius, particle_self_contact_margin=.002,
         particle_topological_contact_filter_threshold=self_filter_rings,
         rigid_body_contact_buffer_size=2048, rigid_body_particle_contact_buffer_size=particle_buffer,
@@ -238,12 +252,12 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
                            color=(.64, .47, .30), friction=board_friction))
     if rigid_only:
         scene.add(RigidSetupSpec(ready_start=ready_start,finger_friction=finger_friction,
-                                structural_fk=coupling=="unified",contact_ke=contact_ke,arm_gain_scale=arm_gain_scale))
+                                structural_fk=coupling=="unified",contact_ke=contact_ke,arm_gain_scale=arm_gain_scale,finger_contact_ke=finger_contact_ke))
     else:
         scene.add(PouchSpec(name="pouch", pose=(.14+shift, 0, height+.0237), quat=(0, 0, 1, 0),
                             cells=cells, size=(.2, .16), material=material,
                             color=(.96, .58, .08), settle_frames=0, ready_start=ready_start,
-                            structural_fk=coupling=="unified",finger_friction=finger_friction,contact_ke=contact_ke,arm_gain_scale=arm_gain_scale))
+                            structural_fk=coupling=="unified",finger_friction=finger_friction,contact_ke=contact_ke,arm_gain_scale=arm_gain_scale,finger_contact_ke=finger_contact_ke))
     if with_clip:
         if coupling not in ("one_way","unified","hybrid"):
             raise ValueError("Clip contact requires one_way or fully unified VBD")
@@ -319,6 +333,8 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         env.pipeline.invalidate_graph()
     env.snack_arm_gain_scale=arm_gain_scale
     env.snack_proxy_iterations=proxy_iterations
+    env.snack_contact_methods=dict(rigid_model=rigid_contact_model,rigid_history=coupling in ("unified","hybrid"),
+        rigid_soft_log_barrier=coupling in ("unified","hybrid"),interval_dat=dat_enabled)
     env.snack_rigid_soft_dat=dat_enabled
     env.snack_contact_parallel=contact_parallel
     env.snack_board_skin_mm=board_skin_mm
@@ -332,7 +348,7 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         edge_ke=material.edge_ke,yield_angle=material.yield_angle,
         plastic_recovery=material.plastic_recovery)
     env.snack_material_parameters.update(board_shape_friction=board_friction,finger_shape_friction=finger_friction)
-    env.snack_material_parameters.update(rigid_contact_ke=contact_ke,body_particle_buffer=particle_buffer)
+    env.snack_material_parameters.update(rigid_contact_ke=contact_ke,finger_contact_ke=finger_contact_ke,body_particle_buffer=particle_buffer)
     env.snack_material_parameters["self_contact_filter_rings"]=self_filter_rings
     if not rigid_only:
         mass=env.model.particle_mass.numpy()[env.scene.by_name["pouch"].particles]

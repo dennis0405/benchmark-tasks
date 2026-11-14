@@ -18,6 +18,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("output", type=Path)
     parser.add_argument("--frames", type=int, default=60)
+    parser.add_argument("--mesh-y",type=int,choices=(12,16,24,32),default=32,
+                        help="Width resolution; folding direction keeps its 40 cells")
     parser.add_argument("--drive", action="store_true")
     parser.add_argument("--coupling", choices=("one_way", "proxy", "unified", "hybrid"), default="one_way")
     parser.add_argument("--ready-start", action="store_true")
@@ -36,6 +38,8 @@ def main():
     parser.add_argument("--disable-rigid-soft-dat",action="store_true")
     parser.add_argument("--rigid-contact-threads",type=int,choices=(4,8,16,32,64),default=4)
     parser.add_argument("--rigid-contact-ke",type=float,default=None)
+    parser.add_argument("--finger-contact-ke",type=float,default=None)
+    parser.add_argument("--rigid-contact-model",choices=("alm","soft"),default="alm")
     parser.add_argument("--body-particle-buffer",type=int,default=None)
     parser.add_argument("--board-skin-mm",type=float,default=0.)
     parser.add_argument("--rebase-z",action="store_true")
@@ -90,6 +94,8 @@ def main():
         if not (args.stage=="seal" and args.table_insert and args.clip and args.drive):
             parser.error("a clip component seed requires --stage seal --table-insert --clip --drive")
         seed_meta=json.loads((args.clip_component_seed/"clip-entry.json").read_text())
+        if seed_meta["arguments"].get("mesh_y",32)!=args.mesh_y:
+            parser.error("checkpoint mesh width resolution differs")
         for key in ("workspace","clip_style","material_profile","hz","physics_hz","coupling"):
             if seed_meta["arguments"][key]!=getattr(args,key):
                 if args.override_physics and key in ("coupling","physics_hz"):continue
@@ -106,7 +112,7 @@ def main():
         for key,default in (("mouth_support","narrow"),("support_extension_mm",0.),("rebase_z",False),("board_skin_mm",0.)):
             if seed_meta["arguments"].get(key,default)!=getattr(args,key):
                 parser.error(f"checkpoint support geometry mismatch: {key}")
-        for key,default in (("board_friction",1.),("finger_friction",None),("self_filter_rings",0),("self_radius_mm",.5)):
+        for key,default in (("board_friction",1.),("finger_friction",None),("finger_contact_ke",None),("self_filter_rings",0),("self_radius_mm",.5)):
             if seed_meta["arguments"].get(key,default)!=getattr(args,key) and not args.override_contact_materials:
                 parser.error(f"checkpoint material change requires --override-contact-materials: {key}")
     interrupted = [False]
@@ -156,7 +162,7 @@ def main():
         shutil.copy2(args.clip_component_seed/"trace.json",sources/"seed-trace.json")
         shutil.copy2(Path(__file__).with_name("resume_clip_component.py"),sources/"resume_clip_component.py")
     started = time.monotonic()
-    sim = make_environment(coupling=args.coupling, ready_start=args.ready_start,
+    sim = make_environment(cells=(40,args.mesh_y),coupling=args.coupling, ready_start=args.ready_start,
                            with_clip=args.clip, material_profile=args.material_profile, control_hz=args.hz,
                            side_access=args.mouth_support=="narrow" and (args.side_access or args.stage in ("regrasp","seal")),
                            physics_hz=args.physics_hz,rigid_cpu=args.rigid_cpu,workspace=args.workspace,
@@ -165,7 +171,7 @@ def main():
                            self_filter_rings=args.self_filter_rings,self_radius=args.self_radius_mm/1000.,
                            rebase_z=args.rebase_z,rigid_contact_ke=args.rigid_contact_ke,
                            body_particle_buffer=args.body_particle_buffer,board_skin_mm=args.board_skin_mm,
-                           rigid_contact_threads=args.rigid_contact_threads,rigid_soft_dat=not args.disable_rigid_soft_dat,proxy_iterations=args.proxy_iterations,tool_rack_style=args.tool_rack_style,proxy_mass_scale=args.proxy_mass_scale,arm_gain_scale=args.arm_gain_scale,tool_parking_shift_x=args.tool_parking_shift_x)
+                           rigid_contact_threads=args.rigid_contact_threads,rigid_soft_dat=not args.disable_rigid_soft_dat,proxy_iterations=args.proxy_iterations,tool_rack_style=args.tool_rack_style,proxy_mass_scale=args.proxy_mass_scale,arm_gain_scale=args.arm_gain_scale,tool_parking_shift_x=args.tool_parking_shift_x,rigid_contact_model=args.rigid_contact_model,finger_contact_ke=args.finger_contact_ke)
     timings = dict(build_s=time.monotonic()-started, driver_tick_s=0., readback_and_metrics_s=0., recording_s=0.)
     entity = sim.scene.by_name["pouch"]
     export_render_geometry(sim, args.output)
@@ -457,6 +463,7 @@ def main():
                   material=sim.snack_material_parameters,
                   arm_gain_scale=sim.snack_arm_gain_scale,
                   proxy_iterations=sim.snack_proxy_iterations,
+                  contact_methods=sim.snack_contact_methods,
                   rigid_soft_dat=sim.snack_rigid_soft_dat,
                   contact_parallel=sim.snack_contact_parallel,
                   hybrid=getattr(getattr(sim,"snack_hybrid_readout",None),"metadata",None),

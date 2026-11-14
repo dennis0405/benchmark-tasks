@@ -28,8 +28,9 @@ def grasp_clip(controller, arm="right"):
     # the handle, so verify the measured pad location before closing.
     nominal=Rotation.from_quat(c.takes._frame_quat((1,0,0),(0,1,0)))
     parking=clip_pose(c)[:3].copy()
-    def target():
-        pose=clip_pose(c)
+    def target(anchor=None):
+        measured_pose=clip_pose(c)
+        pose=measured_pose if anchor is None else anchor
         rotation=Rotation.from_quat(pose[3:])
         quat=(rotation*Rotation.from_euler("x",-np.pi/2)*nominal).as_quat()
         if getattr(c.sim,"snack_coupling",None) in ("unified","hybrid"):
@@ -37,13 +38,18 @@ def grasp_clip(controller, arm="right"):
             # Their midpoint shifts during squeezing; a fixed root offset
             # pushes the free clip sideways instead of centering the jaws.
             model=c.sim.model;poses=c.sim.state.body_q.numpy()
+            measured_root=Rotation.from_quat(measured_pose[3:])
             shape_body=model.shape_body.numpy();local=model.shape_transform.numpy()
             ends={}
             for i,label in enumerate(model.shape_label):
                 for name in ("lower_handle_end","upper_handle_end"):
                     if str(label).endswith("/"+name):
                         body=poses[shape_body[i]]
-                        ends[name]=body[:3]+Rotation.from_quat(body[3:]).apply(local[i,:3])
+                        if anchor is None:
+                            ends[name]=body[:3]+Rotation.from_quat(body[3:]).apply(local[i,:3])
+                        else:
+                            relative=measured_root.inv()*Rotation.from_quat(body[3:])
+                            ends[name]=pose[:3]+rotation.apply(relative.apply(local[i,:3]))
             lower_end,upper_end=ends["lower_handle_end"],ends["upper_handle_end"]
             inset=0. if getattr(c.sim,"snack_tool_rack_style","wide")=="end_access" else .023
             return (lower_end+upper_end)/2+rotation.apply([inset,0,0]),quat
@@ -79,7 +85,8 @@ def grasp_clip(controller, arm="right"):
     c.phase="clip_squeeze_handles"
     hz=float(c.sim.request.physics.control_hz)
     request=0.
-    closing_start=clip_pose(c)[:3].copy()
+    closing_anchor=clip_pose(c).copy()
+    closing_start=closing_anchor[:3].copy()
     for _ in range(c.frames(240)):
         if np.linalg.norm(clip_pose(c)[:3]-closing_start)>.05:
             c.failure="clip displaced more than 50 mm while squeezing"
@@ -100,7 +107,7 @@ def grasp_clip(controller, arm="right"):
         request=min(.85,request+.15/hz)
         panel.grip_request=request
         if getattr(c.sim,"snack_coupling",None) in ("unified","hybrid"):
-            handle,turn=target()
+            handle,turn=target(anchor=closing_anchor)
             desired=c.takes._fold_targets(c.film,{arm:handle},{arm:turn})[arm]
             current=np.asarray(panel.cursor_pos)
             delta=.35*(desired-current)

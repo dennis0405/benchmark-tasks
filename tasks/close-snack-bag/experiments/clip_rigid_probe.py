@@ -29,6 +29,7 @@ def main():
     parser.add_argument("--rigid-contact-threads",type=int,choices=(4,8,16,32,64),default=4)
     parser.add_argument("--rigid-contact-ke",type=float,default=None)
     parser.add_argument("--body-particle-buffer",type=int,default=None)
+    parser.add_argument("--record-rigid-forces",action="store_true")
     parser.add_argument("--plan",action="store_true")
     parser.add_argument("--frames",type=int,default=1000)
     parser.add_argument("--physics-hz",type=int,default=1200)
@@ -46,6 +47,7 @@ def main():
     parser.add_argument("--insert-xy",type=float,nargs=2,default=None,
                         help="After carry, test the measured blade-height servo over the board")
     parser.add_argument("--blade-clearance-mm",type=float,default=.4)
+    parser.add_argument("--rigid-contact-model",choices=("alm","soft"),default="alm")
     parser.add_argument("--support-extension-mm",type=float,default=0.)
     parser.add_argument("--finger-friction",type=float,default=None)
     args=parser.parse_args()
@@ -78,11 +80,17 @@ def main():
                          support_extension=args.support_extension_mm/1000.,
                          rigid_contact_ke=args.rigid_contact_ke,body_particle_buffer=args.body_particle_buffer,
                          rigid_contact_threads=args.rigid_contact_threads,tool_rack_style=args.tool_rack_style,tool_parking_shift_x=args.tool_parking_shift_x,proxy_mass_scale=args.proxy_mass_scale,
-                         proxy_iterations=args.proxy_iterations,arm_gain_scale=args.arm_gain_scale)
+                         proxy_iterations=args.proxy_iterations,arm_gain_scale=args.arm_gain_scale,
+                         rigid_contact_model=args.rigid_contact_model)
     assert sim.model.particle_count==0
     solver=sim.pipeline.program.solver
     actual=getattr(solver,"rigid",solver)
     if args.coupling=="one_way":assert bool(actual.use_mujoco_cpu)==args.cpu
+    rigid_reader=None
+    if args.record_rigid_forces:
+        if args.coupling!="unified":raise ValueError("Rigid force recording currently isolates unified VBD")
+        from unified_contact import install
+        rigid_reader=install(sim)
     from tests.fixtures.grasp import open_session,tick
     session=open_session(sim,9766)
     seed_reset=None
@@ -162,6 +170,28 @@ def main():
                               quat=panel.ik.ee_pose(sim.state)[1].tolist(),
                               target=np.asarray(panel.cursor_pos).tolist(),
                               target_quat=np.asarray(panel.cursor_quat).tolist()) for a,panel in session.arms.items()}))
+        if rigid_reader:
+            c=rigid_reader.contacts;count=min(int(c.rigid_contact_count.numpy()[0]),c.rigid_contact_max)
+            a=c.rigid_contact_shape0.numpy()[:count];b=c.rigid_contact_shape1.numpy()[:count]
+            forces=rigid_reader.observables.contact_f.numpy()[:count,:3]
+            normal=c.rigid_contact_normal.numpy()[:count];owner=sim.model.shape_body.numpy()
+            mu=sim.model.shape_material_mu.numpy();pairs=[]
+            clip_ids=set(sim.scene.by_name["clip"].bodies)
+            fingers={int(v) for side in sim.scene.embodiment.arms["right"].finger_bodies for v in np.asarray(side).reshape(-1)}
+            for index,(s0,s1) in enumerate(zip(a,b)):
+                if s0<0 or s1<0:continue
+                b0,b1=int(owner[s0]),int(owner[s1])
+                if b0 in clip_ids and b1 in fingers:f=forces[index]
+                elif b1 in clip_ids and b0 in fingers:f=-forces[index]
+                else:continue
+                n=normal[index];fn=float(f@n);ft=f-fn*n
+                if np.linalg.norm(f)<1e-8:continue
+                pairs.append(dict(labels=[str(sim.model.shape_label[s0]),str(sim.model.shape_label[s1])],
+                    shape_mu=[float(mu[s0]),float(mu[s1])],clip_force_world_N=f.tolist(),
+                    normal_abs_N=abs(fn),tangent_N=float(np.linalg.norm(ft))))
+            trace[-1]["rigid_grip_contacts"]=pairs
+            trace[-1]["spring_torque_Nm"]=float(sim.snack_passive_spring.observed.numpy()[0])
+            trace[-1]["finger_actuator_forces_N"]=sim.control.joint_f.numpy()[[6,7,14,15]].tolist()
         if step%30==0:print("PROGRESS",trace[-1],flush=True)
         if step%60==0:save()
         if not trace[-1]["finite"]:
