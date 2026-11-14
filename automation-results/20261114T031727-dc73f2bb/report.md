@@ -20,7 +20,7 @@ Status: **blocked**
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 
 
-diagnostic cancelled before native launch
+Brev startup failed: provider FAILURE / UNHEALTHY / NOT READY; console START FAILED; SSH closed. Ordinary stop returned but STOPPED is unconfirmed. No r38 remote worker or Dream was launched. Waiting for recovery choice.
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`
