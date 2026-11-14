@@ -20,7 +20,7 @@ Status: **blocked**
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 
 
-novelty cancelled at batch boundary; partial evidence preserved
+cryptography>=3.1 is required for AES algorithm
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`
