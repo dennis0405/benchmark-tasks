@@ -1,0 +1,30 @@
+{
+  "candidate_digest": "132d3b61fd433c217089e53972eed3f76a84a8b9d94db2dc2bd51e60b6838e4a",
+  "source_digest": "9f2dbbe08d5e3c2c9b12b6e2d94a59d9da8c82b095109eb48fc0e328d615207f",
+  "review": {
+    "verdict": "pass",
+    "findings": [
+      "The previous factual-preflight failure is resolved: both the 530 N maximum propelling-force ceiling and the 2,000 N maximum reaction-force ceiling are now explicit measured limits and failure conditions.",
+      "The selected build plan now specifies linear axial impact and the mounted orientation: fixed M16×1.5 threaded housing, rear-accessible adjustment collar, and 4.0 mm piston rod facing the carriage.",
+      "Primary page images verify the selected ECO OEM .35M data: 12.0 mm stroke, 17.0 J/cycle, 0.3–3.30 m/s, D=4.0 mm, G=11.2 mm, H=14.5 mm, F=87.4 mm, A=100.6 mm, 4.5/9.8 N return force, 530 N maximum propelling force, and 2,000 N maximum reaction force. The separate adjustment image verifies 180° adjustment with setscrew locking for the ECO OEM 0.1M–0.5M family.",
+      "The candidate correctly uses the non-button overall dimension A=100.6 mm and does not mix it with the optional button dimension A1=110.7 mm. It also correctly distinguishes the 4.0 mm rod diameter, 11.2 mm knob diameter, and 14.5 mm axial knob length.",
+      "The clean 5% minimum-energy quotation is supported by the source image, and the 0.85 J minimum follows correctly from the detailed 17.0 J/cycle rating. The extraction artifact in the following sentence is not quoted.",
+      "The AAC manual independently establishes industrial robot X/Z-axis shock-absorber adjustment and lockout relevance. The candidate does not claim that the Enidine damper is interchangeable with the AAC component.",
+      "The essential mechanism is preserved: the setscrew remains captive, only the hex bit is withdrawn and re-engaged, the socket moves with the collar, and adjustment must be followed by physical relocking and dynamic testing.",
+      "The M3×3 DIN 916 screw is clearly disclosed as a representative prototype choice supported by separate fastener references, not asserted to be original Enidine hardware. Unpublished damping, torque, and friction properties remain explicit modeling assumptions requiring later component validation.",
+      "The rigid-PhysX construction plan is sufficiently pinned and testable for an attempt. It requires native contacts, passive damping, an external hard stop, substep force/damage capture, energy and travel checks, parameter sensitivity, reset validation, and prohibits in-episode pose/velocity writes, welding, collision suppression, and hidden success flags.",
+      "The mathematical URDF reach result is appropriately treated only as a layout lead, not as evidence of contact, collision clearance, grasping, damping, or demo success. Novelty is correctly deferred to the separate next-stage review."
+    ],
+    "evidence_paths": [
+      "artifacts/selected.json",
+      "artifacts/candidates.json",
+      "input/last-failure.json",
+      "input/operator-source-notes.json",
+      "input/sources.json",
+      "input/enidine-oem-small-source-p21.png",
+      "input/enidine-adjustment-source-p35.png",
+      "artifacts/fastener-reference-supplement.json",
+      "measurements/urdf-reach-phase15-preflight.json"
+    ]
+  }
+}
