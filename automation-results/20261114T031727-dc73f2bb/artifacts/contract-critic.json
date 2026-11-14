@@ -1,0 +1,32 @@
+{
+  "verdict": "repair",
+  "findings": [
+    "All 17 required-control scores recompute consistently from the stated formula: untouched 0.00; aligned sub-threshold, slow-press, and one-hand controls 0.20; one valid fracture 0.30; four fractures with three contained fragments 0.85; both complete terminal controls and the 480 Hz replay 1.00; all nine hard-failure controls 0.00. The retained-insert bonus first becomes available only after the fourth credited fracture. Pre-timeout controls are sampled before timeout, while a deterministically inaccessible fragment at 360 seconds overrides partial credit.",
+    "The typed contract timebase is arithmetically consistent: 7,200 control steps at 20 Hz equals 360 seconds; production and refinement physics rates are 240/480 Hz with callback dt 1/240 and 1/480 seconds. The pinned runtime source supports configurable control rate and PRE/POST physics callbacks, but no native measurement verifies these values. The only attempted rollout recorded a 10 Hz embodiment, zero physics steps, and a pre-reset CUDA error, so it cannot validate the contract's 20 Hz execution configuration or any physics behavior.",
+    "The implementation cannot realize the selected essential ability. The mandrel radius is 12 mm while the insert radius is 2.35 mm, making coaxial insertion impossible. The hammer is one box rather than separate head and handle bodies. Inserts and tangs are static primitives without masses or native breakable joints; only the mandrel and hammer are free bodies. Therefore valid and invalid strikes cannot physically create the required attached-to-free transitions, insert damage, four recoverable fragments, or retention failures.",
+    "The scorer is absent: task/task.py always returns score 0 and success false, registers no native callback, consumes no contacts or joint transitions, and provides no YAM manipulation demo. Consequently none of the partial, failure, terminal, reset, or refinement controls is executable or independently replayable.",
+    "Contact freshness remains unvalidated. Although the contract describes POST_PHYSICS_STEP consumption and reset clearing, it does not bind the implementation to verified native contact fields, pair identifiers, timestamps, force units, contact-point velocities, or a demonstrated sampling/reset order. No callback is registered and no contact reading exists.",
+    "Several physical predicates still lack executable, deterministic definitions tied to authored geometry: forbidden-volume overlap, the closed-trap regions and opening-width test, insert unthreading and coil fracture, visible shell fracture, safe grasp acquisition, catch-surface bounds, unsafe self-collision, and camera workspace-corner projection. These prevent independent reproduction of scoring and hard failures.",
+    "Bad physical events are specified as failures rather than suppressed, but the scene cannot simulate them: there are no breakable joints, movable inserts, damageable shell state, or native transition logger. Thus invalid strikes cannot remain physically represented as required.",
+    "task/run_component_diagnostics.py is only an aggregator for the obsolete zero-step sandbox rollout. It explicitly reports all frozen readings as null, repeats the invalid conclusion that no CUDA GPU was available for the installed runtime, does not register callbacks, and does not exercise fracture, invalid strikes, retention, containment, reset freshness, 480 Hz refinement, slow pressing, one-hand alternatives, or any required control.",
+    "The generated aggregate is stale relative to the repaired contract: it retains duplicate measurement names for the two axial-impulse bounds and older ambiguous names such as shell damage energy accumulator. Its task digest is not shown as bound to the current contract digest, so it cannot serve as contract-consistent evidence.",
+    "Industrial evidence supports the core mapping—four M2.5 × 3.75 mm inserts, tang removal, verification that tangs do not remain, notch fracture, and an M2.5 break-off tool—but does not support the prototype impulse, damage, geometry, or tolerance values. The contract correctly labels those values as assumptions pending native validation."
+  ],
+  "evidence_paths": [
+    "input/request.json",
+    "input/last-failure.json",
+    "input/runtime-api-preflight.json",
+    "input/runtime.json",
+    "input/sources/s-df759bd2377bbb57.json",
+    "input/sources/s-6195df1bebbb33ef.json",
+    "artifacts/selected.json",
+    "artifacts/contract.json",
+    "task/task.py",
+    "task/procedural_geometry.py",
+    "task/run_component_diagnostics.py",
+    "task/asset-manifest.json",
+    "measurements/component-physics-aggregate.json",
+    "measurements/native-untouched/adhoc_d266806b.json",
+    "measurements/native-untouched/records/20261114_164846_8d146619/scene-0-e0/record.json"
+  ]
+}
