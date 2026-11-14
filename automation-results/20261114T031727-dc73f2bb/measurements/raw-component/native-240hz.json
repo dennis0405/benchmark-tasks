@@ -1,5 +1,823 @@
 {
-  "status": "error",
-  "error": "AttributeError: 'NoneType' object has no attribute 'dtype'",
-  "traceback": "Traceback (most recent call last):\n  File \"/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb/workspace/task/run_component_diagnostics.py\", line 165, in worker\n    hammerv.apply_forces_and_torques_at_position(force,torque,None,None,False)\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/extscache/omni.physics.tensors-110.3.2+110.3.0.lx64.r.cp312.u7f4/omni/physics/tensors/api.py\", line 3502, in apply_forces_and_torques_at_position\n    indices = self._frontend.as_contiguous_uint32(indices)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/extscache/omni.physics.tensors-110.3.2+110.3.0.lx64.r.cp312.u7f4/omni/physics/tensors/frontend_warp.py\", line 110, in as_contiguous_uint32\n    ctype = wp.types.type_ctype(tensor.dtype)\n                                ^^^^^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'dtype'\n"
+  "status": "complete",
+  "hz": 240,
+  "callback_dt_mean": 0.004166666883975267,
+  "callback_handle_count": 2,
+  "measurements": {
+    "settled-fixture-linear-speed-maximum": 4.525822532741586e-06,
+    "settled-loose-tool-linear-speed-maximum": 0.007349088788032532,
+    "untouched-initial-task-score": 0.0,
+    "initial-native-fractured-tang-count": 0,
+    "initial-credited-valid-fracture-count": 0,
+    "initial-tray-resting-fragment-count": 0,
+    "initial-insert-axial-displacement-maximum": 8.344650268554688e-06,
+    "initial-rigid-body-penetration-maximum": 0.0,
+    "initial-open-contact-episode-count": 0,
+    "credited-impact-axis-angle-maximum": 0.0,
+    "credited-impact-radial-offset-maximum": 0.0,
+    "completed-insert-strike-count-minimum": 0,
+    "qualified-strike-axial-impulse-minimum": 0.0,
+    "qualified-strike-axial-impulse-maximum": 0.0,
+    "qualified-strike-cumulative-offaxis-impulse-maximum": 0.0,
+    "invalid-strike-cumulative-offaxis-impulse-minimum": 0,
+    "full-success-native-fractured-tang-count": 0,
+    "full-success-credited-valid-fracture-count": 0,
+    "full-success-tray-resting-fragment-count": 0,
+    "retained-insert-axial-displacement-maximum": 8.344650268554688e-06,
+    "retained-insert-angular-displacement-maximum": 0.6783939599990845,
+    "postfracture-forbidden-penetration-maximum": 0.0,
+    "camera-workspace-valid-depth-fraction-minimum": 0.7458334492640717,
+    "camera-workspace-corners-visible": 0,
+    "terminal-hold-valid-camera-frame-count-minimum": 0,
+    "terminal-stable-hold-duration-minimum": 0.0,
+    "terminal-fragment-linear-speed-maximum": 0.016089918091893196,
+    "terminal-fragment-angular-speed-maximum": 51.980804443359375,
+    "unsafe-self-contact-impulse-maximum": 0.0,
+    "shell-incident-contact-work-maximum": 0.0
+  },
+  "evidence": {
+    "pre_count": 1352,
+    "post_count": 1352,
+    "contact_count": 0,
+    "joint_break_events": [
+      {
+        "step": 1,
+        "joint": "/World/joints/J_shell_4",
+        "native_joint_id": "(161281, 0)"
+      },
+      {
+        "step": 1,
+        "joint": "/World/joints/J_shell_3",
+        "native_joint_id": "(161025, 0)"
+      },
+      {
+        "step": 1,
+        "joint": "/World/joints/J_shell_2",
+        "native_joint_id": "(160769, 0)"
+      },
+      {
+        "step": 1,
+        "joint": "/World/joints/J_shell_1",
+        "native_joint_id": "(160513, 0)"
+      },
+      {
+        "step": 1,
+        "joint": "/World/joints/J_shell_0",
+        "native_joint_id": "(160257, 0)"
+      }
+    ],
+    "episodes": [
+      {
+        "insert": 0,
+        "axial": 0,
+        "offaxis": 0,
+        "radial": null,
+        "angle_deg": 0.0,
+        "force_path_steps": 0
+      },
+      {
+        "insert": 1,
+        "axial": 0,
+        "offaxis": 0,
+        "radial": null,
+        "angle_deg": 0.0,
+        "force_path_steps": 0
+      },
+      {
+        "insert": 2,
+        "axial": 0,
+        "offaxis": 0,
+        "radial": null,
+        "angle_deg": 0.0,
+        "force_path_steps": 0
+      },
+      {
+        "insert": 3,
+        "axial": 0,
+        "offaxis": 0,
+        "radial": null,
+        "angle_deg": 0.0,
+        "force_path_steps": 0
+      }
+    ],
+    "native_broken": 0,
+    "tray_count": 0,
+    "incident_work_samples": 0,
+    "rgb_shape": [
+      480,
+      640,
+      3
+    ],
+    "depth_shape": [
+      480,
+      640
+    ],
+    "raw_events": "measurements/raw-component/native-240hz-events.jsonl",
+    "camera_frames": [
+      {
+        "native_time_s": 3.6333333333333333,
+        "target_index": 0,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 1
+      },
+      {
+        "native_time_s": 3.683333333333333,
+        "target_index": 1,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 2
+      },
+      {
+        "native_time_s": 3.7333333333333334,
+        "target_index": 2,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 3
+      },
+      {
+        "native_time_s": 3.783333333333333,
+        "target_index": 3,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 4
+      },
+      {
+        "native_time_s": 3.8333333333333335,
+        "target_index": 4,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 5
+      },
+      {
+        "native_time_s": 3.8833333333333333,
+        "target_index": 5,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 6
+      },
+      {
+        "native_time_s": 3.933333333333333,
+        "target_index": 6,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 7
+      },
+      {
+        "native_time_s": 3.9833333333333334,
+        "target_index": 7,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 8
+      },
+      {
+        "native_time_s": 4.033333333333333,
+        "target_index": 8,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 9
+      },
+      {
+        "native_time_s": 4.083333333333333,
+        "target_index": 9,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 10
+      },
+      {
+        "native_time_s": 4.133333333333333,
+        "target_index": 10,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 11
+      },
+      {
+        "native_time_s": 4.183333333333334,
+        "target_index": 11,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 12
+      },
+      {
+        "native_time_s": 4.233333333333333,
+        "target_index": 12,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 13
+      },
+      {
+        "native_time_s": 4.283333333333333,
+        "target_index": 13,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 14
+      },
+      {
+        "native_time_s": 4.333333333333333,
+        "target_index": 14,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 15
+      },
+      {
+        "native_time_s": 4.383333333333333,
+        "target_index": 15,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 16
+      },
+      {
+        "native_time_s": 4.433333333333334,
+        "target_index": 16,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 17
+      },
+      {
+        "native_time_s": 4.483333333333333,
+        "target_index": 17,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 18
+      },
+      {
+        "native_time_s": 4.533333333333333,
+        "target_index": 18,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 19
+      },
+      {
+        "native_time_s": 4.583333333333333,
+        "target_index": 19,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 20
+      },
+      {
+        "native_time_s": 4.633333333333333,
+        "target_index": 20,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 21
+      },
+      {
+        "native_time_s": 4.683333333333334,
+        "target_index": 21,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 22
+      },
+      {
+        "native_time_s": 4.733333333333333,
+        "target_index": 22,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 23
+      },
+      {
+        "native_time_s": 4.783333333333333,
+        "target_index": 23,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 24
+      },
+      {
+        "native_time_s": 4.833333333333333,
+        "target_index": 24,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 25
+      },
+      {
+        "native_time_s": 4.883333333333333,
+        "target_index": 25,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 26
+      },
+      {
+        "native_time_s": 4.933333333333334,
+        "target_index": 26,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 27
+      },
+      {
+        "native_time_s": 4.983333333333333,
+        "target_index": 27,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 28
+      },
+      {
+        "native_time_s": 5.033333333333333,
+        "target_index": 28,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 29
+      },
+      {
+        "native_time_s": 5.083333333333333,
+        "target_index": 29,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 30
+      },
+      {
+        "native_time_s": 5.133333333333333,
+        "target_index": 30,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 31
+      },
+      {
+        "native_time_s": 5.183333333333334,
+        "target_index": 31,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 32
+      },
+      {
+        "native_time_s": 5.233333333333333,
+        "target_index": 32,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 33
+      },
+      {
+        "native_time_s": 5.283333333333333,
+        "target_index": 33,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 34
+      },
+      {
+        "native_time_s": 5.333333333333333,
+        "target_index": 34,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 35
+      },
+      {
+        "native_time_s": 5.383333333333333,
+        "target_index": 35,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 36
+      },
+      {
+        "native_time_s": 5.433333333333334,
+        "target_index": 36,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 37
+      },
+      {
+        "native_time_s": 5.483333333333333,
+        "target_index": 37,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 38
+      },
+      {
+        "native_time_s": 5.533333333333333,
+        "target_index": 38,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 39
+      },
+      {
+        "native_time_s": 5.583333333333333,
+        "target_index": 39,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 40
+      },
+      {
+        "native_time_s": 5.633333333333333,
+        "target_index": 40,
+        "mask_pixels": 35941,
+        "valid_depth_fraction": 0.7458334492640717,
+        "corners_visible": false,
+        "camera_frame": 41
+      }
+    ],
+    "initial_insert_poses": [
+      [
+        0.2849959135055542,
+        -0.03216733783483505,
+        0.7849822044372559,
+        5.253690460449434e-07,
+        -1.3929728766015614e-06,
+        7.980521331774071e-05,
+        0.9999999403953552
+      ],
+      [
+        0.3149760365486145,
+        0.03185998648405075,
+        0.7849891781806946,
+        3.0588921617891174e-07,
+        -1.3206451967562316e-06,
+        7.970774458954111e-05,
+        0.9999999403953552
+      ],
+      [
+        0.36498913168907166,
+        -0.03213844448328018,
+        0.7849934697151184,
+        5.088469947622798e-07,
+        -1.3635060440719826e-06,
+        7.981558155734092e-05,
+        0.9999999403953552
+      ],
+      [
+        0.4049917161464691,
+        0.03186815232038498,
+        0.7849700450897217,
+        4.704332070559758e-07,
+        -1.2544004448500345e-06,
+        7.974951586220413e-05,
+        0.9999999403953552
+      ]
+    ],
+    "terminal_insert_poses": [
+      [
+        0.28469741344451904,
+        -0.03262989968061447,
+        0.7849740386009216,
+        1.4809821550443303e-05,
+        -1.6229898847086588e-06,
+        0.00026973485364578664,
+        0.9999999403953552
+      ],
+      [
+        0.31466448307037354,
+        0.03137855604290962,
+        0.7849859595298767,
+        0.005651248153299093,
+        -0.0005484729190357029,
+        0.001695850514806807,
+        0.9999824166297913
+      ],
+      [
+        0.36470186710357666,
+        -0.03258323296904564,
+        0.7849851250648499,
+        1.4855305380478967e-05,
+        -1.6869812498043757e-06,
+        0.00026969745522364974,
+        0.9999999403953552
+      ],
+      [
+        0.40466955304145813,
+        0.03145410865545273,
+        0.7849708795547485,
+        1.4638791071774904e-05,
+        -1.6018803989936714e-06,
+        0.0002696591545827687,
+        0.9999999403953552
+      ]
+    ],
+    "initial_tang_poses": [
+      [
+        0.28499820828437805,
+        -0.03217804431915283,
+        0.7870783805847168,
+        0.0003838518459815532,
+        5.6043816584860906e-05,
+        8.693873678566888e-05,
+        0.9999998807907104
+      ],
+      [
+        0.31497448682785034,
+        0.03185182437300682,
+        0.7870867848396301,
+        0.0003082287439610809,
+        -4.946610351908021e-05,
+        8.798366616247222e-05,
+        0.9999999403953552
+      ],
+      [
+        0.36498820781707764,
+        -0.032144006341695786,
+        0.7870917320251465,
+        0.00022866285871714354,
+        -4.4693631934933364e-05,
+        8.765435632085428e-05,
+        0.9999998807907104
+      ],
+      [
+        0.4049924612045288,
+        0.03185928985476494,
+        0.7870679497718811,
+        0.0003132759593427181,
+        6.183476216392592e-06,
+        8.69787618285045e-05,
+        0.9999999403953552
+      ]
+    ],
+    "terminal_fragments": [
+      {
+        "pose": [
+          0.28469741344451904,
+          -0.03262995928525925,
+          0.7870709896087646,
+          1.4811545952397864e-05,
+          -1.6570478464927874e-06,
+          0.00026969308964908123,
+          0.9999999403953552
+        ],
+        "twist": [
+          -2.6959071419696556e-06,
+          2.5582430680515245e-06,
+          7.092295390975778e-07,
+          -1.3979892173665576e-05,
+          -0.00026771408738568425,
+          -1.470627285016235e-05
+        ],
+        "vertices": [
+          [
+            0.2830975897216655,
+            -0.032955815590199826,
+            0.7868459746663153
+          ],
+          [
+            0.2830975882339176,
+            -0.032955828920992594,
+            0.7872959746661155
+          ],
+          [
+            0.28309723912063794,
+            -0.03230581568503969,
+            0.786845993920743
+          ],
+          [
+            0.2830972376328901,
+            -0.03230582901583246,
+            0.7872959939205431
+          ],
+          [
+            0.286297589256148,
+            -0.03295408955468603,
+            0.7868459852969862
+          ],
+          [
+            0.28629758776840014,
+            -0.0329541028854788,
+            0.7872959852967863
+          ],
+          [
+            0.28629723865512047,
+            -0.0323040896495259,
+            0.7868460045514138
+          ],
+          [
+            0.2862972371673726,
+            -0.03230410298031867,
+            0.787296004551214
+          ]
+        ],
+        "inside": false,
+        "fresh_tray_support": false,
+        "contained": false
+      },
+      {
+        "pose": [
+          0.3148747682571411,
+          0.031736403703689575,
+          0.7871288061141968,
+          0.06230882927775383,
+          0.0011340744094923139,
+          -0.07101571559906006,
+          0.9955265522003174
+        ],
+        "twist": [
+          -0.00826246291399002,
+          -0.012945355847477913,
+          -0.004799473099410534,
+          -50.89861297607422,
+          1.2501420974731445,
+          10.47724723815918
+        ],
+        "vertices": [
+          [
+            0.3132463942212313,
+            0.03167116271851502,
+            0.7868830590598913
+          ],
+          [
+            0.31324342790681003,
+            0.031615263150535595,
+            0.7873295637511937
+          ],
+          [
+            0.31333839352258774,
+            0.032309559409826605,
+            0.786963593483831
+          ],
+          [
+            0.31333542720816654,
+            0.03225365984184718,
+            0.7874100981751334
+          ],
+          [
+            0.3164141093061157,
+            0.03121914756553197,
+            0.7868475140532601
+          ],
+          [
+            0.3164111429916945,
+            0.031163247997552546,
+            0.7872940187445625
+          ],
+          [
+            0.3165061086074722,
+            0.031857544256843555,
+            0.7869280484771999
+          ],
+          [
+            0.31650314229305093,
+            0.03180164468886413,
+            0.7873745531685022
+          ]
+        ],
+        "inside": false,
+        "fresh_tray_support": false,
+        "contained": false
+      },
+      {
+        "pose": [
+          0.36470186710357666,
+          -0.03258329629898071,
+          0.7870820164680481,
+          -1.4740327060280833e-05,
+          1.4654376627731835e-06,
+          -0.00026976384106092155,
+          -0.9999998807907104
+        ],
+        "twist": [
+          -2.9965117391839158e-06,
+          4.399094450491248e-06,
+          4.883644578512758e-06,
+          -0.00019689899636432528,
+          -0.00037327432073652744,
+          -1.4219657714420464e-05
+        ],
+        "vertices": [
+          [
+            0.3631020433406029,
+            -0.032909152862332425,
+            0.7868570021850679
+          ],
+          [
+            0.36310204202528795,
+            -0.03290916612898098,
+            0.7873070021848704
+          ],
+          [
+            0.36310169264762326,
+            -0.03225915295721917,
+            0.7868570213469769
+          ],
+          [
+            0.3631016913323083,
+            -0.032259166223867736,
+            0.7873070213467793
+          ],
+          [
+            0.366302042874845,
+            -0.03290742637409369,
+            0.7868570115893169
+          ],
+          [
+            0.36630204155953006,
+            -0.032907439640742255,
+            0.7873070115891193
+          ],
+          [
+            0.36630169218186537,
+            -0.032257426468980444,
+            0.7868570307512258
+          ],
+          [
+            0.3663016908665504,
+            -0.032257439735629,
+            0.7873070307510283
+          ]
+        ],
+        "inside": false,
+        "fresh_tray_support": false,
+        "contained": false
+      },
+      {
+        "pose": [
+          0.4046695828437805,
+          0.03145404905080795,
+          0.7870678305625916,
+          1.4519860087602865e-05,
+          -1.436718434888462e-06,
+          0.00026976410299539566,
+          0.9999999403953552
+        ],
+        "twist": [
+          -4.351036295702215e-06,
+          1.1263958867857582e-06,
+          4.801244358532131e-06,
+          -8.777572656981647e-05,
+          7.762516179354861e-05,
+          -1.3250284609966911e-05
+        ],
+        "vertices": [
+          [
+            0.40306975906809034,
+            0.031128192387346907,
+            0.7868428165149979
+          ],
+          [
+            0.40306975777856907,
+            0.03112817931912479,
+            0.7872928165148063
+          ],
+          [
+            0.40306940837475025,
+            0.03177819229246836,
+            0.786842835390311
+          ],
+          [
+            0.403069407085229,
+            0.03177817922424624,
+            0.7872928353901194
+          ],
+          [
+            0.40626975860233205,
+            0.031129918877369663,
+            0.7868428257350637
+          ],
+          [
+            0.4062697573128108,
+            0.031129905809147543,
+            0.7872928257348721
+          ],
+          [
+            0.40626940790899196,
+            0.03177991878249112,
+            0.7868428446103768
+          ],
+          [
+            0.4062694066194707,
+            0.031779905714268995,
+            0.7872928446101852
+          ]
+        ],
+        "inside": false,
+        "fresh_tray_support": false,
+        "contained": false
+      }
+    ]
+  },
+  "checks": [],
+  "artifacts": [
+    "measurements/raw-component/native-240hz-events.jsonl"
+  ]
 }
