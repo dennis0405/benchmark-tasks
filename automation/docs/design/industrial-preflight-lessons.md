@@ -140,3 +140,18 @@ source-reading error, so another favorable verdict was not requested. The candid
 rejected and its evidence archived; family-specific source-review leads were cleared
 before restarting industrial research. The preserved result checkpoint is e6ee89c.
 No new task environment, native demo/scorer or Dream evaluation was completed.
+
+
+## Symbolic benchmark goals need their actual state implementation
+
+The new HSR12X jig-transfer candidate passed factual preflight. Its six-suite analyst
+blocked on BEHAVIOR's installing_a_trailer_hitch because BDDL only specifies `attached`.
+The original pinned bddl_utils.py already maps that predicate to AttachedTo, but the
+backend state implementation was absent from the corpus. The collector now includes
+attached_to.py as a mandatory original source. It implements male/female metadata-link
+alignment followed by a fixed/spherical joint; the next analysis must inspect that actual
+mechanism before deciding whether the central ability remains ambiguous. This expands
+evidence, not a requested verdict or a native-physics success claim. A genuinely unresolved
+required overlap still blocks. The manufacturer source supplement independently verifies
+small-model HSR retention exceptions and consistent A1-194/195 geometry; prototype
+circulation/containment remains unvalidated.

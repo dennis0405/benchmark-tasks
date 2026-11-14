@@ -48,6 +48,7 @@ CORPORA = {
             "bddl3/bddl/activity_definitions/*.bddl",
             "OmniGibson/omnigibson/tasks/behavior_task.py",
             "OmniGibson/omnigibson/utils/bddl_utils.py",
+            "OmniGibson/omnigibson/object_states/attached_to.py",
         ],
     ),
     "SimplerEnv": (

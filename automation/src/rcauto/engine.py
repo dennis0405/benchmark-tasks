@@ -591,8 +591,12 @@ class Production:
             "mechanism and tested ability across each complete registry/inventory; do not copy "
             "neighbors or conclusions from a rejected prior candidate family. Read complete "
             "original files for inspected "
-            "neighbors and quote short exact supporting excerpts. Report uncertain for genuine "
-            "required coverage/ability ambiguity. Do not "
+            "neighbors and quote short exact supporting excerpts. When an abstract goal predicate "
+            "underspecifies a mechanism, inspect its actual mapping/backend state implementation "
+            "in the corpus before declaring the mechanism unavailable. Evaluate ambiguity about "
+            "the same central tested ability, rather than a shared ubiquitous primitive alone. "
+            "Retain uncertain when the original evidence still cannot resolve a plausible required "
+            "overlap or coverage gap. Do not "
             "claim any simulator/demo/model success from this source comparison. This is the "
             + stage
             + " novelty analysis; retain every required source/novelty quality gate.",
