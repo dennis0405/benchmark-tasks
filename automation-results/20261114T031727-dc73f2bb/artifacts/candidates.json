@@ -1,101 +1,149 @@
 {
   "candidates": [
     {
-      "id": "er32-collet-nut-preassembly",
-      "title": "Preassemble an ER32 collet into its eccentric clamping nut",
-      "objective": "Orient a compatible ER32 collet and nut, engage the collet groove with the marked eccentric ring, and perform the prescribed tilt-and-roll motion until the collet snaps into retention, without threading the nut onto a holder.",
+      "id": "ewa15-tool-replacement-rebalancing",
+      "title": "Replace and rebalance a spring-balancer-supported industrial tool",
+      "objective": "On an EWA-15-class spring balancer carrying a documented 9–15 kg load, physically lock and proof-check the drum, remove the old tool, adjust spring preload with a wrench while reading the gauge, attach and support the replacement tool, release the lock, and trim preload until the tool remains balanced.",
       "skills": [
-        "small-part pose recognition",
-        "groove-to-eccentric-ring alignment",
-        "bimanual stabilization",
-        "tilt-and-roll insertion",
-        "force-controlled snap engagement",
-        "nondestructive retention verification"
+        "bimanual suspended-load stabilization",
+        "pull-and-turn lock-pin manipulation",
+        "contact-guided drum-slot indexing",
+        "hook release and attachment",
+        "wrench-to-worm engagement",
+        "gauge-guided preload adjustment",
+        "controlled lock release under residual spring force"
       ],
-      "success_conditions": "After both grippers release, the collet remains correctly retained for 3 seconds and survives a calibrated light withdrawal check. Zero score for axial forcing, inverted assembly, false or scripted retention, permanent deformation, damage, dropped parts, or state overwrite. Correct orientation and initial groove capture may receive partial credit but do not constitute success.",
-      "industrial_value": "REGO-FIX defines collet-to-nut preassembly as part of the ER tooling procedure and warns that improper assembly can damage collet concentricity or destroy the nut.",
-      "dexterity": "High: an eccentric lip must first capture a narrow groove, followed by changing-axis insertion and elastic snap engagement rather than ordinary peg insertion.",
+      "success_conditions": "The drum pin must physically enter a slot and resist an upward/downward proof motion before tool removal. The replacement must be within 9–15 kg, attached before unlock, and supported during release. After adjustment, it must remain hands-off without abrupt rise or drop and traverse 70–140 mm under physical spring forces. Zero score for removing an unlocked load, releasing the balancer unloaded, snap-back, tool drop, overtravel, over-tension damage, teleportation, welding, or direct state writes. Partial milestones are verified locking, safe exchange, preload adjustment, and balanced release.",
+      "industrial_value": "The manufacturer prescribes drum locking, load verification, worm adjustment, attachment before release, and final balance checking for tool replacement; it warns that unsafe release can cause snap-back or a dropped tool.",
+      "dexterity": "High. The task combines indexed locking, force-based proof checking, manipulation of a heavy suspended tool, hook handling, wrench engagement, visual gauge feedback, and guarded bimanual release.",
       "evidence": [
         {
-          "source_id": "s-383797c64106a344",
-          "locator": "ER System Operating Manual, page 1, “Assembling collet and clamping nut”",
-          "quote_sha256": "cfbe4912fccbca2fa64c5630329232b47f812cb376ab4fa6717aef9e4d8cd242"
+          "source_id": "s-ac62801e0a07361f",
+          "locator": "EWA Standard Spring Balancer Instruction Manual, page 9, section 4-2, step 2",
+          "quote_sha256": "a3938db88a8a1824377694fcbb5f84a815c35b903e8d3f54eabc969a93c9f69a"
+        },
+        {
+          "source_id": "s-ac62801e0a07361f",
+          "locator": "EWA Standard Spring Balancer Instruction Manual, page 10, section 4-3, Method 1, step 3",
+          "quote_sha256": "5e9062281344c36d5da46dbb103f032b1284b4546c94c690b5a69384d17d9409"
+        },
+        {
+          "source_id": "s-ac62801e0a07361f",
+          "locator": "EWA Standard Spring Balancer Instruction Manual, page 10, section 4-3 warning",
+          "quote_sha256": "e531a024472c191e23e89de2a04114e4a9b2896f3c55f04636fe282d1bfe81e6"
+        },
+        {
+          "source_id": "s-ac62801e0a07361f",
+          "locator": "EWA Standard Spring Balancer Instruction Manual, page 7, section 2-1, specifications",
+          "quote_sha256": "e8742d16ed7e8b2270385ca2bf620b2c79694d5283ad1ba4bf56569e5efc6741"
         }
       ],
-      "asset_plan": "Acquire a compatible physical ER32 collet/nut pair or manufacturer-authorized internal CAD, then measure the groove, lip, eccentricity, lead-in, deflection, and engagement forces. Validate correct-entry retention, wrong-angle rejection, removal resistance, damage thresholds, and reset repeatability before any YAM demonstration. Reject the task if pinned Isaac Sim 6.1 rigid contact cannot reproduce the essential compliant snap without a validated compliant model.",
-      "risk": "The essential internal retention geometry and elastic behavior are absent from the acquired material. A nominal ER32 envelope or scripted latch would not be an acceptable substitute.",
+      "asset_plan": "A representative rigid fixture would require a six-position physical drum lock, spring-loaded pull/turn pin, worm-driven preload, readable gauge, latching hook, 1.3 m payout constraint, and 9–15 kg suspended tool. Environment tests must precede robot integration and cover all lock phases, false seating, proof loading, preload direction, hands-off balance, snap-back-relevant release, overload, overtravel, and reset repeatability. No exact-product claim is permissible.",
+      "risk": "The procedure is well documented, but the acquired evidence does not dimension the lock, worm, gauge, or hook, and the full-scale 9–15 kg manipulation has not been shown feasible for the pinned YAM embodiment. The cable/spring surrogate is also unvalidated.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
-        "Manufacturer-authorized internal eccentric-ring geometry or measurements from a compatible physical pair",
-        "Measured snap-in and withdrawal forces",
-        "Evidence that the required elastic engagement is reproducible in the pinned runtime without artificial latching"
+        "Dimensioned EWA-15 lock-pin, drum-slot, worm, gauge, hook, and housing geometry",
+        "Manufacturer data or defensible measurements for worm ratio and spring torque versus payout",
+        "Pinned-YAM payload, grip-force, reach, and thermal validation with a 9–15 kg suspended load",
+        "Validated physical payout/spring model reproducing balance, lock holding, overtravel, and unsafe-release behavior"
       ]
     },
     {
-      "id": "az100-vertical-tooling-centerline-adjustment",
-      "title": "Align AZ-100 end-of-arm tooling to the mold centerline and lock the adjustment",
-      "objective": "On a de-energized representative AZ-100 vertical-adjustment fixture, loosen the adjusting-screw jam nut and two clamp bolts, rotate the adjusting screw to align the tooling datum with the mold centerline, tighten both clamps, and retighten the jam nut without shifting alignment.",
+      "id": "az100-shock-absorber-tuning",
+      "title": "Tune an industrial robot axis shock absorber and retain the setting",
+      "objective": "With an AZ-100-class axis locked out, physically manipulate the shock-absorber adjuster, cycle a representative carriage through real actuator and impact contacts, iteratively eliminate bottoming and rebound, and retain the chosen setting for repeat trials.",
       "skills": [
-        "ordered multi-fastener manipulation",
-        "tool-to-fastener engagement",
-        "fine screw-driven linear adjustment",
-        "visual datum alignment",
-        "counterholding against lock-nut reaction",
-        "alignment preservation during clamping"
+        "precise adjuster engagement",
+        "fine rotational manipulation",
+        "dynamic-response observation",
+        "iterative force-response tuning",
+        "impact and rebound avoidance",
+        "setting-retention verification"
       ],
-      "success_conditions": "After tool release and a 3-second hold, the tooling datum remains within a hardware-derived centerline tolerance and every fastener is within its measured service window. Zero score for unsafe energization, shortcut motion of unrelated clamps, incorrect order, loose locks, stripped threads, guide damage, dropped tools, or state overwrite. Partial credit distinguishes safe unlocking, correct adjustment, pre-lock alignment, and retained post-lock alignment.",
-      "industrial_value": "The manufacturer’s maintenance procedure explicitly uses the adjustment to place end-of-arm tooling at the mold centerline, making it a robot setup operation affecting the tooling-to-process interface.",
-      "dexterity": "High: the robot must coordinate three locking elements with fine screw adjustment and resist tightening reactions that can disturb the calibrated state.",
+      "success_conditions": "Adjustment occurs only with pneumatic and electrical energy isolated. Carriage motion, damping, rebound, and impacts must arise from modeled physical forces. Two consecutive cycles must stop without bottoming, excessive rebound, or setting drift. Zero score for powered adjustment, direct damping/state writes, disabled collision, hard-stop impact, damage, or success based only on adjuster angle.",
+      "industrial_value": "The robot manual identifies shock absorbers as the cushioning mechanism for the telescoping Z and X axes and includes their deceleration performance in preventive maintenance.",
+      "dexterity": "Moderate. It combines physical adjustment with closed-loop interpretation of dynamic stopping behavior, but the acquired material does not yet establish a separate lock manipulation that would raise the manual dexterity beyond adjuster rotation.",
       "evidence": [
         {
           "source_id": "s-74c3dbd7c10379f7",
-          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 24, section 4.1.1, step 2",
-          "quote_sha256": "a68db5225510c3a8eed4bbcea396b98f3808e20ceaf6613c438727d42d2572dd"
-        }
-      ],
-      "asset_plan": "Obtain reference-hardware measurements for screw pitch, travel, clamp geometry, tool access, fastener sizes, and service torques. Model the screw and arm with rigid revolute/prismatic constraints so displacement results from physical screw rotation. Validate unlock dependence, direction, pitch, clamp retention, jam-nut reaction, overload behavior, and repeatable reset before YAM integration.",
-      "risk": "The procedure is established, but the acquired manual does not provide the dimensions, pitch, torque limits, or permissible centerline error needed for defensible physics and scoring.",
-      "feasibility_status": "research-needed",
-      "missing_evidence": [
-        "Adjusting-screw pitch and usable travel",
-        "Fastener sizes and service torque windows",
-        "Clamp and guide geometry",
-        "Permissible tooling-to-centerline error"
-      ]
-    },
-    {
-      "id": "az100-proximity-switch-registration",
-      "title": "Register and secure a robot proximity switch beneath its actuator",
-      "objective": "Using an independently authored full-scale fixture grounded in the AZ-100 procedure, retract the rigid cylinder, partially loosen the switch-mount screws, slide the proximity switch beneath its actuator until it registers, tighten it without losing registration, and repeat at the extended endpoint.",
-      "skills": [
-        "confined screwdriver alignment",
-        "controlled partial screw loosening",
-        "bimanual slide-and-hold coordination",
-        "sensor-to-actuator registration",
-        "clearance control during fastening",
-        "two-endpoint procedural memory"
-      ],
-      "success_conditions": "At both retracted and extended endpoints, robot-applied motions alone place the actuator past the switch centerline, maintain a sensing gap of at most 6 mm, trigger the indicator solely through physical relative pose, and leave the switch secured for 3 seconds after release. Zero score for powered adjustment, skipping initial retraction, moving the actuator mount as a shortcut, registering only one endpoint, actuator collision, loose or stripped screws, dropped tools, scripted sensor success, teleportation, or state overwrite. Partial credit is awarded for safe initialization, correct screw release, one geometrically valid endpoint, and registration retained after tightening.",
-      "industrial_value": "The AZ-100 maintenance manual requires proximity-switch adjustment after position changes and specifies registration at both cylinder endpoints. The task therefore represents recurring calibration of an industrial robot’s motion-limit sensing rather than generic switch operation.",
-      "dexterity": "Moderate-to-high: it combines partial fastener release, constrained sliding, feedback-guided registration, sub-centimeter clearance control, holding against tightening reaction, and repetition across two articulated states.",
-      "evidence": [
-        {
-          "source_id": "s-74c3dbd7c10379f7",
-          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 30, section 4.2.1, step 3",
-          "quote_sha256": "39fa141a0b6584441b42fdd3576658c1ebf0f2d99bf25672d8124ba201ec274a"
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 31, section 4.2.4",
+          "quote_sha256": "8795a4a385f97af25edbdef61d0be55460f7d52f11da88aaa404182b195b5dd7"
         },
         {
           "source_id": "s-74c3dbd7c10379f7",
-          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 30, section 4.2.1, note",
-          "quote_sha256": "40774cb733d30b6fd45713cb4590f9f3be2552bd45a639629bb849d4d73d3a94"
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 31, section 4.2.4",
+          "quote_sha256": "f94cbf34a9ee6dd0529ca1d9c63d595f040259c90c0f6d451beed3b4ef3dca7e"
+        },
+        {
+          "source_id": "s-74c3dbd7c10379f7",
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, preventive-maintenance table, Robot Performance",
+          "quote_sha256": "3fa0efd2d82159ec8a4df9b86ddeb100b4ff1f3b1dab8fb5f43f75d57a8c59fb"
+        },
+        {
+          "source_id": "s-74c3dbd7c10379f7",
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 31, section 4.2.4, safety note",
+          "quote_sha256": "1bd0da6d5c9a69b697534d37b6c6773d8b047aebe235c838912f91f749309b8f"
         }
       ],
-      "asset_plan": "Build a clearly labeled representative, not exact-product, rigid fixture with a slotted switch bracket, retained mount screws, rigid actuator, and two cylinder endpoints matching the documented arrangement. Use the documented 6 mm boundary and over-center requirement. Choose and record testable modeling assumptions for screw size, slot length, tightening window, cylinder stroke, and sensor hysteresis; calibrate them on the fixture before scoring. Implement the indicator only as a function of actuator-to-sensor geometry. First validate screw retention, sliding only while loosened, the 6 mm boundary, over-center registration, collision rejection, tightening drift, reset repeatability, fingertip clearance, and YAM reach in Isaac Sim 6.1.0 at YAM commit 0059d02a1a91bc6834c1d0846022891df0c78730.",
-      "risk": "The fixture will not claim to reproduce exact proprietary AZ-100 dimensions. Remaining unspecified dimensions are nonessential, explicitly testable fixture parameters; the sourced retention mechanism—screws clamping a sliding switch mount—and sensing relationship are sufficient. A synchronized novelty review must still be repeated before submission because cached records are not authoritative live state.",
-      "feasibility_status": "ready",
-      "missing_evidence": []
+      "asset_plan": "First obtain the shock absorber manufacturer's drawing and adjustment instructions. Then build a disclosed representative rigid carriage, impact face, external stop, adjustable damper, and physical setting-retention mechanism. Independently validate stroke, impact energy, bottoming, rebound, setting retention, sensitivity, and reset repeatability in Isaac Sim 6.1 before YAM integration.",
+      "risk": "The acquired robot manual gives the application and adjustment direction but not the damper stroke, contact geometry, retention mechanism, energy envelope, or response data. Creating those now would invent essential mechanics and thresholds.",
+      "feasibility_status": "blocked",
+      "missing_evidence": [
+        "Manufacturer installation and adjustment instructions for the specified shock absorber",
+        "Dimensioned body, stroke, impact face, adjuster, and setting-retention geometry",
+        "Effective-mass, velocity, energy, bottoming, and rebound limits",
+        "A defensible adjustable damping model validated in Isaac Sim",
+        "Evidence that setting retention requires a meaningful physical manipulation rather than generic knob rotation"
+      ]
+    },
+    {
+      "id": "az100-timing-belt-tracking-tensioning",
+      "title": "Track and tension an industrial robot timing belt",
+      "objective": "With robot power isolated, adjust the two-sided belt tracking/tension mechanism in small increments, manually move the axis, observe lateral belt travel, and iteratively center the belt without over-tensioning it.",
+      "skills": [
+        "paired-adjuster manipulation",
+        "manual axis traversal",
+        "visual tracking diagnosis",
+        "incremental asymmetric tension correction",
+        "bimanual stabilization",
+        "over-tension avoidance"
+      ],
+      "success_conditions": "The robot must physically operate the adjusters and manually traverse the axis after each correction. Success requires the belt to remain centered over repeated full traversals while satisfying a sourced tension or deflection criterion. Zero score for powered adjustment, direct belt-state writes, constraining the belt invisibly to the pulley center, flange climbing, excessive slack, over-tension, or component damage.",
+      "industrial_value": "The manufacturer states that tracking and tensioning are both required and that incorrect adjustment can reduce performance or prematurely fail the belt.",
+      "dexterity": "Potentially high because the robot must alternate between paired fine adjustments and manual full-axis motion while diagnosing the direction of belt creep. However, the essential belt behavior is deformable contact mechanics.",
+      "evidence": [
+        {
+          "source_id": "s-74c3dbd7c10379f7",
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 39, section 4.2.8",
+          "quote_sha256": "fed537a4dd7682d7b348ff3fd4328f5de3922c929210c43bc9f4cbb5272a35e9"
+        },
+        {
+          "source_id": "s-74c3dbd7c10379f7",
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 39, section 4.2.8",
+          "quote_sha256": "7c6ef7e6ff949525043ab3ab2274af9d7f6de886f45781f3a1a6784838e57515"
+        },
+        {
+          "source_id": "s-74c3dbd7c10379f7",
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 40, section 4.2.8, Tracking, step 3",
+          "quote_sha256": "53fd9a3908fccc13d4603ca76efae5d1f4c11da7387b2019fa5367b5424bbeab"
+        },
+        {
+          "source_id": "s-74c3dbd7c10379f7",
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 40, section 4.2.8, Tracking, step 4",
+          "quote_sha256": "e9092eadfaa1000fa1ef0a22c257801424295a9d8721d4307b0c7a20a5d5bc93"
+        }
+      ],
+      "asset_plan": "Do not implement until an already validated Isaac Sim belt/contact example is available for the pinned runtime. A faithful fixture would require dimensioned pulleys, flanges, belt profile, span, adjusters, carriage load, and a validated model of belt tension and lateral tracking. Physics tests must establish center tracking, flange climbing, slack, over-tension, manual traversal, and repeatability before robot control.",
+      "risk": "This is a deformable closed-loop belt problem. No validated belt asset or solver example is present in the acquired inputs, and the manual does not provide the required pulley/belt geometry or a complete numeric tension criterion for the general AZ-100 belt.",
+      "feasibility_status": "blocked",
+      "missing_evidence": [
+        "Validated belt/contact solver example compatible with Isaac Sim 6.1 and the pinned Arena/YAM revisions",
+        "Dimensioned AZ-100 belt, pulley, flange, span, adjuster, and carriage geometry",
+        "Model-specific numeric tension or deflection criterion for the selected axis",
+        "Physics validation showing that asymmetric tension produces credible lateral tracking rather than scripted motion"
+      ]
     }
   ],
-  "selected_id": "az100-proximity-switch-registration",
-  "selection_reason": "This is the only ready candidate: the official procedure establishes the slide-under-actuator mechanism, two-endpoint workflow, and quantitative 6 mm sensing constraint, while a representative rigid fixture can preserve those essential mechanics without claiming an exact product replica. It offers meaningful calibration, alignment, fastening, force-control, and bimanual demands within the pinned YAM runtime. The ER32 task depends on unverified compliant retention geometry, and the centerline-adjustment task lacks essential pitch, torque, and tolerance data."
+  "selected_id": "",
+  "selection_reason": "No candidate is ready, so selecting one would violate the readiness gate and would repeat the prior ambiguous-selection failure. The spring-balancer task has the strongest industrial procedure and dexterity, but it still lacks essential mechanism geometry, validated spring/payout physics, and full-scale YAM payload evidence. Shock-absorber tuning lacks essential manufacturer mechanism and dynamic-limit evidence. Timing-belt tracking requires an unavailable validated deformable implementation. Candidate selection must remain blocked until one candidate has no critical missing evidence."
 }
