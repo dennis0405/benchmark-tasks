@@ -56,6 +56,10 @@ class CoverageError(StateError):
 def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
     if not catalog.get("complete") or not catalog.get("records"):
         raise GateError("catalog incomplete/empty; novelty cannot pass")
+    notes_path = Path(workspace) / "input/novelty-review-notes.json"
+    review_notes = read(notes_path) if notes_path.exists() else {}
+    if not isinstance(review_notes, dict):
+        raise GateError("novelty review notes must be indexed by exact record ID")
     comparisons = []
     terms = set(re.findall(r"[a-z][a-z0-9]+", json.dumps(candidate).lower())) - {
         "the",
@@ -80,7 +84,7 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
     def priority(record):
         title = set(re.findall(r"[a-z][a-z0-9]+", record.get("title", "").lower()))
         text = set(re.findall(r"[a-z][a-z0-9]+", json.dumps(record).lower()))
-        return 3 * len(terms & title) + len(terms & text)
+        return (record["id"] in review_notes, 3 * len(terms & title) + len(terms & text))
 
     # Retrieval changes order only. Passing still requires every catalog record.
     records = sorted(catalog["records"], key=priority, reverse=True)
@@ -137,10 +141,6 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
     )
     request_path = Path(workspace) / "input/request.json"
     request = read(request_path) if request_path.exists() else {}
-    notes_path = Path(workspace) / "input/novelty-review-notes.json"
-    review_notes = read(notes_path) if notes_path.exists() else {}
-    if not isinstance(review_notes, dict):
-        raise GateError("novelty review notes must be indexed by exact record ID")
     context_key = digest(
         {
             "candidate": candidate,

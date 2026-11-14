@@ -114,6 +114,31 @@ def test_focused_source_review_invalidates_only_affected_comparison_and_cannot_f
     assert len(list((tmp_path / "artifacts/novelty-cache").glob("*.json"))) == 3
 
 
+def test_focused_novelty_review_precedes_unrelated_batches_without_skipping_coverage(tmp_path):
+    import json
+
+    class Reviewer:
+        def __init__(self):
+            self.seen = []
+
+        def run(self, *args, **kwargs):
+            batch = json.loads((tmp_path / "input/novelty-batch.json").read_text())
+            self.seen.extend(r["id"] for r in batch["records"])
+            return {"comparisons": [{
+                "id": r["id"], "objective": "Different purpose",
+                "physical_skill": "Different constraint", "success_condition": "Different outcome",
+                "verdict": "distinct", "reason": "Mechanism evidence establishes distinction",
+            } for r in batch["records"]]}
+
+    write_json(tmp_path / "input/novelty-review-notes.json", {"b": {"source": "original"}})
+    (tmp_path / "artifacts").mkdir()
+    catalog = {"complete": True, "digest": "catalog", "records": [{"id": "a"}, {"id": "b"}]}
+    reviewer = Reviewer()
+    report = compare_catalog(reviewer, tmp_path, {}, catalog, batch_size=1)
+    assert reviewer.seen == ["b", "a"]
+    assert report["complete"] and report["compared"] == 2
+
+
 def test_reader_failure_is_retried_without_rejecting_or_caching_the_candidate(tmp_path):
     import json
 
