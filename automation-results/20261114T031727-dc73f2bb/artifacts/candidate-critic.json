@@ -1,29 +1,29 @@
 {
-  "verdict": "pass",
+  "verdict": "repair",
   "findings": [
-    "The selected THK HSR12XRM candidate is factually ready for representative construction. Official THK instructions require a removing/mounting jig, full end-face contact, parallel insertion, and discontinuation of use after rolling-element loss.",
-    "Primary THK catalog page images independently verify the essential mechanism: four recirculating ball rows, 45-degree contact, end-plate circulation, and the explicit exclusion of HSR8X/10X/12X from retained-ball models.",
-    "The model-specific drawings consistently establish HSR12XRM dimensions in millimetres: 20 mm block height, 27 mm width, 45 mm length, 12 mm rail width, and 11 mm rail height. No HSR15 geometry is mixed into the current candidate.",
-    "The plan appropriately treats ball diameter/count, race microprofile, jig length, clearance, transfer-gap tolerance, and angular tolerance as disclosed prototype assumptions rather than THK specifications. It preserves independent rigid balls, four physical circulation paths, continuous rail-to-jig support, and actual contact physics.",
-    "The proposed pre-YAM tests cover circulation and loss, gap and inclination sensitivity, timestep stability, contact-force limits, reset freshness, and deliberate misalignment. Direct pose/velocity writes, fixed balls, hidden welds, and collision suppression are explicitly prohibited.",
-    "Three genuinely distinct sourced objectives were considered. The ABB deformable DressPack candidate and Dell ReadyRails candidate are correctly withheld because their essential physics or retention geometry remains unsupported; only the THK rigid-body candidate is marked ready.",
-    "The previous ambiguous-selection failure is resolved by the acquired, model-specific manufacturer structure and dimensional evidence. Novelty remains a separate subsequent gate and is not asserted here.",
-    "artifacts/candidate-preflight.json is historical and unrelated to this selection, while artifacts/candidate-critic.json records the earlier deficiencies that the current candidates and selected artifacts now address; neither stale artifact was used as affirmative evidence."
+    "The selected candidate is not factually ready. The Goudsmit brochure identifies low-frequency tunnels as suitable for solid objects, including shafts, but supplies no operating sequence requiring full-length passage, withdrawal behavior, motion speed, orientation, aperture clearance, waveform, field-zone geometry, duty limit, or thermal limit. These unsupported constraints are central to the proposed manipulation and scoring, so they cannot all be treated as noncritical prototype assumptions while feasibility_status remains \"ready\" and missing_evidence is empty.",
+    "Direct robot-building significance is not established. The Maurer note says tools and components contacting bearings should be checked and demagnetized, but it does not identify robot-joint shafts, shaft material, or a robot-joint manufacturing demagnetization step. The claim that a representative robot-joint shaft therefore has \"direct\" relevance is an inference, not sourced evidence.",
+    "The proposed magnetic-force interaction is unsupported. Tellinen provides a static hysteresis-state model, while the selected plan additionally requires spatial coil fields, gradients, forces, torque, and rate-dependent treatment of a solid shaft. No acquired source validates the proposed tunnel field geometry or the coupling from the hysteresis model to bounded rigid-body force/torque. Those are essential mechanisms rather than mere proprietary calibration details.",
+    "Primary diagram verification is incomplete. The run contains the raw Goudsmit and Maurer PDFs but no acquired page images for the relevant pages. Because page 18 is a multi-product layout, its column-to-caption association and any depicted tunnel geometry were not independently preserved or verified as required.",
+    "artifacts/candidate-preflight.json and artifacts/candidate-critic.json are stale THK HSR12X reviews and incorrectly report pass for a rejected prior candidate. They do not review the current demagnetization selection and should be regenerated or clearly archived before candidate readiness is asserted.",
+    "Resolve the prior ambiguous-selection failure by either acquiring a model-consistent low-frequency tunnel manual plus direct robot-joint manufacturing evidence and marking the unsupported numerical values as explicit testable assumptions, or downgrade this candidate to research-needed and continue source-first candidate research."
   ],
   "evidence_paths": [
-    "artifacts/selected.json",
-    "artifacts/candidates.json",
+    "input/request.json",
     "input/last-failure.json",
-    "input/sources/s-1007bee1e25db984.json",
-    "input/sources/s-1007bee1e25db984.raw",
-    "input/sources/s-bba7a5a0605fbeea.json",
-    "input/sources/s-bba7a5a0605fbeea.raw",
-    "input/sources/s-6ec4f5415ac07269.json",
-    "input/sources/s-6ec4f5415ac07269.raw",
-    "input/rcauto-thk-hsr-p183.png",
-    "input/rcauto-thk-hsr-p194.png",
-    "input/rcauto-thk-hsr-p195.png",
+    "input/runtime-api-preflight.json",
     "input/operator-source-notes.json",
-    "input/runtime-api-preflight.json"
+    "input/sources.json",
+    "input/sources/s-0a3d1688171454d0.json",
+    "input/sources/s-0a3d1688171454d0.raw",
+    "input/sources/s-96228576f368ce64.json",
+    "input/sources/s-96228576f368ce64.raw",
+    "input/sources/s-73ad8f4348851bfc.json",
+    "input/sources/s-b871f48280fcd511.json",
+    "input/sources/s-6c420615dfaade7b.json",
+    "artifacts/candidates.json",
+    "artifacts/selected.json",
+    "artifacts/candidate-preflight.json",
+    "artifacts/candidate-critic.json"
   ]
 }

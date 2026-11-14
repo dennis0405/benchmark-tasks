@@ -1,152 +1,140 @@
 {
   "candidates": [
     {
-      "id": "thk-hsr12x-block-jig-transfer",
-      "title": "Transfer an uncaged HSR12X LM block onto a removing/mounting jig",
-      "objective": "Bimanually butt a representative removing/mounting jig against an HSR12X rail, maintain parallel continuous support, and slide the uncaged recirculating-ball block fully onto the jig without losing a ball or contaminating or damaging the guide.",
+      "id": "robot-joint-shaft-low-frequency-demagnetization",
+      "title": "Demagnetize a solid robot-joint shaft through a low-frequency tunnel",
+      "objective": "Grasp a representative solid ferromagnetic robot-joint shaft, align it with a round low-frequency demagnetizing tunnel, physically carry its full length through the alternating-field region, and place it in a clean output cradle with reduced simulated remanence, without collision, dropping, reversal-induced remagnetization, or particle recontamination.",
       "skills": [
-        "bimanual rail-to-jig alignment",
-        "flush end-face mating",
-        "continuous rolling-element support",
-        "force-limited precision sliding",
-        "alignment-preserving regrasping",
-        "free rolling-element containment"
+        "stable grasping of an elongated rigid shaft",
+        "six-degree-of-freedom aperture alignment",
+        "clearance-preserving controlled passage",
+        "orientation control under pose-dependent magnetic forces",
+        "clean output placement"
       ],
-      "success_conditions": "Full success requires physical end-face contact, parallel rail and jig axes, complete block transfer, all initially present balls still contained in four circulating rows, no impact, drop, contamination-zone contact, or unsafe inclination, and a stable one-second release. Safe jig mating and partial transfer may receive partial credit. Any lost ball, block jam, separated support interface, direct pose or velocity write, hidden weld, fixed ball, or collision suppression invalidates full success.",
-      "industrial_value": "THK’s maintenance instructions prescribe a removing/mounting jig when block removal is unavoidable and require discontinuing use if a rolling element falls out. This makes preservation of the bearing elements an actual service outcome rather than an invented difficulty.",
-      "dexterity": "One hand must keep a narrow jig physically butted and parallel to the rail while the other advances a small bearing block. The robot must regulate contact and regrasp without opening a gap that lets any freely simulated ball escape.",
+      "success_conditions": "Full success requires every shaft material cell to traverse the effective field, a validated hysteresis calculation to finish below the frozen representative remanence threshold, stable placement in the clean cradle, and no tunnel contact, drop, unsafe release, contamination-zone contact, or excessive device thermal load. Alignment and incomplete treatment earn partial credit. Waypoint traversal alone, direct magnetic-state writes, pose or velocity injection, collision suppression, or a hidden success flag cannot score. A physically valid one-arm strategy receives full credit.",
+      "industrial_value": "The manufacturer identifies shafts as suitable products for low-frequency tunnel demagnetization. Separate bearing-industry guidance requires demagnetizing components that contact bearings and documents particle adhesion, denting, vibration, and wear from residual magnetism. A representative robot-joint shaft treated before bearing assembly therefore has direct robot-building relevance.",
+      "dexterity": "The central manipulation is carrying a long, solid part through a confined aperture while preserving clearance and orientation as its magnetic state and field-derived forces evolve. It is materially harder than pick-and-place, yet remains a rigid-body task within pinned-YAM reach after fixture scaling; no artificial bimanual requirement is imposed.",
       "evidence": [
         {
-          "source_id": "s-1007bee1e25db984",
-          "locator": "LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3",
-          "quote_sha256": "04820ee138738bb979d2ad357aed6bf252b47d079e98eb6f7236c1aa0674588d"
+          "source_id": "s-0a3d1688171454d0",
+          "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Low-frequency demagnetizing tunnels”",
+          "quote_sha256": "9347502825a699f92ae99c312e3815de872d649ae2ec3cc2ddeae5f9c55bf674"
         },
         {
-          "source_id": "s-1007bee1e25db984",
-          "locator": "LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3",
-          "quote_sha256": "422249b3b7604d646eb8630871735104f01818a94aa0e4f08e686026d469a49c"
+          "source_id": "s-0a3d1688171454d0",
+          "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Low-frequency demagnetizing tunnels”",
+          "quote_sha256": "d476f0bd2498a0544cde8371332318bb3e6638a67676bfa8aad33864bfc60f06"
         },
         {
-          "source_id": "s-1007bee1e25db984",
-          "locator": "LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3",
-          "quote_sha256": "31e044d789fbd83ba195789ffd1930c775eace4cf2778f426e473c2127384b58"
+          "source_id": "s-96228576f368ce64",
+          "locator": "Demagnetization of assembled bearings, page 3",
+          "quote_sha256": "951c80708981594870a4484aeee307d8737d2ae2ae3f8d6eb156bd556a778668"
         },
         {
-          "source_id": "s-bba7a5a0605fbeea",
-          "locator": "THK HSR catalog 515-2E, printed page A1-183, “Structure and Features”",
-          "quote_sha256": "02fc979d6217ac2a65e94b2410d6bf6448213f15886f088a8b63b1e8e5c5f02a"
-        },
-        {
-          "source_id": "s-bba7a5a0605fbeea",
-          "locator": "THK HSR catalog 515-2E, printed page A1-183, “Structure and Features”",
-          "quote_sha256": "f8c1f73b0917e8407fce97f419e0607c2f3024b9909da6b5a85733d51457c109"
-        },
-        {
-          "source_id": "s-6ec4f5415ac07269",
-          "locator": "THK “Removing/Mounting Jig,” page 1",
-          "quote_sha256": "7091710e7216188ea0eef976a56952afb930ad622071ae0106f31e01be4e3b5a"
+          "source_id": "s-73ad8f4348851bfc",
+          "locator": "Modelica Magnetic FluxTubes UsersGuide, StaticHysteresis.Tellinen, “The Tellinen hysteresis model”",
+          "quote_sha256": "95205827e47f7e5bdd2264544c8b45e4053e28c22bd72d0591ad170137a6d3fe"
         }
       ],
-      "asset_plan": "Author a representative full-scale HSR12XRM fixture using the visually verified A1-194/A1-195 drawings: 20 mm block height, 27 mm block width, 45 mm block length, 12 mm rail width, 11 mm rail height, and the documented four-row cross-section with end returns. Model every ball as an independent rigid PhysX body and preserve four physical circulation paths. Make the jig’s support cross-section continuous with the rail and clearly label its unpublished length, ball diameter/count, groove clearance, maximum transfer gap, and angular tolerance as prototype assumptions rather than THK specifications. Freeze those values before development and test ball circulation and loss, gap and inclination sensitivity, timestep stability, contact-force limits, reset freshness, and deliberate misalignment failures before YAM integration.",
-      "risk": "The manufacturer drawings establish the selected model’s exterior, rail cross-section, four raceway rows, circulation through end plates, and lack of retention. Exact ball diameter/count, internal groove microprofile, jig length, and service tolerances are unpublished; these are bounded representative modeling assumptions requiring sensitivity tests and must not be presented as an exact THK replica.",
+      "asset_plan": "Author a representative, explicitly non-product-replica rigid tunnel, 320 mm solid shaft, input stand, clean output cradle, and guarded field enclosure. Freeze aperture, shaft diameter and mass, field-zone length, material envelope curve, remanence limit, force ceiling, thermal duty, and reach bounds before development. Use a Tellinen hysteresis state per axial shaft cell, driven only by simulated coil field evaluated from actual poses and time in the verified native PRE/POST physics callback. Couple a bounded field-gradient force and torque into PhysX; never overwrite shaft pose, velocity, or magnetic state. Before YAM integration, test major and minor loops, proper and incomplete passage, reversal, stopping, timestep/rate convergence, force and energy finiteness, thermal accumulation, reset freshness, collision response, and reachable clean placement. The representative field calibration and protocol are disclosed prototype assumptions, not manufacturer specifications.",
+      "risk": "No acquired source supplies a specific tunnel model’s proprietary aperture, waveform, field calibration, or operating speed. Those values must remain frozen representative assumptions and cannot be advertised as Goudsmit performance. Static Tellinen behavior does not by itself establish dynamic eddy-current accuracy, so the selected solid shaft must use a conservative low-frequency regime and pass convergence and improper-treatment controls. Catalog neighbor pr-1810 tests controlled passage through a narrow slot; final novelty depends on the independently validated remanence outcome and magnetic force interaction, not on the passage trajectory alone. Full catalog and six-suite clearance remains a mandatory downstream gate.",
       "feasibility_status": "ready",
       "missing_evidence": []
     },
     {
-      "id": "abb-external-dresspack-section-replacement",
-      "title": "Replace an industrial-robot External DressPack arm section",
-      "objective": "Support a cable-and-hose bundle, release its clamps and adjustable bracket, remove the section without snagging or over-bending it, route a replacement along the lower and upper robot arms, and restore physical clamp capture and usable free length.",
+      "id": "thin-gear-plate-demagnetization",
+      "title": "Demagnetize a thin robot-reducer gear blank over a plate device",
+      "objective": "Pick a representative sub-10-mm ferromagnetic robot-reducer gear blank, expose its complete area to a plate demagnetizer through a controlled parallel sweep and retreat, then place it in a clean inspection tray with physically reduced remanence and no plate strike, drop, untreated region, or thermal overload.",
       "skills": [
-        "bimanual compliant-bundle support",
-        "sequential clamp release and relatching",
-        "constrained routing",
-        "adjustable-bracket positioning",
-        "regrasping without snagging or kinking"
+        "thin-part edge grasping",
+        "parallelism and stand-off control",
+        "full-area surface coverage",
+        "controlled retreat from an alternating field",
+        "clean-side placement"
       ],
-      "success_conditions": "Full success requires every modeled clamp to be physically reopened and relatched, the bundle to follow the documented arm route, and its free length and bend state to remain within source-grounded limits. Hose escape, kink, excessive bend, connector impact, dropped bundle, false closure, or direct state manipulation scores zero.",
-      "industrial_value": "ABB states that its clamps support quick, accurate replacement of the complete package to minimize production stoppage and reports that changing a DressPack section takes less than 30 minutes.",
-      "dexterity": "The operation combines compliant bundle support, multiple latch operations, routing, regrasping, and length adjustment rather than simple cable transport.",
+      "success_conditions": "Full success requires every discretized gear region to receive sufficient pose-derived alternating-field exposure, final remanence below a frozen threshold, stable clean placement, and no plate contact, drop, missed sector, reversal-induced remagnetization, or duty-limit violation. Mere tabletop placement or coverage waypoints do not score.",
+      "industrial_value": "The manufacturer describes plate demagnetizers for flat magnetic products and machine construction, while its industrial report identifies bearing wear, adhering chips, and magnetic-sensor errors as consequences of unwanted magnetism. A thin precision gear is geometrically compatible, but the acquired evidence does not specifically identify robot-reducer gears.",
+      "dexterity": "The robot must hold a broad, thin part nearly parallel to the plate while controlling stand-off, coverage, and retreat. This tests surface-following and orientation control rather than generic transport.",
       "evidence": [
         {
-          "source_id": "s-e4d88bbe4b10e860",
-          "locator": "ABB External DressPack, “Easy replacement of upper and lower arm DressPack”",
-          "quote_sha256": "88ad1d5aedbb6fb936ab507b56e0cd5d0147985830e47778a514e4567e19d2b5"
+          "source_id": "s-0a3d1688171454d0",
+          "locator": "Industrial magnetic handling and demagnetization brochure, page 19, “Plate demagnetizers”",
+          "quote_sha256": "e6cbde937e6bf0e7eedff2c2464217bbbfe66bb7ae048672107df7316c1c519b"
         },
         {
-          "source_id": "s-e4d88bbe4b10e860",
-          "locator": "ABB External DressPack, “Easy replacement of upper and lower arm DressPack”",
-          "quote_sha256": "bd717d410c5b6282f31c5c3d276b9e3e2254ccf162dabfe475ca49746adfdd08"
+          "source_id": "s-0a3d1688171454d0",
+          "locator": "Industrial magnetic handling and demagnetization brochure, page 19, “Plate demagnetizers”",
+          "quote_sha256": "67b9a5a3ba66fa90115fdd3a1120f6fa5dce1b399ac12d4bf281f3b19f1e2e1c"
         },
         {
-          "source_id": "s-e4d88bbe4b10e860",
-          "locator": "ABB External DressPack, “Easy replacement of upper and lower arm DressPack”",
-          "quote_sha256": "bce8c0cb007dc41c5ce8173e12dc110d02b3db6e2d4f54dd0285c3ef16c060f1"
+          "source_id": "s-0a3d1688171454d0",
+          "locator": "Industrial magnetic handling and demagnetization brochure, page 17, “Demagnetizing”",
+          "quote_sha256": "3f6b0893a1bbd6bc2d9d43a2202d899e1d28eb4560406b44431520e112c71e03"
         },
         {
-          "source_id": "s-e4d88bbe4b10e860",
-          "locator": "ABB External DressPack, product description",
-          "quote_sha256": "50771e6ff33dfc165694190aecf211c5fd970f3da17390c0db0a3ee12ca8b6f4"
+          "source_id": "s-0a3d1688171454d0",
+          "locator": "Industrial magnetic handling and demagnetization brochure, page 17, “Demagnetizing”",
+          "quote_sha256": "4e1bd164eecea68e804addb19fa145728514534656f6255f08a8699d00eb005f"
         }
       ],
-      "asset_plan": "Acquire and visually verify the applicable IRB 6720 service diagrams. Proceed only with a validated cable/hose representation that preserves bending, snagging, clamp escape, and damage. All clamps and bracket retention must operate through physical contact.",
-      "risk": "The acquired overview establishes the operation and value but not the clamp latch topology, bracket retention, bundle dimensions, connectors, or allowable bending. No suitable validated deformable implementation is established in the pinned runtime.",
-      "feasibility_status": "blocked",
+      "asset_plan": "Use a rigid procedural plate device and thin gear blank. If pursued, distribute hysteresis cells over the gear, derive exposure from actual pose and field decay, and validate missed-sector, excessive-height, reversal, contact, thermal, reset, and timestep controls before robot integration.",
+      "risk": "The acquired manufacturer material establishes product class and thickness but not a manual treatment path, working stand-off, retreat distance, field profile, device geometry, or duty cycle. Direct robot-reducer manufacturing relevance is also inferential rather than explicitly sourced. A coverage counter would be an invalid substitute for the missing physical mechanism.",
+      "feasibility_status": "research-needed",
       "missing_evidence": [
-        "manufacturer clamp and latch geometry",
-        "adjustable-bracket travel and retention mechanism",
-        "bundle diameters, section lengths, connector geometry, and bend limits",
-        "validated pinned-runtime representation of bending, snagging, and clamp escape"
+        "A model-consistent plate-demagnetizer operating procedure and verified diagram",
+        "Direct primary-source evidence that the selected robot-reducer component requires this treatment",
+        "Validated field-versus-height and spatial hysteresis behavior for full-area treatment",
+        "Complete catalog comparison against surface-processing and magnetic-fixturing tasks"
       ]
     },
     {
-      "id": "dell-2u-readyrails-system-loading",
-      "title": "Install paired 2U ReadyRails and load a rack system through the locking transition",
-      "objective": "Seat and latch both rails at the rack posts, extend their inner members, bimanually tilt and align a representative 2U system so its rear mounting nuts enter first, lower it into paired capture, release both locks, and slide the supported system into the rack.",
+      "id": "bearing-tool-portable-bar-demagnetization",
+      "title": "Demagnetize a bearing-assembly mandrel with a portable bar",
+      "objective": "Manipulate a portable demagnetizing bar around the accessible cylindrical and shoulder surfaces of a fixtured bearing-assembly mandrel, maintaining the required pose and coverage so all remanent hot spots are physically reduced without tool contact, missed regions, overheating, or unsafe release.",
       "skills": [
-        "front-and-rear rack-post alignment",
-        "physical latch engagement",
-        "bimanual leveling of a rigid load",
-        "rear-first tilted insertion",
-        "coordinated lock release and sliding"
+        "six-degree-of-freedom tool manipulation",
+        "curved-surface following",
+        "stand-off and orientation control",
+        "overlapping coverage planning",
+        "collision-free retreat"
       ],
-      "success_conditions": "Full success requires all four rail ends physically seated and latched, rear mounting nuts captured before lowering, all remaining nuts retained, both inner-member locks released, and the system fully inserted and stable. Rail skew, false latch closure, one-sided loading, equipment drop, rack collision, bypassed clips, or direct state manipulation scores zero.",
-      "industrial_value": "Dell’s official installation video documents the ReadyRails installation and loading sequence, including latch verification, rear-first mounting-nut engagement, lowering, lock release, and final insertion.",
-      "dexterity": "The robot must register two rails independently, then support, level, tilt, and capture a large rigid load on two narrow telescoping members before coordinating lock release.",
+      "success_conditions": "Full success requires all initially magnetized mandrel regions to finish below a frozen remanence limit, the bar to remain collision-free and within its thermal duty, and both objects to end stably placed. Missed hot spots, excessive stand-off, contact, drop, or direct state mutation fail or receive partial credit.",
+      "industrial_value": "The bearing-industry application note explicitly requires checking and demagnetizing bearing-contact tools. The equipment manufacturer identifies demagnetizing bars for tools and machine parts in difficult-to-reach locations, including machine building and toolmaking shops.",
+      "dexterity": "This tests controlled tool orientation and curved-surface coverage in constrained access. It can require a real regrasp to reach the mandrel shoulder, but one-arm completion must score if the sourced physical treatment is achieved.",
       "evidence": [
         {
-          "source_id": "s-e1ce477bb432c4af",
-          "locator": "Dell video transcript, ReadyRails installation sequence",
-          "quote_sha256": "548b19cc763e3c7fbe3ec542911d753a57fc372ef4572863c172ba6b04def894"
+          "source_id": "s-96228576f368ce64",
+          "locator": "Demagnetization of assembled bearings, page 3",
+          "quote_sha256": "951c80708981594870a4484aeee307d8737d2ae2ae3f8d6eb156bd556a778668"
         },
         {
-          "source_id": "s-e1ce477bb432c4af",
-          "locator": "Dell video transcript, front-side installation sequence",
-          "quote_sha256": "96cfd8002d0d18aa4c543e2795c0c16a233362eed405fead0c9d01bc605b1f4e"
+          "source_id": "s-0a3d1688171454d0",
+          "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Demagnetization bars”",
+          "quote_sha256": "851fbabcbd91a876df164a3e19497df89c9b577fd6b5dc39a038994e03262b23"
         },
         {
-          "source_id": "s-e1ce477bb432c4af",
-          "locator": "Dell video transcript, system installation sequence",
-          "quote_sha256": "74b02f9cc530b38f7fe700d4f50e5941232a140e99a9891b98b9526db0a98449"
+          "source_id": "s-0a3d1688171454d0",
+          "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Demagnetization bars”",
+          "quote_sha256": "981c75c227cc62e229d3c686957b6341f034084e78b7a33b29aedd41bc34d124"
         },
         {
-          "source_id": "s-e1ce477bb432c4af",
-          "locator": "Dell video transcript, final insertion sequence",
-          "quote_sha256": "189c99ccdc40786beddf2378347f15aa3abbd3c2fb5a4a05d254e3ef3a83e0e7"
+          "source_id": "s-96228576f368ce64",
+          "locator": "Demagnetization of assembled bearings, page 3, “Damage mechanisms caused by residual magnetism in bearings”",
+          "quote_sha256": "d5dfd8c1000003a02d093f3e2570e0b7cbfad05b791c39f87f45c3ee30311e0c"
         }
       ],
-      "asset_plan": "Acquire the matching Rack Installation Guide or public mechanical drawings and independently verify the relevant video frames. Build a representative rigid fixture with physical rack-post hooks, latches, telescoping members, mounting nuts, capture slots, and release clips. Test rail skew, one-sided capture, latch preload, center-of-mass sensitivity, clip timing, reach, and reset behavior in native PhysX.",
-      "risk": "The transcript proves the procedure but does not reveal the essential hook, latch, nut-slot, telescoping-lock, rack-hole, or release-clip geometry. Workspace reach and safe load scaling also remain unverified.",
+      "asset_plan": "Author a rigid representative bearing-contact mandrel and portable bar only after obtaining the matching device instructions. Use spatial hysteresis cells and pose-derived fields, then validate coverage sensitivity, retreat behavior, magnetic forces, thermal duty, contact failures, and reset determinism.",
+      "risk": "The brochure does not provide bar dimensions, stand-off, orientation, sweep speed, overlap, retreat method, field calibration, or duty limit. The bearing note’s instruction to scan an entire surface concerns measurement and cannot be reused as a treatment procedure. Without a bar manual, the essential treatment action would be invented.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
-        "matching ReadyRails model and Rack Installation Guide",
-        "rack-post hook and blue-latch geometry",
-        "system mounting-nut and rail capture-slot dimensions",
-        "inner-member lock and metal release-clip mechanism",
-        "verified rack spacing, rail travel, equipment envelope, mass, and center of mass",
-        "pinned-YAM reach and safe scale study"
+        "Portable-bar manufacturer operating instructions and independently verified diagram",
+        "Sourced stand-off, orientation, sweep, retreat, and duty constraints",
+        "Validated spatial field and hysteresis model",
+        "Pinned-YAM reach and collision-clearance test",
+        "Complete catalog comparison against inspection and surface-coverage objectives"
       ]
     }
   ],
-  "selected_id": "thk-hsr12x-block-jig-transfer",
-  "selection_reason": "The newly acquired and visually inspected THK HSR catalog resolves the prior ambiguous-selection failure: it identifies HSR12X as an unretained-ball model, establishes four circulating raceway rows, and supplies a consistent model-specific exterior and rail cross-section. Together with THK’s mandatory full-contact, parallel-jig procedure and explicit lost-ball rejection rule, this is sufficient for a mechanically faithful representative rigid-PhysX build. Its unpublished microgeometry is nonessential manufacturer calibration that can be disclosed, frozen, and sensitivity-tested. The ABB alternative still depends on unvalidated deformable physics and unknown latch geometry, while the Dell alternative lacks essential retention and capture geometry."
+  "selected_id": "robot-joint-shaft-low-frequency-demagnetization",
+  "selection_reason": "The shaft-tunnel objective is the only candidate whose acquired manufacturer evidence directly matches both the component form—solid shafts—and the required device class—low-frequency tunnels—while bearing-industry evidence supplies direct robot-joint manufacturing significance. Its essential material-state mechanism has an established hysteresis formulation and can be driven from real simulated pose and time rather than a waypoint flag. Unknown proprietary calibration and exact product dimensions are bounded, disclosed prototype assumptions suitable for component testing, not unknown retention or contact mechanisms. The plate and portable-bar alternatives lack sourced treatment procedures and component-specific grounding, so they remain research-needed. Selection is readiness to attempt native component validation; it does not assert completed physics tests, YAM demos, or final catalog and six-suite novelty clearance."
 }

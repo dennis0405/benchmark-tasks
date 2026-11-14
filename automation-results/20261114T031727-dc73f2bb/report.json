@@ -2,8 +2,8 @@
   "run": "20261114T031727-dc73f2bb",
   "status": "blocked",
   "prompt": "사용자 요청 원문:\n좋아. 이제 인스턴스를 다시 켜고 첫 태스크를 만들어보자.\n필요한 CLI 인증부터 확인하고, 로봇 조립·데이터센터 정비 분야에서 산업 근거가 있고 기존 제출과 겹치지 않는 후보를 골라 제출 전 검토 단계까지 진행해줘.\n\n확정된 제작 조건:\n- Category: Impact on AI timelines. 로봇 조립 또는 데이터센터 정비 중 실제 산업에서 자동화할 의미가 있는 물리 조작 하나를 선택한다.\n- 제조사 설치·정비 매뉴얼, 공식 조립 절차, 공개 설계, 실제 작업 영상·보고서의 원문으로 작업과 장비 형상·치수·절차를 입증한다. 추측이나 가상 산업 용도를 만들어내지 않는다.\n- 여러 후보를 비교하고 목적·물리 기술·성공 조건의 신규성과 로봇의 어려운 조작 능력을 함께 검토하여 하나만 제작한다. 조작의 어려움은 극단적일 필요는 없지만 단순 물체 옮기기를 산업 이름만 바꾼 작업은 피한다.\n- 모든 분야의 기존 accepted/pending/open 제출 및 우리 팀 기존 제출, 지정된 기존 벤치마크와 비교한다. 기하·색상·배치·시작 자세·난도만 다른 것은 새 태스크가 아니다. 선정 시점 및 완성 후 다시 전수 비교한다. 불확실한 중복을 통과시키지 않는다.\n- 가능한 강체 PhysX 작업을 선택한다. 기존의 검증된 연성 에셋이 없다면 새 연성 솔버 연구는 하지 않는다. 실제 산업 장비의 형태와 중요한 물리 제약을 재현한다. 공개 에셋은 라이선스·출처·치수를 기록하고 적합하지 않으면 직접 제작한다.\n- objective와 환경·부품 물리를 먼저 완성·진단한 뒤 YAM 전체 데모·채점기를 연결한다. 물체 순간이동/상태 덮어쓰기로 성공을 만들지 않는다. 관련 부품 파손·금지 동작·실패·부분 점수와 성공 유지 시간을 수치로 평가한다.\n- 실제 simulator 측정·두 번의 full-score YAM 데모·실패/부분 점수 대조군·영상/원시 trace 및 깨끗한 경로 재현 검사를 수행한다. 미검증 수치와 성공을 만들어 보고하지 않는다.\n- 모든 제작·검증을 마친 후에만 Dream 최종 평가 episode 1회. 실패나 불명 결과도 자동 재평가하지 않는다. 누적 $20 ledger를 준수하고 인증이 없으면 제작을 보존한 뒤 평가 대기한다.\n- 결과는 이 run의 새로운 origin 브랜치에 보존한다. 원본 매뉴얼 전체/인증 정보는 공개하지 않는다. 50MB/file 또는 100MB checkpoint 초과는 먼저 보고한다.\n- 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.\n- 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.\n",
-  "at": "2026-11-14T13:21:15.530611+00:00",
-  "error": "no candidate passed the ideation gates; inspect selection-history.json",
+  "at": "2026-11-14T13:42:32.733086+00:00",
+  "error": "candidate-critic: The selected candidate is not factually ready. The Goudsmit brochure identifies low-frequency tunnels as suitable for solid objects, including shafts, but supplies no operating sequence requiring full-length passage, withdrawal behavior, motion speed, orientation, aperture clearance, waveform, field-zone geometry, duty limit, or thermal limit. These unsupported constraints are central to the proposed manipulation and scoring, so they cannot all be treated as noncritical prototype assumptions while feasibility_status remains \"ready\" and missing_evidence is empty.; Direct robot-building significance is not established. The Maurer note says tools and components contacting bearings should be checked and demagnetized, but it does not identify robot-joint shafts, shaft material, or a robot-joint manufacturing demagnetization step. The claim that a representative robot-joint shaft therefore has \"direct\" relevance is an inference, not sourced evidence.; The proposed magnetic-force interaction is unsupported. Tellinen provides a static hysteresis-state model, while the selected plan additionally requires spatial coil fields, gradients, forces, torque, and rate-dependent treatment of a solid shaft. No acquired source validates the proposed tunnel field geometry or the coupling from the hysteresis model to bounded rigid-body force/torque. Those are essential mechanisms rather than mere proprietary calibration details.; Primary diagram verification is incomplete. The run contains the raw Goudsmit and Maurer PDFs but no acquired page images for the relevant pages. Because page 18 is a multi-product layout, its column-to-caption association and any depicted tunnel geometry were not independently preserved or verified as required.; artifacts/candidate-preflight.json and artifacts/candidate-critic.json are stale THK HSR12X reviews and incorrectly report pass for a rejected prior candidate. They do not review the current demagnetization selection and should be regenerated or clearly archived before candidate readiness is asserted.; Resolve the prior ambiguous-selection failure by either acquiring a model-consistent low-frequency tunnel manual plus direct robot-joint manufacturing evidence and marking the unsupported numerical values as explicit testable assumptions, or downgrade this candidate to research-needed and continue source-first candidate research.",
   "mode": "production",
   "dream": null,
   "release": null,
@@ -1669,127 +1669,95 @@
     "selected": null
   },
   "last_candidate": {
-    "id": "thk-hsr12x-block-jig-transfer",
-    "title": "Transfer an uncaged HSR12X LM block onto a removing/mounting jig",
-    "objective": "Bimanually butt a representative removing/mounting jig against an HSR12X rail, maintain parallel continuous support, and slide the uncaged recirculating-ball block fully onto the jig without losing a ball or contaminating or damaging the guide.",
+    "id": "robot-joint-shaft-low-frequency-demagnetization",
+    "title": "Demagnetize a solid robot-joint shaft through a low-frequency tunnel",
+    "objective": "Grasp a representative solid ferromagnetic robot-joint shaft, align it with a round low-frequency demagnetizing tunnel, physically carry its full length through the alternating-field region, and place it in a clean output cradle with reduced simulated remanence, without collision, dropping, reversal-induced remagnetization, or particle recontamination.",
     "skills": [
-      "bimanual rail-to-jig alignment",
-      "flush end-face mating",
-      "continuous rolling-element support",
-      "force-limited precision sliding",
-      "alignment-preserving regrasping",
-      "free rolling-element containment"
+      "stable grasping of an elongated rigid shaft",
+      "six-degree-of-freedom aperture alignment",
+      "clearance-preserving controlled passage",
+      "orientation control under pose-dependent magnetic forces",
+      "clean output placement"
     ],
-    "success_conditions": "Full success requires physical end-face contact, parallel rail and jig axes, complete block transfer, all initially present balls still contained in four circulating rows, no impact, drop, contamination-zone contact, or unsafe inclination, and a stable one-second release. Safe jig mating and partial transfer may receive partial credit. Any lost ball, block jam, separated support interface, direct pose or velocity write, hidden weld, fixed ball, or collision suppression invalidates full success.",
-    "industrial_value": "THK’s maintenance instructions prescribe a removing/mounting jig when block removal is unavoidable and require discontinuing use if a rolling element falls out. This makes preservation of the bearing elements an actual service outcome rather than an invented difficulty.",
-    "dexterity": "One hand must keep a narrow jig physically butted and parallel to the rail while the other advances a small bearing block. The robot must regulate contact and regrasp without opening a gap that lets any freely simulated ball escape.",
+    "success_conditions": "Full success requires every shaft material cell to traverse the effective field, a validated hysteresis calculation to finish below the frozen representative remanence threshold, stable placement in the clean cradle, and no tunnel contact, drop, unsafe release, contamination-zone contact, or excessive device thermal load. Alignment and incomplete treatment earn partial credit. Waypoint traversal alone, direct magnetic-state writes, pose or velocity injection, collision suppression, or a hidden success flag cannot score. A physically valid one-arm strategy receives full credit.",
+    "industrial_value": "The manufacturer identifies shafts as suitable products for low-frequency tunnel demagnetization. Separate bearing-industry guidance requires demagnetizing components that contact bearings and documents particle adhesion, denting, vibration, and wear from residual magnetism. A representative robot-joint shaft treated before bearing assembly therefore has direct robot-building relevance.",
+    "dexterity": "The central manipulation is carrying a long, solid part through a confined aperture while preserving clearance and orientation as its magnetic state and field-derived forces evolve. It is materially harder than pick-and-place, yet remains a rigid-body task within pinned-YAM reach after fixture scaling; no artificial bimanual requirement is imposed.",
     "evidence": [
       {
-        "source_id": "s-1007bee1e25db984",
-        "locator": "LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3",
-        "quote_sha256": "04820ee138738bb979d2ad357aed6bf252b47d079e98eb6f7236c1aa0674588d"
+        "source_id": "s-0a3d1688171454d0",
+        "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Low-frequency demagnetizing tunnels”",
+        "quote_sha256": "9347502825a699f92ae99c312e3815de872d649ae2ec3cc2ddeae5f9c55bf674"
       },
       {
-        "source_id": "s-1007bee1e25db984",
-        "locator": "LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3",
-        "quote_sha256": "422249b3b7604d646eb8630871735104f01818a94aa0e4f08e686026d469a49c"
+        "source_id": "s-0a3d1688171454d0",
+        "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Low-frequency demagnetizing tunnels”",
+        "quote_sha256": "d476f0bd2498a0544cde8371332318bb3e6638a67676bfa8aad33864bfc60f06"
       },
       {
-        "source_id": "s-1007bee1e25db984",
-        "locator": "LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3",
-        "quote_sha256": "31e044d789fbd83ba195789ffd1930c775eace4cf2778f426e473c2127384b58"
+        "source_id": "s-96228576f368ce64",
+        "locator": "Demagnetization of assembled bearings, page 3",
+        "quote_sha256": "951c80708981594870a4484aeee307d8737d2ae2ae3f8d6eb156bd556a778668"
       },
       {
-        "source_id": "s-bba7a5a0605fbeea",
-        "locator": "THK HSR catalog 515-2E, printed page A1-183, “Structure and Features”",
-        "quote_sha256": "02fc979d6217ac2a65e94b2410d6bf6448213f15886f088a8b63b1e8e5c5f02a"
-      },
-      {
-        "source_id": "s-bba7a5a0605fbeea",
-        "locator": "THK HSR catalog 515-2E, printed page A1-183, “Structure and Features”",
-        "quote_sha256": "f8c1f73b0917e8407fce97f419e0607c2f3024b9909da6b5a85733d51457c109"
-      },
-      {
-        "source_id": "s-6ec4f5415ac07269",
-        "locator": "THK “Removing/Mounting Jig,” page 1",
-        "quote_sha256": "7091710e7216188ea0eef976a56952afb930ad622071ae0106f31e01be4e3b5a"
+        "source_id": "s-73ad8f4348851bfc",
+        "locator": "Modelica Magnetic FluxTubes UsersGuide, StaticHysteresis.Tellinen, “The Tellinen hysteresis model”",
+        "quote_sha256": "95205827e47f7e5bdd2264544c8b45e4053e28c22bd72d0591ad170137a6d3fe"
       }
     ],
-    "asset_plan": "Author a representative full-scale HSR12XRM fixture using the visually verified A1-194/A1-195 drawings: 20 mm block height, 27 mm block width, 45 mm block length, 12 mm rail width, 11 mm rail height, and the documented four-row cross-section with end returns. Model every ball as an independent rigid PhysX body and preserve four physical circulation paths. Make the jig’s support cross-section continuous with the rail and clearly label its unpublished length, ball diameter/count, groove clearance, maximum transfer gap, and angular tolerance as prototype assumptions rather than THK specifications. Freeze those values before development and test ball circulation and loss, gap and inclination sensitivity, timestep stability, contact-force limits, reset freshness, and deliberate misalignment failures before YAM integration.",
-    "risk": "The manufacturer drawings establish the selected model’s exterior, rail cross-section, four raceway rows, circulation through end plates, and lack of retention. Exact ball diameter/count, internal groove microprofile, jig length, and service tolerances are unpublished; these are bounded representative modeling assumptions requiring sensitivity tests and must not be presented as an exact THK replica.",
+    "asset_plan": "Author a representative, explicitly non-product-replica rigid tunnel, 320 mm solid shaft, input stand, clean output cradle, and guarded field enclosure. Freeze aperture, shaft diameter and mass, field-zone length, material envelope curve, remanence limit, force ceiling, thermal duty, and reach bounds before development. Use a Tellinen hysteresis state per axial shaft cell, driven only by simulated coil field evaluated from actual poses and time in the verified native PRE/POST physics callback. Couple a bounded field-gradient force and torque into PhysX; never overwrite shaft pose, velocity, or magnetic state. Before YAM integration, test major and minor loops, proper and incomplete passage, reversal, stopping, timestep/rate convergence, force and energy finiteness, thermal accumulation, reset freshness, collision response, and reachable clean placement. The representative field calibration and protocol are disclosed prototype assumptions, not manufacturer specifications.",
+    "risk": "No acquired source supplies a specific tunnel model’s proprietary aperture, waveform, field calibration, or operating speed. Those values must remain frozen representative assumptions and cannot be advertised as Goudsmit performance. Static Tellinen behavior does not by itself establish dynamic eddy-current accuracy, so the selected solid shaft must use a conservative low-frequency regime and pass convergence and improper-treatment controls. Catalog neighbor pr-1810 tests controlled passage through a narrow slot; final novelty depends on the independently validated remanence outcome and magnetic force interaction, not on the passage trajectory alone. Full catalog and six-suite clearance remains a mandatory downstream gate.",
     "feasibility_status": "ready",
     "missing_evidence": []
   },
   "sources": [
     {
-      "id": "s-1007bee1e25db984",
-      "title": "LM Guide Precautions on Use, including removing/mounting jig procedure",
-      "publisher": "THK",
-      "url": "https://tech.thk.com/upload/tec_data/No.1030-T34667_en_LM_Guide.pdf",
-      "sha256": "b63208323aa14ab3b0da95df2370756c0ca12ea6f09fab6953954c93419c20ee"
+      "id": "s-96228576f368ce64",
+      "title": "Demagnetization of assembled bearings",
+      "publisher": "Maurer Magnetic AG",
+      "url": "https://maurermagnetic.com/wp-content/uploads/2020/04/Application-note-demagnetization-of-assembled-bearings-EN.pdf",
+      "sha256": "12566db1c75be9faf313230a00c9b9d4e415045996f7f21548a10b973cc50459"
     },
     {
-      "id": "s-6ec4f5415ac07269",
-      "title": "Removing/Mounting Jig",
-      "publisher": "THK",
-      "url": "https://tech.thk.com/en/products/pdf/en_a01_573.pdf",
-      "sha256": "cde76ecca474b25d5498e287618ee242aa2c5a505c38d43039162537a3221cd5"
+      "id": "s-0a3d1688171454d0",
+      "title": "Industrial magnetic handling and demagnetization brochure",
+      "publisher": "Goudsmit Magnetics",
+      "url": "https://www.goudsmitmagnetics.com/uploads/pdf/brochure-handling-en.pdf",
+      "sha256": "7f61dfc25d93ab52c79aa8718f98ad9c7cf08f6d7ad0b857b8d3b27e4318b27b"
     },
     {
-      "id": "s-2095873c35e0da13",
-      "title": "HSR/R-XR Full-Ball LM Guide product and CAD page",
-      "publisher": "THK",
-      "url": "https://www.thk.com/eu/en/products/lm_guide/full_ball/hsr/r_xr/",
-      "sha256": "39dc4e1fd6728806aa4bd6d32d2f49cf62543265c61f0dd4b07e60b46ce3f4cc"
+      "id": "s-fb839e55cda4c53b",
+      "title": "CC0 asset license",
+      "publisher": "ambientCG",
+      "url": "https://ambientcg.com/license",
+      "sha256": "86d690c1384e979c84fcb607c66dcd4802ff75f917a2fbef1658add632d1b11b"
     },
     {
-      "id": "s-a6083e751c3ee956",
-      "title": "Product Manual — DressPack IRB 6720",
-      "publisher": "ABB",
-      "url": "https://www.uzivatelskadokumentace.cz/Application%20Equipment%20%26%20Accessories/DressPack/DressPack%20IRB%206720/en/3HAC088411-001.pdf",
-      "sha256": "143c508dc484b5f9a3b8e760b1f48e17c33f2a92058e4ac421b1c278c71a6620"
+      "id": "s-0e2dbc39a87eed72",
+      "title": "LIBERO original BDDL task definitions",
+      "publisher": "Lifelong Robot Learning",
+      "url": "https://github.com/Lifelong-Robot-Learning/LIBERO/tree/master/libero/libero/bddl_files",
+      "sha256": "7892009d6d727766013e1b5f3d818a6906caa38d69aff210163ddef37e8f5edf"
     },
     {
-      "id": "s-e4d88bbe4b10e860",
-      "title": "External DressPack",
-      "publisher": "ABB",
-      "url": "https://www.abb.com/global/en/areas/robotics/products/equipment/dresspacks/external-dresspack",
-      "sha256": "126bb488d89206ea3a5a52449dd2509afeaa2599acaa54565a42ac4f1665ab09"
-    },
-    {
-      "id": "s-e1ce477bb432c4af",
-      "title": "How to Unbox and Install Dell 2U ReadyRails",
-      "publisher": "Dell Technologies",
-      "url": "https://www.dell.com/support/contents/en-aw/videos/videoplayer/how-to-unbox-and-install-dell-2u-readyrails/6396722281112",
-      "sha256": "3ba6a4fecf331614e07821f77940328e711908d215ff85e7c686f7ff7da9250f"
-    },
-    {
-      "id": "s-863944427b8e3519",
-      "title": "LIBERO original BDDL task definition",
-      "publisher": "Lifelong-Robot-Learning",
-      "url": "https://raw.githubusercontent.com/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.bddl",
-      "sha256": "491835cc2eb6956f7ce3d1ee4e266377116168fe453e6529fe105e3b0333635d"
-    },
-    {
-      "id": "s-0839942e794e7f8e",
-      "title": "RoboCasa original environment registry",
+      "id": "s-d96edf36132218e4",
+      "title": "RoboCasa original kitchen task implementations",
       "publisher": "RoboCasa",
-      "url": "https://raw.githubusercontent.com/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/__init__.py",
-      "sha256": "db2b99b1555167a2a7f7c93024e84e7e6fef41b739f7f4520a5a1ddfb0c24e17"
+      "url": "https://github.com/robocasa/robocasa/tree/main/robocasa/environments/kitchen",
+      "sha256": "968cd658185c950a4c21675630b81c8e3d1d3e7367537c81177066fc268e4c73"
     },
     {
-      "id": "s-396760d996a2e1d5",
-      "title": "SimplerEnv original environment registry",
+      "id": "s-d13271bd3025d4f4",
+      "title": "SimplerEnv original real-to-sim environment definitions",
       "publisher": "SimplerEnv",
-      "url": "https://raw.githubusercontent.com/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/__init__.py",
-      "sha256": "ed5079f2aa8d9c85938f86440195ecdf90c4ee3afebb96b778375aad7cccac25"
+      "url": "https://github.com/simpler-env/ManiSkill2_real2sim/tree/main/mani_skill2_real2sim/envs",
+      "sha256": "35a2b590ecd122b762133b2aeca513e88bd902df667cfd5032c89130ca51b1db"
     },
     {
-      "id": "s-93a68214e3396776",
-      "title": "BEHAVIOR-1K original task implementation",
+      "id": "s-660b48d08ce51e54",
+      "title": "BEHAVIOR-1K original BDDL activity definitions",
       "publisher": "Stanford Vision and Learning Lab",
-      "url": "https://raw.githubusercontent.com/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/tasks/behavior_task.py",
-      "sha256": "3716537d3c9e896ca574241db53c339c031cbb88ade54ff4b04e085170fce06f"
+      "url": "https://github.com/StanfordVL/BEHAVIOR-1K/tree/main/bddl3/bddl/activity_definitions",
+      "sha256": "cd31fc546da7ddc51effecf218231f9e878bdb86352e1825a9cd292e6090dc4f"
     },
     {
       "id": "s-6ed524b5f205e074",
@@ -1799,18 +1767,32 @@
       "sha256": "8a8351a763ba4a806d420d435b5df0188c496a29e9f30f026e06d8569619baf5"
     },
     {
-      "id": "s-6a49c58c976fa469",
-      "title": "RoboDojo original fasten_screws task definition",
+      "id": "s-5d66f9b402b33e5c",
+      "title": "RoboDojo original task logic and configurations",
       "publisher": "RoboDojo Benchmark",
-      "url": "https://raw.githubusercontent.com/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/fasten_screws.py",
-      "sha256": "2e187a28e33e44efb87baae6463b3ec35264ccd41e35c21a1be44f6361675185"
+      "url": "https://github.com/robodojo-benchmark/RoboDojo/tree/main/task/RoboDojo",
+      "sha256": "8757974cd69a46178397974e0f313add0d6643804b6277f39ed4ed4380cf993b"
     },
     {
-      "id": "s-bba7a5a0605fbeea",
-      "title": "THK HSR full-ball LM Guide manufacturer catalog515-2E pagesA1-182 throughA1-213",
-      "publisher": "THK",
-      "url": "https://tech.thk.com/en/products/pdf/en_a01_182.pdf",
-      "sha256": "c29dd1b04018c61addcdc1f30a8145f41ebc2b6be3257bbb8fefa3522ce2965e"
+      "id": "s-73ad8f4348851bfc",
+      "title": "Modelica Association static hysteresis: Tellinen and Preisach models",
+      "publisher": "Modelica Association",
+      "url": "https://doc.modelica.org/Modelica%203.2.3/Resources/helpDymola/Modelica_Magnetic_FluxTubes_UsersGuide_Hysteresis_StaticHysteresis.html",
+      "sha256": "074d3bf863ddd59ea557e7f9a1ec8c06ff906007ef5a94827daf7045fd7e0e82"
+    },
+    {
+      "id": "s-b871f48280fcd511",
+      "title": "Modelica Models for Magnetic Hysteresis, Materials and Transformers",
+      "publisher": "Ziske and Boedrich; Modelica Conference2014",
+      "url": "https://ep.liu.se/ecp/096/017/ecp14096017.pdf",
+      "sha256": "6e8c4fea14fe41e1f81a2424345b919a9486663f60df091a957ac55359049367"
+    },
+    {
+      "id": "s-6c420615dfaade7b",
+      "title": "Magpylib6.1 current-loop SI field classes",
+      "publisher": "Magpylib",
+      "url": "https://magpylib.readthedocs.io/en/6.1.0/_pages/user_guide/docs/docs_classes.html",
+      "sha256": "aa550a7f8b16117b045130a66332332171a313e295646c73ac0d961b962a2300"
     }
   ]
 }

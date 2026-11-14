@@ -1,52 +1,41 @@
 {
-  "id": "thk-hsr12x-block-jig-transfer",
-  "title": "Transfer an uncaged HSR12X LM block onto a removing/mounting jig",
-  "objective": "Bimanually butt a representative removing/mounting jig against an HSR12X rail, maintain parallel continuous support, and slide the uncaged recirculating-ball block fully onto the jig without losing a ball or contaminating or damaging the guide.",
+  "id": "robot-joint-shaft-low-frequency-demagnetization",
+  "title": "Demagnetize a solid robot-joint shaft through a low-frequency tunnel",
+  "objective": "Grasp a representative solid ferromagnetic robot-joint shaft, align it with a round low-frequency demagnetizing tunnel, physically carry its full length through the alternating-field region, and place it in a clean output cradle with reduced simulated remanence, without collision, dropping, reversal-induced remagnetization, or particle recontamination.",
   "skills": [
-    "bimanual rail-to-jig alignment",
-    "flush end-face mating",
-    "continuous rolling-element support",
-    "force-limited precision sliding",
-    "alignment-preserving regrasping",
-    "free rolling-element containment"
+    "stable grasping of an elongated rigid shaft",
+    "six-degree-of-freedom aperture alignment",
+    "clearance-preserving controlled passage",
+    "orientation control under pose-dependent magnetic forces",
+    "clean output placement"
   ],
-  "success_conditions": "Full success requires physical end-face contact, parallel rail and jig axes, complete block transfer, all initially present balls still contained in four circulating rows, no impact, drop, contamination-zone contact, or unsafe inclination, and a stable one-second release. Safe jig mating and partial transfer may receive partial credit. Any lost ball, block jam, separated support interface, direct pose or velocity write, hidden weld, fixed ball, or collision suppression invalidates full success.",
-  "industrial_value": "THK’s maintenance instructions prescribe a removing/mounting jig when block removal is unavoidable and require discontinuing use if a rolling element falls out. This makes preservation of the bearing elements an actual service outcome rather than an invented difficulty.",
-  "dexterity": "One hand must keep a narrow jig physically butted and parallel to the rail while the other advances a small bearing block. The robot must regulate contact and regrasp without opening a gap that lets any freely simulated ball escape.",
+  "success_conditions": "Full success requires every shaft material cell to traverse the effective field, a validated hysteresis calculation to finish below the frozen representative remanence threshold, stable placement in the clean cradle, and no tunnel contact, drop, unsafe release, contamination-zone contact, or excessive device thermal load. Alignment and incomplete treatment earn partial credit. Waypoint traversal alone, direct magnetic-state writes, pose or velocity injection, collision suppression, or a hidden success flag cannot score. A physically valid one-arm strategy receives full credit.",
+  "industrial_value": "The manufacturer identifies shafts as suitable products for low-frequency tunnel demagnetization. Separate bearing-industry guidance requires demagnetizing components that contact bearings and documents particle adhesion, denting, vibration, and wear from residual magnetism. A representative robot-joint shaft treated before bearing assembly therefore has direct robot-building relevance.",
+  "dexterity": "The central manipulation is carrying a long, solid part through a confined aperture while preserving clearance and orientation as its magnetic state and field-derived forces evolve. It is materially harder than pick-and-place, yet remains a rigid-body task within pinned-YAM reach after fixture scaling; no artificial bimanual requirement is imposed.",
   "evidence": [
     {
-      "source_id": "s-1007bee1e25db984",
-      "locator": "LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3",
-      "quote_sha256": "04820ee138738bb979d2ad357aed6bf252b47d079e98eb6f7236c1aa0674588d"
+      "source_id": "s-0a3d1688171454d0",
+      "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Low-frequency demagnetizing tunnels”",
+      "quote_sha256": "9347502825a699f92ae99c312e3815de872d649ae2ec3cc2ddeae5f9c55bf674"
     },
     {
-      "source_id": "s-1007bee1e25db984",
-      "locator": "LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3",
-      "quote_sha256": "422249b3b7604d646eb8630871735104f01818a94aa0e4f08e686026d469a49c"
+      "source_id": "s-0a3d1688171454d0",
+      "locator": "Industrial magnetic handling and demagnetization brochure, page 18, “Low-frequency demagnetizing tunnels”",
+      "quote_sha256": "d476f0bd2498a0544cde8371332318bb3e6638a67676bfa8aad33864bfc60f06"
     },
     {
-      "source_id": "s-1007bee1e25db984",
-      "locator": "LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3",
-      "quote_sha256": "31e044d789fbd83ba195789ffd1930c775eace4cf2778f426e473c2127384b58"
+      "source_id": "s-96228576f368ce64",
+      "locator": "Demagnetization of assembled bearings, page 3",
+      "quote_sha256": "951c80708981594870a4484aeee307d8737d2ae2ae3f8d6eb156bd556a778668"
     },
     {
-      "source_id": "s-bba7a5a0605fbeea",
-      "locator": "THK HSR catalog 515-2E, printed page A1-183, “Structure and Features”",
-      "quote_sha256": "02fc979d6217ac2a65e94b2410d6bf6448213f15886f088a8b63b1e8e5c5f02a"
-    },
-    {
-      "source_id": "s-bba7a5a0605fbeea",
-      "locator": "THK HSR catalog 515-2E, printed page A1-183, “Structure and Features”",
-      "quote_sha256": "f8c1f73b0917e8407fce97f419e0607c2f3024b9909da6b5a85733d51457c109"
-    },
-    {
-      "source_id": "s-6ec4f5415ac07269",
-      "locator": "THK “Removing/Mounting Jig,” page 1",
-      "quote_sha256": "7091710e7216188ea0eef976a56952afb930ad622071ae0106f31e01be4e3b5a"
+      "source_id": "s-73ad8f4348851bfc",
+      "locator": "Modelica Magnetic FluxTubes UsersGuide, StaticHysteresis.Tellinen, “The Tellinen hysteresis model”",
+      "quote_sha256": "95205827e47f7e5bdd2264544c8b45e4053e28c22bd72d0591ad170137a6d3fe"
     }
   ],
-  "asset_plan": "Author a representative full-scale HSR12XRM fixture using the visually verified A1-194/A1-195 drawings: 20 mm block height, 27 mm block width, 45 mm block length, 12 mm rail width, 11 mm rail height, and the documented four-row cross-section with end returns. Model every ball as an independent rigid PhysX body and preserve four physical circulation paths. Make the jig’s support cross-section continuous with the rail and clearly label its unpublished length, ball diameter/count, groove clearance, maximum transfer gap, and angular tolerance as prototype assumptions rather than THK specifications. Freeze those values before development and test ball circulation and loss, gap and inclination sensitivity, timestep stability, contact-force limits, reset freshness, and deliberate misalignment failures before YAM integration.",
-  "risk": "The manufacturer drawings establish the selected model’s exterior, rail cross-section, four raceway rows, circulation through end plates, and lack of retention. Exact ball diameter/count, internal groove microprofile, jig length, and service tolerances are unpublished; these are bounded representative modeling assumptions requiring sensitivity tests and must not be presented as an exact THK replica.",
+  "asset_plan": "Author a representative, explicitly non-product-replica rigid tunnel, 320 mm solid shaft, input stand, clean output cradle, and guarded field enclosure. Freeze aperture, shaft diameter and mass, field-zone length, material envelope curve, remanence limit, force ceiling, thermal duty, and reach bounds before development. Use a Tellinen hysteresis state per axial shaft cell, driven only by simulated coil field evaluated from actual poses and time in the verified native PRE/POST physics callback. Couple a bounded field-gradient force and torque into PhysX; never overwrite shaft pose, velocity, or magnetic state. Before YAM integration, test major and minor loops, proper and incomplete passage, reversal, stopping, timestep/rate convergence, force and energy finiteness, thermal accumulation, reset freshness, collision response, and reachable clean placement. The representative field calibration and protocol are disclosed prototype assumptions, not manufacturer specifications.",
+  "risk": "No acquired source supplies a specific tunnel model’s proprietary aperture, waveform, field calibration, or operating speed. Those values must remain frozen representative assumptions and cannot be advertised as Goudsmit performance. Static Tellinen behavior does not by itself establish dynamic eddy-current accuracy, so the selected solid shaft must use a conservative low-frequency regime and pass convergence and improper-treatment controls. Catalog neighbor pr-1810 tests controlled passage through a narrow slot; final novelty depends on the independently validated remanence outcome and magnetic force interaction, not on the passage trajectory alone. Full catalog and six-suite clearance remains a mandatory downstream gate.",
   "feasibility_status": "ready",
   "missing_evidence": []
 }
