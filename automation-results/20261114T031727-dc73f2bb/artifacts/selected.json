@@ -1,32 +1,52 @@
 {
-  "id": "az100-proximity-switch-registration",
-  "title": "Register and secure a robot proximity switch beneath its actuator",
-  "objective": "Using an independently authored full-scale fixture grounded in the AZ-100 procedure, retract the rigid cylinder, partially loosen the switch-mount screws, slide the proximity switch beneath its actuator until it registers, tighten it without losing registration, and repeat at the extended endpoint.",
+  "id": "eco-oem35m-robot-axis-damper-commissioning",
+  "title": "Commission and lock a compact industrial robot-axis shock absorber",
+  "objective": "With the representative axis isolated, physically loosen the adjuster setscrew, rotate the numbered collar on an ECO OEM .35M-form damper, retighten the setscrew, operate a guarded physical cycle control, and iteratively obtain two repeatable carriage stops without bottoming, overload, excessive rebound, or setting drift.",
   "skills": [
-    "confined screwdriver alignment",
-    "controlled partial screw loosening",
-    "bimanual slide-and-hold coordination",
-    "sensor-to-actuator registration",
-    "clearance control during fastening",
-    "two-endpoint procedural memory"
+    "hex-key alignment and insertion into a recessed setscrew",
+    "collar grasping and controlled fine rotation",
+    "bimanual stabilization while loosening and locking",
+    "iterative adjustment from observed dynamic response",
+    "force-limited tightening without stripping",
+    "physical control actuation and guarded inspection"
   ],
-  "success_conditions": "At both retracted and extended endpoints, robot-applied motions alone place the actuator past the switch centerline, maintain a sensing gap of at most 6 mm, trigger the indicator solely through physical relative pose, and leave the switch secured for 3 seconds after release. Zero score for powered adjustment, skipping initial retraction, moving the actuator mount as a shortcut, registering only one endpoint, actuator collision, loose or stripped screws, dropped tools, scripted sensor success, teleportation, or state overwrite. Partial credit is awarded for safe initialization, correct screw release, one geometrically valid endpoint, and registration retained after tightening.",
-  "industrial_value": "The AZ-100 maintenance manual requires proximity-switch adjustment after position changes and specifies registration at both cylinder endpoints. The task therefore represents recurring calibration of an industrial robot’s motion-limit sensing rather than generic switch operation.",
-  "dexterity": "Moderate-to-high: it combines partial fastener release, constrained sliding, feedback-guided registration, sub-centimeter clearance control, holding against tightening reaction, and repetition across two articulated states.",
+  "success_conditions": "Use a rigid PhysX carriage whose motor, contacts, spring return, damper stroke, and hard stop are physically simulated. Test energy must be at least 0.85 J, corresponding to 5% of the published 17.0 Nm/cycle maximum, with impact velocity inside the published 0.3–3.30 m/s range. The robot must physically loosen the setscrew before turning the collar and physically relock it afterward. Success requires two consecutive cycles with no piston travel beyond 12.0 mm, no hard-stop strike, no excessive rebound, no overload, and collar drift below a declared measured tolerance during a post-lock witness-torque test. Award partial credit for successful key engagement, unlocking, adjustment, and locking. Zero score for adjustment while the axis is energized, direct pose/velocity/damping writes, collision suppression, hidden stage flags, damaged threads, dropped tools, or a hard-stop impact.",
+  "industrial_value": "The AZ-100 service manual establishes shock-absorber adjustment as robot-axis maintenance, while the Enidine catalog establishes a real compact adjustable damper, its operating envelope, internal adjustment mechanism, and setscrew retention. This makes the task relevant to commissioning and maintaining automation equipment that supports scalable robot and compute-infrastructure production, without claiming that the Enidine model is interchangeable with the AZ-100 component.",
+  "dexterity": "High but feasible: the robot must align and seat a hex key, counterhold a small cylindrical body, unlock a retained collar, make fine rotations, reinsert or maintain tool engagement, apply bounded locking torque, and judge the result from repeated physical impacts rather than collar angle alone.",
   "evidence": [
     {
       "source_id": "s-74c3dbd7c10379f7",
-      "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 30, section 4.2.1, step 3",
-      "quote_sha256": "39fa141a0b6584441b42fdd3576658c1ebf0f2d99bf25672d8124ba201ec274a"
+      "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 31, section 4.2.4",
+      "quote_sha256": "8795a4a385f97af25edbdef61d0be55460f7d52f11da88aaa404182b195b5dd7"
     },
     {
       "source_id": "s-74c3dbd7c10379f7",
-      "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 30, section 4.2.1, note",
-      "quote_sha256": "40774cb733d30b6fd45713cb4590f9f3be2552bd45a639629bb849d4d73d3a94"
+      "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 31, section 4.2.4 safety note",
+      "quote_sha256": "09b01167ec75b833737517703f232918245a0051ba7d664745d3835f3f38787f"
+    },
+    {
+      "source_id": "s-90765d9ec51b37b3",
+      "locator": "ITT Enidine catalog, printed page 20 (PDF page 24), ECO OEM/OEMXT Series Overview",
+      "quote_sha256": "88d33cdb607fcd9b5af4596f764e9637add1e8b00149f23d468d98c1c38a2e72"
+    },
+    {
+      "source_id": "s-90765d9ec51b37b3",
+      "locator": "ITT Enidine catalog, printed page 21 (PDF page 25), ECO OEM Small Bore Series Technical Data",
+      "quote_sha256": "404fd3e4725d4440a86701a6e2562ab765a197332973e4e6a57eabf06ad795a1"
+    },
+    {
+      "source_id": "s-90765d9ec51b37b3",
+      "locator": "ITT Enidine catalog, printed page 21 (PDF page 25), Technical Data note 1",
+      "quote_sha256": "d5c6170b34b0a3eb9684047bed2cf5441667cc47e4383028c2ce1c36e4b50f0b"
+    },
+    {
+      "source_id": "s-90765d9ec51b37b3",
+      "locator": "ITT Enidine catalog, printed page 35 (PDF page 39), Adjustment Techniques",
+      "quote_sha256": "b44a08ddb5b496bfa2ad4368539b66aae0e1b65b9959a13a18ff07007b969742"
     }
   ],
-  "asset_plan": "Build a clearly labeled representative, not exact-product, rigid fixture with a slotted switch bracket, retained mount screws, rigid actuator, and two cylinder endpoints matching the documented arrangement. Use the documented 6 mm boundary and over-center requirement. Choose and record testable modeling assumptions for screw size, slot length, tightening window, cylinder stroke, and sensor hysteresis; calibrate them on the fixture before scoring. Implement the indicator only as a function of actuator-to-sensor geometry. First validate screw retention, sliding only while loosened, the 6 mm boundary, over-center registration, collision rejection, tightening drift, reset repeatability, fingertip clearance, and YAM reach in Isaac Sim 6.1.0 at YAM commit 0059d02a1a91bc6834c1d0846022891df0c78730.",
-  "risk": "The fixture will not claim to reproduce exact proprietary AZ-100 dimensions. Remaining unspecified dimensions are nonessential, explicitly testable fixture parameters; the sourced retention mechanism—screws clamping a sliding switch mount—and sensing relationship are sufficient. A synchronized novelty review must still be repeated before submission because cached records are not authoritative live state.",
+  "asset_plan": "Author a full-scale representative fixture around the published ECO OEM .35M envelope: 12.0 mm stroke, M16×1.5 body, 100.6 mm body length, 11.2 mm rod diameter, 14.5 mm adjustment diameter, and published force/energy/velocity limits. Preserve a physical 180-degree collar and a contact-bearing setscrew; disclose the independently chosen setscrew size, friction, thread torque, damping interpolation, and carriage parameters as modeling assumptions rather than manufacturer calibration. Start with an 8 kg guarded carriage at 0.5 m/s (1.0 J), then validate energy balance, 12 mm travel, hard-stop contact, rebound, low/high-adjustment controls, lock holding, parameter sensitivity, and reset repeatability before connecting YAM. The cycle control must be physically pressed by the robot, and no task object may be teleported or welded during execution.",
+  "risk": "The catalog does not publish collar torque, setscrew dimensions, friction, or a complete force-versus-setting curve. These are nonessential calibration details rather than an unknown retention mechanism: model them as bounded assumptions and require component-level sensitivity and witness-torque tests before any full demo. The small interface may require an enlarged but mechanically equivalent robot-accessible key head; any enlargement must be disclosed and must preserve the collar/setscrew operation.",
   "feasibility_status": "ready",
   "missing_evidence": []
 }

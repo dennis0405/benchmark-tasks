@@ -20,7 +20,7 @@ Status: **blocked**
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 
 
-evidence quote is absent from acquired source s-5564ba3bb93b1ea3: 'EWA-15 9~15 1.3 Approx.4.7'
+all proposed candidates duplicate/uncertain; inspect selection-history.json
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`

@@ -1,68 +1,20 @@
 {
   "candidates": [
     {
-      "id": "ewa15-tool-replacement-rebalancing",
-      "title": "Replace and rebalance a spring-balancer-supported industrial tool",
-      "objective": "On an EWA-15-class spring balancer carrying a documented 9–15 kg load, physically lock and proof-check the drum, remove the old tool, adjust spring preload with a wrench while reading the gauge, attach and support the replacement tool, release the lock, and trim preload until the tool remains balanced.",
+      "id": "eco-oem35m-robot-axis-damper-commissioning",
+      "title": "Commission and lock a compact industrial robot-axis shock absorber",
+      "objective": "With the representative axis isolated, physically loosen the adjuster setscrew, rotate the numbered collar on an ECO OEM .35M-form damper, retighten the setscrew, operate a guarded physical cycle control, and iteratively obtain two repeatable carriage stops without bottoming, overload, excessive rebound, or setting drift.",
       "skills": [
-        "bimanual suspended-load stabilization",
-        "pull-and-turn lock-pin manipulation",
-        "contact-guided drum-slot indexing",
-        "hook release and attachment",
-        "wrench-to-worm engagement",
-        "gauge-guided preload adjustment",
-        "controlled lock release under residual spring force"
+        "hex-key alignment and insertion into a recessed setscrew",
+        "collar grasping and controlled fine rotation",
+        "bimanual stabilization while loosening and locking",
+        "iterative adjustment from observed dynamic response",
+        "force-limited tightening without stripping",
+        "physical control actuation and guarded inspection"
       ],
-      "success_conditions": "The drum pin must physically enter a slot and resist an upward/downward proof motion before tool removal. The replacement must be within 9–15 kg, attached before unlock, and supported during release. After adjustment, it must remain hands-off without abrupt rise or drop and traverse 70–140 mm under physical spring forces. Zero score for removing an unlocked load, releasing the balancer unloaded, snap-back, tool drop, overtravel, over-tension damage, teleportation, welding, or direct state writes. Partial milestones are verified locking, safe exchange, preload adjustment, and balanced release.",
-      "industrial_value": "The manufacturer prescribes drum locking, load verification, worm adjustment, attachment before release, and final balance checking for tool replacement; it warns that unsafe release can cause snap-back or a dropped tool.",
-      "dexterity": "High. The task combines indexed locking, force-based proof checking, manipulation of a heavy suspended tool, hook handling, wrench engagement, visual gauge feedback, and guarded bimanual release.",
-      "evidence": [
-        {
-          "source_id": "s-ac62801e0a07361f",
-          "locator": "EWA Standard Spring Balancer Instruction Manual, page 9, section 4-2, step 2",
-          "quote_sha256": "a3938db88a8a1824377694fcbb5f84a815c35b903e8d3f54eabc969a93c9f69a"
-        },
-        {
-          "source_id": "s-ac62801e0a07361f",
-          "locator": "EWA Standard Spring Balancer Instruction Manual, page 10, section 4-3, Method 1, step 3",
-          "quote_sha256": "5e9062281344c36d5da46dbb103f032b1284b4546c94c690b5a69384d17d9409"
-        },
-        {
-          "source_id": "s-ac62801e0a07361f",
-          "locator": "EWA Standard Spring Balancer Instruction Manual, page 10, section 4-3 warning",
-          "quote_sha256": "e531a024472c191e23e89de2a04114e4a9b2896f3c55f04636fe282d1bfe81e6"
-        },
-        {
-          "source_id": "s-ac62801e0a07361f",
-          "locator": "EWA Standard Spring Balancer Instruction Manual, page 7, section 2-1, specifications",
-          "quote_sha256": "e8742d16ed7e8b2270385ca2bf620b2c79694d5283ad1ba4bf56569e5efc6741"
-        }
-      ],
-      "asset_plan": "A representative rigid fixture would require a six-position physical drum lock, spring-loaded pull/turn pin, worm-driven preload, readable gauge, latching hook, 1.3 m payout constraint, and 9–15 kg suspended tool. Environment tests must precede robot integration and cover all lock phases, false seating, proof loading, preload direction, hands-off balance, snap-back-relevant release, overload, overtravel, and reset repeatability. No exact-product claim is permissible.",
-      "risk": "The procedure is well documented, but the acquired evidence does not dimension the lock, worm, gauge, or hook, and the full-scale 9–15 kg manipulation has not been shown feasible for the pinned YAM embodiment. The cable/spring surrogate is also unvalidated.",
-      "feasibility_status": "research-needed",
-      "missing_evidence": [
-        "Dimensioned EWA-15 lock-pin, drum-slot, worm, gauge, hook, and housing geometry",
-        "Manufacturer data or defensible measurements for worm ratio and spring torque versus payout",
-        "Pinned-YAM payload, grip-force, reach, and thermal validation with a 9–15 kg suspended load",
-        "Validated physical payout/spring model reproducing balance, lock holding, overtravel, and unsafe-release behavior"
-      ]
-    },
-    {
-      "id": "az100-shock-absorber-tuning",
-      "title": "Tune an industrial robot axis shock absorber and retain the setting",
-      "objective": "With an AZ-100-class axis locked out, physically manipulate the shock-absorber adjuster, cycle a representative carriage through real actuator and impact contacts, iteratively eliminate bottoming and rebound, and retain the chosen setting for repeat trials.",
-      "skills": [
-        "precise adjuster engagement",
-        "fine rotational manipulation",
-        "dynamic-response observation",
-        "iterative force-response tuning",
-        "impact and rebound avoidance",
-        "setting-retention verification"
-      ],
-      "success_conditions": "Adjustment occurs only with pneumatic and electrical energy isolated. Carriage motion, damping, rebound, and impacts must arise from modeled physical forces. Two consecutive cycles must stop without bottoming, excessive rebound, or setting drift. Zero score for powered adjustment, direct damping/state writes, disabled collision, hard-stop impact, damage, or success based only on adjuster angle.",
-      "industrial_value": "The robot manual identifies shock absorbers as the cushioning mechanism for the telescoping Z and X axes and includes their deceleration performance in preventive maintenance.",
-      "dexterity": "Moderate. It combines physical adjustment with closed-loop interpretation of dynamic stopping behavior, but the acquired material does not yet establish a separate lock manipulation that would raise the manual dexterity beyond adjuster rotation.",
+      "success_conditions": "Use a rigid PhysX carriage whose motor, contacts, spring return, damper stroke, and hard stop are physically simulated. Test energy must be at least 0.85 J, corresponding to 5% of the published 17.0 Nm/cycle maximum, with impact velocity inside the published 0.3–3.30 m/s range. The robot must physically loosen the setscrew before turning the collar and physically relock it afterward. Success requires two consecutive cycles with no piston travel beyond 12.0 mm, no hard-stop strike, no excessive rebound, no overload, and collar drift below a declared measured tolerance during a post-lock witness-torque test. Award partial credit for successful key engagement, unlocking, adjustment, and locking. Zero score for adjustment while the axis is energized, direct pose/velocity/damping writes, collision suppression, hidden stage flags, damaged threads, dropped tools, or a hard-stop impact.",
+      "industrial_value": "The AZ-100 service manual establishes shock-absorber adjustment as robot-axis maintenance, while the Enidine catalog establishes a real compact adjustable damper, its operating envelope, internal adjustment mechanism, and setscrew retention. This makes the task relevant to commissioning and maintaining automation equipment that supports scalable robot and compute-infrastructure production, without claiming that the Enidine model is interchangeable with the AZ-100 component.",
+      "dexterity": "High but feasible: the robot must align and seat a hex key, counterhold a small cylindrical body, unlock a retained collar, make fine rotations, reinsert or maintain tool engagement, apply bounded locking torque, and judge the result from repeated physical impacts rather than collar angle alone.",
       "evidence": [
         {
           "source_id": "s-74c3dbd7c10379f7",
@@ -71,46 +23,98 @@
         },
         {
           "source_id": "s-74c3dbd7c10379f7",
-          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 31, section 4.2.4",
-          "quote_sha256": "f94cbf34a9ee6dd0529ca1d9c63d595f040259c90c0f6d451beed3b4ef3dca7e"
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 31, section 4.2.4 safety note",
+          "quote_sha256": "09b01167ec75b833737517703f232918245a0051ba7d664745d3835f3f38787f"
         },
         {
-          "source_id": "s-74c3dbd7c10379f7",
-          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, preventive-maintenance table, Robot Performance",
-          "quote_sha256": "3fa0efd2d82159ec8a4df9b86ddeb100b4ff1f3b1dab8fb5f43f75d57a8c59fb"
+          "source_id": "s-90765d9ec51b37b3",
+          "locator": "ITT Enidine catalog, printed page 20 (PDF page 24), ECO OEM/OEMXT Series Overview",
+          "quote_sha256": "88d33cdb607fcd9b5af4596f764e9637add1e8b00149f23d468d98c1c38a2e72"
         },
         {
-          "source_id": "s-74c3dbd7c10379f7",
-          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 31, section 4.2.4, safety note",
-          "quote_sha256": "1bd0da6d5c9a69b697534d37b6c6773d8b047aebe235c838912f91f749309b8f"
+          "source_id": "s-90765d9ec51b37b3",
+          "locator": "ITT Enidine catalog, printed page 21 (PDF page 25), ECO OEM Small Bore Series Technical Data",
+          "quote_sha256": "404fd3e4725d4440a86701a6e2562ab765a197332973e4e6a57eabf06ad795a1"
+        },
+        {
+          "source_id": "s-90765d9ec51b37b3",
+          "locator": "ITT Enidine catalog, printed page 21 (PDF page 25), Technical Data note 1",
+          "quote_sha256": "d5c6170b34b0a3eb9684047bed2cf5441667cc47e4383028c2ce1c36e4b50f0b"
+        },
+        {
+          "source_id": "s-90765d9ec51b37b3",
+          "locator": "ITT Enidine catalog, printed page 35 (PDF page 39), Adjustment Techniques",
+          "quote_sha256": "b44a08ddb5b496bfa2ad4368539b66aae0e1b65b9959a13a18ff07007b969742"
         }
       ],
-      "asset_plan": "First obtain the shock absorber manufacturer's drawing and adjustment instructions. Then build a disclosed representative rigid carriage, impact face, external stop, adjustable damper, and physical setting-retention mechanism. Independently validate stroke, impact energy, bottoming, rebound, setting retention, sensitivity, and reset repeatability in Isaac Sim 6.1 before YAM integration.",
-      "risk": "The acquired robot manual gives the application and adjustment direction but not the damper stroke, contact geometry, retention mechanism, energy envelope, or response data. Creating those now would invent essential mechanics and thresholds.",
-      "feasibility_status": "blocked",
+      "asset_plan": "Author a full-scale representative fixture around the published ECO OEM .35M envelope: 12.0 mm stroke, M16×1.5 body, 100.6 mm body length, 11.2 mm rod diameter, 14.5 mm adjustment diameter, and published force/energy/velocity limits. Preserve a physical 180-degree collar and a contact-bearing setscrew; disclose the independently chosen setscrew size, friction, thread torque, damping interpolation, and carriage parameters as modeling assumptions rather than manufacturer calibration. Start with an 8 kg guarded carriage at 0.5 m/s (1.0 J), then validate energy balance, 12 mm travel, hard-stop contact, rebound, low/high-adjustment controls, lock holding, parameter sensitivity, and reset repeatability before connecting YAM. The cycle control must be physically pressed by the robot, and no task object may be teleported or welded during execution.",
+      "risk": "The catalog does not publish collar torque, setscrew dimensions, friction, or a complete force-versus-setting curve. These are nonessential calibration details rather than an unknown retention mechanism: model them as bounded assumptions and require component-level sensitivity and witness-torque tests before any full demo. The small interface may require an enlarged but mechanically equivalent robot-accessible key head; any enlargement must be disclosed and must preserve the collar/setscrew operation.",
+      "feasibility_status": "ready",
+      "missing_evidence": []
+    },
+    {
+      "id": "ewa15-tool-replacement-rebalancing",
+      "title": "Replace and rebalance a spring-balancer-supported industrial tool",
+      "objective": "Lock and proof-check an EWA-15 drum, support and exchange its suspended tool, adjust spring preload through the worm while observing the gauge, and release the lock under control until the replacement remains balanced.",
+      "skills": [
+        "bimanual suspended-load stabilization",
+        "pull-and-turn lock-pin manipulation",
+        "drum-slot indexing",
+        "hook release and attachment",
+        "wrench-to-worm engagement",
+        "gauge-guided preload adjustment",
+        "controlled release under spring force"
+      ],
+      "success_conditions": "The pin must physically enter a drum slot and resist an upward/downward proof motion before removal. The 9–15 kg replacement must be attached and supported before unlock, then remain hands-off without abrupt rise, drop, or overtravel. Zero score for unlocked removal, unloaded release, snap-back, tool drop, direct state writes, teleportation, or welded retention.",
+      "industrial_value": "The manufacturer explicitly prescribes drum locking, load support, preload adjustment, attachment before release, and final balance checking during suspended-tool replacement.",
+      "dexterity": "High: indexed locking, proof loading, heavy-load stabilization, hook manipulation, wrench engagement, gauge feedback, and guarded release must be coordinated.",
+      "evidence": [
+        {
+          "source_id": "s-ac62801e0a07361f",
+          "locator": "EWA Standard Spring Balancer Instruction Manual, page 9, section 4-2, step 2",
+          "quote_sha256": "c7103c3432844efd2a812a44fe8d7d3d4c6f543cd8df55b83157102806a95cfb"
+        },
+        {
+          "source_id": "s-ac62801e0a07361f",
+          "locator": "EWA Standard Spring Balancer Instruction Manual, page 10, section 4-3, Method 1, step 3",
+          "quote_sha256": "ddda4d1fcdd53a3e3e49f283e88d38e7f2b8f1dfd7dca7f36c5dcfd36bbcea28"
+        },
+        {
+          "source_id": "s-ac62801e0a07361f",
+          "locator": "EWA Standard Spring Balancer Instruction Manual, page 7, section 2-1, specifications header",
+          "quote_sha256": "5da4c684c5ce3bf21463a3acc5c543d73a412f63e8979a58d16f922a1e829a0b"
+        },
+        {
+          "source_id": "s-ac62801e0a07361f",
+          "locator": "EWA Standard Spring Balancer Instruction Manual, page 7, section 2-1, specifications row",
+          "quote_sha256": "e8742d16ed7e8b2270385ca2bf620b2c79694d5283ad1ba4bf56569e5efc6741"
+        }
+      ],
+      "asset_plan": "A representative fixture needs a six-position physical drum lock, pull/turn pin, worm-driven preload, readable gauge, latching hook, 1.3 m payout constraint, and 9–15 kg load. Validate false seating, lock holding, payout, preload direction, hands-off balance, snap-back behavior, overload, and reset repeatability before robot integration.",
+      "risk": "The procedure and specification row are now cited from the source that actually contains them, correcting the prior source mismatch. Essential lock, worm, gauge, hook, and spring geometry remains undimensioned, and the pinned YAM payload capability is unverified.",
+      "feasibility_status": "research-needed",
       "missing_evidence": [
-        "Manufacturer installation and adjustment instructions for the specified shock absorber",
-        "Dimensioned body, stroke, impact face, adjuster, and setting-retention geometry",
-        "Effective-mass, velocity, energy, bottoming, and rebound limits",
-        "A defensible adjustable damping model validated in Isaac Sim",
-        "Evidence that setting retention requires a meaningful physical manipulation rather than generic knob rotation"
+        "Dimensioned lock-pin, drum-slot, worm, gauge, hook, and housing geometry",
+        "Defensible worm ratio and spring torque-versus-payout bounds",
+        "Pinned-YAM reach, grip-force, and payload validation for a 9–15 kg suspended load",
+        "Validated spring/payout and unsafe-release physics"
       ]
     },
     {
       "id": "az100-timing-belt-tracking-tensioning",
       "title": "Track and tension an industrial robot timing belt",
-      "objective": "With robot power isolated, adjust the two-sided belt tracking/tension mechanism in small increments, manually move the axis, observe lateral belt travel, and iteratively center the belt without over-tensioning it.",
+      "objective": "With power isolated, adjust the two-sided tracking mechanism in small increments, manually traverse the axis, observe lateral belt travel, and iteratively center the belt without slack or over-tension.",
       "skills": [
         "paired-adjuster manipulation",
         "manual axis traversal",
         "visual tracking diagnosis",
-        "incremental asymmetric tension correction",
+        "incremental asymmetric correction",
         "bimanual stabilization",
         "over-tension avoidance"
       ],
-      "success_conditions": "The robot must physically operate the adjusters and manually traverse the axis after each correction. Success requires the belt to remain centered over repeated full traversals while satisfying a sourced tension or deflection criterion. Zero score for powered adjustment, direct belt-state writes, constraining the belt invisibly to the pulley center, flange climbing, excessive slack, over-tension, or component damage.",
-      "industrial_value": "The manufacturer states that tracking and tensioning are both required and that incorrect adjustment can reduce performance or prematurely fail the belt.",
-      "dexterity": "Potentially high because the robot must alternate between paired fine adjustments and manual full-axis motion while diagnosing the direction of belt creep. However, the essential belt behavior is deformable contact mechanics.",
+      "success_conditions": "The robot must physically operate both adjusters and manually traverse the axis after each correction. Success requires centered tracking over repeated full traversals and a sourced model-specific tension criterion. Zero score for powered adjustment, direct belt-state writes, invisible centering constraints, flange climbing, slack, over-tension, or damage.",
+      "industrial_value": "The robot manufacturer identifies tracking and tensioning as required maintenance and warns that incorrect adjustment reduces performance or causes premature belt failure.",
+      "dexterity": "Potentially high because paired fine adjustment, manual traversal, and diagnosis of belt creep must be alternated, but the essential manipulation depends on credible deformable belt contact.",
       "evidence": [
         {
           "source_id": "s-74c3dbd7c10379f7",
@@ -119,13 +123,8 @@
         },
         {
           "source_id": "s-74c3dbd7c10379f7",
-          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 39, section 4.2.8",
-          "quote_sha256": "7c6ef7e6ff949525043ab3ab2274af9d7f6de886f45781f3a1a6784838e57515"
-        },
-        {
-          "source_id": "s-74c3dbd7c10379f7",
           "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 40, section 4.2.8, Tracking, step 3",
-          "quote_sha256": "53fd9a3908fccc13d4603ca76efae5d1f4c11da7387b2019fa5367b5424bbeab"
+          "quote_sha256": "21887b72c22bb917e775a0191c7d2213674ef81a75309df7eae2179338f29d3e"
         },
         {
           "source_id": "s-74c3dbd7c10379f7",
@@ -133,17 +132,17 @@
           "quote_sha256": "e9092eadfaa1000fa1ef0a22c257801424295a9d8721d4307b0c7a20a5d5bc93"
         }
       ],
-      "asset_plan": "Do not implement until an already validated Isaac Sim belt/contact example is available for the pinned runtime. A faithful fixture would require dimensioned pulleys, flanges, belt profile, span, adjusters, carriage load, and a validated model of belt tension and lateral tracking. Physics tests must establish center tracking, flange climbing, slack, over-tension, manual traversal, and repeatability before robot control.",
-      "risk": "This is a deformable closed-loop belt problem. No validated belt asset or solver example is present in the acquired inputs, and the manual does not provide the required pulley/belt geometry or a complete numeric tension criterion for the general AZ-100 belt.",
+      "asset_plan": "Do not implement without a validated Isaac Sim 6.1 belt/contact example. A faithful fixture needs sourced pulley, flange, belt-profile, span, adjuster, and carriage geometry plus tests for lateral tracking, flange climbing, slack, over-tension, manual traversal, and repeatability.",
+      "risk": "This is a deformable closed-loop belt problem, and the acquired inputs contain neither a validated compatible solver example nor sufficient model-specific geometry and tension data.",
       "feasibility_status": "blocked",
       "missing_evidence": [
-        "Validated belt/contact solver example compatible with Isaac Sim 6.1 and the pinned Arena/YAM revisions",
-        "Dimensioned AZ-100 belt, pulley, flange, span, adjuster, and carriage geometry",
-        "Model-specific numeric tension or deflection criterion for the selected axis",
-        "Physics validation showing that asymmetric tension produces credible lateral tracking rather than scripted motion"
+        "Validated belt/contact example compatible with the pinned Isaac Sim 6.1 Arena/YAM runtime",
+        "Dimensioned belt, pulley, flange, span, adjuster, and carriage geometry",
+        "Model-specific numeric tension or deflection criterion",
+        "Physics validation that asymmetric tension creates credible lateral tracking"
       ]
     }
   ],
-  "selected_id": "",
-  "selection_reason": "No candidate is ready, so selecting one would violate the readiness gate and would repeat the prior ambiguous-selection failure. The spring-balancer task has the strongest industrial procedure and dexterity, but it still lacks essential mechanism geometry, validated spring/payout physics, and full-scale YAM payload evidence. Shock-absorber tuning lacks essential manufacturer mechanism and dynamic-limit evidence. Timing-belt tracking requires an unavailable validated deformable implementation. Candidate selection must remain blocked until one candidate has no critical missing evidence."
+  "selected_id": "eco-oem35m-robot-axis-damper-commissioning",
+  "selection_reason": "The ECO OEM .35M commissioning task is the only candidate with primary evidence for industrial robot relevance, essential adjustment and retention mechanics, full-scale body geometry, stroke, velocity range, energy limit, return/propelling data, and a plausible rigid-PhysX implementation in the pinned Isaac Sim 6.1/YAM runtime. Its collar-unlock-adjust-relock workflow and dynamically verified stopping objective are materially different from connector insertion, module exchange, static clearance adjustment, generic knob rotation, and the supplied benchmark task families. Review of the acquired six-suite records and existing novelty artifacts found no objective combining physical damper setting retention with measured impact-energy commissioning. The remaining unpublished coefficients can be bounded modeling assumptions tested before robot integration; no essential contact or retention mechanism is unknown."
 }
