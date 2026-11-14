@@ -82,4 +82,4 @@ def evaluate(trace,result):
         scope="Each original wall rises at least 40 mm; both hands retain opposed contact with both mouth walls within 3 mm of actual finger primitives for 3 continuous seconds. Not whole-bag suspension, folding or sealing.",
         thresholds=dict(load_N=MIN_LOAD_N,wall_finger_distance_m=.003,lift_m=MIN_LIFT_M,
                         confirmed_release_distance_m=.010,release_confirmation_s=.25),
-        limitation="Uncalibrated simulated material and qualitative force presence; main-pad prism approximation and existing geometry-observer exclusions remain.")
+        limitation="Uncalibrated material and qualitative force presence; distances use film particles and BOX/CAPSULE/SPHERE finger colliders, excluding mesh colliders. Existing substep geometry exclusions remain.")

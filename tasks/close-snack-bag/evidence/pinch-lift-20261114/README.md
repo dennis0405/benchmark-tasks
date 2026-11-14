@@ -1,9 +1,16 @@
 # Bimanual mouth grasp / lift verification
 
 **No completed lift-and-three-second-hold success is claimed.** Folding and
-clip actions are excluded. The most recent loaded recording is
+clip actions are excluded. The earlier loaded review recording is
 `pinch-tilt-loaded-v74/mouth-grasp-lift-diagnostic.mp4` (6.9 seconds, 20 fps,
 1280 x 720). It contains no interpolation or edited object positions.
+
+The later user-authorized v3 run is in `pinch-contact-hold-v76`: small pad-edge
+excursions no longer abort. Its 7.45-second video shows actual release, with
+zero right-hand contact and 19.7-28.3 mm separation over the confirmed interval.
+The left hand is also separated at the end. There is no successful three-second
+hold. See that run's README and raw contact audit. The descriptions below
+preserve the earlier v1/v2 review; v74 is the earlier review recording.
 
 The close-up makes robot geometry translucent and draws green/blue dots on
 the actual original material vertices tracked by the left/right hand. Both

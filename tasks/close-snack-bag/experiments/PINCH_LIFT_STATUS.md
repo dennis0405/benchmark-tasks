@@ -32,7 +32,20 @@ from recorded particle/body states and reads primary mean force vectors;
 cursor targets and footprint flags cannot establish a pass. Tests cover a
 retained grasp despite escaped fiducials, real separated hands, and film at
 the end of a long pad far from the jaw centre. Fifteen focused tests pass.
-v76 is pending at this checkpoint.
+v76 completes its diagnostic run at frame 148: right-hand release is confirmed
+from five consecutive separated observations. Contact is zero, with nearest
+film-particle/finger separation increasing from 19.7 to 28.3 mm. The left hand
+also has zero contact and 24.2 mm separation at the terminal state. The script
+does not stop on footprint escape; it stops on actual separation. Three-second
+bimanual retention fails. The independent raw-state audit agrees with the
+recorded heights/distances and confirms the right-hand release interval.
+
+All 17,760 physics steps have zero observed intersections and no contact
+overflow. One cracker seam failure is recorded. The 7.45-second diagnostic
+video, full raw recording, exact execution source and audit are preserved in
+`evidence/pinch-lift-20261114/pinch-contact-hold-v76`. No further test is running;
+Brev remains on. This was a fresh episode with the same settings/commands as
+v74, not a resumed solver state.
 
 ## Historical observation contract: v2
 
