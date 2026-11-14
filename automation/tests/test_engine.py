@@ -78,6 +78,42 @@ def test_missing_catalog_cannot_mean_novel(tmp_path):
         compare_catalog(None, tmp_path, {}, {"complete": False})
 
 
+def test_focused_source_review_invalidates_only_affected_comparison_and_cannot_force_pass(tmp_path):
+    import json
+
+    class Reviewer:
+        def __init__(self):
+            self.calls = []
+
+        def run(self, *args, **kwargs):
+            batch = json.loads((tmp_path / "input/novelty-batch.json").read_text())
+            self.calls.append([r["id"] for r in batch["records"]])
+            notes = batch.get("review_notes", {})
+            if notes:
+                assert notes == {"a": {"evidence": "Read original mechanism; no requested verdict"}}
+                assert "not authority" in args[1]
+            return {"comparisons": [{
+                "id": r["id"], "objective": "Purpose comparison",
+                "physical_skill": "Mechanism comparison", "success_condition": "Outcome comparison",
+                "verdict": "overlap" if notes else "distinct",
+                "reason": "Evidence still establishes overlap" if notes else "Different abilities",
+            } for r in batch["records"]]}
+
+    (tmp_path / "input").mkdir()
+    (tmp_path / "artifacts").mkdir()
+    catalog = {"complete": True, "digest": "catalog", "records": [{"id": "a"}, {"id": "b"}]}
+    reviewer = Reviewer()
+    assert compare_catalog(reviewer, tmp_path, {}, catalog)["complete"]
+    write_json(tmp_path / "input/novelty-review-notes.json", {
+        "a": {"evidence": "Read original mechanism; no requested verdict"},
+    })
+    with pytest.raises(GateError, match="overlap"):
+        compare_catalog(reviewer, tmp_path, {}, catalog)
+    assert reviewer.calls == [["a", "b"], ["a"]]
+    # The first review remains available; notes do not replace its audit record.
+    assert len(list((tmp_path / "artifacts/novelty-cache").glob("*.json"))) == 3
+
+
 def test_reader_failure_is_retried_without_rejecting_or_caching_the_candidate(tmp_path):
     import json
 

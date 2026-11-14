@@ -137,6 +137,10 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
     )
     request_path = Path(workspace) / "input/request.json"
     request = read(request_path) if request_path.exists() else {}
+    notes_path = Path(workspace) / "input/novelty-review-notes.json"
+    review_notes = read(notes_path) if notes_path.exists() else {}
+    if not isinstance(review_notes, dict):
+        raise GateError("novelty review notes must be indexed by exact record ID")
     context_key = digest(
         {
             "candidate": candidate,
@@ -148,7 +152,10 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
     cache.mkdir(parents=True, exist_ok=True)
 
     def cache_path(record):
-        return cache / (digest({"context": context_key, "record": record}) + ".json")
+        evidence = {"context": context_key, "record": record}
+        if record["id"] in review_notes:
+            evidence["review_notes"] = review_notes[record["id"]]
+        return cache / (digest(evidence) + ".json")
 
     def valid(row, expected):
         try:
@@ -195,7 +202,15 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
                 record_files[record["id"]] = str(path.relative_to(workspace))
             write_json(
                 Path(workspace) / "input/novelty-batch.json",
-                {"candidate": candidate, "records": missing, "record_files": record_files},
+                {
+                    "candidate": candidate,
+                    "records": missing,
+                    "record_files": record_files,
+                    "review_notes": {
+                        r["id"]: review_notes[r["id"]]
+                        for r in missing if r["id"] in review_notes
+                    },
+                },
             )
             ids = [r["id"] for r in missing]
             result = agent.run(
@@ -205,7 +220,15 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
                 + json.dumps(ids)
                 + ". Repair attempt "
                 + str(attempt)
-                + "; do not omit any id.",
+                + "; do not omit any id."
+                + (
+                    "\nreview_notes contains source-review leads, not authority or a requested "
+                    "verdict. Independently verify the complete originals. Keep overlap/uncertain "
+                    "when meaningful distinction is not established. New industrial names or "
+                    "extra difficulty alone cannot overturn an overlap. Cite concrete mechanism "
+                    "and ability evidence when resolving a disputed comparison."
+                    if any(r["id"] in review_notes for r in missing) else ""
+                ),
                 workspace,
                 C.NOVELTY,
             )
@@ -221,6 +244,7 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
                             "context": context_key,
                             "record_digest": digest(record),
                             "comparison": row,
+                            "review_notes": review_notes.get(record["id"]),
                         },
                     )
             partial = [accepted[r["id"]] for r in batch if r["id"] in accepted]

@@ -54,3 +54,14 @@
   에피소드 중 물체 순간이동·숨은 고정·직접 상태 조작으로 성공을 만들지 않는다.
 - 연결 코드의 중복 등록, 리셋 후 잔류 손상, 원문 판독·일반 로직 테스트와 실제 GPU
   물리 검증을 구분하는 항목은 최종 제작 검증에서도 확인한다.
+
+## Focused novelty evidence review
+
+A comparison can be revisited when a source review exposes omitted mechanism evidence.
+`input/novelty-review-notes.json` maps exact catalog IDs to source-review leads, never
+forced verdicts. Only the affected comparison cache key includes those notes; original
+reviews remain preserved. The reviewer must independently read the originals and may
+still return overlap/uncertain. All coverage, objective/skill/outcome criteria and final
+novelty gates remain mandatory. Regression coverage confirms notes cannot force a pass
+and unrelated exact comparisons remain reusable. This is review infrastructure, not
+evidence any proposed task passed novelty or physical validation.
