@@ -20,7 +20,7 @@ Status: **blocked**
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 
 
-command exited -15; inspect /data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb/agent-runs/novelty-reviewer-2026-11-14T03-33-08.009614+00-00/events.jsonl
+evidence quote is absent from acquired source
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`

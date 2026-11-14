@@ -47,21 +47,21 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 58964,
+    "supervisor_pid": 61183,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log",
-    "error": "command exited -15; inspect /data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb/agent-runs/novelty-reviewer-2026-11-14T03-33-08.009614+00-00/events.jsonl",
+    "error": "evidence quote is absent from acquired source",
     "approval": null,
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb",
     "remote_status": {
       "status": "blocked",
-      "error": "command exited -15; inspect /data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb/agent-runs/novelty-reviewer-2026-11-14T03-33-08.009614+00-00/events.jsonl",
-      "type": "StateError",
-      "at": "2026-11-14T03:33:30.125986+00:00"
+      "error": "evidence quote is absent from acquired source",
+      "type": "GateError",
+      "at": "2026-11-14T03:44:08.522347+00:00"
     },
     "compute": "stopped",
-    "revision": 1,
-    "revision_request": "첫 실제 실행의 게이트 수정: 모든 PR 비교 기록은 유지한다. 타 팀의 closed+unmerged 이력의 정보 부족은 inactive_uncertainty로 보존하며 현재 accepted/pending 주장은 아니다. 실제 overlap은 닫힌 기록도 차단한다. merged/open/우리 팀/불명 상태는 기존처럼 정보 부족도 차단한다. 동일 후보 PCIe 확장카드의 전수 비교부터 재개하고, 단순 커넥터 삽입·래치와의 표면상 차이는 신규성으로 인정하지 말 것. 기존 산업 원문과 후보 조사 결과를 재사용한다.",
-    "resume_from_stage": "novelty"
+    "revision": 2,
+    "revision_request": "중복 검사에서 PCIe 확장카드 압입 후보를 탈락시킨다: accepted pr-20(Reseat the half-inserted plug), pr-22(Plug both ends of a patch cord into a cable tester)와 목적·주요 조작·성공 조건이 겹친다. 핫스왑 드라이브는 pr-146, 메모리는 pr-1874/pr-1875/pr-398과 겹쳐 이미 탈락이다. 이 세 후보와 모든 커넥터 삽입/장착+래치 변형을 다시 제안하지 말 것. input/revision-request.txt와 기존 artifacts/candidates.json 및 이전 novelty-reviewer 결과를 읽어 실패 근거를 보존한다. 산업 원문 조사 범위를 서버 부품 교환 외 로봇/기계 구동계 조립·조정·정비로 넓혀 실제 절차의 서로 다른 물리 능력을 찾는다. 단순 일반 조작에 산업 이름을 붙이지 않는다. 예를 들어 정렬/맞물림 조정, 구동부 텐션/유격 교정, 조립용 기구 작동 등은 검색 방향 예시일 뿐, 반드시 실제 제조사 절차로 검증해야 한다. 후보는 이미 중복인 대조 예시로 숫자를 채우지 말고, 초기 전체 카탈로그 검색에서 명백한 중복이 발견되지 않은 실행 가능한 서로 다른 목표 세 개를 확보할 것. 기존 벤치마크와 semantic novelty도 중요하며, 실제 장비 형상·치수 및 YAM 실현성 근거가 있어야 한다. 공개 자료만 사용하고 현재 fork 브랜치·기존 런·GPU 사용 범위·Dream 1회·최종 사람 승인 조건은 그대로 유지한다.",
+    "resume_from_stage": "research"
   },
   "events": [
     {
@@ -375,6 +375,222 @@
       "run": "20261114T031727-dc73f2bb",
       "at": "2026-11-14T03:33:49.537594+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"command exited -15; inspect /data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb/agent-runs/novelty-reviewer-2026-11-14T03-33-08.009614+00-00/events.jsonl\"}"
+    },
+    {
+      "seq": 64,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:34:20.230505+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 65,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:34:51.006308+00:00",
+      "data": "{\"revision\": 2, \"revision_request\": \"\\uc911\\ubcf5 \\uac80\\uc0ac\\uc5d0\\uc11c PCIe \\ud655\\uc7a5\\uce74\\ub4dc \\uc555\\uc785 \\ud6c4\\ubcf4\\ub97c \\ud0c8\\ub77d\\uc2dc\\ud0a8\\ub2e4: accepted pr-20(Reseat the half-inserted plug), pr-22(Plug both ends of a patch cord into a cable tester)\\uc640 \\ubaa9\\uc801\\u00b7\\uc8fc\\uc694 \\uc870\\uc791\\u00b7\\uc131\\uacf5 \\uc870\\uac74\\uc774 \\uacb9\\uce5c\\ub2e4. \\ud56b\\uc2a4\\uc651 \\ub4dc\\ub77c\\uc774\\ube0c\\ub294 pr-146, \\uba54\\ubaa8\\ub9ac\\ub294 pr-1874/pr-1875/pr-398\\uacfc \\uacb9\\uccd0 \\uc774\\ubbf8 \\ud0c8\\ub77d\\uc774\\ub2e4. \\uc774 \\uc138 \\ud6c4\\ubcf4\\uc640 \\ubaa8\\ub4e0 \\ucee4\\ub125\\ud130 \\uc0bd\\uc785/\\uc7a5\\ucc29+\\ub798\\uce58 \\ubcc0\\ud615\\uc744 \\ub2e4\\uc2dc \\uc81c\\uc548\\ud558\\uc9c0 \\ub9d0 \\uac83. input/revision-request.txt\\uc640 \\uae30\\uc874 artifacts/candidates.json \\ubc0f \\uc774\\uc804 novelty-reviewer \\uacb0\\uacfc\\ub97c \\uc77d\\uc5b4 \\uc2e4\\ud328 \\uadfc\\uac70\\ub97c \\ubcf4\\uc874\\ud55c\\ub2e4. \\uc0b0\\uc5c5 \\uc6d0\\ubb38 \\uc870\\uc0ac \\ubc94\\uc704\\ub97c \\uc11c\\ubc84 \\ubd80\\ud488 \\uad50\\ud658 \\uc678 \\ub85c\\ubd07/\\uae30\\uacc4 \\uad6c\\ub3d9\\uacc4 \\uc870\\ub9bd\\u00b7\\uc870\\uc815\\u00b7\\uc815\\ube44\\ub85c \\ub113\\ud600 \\uc2e4\\uc81c \\uc808\\ucc28\\uc758 \\uc11c\\ub85c \\ub2e4\\ub978 \\ubb3c\\ub9ac \\ub2a5\\ub825\\uc744 \\ucc3e\\ub294\\ub2e4. \\ub2e8\\uc21c \\uc77c\\ubc18 \\uc870\\uc791\\uc5d0 \\uc0b0\\uc5c5 \\uc774\\ub984\\uc744 \\ubd99\\uc774\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc608\\ub97c \\ub4e4\\uc5b4 \\uc815\\ub82c/\\ub9de\\ubb3c\\ub9bc \\uc870\\uc815, \\uad6c\\ub3d9\\ubd80 \\ud150\\uc158/\\uc720\\uaca9 \\uad50\\uc815, \\uc870\\ub9bd\\uc6a9 \\uae30\\uad6c \\uc791\\ub3d9 \\ub4f1\\uc740 \\uac80\\uc0c9 \\ubc29\\ud5a5 \\uc608\\uc2dc\\uc77c \\ubfd0, \\ubc18\\ub4dc\\uc2dc \\uc2e4\\uc81c \\uc81c\\uc870\\uc0ac \\uc808\\ucc28\\ub85c \\uac80\\uc99d\\ud574\\uc57c \\ud55c\\ub2e4. \\ud6c4\\ubcf4\\ub294 \\uc774\\ubbf8 \\uc911\\ubcf5\\uc778 \\ub300\\uc870 \\uc608\\uc2dc\\ub85c \\uc22b\\uc790\\ub97c \\ucc44\\uc6b0\\uc9c0 \\ub9d0\\uace0, \\ucd08\\uae30 \\uc804\\uccb4 \\uce74\\ud0c8\\ub85c\\uadf8 \\uac80\\uc0c9\\uc5d0\\uc11c \\uba85\\ubc31\\ud55c \\uc911\\ubcf5\\uc774 \\ubc1c\\uacac\\ub418\\uc9c0 \\uc54a\\uc740 \\uc2e4\\ud589 \\uac00\\ub2a5\\ud55c \\uc11c\\ub85c \\ub2e4\\ub978 \\ubaa9\\ud45c \\uc138 \\uac1c\\ub97c \\ud655\\ubcf4\\ud560 \\uac83. \\uae30\\uc874 \\ubca4\\uce58\\ub9c8\\ud06c\\uc640 semantic novelty\\ub3c4 \\uc911\\uc694\\ud558\\uba70, \\uc2e4\\uc81c \\uc7a5\\ube44 \\ud615\\uc0c1\\u00b7\\uce58\\uc218 \\ubc0f YAM \\uc2e4\\ud604\\uc131 \\uadfc\\uac70\\uac00 \\uc788\\uc5b4\\uc57c \\ud55c\\ub2e4. \\uacf5\\uac1c \\uc790\\ub8cc\\ub9cc \\uc0ac\\uc6a9\\ud558\\uace0 \\ud604\\uc7ac fork \\ube0c\\ub79c\\uce58\\u00b7\\uae30\\uc874 \\ub7f0\\u00b7GPU \\uc0ac\\uc6a9 \\ubc94\\uc704\\u00b7Dream 1\\ud68c\\u00b7\\ucd5c\\uc885 \\uc0ac\\ub78c \\uc2b9\\uc778 \\uc870\\uac74\\uc740 \\uadf8\\ub300\\ub85c \\uc720\\uc9c0\\ud55c\\ub2e4.\", \"approval\": null}"
+    },
+    {
+      "seq": 66,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:34:51.006575+00:00",
+      "data": "{\"resume_from_stage\": \"research\"}"
+    },
+    {
+      "seq": 67,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:34:51.009306+00:00",
+      "data": "{\"supervisor_pid\": 61183, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log\"}"
+    },
+    {
+      "seq": 68,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:34:51.074055+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 69,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:35:34.311599+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 70,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:37:04.318838+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb\"}"
+    },
+    {
+      "seq": 71,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:37:20.166157+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T03:37:04.692800+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 72,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:37:35.656473+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T03:37:04.692800+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 73,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:37:51.116691+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T03:37:04.692800+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 74,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:38:06.546485+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T03:37:04.692800+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 75,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:38:22.039570+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T03:37:04.692800+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 76,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:38:37.480133+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T03:37:04.692800+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 77,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:38:52.917885+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 78,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:39:08.353099+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 79,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:39:23.993573+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 80,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:39:39.456325+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 81,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:39:54.919170+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 82,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:40:10.484256+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 83,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:40:25.950305+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 84,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:40:41.388439+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 85,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:40:56.834023+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 86,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:41:12.331712+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 87,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:41:27.792068+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 88,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:41:43.257253+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 89,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:41:58.723844+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 90,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:42:14.184774+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 91,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:42:29.677643+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 92,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:42:45.124527+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 93,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:43:00.676171+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 94,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:43:16.135674+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 95,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:43:31.587021+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 96,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:43:47.180116+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 97,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:44:02.656662+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:38:45.781905+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 98,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:44:18.094314+00:00",
+      "data": "{\"remote_status\": {\"status\": \"blocked\", \"error\": \"evidence quote is absent from acquired source\", \"type\": \"GateError\", \"at\": \"2026-11-14T03:44:08.522347+00:00\"}, \"stage\": null}"
+    },
+    {
+      "seq": 99,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:44:24.882890+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"evidence quote is absent from acquired source\"}"
     }
   ],
   "effects": {
