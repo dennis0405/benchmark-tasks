@@ -19,7 +19,14 @@ from film_material import FilmMaterial
 from pouch_geometry import open_pouch
 
 
-def configure_rigid_model(model,ready_start,structural_fk=False,finger_friction=None,contact_ke=1e6):
+def configure_rigid_model(model,ready_start,structural_fk=False,finger_friction=None,contact_ke=1e6,arm_gain_scale=1.):
+    if arm_gain_scale!=1.:
+        ke=model.joint_target_ke.numpy().copy();kd=model.joint_target_kd.numpy().copy()
+        starts=model.joint_qd_start.numpy()
+        for j,label in enumerate(model.joint_label):
+            if "yam_bimanual" in str(label) and "finger" not in str(label):
+                d=int(starts[j]);ke[d]*=arm_gain_scale;kd[d]*=np.sqrt(arm_gain_scale)
+        model.joint_target_ke.assign(ke);model.joint_target_kd.assign(kd)
     if ready_start:
         q=model.joint_q.numpy().copy()
         starts=model.joint_q_start.numpy()
@@ -49,6 +56,7 @@ class RigidSetupSpec:
     finger_friction:float|None=None
     structural_fk:bool=False
     contact_ke:float=1e6
+    arm_gain_scale:float=1.
     sim:object=field(default_factory=lambda:rss.SimRequirements(domain="articulated"))
 
 
@@ -61,7 +69,7 @@ class RigidSetupEntity(rss.Entity):
 
     def apply_model_materials(self,model):
         configure_rigid_model(model,self.spec.ready_start,self.spec.structural_fk,
-                              self.spec.finger_friction,self.spec.contact_ke)
+                              self.spec.finger_friction,self.spec.contact_ke,self.spec.arm_gain_scale)
 
 
 @dataclass(frozen=True, kw_only=True)
@@ -71,6 +79,7 @@ class PouchSpec(PaperSpec):
     structural_fk: bool = False
     finger_friction:float|None=None
     contact_ke:float=1e6
+    arm_gain_scale:float=1.
 
 
 @rss.register_entity("snack_unfolded_pouch")
@@ -82,7 +91,7 @@ class PouchEntity(EntityPaper):
         # Newton 1.7 VBD requires body_q and joint_q to describe the SAME
         # structural rest pose before solver construction (not just State FK).
         configure_rigid_model(model,self.spec.ready_start,self.spec.structural_fk,
-                              self.spec.finger_friction,self.spec.contact_ke)
+                              self.spec.finger_friction,self.spec.contact_ke,self.spec.arm_gain_scale)
 
     def surface(self):
         q, f, self.grid = open_pouch(
@@ -108,7 +117,12 @@ class PouchEntity(EntityPaper):
             particle_radius=material.particle_radius, label=self.name)
 
 
-def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None,self_filter_rings=0,self_radius=.0005,rebase_z=False,rigid_contact_ke=None,body_particle_buffer=None,board_skin_mm=0.):
+def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None,self_filter_rings=0,self_radius=.0005,rebase_z=False,rigid_contact_ke=None,body_particle_buffer=None,board_skin_mm=0.,rigid_contact_threads=4,rigid_soft_dat=True,proxy_iterations=2,tool_rack_style="wide",proxy_mass_scale=1.,arm_gain_scale=1.,tool_parking_shift_x=0.):
+    from vbd_parallel import configure as configure_parallel
+    contact_parallel=configure_parallel(rigid_contact_threads)
+    if not 0.<=tool_parking_shift_x<=.06:raise ValueError("parking shift must be 0..6 cm")
+    if not 1.<=arm_gain_scale<=20.:raise ValueError("arm gain scale must be 1..20")
+    if tool_rack_style not in ("wide","end_access"):raise ValueError("unknown tool rack style")
     if embodiment != "yam_bimanual":
         raise ValueError("This research scene currently supports yam_bimanual only")
     if not 0<=board_skin_mm<=2.:raise ValueError("board skin must be 0..2 mm")
@@ -146,7 +160,8 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
     # The proven upstream paper/YAM path provides force feedback along the
     # fingers' slides. General two-way clip/film coupling is a later gate.
     coupling_spec = (rss.coupler("one_way", contact_forces=True, slide_feedback=True)
-                     if coupling == "one_way" else rss.coupler("proxy", iterations=2, proxy_joints=True))
+                     if coupling == "one_way" else rss.coupler("proxy", iterations=proxy_iterations, proxy_joints=coupling!="hybrid",
+                                      proxy_relaxation=.5 if coupling=="hybrid" else 1.,mass_scale=proxy_mass_scale))
     physics_rate=physics_hz or (2400 if with_clip else 1200)
     if physics_rate<control_hz or physics_rate%control_hz:
         raise ValueError("physics_hz must be a positive multiple of control_hz")
@@ -154,8 +169,10 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         rss.GENERIC, control_hz=float(control_hz), substeps=physics_rate//control_hz,
         coupling=coupling_spec,
         collision=rss.CollisionSpec(full_surface_contact=True))
+    dat_enabled=coupling=="unified" and rigid_soft_dat and not rigid_only
     backend = rss.backend(
-        "vbd", iterations=30, friction_epsilon=1e-3,
+        "unified_vbd_solver.OwnedVBD" if dat_enabled else "vbd", iterations=30,
+        particle_enable_self_contact=not rigid_only,rigid_soft_enable_dat=dat_enabled, friction_epsilon=1e-3,
         rigid_compliant_alm=True,
         particle_self_contact_radius=self_radius, particle_self_contact_margin=.002,
         particle_topological_contact_filter_threshold=self_filter_rings,
@@ -164,7 +181,7 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
     physics = physics.with_backend("*", backend)
     if coupling == "unified":
         physics = physics.with_backend("articulated", backend)
-    if rigid_cpu or (rigid_only and coupling!="unified"):
+    if rigid_cpu or (rigid_only and coupling=="one_way"):
         if coupling!="one_way":
             raise ValueError("Native MuJoCo control requires the one_way research path")
         physics=physics.with_backend("articulated",rss.backend("mujoco",use_mujoco_cpu=rigid_cpu))
@@ -221,26 +238,30 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
                            color=(.64, .47, .30), friction=board_friction))
     if rigid_only:
         scene.add(RigidSetupSpec(ready_start=ready_start,finger_friction=finger_friction,
-                                structural_fk=coupling=="unified",contact_ke=contact_ke))
+                                structural_fk=coupling=="unified",contact_ke=contact_ke,arm_gain_scale=arm_gain_scale))
     else:
         scene.add(PouchSpec(name="pouch", pose=(.14+shift, 0, height+.0237), quat=(0, 0, 1, 0),
                             cells=cells, size=(.2, .16), material=material,
                             color=(.96, .58, .08), settle_frames=0, ready_start=ready_start,
-                            structural_fk=coupling=="unified",finger_friction=finger_friction,contact_ke=contact_ke))
+                            structural_fk=coupling=="unified",finger_friction=finger_friction,contact_ke=contact_ke,arm_gain_scale=arm_gain_scale))
     if with_clip:
-        if coupling not in ("one_way","unified"):
+        if coupling not in ("one_way","unified","hybrid"):
             raise ValueError("Clip contact requires one_way or fully unified VBD")
         from deformable_clip import ClipSpec
         scene.add(rss.slab(name="tool_base",half=(.10,.07,.025),
-                           at=(0,-.30,.025),color=(.64,.47,.30),friction=.6))
+                           at=(tool_parking_shift_x,-.30,.025),color=(.64,.47,.30),friction=.6))
         # A passive parking support under the long handles. Without it the
         # free upright clip tips backward before the robot reaches it.
-        scene.add(rss.slab(name="tool_stand",half=(.035,.050,.019),
-                           at=(-.03,-.30,.069),color=(.64,.47,.30),friction=.6))
+        scene.add(rss.slab(name="tool_stand",half=(.012 if tool_rack_style=="end_access" else .035,.050,.019),
+                           at=((- .020 if tool_rack_style=="end_access" else -.03)+tool_parking_shift_x,-.30,.069),color=(.64,.47,.30),friction=.6))
         for side in (-1,1):
-            scene.add(rss.slab(name=f"tool_rail_{side}",half=(.035,.002,.002),
-                at=(-.03,-.30+side*.047,.090),color=(.64,.47,.30),friction=.6))
-        scene.add(ClipSpec(style=clip_style,unified_spring=coupling=="unified"))
+            scene.add(rss.slab(name=f"tool_rail_{side}",half=(.012 if tool_rack_style=="end_access" else .035,.002,.002),
+                at=((- .020 if tool_rack_style=="end_access" else -.03)+tool_parking_shift_x,-.30+side*.047,.090),color=(.64,.47,.30),friction=.6))
+        tool_spec=ClipSpec(at=(.02+tool_parking_shift_x,-.30,.102),style=clip_style,unified_spring=coupling in ("unified","hybrid"))
+        if coupling=="hybrid":
+            tool_spec=rss.replace(tool_spec,entity="snack_film_clip",sim=rss.SimRequirements(
+                domain="paper",contacts=rss.contacts_with("surface","objects","articulated","robot","paper","cloth")))
+        scene.add(tool_spec)
     env = scene.build(device=device, control_mode="joint_position")
     if rigid_cpu:
         env.pipeline.use_cuda_graph=False
@@ -250,7 +271,22 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         env.pipeline.hooks.add("pre_solve", reaction.before_solve, name="clip-full-wrench", cadence=1)
         env.pipeline.invalidate_graph()
         env.snack_tool_feedback = reaction
+    if coupling=="hybrid":
+        if not rigid_only:
+            from hybrid_contact import install as install_hybrid
+            env.snack_hybrid_readout=install_hybrid(env)
+        from unified_contact import install_joint_encoder
+        from passive_clip_spring import PassiveClipSpring
+        install_joint_encoder(env)
+        tool=env.scene.by_name["clip"]
+        spring=PassiveClipSpring(env,*tool.bodies,tool.spring_stiffness,tool.spring_damping)
+        env.pipeline.hooks.add("pre_solve",spring.before_solve,name="passive-clip-spring",cadence=1)
+        env.snack_passive_spring=spring
+        env.pipeline.invalidate_graph()
     if coupling=="unified":
+        if dat_enabled:
+            from unified_vbd_solver import install_contact_authority
+            install_contact_authority(env)
         from unified_contact import install,install_joint_encoder
         if not rigid_only:env.snack_unified_readout=install(env)
         install_joint_encoder(env)
@@ -281,6 +317,10 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         env.pipeline.reset_solvers(flags=0)
         env.pipeline.reset_finite_flags()
         env.pipeline.invalidate_graph()
+    env.snack_arm_gain_scale=arm_gain_scale
+    env.snack_proxy_iterations=proxy_iterations
+    env.snack_rigid_soft_dat=dat_enabled
+    env.snack_contact_parallel=contact_parallel
     env.snack_board_skin_mm=board_skin_mm
     env.snack_world_z_offset=z_offset
     env.snack_board_height = height
@@ -299,10 +339,12 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         env.snack_material_parameters.update(actual_pouch_mass_kg=float(mass.sum()),
             zero_mass_pouch_particles=int((mass==0).sum()),
             model_gravity=np.asarray(env.model.gravity.numpy()).tolist())
-    env.snack_rigid_backend="unified_vbd" if coupling=="unified" else ("mujoco_native_cpu" if rigid_cpu else "mujoco_warp_gpu")
+    env.snack_rigid_backend="native_robot_vbd_tool_proxy" if coupling=="hybrid" else "unified_vbd" if coupling=="unified" else ("mujoco_native_cpu" if rigid_cpu else "mujoco_warp_gpu")
     env.snack_coupling=coupling
     env.snack_rigid_only=rigid_only
     env.snack_workspace=workspace
+    env.snack_tool_parking_shift_x=tool_parking_shift_x
+    env.snack_tool_rack_style=tool_rack_style
     env.snack_clip_style=clip_style
     support_name="mouth_support" if ready_start and side_access else "board"
     support_id=next(i for i,label in enumerate(env.model.shape_label) if str(label)==support_name)

@@ -20,14 +20,20 @@ def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("output",type=Path)
     parser.add_argument("--cpu",action="store_true")
-    parser.add_argument("--coupling",choices=("one_way","unified"),default="one_way")
+    parser.add_argument("--coupling",choices=("one_way","unified","hybrid"),default="one_way")
+    parser.add_argument("--proxy-mass-scale",type=float,default=1.)
+    parser.add_argument("--proxy-iterations",type=int,choices=(1,2,4),default=2)
+    parser.add_argument("--arm-gain-scale",type=float,default=1.)
+    parser.add_argument("--tool-parking-shift-x",type=float,default=0.)
+    parser.add_argument("--tool-rack-style",choices=("wide","end_access"),default="wide")
+    parser.add_argument("--rigid-contact-threads",type=int,choices=(4,8,16,32,64),default=4)
     parser.add_argument("--rigid-contact-ke",type=float,default=None)
     parser.add_argument("--body-particle-buffer",type=int,default=None)
     parser.add_argument("--plan",action="store_true")
     parser.add_argument("--frames",type=int,default=1000)
     parser.add_argument("--physics-hz",type=int,default=1200)
     parser.add_argument("--workspace",choices=("original","raised_forward","raised_flat"),default="original")
-    parser.add_argument("--clip-style",choices=("standard","thin_lower","thin_strong","thin_broad","thin_aligned","thin_compact"),default="standard")
+    parser.add_argument("--clip-style",choices=("standard","thin_lower","thin_strong","thin_broad","thin_aligned","thin_compact","thin_buttons"),default="standard")
     parser.add_argument("--precise-carry",action="store_true")
     parser.add_argument("--clear-left",action="store_true")
     parser.add_argument("--rigid-seed",type=Path,default=None,
@@ -56,13 +62,13 @@ def main():
         shutil.copy2(root/name,sources/name)
     for name in ("clip_rigid_probe.py","fold_controller.py","clip_controller.py","check_rigid_tool.py",
                  "gpu_contact_checks.py","film_material.py","plan_clip_poses.py","passive_clip_spring.py",
-                 "unified_contact.py","robot_gravity_compensation.py","native_joint_mimics.py","finite_gripper_drive.py","contact_average.py","assets/clip_spring_v2.xml","assets/yam_ready_pose.json"):
+                 "unified_contact.py","robot_gravity_compensation.py","native_joint_mimics.py","finite_gripper_drive.py","vbd_parallel.py","contact_average.py","assets/clip_spring_v2.xml","assets/yam_ready_pose.json"):
         shutil.copy2(root/"experiments"/name,sources/Path(name).name)
     if args.workspace!="original":
         name=f"assets/yam_{args.workspace}_pose.json"
         shutil.copy2(root/"experiments"/name,sources/Path(name).name)
     if args.clip_style!="standard":
-        name="assets/"+{"thin_lower":"clip_thin_lower.xml","thin_strong":"clip_thin_strong.xml","thin_broad":"clip_thin_broad.xml","thin_aligned":"clip_thin_aligned.xml","thin_compact":"clip_thin_compact.xml"}[args.clip_style]
+        name="assets/"+{"thin_lower":"clip_thin_lower.xml","thin_strong":"clip_thin_strong.xml","thin_broad":"clip_thin_broad.xml","thin_aligned":"clip_thin_aligned.xml","thin_compact":"clip_thin_compact.xml","thin_buttons":"clip_thin_buttons.xml"}[args.clip_style]
         shutil.copy2(root/"experiments"/name,sources/Path(name).name)
     (args.output/"arguments.json").write_text(json.dumps(dict(vars(args),hz=20),default=str,indent=2))
     started=time.monotonic()
@@ -70,7 +76,9 @@ def main():
                          rigid_only=True,control_hz=20,physics_hz=args.physics_hz,workspace=args.workspace,
                          clip_style=args.clip_style,finger_friction=args.finger_friction,
                          support_extension=args.support_extension_mm/1000.,
-                         rigid_contact_ke=args.rigid_contact_ke,body_particle_buffer=args.body_particle_buffer)
+                         rigid_contact_ke=args.rigid_contact_ke,body_particle_buffer=args.body_particle_buffer,
+                         rigid_contact_threads=args.rigid_contact_threads,tool_rack_style=args.tool_rack_style,tool_parking_shift_x=args.tool_parking_shift_x,proxy_mass_scale=args.proxy_mass_scale,
+                         proxy_iterations=args.proxy_iterations,arm_gain_scale=args.arm_gain_scale)
     assert sim.model.particle_count==0
     solver=sim.pipeline.program.solver
     actual=getattr(solver,"rigid",solver)

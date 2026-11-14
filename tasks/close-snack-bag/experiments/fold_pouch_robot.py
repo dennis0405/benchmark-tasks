@@ -19,7 +19,7 @@ def main():
     parser.add_argument("output", type=Path)
     parser.add_argument("--frames", type=int, default=60)
     parser.add_argument("--drive", action="store_true")
-    parser.add_argument("--coupling", choices=("one_way", "proxy", "unified"), default="one_way")
+    parser.add_argument("--coupling", choices=("one_way", "proxy", "unified", "hybrid"), default="one_way")
     parser.add_argument("--ready-start", action="store_true")
     parser.add_argument("--clip", action="store_true")
     parser.add_argument("--checkpoint-every",type=int,default=120)
@@ -27,6 +27,14 @@ def main():
     parser.add_argument("--stage",choices=("fold","fold_hold","regrasp","seal","clip_grasp","rest"),default="fold")
     parser.add_argument("--self-filter-rings",type=int,choices=(0,2),default=0)
     parser.add_argument("--self-radius-mm",type=float,default=.5)
+    parser.add_argument("--press-passes",type=int,choices=(1,2,3),default=1)
+    parser.add_argument("--tool-parking-shift-x",type=float,default=0.)
+    parser.add_argument("--tool-rack-style",choices=("wide","end_access"),default="wide")
+    parser.add_argument("--arm-gain-scale",type=float,default=1.)
+    parser.add_argument("--proxy-mass-scale",type=float,default=1.)
+    parser.add_argument("--proxy-iterations",type=int,choices=(1,2,4),default=2)
+    parser.add_argument("--disable-rigid-soft-dat",action="store_true")
+    parser.add_argument("--rigid-contact-threads",type=int,choices=(4,8,16,32,64),default=4)
     parser.add_argument("--rigid-contact-ke",type=float,default=None)
     parser.add_argument("--body-particle-buffer",type=int,default=None)
     parser.add_argument("--board-skin-mm",type=float,default=0.)
@@ -37,7 +45,9 @@ def main():
     parser.add_argument("--side-access",action="store_true")
     parser.add_argument("--rigid-cpu",action="store_true")
     parser.add_argument("--workspace",choices=("original","raised_forward","raised_flat"),default="original")
-    parser.add_argument("--clip-style",choices=("standard","thin_lower","thin_strong","thin_broad","thin_aligned","thin_compact"),default="standard")
+    parser.add_argument("--clip-style",choices=("standard","thin_lower","thin_strong","thin_broad","thin_aligned","thin_compact","thin_buttons"),default="standard")
+    parser.add_argument("--override-physics",action="store_true",
+                        help="Component reset only: change coupling backend or physics rate, preserving physical state")
     parser.add_argument("--override-clip-spring",action="store_true")
     parser.add_argument("--override-clip-geometry",action="store_true")
     parser.add_argument("--reset-tool",action="store_true",
@@ -53,7 +63,7 @@ def main():
     parser.add_argument("--record-force-means",action="store_true")
     parser.add_argument("--release-style",choices=("wide","sliding"),default="sliding")
     parser.add_argument("--clip-component-seed",type=Path,default=None)
-    parser.add_argument("--component-start",choices=("clip","centre_press","raw_release","edge_drag","press_drag","insert","continue_insert","prepare"),default="clip")
+    parser.add_argument("--component-start",choices=("clip","centre_press","raw_release","edge_drag","press_drag","insert","continue_insert","prepare","repress"),default="clip")
     parser.add_argument("--mouth-support",choices=("narrow","full"),default="narrow")
     parser.add_argument("--support-extension-mm",type=float,default=0.)
     parser.add_argument("--support-hold",choices=("static","admittance"),default="static")
@@ -62,6 +72,8 @@ def main():
     parser.add_argument("--finger-friction",type=float,default=None)
     parser.add_argument("--override-contact-materials",action="store_true")
     args = parser.parse_args()
+    if args.override_physics and not args.clip_component_seed:
+        parser.error("physics override requires an explicit component reset")
     if args.reset_tool and not args.clip_component_seed:
         parser.error("reset-tool is only for an explicit clip component seed")
     if (args.reset_gripper_relief_mm or args.reset_tool_lift_mm) and not args.clip_component_seed:
@@ -72,7 +84,7 @@ def main():
         parser.error("blade-clearance-mm must be in 0.02..0.8")
     if args.stage=="clip_grasp" and not (args.clip and args.drive):
         parser.error("clip_grasp requires --clip --drive")
-    if args.table_insert and (args.clip_style not in ("thin_lower","thin_strong","thin_broad","thin_aligned","thin_compact") or args.workspace!="raised_flat"):
+    if args.table_insert and (args.clip_style not in ("thin_lower","thin_strong","thin_broad","thin_aligned","thin_compact","thin_buttons") or args.workspace!="raised_flat"):
         parser.error("table-insert requires the thin lower blade and raised_flat workspace")
     if args.clip_component_seed:
         if not (args.stage=="seal" and args.table_insert and args.clip and args.drive):
@@ -80,13 +92,17 @@ def main():
         seed_meta=json.loads((args.clip_component_seed/"clip-entry.json").read_text())
         for key in ("workspace","clip_style","material_profile","hz","physics_hz","coupling"):
             if seed_meta["arguments"][key]!=getattr(args,key):
+                if args.override_physics and key in ("coupling","physics_hz"):continue
                 if key=="clip_style" and args.override_clip_geometry and args.reset_tool and {
-                    seed_meta["arguments"][key],args.clip_style}.issubset({"thin_lower","thin_strong","thin_broad","thin_aligned","thin_compact"}):
+                    seed_meta["arguments"][key],args.clip_style}.issubset({"thin_lower","thin_strong","thin_broad","thin_aligned","thin_compact","thin_buttons"}):
                     continue
                 if key=="clip_style" and args.override_clip_spring and {
                     seed_meta["arguments"][key],args.clip_style}=={"thin_lower","thin_strong"}:
                     continue
                 parser.error(f"checkpoint scene mismatch: {key}")
+        for key,default in (("tool_rack_style","wide"),("tool_parking_shift_x",0.)):
+            if seed_meta["arguments"].get(key,default)!=getattr(args,key) and not args.reset_tool:
+                parser.error(f"checkpoint fixture change requires --reset-tool: {key}")
         for key,default in (("mouth_support","narrow"),("support_extension_mm",0.),("rebase_z",False),("board_skin_mm",0.)):
             if seed_meta["arguments"].get(key,default)!=getattr(args,key):
                 parser.error(f"checkpoint support geometry mismatch: {key}")
@@ -107,8 +123,8 @@ def main():
                    Path(__file__).resolve().parents[1]/"fold_metrics.py",
                    Path(__file__).with_name("assets")/"yam_ready_pose.json"):
         shutil.copy2(source, sources/source.name)
-    if args.coupling=="unified":
-        for name in ("unified_contact.py","robot_gravity_compensation.py","native_joint_mimics.py","finite_gripper_drive.py","passive_clip_spring.py","contact_average.py"):
+    if args.coupling in ("unified","hybrid"):
+        for name in ("unified_contact.py","robot_gravity_compensation.py","native_joint_mimics.py","finite_gripper_drive.py","vbd_parallel.py","unified_vbd_solver.py","hybrid_contact.py","contact_capacity.py","passive_clip_spring.py","contact_average.py"):
             source=Path(__file__).with_name(name)
             shutil.copy2(source,sources/name)
     if args.workspace!="original":
@@ -131,7 +147,7 @@ def main():
                        Path(__file__).with_name("assets")/"clip_spring_v2.xml"):
             shutil.copy2(source, sources/source.name)
         if args.clip_style!="standard":
-            source=Path(__file__).with_name("assets")/{"thin_lower":"clip_thin_lower.xml","thin_strong":"clip_thin_strong.xml","thin_broad":"clip_thin_broad.xml","thin_aligned":"clip_thin_aligned.xml","thin_compact":"clip_thin_compact.xml"}[args.clip_style]
+            source=Path(__file__).with_name("assets")/{"thin_lower":"clip_thin_lower.xml","thin_strong":"clip_thin_strong.xml","thin_broad":"clip_thin_broad.xml","thin_aligned":"clip_thin_aligned.xml","thin_compact":"clip_thin_compact.xml","thin_buttons":"clip_thin_buttons.xml"}[args.clip_style]
             shutil.copy2(source,sources/source.name)
     (args.output/"arguments.json").write_text(json.dumps(vars(args), default=str, indent=2))
     if args.clip_component_seed:
@@ -148,7 +164,8 @@ def main():
                            board_friction=args.board_friction,finger_friction=args.finger_friction,
                            self_filter_rings=args.self_filter_rings,self_radius=args.self_radius_mm/1000.,
                            rebase_z=args.rebase_z,rigid_contact_ke=args.rigid_contact_ke,
-                           body_particle_buffer=args.body_particle_buffer,board_skin_mm=args.board_skin_mm)
+                           body_particle_buffer=args.body_particle_buffer,board_skin_mm=args.board_skin_mm,
+                           rigid_contact_threads=args.rigid_contact_threads,rigid_soft_dat=not args.disable_rigid_soft_dat,proxy_iterations=args.proxy_iterations,tool_rack_style=args.tool_rack_style,proxy_mass_scale=args.proxy_mass_scale,arm_gain_scale=args.arm_gain_scale,tool_parking_shift_x=args.tool_parking_shift_x)
     timings = dict(build_s=time.monotonic()-started, driver_tick_s=0., readback_and_metrics_s=0., recording_s=0.)
     entity = sim.scene.by_name["pouch"]
     export_render_geometry(sim, args.output)
@@ -167,6 +184,7 @@ def main():
             component_reset["clip_asset_change"]=dict(from_style=seed_meta["arguments"]["clip_style"],
                                                      to_style=args.clip_style)
         controller = FoldController(sim, session)
+        controller.press_passes=args.press_passes
         controller.table_insert=args.table_insert
         controller.insert_mode=args.insert_mode
         controller.blade_clearance_m=args.blade_clearance_mm/1000.
@@ -178,7 +196,7 @@ def main():
         elif args.stage in ("regrasp","seal"):
             controller.after_fold=args.stage
         if args.clip_component_seed:
-            from clip_controller import seal_fold,centre_press_component,raw_release_component,edge_drag_component,press_drag_component,insert_component,sequential_component,continue_insertion_component
+            from clip_controller import repress_component,seal_fold,centre_press_component,raw_release_component,edge_drag_component,press_drag_component,insert_component,sequential_component,continue_insertion_component
             controller.layout=component_reset["layout"]
             controller.marks["left_press_hold"]=True
             if component_reset.get("left_cleared_for_clip"):
@@ -188,7 +206,7 @@ def main():
             if not controller.support_holds and not controller.marks.get("left_cleared_for_clip"):
                 controller.start_support("left")
             controller.phase="clip_component_reset"
-            stages={"clip":seal_fold,"centre_press":centre_press_component,"raw_release":raw_release_component,"edge_drag":edge_drag_component,"press_drag":press_drag_component,"insert":insert_component,"continue_insert":continue_insertion_component,"prepare":sequential_component}
+            stages={"clip":seal_fold,"centre_press":centre_press_component,"raw_release":raw_release_component,"edge_drag":edge_drag_component,"press_drag":press_drag_component,"insert":insert_component,"continue_insert":continue_insertion_component,"prepare":sequential_component,"repress":repress_component}
             drive=stages[args.component_start](controller)
         elif args.stage=="clip_grasp":
             from clip_controller import clip_grasp_drive
@@ -215,6 +233,14 @@ def main():
         shutil.copy2(Path(__file__).with_name("gpu_contact_checks.py"),sources/"gpu_contact_checks.py")
         watcher=SubstepGeometry(sim,entity)
         sim.pipeline.hooks.add("post_solve",watcher.check,name="independent-film-geometry",cadence=1)
+        sim.pipeline.invalidate_graph()
+    capacity=None
+    if args.coupling in ("unified","hybrid"):
+        from contact_capacity import ContactCapacity
+        readout=getattr(sim,"snack_hybrid_readout",None) or sim.snack_unified_readout
+        native_reader=readout.reader if args.coupling=="hybrid" else readout
+        capacity=ContactCapacity(native_reader.inner,native_reader.contacts)
+        sim.pipeline.hooks.add("post_solve",capacity.check,name="contact-capacity-observer",cadence=1)
         sim.pipeline.invalidate_graph()
     average=None
     if args.force_readout=="mean" or args.record_force_means:
@@ -384,6 +410,7 @@ def main():
             trace[-1]["all_shape_mean_force_world_N"]=mean_forces.sum(0).tolist()
             trace[-1]["fixture_mean_force_world_N"]={str(sim.model.shape_label[i]):mean_forces[i].tolist()
                                                        for i in np.flatnonzero(owners<0)}
+        if capacity:trace[-1]["contact_capacity"]=capacity.report()
         timings["readback_and_metrics_s"]+=time.monotonic()-before
         if controller and hasattr(controller,"layout"):
             geometry=watcher.report() if watcher else None
@@ -405,6 +432,9 @@ def main():
                 print("RESET_JAWS", trace[-1]["jaws"], flush=True)
         if step % args.checkpoint_every == 0:
             save_record()
+        if capacity and any(v for k,v in trace[-1]["contact_capacity"].items() if "overflow" in k):
+            if controller:controller.failure="rigid/film contact capacity exceeded"
+            break
         if watcher and (trace[-1]["substep_geometry"]["transverse_edge_crossings"] or
                         trace[-1]["substep_geometry"]["film_box_intersections"] or
                         trace[-1]["substep_geometry"]["film_round_intersections"]):
@@ -425,6 +455,11 @@ def main():
                   clip_style=args.clip_style,table_insert=args.table_insert,
                   material_profile=args.material_profile,
                   material=sim.snack_material_parameters,
+                  arm_gain_scale=sim.snack_arm_gain_scale,
+                  proxy_iterations=sim.snack_proxy_iterations,
+                  rigid_soft_dat=sim.snack_rigid_soft_dat,
+                  contact_parallel=sim.snack_contact_parallel,
+                  hybrid=getattr(getattr(sim,"snack_hybrid_readout",None),"metadata",None),
                   robot_gripper=getattr(getattr(sim,"snack_finite_gripper",None),"metadata",None),
                   gravity_compensation=getattr(getattr(sim,"snack_robot_gravcomp",None),"metadata",None),
                   pipeline_graph=dict(captured=sim.pipeline.captured,steps_replayed=sim.pipeline.steps_replayed,
@@ -434,9 +469,10 @@ def main():
                   controller_failure=controller.failure if controller else None,
                   controller_completed=controller_completed,
                   controller_diagnostics=({k:controller.marks[k] for k in (
-                      "press_plans","press_diagnostics","fold_drag_m","clip_grasp_transform",
+                      "press_plans","press_diagnostics","crease_passes","fold_drag_m","clip_grasp_transform",
                       "left_clear_kinematic_plan","left_cleared_for_clip","last_move_error","blade_insertion_servo")
                       if k in controller.marks} if controller else {}),
+                  contact_capacity=capacity.report() if capacity else None,
                   substep_geometry=watcher.report() if watcher else None,
                   limitation="Uncalibrated material; contents/air not integrated; ready-start places open hands around the unfolded rim at reset; controller completion is not a physical success assessment")
     (args.output / "result.json").write_text(json.dumps(result, indent=2))

@@ -407,3 +407,68 @@ readout bias (v5). A lower contact stiffness comparison is ongoing. CUDA graph
 capture is active (v5: one eager frame, nine replayed frames); this is not a
 Python eager-loop bottleneck. Full unified film work is several seconds per
 20 Hz control frame and is being profiled before tuning iteration counts.
+
+### Contact ownership, profiling, and native robot comparison
+
+The unified v6 run stopped at frame 70 on 77 observed finger/film intersections.
+The native VBD rigid-soft DAT option is off by default and requires solver-owned
+collision checkpoints. `OwnedVBD` provides that ownership and removes the
+redundant RSS main detector. DAT v10 completed 173 frames / 10,380 observed
+substeps without intersections, but failed the fold gate (0.79 rad) after
+losing the rim grip. The declared contact continuation v11 also stayed
+geometrically clear but lost the tool grasp before completing insertion.
+These are failures; no full folding/sealing demonstration is claimed.
+
+A Nsight kernel profile of the unified rest case measured 46.6% in body/particle
+contact reduction and 19.2% in body/body reduction. Newton uses four strided
+threads per body. The opt-in `vbd_parallel.py` specialization sets both the
+kernel and launch width to 32, with exact source hash guards and no installed
+file edits. A known 100-contact reduction returns the expected -100 N (error
+below 0.001 N). Iteration counts and geometry checks remain unchanged. Rest
+trajectories differ because parallel atomic accumulation is not bitwise
+reproducible; this setting needs fresh trajectory validation. Matched final
+throughput comparisons remain pending; no general speedup is certified.
+
+The body-primary port changes YAM response: native MuJoCo armature, force
+limits and mimic behavior are not all supported by VBD. A second research
+configuration, `hybrid`, keeps the native MuJoCo robot and puts the free clip
+in the film's VBD island. The stock staggered two-way proxy coupler carries
+reactions; there is no extra delayed `ToolFeedback` force. The passive clip
+spring is applied once to its Newton-owned bodies. Contact readout integration
+and retained-grip tests are ongoing. v42 reached the handle and opened the
+clip but slipped during lift; a force-limited squeeze-hold comparison follows.
+
+The 8,000-contact known-sum microbenchmark measured 2.461 ms at four threads
+versus 0.349 ms at 32 threads (five batches of 200 captured replays), with the
+same accumulated force. This 7.05x ratio applies only to that contact-reduction
+microbenchmark, not an entire scene. Compact numbers are in
+`evidence/unfolded-20261114/performance/contact-reduction-benchmark.json`.
+
+A read-only per-substep contact-capacity monitor now persists overflow events,
+even if later frames become quiet. The focused suite passed 39 tests; the
+new button asset additionally passes its full-range geometry and analytical
+squeeze-force checks. These do not imply a completed task episode.
+
+Hybrid v18 with 10x native arm position gains reached the pre-press fold gate
+(2.31 rad, 64% columns), unlike the weaker servo comparisons. It later failed
+on observed finger/film intersections during pressing at frame 516. A clean
+frame-515 checkpoint was extracted for declared repeat-press diagnostics.
+The model retains original native actuator effort limits; position stiffness
+and damping are explicitly changed, not calibrated against hardware.
+
+A host IK route search found the previous end-grasp parking location outside
+the precise reachable range; moving the clip and its passive rack 40 mm in X
+makes the tested grasp/lift/flat route kinematically feasible. This is IK-only
+evidence, not collision or dynamics certification. Native reconstructed
+contacts during squeezing also found contact on slanted finger-wing colliders.
+`thin_buttons` retains the jaw and spring but adds narrow, protruding end pads
+to seat on YAM's 12 mm main pads. End-pad centres are read from actual collider
+transforms by the controller instead of hardcoded coordinates. Physical grip
+and carry tests remain ongoing.
+
+The hybrid contact-material assignment was corrected: only clip shapes use
+10 kN/m. Finger and board shapes keep the original 1 MN/m values. A fresh
+hybrid v20 nevertheless stopped on a board intersection at frame 2, so it is
+not a validated fix. The fully coupled, DAT-enabled path is also being
+retested with stronger arm tracking, 2,400 Hz physics and the reachable button
+grip. No current end-to-end fold/clip/release/3 s success exists.

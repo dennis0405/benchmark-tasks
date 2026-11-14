@@ -29,7 +29,7 @@ class ClipEntity(rss.Entity):
         start_b, start_s, start_j = builder.body_count, builder.shape_count, builder.joint_count
         start_q = len(builder.joint_q)
         frame = self.placed((*self.spec.at, *self.spec.quat))
-        filenames={"standard":"clip_spring_v2.xml","thin_lower":"clip_thin_lower.xml","thin_strong":"clip_thin_strong.xml","thin_broad":"clip_thin_broad.xml","thin_aligned":"clip_thin_aligned.xml","thin_compact":"clip_thin_compact.xml"}
+        filenames={"standard":"clip_spring_v2.xml","thin_lower":"clip_thin_lower.xml","thin_strong":"clip_thin_strong.xml","thin_broad":"clip_thin_broad.xml","thin_aligned":"clip_thin_aligned.xml","thin_compact":"clip_thin_compact.xml","thin_buttons":"clip_thin_buttons.xml"}
         asset=Path(__file__).parent/"experiments/assets"/filenames[self.spec.style]
         builder.add_mjcf(str(asset),
                          floating=True, override_root_xform=True,
@@ -62,3 +62,9 @@ class ClipEntity(rss.Entity):
             q = state.joint_q.numpy().copy()
             q[self.coords] = self.model.joint_q.numpy()[self.coords]
             state.joint_q.assign(q)
+
+
+@rss.register_entity("snack_film_clip")
+class FilmClipEntity(ClipEntity):
+    """The free articulated tool shares the film's Newton solver island."""
+    domain="paper"

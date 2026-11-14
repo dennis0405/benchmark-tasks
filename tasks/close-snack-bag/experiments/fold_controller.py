@@ -277,7 +277,8 @@ class FoldController:
 
     def press(self, arm, *, leave_down=False, near=.040, along_fold=False,sweep_end=None,at_rim=False):
         self.support_holds.pop(arm,None)
-        self.phase = "press_"+arm
+        number=getattr(self,"press_pass_index",1)
+        self.phase = "press_"+arm+(f"_repeat_{number}" if number>1 else "")
         panel = self.session.arms[arm]
         sign = 1. if arm=="left" else -1.
         # Keep the pinch pose's closing-axis sign. The upstream paper

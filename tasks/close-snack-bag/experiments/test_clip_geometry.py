@@ -24,6 +24,20 @@ class ClipGeometryTests(unittest.TestCase):
     def test_compact_aligned_pressure_pad_joint_range_has_no_opposing_box_overlap(self):
         self.check_asset("clip_thin_compact.xml")
 
+    def test_precision_button_joint_range_has_no_opposing_overlap(self):
+        self.check_asset("clip_thin_buttons.xml")
+
+    def test_button_analytical_squeeze_force_stays_below_five_newtons(self):
+        root=ET.parse(Path(__file__).with_name("assets")/"clip_thin_buttons.xml").getroot()
+        joint=root.find("worldbody/body/body/joint")
+        upper=np.fromstring(root.find(".//geom[@name='upper_handle_end']").get("pos"),sep=" ")
+        stiffness=float(joint.get("stiffness"));limits=np.fromstring(joint.get("range"),sep=" ")
+        for angle in np.linspace(*limits,81):
+            r=Rotation.from_euler("y",angle).apply(upper)
+            direction=Rotation.from_euler("y",angle+.32).apply([0,0,1])
+            lever=abs(np.cross(r,direction)[1])
+            self.assertLess(stiffness*abs(angle)/lever,5.,"analytical bound, not measured tool calibration")
+
     def test_stronger_variant_only_changes_passive_stiffness(self):
         directory=Path(__file__).with_name("assets")
         original=ET.parse(directory/"clip_thin_lower.xml").getroot()

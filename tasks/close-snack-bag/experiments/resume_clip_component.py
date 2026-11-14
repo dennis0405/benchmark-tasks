@@ -59,7 +59,7 @@ def restore(sim,session,directory,*,reset_tool=False,gripper_relief_m=0.,tool_li
             relieved.append(dict(joint=int(joint),coord=coord,before=before,after=float(joints[coord])))
         if len(relieved)!=2:raise ValueError("expected two YAM finger slides")
         excluded.update(fingers)
-    body_primary=getattr(sim,"snack_coupling",None)=="unified" and "w" in data
+    body_primary=getattr(sim,"snack_coupling",None) in ("unified","hybrid") and "w" in data
     if body_primary and (data["w"].shape!=sim.state.body_qd.numpy().shape or not np.isfinite(data["w"]).all()):
         raise ValueError("invalid recorded body velocities")
     for state in (sim.pipeline.state_0,sim.pipeline.state_1):

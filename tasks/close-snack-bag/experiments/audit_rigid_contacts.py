@@ -17,7 +17,7 @@ from deformable_scene import make_environment
 
 
 def main():
-    p=argparse.ArgumentParser();p.add_argument("run",type=Path);p.add_argument("--step",type=int);a=p.parse_args()
+    p=argparse.ArgumentParser();p.add_argument("run",type=Path);p.add_argument("--step",type=int);p.add_argument("--allow-body-residual",action="store_true");a=p.parse_args()
     args=json.loads((a.run/"arguments.json").read_text())
     raw=(a.run/"states.npz").read_bytes()
     import io
@@ -28,12 +28,13 @@ def main():
         clip_style=args["clip_style"],side_access=args.get("mouth_support","full")=="narrow",
         support_extension=args.get("support_extension_mm",0.)/1000.,
         board_friction=args.get("board_friction",1.),finger_friction=args.get("finger_friction"),
-        rebase_z=args.get("rebase_z",False))
+        rebase_z=args.get("rebase_z",False),board_skin_mm=args.get("board_skin_mm",0.),
+        tool_rack_style=args.get("tool_rack_style","wide"),tool_parking_shift_x=args.get("tool_parking_shift_x",0.))
     sim.state.joint_q.assign(states[f"j_{step:05d}"])
     sim.state.joint_qd.assign(states[f"d_{step:05d}"])
     newton.eval_fk(sim.model,sim.state.joint_q,sim.state.joint_qd,sim.state)
     position_error=float(abs(sim.state.body_q.numpy()[:,:3]-states[f"b_{step:05d}"][:,:3]).max())
-    if position_error>1e-5:raise ValueError("offline rigid model FK differs from the recording")
+    if position_error>1e-5 and not a.allow_body_residual:raise ValueError("offline rigid model FK differs from the recording")
     solver=sim.pipeline.program.solver
     solver=getattr(solver,"rigid",solver)
     solver._update_mjc_data(solver.mj_data,sim.model,sim.state)
@@ -53,7 +54,7 @@ def main():
             contact_dimension=int(contact.dim),
             condim=[int(model.geom_condim[g]) for g in geoms],
             friction=[model.geom_friction[g].tolist() for g in geoms]))
-    report=dict(scope=__doc__,step=step,fk_position_error_m=position_error,contacts=contacts,
+    report=dict(scope=__doc__,body_pose_approximation_permitted=a.allow_body_residual,step=step,fk_position_error_m=position_error,contacts=contacts,
                 states_sha256=hashlib.sha256(raw).hexdigest())
     (a.run/"rigid-contact-audit.json").write_text(json.dumps(report,indent=2))
     for c in contacts:

@@ -1,0 +1,54 @@
+{
+  "scope": "Single-body known-sum point contact force/Hessian reduction, captured graph including output clears; not whole-scene throughput",
+  "device": "Brev L40S",
+  "batches": 5,
+  "replays_per_batch": 200,
+  "other_work": "MPS active with other experiments",
+  "rows": [
+    {
+      "threads": 4,
+      "contacts": 8000,
+      "force": [
+        0.0,
+        0.0,
+        -8000.00048828125
+      ],
+      "expected": [
+        0,
+        0,
+        -8000
+      ],
+      "per_graph_s": [
+        0.0024622492299931765,
+        0.0024630593900110396,
+        0.002460652645004302,
+        0.002454337974995724,
+        0.0024519102849990303
+      ],
+      "median_graph_s": 0.002460652645004302
+    },
+    {
+      "threads": 32,
+      "contacts": 8000,
+      "force": [
+        0.0,
+        0.0,
+        -8000.00048828125
+      ],
+      "expected": [
+        0,
+        0,
+        -8000
+      ],
+      "per_graph_s": [
+        0.00035033651498451947,
+        0.0003483461249925313,
+        0.0003490661949945206,
+        0.00034901523500593614,
+        0.00034999915500520727
+      ],
+      "median_graph_s": 0.0003490661949945206
+    }
+  ],
+  "median_ratio": 7.049243611352647
+}

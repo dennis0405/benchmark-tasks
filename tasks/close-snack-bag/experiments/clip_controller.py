@@ -32,14 +32,21 @@ def grasp_clip(controller, arm="right"):
         pose=clip_pose(c)
         rotation=Rotation.from_quat(pose[3:])
         quat=(rotation*Rotation.from_euler("x",-np.pi/2)*nominal).as_quat()
-        if getattr(c.sim,"snack_coupling",None)=="unified":
+        if getattr(c.sim,"snack_coupling",None) in ("unified","hybrid"):
             # Track the actual two end pads as the upper lever rotates.
             # Their midpoint shifts during squeezing; a fixed root offset
             # pushes the free clip sideways instead of centering the jaws.
-            upper=c.sim.state.body_q.numpy()[c.sim.scene.by_name["clip"].bodies[1]]
-            lower_end=pose[:3]+rotation.apply([-.083,0,-.040])
-            upper_end=upper[:3]+Rotation.from_quat(upper[3:]).apply([-.083,0,.040])
-            return (lower_end+upper_end)/2,quat
+            model=c.sim.model;poses=c.sim.state.body_q.numpy()
+            shape_body=model.shape_body.numpy();local=model.shape_transform.numpy()
+            ends={}
+            for i,label in enumerate(model.shape_label):
+                for name in ("lower_handle_end","upper_handle_end"):
+                    if str(label).endswith("/"+name):
+                        body=poses[shape_body[i]]
+                        ends[name]=body[:3]+Rotation.from_quat(body[3:]).apply(local[i,:3])
+            lower_end,upper_end=ends["lower_handle_end"],ends["upper_handle_end"]
+            inset=0. if getattr(c.sim,"snack_tool_rack_style","wide")=="end_access" else .023
+            return (lower_end+upper_end)/2+rotation.apply([inset,0,0]),quat
         return pose[:3]+rotation.apply([-.060,0,0]),quat
     handle,quat=target()
     yield from c.move({arm:handle+[0,0,.15]},{arm:quat},.15,100)
@@ -82,11 +89,17 @@ def grasp_clip(controller, arm="right"):
             # hinge stop to make transport look stable.
             coords=c.sim.scene.embodiment.arms[arm].gripper_coords
             actual=float(c.sim.state.joint_q.numpy()[coords][0])
-            panel.grip_request=float(np.clip(1-(actual+.0001)/.0475,0,1))
+            if getattr(c.sim,"snack_coupling",None)=="hybrid":
+                # Keep the force-limited native squeeze command under the
+                # Newton tool's spring load instead of relaxing its pinch.
+                panel.grip_request=float(request)
+            else:
+                relief=(-.0003 if getattr(c.sim,"snack_coupling",None)=="unified" else .0001)
+                panel.grip_request=float(np.clip(1-(actual+relief)/.0475,0,1))
             break
         request=min(.85,request+.15/hz)
         panel.grip_request=request
-        if getattr(c.sim,"snack_coupling",None)=="unified":
+        if getattr(c.sim,"snack_coupling",None) in ("unified","hybrid"):
             handle,turn=target()
             desired=c.takes._fold_targets(c.film,{arm:handle},{arm:turn})[arm]
             current=np.asarray(panel.cursor_pos)
@@ -379,9 +392,29 @@ def sequential_table_fold(c):
     quat=right.ik.ee_pose(c.sim.state)[1]
     jaw=c.takes._fold_jaws(c.film,"right")
     yield from c.move({"right":jaw+[0,-.10,.05]},{"right":quat},.12,100)
-    yield from c.press("left",leave_down=True,near=-.045,sweep_end=.070,at_rim=True)
-    if c.failure:return False
+    return (yield from crease_table_fold(c))
+
+
+def crease_table_fold(c,first_pass=1):
+    """Repeat physical crease strokes when the measured fold still needs work."""
+    from fold_metrics import fold_metrics
+    entity=c.sim.scene.by_name["pouch"]
+    for number in range(first_pass,max(first_pass,int(getattr(c,"press_passes",1)))+1):
+        c.press_pass_index=number
+        if number>first_pass:yield from c.lift_press("left")
+        near,end=(-.045,.070) if number%2 else (.060,-.040)
+        yield from c.press("left",leave_down=True,near=near,sweep_end=end,at_rim=True)
+        if c.failure:return False
+        q=c.sim.state.particle_q.numpy()[entity.particles]
+        fold=fold_metrics(q,entity.grid,[(34,28,40)])["folds"][0]
+        c.marks.setdefault("crease_passes",[]).append(dict(pass_number=number,fold=fold))
+        print("CREASE_PASS",number,fold,flush=True)
+        if fold["valid"] and fold["median_angle_rad"]>=2.5 and fold["folded_fraction"]>=.8:break
     return (yield from table_fold_gate(c))
+
+
+def repress_component(c):
+    if (yield from crease_table_fold(c,first_pass=2)):yield from seal_fold(c)
 
 
 def sequential_component(c):

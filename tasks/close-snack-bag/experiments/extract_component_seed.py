@@ -17,10 +17,14 @@ def main():
     states=np.load(a.run/"states.npz");trace=json.loads((a.run/"trace.json").read_text())
     step=a.step if a.step is not None else max(int(k[2:]) for k in states.files if k.startswith("b_"))
     row=next(t for t in trace if t["step"]==step)
-    if row["phase"] not in ("clip_stage","clip_descend_outside","clip_insert","clip_release","hands_free_hold"):
-        raise ValueError("extract a post-grasp clip component state")
+    if row["phase"] not in ("clip_stage","clip_descend_outside","clip_insert","clip_release","hands_free_hold","press_left","press_right","table_fold_ready"):
+        raise ValueError("extract an observed pressing or post-grasp component state")
     layout_path=a.run/"seeds"/"clip_insert"/"clip-entry.json"
-    if not layout_path.exists():layout_path=Path(args["clip_component_seed"])/"clip-entry.json"
+    if not layout_path.exists():
+        candidates=list((a.run/"seeds").glob("*/clip-entry.json"))
+        if candidates:layout_path=max(candidates,key=lambda path:json.loads(path.read_text())["step"])
+        elif args.get("clip_component_seed"):layout_path=Path(args["clip_component_seed"])/"clip-entry.json"
+        else:raise ValueError("no observed layout metadata")
     meta=json.loads(layout_path.read_text())
     data={k:states[f"{k}_{step:05d}"] for k in ("q","b","j","d","v","r")}
     if f"w_{step:05d}" in states:data["w"]=states[f"w_{step:05d}"]
