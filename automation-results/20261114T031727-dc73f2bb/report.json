@@ -2,42 +2,13 @@
   "run": "20261114T031727-dc73f2bb",
   "status": "blocked",
   "prompt": "사용자 요청 원문:\n좋아. 이제 인스턴스를 다시 켜고 첫 태스크를 만들어보자.\n필요한 CLI 인증부터 확인하고, 로봇 조립·데이터센터 정비 분야에서 산업 근거가 있고 기존 제출과 겹치지 않는 후보를 골라 제출 전 검토 단계까지 진행해줘.\n\n확정된 제작 조건:\n- Category: Impact on AI timelines. 로봇 조립 또는 데이터센터 정비 중 실제 산업에서 자동화할 의미가 있는 물리 조작 하나를 선택한다.\n- 제조사 설치·정비 매뉴얼, 공식 조립 절차, 공개 설계, 실제 작업 영상·보고서의 원문으로 작업과 장비 형상·치수·절차를 입증한다. 추측이나 가상 산업 용도를 만들어내지 않는다.\n- 여러 후보를 비교하고 목적·물리 기술·성공 조건의 신규성과 로봇의 어려운 조작 능력을 함께 검토하여 하나만 제작한다. 조작의 어려움은 극단적일 필요는 없지만 단순 물체 옮기기를 산업 이름만 바꾼 작업은 피한다.\n- 모든 분야의 기존 accepted/pending/open 제출 및 우리 팀 기존 제출, 지정된 기존 벤치마크와 비교한다. 기하·색상·배치·시작 자세·난도만 다른 것은 새 태스크가 아니다. 선정 시점 및 완성 후 다시 전수 비교한다. 불확실한 중복을 통과시키지 않는다.\n- 가능한 강체 PhysX 작업을 선택한다. 기존의 검증된 연성 에셋이 없다면 새 연성 솔버 연구는 하지 않는다. 실제 산업 장비의 형태와 중요한 물리 제약을 재현한다. 공개 에셋은 라이선스·출처·치수를 기록하고 적합하지 않으면 직접 제작한다.\n- objective와 환경·부품 물리를 먼저 완성·진단한 뒤 YAM 전체 데모·채점기를 연결한다. 물체 순간이동/상태 덮어쓰기로 성공을 만들지 않는다. 관련 부품 파손·금지 동작·실패·부분 점수와 성공 유지 시간을 수치로 평가한다.\n- 실제 simulator 측정·두 번의 full-score YAM 데모·실패/부분 점수 대조군·영상/원시 trace 및 깨끗한 경로 재현 검사를 수행한다. 미검증 수치와 성공을 만들어 보고하지 않는다.\n- 모든 제작·검증을 마친 후에만 Dream 최종 평가 episode 1회. 실패나 불명 결과도 자동 재평가하지 않는다. 누적 $20 ledger를 준수하고 인증이 없으면 제작을 보존한 뒤 평가 대기한다.\n- 결과는 이 run의 새로운 origin 브랜치에 보존한다. 원본 매뉴얼 전체/인증 정보는 공개하지 않는다. 50MB/file 또는 100MB checkpoint 초과는 먼저 보고한다.\n- 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.\n- 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.\n",
-  "at": "2026-11-14T04:38:09.459899+00:00",
+  "at": "2026-11-14T04:45:50.495531+00:00",
   "error": "all proposed candidates duplicate/uncertain; inspect selection-history.json",
   "mode": "production",
   "dream": null,
   "release": null,
   "review_path": "workspace/artifacts",
   "note": "local report; not a contest submission",
-  "selected": {
-    "id": "robot-motion-connector-replacement",
-    "title": "Replace a drive-and-motion-control connector in a commercial cleaning robot",
-    "objective": "Remove a failed motion-control harness connector and install its replacement while preserving surrounding wiring and seals.",
-    "skills": [
-      "confined connector access",
-      "latch manipulation",
-      "connector extraction and alignment",
-      "controlled mating",
-      "cable and seal management"
-    ],
-    "success_conditions": "Blocked: no defensible success rubric can be written from the acquired sources because they do not identify a cleaning-robot assembly, connector part number, access geometry, removal procedure, insertion procedure, or sealing inspection.",
-    "industrial_value": "Molex documents that commercial cleaning-robot motors and motion systems require reliable power and signal connectors in demanding environments, establishing the subsystem's industrial importance.",
-    "dexterity": "Potentially high, but currently unsubstantiated for any actual equipment geometry.",
-    "evidence": [
-      {
-        "source_id": "s-b8dfc5566fdc008f",
-        "quote": "Motors and motion systems in cleaning robots need vibration-resistant connectors to maintain reliable power and signal transmission despite exposure to moisture and cleaning chemicals.",
-        "locator": "Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors section"
-      },
-      {
-        "source_id": "s-b8dfc5566fdc008f",
-        "quote": "Mini-Fit Connectors",
-        "locator": "Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors product-family listing"
-      }
-    ],
-    "asset_plan": "No asset development should begin. Obtain an OEM service manual or public assembly procedure naming the exact robot, Mini-Fit part set, access envelope, latch/seal configuration, and replacement inspection requirements.",
-    "risk": "Blocked and not selected. The source proves application relevance only; treating it as an assembly or service instruction would invent the task geometry and procedure."
-  },
   "novelty": {
     "catalog_digest": "417fe0b751d3b6da3ee76c5b0567ec985e0b9d4e8124054a91a710d8ce1d7d31",
     "candidate_digest": "852c99173894c4b843904383d8cc2c2ceede9e10e32214b78c81054b704647b2",
@@ -248,6 +219,190 @@
     ],
     "inactive_uncertainty": [],
     "at": "2026-11-14T04:37:58.127450+00:00"
+  },
+  "selection_history": {
+    "rejected": [
+      {
+        "candidate": "minifit-5556-terminal-extraction",
+        "reason": "novelty overlap/uncertainty: 1 records; inspect novelty.json"
+      },
+      {
+        "candidate": "minifit-5378-single-blade-extraction",
+        "reason": "novelty overlap/uncertainty: 1 records; inspect novelty.json"
+      },
+      {
+        "candidate": "nondestructive-harness-terminal-rework",
+        "reason": "novelty overlap/uncertainty: 1 records; inspect novelty.json"
+      },
+      {
+        "candidate": "robot-motion-connector-replacement",
+        "reason": "novelty overlap/uncertainty: 4 records; inspect novelty.json"
+      }
+    ],
+    "selected": null
+  },
+  "last_candidate": {
+    "id": "robot-motion-connector-replacement",
+    "title": "Replace a drive-and-motion-control connector in a commercial cleaning robot",
+    "objective": "Remove a failed motion-control harness connector and install its replacement while preserving surrounding wiring and seals.",
+    "skills": [
+      "confined connector access",
+      "latch manipulation",
+      "connector extraction and alignment",
+      "controlled mating",
+      "cable and seal management"
+    ],
+    "success_conditions": "Blocked: no defensible success rubric can be written from the acquired sources because they do not identify a cleaning-robot assembly, connector part number, access geometry, removal procedure, insertion procedure, or sealing inspection.",
+    "industrial_value": "Molex documents that commercial cleaning-robot motors and motion systems require reliable power and signal connectors in demanding environments, establishing the subsystem's industrial importance.",
+    "dexterity": "Potentially high, but currently unsubstantiated for any actual equipment geometry.",
+    "evidence": [
+      {
+        "source_id": "s-b8dfc5566fdc008f",
+        "locator": "Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors section",
+        "quote_sha256": "f1ea2ce88472d8ade8b3d8ba4c1779113f8d19a5be908d7d4c45fe5912222dc1"
+      },
+      {
+        "source_id": "s-b8dfc5566fdc008f",
+        "locator": "Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors product-family listing",
+        "quote_sha256": "e759fb5ade9591ded51501e045fac7c58df34ddc5a6ef5e6f9af780c246765a9"
+      }
+    ],
+    "asset_plan": "No asset development should begin. Obtain an OEM service manual or public assembly procedure naming the exact robot, Mini-Fit part set, access envelope, latch/seal configuration, and replacement inspection requirements.",
+    "risk": "Blocked and not selected. The source proves application relevance only; treating it as an assembly or service instruction would invent the task geometry and procedure."
+  },
+  "pilot_outcome": {
+    "run": "20261114T031727-dc73f2bb",
+    "at": "2026-11-14T04:45:50.494862+00:00",
+    "state": "blocked_before_environment",
+    "catalog_records": 2089,
+    "board": {
+      "complete": true,
+      "views": {
+        "accepted": 94,
+        "pending": 510,
+        "revision": 340
+      },
+      "view_status_counts": {
+        "accepted": {
+          "accepted": 94
+        },
+        "pending": {
+          "pending": 364,
+          "rejected": 56,
+          "pilot": 90
+        },
+        "revision": {
+          "rejected": 340
+        }
+      },
+      "own_history": 24,
+      "ignored_nonheld_revision_history": 21,
+      "at": "2026-11-14T04:18:32.335060+00:00",
+      "matched_github": 770
+    },
+    "candidate_reviews": {
+      "minifit-5556-terminal-extraction": {
+        "title": "Depin a Mini-Fit Jr. 5556 terminal from a 5557 housing",
+        "compared": 100,
+        "blockers": [
+          {
+            "id": "pr-1784",
+            "verdict": "overlap",
+            "reason": "Both centrally test sustaining a connector release feature while withdrawing the retained line/component. The candidate adds finer dual-blade access and neighbor protection, but those are difficulty and geometry differences around the same release-and-pull ability.",
+            "title": "Disconnect a pneumatic line from a push-to-connect manifold port and blank the port",
+            "url": "https://github.com/robocurve/benchmark-tasks/pull/1784",
+            "source_status": "open-unclassified",
+            "own_team": false
+          }
+        ]
+      },
+      "minifit-5378-single-blade-extraction": {
+        "title": "Extract a 5378-series terminal with a single HT60630B blade",
+        "compared": 200,
+        "blockers": [
+          {
+            "id": "pr-662",
+            "verdict": "overlap",
+            "reason": "The core tested ability is the same release-while-pulling pattern; smaller connector geometry and a blade tool add difficulty but do not by themselves establish a meaningfully different ability.",
+            "title": "Release a push-fit fitting and pull the pipe out",
+            "url": "https://github.com/robocurve/benchmark-tasks/pull/662",
+            "source_status": "merged",
+            "own_team": false
+          }
+        ]
+      },
+      "nondestructive-harness-terminal-rework": {
+        "title": "Non-destructively extract a reusable harness terminal for OEM rework",
+        "compared": 25,
+        "blockers": [
+          {
+            "id": "pr-209",
+            "verdict": "uncertain",
+            "reason": "Both centrally test release-before-pull extraction without disturbing the holder. The candidate claims finer hidden-feature access and reuse inspection, but lacks a concrete connector, tool, procedure, damage model, and numeric acceptance limits, so a meaningful tested distinction is not yet established.",
+            "title": "Add release a spring clamp before pulling",
+            "url": "https://github.com/robocurve/benchmark-tasks/pull/209",
+            "source_status": "open-unclassified",
+            "own_team": false
+          }
+        ]
+      },
+      "robot-motion-connector-replacement": {
+        "title": "Replace a drive-and-motion-control connector in a commercial cleaning robot",
+        "compared": 25,
+        "blockers": [
+          {
+            "id": "pr-1289",
+            "verdict": "uncertain",
+            "reason": "Both are component reattachment tasks, and missing attachment details on both sides prevent a confident determination of whether they test meaningfully different mechanics.",
+            "title": "Reattach your detached wrist camera",
+            "url": "https://github.com/robocurve/benchmark-tasks/pull/1289",
+            "source_status": "open-unclassified",
+            "own_team": false
+          },
+          {
+            "id": "pr-1970",
+            "verdict": "uncertain",
+            "reason": "The tasks may share the same essential insertion-and-latching ability, and the underspecified candidate does not establish that its claimed extraction or seal work is actually tested.",
+            "title": "Load four Han-Modular modules into a HARTING hinged frame its spring holds open, then squeeze it shut until it clicks",
+            "url": "https://github.com/robocurve/benchmark-tasks/pull/1970",
+            "source_status": "open-unclassified",
+            "own_team": false
+          },
+          {
+            "id": "pr-1797",
+            "verdict": "uncertain",
+            "reason": "The candidate explicitly includes cable management, but its absent geometry and rubric make it impossible to show whether that ability is more than the routing-and-retention skill already tested here.",
+            "title": "Route a cable between two posts and secure its final clip",
+            "url": "https://github.com/robocurve/benchmark-tasks/pull/1797",
+            "source_status": "open-unclassified",
+            "own_team": false
+          },
+          {
+            "id": "pr-1891",
+            "verdict": "uncertain",
+            "reason": "The core tested ability may reduce to alignment and controlled electrical mating, and the candidate lacks enough geometry or rubric to establish a meaningful distinction.",
+            "title": "Seat a robot controller's add-on board on its two rows of header pins without bending any pin",
+            "url": "https://github.com/robocurve/benchmark-tasks/pull/1891",
+            "source_status": "open-unclassified",
+            "own_team": false
+          }
+        ]
+      }
+    },
+    "full_catalog_pass": false,
+    "physical_environment_built": false,
+    "yam_demo_complete": false,
+    "dream_attempts": 0,
+    "upstream_submission": false,
+    "compute": {
+      "instance": "robocurve-automation-256",
+      "observed_state": "STOPPED"
+    },
+    "pipeline_checks": {
+      "pytest_passed": 63,
+      "ruff": "passed"
+    },
+    "next_research_focus": "Find a different physical ability outside connector insertion, release-and-pull extraction and keyed seating; ground it in an industrial procedure before construction."
   },
   "sources": [
     {
