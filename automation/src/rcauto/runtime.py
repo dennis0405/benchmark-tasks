@@ -47,13 +47,20 @@ class Brev:
             result = self.status()
             if result["status"] == expected:
                 return result
+            if result["status"] in {"FAILURE", "FAILED", "ERROR"}:
+                raise RuntimeErrorState(
+                    f"instance failed while waiting for {expected}: status={result['status']}; "
+                    f"health={result.get('health_status', 'unknown')}; no automatic reset/recreation"
+                )
             time.sleep(self.config.get("poll_seconds", 10))
         raise RuntimeErrorState(f"instance state unknown: did not reach {expected}")
 
     def start(self):
         current = self.status()
         if current["status"] == "STOPPED":
-            capture(["brev", "start", self.name], timeout=900)
+            # Let our state monitor observe terminal startup failures instead
+            # of waiting inside the CLI's interactive readiness spinner.
+            capture(["brev", "start", self.name, "--detached"], timeout=120)
         elif current["status"] not in {"RUNNING", "STARTING"}:
             raise RuntimeErrorState("instance busy/changing state: " + current["status"])
         self.wait("RUNNING")

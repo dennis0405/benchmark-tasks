@@ -83,6 +83,36 @@ def test_failed_deploy_stops_newly_started_instance_without_a_worker(tmp_path):
     assert s.get(r["id"])["compute"] == "stopped"
 
 
+def test_stop_arriving_during_startup_prevents_deploy_or_worker_launch(tmp_path):
+    from rcauto.store import write_json
+
+    s = Store(tmp_path / "state")
+    r = s.create("x", instance="vm")
+
+    class FakeBrev:
+        stopped = False
+
+        def start(self):
+            write_json(s.run_dir(r["id"]) / "cancel-requested.json", {"requested": "operator"})
+
+        def ssh(self, *a, **kw):
+            pytest.fail("stop requested at startup; no deployment or remote launch")
+
+        def stop(self):
+            self.stopped = True
+
+    c = Coordinator(
+        s, {"instance": "vm", "instance_id": "id", "remote_root": "/data/test"}, tmp_path
+    )
+    c.brev = FakeBrev()
+    c.sync = lambda: {"complete": True}
+    c.prepare_input = lambda *a: None
+    c.produce(r["id"])
+    assert c.brev.stopped
+    assert "stop requested" in s.get(r["id"])["error"]
+    assert s.effect(r["id"], "dream") is None
+
+
 def test_different_active_worker_is_never_stopped(tmp_path):
     class FakeBrev:
         def start(self):

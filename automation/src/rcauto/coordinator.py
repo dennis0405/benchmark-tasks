@@ -212,6 +212,8 @@ class Coordinator:
                 started = True
                 b.start()
                 self.store.update(rid, compute="running", remote_status=None, stage=None)
+                if (root / "cancel-requested.json").exists():
+                    raise GateError("stop requested during startup; no worker launched")
                 b.ssh("mkdir -p " + shlex.quote(self.config["remote_root"] + "/worker-state"))
                 # A dedicated instance still may have an old worker. Never stop/redeploy over it.
                 busy = b.ssh(
@@ -343,8 +345,9 @@ class Coordinator:
                 self.finalize(rid)
             except (Exception, KeyboardInterrupt) as e:
                 logging.getLogger(__name__).exception("production interrupted; preserving state")
-                self.store.update(rid, status="blocked", error=str(e))
-                self.report(rid, "blocked", str(e))
+                reason = str(e) or type(e).__name__
+                self.store.update(rid, status="blocked", error=reason)
+                self.report(rid, "blocked", reason)
                 if transferred and self.store.get(rid).get("mode") != "selftest":
                     try:
                         Publisher(self.store, self.config).checkpoint(rid)
