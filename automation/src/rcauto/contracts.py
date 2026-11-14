@@ -79,6 +79,7 @@ BENCHMARK_NOVELTY = obj(
         )
     ),
 )
+BENCHMARK_QUOTE_REPAIR = obj(replacements=array(obj(suite=S, name=S, source_path=S, quote=S)))
 NOVELTY_SCOPE = """
 Respect the catalog scope encoded in artifacts/novelty.json.inactive_uncertainty.
 Verify those exemptions against input/catalog.json: only uncertain, closed AND unmerged,

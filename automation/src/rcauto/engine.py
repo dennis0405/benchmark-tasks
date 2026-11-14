@@ -605,6 +605,7 @@ class Production:
         rows = result["comparisons"]
         if len(rows) != len(names) or {r["suite"] for r in rows} != set(names):
             raise CoverageError("benchmark comparison suite coverage incomplete")
+        missing_quotes = []
         for row in rows:
             corpus = read(self.workspace / index[row["suite"]]["definition_manifest"])
             originals = {source["local_path"]: source for source in corpus["files"]}
@@ -626,7 +627,9 @@ class Production:
                     task["source_path"] = matches[0]
                 text = inside(self.workspace, task["source_path"]).read_text()
                 if not task["quote"].strip() or task["quote"] not in text:
-                    raise GateError("benchmark comparison original quote absent")
+                    missing_quotes.append((row["suite"], task))
+        if missing_quotes:
+            self.repair_benchmark_quotes(missing_quotes, candidate, stage)
         report = {
             **result,
             "candidate_digest": digest(candidate),
@@ -641,6 +644,58 @@ class Production:
         ):
             raise GateError("required benchmark overlap/uncertainty; inspect explicit comparison")
         return report
+
+    def repair_benchmark_quotes(self, missing, candidate, stage):
+        targets = {(suite, task["name"], task["source_path"]): task for suite, task in missing}
+        if len(targets) != len(missing):
+            raise GateError("benchmark quote repair references ambiguous")
+        feedback = "Original excerpt is not an exact substring of the verified source."
+        for attempt in range(2):
+            write_json(
+                self.workspace / "input/benchmark-quote-repair.json",
+                {
+                    "candidate_digest": digest(candidate),
+                    "stage": stage,
+                    "attempt": attempt,
+                    "failure": feedback,
+                    "items": [
+                        {
+                            "suite": suite,
+                            "name": name,
+                            "source_path": path,
+                            "rejected_quote": task["quote"],
+                        }
+                        for (suite, name, path), task in targets.items()
+                    ],
+                },
+            )
+            result = self.ask(
+                "benchmark-quote-repairer",
+                "Read input/benchmark-quote-repair.json and each complete original source file. "
+                "Return exactly one short exact source excerpt for each indexed item, preserving "
+                "its suite, name and source_path. Copy actual whitespace/punctuation or choose a "
+                "clean shorter excerpt. Do not reevaluate novelty, change neighbors, change source "
+                "files or request any verdict: the controller keeps every original judgment and "
+                "reason unchanged. An unsupported source cannot be repaired by invention.",
+                C.BENCHMARK_QUOTE_REPAIR,
+            )
+            rows = result["replacements"]
+            replacements = {(r["suite"], r["name"], r["source_path"]): r["quote"] for r in rows}
+            if len(rows) != len(replacements) or set(replacements) != set(targets):
+                feedback = (
+                    "Quote repair must preserve exact item/source coverage; no source switch."
+                )
+                continue
+            if any(
+                not quote.strip() or quote not in inside(self.workspace, key[2]).read_text()
+                for key, quote in replacements.items()
+            ):
+                feedback = "Quote repair still absent from an original source; copy a shorter exact excerpt."
+                continue
+            for key, quote in replacements.items():
+                targets[key]["quote"] = quote
+            return
+        raise GateError("benchmark quote repair failed after two bounded attempts: " + feedback)
 
     def novelty(self):
         validate_benchmarks(self.workspace, self.config.get("benchmarks", []))

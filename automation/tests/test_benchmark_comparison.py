@@ -66,6 +66,8 @@ def setup_production(tmp_path, verdict="distinct", quote="(:goal (turned stove))
 
     class Agent:
         def run(self, role, *args, **kwargs):
+            if role == "benchmark-quote-repairer":
+                return {"replacements": []}
             assert role == "benchmark-novelty-analyst", "benchmark gate must precede catalog review"
             return report
 
@@ -128,3 +130,68 @@ def test_ambiguous_original_repository_path_does_not_select_arbitrary_version(tm
     report["comparisons"][0]["closest_tasks"][0]["source_path"] = "benchmark/task.bddl"
     with pytest.raises(GateError, match="original suite definition"):
         p.benchmark_novelty({"id": "damper"})
+
+
+@pytest.mark.parametrize("verdict", ["distinct", "uncertain", "overlap"])
+def test_quote_repair_changes_only_exact_excerpt_not_novelty_judgment(tmp_path, verdict):
+    from copy import deepcopy
+
+    p, report = setup_production(tmp_path, verdict=verdict, quote="invented layout")
+    original = deepcopy(report)
+    calls = []
+
+    class Agent:
+        def run(self, role, *args, **kwargs):
+            calls.append(role)
+            if role == "benchmark-novelty-analyst":
+                return report
+            return {
+                "replacements": [
+                    {
+                        "suite": "LIBERO",
+                        "name": "turn the stove",
+                        "source_path": "input/task.bddl",
+                        "quote": "(:goal (turned stove))",
+                    }
+                ]
+            }
+
+    p.agent = Agent()
+    if verdict == "distinct":
+        p.benchmark_novelty({"id": "damper"})
+    else:
+        with pytest.raises(GateError, match="overlap/uncertainty"):
+            p.benchmark_novelty({"id": "damper"})
+    assert calls == ["benchmark-novelty-analyst", "benchmark-quote-repairer"]
+    assert report["comparisons"][0]["verdict"] == original["comparisons"][0]["verdict"]
+    assert (
+        report["comparisons"][0]["closest_tasks"][0]["reason"]
+        == original["comparisons"][0]["closest_tasks"][0]["reason"]
+    )
+
+
+def test_quote_repair_cannot_switch_sources_or_run_without_bound(tmp_path):
+    p, report = setup_production(tmp_path, quote="invented layout")
+    calls = []
+
+    class Agent:
+        def run(self, role, *args, **kwargs):
+            calls.append(role)
+            if role == "benchmark-novelty-analyst":
+                return report
+            return {
+                "replacements": [
+                    {
+                        "suite": "LIBERO",
+                        "name": "turn the stove",
+                        "source_path": "input/other.bddl",
+                        "quote": "(:goal (turned stove))",
+                    }
+                ]
+            }
+
+    p.agent = Agent()
+    with pytest.raises(GateError, match="quote repair"):
+        p.benchmark_novelty({"id": "damper"})
+    assert calls.count("benchmark-quote-repairer") == 2
+    assert report["comparisons"][0]["closest_tasks"][0]["quote"] == "invented layout"

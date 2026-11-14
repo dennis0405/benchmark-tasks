@@ -155,3 +155,13 @@ evidence, not a requested verdict or a native-physics success claim. A genuinely
 required overlap still blocks. The manufacturer source supplement independently verifies
 small-model HSR retention exceptions and consistent A1-194/195 geometry; prototype
 circulation/containment remains unvalidated.
+
+
+The following benchmark review resolved all six comparisons but failed exact excerpt
+validation because a LIBERO goal had been reformatted into one line. Benchmark quote
+repair now has its own typed role, at most two attempts, bound to the same suite/task/file.
+It may replace only the excerpt string with an exact original substring. The controller
+retains every novelty judgment, neighbor and reason; overlap/uncertain remains blocking.
+Missing suite coverage and unverified sources are not repaired by this path. Regression
+checks cover successful excerpt correction, unchanged blocking verdicts, source-switch
+rejection and bounded failure. This fixes evidence formatting, not task novelty itself.
