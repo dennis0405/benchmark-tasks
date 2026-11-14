@@ -14,55 +14,61 @@
 - 결과는 이 run의 새로운 origin 브랜치에 보존한다. 원본 매뉴얼 전체/인증 정보는 공개하지 않는다. 50MB/file 또는 100MB checkpoint 초과는 먼저 보고한다.
 - 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
-</p><p>all proposed candidates duplicate/uncertain; inspect selection-history.json</p><p>Release digest: none</p><h2>last_candidate</h2><pre>{
+</p><p>evidence quote is absent from acquired source s-90765d9ec51b37b3: &#x27;All shock absorbers will function satisfactorily at 5% of their maximum rated energy per cycle. If less than 5%, a smaller model should be specified.&#x27;</p><p>Release digest: none</p><h2>last_candidate</h2><pre>{
   &quot;id&quot;: &quot;eco-oem35m-robot-axis-damper-commissioning&quot;,
   &quot;title&quot;: &quot;Commission and lock a compact industrial robot-axis shock absorber&quot;,
-  &quot;objective&quot;: &quot;With the representative axis isolated, physically loosen the adjuster setscrew, rotate the numbered collar on an ECO OEM .35M-form damper, retighten the setscrew, operate a guarded physical cycle control, and iteratively obtain two repeatable carriage stops without bottoming, overload, excessive rebound, or setting drift.&quot;,
+  &quot;objective&quot;: &quot;With the representative axis isolated, physically seat a hex bit and loosen—but do not extract—the captive setscrew in the moving numbered collar; withdraw the bit, rotate the collar within its published 180° adjustment, reacquire the relocated socket, relock the setting, physically operate a guarded cycle control, and iteratively obtain two repeatable carriage stops without bottoming, overload, excessive rebound, or setting drift.&quot;,
   &quot;skills&quot;: [
-    &quot;hex-key alignment and insertion into a recessed setscrew&quot;,
-    &quot;collar grasping and controlled fine rotation&quot;,
-    &quot;bimanual stabilization while loosening and locking&quot;,
+    &quot;recessed hex-socket alignment and insertion&quot;,
+    &quot;bounded-torque loosening and tightening&quot;,
+    &quot;hex-bit withdrawal and socket reacquisition after collar motion&quot;,
+    &quot;controlled fine rotation of a small numbered collar&quot;,
+    &quot;bimanual counterholding without invented torsional spring load&quot;,
     &quot;iterative adjustment from observed dynamic response&quot;,
-    &quot;force-limited tightening without stripping&quot;,
-    &quot;physical control actuation and guarded inspection&quot;
+    &quot;physical guarded-control actuation&quot;
   ],
-  &quot;success_conditions&quot;: &quot;Use a rigid PhysX carriage whose motor, contacts, spring return, damper stroke, and hard stop are physically simulated. Test energy must be at least 0.85 J, corresponding to 5% of the published 17.0 Nm/cycle maximum, with impact velocity inside the published 0.3–3.30 m/s range. The robot must physically loosen the setscrew before turning the collar and physically relock it afterward. Success requires two consecutive cycles with no piston travel beyond 12.0 mm, no hard-stop strike, no excessive rebound, no overload, and collar drift below a declared measured tolerance during a post-lock witness-torque test. Award partial credit for successful key engagement, unlocking, adjustment, and locking. Zero score for adjustment while the axis is energized, direct pose/velocity/damping writes, collision suppression, hidden stage flags, damaged threads, dropped tools, or a hard-stop impact.&quot;,
-  &quot;industrial_value&quot;: &quot;The AZ-100 service manual establishes shock-absorber adjustment as robot-axis maintenance, while the Enidine catalog establishes a real compact adjustable damper, its operating envelope, internal adjustment mechanism, and setscrew retention. This makes the task relevant to commissioning and maintaining automation equipment that supports scalable robot and compute-infrastructure production, without claiming that the Enidine model is interchangeable with the AZ-100 component.&quot;,
-  &quot;dexterity&quot;: &quot;High but feasible: the robot must align and seat a hex key, counterhold a small cylindrical body, unlock a retained collar, make fine rotations, reinsert or maintain tool engagement, apply bounded locking torque, and judge the result from repeated physical impacts rather than collar angle alone.&quot;,
+  &quot;success_conditions&quot;: &quot;Use a rigid PhysX carriage with physically simulated drive, contact, axial return spring, 12.0 mm damper stroke, and external hard stop. Test energy must be at least 0.85 J—5% of the published 17.0 Nm/cycle maximum—and impact velocity must remain within 0.3–3.30 m/s and the conservative usable-setting bound read from the ECO OEM Small Series chart. The robot must loosen the captive setscrew, withdraw the bit, turn the collar, reacquire the moved socket, relock it, and physically initiate each test. Success requires two consecutive measured stops without exceeding stroke, striking the hard stop, exceeding published reaction/propelling limits, excessive rebound, or post-lock collar drift. Partial credit covers safe engagement, unlocking, adjustment, reacquisition, and locking. Zero score applies to energized adjustment, dropped tools, thread damage, unsafe collision, hard-stop impact, direct task-object pose/velocity/damping writes, collision suppression, welding, teleportation, or hidden demo-stage success flags.&quot;,
+  &quot;industrial_value&quot;: &quot;The AZ-100 robot manual identifies shock-absorber adjustment as robot-axis maintenance. The Enidine catalog independently documents a compact adjustable hydraulic shock absorber, its geometry, operating limits, adjustment collar, and setscrew locking. The representative fixture therefore models an industrial commissioning operation without claiming that the Enidine unit is interchangeable with the AZ-100 component or that an unpublished manufacturer force curve is reproduced.&quot;,
+  &quot;dexterity&quot;: &quot;The task combines small-socket tool alignment, controlled torque, counterholding, collar regrasping, mandatory tool withdrawal and reacquisition after the socket moves, retention of a fine setting during relocking, and feedback-driven dynamic commissioning. Its outcome depends on measured stopping behavior rather than knob rotation alone.&quot;,
   &quot;evidence&quot;: [
     {
       &quot;source_id&quot;: &quot;s-74c3dbd7c10379f7&quot;,
-      &quot;locator&quot;: &quot;AZ-100 Series Robot Installation and Maintenance Manual, page 31, section 4.2.4&quot;,
+      &quot;locator&quot;: &quot;AZ-100 Series Robot Installation and Maintenance Manual, printed page 31, section 4.2.4&quot;,
       &quot;quote_sha256&quot;: &quot;8795a4a385f97af25edbdef61d0be55460f7d52f11da88aaa404182b195b5dd7&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-74c3dbd7c10379f7&quot;,
-      &quot;locator&quot;: &quot;AZ-100 Series Robot Installation and Maintenance Manual, page 31, section 4.2.4 safety note&quot;,
-      &quot;quote_sha256&quot;: &quot;09b01167ec75b833737517703f232918245a0051ba7d664745d3835f3f38787f&quot;
+      &quot;locator&quot;: &quot;AZ-100 Series Robot Installation and Maintenance Manual, printed page 25, section 4.0 note&quot;,
+      &quot;quote_sha256&quot;: &quot;88d0d8da76f39e376fc0843ffe6b4a8afa69b7cec97b109e6f6e95e7f7eb6ae9&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-90765d9ec51b37b3&quot;,
-      &quot;locator&quot;: &quot;ITT Enidine catalog, printed page 20 (PDF page 24), ECO OEM/OEMXT Series Overview&quot;,
-      &quot;quote_sha256&quot;: &quot;88d33cdb607fcd9b5af4596f764e9637add1e8b00149f23d468d98c1c38a2e72&quot;
-    },
-    {
-      &quot;source_id&quot;: &quot;s-90765d9ec51b37b3&quot;,
-      &quot;locator&quot;: &quot;ITT Enidine catalog, printed page 21 (PDF page 25), ECO OEM Small Bore Series Technical Data&quot;,
+      &quot;locator&quot;: &quot;ITT Enidine catalog, printed page 21, ECO OEM Small Bore Series technical-data row&quot;,
       &quot;quote_sha256&quot;: &quot;404fd3e4725d4440a86701a6e2562ab765a197332973e4e6a57eabf06ad795a1&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-90765d9ec51b37b3&quot;,
-      &quot;locator&quot;: &quot;ITT Enidine catalog, printed page 21 (PDF page 25), Technical Data note 1&quot;,
-      &quot;quote_sha256&quot;: &quot;d5c6170b34b0a3eb9684047bed2cf5441667cc47e4383028c2ce1c36e4b50f0b&quot;
+      &quot;locator&quot;: &quot;ITT Enidine catalog, printed page 21, dimensional row; headings define A, A1, C, D, E1, F, G, H, J, WF and WL&quot;,
+      &quot;quote_sha256&quot;: &quot;ba906b4891be9b1c162b7cc974e17af69ef76eb535078db8954230ccd4f20d73&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-90765d9ec51b37b3&quot;,
-      &quot;locator&quot;: &quot;ITT Enidine catalog, printed page 35 (PDF page 39), Adjustment Techniques&quot;,
-      &quot;quote_sha256&quot;: &quot;b44a08ddb5b496bfa2ad4368539b66aae0e1b65b9959a13a18ff07007b969742&quot;
+      &quot;locator&quot;: &quot;ITT Enidine catalog, printed page 21, technical-data note 1; transcription preserved exactly, including source spacing&quot;,
+      &quot;quote_sha256&quot;: &quot;1cafe5ef35de46d1cca1319a62ca73da94e3317486cdfca4c357d827d77b6115&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;s-90765d9ec51b37b3&quot;,
+      &quot;locator&quot;: &quot;ITT Enidine catalog, printed page 35, Adjustment Techniques&quot;,
+      &quot;quote_sha256&quot;: &quot;bd595193f3eb5c627a47c09981d111c527a6a7cb2e9ceedf7aef6bc16aa7c995&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;s-90765d9ec51b37b3&quot;,
+      &quot;locator&quot;: &quot;ITT Enidine catalog, printed page 35, usable adjustment setting range&quot;,
+      &quot;quote_sha256&quot;: &quot;5d2244da43987b1a8476ee895312e1fa9bd5fcd571757b41af374bd3b574d12c&quot;
     }
   ],
-  &quot;asset_plan&quot;: &quot;Author a full-scale representative fixture around the published ECO OEM .35M envelope: 12.0 mm stroke, M16×1.5 body, 100.6 mm body length, 11.2 mm rod diameter, 14.5 mm adjustment diameter, and published force/energy/velocity limits. Preserve a physical 180-degree collar and a contact-bearing setscrew; disclose the independently chosen setscrew size, friction, thread torque, damping interpolation, and carriage parameters as modeling assumptions rather than manufacturer calibration. Start with an 8 kg guarded carriage at 0.5 m/s (1.0 J), then validate energy balance, 12 mm travel, hard-stop contact, rebound, low/high-adjustment controls, lock holding, parameter sensitivity, and reset repeatability before connecting YAM. The cycle control must be physically pressed by the robot, and no task object may be teleported or welded during execution.&quot;,
-  &quot;risk&quot;: &quot;The catalog does not publish collar torque, setscrew dimensions, friction, or a complete force-versus-setting curve. These are nonessential calibration details rather than an unknown retention mechanism: model them as bounded assumptions and require component-level sensitivity and witness-torque tests before any full demo. The small interface may require an enlarged but mechanically equivalent robot-accessible key head; any enlargement must be disclosed and must preserve the collar/setscrew operation.&quot;,
+  &quot;asset_plan&quot;: &quot;Author a full-scale representative non-button ECO OEM .35M-form fixture using 12.0 mm stroke, M16×1.5 housing thread, D=4.0 mm piston rod diameter, G=11.2 mm adjustment-knob diameter, H=14.5 mm axial knob length, F=87.4 mm indicated housing portion, and A=100.6 mm overall envelope. Do not mix optional-button A1/E1 dimensions into this version. Preserve the moving 180° collar and a captive contact-bearing setscrew. An independently authored M3×3 DIN 916-style screw with 0.5 mm pitch and 1.5 mm socket may be disclosed as a representative prototype choice, not an Enidine specification. Use a guarded rigid carriage near 1 J and 0.5 m/s, then validate at 240 Hz: energy balance, stroke, hard-stop contact, reaction and propelling loads, rebound, low/high-setting controls, lock retention, socket contact, parameter sensitivity, and clean reset. The robot must physically press the cycle control; no episode-time teleportation, welding, or direct state completion is allowed.&quot;,
+  &quot;risk&quot;: &quot;The catalog does not publish collar torque, the original setscrew dimensions, friction, or a force-versus-setting calibration. These must remain disclosed bounded assumptions and pass component sensitivity, contact, stability, and witness-torque tests before YAM integration. The source chart must be conservatively digitized for the chosen velocity, and the representative damping law must not be described as manufacturer calibrated. The phase-15 reach result is only an IK planning lead, not grasp, collision, contact, or simulation validation.&quot;,
   &quot;feasibility_status&quot;: &quot;ready&quot;,
   &quot;missing_evidence&quot;: []
 }</pre><h2>selection_history</h2><pre>{

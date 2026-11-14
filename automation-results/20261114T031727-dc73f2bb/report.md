@@ -20,7 +20,7 @@ Status: **blocked**
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 
 
-all proposed candidates duplicate/uncertain; inspect selection-history.json
+evidence quote is absent from acquired source s-90765d9ec51b37b3: 'All shock absorbers will function satisfactorily at 5% of their maximum rated energy per cycle. If less than 5%, a smaller model should be specified.'
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`

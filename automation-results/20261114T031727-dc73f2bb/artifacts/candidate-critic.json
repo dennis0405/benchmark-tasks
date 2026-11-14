@@ -1,0 +1,18 @@
+{
+  "verdict": "repair",
+  "findings": [
+    "The selected candidate is factually consistent on the critical geometry: the primary table confirms 12 mm stroke, 17 J/cycle, 0.3–3.30 m/s, D=4 mm rod, G=11.2 mm knob diameter, H=14.5 mm axial length, F=87.4 mm, and A=100.6 mm overall length. The adjustment image also confirms a 180° moving collar with setscrew locking for ECO OEM 0.1M–0.5M. The representative rigid-PhysX construction plan appropriately discloses uncalibrated damping and fastener assumptions.",
+    "One evidence quotation is falsely described as an exact transcription. The primary page reads “If less than 5%, a smaller model should be specified,” while artifacts/selected.json contains “a sm aller model” and claims the spacing is preserved exactly. Replace it with the genuine printed wording; the source does support the 5% requirement, so the prior failure’s assertion that the statement is absent is incorrect.",
+    "Novelty readiness remains unresolved: artifacts/novelty-critic.json records missing explicit comparisons against all six required benchmark suites and insufficient proof for 17 catalog-history exemptions. Although its older geometry objections are now corrected in artifacts/selected.json, the remaining coverage findings prevent an unconditional pass under the requested all-category novelty gate."
+  ],
+  "evidence_paths": [
+    "artifacts/selected.json",
+    "artifacts/candidates.json",
+    "artifacts/novelty-critic.json",
+    "input/last-failure.json",
+    "input/operator-source-notes.json",
+    "input/enidine-oem-small-source-p21.png",
+    "input/enidine-adjustment-source-p35.png",
+    "input/sources.json"
+  ]
+}
