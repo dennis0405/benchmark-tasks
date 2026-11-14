@@ -69,7 +69,7 @@
   &quot;rejected&quot;: [
     {
       &quot;candidate&quot;: &quot;eco-oem35m-robot-axis-damper-commissioning&quot;,
-      &quot;reason&quot;: &quot;novelty overlap/uncertainty: 1 records; inspect novelty.json&quot;
+      &quot;reason&quot;: &quot;novelty-critic: Required benchmark novelty coverage is absent. artifacts/novelty.json compares 2,146 catalog records but contains no LIBERO, RoboCasa, SimplerEnv, BEHAVIOR, DataCenterBench, or RoboDojo comparison, so selector/registry coverage and meaningful objective/ability/success-condition distinctions remain unverified.; Potentially relevant original definitions that still require explicit comparison include LIBERO “turn_on_the_stove”; RoboCasa KitchenStove tasks; SimplerEnv OpenDrawerInSceneEnv; BEHAVIOR “locking_every_door”; DataCenterBench “Turn a knob” and “Turn a key” (https://robocurve.org/datacenterbench/); and RoboDojo “fasten_screws” (https://raw.githubusercontent.com/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/fasten_screws.py). None alone establishes overlap, but required distinctions were not recorded.; The selected asset plan repeats known source-reading errors: it calls 11.2 mm the rod diameter and 14.5 mm the adjustment diameter. The primary table and operator notes establish D=4.0 mm rod diameter, G=11.2 mm knob diameter, H=14.5 mm axial length, and A=100.6 mm overall envelope—not body length. The selection must be corrected before contract freezing.; The selected objective correctly keeps the setscrew captive and requires physical hex-key manipulation, collar adjustment, relocking, and dynamic impact testing. However, its wording should explicitly require withdrawing and re-engaging the bit because the lock screw moves with the numbered collar; full screw extraction/reinstallation must not be introduced.; The 17 uncertain catalog records are nonblocking only if each is closed, unmerged, other-team, non-board-required history. The catalog confirms closed status and own_team=false for sampled pr-1110, but artifacts/novelty.json does not preserve auditable evidence for unmerged and non-board-required scope across all 17 exemptions. Retain uncertainty and verify every exemption explicitly.; The previous failure (“all proposed candidates duplicate/uncertain”) is not resolved because required six-suite comparisons are missing. Catalog count completeness alone cannot establish novelty.&quot;
     }
   ],
   &quot;skipped&quot;: [
@@ -172,5 +172,19 @@
     &quot;publisher&quot;: &quot;ITT Enidine (copy hosted by Omni-Tec)&quot;,
     &quot;url&quot;: &quot;https://www.omni-tec.it/wp-content/uploads/2017/11/enidine-catalog_en.pdf&quot;,
     &quot;sha256&quot;: &quot;9391dbf7de519a46b5bcde585cfe3cd085df219f616826ad332c2b3b42955544&quot;
+  },
+  {
+    &quot;id&quot;: &quot;s-3d1c868ddefa3739&quot;,
+    &quot;title&quot;: &quot;Accu M3x3 DIN916 set-screw original technical datasheet&quot;,
+    &quot;publisher&quot;: &quot;Accu&quot;,
+    &quot;url&quot;: &quot;https://www.accu.co.uk/api/product-datasheet?id=494670&quot;,
+    &quot;sha256&quot;: &quot;f0a6dd295d54d522974b7bb7b72ec78e7346c3c7448f7e9f5d4d384ef7dc780b&quot;
+  },
+  {
+    &quot;id&quot;: &quot;s-86e8d8d9a44dd4de&quot;,
+    &quot;title&quot;: &quot;Fuller ISO4029 socket set-screw geometry table&quot;,
+    &quot;publisher&quot;: &quot;Fuller Fasteners&quot;,
+    &quot;url&quot;: &quot;https://fullerfasteners.com/tech/iso-4029-specifications-hex-socket-set-screws-with-cup-point/&quot;,
+    &quot;sha256&quot;: &quot;d0efe6d5120025acc30700963d03a9b5b2cefd9f16421d77f7b0233077d0eeb0&quot;
   }
 ]</pre><p>Approval and submission require separate CLI commands.</p>
