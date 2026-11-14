@@ -2,234 +2,186 @@
   "comparisons": [
     {
       "suite": "LIBERO",
-      "coverage_method": "Verified the pinned manifest at commit 8f1084e3132a39270c3a13ebe37270a43ece2a01: all 135 selector-matched original files were present and matched their recorded SHA-256 values. Reviewed the benchmark registry files and searched the complete manifest-indexed inventory for adjustment, knob, lock, screw, damper, drawer, key, and control tasks. Inspected the closest stove definition completely.",
-      "objective": "The candidate commissions and locks an industrial shock absorber, then tests repeatable dynamic carriage stopping. LIBERO's nearest task only turns on a stove; it does not tune, secure, or dynamically validate a mechanism.",
-      "physical_skill": "Both involve rotary actuation, but LIBERO lacks recessed hex-bit alignment, bounded loosening/tightening, bit withdrawal, collar rotation, moving-socket reacquisition, setting preservation, and guarded test-control sequencing.",
-      "success_condition": "Candidate success requires a locked setting and two safe physical impact cycles within travel, rebound, force, drift, and damage limits. LIBERO succeeds solely when the stove's Turnon predicate is true.",
+      "coverage_method": "Verified the complete pinned manifest (SHA-256 ee9985787565dc1746699aec8f77b688f6e04c2836d04f12467e3f8e0a076dd7): 135 files selected from all LIBERO BDDL definitions, benchmark registries, and predicate implementations at commit 8f1084e3132a39270c3a13ebe37270a43ece2a01. Searched the complete manifest inventory by the candidate’s mechanisms—rail, slide, drawer, transfer, insertion, block, carriage, bearing, and balls—then read the complete closest original BDDL definition. The inventory was used only for navigation; the verdict relies on the original file.",
+      "objective": "The candidate transfers an uncaged recirculating-ball LM block from a service rail to a physically butted jig while preserving every rolling element. The closest LIBERO objective merely opens a cabinet drawer.",
+      "physical_skill": "Candidate: bimanual end-face mating, parallel-axis alignment, continuous support across a rail-to-jig boundary, force-limited block sliding, alignment-preserving regrasping, and containment of free balls. LIBERO neighbor: actuate one articulated drawer until its Open predicate holds.",
+      "success_condition": "Candidate success requires complete transfer, physical rail/jig contact, maintained parallelism, all balls retained in four circulating rows, no gap, jam, impact, contamination, or unsafe inclination, followed by a stable release. LIBERO success is only `(Open wooden_cabinet_1_top_region)`.",
       "evidence_paths": [
         "input/benchmark-corpora/LIBERO/manifest.json",
-        "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_90/KITCHEN_SCENE3_turn_on_the_stove.bddl"
+        "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_90/KITCHEN_SCENE1_open_the_top_drawer_of_the_cabinet.bddl"
       ],
       "closest_tasks": [
         {
-          "name": "KITCHEN_SCENE3_turn_on_the_stove",
-          "source_path": "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_90/KITCHEN_SCENE3_turn_on_the_stove.bddl",
-          "quote": "(:goal\n    (And (Turnon flat_stove_1))\n  )",
-          "objective": "Turn on a tabletop stove.",
-          "physical_skill": "Actuate a stove control to change its on/off state.",
-          "success_condition": "The flat stove satisfies Turnon.",
-          "reason": "Generic rotary/control actuation is shared, but the tested ability and outcome omit tool access, captive locking, reacquisition, dynamic response, and safety validation.",
+          "name": "open the top drawer of the cabinet",
+          "source_path": "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_90/KITCHEN_SCENE1_open_the_top_drawer_of_the_cabinet.bddl",
+          "quote": "(:language open the top drawer of the cabinet)",
+          "objective": "Open the cabinet’s top drawer.",
+          "physical_skill": "Grasp and translate an already supported prismatic drawer.",
+          "success_condition": "`(:goal (And (Open wooden_cabinet_1_top_region)))`",
+          "reason": "Both involve constrained linear motion, but the LIBERO drawer remains continuously supported by its own articulation. It does not require mating two separate supports, transferring a carriage across their interface, bimanual alignment, or retaining free rolling elements.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "The complete indexed suite exposes control rotation and drawer manipulation, but no task with the candidate's coupled unlock-adjust-relock-and-dynamic-commissioning objective."
+      "reason": "No inspected LIBERO definition tests continuous support transfer of an uncaged bearing carriage. The nearest shared primitive—linear sliding—is insufficient to establish the same objective, mechanism, or failure-sensitive ability."
     },
     {
       "suite": "RoboCasa",
-      "coverage_method": "Verified the pinned manifest at commit 425684d332f135f5b30a40b321f52d15a0fe9250: all 381 selector-matched originals were present with no SHA-256 mismatch. Reviewed environments/__init__.py and dataset_registry.py coverage, searched every manifest-indexed source, and read the complete atomic stove task definition containing turn-on, turn-off, and low-heat variants.",
-      "objective": "The candidate tunes and locks an industrial damper based on measured stopping behavior. RoboCasa's closest tasks manipulate a kitchen stove knob to an on/off or low-heat state.",
-      "physical_skill": "RoboCasa tests knob rotation. The candidate additionally requires seating a 1.5 mm bit, captive-screw torque, withdrawing the bit, fine collar rotation, reacquiring the socket after it moves, relocking without drift, clearing the mechanism, and actuating a separate guarded control.",
-      "success_condition": "RoboCasa evaluates burner state or whether a knob value lies in a low-heat interval. The candidate requires two consecutive physical carriage stops without bottoming, hard-stop contact, excessive rebound, force-limit violations, damage, tool loss, or setting drift.",
+      "coverage_method": "Verified the complete pinned manifest (SHA-256 7a3cf904dfb3437135ca2002172c2d8fcced2531e13a2d4a6a3ca3185030d545): 381 files covering kitchen environment definitions, the environment registry, and dataset registry at commit 425684d332f135f5b30a40b321f52d15a0fe9250. Searched every inventory entry for rail/slide/rack/drawer/transfer/insertion/bearing mechanisms and read the complete original `kitchen_oven.py` containing the closest rack task.",
+      "objective": "The candidate moves an uncaged LM block between two separately positioned supports without losing balls. RoboCasa’s closest task slides an oven rack inward or outward while it remains part of the oven fixture.",
+      "physical_skill": "Candidate: bimanual jig-to-rail alignment plus force-limited transfer over a potentially discontinuous interface. RoboCasa: unimanual translation of a supported oven rack along its existing guides.",
+      "success_condition": "Candidate success jointly gates full transfer, contact and parallelism of the supports, preservation of every ball, prohibited-contact avoidance, and hands-off stability. SlideOvenRack checks only normalized rack position: at least 0.95 when pulled out or at most 0.05 when pushed in.",
       "evidence_paths": [
         "input/benchmark-corpora/RoboCasa/manifest.json",
-        "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/__init__.py",
-        "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/utils/dataset_registry.py",
-        "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/atomic/kitchen_stove.py"
+        "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/atomic/kitchen_oven.py"
       ],
       "closest_tasks": [
         {
-          "name": "ManipulateStoveKnob / TurnOnStove / TurnOffStove",
-          "source_path": "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/atomic/kitchen_stove.py",
-          "quote": "burner_on = self.stove.is_burner_on(env=self, burner_loc=self.knob)",
-          "objective": "Turn a selected stove burner on or off.",
-          "physical_skill": "Rotate a stove knob.",
-          "success_condition": "The selected burner's Boolean state matches the requested behavior.",
-          "reason": "It shares rotary manipulation but not locking-tool use, moving-socket reacquisition, iterative dynamic commissioning, or failure-sensitive cycling.",
-          "verdict": "distinct"
-        },
-        {
-          "name": "LowerHeat",
-          "source_path": "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/atomic/kitchen_stove.py",
-          "quote": "return knob_at_low",
-          "objective": "Lower a kettle burner's heat by changing its knob setting.",
-          "physical_skill": "Rotate a knob into a target interval.",
-          "success_condition": "Absolute knob value lies between the defined low-heat bounds.",
-          "reason": "This is the strongest parameter-setting neighbor, but it scores static knob position only and has no lock, tool reacquisition, measured physical response, repeated test cycle, or damage constraints.",
+          "name": "SlideOvenRack",
+          "source_path": "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/atomic/kitchen_oven.py",
+          "quote": "ep_meta[\"lang\"] = f\"Fully slide the oven rack {direction}.\"",
+          "objective": "Fully slide an oven rack in or out.",
+          "physical_skill": "Translate a rack constrained by an existing oven guide.",
+          "success_condition": "`return current_pos >= 0.95` for pulling or `return current_pos <= 0.05` for pushing.",
+          "reason": "The task shares guided sliding but not support-interface construction, bimanual parallel alignment, carriage handoff, regrasping while maintaining support, or free-element containment.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "The candidate is not distinguished merely by industrial geometry: it tests a coupled tool-mediated lock, fine adjustment, and measured dynamic commissioning loop absent from RoboCasa's static appliance controls."
+      "reason": "Across the complete RoboCasa registry, rack and drawer tasks retain their original guide support and score fixture state. They do not test the candidate’s essential rail-to-jig handoff mechanism or rolling-element-loss failure."
     },
     {
       "suite": "SimplerEnv",
-      "coverage_method": "Verified both pinned components and all 11 manifest entries: every original existed and matched its SHA-256. Checked the environment registration and builder files, searched the complete indexed inventory, and read the full open/close drawer implementation.",
-      "objective": "The candidate commissions a shock absorber through adjustment, locking, and impact testing. SimplerEnv's nearest articulated task opens or closes a cabinet drawer.",
-      "physical_skill": "Drawer tasks require grasping/pulling or pushing a prismatic articulation. They do not require fine tool insertion, screw torque, tool withdrawal/re-engagement, collar rotation, setting preservation, or test-control operation.",
-      "success_condition": "Drawer success is a single joint-position threshold. Candidate success depends on the locked setting plus two bounded, damage-free dynamic cycles and safe sequencing.",
+      "coverage_method": "Verified all 11 pinned definition and registration files in the complete manifest (SHA-256 81f679c8aa727b08fc32b1830972b993cb4705e1bed8ce13da1ede4ec8a1da60): 2 SimplerEnv registry/builder files at commit eddb5690749a1e34267807c0f7b5eede323918d7 and 9 ManiSkill2-real2sim environment files at commit ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682. Searched the complete inventory and read the entire closest drawer environment source.",
+      "objective": "The candidate performs a service transfer of an uncaged bearing block from a rail to a jig. The closest SimplerEnv task opens one cabinet drawer.",
+      "physical_skill": "Candidate: coordinated holding of a separate jig, flush/parallel support alignment, controlled carriage translation, and preservation of free balls. SimplerEnv: pull one articulated drawer along a fixed prismatic joint.",
+      "success_condition": "Candidate has compound geometry, containment, damage, and stable-release gates. SimplerEnv reports success solely when the selected drawer joint position reaches 0.15 or more.",
       "evidence_paths": [
         "input/benchmark-corpora/SimplerEnv/manifest.json",
-        "input/benchmark-corpora/SimplerEnv/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/__init__.py",
-        "input/benchmark-corpora/SimplerEnv/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/utils/env/env_builder.py",
         "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/open_drawer_in_scene.py"
       ],
       "closest_tasks": [
         {
-          "name": "OpenDrawerInSceneEnv",
+          "name": "OpenDrawerCustomInScene-v0",
           "source_path": "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/open_drawer_in_scene.py",
           "quote": "return dict(success=qpos >= 0.15, qpos=qpos, episode_stats=self.episode_stats)",
-          "objective": "Open a selected cabinet drawer.",
-          "physical_skill": "Move a prismatic drawer joint through contact manipulation.",
-          "success_condition": "The drawer joint position reaches at least 0.15.",
-          "reason": "It tests articulated motion but not rotary setting, captive locking, fine tool alignment, or response-based commissioning.",
-          "verdict": "distinct"
-        },
-        {
-          "name": "CloseDrawerInSceneEnv",
-          "source_path": "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/open_drawer_in_scene.py",
-          "quote": "return dict(success=qpos <= 0.05, qpos=qpos, episode_stats=self.episode_stats)",
-          "objective": "Close a selected cabinet drawer.",
-          "physical_skill": "Push a prismatic drawer articulation closed.",
-          "success_condition": "The drawer joint position is at most 0.05.",
-          "reason": "A single prismatic threshold does not test the candidate's lock-adjust-test loop or dynamic safety outcome.",
+          "objective": "Open the selected top, middle, or bottom drawer.",
+          "physical_skill": "Translate a drawer on its existing cabinet joint.",
+          "success_condition": "Drawer joint position `qpos >= 0.15`.",
+          "reason": "Its articulated drawer never crosses between independently aligned supports and has no loose rolling elements or loss-sensitive outcome.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "No manifest-indexed SimplerEnv definition contains damper adjustment, fastener locking, tool reacquisition, or dynamic stopping validation."
+      "reason": "The complete SimplerEnv task set contains drawer manipulation and placement tasks, but no definition testing a bearing-carriage handoff across a physically maintained rail/jig interface."
     },
     {
       "suite": "BEHAVIOR",
-      "coverage_method": "Verified both pinned BEHAVIOR components and all 1,121 manifest entries: no missing originals or SHA-256 mismatches. Checked the task/predicate implementation files, searched the complete indexed activity inventory, and read both original locking definitions completely. The apparent locking tasks are goal-specified as closing openings rather than operating a lock mechanism.",
-      "objective": "The candidate changes and secures a damper setting and validates physical stopping. BEHAVIOR's nearest named activities close every door or window.",
-      "physical_skill": "BEHAVIOR requires manipulation sufficient to make openings not open; its definitions do not specify key use, latch engagement, screw torque, fine collar adjustment, socket reacquisition, or dynamic force control.",
-      "success_condition": "The locking activities succeed when all relevant open predicates become false. The candidate requires a retained setting and two safe impact cycles within quantitative travel, rebound, force, and drift bounds.",
+      "coverage_method": "Verified the complete two-component manifest (SHA-256 7ea9b037ea65eb50f79caff9b63b3851fbe438dd48c4119f236b9e1abf03c76d): 1,020 BEHAVIOR-1K files at commit b544acbbb76b461349bcba21f93b870b11da6608 and 101 legacy BDDL activity files at commit 06bec10ca54c7f375a1f71da8b94f7e1896ff77a. Searched all 1,121 inventory entries for mounting, rail, bearing, carriage, insertion, attachment, and sliding tasks. The complete closest current specification was read; no corresponding legacy specification was present in the supplied legacy inventory.",
+      "objective": "The candidate transfers a bearing carriage onto an aligned service jig. BEHAVIOR’s closest semantic neighbor installs a trailer hitch onto a pickup.",
+      "physical_skill": "Candidate explicitly requires bimanual flush alignment, continuous bearing support, force-limited sliding, regrasping, and retention of free balls. The hitch definition exposes only an abstract final `attached` relation and does not specify whether completion entails receiver alignment/insertion, fastening, or another attachment mechanism.",
+      "success_condition": "Candidate success includes full carriage transfer and detailed preservation/failure gates. The hitch task succeeds when the hitch is attached to the pickup.",
       "evidence_paths": [
         "input/benchmark-corpora/BEHAVIOR/manifest.json",
-        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/tasks/behavior_task.py",
-        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/utils/bddl_utils.py",
-        "input/benchmark-corpora/BEHAVIOR/StanfordVL/bddl/06bec10ca54c7f375a1f71da8b94f7e1896ff77a/bddl/activity_definitions/locking_every_door/problem0.bddl",
-        "input/benchmark-corpora/BEHAVIOR/StanfordVL/bddl/06bec10ca54c7f375a1f71da8b94f7e1896ff77a/bddl/activity_definitions/locking_every_window/problem0.bddl"
+        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/installing_a_trailer_hitch/problem0.bddl"
       ],
       "closest_tasks": [
         {
-          "name": "locking_every_door_0",
-          "source_path": "input/benchmark-corpora/BEHAVIOR/StanfordVL/bddl/06bec10ca54c7f375a1f71da8b94f7e1896ff77a/bddl/activity_definitions/locking_every_door/problem0.bddl",
-          "quote": "(not \n                (open ?door.n.01_1)\n            )",
-          "objective": "Make both specified doors no longer open.",
-          "physical_skill": "Close door articulations; no lock actuation is required by the definition.",
-          "success_condition": "Both door open predicates are false.",
-          "reason": "Despite the activity name, the original goal contains only not-open predicates and does not test locking hardware, adjustment, tools, or dynamic response.",
-          "verdict": "distinct"
-        },
-        {
-          "name": "locking_every_window_0",
-          "source_path": "input/benchmark-corpora/BEHAVIOR/StanfordVL/bddl/06bec10ca54c7f375a1f71da8b94f7e1896ff77a/bddl/activity_definitions/locking_every_window/problem0.bddl",
-          "quote": "(not \n                (open ?window.n.01_1)\n            )",
-          "objective": "Make four specified windows no longer open.",
-          "physical_skill": "Close window articulations; no latch or key operation is encoded.",
-          "success_condition": "All four window open predicates are false.",
-          "reason": "The task's tested state is closure, not a retained mechanical setting or secured commissioning outcome.",
-          "verdict": "distinct"
+          "name": "installing_a_trailer_hitch-0",
+          "source_path": "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/installing_a_trailer_hitch/problem0.bddl",
+          "quote": "(attached ?hitch.n.04_1 ?pickup.n.01_1)",
+          "objective": "Attach a hitch to a pickup.",
+          "physical_skill": "Potentially align and mount a hitch, but the original BDDL does not encode the physical attachment procedure.",
+          "success_condition": "The hitch and pickup satisfy the `attached` predicate.",
+          "reason": "The candidate’s rolling-element containment and continuous rail support are absent from the definition. Nevertheless, `attached` is too abstract to determine from this source whether the realized hitch task tests a closely related alignment-and-insertion mechanism. Under the required uncertainty rule, this cannot be called conclusively distinct.",
+          "verdict": "uncertain"
         }
       ],
-      "verdict": "distinct",
-      "reason": "The closest nominal locking activities do not encode actual locking. No complete-inventory match tests the candidate's fine tool sequence and quantitative dynamic validation."
+      "verdict": "uncertain",
+      "reason": "The complete registry was covered, but the closest task’s original definition underspecifies its physical mechanism. The candidate has additional explicit abilities, yet the available source cannot rule out meaningful alignment/insertion overlap."
     },
     {
       "suite": "DataCenterBench",
-      "coverage_method": "Verified the suite's sole published original against its manifest SHA-256. Read the entire published definition inventory, including all ten kept tasks and nine excluded candidates. This source is the complete available registry: it explicitly enumerates the retained controls/connections and excluded service steps.",
-      "objective": "The candidate performs multi-stage industrial damper commissioning. DataCenterBench keeps isolated tabletop steps such as turning a knob or key and explicitly excludes a non-functional thumbscrew prop.",
-      "physical_skill": "The suite includes rotary knob/key motion and considers tightening. It does not combine recessed tool seating, captive-screw loosening, bit withdrawal, moving-socket reacquisition, setting-preserving relock, and response-guided repeated cycling.",
-      "success_condition": "Kept controls are visually scored single steps; the excluded thumbscrew fastens nothing. Candidate success requires a functional retained adjustment and two quantitative, safe dynamic stops.",
+      "coverage_method": "Verified the complete one-file manifest (SHA-256 641b290bc86e53a147d793c0b52b77f348e656ec768c44c7bab28347ab5c7d31) and read the entire original published-task definition inventory. It enumerates all 10 kept tasks and all 9 considered but excluded tasks, allowing direct coverage of the complete published registry rather than keyword-only sampling.",
+      "objective": "The candidate services a recirculating-ball linear guide by transferring its uncaged carriage onto a mounting/removal jig. The nearest DataCenterBench retained task moves a two-position slider; nearby excluded tasks insert a battery or route a cable into a clip.",
+      "physical_skill": "Candidate: bimanual precision support mating and controlled carriage handoff while preventing loss of multiple free balls. DataCenterBench’s slider tests a single sliding motion on a fixed control; its connection tasks test ordinary pick-align-push or clip insertion.",
+      "success_condition": "Candidate success combines full transfer, physical interface continuity, parallelism, all-ball retention, damage/contamination avoidance, and a stable release. The published DataCenterBench description reduces the slider to movement between two fixed positions and states that the tabletop dimmer copies only the sliding motion.",
       "evidence_paths": [
         "input/benchmark-corpora/DataCenterBench/manifest.json",
         "input/benchmark-corpora/DataCenterBench/published-task-definitions.txt"
       ],
       "closest_tasks": [
         {
-          "name": "Turn a knob",
+          "name": "Move a slider",
           "source_path": "input/benchmark-corpora/DataCenterBench/published-task-definitions.txt",
-          "quote": "Real rotary selector with two positions. Ours has no click stops.",
-          "objective": "Move a rotary selector between two control positions.",
-          "physical_skill": "Rotate a knob toward a marked state.",
-          "success_condition": "Complete the single visually scored control step.",
-          "reason": "Shares rotary control motion but lacks a fastener lock, tool handling, iterative adjustment, and functional stopping outcome.",
+          "quote": "Real UPS mode selector has two fixed positions. Our dimmer copies only the sliding motion.",
+          "objective": "Move a tabletop slider corresponding to a UPS mode selector.",
+          "physical_skill": "Translate a fixed slider between two positions.",
+          "success_condition": "Reach the requested fixed selector position; the published definition does not add interface-alignment or containment gates.",
+          "reason": "The only commonality is linear motion. The slider is already constrained and does not require transferring a carriage between supports or preserving rolling elements.",
           "verdict": "distinct"
         },
         {
-          "name": "Turn a key",
+          "name": "Press a cable into a clip",
           "source_path": "input/benchmark-corpora/DataCenterBench/published-task-definitions.txt",
-          "quote": "Real step unlocks a bypass breaker's key interlock before switching. Our key switch matches the motion.",
-          "objective": "Unlock a bypass-breaker interlock using a key-switch analogue.",
-          "physical_skill": "Align and rotate a key-like control.",
-          "success_condition": "Complete the single unlocking motion.",
-          "reason": "This is a tool/control-access neighbor, but it does not require withdrawal and reacquisition after a setting moves, relocking, or dynamic commissioning.",
-          "verdict": "distinct"
-        },
-        {
-          "name": "Tighten a thumbscrew (left out)",
-          "source_path": "input/benchmark-corpora/DataCenterBench/published-task-definitions.txt",
-          "quote": "Real step secures a server's card riser. Ours fastens nothing.",
-          "objective": "Considered analogue for securing a card riser, but excluded from the benchmark.",
-          "physical_skill": "Generic manual screw rotation.",
-          "success_condition": "No retained benchmark task or functional fastening criterion is defined.",
-          "reason": "Even as a considered task, it lacks functional clamping and does not test the candidate's unlock-adjust-reacquire-lock-test sequence.",
+          "quote": "Real step routes cables along a switch tray. Ours uses one clip.",
+          "objective": "Seat a cable in a routing clip.",
+          "physical_skill": "Align and press a deformable cable into one fixed clip.",
+          "success_condition": "Cable is retained by the clip.",
+          "reason": "This has alignment and retention, but neither a moving carriage nor a continuous rigid support handoff, recirculating free elements, parallel rail mating, or bimanual gap control.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "DataCenterBench contains overlapping primitives, but its own publication characterizes them as isolated simplified steps. Their objectives and scoring do not cover functional mechanical commissioning."
+      "reason": "The complete published registry consists of controls, connectors, clipping, key turning, and excluded elementary service steps. None tests continuous support transfer of an uncaged bearing carriage or loss prevention for its rolling elements."
     },
     {
       "suite": "RoboDojo",
-      "coverage_method": "Verified the pinned manifest at commit f57e1633ffed59761bc8e568cfe7530c4b33381c: all 110 registry/config/task files existed and matched SHA-256. Reviewed task_registry.py, searched the complete indexed inventory, and read the full Python and YAML definitions for fasten_screws and insert_key.",
-      "objective": "The candidate adjusts and locks one damper, then validates its dynamic stopping response. RoboDojo fasten_screws mates three color-matched nuts and bolts; insert_key inserts and nominally turns a key.",
-      "physical_skill": "fasten_screws overlaps threaded tightening, while insert_key overlaps alignment and insertion. Neither requires a hex bit in a recessed moving socket, captive fastener loosening, tool withdrawal before collar movement, socket reacquisition, setting retention, or guarded dynamic testing.",
-      "success_condition": "fasten_screws scores nut axis, 1 mm XY alignment, insertion depth, open grippers, and robot reset. insert_key scores lift, depth, XY distance, and orientation; its success checks do not encode the instructed turn. Candidate success instead depends on a locked setting and two force/travel/rebound-safe physical impact cycles.",
+      "coverage_method": "Verified the complete pinned manifest (SHA-256 bb423627a3d3ef68b8e6a9441309f1f8444644cac785ac082b2eba0eb3f9b128): all 110 selected task implementations, YAML configurations, and task-registry files at commit f57e1633ffed59761bc8e568cfe7530c4b33381c. Searched the complete inventory for ball, tube, insertion, rail, alignment, transfer, and containment mechanisms, then read both complete task/config pairs for the two closest candidates.",
+      "objective": "The candidate moves a recirculating-ball bearing block between a rail and a service jig without losing any ball. `pour_balls_into_vase` transfers seven loose balls between open containers; `insert_tubes` places three tubes individually into a rack.",
+      "physical_skill": "Candidate: simultaneously hold and align a jig, establish a continuous support path, slide a constrained block across the interface, and preserve balls inside its circulation paths. Pouring requires container transport and tilt; tube insertion requires repeated pick-align-insert actions into independent vertical slots.",
+      "success_condition": "Candidate requires complete block transfer, support contact and parallelism, all balls still contained, prohibited outcomes absent, and stable release. Pouring requires all seven spheres in the vase, the cup upright, and robot return. Tube insertion requires all three tubes inside and sufficiently deep in the slot, within 30 degrees of the required axis, with open grippers.",
       "evidence_paths": [
         "input/benchmark-corpora/RoboDojo/manifest.json",
-        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/task_registry.py",
-        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/config/fasten_screws.yml",
-        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/fasten_screws.py",
-        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/config/insert_key.yml",
-        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/insert_key.py"
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/config/pour_balls_into_vase.yml",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/pour_balls_into_vase.py",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/config/insert_tubes.yml",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/insert_tubes.py"
       ],
       "closest_tasks": [
         {
-          "name": "fasten_screws",
-          "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/fasten_screws.py",
-          "quote": "Insert and tighten each screw into the nut of the same color.",
-          "objective": "Insert and tighten three matching nut/bolt pairs.",
-          "physical_skill": "Align threaded parts and rotate them into engagement.",
-          "success_condition": "Each nut is upright, within 0.001 m XY of its bolt, reaches the specified depth, and the required release/reset conditions hold.",
-          "reason": "Threaded tightening is genuine overlap at the primitive level, but RoboDojo does not test loosening a captive lock, withdrawing/reacquiring a separate bit around an adjusted collar, preserving a setting, or measuring functional dynamic response.",
+          "name": "pour_balls_into_vase",
+          "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/pour_balls_into_vase.py",
+          "quote": "templates = [\"Pour all the balls from the cup into the vase.\"]",
+          "objective": "Pour seven loose balls from a cup into a vase.",
+          "physical_skill": "Grasp, transport, and tilt a container so free balls enter another container without remaining behind.",
+          "success_condition": "Each `sphere_0` through `sphere_6` is in the vase, the cup is upright, and all robot arms return to origin.",
+          "reason": "Both tasks make the fate of multiple free balls consequential. However, RoboDojo intentionally transfers the balls between containers, whereas the candidate must keep balls inside a moving bearing block while creating and maintaining a continuous rigid support interface. The central tested mechanisms are different.",
           "verdict": "distinct"
         },
         {
-          "name": "insert_key",
-          "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/insert_key.py",
-          "quote": "Pick up the key, hand it over to the other hand, insert it into the keyhole, then turn it.",
-          "objective": "Pick up, hand over, insert, and nominally turn a key.",
-          "physical_skill": "Fine alignment, insertion, and bimanual handover.",
-          "success_condition": "The implemented full score checks insertion depth, XY proximity, upright orientation, and slot-axis alignment; it does not check key rotation.",
-          "reason": "It is a strong fine-alignment neighbor, but lacks torque-bounded captive locking, adjustment between tool engagements, setting retention, and response-based cycling.",
+          "name": "insert_tubes",
+          "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/insert_tubes.py",
+          "quote": "templates = [\"Insert the three tubes into the rack one by one.\"]",
+          "objective": "Insert three separate test tubes into a rack.",
+          "physical_skill": "Repeatedly align and lower rigid tubes into independent rack slots.",
+          "success_condition": "All three tubes are in the slot fixture, reach the specified depth, remain within 30 degrees of the required axis, and are released.",
+          "reason": "This is genuine precision insertion, but it lacks a carriage already engaged with one guide, a second support that must be held flush and parallel, continuous support during handoff, recirculating balls, and loss-sensitive transfer.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "RoboDojo covers relevant primitives separately, especially fastening and insertion, but no original definition combines them into the candidate's mechanically coupled commissioning ability or quantitative outcome."
+      "reason": "The nearest RoboDojo tasks separately cover loose-ball pouring and multi-object insertion, but neither combines them into the candidate’s essential ability: transferring an uncaged bearing carriage across a maintained rail-to-jig interface while its freely simulated rolling elements remain contained."
     }
   ],
-  "candidate_digest": "132d3b61fd433c217089e53972eed3f76a84a8b9d94db2dc2bd51e60b6838e4a",
-  "at": "2026-11-14T11:23:15.770805+00:00",
+  "candidate_digest": "ebe443d5dbf5df59f172c1c27be3442ac69f3bb5cedc8ab2e5f72765a0fa966b",
+  "at": "2026-11-14T12:42:28.179469+00:00",
   "definition_manifests": {
-    "LIBERO": "e942a231c19eb15db302c9ef67590734e8885ebe49aad45a9ffb565d453205a2",
-    "RoboCasa": "6ee536b06831de1c1e518c4af8a537c6b06f934af76ee8ca3adc5da339e1c1c2",
-    "SimplerEnv": "feea1aeb8b633e20fee485cd02bf13147d0344e85db798d9d9505aacfd48d983",
-    "BEHAVIOR": "360a4ab79297249a2d7fbf4e1fb7ece920fd51c60eb232962f1bae5cc3283da9",
-    "DataCenterBench": "ba132c3408e0c023435d561b6e72e11c99480ca44c23c3314967876311e987d3",
-    "RoboDojo": "c2c329847d5331b213099dbef43745e96b7afe92af6d5cc796531b27ae4d72a6"
+    "LIBERO": "ee9985787565dc1746699aec8f77b688f6e04c2836d04f12467e3f8e0a076dd7",
+    "RoboCasa": "7a3cf904dfb3437135ca2002172c2d8fcced2531e13a2d4a6a3ca3185030d545",
+    "SimplerEnv": "81f679c8aa727b08fc32b1830972b993cb4705e1bed8ce13da1ede4ec8a1da60",
+    "BEHAVIOR": "7ea9b037ea65eb50f79caff9b63b3851fbe438dd48c4119f236b9e1abf03c76d",
+    "DataCenterBench": "641b290bc86e53a147d793c0b52b77f348e656ec768c44c7bab28347ab5c7d31",
+    "RoboDojo": "bb423627a3d3ef68b8e6a9441309f1f8444644cac785ac082b2eba0eb3f9b128"
   }
 }

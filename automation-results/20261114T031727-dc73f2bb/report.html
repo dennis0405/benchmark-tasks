@@ -15,176 +15,178 @@
 - 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 </p><p>no candidate passed the ideation gates; inspect selection-history.json</p><p>Release digest: none</p><h2>last_candidate</h2><pre>{
-  &quot;id&quot;: &quot;eco-oem35m-robot-axis-damper-commissioning&quot;,
-  &quot;title&quot;: &quot;Commission and lock a compact industrial robot-axis shock absorber&quot;,
-  &quot;objective&quot;: &quot;With the industrial axis locked out, physically loosen the captive setscrew on a representative ECO OEM .35M-form damper, withdraw the hex bit, rotate the numbered collar, reacquire and tighten the moving socket, clear both hands and tools, then operate a separate guarded test-fixture control and iteratively obtain repeatable axial carriage stops without bottoming, overload, excessive rebound, or setting drift.&quot;,
+  &quot;id&quot;: &quot;thk-hsr12x-block-jig-transfer&quot;,
+  &quot;title&quot;: &quot;Transfer an uncaged HSR12X LM block onto a removing/mounting jig&quot;,
+  &quot;objective&quot;: &quot;Bimanually butt a representative removing/mounting jig against an HSR12X rail, maintain parallel continuous support, and slide the uncaged recirculating-ball block fully onto the jig without losing a ball or contaminating or damaging the guide.&quot;,
   &quot;skills&quot;: [
-    &quot;aligning and inserting a 1.5 mm hex bit into a recessed socket&quot;,
-    &quot;loosening and tightening a captive setscrew with bounded torque&quot;,
-    &quot;finely rotating an 11.2 mm adjustment collar&quot;,
-    &quot;withdrawing and reacquiring a socket after it moves with the collar&quot;,
-    &quot;iterative adjustment from measured dynamic response&quot;,
-    &quot;safe sequencing between lockout, manipulation, tool clearance, and guarded physical control actuation&quot;
+    &quot;bimanual rail-to-jig alignment&quot;,
+    &quot;flush end-face mating&quot;,
+    &quot;continuous rolling-element support&quot;,
+    &quot;force-limited precision sliding&quot;,
+    &quot;alignment-preserving regrasping&quot;,
+    &quot;free rolling-element containment&quot;
   ],
-  &quot;success_conditions&quot;: &quot;Use a rigid PhysX carriage with physical drive, contacts, 12.0 mm damper travel, axial return spring, and an external hard stop. Mount the threaded housing fixed, with the accessible adjustment collar at the rear and the 4.0 mm piston rod facing the carriage; impact must remain linear and axial rather than side-loaded. Test energy must be at least 0.85 J, representing 5% of the published 17.0 Nm/cycle rating, and impact velocity must remain within 0.3–3.30 m/s and the chart-permitted setting range. Measured drive/propelling force must not exceed 530 N, and measured reaction force must not exceed 2,000 N. The robot must loosen the captive screw, withdraw the bit before collar rotation, reacquire and relock the moving socket, clear the mechanism, and physically actuate the guarded test control. Full success requires two consecutive cycles with no travel beyond 12.0 mm, hard-stop strike, excessive rebound, force-limit violation, dropped tool, damaged thread, or collar drift beyond 2 degrees. Safe unlocking, adjustment, reacquisition, and locking receive partial credit. Energized adjustment, direct task-object pose or velocity writes, collision suppression, hidden success flags, damage, or unsafe cycling scores zero.&quot;,
-  &quot;industrial_value&quot;: &quot;The AAC maintenance manual documents adjustable shock absorbers on industrial robot X and Z axes. The Enidine manufacturer catalog independently documents a compact adjustable hydraulic damper&#x27;s mechanism, dimensions, ratings, and locking method. The representative fixture therefore exercises maintenance needed for reliable automation equipment used in scalable manufacturing, without claiming that the Enidine model is interchangeable with the AAC component or that its unpublished force curve is calibrated.&quot;,
-  &quot;dexterity&quot;: &quot;High but feasible to attempt with the pinned YAM runtime: the robot must seat a fine tool in a small socket, apply bounded torque, withdraw it before moving the collar, finely grasp and rotate the collar, reacquire the relocated socket, preserve the selected setting while locking, and evaluate physical impact outcomes rather than collar angle alone.&quot;,
+  &quot;success_conditions&quot;: &quot;Full success requires physical end-face contact, parallel rail and jig axes, complete block transfer, all initially present balls still contained in four circulating rows, no impact, drop, contamination-zone contact, or unsafe inclination, and a stable one-second release. Safe jig mating and partial transfer may receive partial credit. Any lost ball, block jam, separated support interface, direct pose or velocity write, hidden weld, fixed ball, or collision suppression invalidates full success.&quot;,
+  &quot;industrial_value&quot;: &quot;THK’s maintenance instructions prescribe a removing/mounting jig when block removal is unavoidable and require discontinuing use if a rolling element falls out. This makes preservation of the bearing elements an actual service outcome rather than an invented difficulty.&quot;,
+  &quot;dexterity&quot;: &quot;One hand must keep a narrow jig physically butted and parallel to the rail while the other advances a small bearing block. The robot must regulate contact and regrasp without opening a gap that lets any freely simulated ball escape.&quot;,
   &quot;evidence&quot;: [
     {
-      &quot;source_id&quot;: &quot;s-74c3dbd7c10379f7&quot;,
-      &quot;locator&quot;: &quot;AZ-100 Series Robot Installation and Maintenance Manual, printed page 31, section 4.2.4&quot;,
-      &quot;quote_sha256&quot;: &quot;8795a4a385f97af25edbdef61d0be55460f7d52f11da88aaa404182b195b5dd7&quot;
+      &quot;source_id&quot;: &quot;s-1007bee1e25db984&quot;,
+      &quot;locator&quot;: &quot;LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3&quot;,
+      &quot;quote_sha256&quot;: &quot;04820ee138738bb979d2ad357aed6bf252b47d079e98eb6f7236c1aa0674588d&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-74c3dbd7c10379f7&quot;,
-      &quot;locator&quot;: &quot;AZ-100 Series Robot Installation and Maintenance Manual, printed page 31, section 4.2.4 safety note&quot;,
-      &quot;quote_sha256&quot;: &quot;09b01167ec75b833737517703f232918245a0051ba7d664745d3835f3f38787f&quot;
+      &quot;source_id&quot;: &quot;s-1007bee1e25db984&quot;,
+      &quot;locator&quot;: &quot;LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3&quot;,
+      &quot;quote_sha256&quot;: &quot;422249b3b7604d646eb8630871735104f01818a94aa0e4f08e686026d469a49c&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-90765d9ec51b37b3&quot;,
-      &quot;locator&quot;: &quot;ITT Enidine catalog, printed page 20, ECO OEM/OEMXT Series Overview&quot;,
-      &quot;quote_sha256&quot;: &quot;88d33cdb607fcd9b5af4596f764e9637add1e8b00149f23d468d98c1c38a2e72&quot;
+      &quot;source_id&quot;: &quot;s-1007bee1e25db984&quot;,
+      &quot;locator&quot;: &quot;LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3&quot;,
+      &quot;quote_sha256&quot;: &quot;31e044d789fbd83ba195789ffd1930c775eace4cf2778f426e473c2127384b58&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-90765d9ec51b37b3&quot;,
-      &quot;locator&quot;: &quot;ITT Enidine catalog, printed page 21, ECO OEM Small Bore Series technical-data row&quot;,
-      &quot;quote_sha256&quot;: &quot;404fd3e4725d4440a86701a6e2562ab765a197332973e4e6a57eabf06ad795a1&quot;
+      &quot;source_id&quot;: &quot;s-bba7a5a0605fbeea&quot;,
+      &quot;locator&quot;: &quot;THK HSR catalog 515-2E, printed page A1-183, “Structure and Features”&quot;,
+      &quot;quote_sha256&quot;: &quot;02fc979d6217ac2a65e94b2410d6bf6448213f15886f088a8b63b1e8e5c5f02a&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-90765d9ec51b37b3&quot;,
-      &quot;locator&quot;: &quot;ITT Enidine catalog, printed page 21, note 1&quot;,
-      &quot;quote_sha256&quot;: &quot;d5c6170b34b0a3eb9684047bed2cf5441667cc47e4383028c2ce1c36e4b50f0b&quot;
+      &quot;source_id&quot;: &quot;s-bba7a5a0605fbeea&quot;,
+      &quot;locator&quot;: &quot;THK HSR catalog 515-2E, printed page A1-183, “Structure and Features”&quot;,
+      &quot;quote_sha256&quot;: &quot;f8c1f73b0917e8407fce97f419e0607c2f3024b9909da6b5a85733d51457c109&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-90765d9ec51b37b3&quot;,
-      &quot;locator&quot;: &quot;ITT Enidine catalog, printed page 35, Adjustment Techniques&quot;,
-      &quot;quote_sha256&quot;: &quot;b44a08ddb5b496bfa2ad4368539b66aae0e1b65b9959a13a18ff07007b969742&quot;
+      &quot;source_id&quot;: &quot;s-6ec4f5415ac07269&quot;,
+      &quot;locator&quot;: &quot;THK “Removing/Mounting Jig,” page 1&quot;,
+      &quot;quote_sha256&quot;: &quot;7091710e7216188ea0eef976a56952afb930ad622071ae0106f31e01be4e3b5a&quot;
     }
   ],
-  &quot;asset_plan&quot;: &quot;Author a full-scale representative non-button ECO OEM .35M-form fixture with a fixed M16×1.5 threaded housing, rear accessible adjustment collar, and piston rod facing an axially moving carriage. Use the verified geometry: 12.0 mm stroke, D=4.0 mm piston-rod diameter, G=11.2 mm adjustment-knob diameter, H=14.5 mm axial knob length, F=87.4 mm indicated housing portion, and A=100.6 mm overall envelope. Preserve the physical 180-degree moving collar, collar-mounted socket, captive contact-bearing setscrew, and external hard stop. A representative M3×3 DIN 916 screw may use the independently sourced 0.5 mm pitch and 1.5 mm socket but must not be described as the Enidine fastener. Begin component testing with an 8 kg carriage at 0.5 m/s (1.0 J). Use a disclosed lumped passive hydraulic approximation, not manufacturer calibration. Before YAM integration, validate axial alignment, energy balance, 12 mm travel, the 530 N propelling and 2,000 N reaction ceilings, hard-stop contact, rebound, low/high-setting controls, lock retention, parameter sensitivity, timestep stability, 240 Hz damage capture, and clean reset. The robot must physically operate the guarded control after clearing the fixture; no in-episode teleporting, welding, or task-object state writes are allowed.&quot;,
-  &quot;risk&quot;: &quot;The catalog does not publish collar torque, setscrew identity, friction, or a complete force-versus-setting calibration. Treat these as bounded prototype assumptions and require component-level sensitivity, retention, and witness-torque tests. The 1.5 mm socket presents a native-contact risk, while the existing URDF reach result proves only mathematical pose reachability—not collision clearance, grasping, contact stability, or successful damping. Construction must stop before a full demo if passive damping, axial contact, force sensing, substep damage capture, or reset behavior cannot be validated.&quot;,
+  &quot;asset_plan&quot;: &quot;Author a representative full-scale HSR12XRM fixture using the visually verified A1-194/A1-195 drawings: 20 mm block height, 27 mm block width, 45 mm block length, 12 mm rail width, 11 mm rail height, and the documented four-row cross-section with end returns. Model every ball as an independent rigid PhysX body and preserve four physical circulation paths. Make the jig’s support cross-section continuous with the rail and clearly label its unpublished length, ball diameter/count, groove clearance, maximum transfer gap, and angular tolerance as prototype assumptions rather than THK specifications. Freeze those values before development and test ball circulation and loss, gap and inclination sensitivity, timestep stability, contact-force limits, reset freshness, and deliberate misalignment failures before YAM integration.&quot;,
+  &quot;risk&quot;: &quot;The manufacturer drawings establish the selected model’s exterior, rail cross-section, four raceway rows, circulation through end plates, and lack of retention. Exact ball diameter/count, internal groove microprofile, jig length, and service tolerances are unpublished; these are bounded representative modeling assumptions requiring sensitivity tests and must not be presented as an exact THK replica.&quot;,
   &quot;feasibility_status&quot;: &quot;ready&quot;,
   &quot;missing_evidence&quot;: []
 }</pre><h2>selection_history</h2><pre>{
   &quot;rejected&quot;: [
     {
-      &quot;candidate&quot;: &quot;eco-oem35m-robot-axis-damper-commissioning&quot;,
-      &quot;reason&quot;: &quot;novelty overlap/uncertainty: 1 records; inspect novelty.json&quot;
+      &quot;candidate&quot;: &quot;thk-hsr12x-block-jig-transfer&quot;,
+      &quot;reason&quot;: &quot;required benchmark overlap/uncertainty; inspect explicit comparison&quot;
     }
   ],
   &quot;skipped&quot;: [
     {
-      &quot;candidate&quot;: &quot;ewa15-spring-balancer-preload-commissioning&quot;,
+      &quot;candidate&quot;: &quot;abb-external-dresspack-section-replacement&quot;,
       &quot;reason&quot;: &quot;not build-ready&quot;,
       &quot;missing_evidence&quot;: [
-        &quot;source-grounded worm-drive and wrench-interface dimensions&quot;,
-        &quot;gauge scale geometry and mapping to preload&quot;,
-        &quot;drum radius and spring torque-versus-payout relationship&quot;,
-        &quot;validated rigid-body representation preserving suspended-cable and snap-back behavior&quot;
+        &quot;manufacturer clamp and latch geometry&quot;,
+        &quot;adjustable-bracket travel and retention mechanism&quot;,
+        &quot;bundle diameters, section lengths, connector geometry, and bend limits&quot;,
+        &quot;validated pinned-runtime representation of bending, snagging, and clamp escape&quot;
       ]
     },
     {
-      &quot;candidate&quot;: &quot;ewa15-drum-lock-tool-exchange&quot;,
+      &quot;candidate&quot;: &quot;dell-2u-readyrails-system-loading&quot;,
       &quot;reason&quot;: &quot;not build-ready&quot;,
       &quot;missing_evidence&quot;: [
-        &quot;pin diameter, travel, detent, and rotation geometry&quot;,
-        &quot;drum-slot dimensions and engagement depth&quot;,
-        &quot;bottom-hook and latch geometry&quot;,
-        &quot;validated rigid-PhysX model preserving suspended-load and snap-back behavior&quot;
+        &quot;matching ReadyRails model and Rack Installation Guide&quot;,
+        &quot;rack-post hook and blue-latch geometry&quot;,
+        &quot;system mounting-nut and rail capture-slot dimensions&quot;,
+        &quot;inner-member lock and metal release-clip mechanism&quot;,
+        &quot;verified rack spacing, rail travel, equipment envelope, mass, and center of mass&quot;,
+        &quot;pinned-YAM reach and safe scale study&quot;
       ]
     }
   ],
   &quot;selected&quot;: null
 }</pre><h2>sources</h2><pre>[
   {
-    &quot;id&quot;: &quot;s-74c3dbd7c10379f7&quot;,
-    &quot;title&quot;: &quot;AZ-100 Series Robot Installation and Maintenance Manual&quot;,
-    &quot;publisher&quot;: &quot;Automated Assemblies Corporation&quot;,
-    &quot;url&quot;: &quot;https://www.peakstarps.com/specsheets/AAC_Series_AZ100_Manual.pdf&quot;,
-    &quot;sha256&quot;: &quot;3b4ea6150e1904fbf882c317fc4e8efcd71cff18ce82a7708e099dfa1582fe3f&quot;
+    &quot;id&quot;: &quot;s-1007bee1e25db984&quot;,
+    &quot;title&quot;: &quot;LM Guide Precautions on Use, including removing/mounting jig procedure&quot;,
+    &quot;publisher&quot;: &quot;THK&quot;,
+    &quot;url&quot;: &quot;https://tech.thk.com/upload/tec_data/No.1030-T34667_en_LM_Guide.pdf&quot;,
+    &quot;sha256&quot;: &quot;b63208323aa14ab3b0da95df2370756c0ca12ea6f09fab6953954c93419c20ee&quot;
   },
   {
-    &quot;id&quot;: &quot;s-296268c6b07cb9a7&quot;,
-    &quot;title&quot;: &quot;General Terms and Conditions for TraceParts Product Catalog Services&quot;,
-    &quot;publisher&quot;: &quot;TraceParts&quot;,
-    &quot;url&quot;: &quot;https://info.traceparts.com/it/legal/general-terms-and-conditions-for-traceparts-product-catalog-services-applicable-to-parts-manufacturers/&quot;,
-    &quot;sha256&quot;: &quot;f898acb453ae85c6a16d70ef82def47d627c0d33735955c66023515af6fcaac1&quot;
+    &quot;id&quot;: &quot;s-6ec4f5415ac07269&quot;,
+    &quot;title&quot;: &quot;Removing/Mounting Jig&quot;,
+    &quot;publisher&quot;: &quot;THK&quot;,
+    &quot;url&quot;: &quot;https://tech.thk.com/en/products/pdf/en_a01_573.pdf&quot;,
+    &quot;sha256&quot;: &quot;cde76ecca474b25d5498e287618ee242aa2c5a505c38d43039162537a3221cd5&quot;
   },
   {
-    &quot;id&quot;: &quot;s-ac62801e0a07361f&quot;,
-    &quot;title&quot;: &quot;EWA Standard Spring Balancer Instruction Manual&quot;,
-    &quot;publisher&quot;: &quot;ENDO KOGYO&quot;,
-    &quot;url&quot;: &quot;https://www.endo-kogyo.co.jp/pdfs/en/spring_balancer/standard_spring_balancer/instruction/EWA-15_E.pdf&quot;,
-    &quot;sha256&quot;: &quot;deeacdfcb8e422aff609617f593c6cd58d22ef7af58db6f6488b646e5aeff218&quot;
+    &quot;id&quot;: &quot;s-2095873c35e0da13&quot;,
+    &quot;title&quot;: &quot;HSR/R-XR Full-Ball LM Guide product and CAD page&quot;,
+    &quot;publisher&quot;: &quot;THK&quot;,
+    &quot;url&quot;: &quot;https://www.thk.com/eu/en/products/lm_guide/full_ball/hsr/r_xr/&quot;,
+    &quot;sha256&quot;: &quot;39dc4e1fd6728806aa4bd6d32d2f49cf62543265c61f0dd4b07e60b46ce3f4cc&quot;
   },
   {
-    &quot;id&quot;: &quot;s-5564ba3bb93b1ea3&quot;,
-    &quot;title&quot;: &quot;Spring Balancer Product Catalog and Dimensions&quot;,
-    &quot;publisher&quot;: &quot;ENDO KOGYO&quot;,
-    &quot;url&quot;: &quot;https://www.endo-kogyo.co.jp/english/product/balancer/spring/list/index.html&quot;,
-    &quot;sha256&quot;: &quot;ac3bf19ffcc3a0746c5fe76d8e8a96c891c3c186a479ad2d6bacfdb1c4a5f28d&quot;
+    &quot;id&quot;: &quot;s-a6083e751c3ee956&quot;,
+    &quot;title&quot;: &quot;Product Manual — DressPack IRB 6720&quot;,
+    &quot;publisher&quot;: &quot;ABB&quot;,
+    &quot;url&quot;: &quot;https://www.uzivatelskadokumentace.cz/Application%20Equipment%20%26%20Accessories/DressPack/DressPack%20IRB%206720/en/3HAC088411-001.pdf&quot;,
+    &quot;sha256&quot;: &quot;143c508dc484b5f9a3b8e760b1f48e17c33f2a92058e4ac421b1c278c71a6620&quot;
   },
   {
-    &quot;id&quot;: &quot;s-ba1ff6896ed10cd2&quot;,
-    &quot;title&quot;: &quot;LIBERO Benchmark Task/Suite Definitions&quot;,
-    &quot;publisher&quot;: &quot;Lifelong Robot Learning&quot;,
-    &quot;url&quot;: &quot;https://github.com/Lifelong-Robot-Learning/LIBERO/blob/master/libero/libero/benchmark/__init__.py&quot;,
-    &quot;sha256&quot;: &quot;00b89b6be273ad105b1ab26ab98d3809fa363f05cf6765c32c0d2cb13b665ef8&quot;
+    &quot;id&quot;: &quot;s-e4d88bbe4b10e860&quot;,
+    &quot;title&quot;: &quot;External DressPack&quot;,
+    &quot;publisher&quot;: &quot;ABB&quot;,
+    &quot;url&quot;: &quot;https://www.abb.com/global/en/areas/robotics/products/equipment/dresspacks/external-dresspack&quot;,
+    &quot;sha256&quot;: &quot;126bb488d89206ea3a5a52449dd2509afeaa2599acaa54565a42ac4f1665ab09&quot;
   },
   {
-    &quot;id&quot;: &quot;s-e9a991225cb77788&quot;,
-    &quot;title&quot;: &quot;RoboCasa Benchmarking Overview and Task Definitions&quot;,
+    &quot;id&quot;: &quot;s-e1ce477bb432c4af&quot;,
+    &quot;title&quot;: &quot;How to Unbox and Install Dell 2U ReadyRails&quot;,
+    &quot;publisher&quot;: &quot;Dell Technologies&quot;,
+    &quot;url&quot;: &quot;https://www.dell.com/support/contents/en-aw/videos/videoplayer/how-to-unbox-and-install-dell-2u-readyrails/6396722281112&quot;,
+    &quot;sha256&quot;: &quot;3ba6a4fecf331614e07821f77940328e711908d215ff85e7c686f7ff7da9250f&quot;
+  },
+  {
+    &quot;id&quot;: &quot;s-863944427b8e3519&quot;,
+    &quot;title&quot;: &quot;LIBERO original BDDL task definition&quot;,
+    &quot;publisher&quot;: &quot;Lifelong-Robot-Learning&quot;,
+    &quot;url&quot;: &quot;https://raw.githubusercontent.com/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.bddl&quot;,
+    &quot;sha256&quot;: &quot;491835cc2eb6956f7ce3d1ee4e266377116168fe453e6529fe105e3b0333635d&quot;
+  },
+  {
+    &quot;id&quot;: &quot;s-0839942e794e7f8e&quot;,
+    &quot;title&quot;: &quot;RoboCasa original environment registry&quot;,
     &quot;publisher&quot;: &quot;RoboCasa&quot;,
-    &quot;url&quot;: &quot;https://github.com/robocasa/robocasa/blob/main/docs/benchmarking/benchmarking_overview.md&quot;,
-    &quot;sha256&quot;: &quot;2278e251c9165e1025773264a5456452c6f27dce8699fc43143dad25fbf050ac&quot;
+    &quot;url&quot;: &quot;https://raw.githubusercontent.com/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/__init__.py&quot;,
+    &quot;sha256&quot;: &quot;db2b99b1555167a2a7f7c93024e84e7e6fef41b739f7f4520a5a1ddfb0c24e17&quot;
   },
   {
-    &quot;id&quot;: &quot;s-ba10be5ef4742367&quot;,
-    &quot;title&quot;: &quot;SimplerEnv Official Benchmark and Task Definitions&quot;,
+    &quot;id&quot;: &quot;s-396760d996a2e1d5&quot;,
+    &quot;title&quot;: &quot;SimplerEnv original environment registry&quot;,
     &quot;publisher&quot;: &quot;SimplerEnv&quot;,
-    &quot;url&quot;: &quot;https://github.com/simpler-env/SimplerEnv/blob/main/README.md&quot;,
-    &quot;sha256&quot;: &quot;f7f4407a482da2dc3d161b1b6eb421cd5b29347ef40885c16fa5134dc85828ac&quot;
+    &quot;url&quot;: &quot;https://raw.githubusercontent.com/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/__init__.py&quot;,
+    &quot;sha256&quot;: &quot;ed5079f2aa8d9c85938f86440195ecdf90c4ee3afebb96b778375aad7cccac25&quot;
   },
   {
-    &quot;id&quot;: &quot;s-d013a72cf7ffba86&quot;,
-    &quot;title&quot;: &quot;BEHAVIOR-1K Task Definitions&quot;,
+    &quot;id&quot;: &quot;s-93a68214e3396776&quot;,
+    &quot;title&quot;: &quot;BEHAVIOR-1K original task implementation&quot;,
     &quot;publisher&quot;: &quot;Stanford Vision and Learning Lab&quot;,
-    &quot;url&quot;: &quot;https://github.com/StanfordVL/BEHAVIOR-1K/blob/main/docs/behavior_components/behavior_tasks.md&quot;,
-    &quot;sha256&quot;: &quot;0c989b72cf029b6c43663a6e480ceafd01211170cee6daf825d314e68f6ddec9&quot;
+    &quot;url&quot;: &quot;https://raw.githubusercontent.com/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/tasks/behavior_task.py&quot;,
+    &quot;sha256&quot;: &quot;3716537d3c9e896ca574241db53c339c031cbb88ade54ff4b04e085170fce06f&quot;
   },
   {
     &quot;id&quot;: &quot;s-6ed524b5f205e074&quot;,
-    &quot;title&quot;: &quot;DataCenterBench Official Tasks&quot;,
+    &quot;title&quot;: &quot;DataCenterBench published task definitions&quot;,
     &quot;publisher&quot;: &quot;RoboCurve&quot;,
     &quot;url&quot;: &quot;https://robocurve.org/datacenterbench/&quot;,
     &quot;sha256&quot;: &quot;8a8351a763ba4a806d420d435b5df0188c496a29e9f30f026e06d8569619baf5&quot;
   },
   {
-    &quot;id&quot;: &quot;s-5d66f9b402b33e5c&quot;,
-    &quot;title&quot;: &quot;RoboDojo Official Task Definitions&quot;,
+    &quot;id&quot;: &quot;s-6a49c58c976fa469&quot;,
+    &quot;title&quot;: &quot;RoboDojo original fasten_screws task definition&quot;,
     &quot;publisher&quot;: &quot;RoboDojo Benchmark&quot;,
-    &quot;url&quot;: &quot;https://github.com/robodojo-benchmark/RoboDojo/tree/main/task/RoboDojo&quot;,
-    &quot;sha256&quot;: &quot;c7ea518206f61cbb3ff9244f84fe9b00966564c1476c7b93e313c3128f5cc08a&quot;
+    &quot;url&quot;: &quot;https://raw.githubusercontent.com/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/fasten_screws.py&quot;,
+    &quot;sha256&quot;: &quot;2e187a28e33e44efb87baae6463b3ec35264ccd41e35c21a1be44f6361675185&quot;
   },
   {
-    &quot;id&quot;: &quot;s-90765d9ec51b37b3&quot;,
-    &quot;title&quot;: &quot;ITT Enidine industrial shock absorber catalog (manufacturer publication, distributor-hosted edition)&quot;,
-    &quot;publisher&quot;: &quot;ITT Enidine (copy hosted by Omni-Tec)&quot;,
-    &quot;url&quot;: &quot;https://www.omni-tec.it/wp-content/uploads/2017/11/enidine-catalog_en.pdf&quot;,
-    &quot;sha256&quot;: &quot;9391dbf7de519a46b5bcde585cfe3cd085df219f616826ad332c2b3b42955544&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-3d1c868ddefa3739&quot;,
-    &quot;title&quot;: &quot;Accu M3x3 DIN916 set-screw original technical datasheet&quot;,
-    &quot;publisher&quot;: &quot;Accu&quot;,
-    &quot;url&quot;: &quot;https://www.accu.co.uk/api/product-datasheet?id=494670&quot;,
-    &quot;sha256&quot;: &quot;f0a6dd295d54d522974b7bb7b72ec78e7346c3c7448f7e9f5d4d384ef7dc780b&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-86e8d8d9a44dd4de&quot;,
-    &quot;title&quot;: &quot;Fuller ISO4029 socket set-screw geometry table&quot;,
-    &quot;publisher&quot;: &quot;Fuller Fasteners&quot;,
-    &quot;url&quot;: &quot;https://fullerfasteners.com/tech/iso-4029-specifications-hex-socket-set-screws-with-cup-point/&quot;,
-    &quot;sha256&quot;: &quot;d0efe6d5120025acc30700963d03a9b5b2cefd9f16421d77f7b0233077d0eeb0&quot;
+    &quot;id&quot;: &quot;s-bba7a5a0605fbeea&quot;,
+    &quot;title&quot;: &quot;THK HSR full-ball LM Guide manufacturer catalog515-2E pagesA1-182 throughA1-213&quot;,
+    &quot;publisher&quot;: &quot;THK&quot;,
+    &quot;url&quot;: &quot;https://tech.thk.com/en/products/pdf/en_a01_182.pdf&quot;,
+    &quot;sha256&quot;: &quot;c29dd1b04018c61addcdc1f30a8145f41ebc2b6be3257bbb8fefa3522ce2965e&quot;
   }
 ]</pre><p>Approval and submission require separate CLI commands.</p>

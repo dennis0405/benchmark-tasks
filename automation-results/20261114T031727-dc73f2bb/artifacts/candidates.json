@@ -1,140 +1,152 @@
 {
   "candidates": [
     {
-      "id": "eco-oem35m-robot-axis-damper-commissioning",
-      "title": "Commission and lock a compact industrial robot-axis shock absorber",
-      "objective": "With the industrial axis locked out, physically loosen the captive setscrew on a representative ECO OEM .35M-form damper, withdraw the hex bit, rotate the numbered collar, reacquire and tighten the moving socket, clear both hands and tools, then operate a separate guarded test-fixture control and iteratively obtain repeatable axial carriage stops without bottoming, overload, excessive rebound, or setting drift.",
+      "id": "thk-hsr12x-block-jig-transfer",
+      "title": "Transfer an uncaged HSR12X LM block onto a removing/mounting jig",
+      "objective": "Bimanually butt a representative removing/mounting jig against an HSR12X rail, maintain parallel continuous support, and slide the uncaged recirculating-ball block fully onto the jig without losing a ball or contaminating or damaging the guide.",
       "skills": [
-        "aligning and inserting a 1.5 mm hex bit into a recessed socket",
-        "loosening and tightening a captive setscrew with bounded torque",
-        "finely rotating an 11.2 mm adjustment collar",
-        "withdrawing and reacquiring a socket after it moves with the collar",
-        "iterative adjustment from measured dynamic response",
-        "safe sequencing between lockout, manipulation, tool clearance, and guarded physical control actuation"
+        "bimanual rail-to-jig alignment",
+        "flush end-face mating",
+        "continuous rolling-element support",
+        "force-limited precision sliding",
+        "alignment-preserving regrasping",
+        "free rolling-element containment"
       ],
-      "success_conditions": "Use a rigid PhysX carriage with physical drive, contacts, 12.0 mm damper travel, axial return spring, and an external hard stop. Mount the threaded housing fixed, with the accessible adjustment collar at the rear and the 4.0 mm piston rod facing the carriage; impact must remain linear and axial rather than side-loaded. Test energy must be at least 0.85 J, representing 5% of the published 17.0 Nm/cycle rating, and impact velocity must remain within 0.3–3.30 m/s and the chart-permitted setting range. Measured drive/propelling force must not exceed 530 N, and measured reaction force must not exceed 2,000 N. The robot must loosen the captive screw, withdraw the bit before collar rotation, reacquire and relock the moving socket, clear the mechanism, and physically actuate the guarded test control. Full success requires two consecutive cycles with no travel beyond 12.0 mm, hard-stop strike, excessive rebound, force-limit violation, dropped tool, damaged thread, or collar drift beyond 2 degrees. Safe unlocking, adjustment, reacquisition, and locking receive partial credit. Energized adjustment, direct task-object pose or velocity writes, collision suppression, hidden success flags, damage, or unsafe cycling scores zero.",
-      "industrial_value": "The AAC maintenance manual documents adjustable shock absorbers on industrial robot X and Z axes. The Enidine manufacturer catalog independently documents a compact adjustable hydraulic damper's mechanism, dimensions, ratings, and locking method. The representative fixture therefore exercises maintenance needed for reliable automation equipment used in scalable manufacturing, without claiming that the Enidine model is interchangeable with the AAC component or that its unpublished force curve is calibrated.",
-      "dexterity": "High but feasible to attempt with the pinned YAM runtime: the robot must seat a fine tool in a small socket, apply bounded torque, withdraw it before moving the collar, finely grasp and rotate the collar, reacquire the relocated socket, preserve the selected setting while locking, and evaluate physical impact outcomes rather than collar angle alone.",
+      "success_conditions": "Full success requires physical end-face contact, parallel rail and jig axes, complete block transfer, all initially present balls still contained in four circulating rows, no impact, drop, contamination-zone contact, or unsafe inclination, and a stable one-second release. Safe jig mating and partial transfer may receive partial credit. Any lost ball, block jam, separated support interface, direct pose or velocity write, hidden weld, fixed ball, or collision suppression invalidates full success.",
+      "industrial_value": "THK’s maintenance instructions prescribe a removing/mounting jig when block removal is unavoidable and require discontinuing use if a rolling element falls out. This makes preservation of the bearing elements an actual service outcome rather than an invented difficulty.",
+      "dexterity": "One hand must keep a narrow jig physically butted and parallel to the rail while the other advances a small bearing block. The robot must regulate contact and regrasp without opening a gap that lets any freely simulated ball escape.",
       "evidence": [
         {
-          "source_id": "s-74c3dbd7c10379f7",
-          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, printed page 31, section 4.2.4",
-          "quote_sha256": "8795a4a385f97af25edbdef61d0be55460f7d52f11da88aaa404182b195b5dd7"
+          "source_id": "s-1007bee1e25db984",
+          "locator": "LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3",
+          "quote_sha256": "04820ee138738bb979d2ad357aed6bf252b47d079e98eb6f7236c1aa0674588d"
         },
         {
-          "source_id": "s-74c3dbd7c10379f7",
-          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, printed page 31, section 4.2.4 safety note",
-          "quote_sha256": "09b01167ec75b833737517703f232918245a0051ba7d664745d3835f3f38787f"
+          "source_id": "s-1007bee1e25db984",
+          "locator": "LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3",
+          "quote_sha256": "422249b3b7604d646eb8630871735104f01818a94aa0e4f08e686026d469a49c"
         },
         {
-          "source_id": "s-90765d9ec51b37b3",
-          "locator": "ITT Enidine catalog, printed page 20, ECO OEM/OEMXT Series Overview",
-          "quote_sha256": "88d33cdb607fcd9b5af4596f764e9637add1e8b00149f23d468d98c1c38a2e72"
+          "source_id": "s-1007bee1e25db984",
+          "locator": "LM Guide Instruction Manual No. 1030-T34667, printed page 2-2, section 2-3",
+          "quote_sha256": "31e044d789fbd83ba195789ffd1930c775eace4cf2778f426e473c2127384b58"
         },
         {
-          "source_id": "s-90765d9ec51b37b3",
-          "locator": "ITT Enidine catalog, printed page 21, ECO OEM Small Bore Series technical-data row",
-          "quote_sha256": "404fd3e4725d4440a86701a6e2562ab765a197332973e4e6a57eabf06ad795a1"
+          "source_id": "s-bba7a5a0605fbeea",
+          "locator": "THK HSR catalog 515-2E, printed page A1-183, “Structure and Features”",
+          "quote_sha256": "02fc979d6217ac2a65e94b2410d6bf6448213f15886f088a8b63b1e8e5c5f02a"
         },
         {
-          "source_id": "s-90765d9ec51b37b3",
-          "locator": "ITT Enidine catalog, printed page 21, note 1",
-          "quote_sha256": "d5c6170b34b0a3eb9684047bed2cf5441667cc47e4383028c2ce1c36e4b50f0b"
+          "source_id": "s-bba7a5a0605fbeea",
+          "locator": "THK HSR catalog 515-2E, printed page A1-183, “Structure and Features”",
+          "quote_sha256": "f8c1f73b0917e8407fce97f419e0607c2f3024b9909da6b5a85733d51457c109"
         },
         {
-          "source_id": "s-90765d9ec51b37b3",
-          "locator": "ITT Enidine catalog, printed page 35, Adjustment Techniques",
-          "quote_sha256": "b44a08ddb5b496bfa2ad4368539b66aae0e1b65b9959a13a18ff07007b969742"
+          "source_id": "s-6ec4f5415ac07269",
+          "locator": "THK “Removing/Mounting Jig,” page 1",
+          "quote_sha256": "7091710e7216188ea0eef976a56952afb930ad622071ae0106f31e01be4e3b5a"
         }
       ],
-      "asset_plan": "Author a full-scale representative non-button ECO OEM .35M-form fixture with a fixed M16×1.5 threaded housing, rear accessible adjustment collar, and piston rod facing an axially moving carriage. Use the verified geometry: 12.0 mm stroke, D=4.0 mm piston-rod diameter, G=11.2 mm adjustment-knob diameter, H=14.5 mm axial knob length, F=87.4 mm indicated housing portion, and A=100.6 mm overall envelope. Preserve the physical 180-degree moving collar, collar-mounted socket, captive contact-bearing setscrew, and external hard stop. A representative M3×3 DIN 916 screw may use the independently sourced 0.5 mm pitch and 1.5 mm socket but must not be described as the Enidine fastener. Begin component testing with an 8 kg carriage at 0.5 m/s (1.0 J). Use a disclosed lumped passive hydraulic approximation, not manufacturer calibration. Before YAM integration, validate axial alignment, energy balance, 12 mm travel, the 530 N propelling and 2,000 N reaction ceilings, hard-stop contact, rebound, low/high-setting controls, lock retention, parameter sensitivity, timestep stability, 240 Hz damage capture, and clean reset. The robot must physically operate the guarded control after clearing the fixture; no in-episode teleporting, welding, or task-object state writes are allowed.",
-      "risk": "The catalog does not publish collar torque, setscrew identity, friction, or a complete force-versus-setting calibration. Treat these as bounded prototype assumptions and require component-level sensitivity, retention, and witness-torque tests. The 1.5 mm socket presents a native-contact risk, while the existing URDF reach result proves only mathematical pose reachability—not collision clearance, grasping, contact stability, or successful damping. Construction must stop before a full demo if passive damping, axial contact, force sensing, substep damage capture, or reset behavior cannot be validated.",
+      "asset_plan": "Author a representative full-scale HSR12XRM fixture using the visually verified A1-194/A1-195 drawings: 20 mm block height, 27 mm block width, 45 mm block length, 12 mm rail width, 11 mm rail height, and the documented four-row cross-section with end returns. Model every ball as an independent rigid PhysX body and preserve four physical circulation paths. Make the jig’s support cross-section continuous with the rail and clearly label its unpublished length, ball diameter/count, groove clearance, maximum transfer gap, and angular tolerance as prototype assumptions rather than THK specifications. Freeze those values before development and test ball circulation and loss, gap and inclination sensitivity, timestep stability, contact-force limits, reset freshness, and deliberate misalignment failures before YAM integration.",
+      "risk": "The manufacturer drawings establish the selected model’s exterior, rail cross-section, four raceway rows, circulation through end plates, and lack of retention. Exact ball diameter/count, internal groove microprofile, jig length, and service tolerances are unpublished; these are bounded representative modeling assumptions requiring sensitivity tests and must not be presented as an exact THK replica.",
       "feasibility_status": "ready",
       "missing_evidence": []
     },
     {
-      "id": "ewa15-spring-balancer-preload-commissioning",
-      "title": "Commission spring-balancer preload for a replacement production tool",
-      "objective": "Secure a loaded EWA-15-form spring balancer, engage its adjustment worm with a wrench, set preload while observing the physical gauge, and verify that the replacement tool remains balanced through a prescribed vertical travel without over-tension, drop, or snap-back.",
+      "id": "abb-external-dresspack-section-replacement",
+      "title": "Replace an industrial-robot External DressPack arm section",
+      "objective": "Support a cable-and-hose bundle, release its clamps and adjustable bracket, remove the section without snagging or over-bending it, route a replacement along the lower and upper robot arms, and restore physical clamp capture and usable free length.",
       "skills": [
-        "wrench alignment and engagement with an adjustment worm",
-        "controlled multi-turn preload adjustment",
-        "supporting a suspended load during adjustment",
-        "coordinating gauge observation with force response",
-        "testing balance through vertical travel"
+        "bimanual compliant-bundle support",
+        "sequential clamp release and relatching",
+        "constrained routing",
+        "adjustable-bracket positioning",
+        "regrasping without snagging or kinking"
       ],
-      "success_conditions": "The robot must keep a valid suspended load attached, turn the physical worm in the documented direction, and test vertical balance without exceeding cable travel or invoking the emergency arrest mechanism. Full success requires bounded vertical drift throughout the test interval. Over-tension, unloaded release, cable overtravel, tool drop, or snap-back scores zero.",
-      "industrial_value": "The manufacturer explicitly requires spring-tension adjustment before use and after replacement of suspended production tooling. Automating the procedure could reduce manual handling around heavy suspended tools, but the available evidence is not yet sufficient for a faithful simulator build.",
-      "dexterity": "The operation combines wrench engagement, suspended-load support, iterative force balancing, gauge reading, and safe travel testing rather than simple knob rotation.",
+      "success_conditions": "Full success requires every modeled clamp to be physically reopened and relatched, the bundle to follow the documented arm route, and its free length and bend state to remain within source-grounded limits. Hose escape, kink, excessive bend, connector impact, dropped bundle, false closure, or direct state manipulation scores zero.",
+      "industrial_value": "ABB states that its clamps support quick, accurate replacement of the complete package to minimize production stoppage and reports that changing a DressPack section takes less than 30 minutes.",
+      "dexterity": "The operation combines compliant bundle support, multiple latch operations, routing, regrasping, and length adjustment rather than simple cable transport.",
       "evidence": [
         {
-          "source_id": "s-ac62801e0a07361f",
-          "locator": "EWA-15 Instruction Manual, page 9, section 4.1",
-          "quote_sha256": "64f3f0958a8206fe552dd6a6208a6a3751b8f315993ab8c8bb26eb06d527f70a"
+          "source_id": "s-e4d88bbe4b10e860",
+          "locator": "ABB External DressPack, “Easy replacement of upper and lower arm DressPack”",
+          "quote_sha256": "88ad1d5aedbb6fb936ab507b56e0cd5d0147985830e47778a514e4567e19d2b5"
         },
         {
-          "source_id": "s-ac62801e0a07361f",
-          "locator": "EWA-15 Instruction Manual, page 10, section 4.3",
-          "quote_sha256": "5e9062281344c36d5da46dbb103f032b1284b4546c94c690b5a69384d17d9409"
+          "source_id": "s-e4d88bbe4b10e860",
+          "locator": "ABB External DressPack, “Easy replacement of upper and lower arm DressPack”",
+          "quote_sha256": "bd717d410c5b6282f31c5c3d276b9e3e2254ccf162dabfe475ca49746adfdd08"
         },
         {
-          "source_id": "s-ac62801e0a07361f",
-          "locator": "EWA-15 Instruction Manual, page 10, section 4.3",
-          "quote_sha256": "36bd4ce58fde2bd6a40cfab52ae5f6a5a69f8d6288c4f47e65a98a9d0c9a5d89"
+          "source_id": "s-e4d88bbe4b10e860",
+          "locator": "ABB External DressPack, “Easy replacement of upper and lower arm DressPack”",
+          "quote_sha256": "bce8c0cb007dc41c5ce8173e12dc110d02b3db6e2d4f54dd0285c3ef16c060f1"
+        },
+        {
+          "source_id": "s-e4d88bbe4b10e860",
+          "locator": "ABB External DressPack, product description",
+          "quote_sha256": "50771e6ff33dfc165694190aecf211c5fd970f3da17390c0db0a3ee12ca8b6f4"
         }
       ],
-      "asset_plan": "Use a rigid articulated drum, worm drive, physical gauge, loaded hook, and bounded vertical carriage only after acquiring source-grounded worm, gauge, drum, and housing-interface geometry. Any rigid-link cable surrogate must preserve load, travel, tool-drop, and snap-back consequences and be validated in the pinned runtime before robot integration.",
-      "risk": "The procedure and hazards are well documented, but the acquired sources do not adequately define the essential worm interface, gauge geometry, drum radius, internal spring law, or a validated rigid-body substitute for the cable.",
-      "feasibility_status": "research-needed",
+      "asset_plan": "Acquire and visually verify the applicable IRB 6720 service diagrams. Proceed only with a validated cable/hose representation that preserves bending, snagging, clamp escape, and damage. All clamps and bracket retention must operate through physical contact.",
+      "risk": "The acquired overview establishes the operation and value but not the clamp latch topology, bracket retention, bundle dimensions, connectors, or allowable bending. No suitable validated deformable implementation is established in the pinned runtime.",
+      "feasibility_status": "blocked",
       "missing_evidence": [
-        "source-grounded worm-drive and wrench-interface dimensions",
-        "gauge scale geometry and mapping to preload",
-        "drum radius and spring torque-versus-payout relationship",
-        "validated rigid-body representation preserving suspended-cable and snap-back behavior"
+        "manufacturer clamp and latch geometry",
+        "adjustable-bracket travel and retention mechanism",
+        "bundle diameters, section lengths, connector geometry, and bend limits",
+        "validated pinned-runtime representation of bending, snagging, and clamp escape"
       ]
     },
     {
-      "id": "ewa15-drum-lock-tool-exchange",
-      "title": "Engage a spring-balancer drum lock and exchange a suspended tool",
-      "objective": "Pull and rotate the lock pin, move the suspended tool until the pin physically enters one of the drum's six indexed slots, verify engagement by reversing the load, exchange the tool while maintaining support, and release the lock only after restoring an equivalent load.",
+      "id": "dell-2u-readyrails-system-loading",
+      "title": "Install paired 2U ReadyRails and load a rack system through the locking transition",
+      "objective": "Seat and latch both rails at the rack posts, extend their inner members, bimanually tilt and align a representative 2U system so its rear mounting nuts enter first, lower it into paired capture, release both locks, and slide the supported system into the rack.",
       "skills": [
-        "pin pulling and quarter-turn positioning",
-        "load motion for concealed slot alignment",
-        "force-based verification of latch engagement",
-        "bimanual suspended-tool support and hook manipulation",
-        "safety-critical release sequencing"
+        "front-and-rear rack-post alignment",
+        "physical latch engagement",
+        "bimanual leveling of a rigid load",
+        "rear-first tilted insertion",
+        "coordinated lock release and sliding"
       ],
-      "success_conditions": "The robot must place the pin in its lock position, move the load until the pin physically enters a drum slot, verify engagement through attempted tool motion, exchange the tool without unloading an unlocked drum, restore an equivalent load, and physically release the pin. False engagement, tool drop, unloaded release, snap-back, damage, or reliance on the emergency arrest device scores zero.",
-      "industrial_value": "The manufacturer identifies the drum lock as the mechanism used for suspended-tool removal and wire-rope replacement. Correct engagement and verification are meaningful safety-critical production-maintenance actions, but essential contact geometry remains unavailable.",
-      "dexterity": "The task requires alignment inferred through load motion, force-based latch verification, pin reorientation, bimanual suspended-load handling, hook manipulation, and strict sequencing.",
+      "success_conditions": "Full success requires all four rail ends physically seated and latched, rear mounting nuts captured before lowering, all remaining nuts retained, both inner-member locks released, and the system fully inserted and stable. Rail skew, false latch closure, one-sided loading, equipment drop, rack collision, bypassed clips, or direct state manipulation scores zero.",
+      "industrial_value": "Dell’s official installation video documents the ReadyRails installation and loading sequence, including latch verification, rear-first mounting-nut engagement, lowering, lock release, and final insertion.",
+      "dexterity": "The robot must register two rails independently, then support, level, tilt, and capture a large rigid load on two narrow telescoping members before coordinating lock release.",
       "evidence": [
         {
-          "source_id": "s-ac62801e0a07361f",
-          "locator": "EWA-15 Instruction Manual, page 7, section 2.2",
-          "quote_sha256": "e219132767cb906d1fbb59b299de1148d1682865c4df8c72ecec1a0b3e4f44b9"
+          "source_id": "s-e1ce477bb432c4af",
+          "locator": "Dell video transcript, ReadyRails installation sequence",
+          "quote_sha256": "548b19cc763e3c7fbe3ec542911d753a57fc372ef4572863c172ba6b04def894"
         },
         {
-          "source_id": "s-ac62801e0a07361f",
-          "locator": "EWA-15 Instruction Manual, page 9, section 4.2",
-          "quote_sha256": "a3938db88a8a1824377694fcbb5f84a815c35b903e8d3f54eabc969a93c9f69a"
+          "source_id": "s-e1ce477bb432c4af",
+          "locator": "Dell video transcript, front-side installation sequence",
+          "quote_sha256": "96cfd8002d0d18aa4c543e2795c0c16a233362eed405fead0c9d01bc605b1f4e"
         },
         {
-          "source_id": "s-ac62801e0a07361f",
-          "locator": "EWA-15 Instruction Manual, page 9, section 4.2",
-          "quote_sha256": "3cb5fdc2e149b30d477d9b96bc13fb890905f111850a0a34681c64a4d6f1f90e"
+          "source_id": "s-e1ce477bb432c4af",
+          "locator": "Dell video transcript, system installation sequence",
+          "quote_sha256": "74b02f9cc530b38f7fe700d4f50e5941232a140e99a9891b98b9526db0a98449"
+        },
+        {
+          "source_id": "s-e1ce477bb432c4af",
+          "locator": "Dell video transcript, final insertion sequence",
+          "quote_sha256": "189c99ccdc40786beddf2378347f15aa3abbd3c2fb5a4a05d254e3ef3a83e0e7"
         }
       ],
-      "asset_plan": "Construct a representative articulated drum, six-position lock wheel, translating and rotating pin, bottom hook, and equivalently loaded replacement tool only after obtaining dimensional evidence for the pin, slots, drum, hook, and release interfaces. A cable approximation must retain load, travel, drop, and snap-back consequences in rigid PhysX.",
-      "risk": "The source establishes the retention topology and safety sequence, but pin travel and detent behavior, slot engagement geometry, drum and hook dimensions, and safe cable physics are unresolved. Replacing them with a generic latch would invalidate the objective.",
-      "feasibility_status": "blocked",
+      "asset_plan": "Acquire the matching Rack Installation Guide or public mechanical drawings and independently verify the relevant video frames. Build a representative rigid fixture with physical rack-post hooks, latches, telescoping members, mounting nuts, capture slots, and release clips. Test rail skew, one-sided capture, latch preload, center-of-mass sensitivity, clip timing, reach, and reset behavior in native PhysX.",
+      "risk": "The transcript proves the procedure but does not reveal the essential hook, latch, nut-slot, telescoping-lock, rack-hole, or release-clip geometry. Workspace reach and safe load scaling also remain unverified.",
+      "feasibility_status": "research-needed",
       "missing_evidence": [
-        "pin diameter, travel, detent, and rotation geometry",
-        "drum-slot dimensions and engagement depth",
-        "bottom-hook and latch geometry",
-        "validated rigid-PhysX model preserving suspended-load and snap-back behavior"
+        "matching ReadyRails model and Rack Installation Guide",
+        "rack-post hook and blue-latch geometry",
+        "system mounting-nut and rail capture-slot dimensions",
+        "inner-member lock and metal release-clip mechanism",
+        "verified rack spacing, rail travel, equipment envelope, mass, and center of mass",
+        "pinned-YAM reach and safe scale study"
       ]
     }
   ],
-  "selected_id": "eco-oem35m-robot-axis-damper-commissioning",
-  "selection_reason": "This is the only candidate with sufficient primary evidence for the industrial procedure, essential adjustment and retention mechanism, full-scale external geometry, operating envelope, and a plausible rigid-PhysX/YAM construction attempt. The repaired contract now enforces both the published 530 N maximum propelling-force ceiling and 2,000 N reaction-force ceiling, requires axial linear impact, and fixes the mounted orientation: threaded housing fixed, rear collar accessible, and 4.0 mm piston rod facing the carriage. It also preserves the captive setscrew and requires hex-bit withdrawal and reacquisition. The spring-balancer candidates remain meaningful but cannot be selected because essential contact or load-mechanism evidence is missing."
+  "selected_id": "thk-hsr12x-block-jig-transfer",
+  "selection_reason": "The newly acquired and visually inspected THK HSR catalog resolves the prior ambiguous-selection failure: it identifies HSR12X as an unretained-ball model, establishes four circulating raceway rows, and supplies a consistent model-specific exterior and rail cross-section. Together with THK’s mandatory full-contact, parallel-jig procedure and explicit lost-ball rejection rule, this is sufficient for a mechanically faithful representative rigid-PhysX build. Its unpublished microgeometry is nonessential manufacturer calibration that can be disclosed, frozen, and sensitivity-tested. The ABB alternative still depends on unvalidated deformable physics and unknown latch geometry, while the Dell alternative lacks essential retention and capture geometry."
 }
