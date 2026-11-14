@@ -1,0 +1,73 @@
+{
+  "status": "complete",
+  "scope": "CPU-only source, manifest, and public-loader validation; no native physics claims",
+  "checks": [
+    {
+      "name": "python-source-compile-failure-count",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 0,
+      "unit": "count"
+    },
+    {
+      "name": "public-task-loader-object-count",
+      "measured": 50,
+      "operator": "==",
+      "threshold": 50,
+      "unit": "count"
+    },
+    {
+      "name": "public-task-loader-duplicate-name-count",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 0,
+      "unit": "count"
+    },
+    {
+      "name": "frozen-contract-check-count",
+      "measured": 35,
+      "operator": "==",
+      "threshold": 35,
+      "unit": "count"
+    },
+    {
+      "name": "diagnostic-source-contract-name-coverage-count",
+      "measured": 35,
+      "operator": "==",
+      "threshold": 35,
+      "unit": "count"
+    },
+    {
+      "name": "frozen-required-control-count",
+      "measured": 15,
+      "operator": "==",
+      "threshold": 15,
+      "unit": "count"
+    },
+    {
+      "name": "asset-manifest-hash-mismatch-count",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 0,
+      "unit": "count"
+    },
+    {
+      "name": "public-initial-score",
+      "measured": 0.0,
+      "operator": "==",
+      "threshold": 0.0,
+      "unit": "score"
+    }
+  ],
+  "artifacts": [
+    "task/task.py",
+    "task/procedural_geometry.py",
+    "task/component_mechanism.py",
+    "task/run_component_diagnostics.py",
+    "task/asset-manifest.json",
+    "task/LICENSE.txt",
+    "measurements/environment-static-validation.json"
+  ],
+  "native_measurements": null,
+  "note": "The public task loads from /tmp without modifying PYTHONPATH. GPU/native physics was intentionally not executed in this role. The host diagnostic fails closed if isolated adversarial probes or YAM self-contact evidence are absent."
+}

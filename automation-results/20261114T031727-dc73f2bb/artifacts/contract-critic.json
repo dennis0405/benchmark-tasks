@@ -1,26 +1,33 @@
 {
-  "verdict": "repair",
+  "verdict": "pass",
   "findings": [
-    "All 15 required-control scores recompute correctly from S=0.125*N_removed+0.10*N_collected+0.10*T with H overriding to zero: 0, 0, 0.125, 0.225, 0.50, 0.80, 0.90, 0.90, 1.00, 1.00, 1.00, 0, 0, 0, 0.70. The bonus first becomes available at 41 fresh 20 Hz observations spanning at least 2.0 s; timeout alone preserves earned partial credit.",
-    "The previous terminal aggregation and contact-name failures are repaired: terminal/rest and camera values now use explicit worst-case aggregation across required runs, and `nominal-contact-stream-row-count-total` accurately names its suite-wide sum.",
-    "One material aggregation ambiguity remains. The sole physics check `lifecycle-registered-task-callback-handle-count` is mapped to samples taken after registration and every reset, but the mapping says to report both maximum and minimum separately while defining neither which scalar supplies that single check nor two correspondingly named checks. Define the check as an all-samples predicate, specify one aggregation such as maximum absolute error from 2, or add explicit minimum and maximum checks.",
-    "Timing is otherwise internally consistent: 7,200 control steps at 20 Hz equals 360 seconds, distinct from 240 Hz production and 480 Hz refinement physics. Callback-dt checks consume actual float32 POST values, and missing, duplicate, stale, non-finite, or exception-producing evidence fails rather than passing vacuously.",
-    "Damage and loss are evaluated independently of desired actions. Safe alternative strategies receive the same outcome score, while native insert/shell damage, fragment loss, forbidden penetration, unsafe collision, invalid state, and simulation cheats force zero.",
-    "The indexed PhysxManager snapshot matches its SHA-256 and supports dt-bearing PRE_PHYSICS_STEP and POST_PHYSICS_STEP callback registration, returned handles, and deregistration. This establishes prospective API availability only.",
-    "Primary industrial evidence supports four M2.5 × 3.75 mm shell-base inserts, tang removal with a tang-break tool, fragment accountability, notch fracture, and the listed M2.5 mandrel. Unsupported geometry, force, mass, tolerance, and damage values are disclosed as prototype assumptions."
+    "All 15 required controls recompute correctly from S=0.125*N_removed+0.10*N_collected+0.10*T, including initial 0, partial scores 0.125/0.225/0.50/0.80/0.90, full 1.00, hard-failure 0, and timeout partial 0.70.",
+    "The terminal bonus first becomes available after 41 consecutive fresh 20 Hz observations spanning at least 2.0 seconds. Timeout alone does not erase earned removal or collection credit.",
+    "Timing is consistent: 7,200 control steps at 20 Hz equal 360 seconds; production physics is 240 Hz and refinement is separately measured at 480 Hz using actual POST callback dt samples.",
+    "The prior penetration-scope contradiction is repaired: the <=0.0002 m post-fracture bound covers only named non-damage/pass probes, while intentional seat-break, shell-break, and forbidden-penetration probes are excluded and separately required to produce observable damage events that force score zero.",
+    "Every physics check has an explicit phase, sampling window, aggregation rule, and missing-evidence behavior. Required empty sets are unavailable/failing rather than silently reported as zero or infinity.",
+    "The lifecycle metric is unambiguous: max_s abs(h_s-2)==0 over post-registration and post-reset active-lifecycle samples, counting only this task's PRE/POST PhysxManager callback pair.",
+    "Damage, loss, unsafe contact, invalid state, forbidden penetration, and simulation cheats are scored independently of desired actions. Safe alternative strategies receive the same outcome score, preserving the selected ability without mandating a hand, order, strike count, or impulse window.",
+    "The hash-verified pinned PhysxManager source exposes dt-bearing PRE_PHYSICS_STEP and POST_PHYSICS_STEP callback subscriptions as claimed. The contract correctly treats source inspection as prospective API evidence rather than native physics validation.",
+    "Primary industrial evidence supports four M2.5 × 3.75 mm shell-base inserts, tang removal with a tang-break tool, fragment accountability, notch fracture, and the listed M2.5 tang-break mandrel. Unsupported geometry, force, material, mass, and tolerance values remain disclosed prototype assumptions."
   ],
   "evidence_paths": [
     "artifacts/contract.json",
     "artifacts/selected.json",
     "artifacts/contract-critic.json",
     "input/request.json",
+    "input/last-failure.json",
     "input/repository-AGENTS.md",
     "input/review-prompt.txt",
-    "input/last-failure.json",
     "input/runtime-api-preflight.json",
     "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py",
     "input/sources/s-df759bd2377bbb57.json",
     "input/sources/s-6195df1bebbb33ef.json",
-    "input/novelty-batch.json"
+    "input/novelty-batch.json",
+    "input/novelty-records/933193e3e336fb78a08abd7787cf15f7f0986f1ac42a0f1d8bd7c0bf2e65d198.json",
+    "input/novelty-records/d96bb55ec62a15647200dd251bc75445f2b9b7e69dc970c4110619431e42103f.json",
+    "input/novelty-records/73480ddab9f306b339941c7950847f52e21de242ad49a46e8d7c294cba31c42d.json",
+    "input/novelty-records/d5ee3a2a32d7494d0d67cc8d90131616d341b5f7ae229b7a936340bce8a33b59.json",
+    "input/novelty-records/d3f0d61f8b29d25000cc0592ce29c18178a71fdbc0edba7298ae1b612cd781ae.json"
   ]
 }

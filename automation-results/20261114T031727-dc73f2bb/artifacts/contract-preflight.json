@@ -1,36 +1,36 @@
 {
-  "contract_digest": "687a48e54f41aec6de7e7070ad876a09a87bce7c1b319c02da55ed5053fbc323",
+  "contract_digest": "acc74d5535d48dea995f5b2948e92d8e0aabfe0936053ee9e30571626f1b96da",
   "review": {
     "verdict": "pass",
     "findings": [
-      "All 17 required controls recompute consistently from score=min(1,G+A+F+R+C+T), with irreversible H overriding to zero, in contract order: 0.00, 0.20, 0.00, 0.00, 0.00, 0.00, 0.30, 0.85, 0.00, 0.00, 0.00, 0.00, 1.00, 1.00, 1.00, 0.20, 0.20. Initial is 0; partial cases are 0.20, 0.30, and 0.85; full is 1.00; every specified hard failure is 0. R first becomes available after the fourth credited fracture. Timeout changes the inaccessible-fragment case by evaluating geometric inaccessibility and setting H before final scoring.",
-      "Timing is internally consistent: 7,200 controls at 20 Hz equals 360 s; production and refinement physics run at 240/480 Hz. The 300 s samples occur after POST(72000)/POST(144000), and timeout after POST(86400)/POST(172800). The initial diagnostic window, exact POST boundaries, settled-speed aggregation, penetration aggregation, and per-insert completed-strike interpretation are now explicit.",
-      "Contact freshness and aggregation are computable: PRE(n) supplies poses, twists, and joint state; POST(n) consumes only step-n contacts once; force is converted to impulse exactly once while native impulse is not rescaled; duplicate, stale, untagged, wrong-dt, and non-finite data set H. Repeated score/success reads cannot advance state.",
-      "Bad physical outcomes are preserved and scored as failures rather than conditionally suppressed. Native joint transitions occur before eligibility; invalid fracture, overload, glancing impact, direct hammer contact, insert/shell damage, forbidden penetration, fragment loss, unsafe self-contact, and timeout inaccessibility set H. Slow pressing, sequential one-arm operation, and other physically valid alternatives remain permitted and trigger reassessment if unexpectedly successful.",
-      "The two pinned runtime snapshots exist at permitted evidence locations and match the SHA256 values in the preflight index. Their provenance records identify the original paths and pinned IsaacLab commit. The PhysxManager snapshot confirms IsaacEvents PRE_PHYSICS_STEP/POST_PHYSICS_STEP registration, dt-bearing callbacks, returned CallbackHandle objects, native pre_step selection, and unsubscribe support. These facts support the prospective API design without claiming native validation.",
-      "The contract’s final approximation retains a historical statement that the snapshot directory was absent when the contract was authored. Current hash-verified snapshots resolve that lifecycle condition; the stale disclosure does not alter any task observable, formula, threshold, or required control and is not a remaining specification defect.",
-      "Industrial evidence supports four M2.5 × 3.75 mm shell-base inserts, tang removal, verification that tangs do not remain, fracture at the notch, and M2.5 mandrel 0158 040 1000. Unpublished geometry, forces, damage limits, and tolerances are explicitly identified as frozen prototype assumptions rather than industrial facts.",
-      "No material unresolved specification contradiction or ambiguous measurement remains. Native component behavior, timestep convergence, contact units/freshness, fracture dynamics, camera behavior, and demonstrations remain correctly deferred to later executed validation gates."
+      "All 15 required controls recompute correctly from S=0.125*N_removed+0.10*N_collected+0.10*T, including initial 0, partial scores 0.125/0.225/0.50/0.80/0.90, full 1.00, hard-failure 0, and timeout partial 0.70.",
+      "The terminal bonus first becomes available after 41 consecutive fresh 20 Hz observations spanning at least 2.0 seconds. Timeout alone does not erase earned removal or collection credit.",
+      "Timing is consistent: 7,200 control steps at 20 Hz equal 360 seconds; production physics is 240 Hz and refinement is separately measured at 480 Hz using actual POST callback dt samples.",
+      "The prior penetration-scope contradiction is repaired: the <=0.0002 m post-fracture bound covers only named non-damage/pass probes, while intentional seat-break, shell-break, and forbidden-penetration probes are excluded and separately required to produce observable damage events that force score zero.",
+      "Every physics check has an explicit phase, sampling window, aggregation rule, and missing-evidence behavior. Required empty sets are unavailable/failing rather than silently reported as zero or infinity.",
+      "The lifecycle metric is unambiguous: max_s abs(h_s-2)==0 over post-registration and post-reset active-lifecycle samples, counting only this task's PRE/POST PhysxManager callback pair.",
+      "Damage, loss, unsafe contact, invalid state, forbidden penetration, and simulation cheats are scored independently of desired actions. Safe alternative strategies receive the same outcome score, preserving the selected ability without mandating a hand, order, strike count, or impulse window.",
+      "The hash-verified pinned PhysxManager source exposes dt-bearing PRE_PHYSICS_STEP and POST_PHYSICS_STEP callback subscriptions as claimed. The contract correctly treats source inspection as prospective API evidence rather than native physics validation.",
+      "Primary industrial evidence supports four M2.5 × 3.75 mm shell-base inserts, tang removal with a tang-break tool, fragment accountability, notch fracture, and the listed M2.5 tang-break mandrel. Unsupported geometry, force, material, mass, and tolerance values remain disclosed prototype assumptions."
     ],
     "evidence_paths": [
+      "artifacts/contract.json",
+      "artifacts/selected.json",
+      "artifacts/contract-critic.json",
       "input/request.json",
       "input/last-failure.json",
+      "input/repository-AGENTS.md",
+      "input/review-prompt.txt",
       "input/runtime-api-preflight.json",
       "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py",
-      "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py.provenance.json",
-      "input/pinned-runtime-sources/4a7638c3890522bbe7c25600c0090e6cb7f403550ccb8be7641bf84034213b83-generatedSchema.usda",
-      "input/pinned-runtime-sources/4a7638c3890522bbe7c25600c0090e6cb7f403550ccb8be7641bf84034213b83-generatedSchema.usda.provenance.json",
       "input/sources/s-df759bd2377bbb57.json",
       "input/sources/s-6195df1bebbb33ef.json",
-      "input/sources/s-c392a734cb5007d7.json",
       "input/novelty-batch.json",
       "input/novelty-records/933193e3e336fb78a08abd7787cf15f7f0986f1ac42a0f1d8bd7c0bf2e65d198.json",
       "input/novelty-records/d96bb55ec62a15647200dd251bc75445f2b9b7e69dc970c4110619431e42103f.json",
       "input/novelty-records/73480ddab9f306b339941c7950847f52e21de242ad49a46e8d7c294cba31c42d.json",
       "input/novelty-records/d5ee3a2a32d7494d0d67cc8d90131616d341b5f7ae229b7a936340bce8a33b59.json",
-      "input/novelty-records/d3f0d61f8b29d25000cc0592ce29c18178a71fdbc0edba7298ae1b612cd781ae.json",
-      "artifacts/selected.json",
-      "artifacts/contract.json"
+      "input/novelty-records/d3f0d61f8b29d25000cc0592ce29c18178a71fdbc0edba7298ae1b612cd781ae.json"
     ]
   }
 }
