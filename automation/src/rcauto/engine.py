@@ -52,8 +52,68 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
     if not catalog.get("complete") or not catalog.get("records"):
         raise GateError("catalog incomplete/empty; novelty cannot pass")
     comparisons = []
-    records = catalog["records"]
+    terms = set(re.findall(r"[a-z][a-z0-9]+", json.dumps(candidate).lower())) - {
+        "the",
+        "and",
+        "with",
+        "from",
+        "that",
+        "this",
+        "for",
+        "into",
+        "both",
+        "its",
+        "task",
+        "score",
+        "success",
+        "condition",
+        "objective",
+        "physical",
+        "skill",
+    }
+
+    def priority(record):
+        title = set(re.findall(r"[a-z][a-z0-9]+", record.get("title", "").lower()))
+        text = set(re.findall(r"[a-z][a-z0-9]+", json.dumps(record).lower()))
+        return 3 * len(terms & title) + len(terms & text)
+
+    # Retrieval changes order only. Passing still requires every catalog record.
+    records = sorted(catalog["records"], key=priority, reverse=True)
+    by_id = {record["id"]: record for record in records}
+
+    def checkpoint():
+        inactive = [
+            {"id": row["id"], "reason": "closed unmerged other-team history; uncertainty retained"}
+            for row in comparisons
+            if row["verdict"] == "uncertain"
+            and by_id[row["id"]].get("state") == "closed"
+            and by_id[row["id"]].get("status") == "closed"
+            and by_id[row["id"]].get("own_team") is False
+        ]
+        exempt = {row["id"] for row in inactive}
+        blockers = [
+            row for row in comparisons if row["verdict"] != "distinct" and row["id"] not in exempt
+        ]
+        report = {
+            "catalog_digest": catalog["digest"],
+            "candidate_digest": digest(candidate),
+            "catalog_total": len(records),
+            "complete": len(comparisons) == len(records),
+            "compared": len(comparisons),
+            "comparisons": comparisons,
+            "inactive_uncertainty": inactive,
+            "at": now(),
+        }
+        write_json(Path(workspace) / "artifacts" / "novelty.json", report)
+        if blockers:
+            raise GateError(
+                f"novelty overlap/uncertainty: {len(blockers)} records; inspect novelty.json"
+            )
+        return report
+
     for i in range(0, len(records), batch_size):
+        if (Path(workspace).parent / "cancel.json").exists():
+            raise StateError("novelty cancelled at batch boundary; partial evidence preserved")
         batch = records[i : i + batch_size]
         data = {"candidate": candidate, "records": batch}
         filename = Path(workspace) / "input" / "novelty-batch.json"
@@ -63,7 +123,7 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
             C.SCENARIO_POLICY + "\nRead input/novelty-batch.json. "
             "Compare EVERY record on objective, physical skill and success conditions. "
             "Different geometry/tool names are not sufficient. Mark insufficient data uncertain. "
-            "Return one comparison per exact record id.",
+            "Return one comparison per exact record id. Keep each comparison axis concise.",
             workspace,
             C.NOVELTY,
         )
@@ -78,32 +138,7 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
         ):
             raise GateError("novelty comparison axes missing")
         comparisons.extend(rows)
-    report = {
-        "catalog_digest": catalog["digest"],
-        "candidate_digest": digest(candidate),
-        "compared": len(comparisons),
-        "comparisons": comparisons,
-        "at": now(),
-    }
-    by_id = {record["id"]: record for record in records}
-    # Closed, unmerged history remains in the comparison, but an empty withdrawn/test
-    # PR is not an accepted/pending claim. Preserve its uncertainty explicitly. An
-    # actual overlap still blocks; accepted/open/own/unknown records fail closed.
-    report["inactive_uncertainty"] = [
-        {"id": row["id"], "reason": "closed unmerged other-team history; uncertainty retained"}
-        for row in comparisons
-        if row["verdict"] == "uncertain"
-        and by_id[row["id"]].get("state") == "closed"
-        and by_id[row["id"]].get("status") == "closed"
-        and by_id[row["id"]].get("own_team") is False
-    ]
-    write_json(Path(workspace) / "artifacts" / "novelty.json", report)
-    inactive = {row["id"] for row in report["inactive_uncertainty"]}
-    blockers = [r for r in comparisons if r["verdict"] != "distinct" and r["id"] not in inactive]
-    if blockers:
-        raise GateError(
-            f"novelty overlap/uncertainty: {len(blockers)} records; inspect novelty.json"
-        )
+        report = checkpoint()
     return report
 
 

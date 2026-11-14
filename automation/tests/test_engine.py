@@ -77,6 +77,41 @@ def test_unavailable_inactive_history_is_not_an_active_novelty_claim(tmp_path, r
         assert report["inactive_uncertainty"][0]["id"] == "pr-1"
 
 
+def test_known_overlap_stops_before_unnecessary_batches_and_keeps_partial_evidence(tmp_path):
+    import json
+
+    class OverlapAgent:
+        calls = 0
+
+        def run(self, *args, **kwargs):
+            self.calls += 1
+            assert self.calls == 1, "must stop after a confirmed overlap"
+            batch = json.loads((tmp_path / "input/novelty-batch.json").read_text())
+            return {
+                "comparisons": [
+                    {
+                        "id": r["id"],
+                        "objective": "Same",
+                        "physical_skill": "Same",
+                        "success_condition": "Same",
+                        "verdict": "overlap",
+                        "reason": "Same objective",
+                    }
+                    for r in batch["records"]
+                ]
+            }
+
+    (tmp_path / "input").mkdir()
+    (tmp_path / "artifacts").mkdir()
+    agent = OverlapAgent()
+    cat = {"complete": True, "digest": "c", "records": [{"id": "a"}, {"id": "b"}]}
+    with pytest.raises(GateError, match="overlap"):
+        compare_catalog(agent, tmp_path, {}, cat, batch_size=1)
+    report = json.loads((tmp_path / "artifacts/novelty.json").read_text())
+    assert not report["complete"] and report["compared"] == 1
+    assert agent.calls == 1
+
+
 def test_approval_is_bound_to_report_and_payload(tmp_path):
     s = Store(tmp_path / "state")
     r = s.create("task", instance="vm")
