@@ -12,7 +12,7 @@ from .store import now, write_json
 
 
 class EpisodeGuard:
-    def __init__(self, path, max_requests):
+    def __init__(self, path, max_requests=None):
         self.path, self.max_requests = Path(path), max_requests
         self.episodes, self.requests = 0, 0
 
@@ -30,7 +30,7 @@ class EpisodeGuard:
         self.event("episode-start", episode=self.episodes)
 
     def request(self):
-        if self.requests >= self.max_requests:
+        if self.max_requests is not None and self.requests >= self.max_requests:
             raise RuntimeError("Dream request guard reached; no automatic retry")
         self.requests += 1
         self.event("request-intent", request=self.requests)

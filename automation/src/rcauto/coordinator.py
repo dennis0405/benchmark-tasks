@@ -408,7 +408,7 @@ class Coordinator:
             "output": remote + "/dream-result",
             "instruction": spec["instruction"],
             "max_steps": contract["run_steps"],
-            "max_requests": self.config.get("dream_max_requests", 80),
+            "max_requests": self.config.get("dream_max_requests"),
             "run": rid,
             "owner_path": self.config["remote_root"] + "/worker-owner.json",
         }
