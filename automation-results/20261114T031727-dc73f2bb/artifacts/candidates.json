@@ -3,124 +3,99 @@
     {
       "id": "er32-collet-nut-preassembly",
       "title": "Preassemble an ER32 collet into its eccentric clamping nut",
-      "objective": "Orient a matching ER32 collet and clamping nut, place the collet extraction groove into the eccentric ring at the nut’s marked point, then tilt and roll the collet until it audibly and mechanically seats. Stop before tool insertion, threading onto a holder, or torque tightening.",
+      "objective": "Orient a compatible ER32 collet and nut, engage the collet groove with the marked eccentric ring, and perform the prescribed tilt-and-roll motion until the collet snaps into retention, without threading the nut onto a holder.",
       "skills": [
         "small-part pose recognition",
-        "groove-to-eccentric-lip alignment",
+        "groove-to-eccentric-ring alignment",
         "bimanual stabilization",
         "tilt-and-roll insertion",
         "force-controlled snap engagement",
-        "retention verification without destructive pulling"
+        "nondestructive retention verification"
       ],
-      "success_conditions": "The correct collet is retained continuously around the nut’s eccentric ring after both grippers release it for 3 seconds, and a light nondestructive withdrawal check does not separate it. The mark and initial groove entry must be used, with no direct axial forcing. Zero score for an unretained or inverted collet, substituting a scripted latch, threading the nut onto a holder before verified engagement, permanent collet deformation, nut damage, dropped parts, or teleport/state overwrite. Partial credit may recognize correct orientation and initial groove capture, but not false retention.",
-      "industrial_value": "REGO-FIX specifies nut-collet preassembly as a required tooling-system step and warns that improper assembly can damage collet concentricity or destroy the nut. Hiteco documents industrial MTC electrospindles using ER32 tooling, supporting relevance to robot-associated machining equipment without claiming that arbitrary manufacturers’ internal retention geometries are interchangeable.",
-      "dexterity": "High. The defining motion is a constrained eccentric-lip capture followed by a changing-axis tilt/roll and snap engagement, not connector mating or ordinary peg insertion.",
+      "success_conditions": "After both grippers release, the collet remains correctly retained for 3 seconds and survives a calibrated light withdrawal check. Zero score for axial forcing, inverted assembly, false or scripted retention, permanent deformation, damage, dropped parts, or state overwrite. Correct orientation and initial groove capture may receive partial credit but do not constitute success.",
+      "industrial_value": "REGO-FIX defines collet-to-nut preassembly as part of the ER tooling procedure and warns that improper assembly can damage collet concentricity or destroy the nut.",
+      "dexterity": "High: an eccentric lip must first capture a narrow groove, followed by changing-axis insertion and elastic snap engagement rather than ordinary peg insertion.",
       "evidence": [
         {
           "source_id": "s-383797c64106a344",
           "locator": "ER System Operating Manual, page 1, “Assembling collet and clamping nut”",
           "quote_sha256": "cfbe4912fccbca2fa64c5630329232b47f812cb376ab4fa6717aef9e4d8cd242"
-        },
-        {
-          "source_id": "s-383797c64106a344",
-          "locator": "ER System Operating Manual, page 1, “Assembling collet and clamping nut”",
-          "quote_sha256": "74d289f8d2ad5f7a1de55c45fb8375240465bfa1294d12c6f32abeba2e34b28f"
-        },
-        {
-          "source_id": "s-383797c64106a344",
-          "locator": "ER System Operating Manual, page 2, warning beneath assembly/removal diagrams",
-          "quote_sha256": "96ac6778351fa1fa8905ac7d31dad12c4847e5c4443de86b6ae0b85bf7d989aa"
-        },
-        {
-          "source_id": "s-7bbd8662e186099c",
-          "locator": "Hiteco MTC Electrospindles Catalog, page 12, ER32DX equipment listing",
-          "quote_sha256": "1ae056b625b30a7e878d0c67f6da61a03dfcc99777fc566aa439e343eb252345"
         }
       ],
-      "asset_plan": "Do not build from nominal ER32 envelope dimensions alone. Acquire one mutually compatible physical REGO-FIX ER32 collet/nut pair or manufacturer-authorized internal CAD, measure the marked eccentric ring, extraction groove, lip eccentricity, lead-in, and elastic deflection, and record provenance. First test whether the pinned Isaac Sim 6.1 rigid-contact model can reproduce correct marked-point entry, snap retention, wrong-angle rejection, removal resistance, and reset repeatability. If essential collet spring deformation cannot be reproduced without an already validated compliant model, reject the task rather than using a magic latch. YAM reach and fingertip clearance must be checked at full scale before demo work.",
-      "risk": "Blocked, not selected. The acquired sources prove the sequence and consequence but do not expose the internal eccentric-lip geometry, permissible deformation, snap force, or a licensed downloadable ER32 nut/collet asset. The available Hiteco dimensions establish ER32 industrial equipment, not interchangeability with REGO-FIX retention geometry. Existing novelty records include unrelated push-fit-collet release tasks; this assembly objective appears mechanically distinct, but a complete synchronized submission review remains required."
+      "asset_plan": "Acquire a compatible physical ER32 collet/nut pair or manufacturer-authorized internal CAD, then measure the groove, lip, eccentricity, lead-in, deflection, and engagement forces. Validate correct-entry retention, wrong-angle rejection, removal resistance, damage thresholds, and reset repeatability before any YAM demonstration. Reject the task if pinned Isaac Sim 6.1 rigid contact cannot reproduce the essential compliant snap without a validated compliant model.",
+      "risk": "The essential internal retention geometry and elastic behavior are absent from the acquired material. A nominal ER32 envelope or scripted latch would not be an acceptable substitute.",
+      "feasibility_status": "research-needed",
+      "missing_evidence": [
+        "Manufacturer-authorized internal eccentric-ring geometry or measurements from a compatible physical pair",
+        "Measured snap-in and withdrawal forces",
+        "Evidence that the required elastic engagement is reproducible in the pinned runtime without artificial latching"
+      ]
     },
     {
       "id": "az100-vertical-tooling-centerline-adjustment",
       "title": "Align AZ-100 end-of-arm tooling to the mold centerline and lock the adjustment",
-      "objective": "On a de-energized AZ-100 vertical-position adjustment fixture, loosen the adjusting-screw jam nut and both clamp bolts, rotate the adjusting screw until the end-of-arm-tooling datum coincides with the specified mold centerline, tighten both clamp bolts while preserving alignment, and finally tighten the jam nut without shifting the setting.",
+      "objective": "On a de-energized representative AZ-100 vertical-adjustment fixture, loosen the adjusting-screw jam nut and two clamp bolts, rotate the adjusting screw to align the tooling datum with the mold centerline, tighten both clamps, and retighten the jam nut without shifting alignment.",
       "skills": [
-        "tool engagement on three fasteners",
-        "ordered loosening and tightening",
+        "ordered multi-fastener manipulation",
+        "tool-to-fastener engagement",
         "fine screw-driven linear adjustment",
         "visual datum alignment",
         "counterholding against lock-nut reaction",
-        "bimanual stabilization while clamping"
+        "alignment preservation during clamping"
       ],
-      "success_conditions": "After release and a 3-second hold, the tooling datum remains within a preregistered measurement tolerance derived from reference hardware of the mold-centerline target; both clamp bolts and the jam nut are restored to hardware-measured service torque windows; and the adjustment has not been used to limit cylinder stroke. Zero score for tightening clamps before alignment, leaving any lock loose, moving a proximity-switch actuator clamp as a shortcut, damaging threads or guide tubes, energizing the fixture, dropping a tool, or teleport/state overwrite. Partial credit may distinguish safe unlock, correct adjustment direction, achieved alignment before locking, and retained alignment after locking.",
-      "industrial_value": "The manufacturer defines this operation specifically as alignment of end-of-arm tooling to a mold centerline and warns that using the proximity-switch actuator clamp instead can damage robot components. It is therefore a robot setup operation whose quality directly affects the tooling-to-process interface.",
-      "dexterity": "High but rigid-body feasible. The robot must sequence a jam nut, paired clamp bolts, and a screw-driven alignment, then manage tightening reaction without losing the calibrated position. That tests preservation of an adjusted state under later fastening forces rather than generic nut tightening.",
+      "success_conditions": "After tool release and a 3-second hold, the tooling datum remains within a hardware-derived centerline tolerance and every fastener is within its measured service window. Zero score for unsafe energization, shortcut motion of unrelated clamps, incorrect order, loose locks, stripped threads, guide damage, dropped tools, or state overwrite. Partial credit distinguishes safe unlocking, correct adjustment, pre-lock alignment, and retained post-lock alignment.",
+      "industrial_value": "The manufacturer’s maintenance procedure explicitly uses the adjustment to place end-of-arm tooling at the mold centerline, making it a robot setup operation affecting the tooling-to-process interface.",
+      "dexterity": "High: the robot must coordinate three locking elements with fine screw adjustment and resist tightening reactions that can disturb the calibrated state.",
       "evidence": [
-        {
-          "source_id": "s-74c3dbd7c10379f7",
-          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 24, section 4.1.1 “Vertical Position Adjustment,” step 1",
-          "quote_sha256": "3038065bdae550d3a0e8be58f35095863a0a7fbaccc29e5f65566529f8e7e111"
-        },
         {
           "source_id": "s-74c3dbd7c10379f7",
           "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 24, section 4.1.1, step 2",
           "quote_sha256": "a68db5225510c3a8eed4bbcea396b98f3808e20ceaf6613c438727d42d2572dd"
-        },
-        {
-          "source_id": "s-74c3dbd7c10379f7",
-          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 24, section 4.1.1, step 3",
-          "quote_sha256": "226179f26c79fd171f28e69f1c3251721b435f37ba0de7005368b9992a1e2a50"
-        },
-        {
-          "source_id": "s-74c3dbd7c10379f7",
-          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 24, section 4.1.1, note",
-          "quote_sha256": "c1e3f6a3a603418a70576b42b5f6a01bbfa925c974bdc453e0527eb03ecefa62"
         }
       ],
-      "asset_plan": "Create a full-scale rigid test fixture only after measuring a matching AZ-100 adjustment assembly or obtaining its applicable drawing: screw pitches, lock-nut and clamp-bolt sizes, clamp compliance, travel, tool access, and fastening torques are absent from the acquired text. Use revolute/prismatic PhysX joints and frictional threaded-drive equivalents whose displacement follows actual screw rotation; never map gripper pose directly to alignment state. Validate unlock dependence, screw direction and pitch, clamp retention, jam-nut reaction, wrong-order controls, overload damage thresholds, and repeated resets before connecting YAM.",
-      "risk": "Promising but not selected because the currently acquired manual lacks fastener dimensions, screw pitch, torque specifications for these adjustment fasteners, allowable centerline error, and accessible fixture geometry. Those are mandatory reference-hardware measurements, not values to invent. The operation is semantically different from benchmark knob turning or generic fastening, but full accepted/pending/open/team comparison is still incomplete."
+      "asset_plan": "Obtain reference-hardware measurements for screw pitch, travel, clamp geometry, tool access, fastener sizes, and service torques. Model the screw and arm with rigid revolute/prismatic constraints so displacement results from physical screw rotation. Validate unlock dependence, direction, pitch, clamp retention, jam-nut reaction, overload behavior, and repeatable reset before YAM integration.",
+      "risk": "The procedure is established, but the acquired manual does not provide the dimensions, pitch, torque limits, or permissible centerline error needed for defensible physics and scoring.",
+      "feasibility_status": "research-needed",
+      "missing_evidence": [
+        "Adjusting-screw pitch and usable travel",
+        "Fastener sizes and service torque windows",
+        "Clamp and guide geometry",
+        "Permissible tooling-to-centerline error"
+      ]
     },
     {
       "id": "az100-proximity-switch-registration",
-      "title": "Register and secure an AZ-100 proximity switch beneath its actuator",
-      "objective": "With the robot de-energized and its cylinder first retracted, loosen the proximity-switch mount screws, slide the switch beneath the actuator until the indicator changes state while maintaining at most 6 mm sensing clearance and actuator overtravel past switch centerline, then tighten the mount screws without losing registration; repeat for the extended endpoint.",
+      "title": "Register and secure a robot proximity switch beneath its actuator",
+      "objective": "Using an independently authored full-scale fixture grounded in the AZ-100 procedure, retract the rigid cylinder, partially loosen the switch-mount screws, slide the proximity switch beneath its actuator until it registers, tighten it without losing registration, and repeat at the extended endpoint.",
       "skills": [
         "confined screwdriver alignment",
         "controlled partial screw loosening",
         "bimanual slide-and-hold coordination",
-        "fine sensor-to-actuator registration",
-        "maintaining clearance during fastening",
+        "sensor-to-actuator registration",
+        "clearance control during fastening",
         "two-endpoint procedural memory"
       ],
-      "success_conditions": "For both retracted and extended endpoints, robot-applied motions alone place the actuator past the switch centerline, leave the sensing surface no more than 6 mm away, produce the modeled indicator transition only from physical proximity, and retain the switch pose for 3 seconds after mount-screw tightening and tool release. Zero score for adjusting while powered, failing to retract before the first adjustment, registering only one endpoint, relying on indicator state without geometric clearance, actuator collision, loose or stripped screws, moving the actuator instead of the switch, or teleport/state overwrite. Partial credit may recognize safe initial state, correct screw release, one valid endpoint, and retained registration after tightening.",
-      "industrial_value": "AAC requires this adjustment after any position adjustment, so it is a recurring calibration step in maintenance of an industrial take-out robot. The manual supplies both the physical registration procedure and a quantitative sensing-clearance limit.",
-      "dexterity": "Moderate-to-high and feasible as a rigid PhysX task. It combines partial fastener release, constrained sliding, sensing-state interpretation, sub-centimeter clearance control, holding position against screw-tightening reaction, and repetition at two articulated endpoint configurations.",
+      "success_conditions": "At both retracted and extended endpoints, robot-applied motions alone place the actuator past the switch centerline, maintain a sensing gap of at most 6 mm, trigger the indicator solely through physical relative pose, and leave the switch secured for 3 seconds after release. Zero score for powered adjustment, skipping initial retraction, moving the actuator mount as a shortcut, registering only one endpoint, actuator collision, loose or stripped screws, dropped tools, scripted sensor success, teleportation, or state overwrite. Partial credit is awarded for safe initialization, correct screw release, one geometrically valid endpoint, and registration retained after tightening.",
+      "industrial_value": "The AZ-100 maintenance manual requires proximity-switch adjustment after position changes and specifies registration at both cylinder endpoints. The task therefore represents recurring calibration of an industrial robot’s motion-limit sensing rather than generic switch operation.",
+      "dexterity": "Moderate-to-high: it combines partial fastener release, constrained sliding, feedback-guided registration, sub-centimeter clearance control, holding against tightening reaction, and repetition across two articulated states.",
       "evidence": [
         {
           "source_id": "s-74c3dbd7c10379f7",
-          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 30, section 4.2.1 “Proximity Switch Adjustment”",
-          "quote_sha256": "c3257e7237d9607fa4e7cf254ff96e4850c40af9e858b14b7d43d2f121bf69e6"
-        },
-        {
-          "source_id": "s-74c3dbd7c10379f7",
           "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 30, section 4.2.1, step 3",
-          "quote_sha256": "4a62029ecaee2e8bf4f98310a88fcf71410aa810cf7fba1c06bde09d7eddb575"
-        },
-        {
-          "source_id": "s-74c3dbd7c10379f7",
-          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 30, section 4.2.1, steps 4 and continuation",
-          "quote_sha256": "5f156d89807fbba99c8fcb2170e0c01e411aed3d5eeef8d674816d4c79fc82e4"
+          "quote_sha256": "39fa141a0b6584441b42fdd3576658c1ebf0f2d99bf25672d8124ba201ec274a"
         },
         {
           "source_id": "s-74c3dbd7c10379f7",
           "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 30, section 4.2.1, note",
-          "quote_sha256": "dda98ef6eb9c82b1c51015d0656e14c7eae0258b8ac02dc0e0a23b49eb47066b"
+          "quote_sha256": "40774cb733d30b6fd45713cb4590f9f3be2552bd45a639629bb849d4d73d3a94"
         }
       ],
-      "asset_plan": "Use the official section 4.2.1 arrangement plus measurements from one matching AZ-100 switch, actuator, slot, bracket, and screws. Build the cylinder/actuator and slotted switch mount as rigid articulated bodies at actual scale. Implement indicator state solely as a readout of sensor-actuator distance and relative pose, never as an action-triggered success flag. Before YAM integration, validate screw retention, sliding only when loosened, the 6 mm boundary, over-center criterion, collision rejection, endpoint articulation, tightening drift, reset repeatability, fingertip clearance, and full-scale reach in pinned Isaac Sim 6.1.0/YAM commit 0059d02a1a91bc6834c1d0846022891df0c78730.",
-      "risk": "Lowest implementation risk of the three, but still conditional on acquiring matching component geometry, fastener dimensions, and a safe full-scale fixture. The sourced benchmark catalogs contain switch flipping, knob turning, sliders, insertion, latching, and generic fastening, but no objective combining loosen-slide-sense-hold-retighten calibration at two articulated endpoints was found. Cached submission records searched by objective/skill terms revealed no confirmed same task, but that is not proof of complete novelty; synchronized accepted/pending/open/team review is required before construction and again after completion."
+      "asset_plan": "Build a clearly labeled representative, not exact-product, rigid fixture with a slotted switch bracket, retained mount screws, rigid actuator, and two cylinder endpoints matching the documented arrangement. Use the documented 6 mm boundary and over-center requirement. Choose and record testable modeling assumptions for screw size, slot length, tightening window, cylinder stroke, and sensor hysteresis; calibrate them on the fixture before scoring. Implement the indicator only as a function of actuator-to-sensor geometry. First validate screw retention, sliding only while loosened, the 6 mm boundary, over-center registration, collision rejection, tightening drift, reset repeatability, fingertip clearance, and YAM reach in Isaac Sim 6.1.0 at YAM commit 0059d02a1a91bc6834c1d0846022891df0c78730.",
+      "risk": "The fixture will not claim to reproduce exact proprietary AZ-100 dimensions. Remaining unspecified dimensions are nonessential, explicitly testable fixture parameters; the sourced retention mechanism—screws clamping a sliding switch mount—and sensing relationship are sufficient. A synchronized novelty review must still be repeated before submission because cached records are not authoritative live state.",
+      "feasibility_status": "ready",
+      "missing_evidence": []
     }
   ],
   "selected_id": "az100-proximity-switch-registration",
-  "selection_reason": "This is the only candidate presently supported by a manufacturer procedure, an explicit quantitative geometric criterion, rigid-body physics, and a compact full-scale fixture plausibly reachable by YAM. It tests calibration under fastening reaction rather than a cosmetic variant of switching, sliding, or screw tightening. ER32 preassembly remains blocked by missing eccentric-lip geometry and potentially essential elastic collet deformation; the AZ-100 centerline adjustment is valuable but lacks the dimensions, torque limits, and allowable alignment error needed for a defensible scorer. Selection is conditional rather than a success assertion: reference-component measurement, complete novelty synchronization, rigid environment diagnostics, and YAM reach/force tests must pass before full demo development."
+  "selection_reason": "This is the only ready candidate: the official procedure establishes the slide-under-actuator mechanism, two-endpoint workflow, and quantitative 6 mm sensing constraint, while a representative rigid fixture can preserve those essential mechanics without claiming an exact product replica. It offers meaningful calibration, alignment, fastening, force-control, and bimanual demands within the pinned YAM runtime. The ER32 task depends on unverified compliant retention geometry, and the centerline-adjustment task lacks essential pitch, torque, and tolerance data."
 }
