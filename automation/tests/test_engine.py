@@ -308,6 +308,38 @@ def test_novelty_fallback_never_promotes_a_candidate_with_missing_physics_eviden
     assert history["skipped"][0]["candidate"] == "blocked"
 
 
+def test_novelty_critic_receives_archival_scope_and_current_stage_boundaries(tmp_path):
+    from rcauto.engine import Production
+
+    store = Store(tmp_path / "state")
+    run = store.create("industrial task", instance="test")
+    production = Production(store, run["id"], None, {})
+    candidate = {"id": "candidate", "feasibility_status": "ready", "missing_evidence": []}
+    write_json(production.artifact("selected"), candidate)
+    write_json(production.artifact("candidates"), {"candidates": [candidate]})
+    write_json(production.workspace / "input/catalog.json", {
+        "complete": True, "digest": "catalog", "records": [{"id": "unrelated"}],
+    })
+
+    class Reviewer:
+        def run(self, *args, **kwargs):
+            return {"comparisons": [{
+                "id": "unrelated", "objective": "Different", "physical_skill": "Different",
+                "success_condition": "Different", "verdict": "distinct", "reason": "Different",
+            }]}
+
+    def critic(role, instruction):
+        if "inactive_uncertainty" not in instruction or "next contract stage" not in instruction:
+            raise GateError("archival ambiguity or absent downstream implementation blocks ideation")
+        assert "known overlaps still block" in instruction
+        assert "original suite definitions" in instruction
+        return {"verdict": "pass"}
+
+    production.agent = Reviewer()
+    production.review = critic
+    assert production.novelty()["compared"] == 1
+
+
 def test_approval_is_bound_to_report_and_payload(tmp_path):
     s = Store(tmp_path / "state")
     r = s.create("task", instance="vm")

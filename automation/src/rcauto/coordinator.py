@@ -11,8 +11,10 @@ from pathlib import Path
 import httpx
 
 from .agents import Agent
+from .benchmarks import sync_benchmarks
 from .board import collect_board, merge_board_catalog, recover_own_history
 from .catalog import GitHub, get_source
+from .contracts import NOVELTY_SCOPE
 from .engine import Production, compare_catalog, read
 from .gates import GateError, evaluation_identity, manifest, validate_media, verify_manifest
 from .publish import Publisher, public_evidence
@@ -72,6 +74,8 @@ class Coordinator:
     def fresh_novelty(self, rid):
         root = self.store.run_dir(rid)
         catalog = self.sync()
+        sync_benchmarks(root / "workspace", self.store.root / "benchmark-corpus-cache",
+                        self.config.get("benchmarks", []))
         folders = list((root / "release" / "tasks").iterdir())
         final_spec = read(folders[0] / "task.json")
         candidate = {
@@ -87,7 +91,8 @@ class Coordinator:
             "Read artifacts/novelty.json and input/benchmark-sources.json. Verify final objective, "
             "physical skills and scoring against the latest PR catalog and all required benchmark "
             "originals. Recheck original URLs if changed/stale. Block overlaps, superficial variants "
-            "or missing coverage. This is a CPU-only final check, not permission to run simulation.",
+            "or missing coverage. This is a CPU-only final check, not permission to run simulation."
+            + NOVELTY_SCOPE,
         )
         return result
 
@@ -115,6 +120,8 @@ class Coordinator:
             "repos/robocurve/benchmark-tasks/contents/AGENTS.md"
         )
         (workspace / "input/repository-AGENTS.md").write_bytes(base64.b64decode(rules["content"]))
+        sync_benchmarks(workspace, self.store.root / "benchmark-corpus-cache",
+                        self.config.get("benchmarks", []))
 
     def download_run(self, rid, remote_run):
         import tempfile

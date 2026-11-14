@@ -53,6 +53,19 @@ NOVELTY = obj(
         )
     )
 )
+NOVELTY_SCOPE = """
+Respect the catalog scope encoded in artifacts/novelty.json.inactive_uncertainty.
+Verify those exemptions against input/catalog.json: only uncertain, closed AND unmerged,
+explicitly other-team, non-board-required historical records are nonblocking references.
+Retain their uncertainty; never call them proven distinct. All known overlaps still block,
+including historical ones. Uncertainty for accepted/merged, pending/open, board-required,
+our-team history, unknown-scope records or required benchmark definitions still blocks.
+A complete comparison count alone never establishes novelty. Verify the original suite
+definitions and meaningfully different objectives, physical abilities and success conditions.
+input/benchmark-sources.json indexes each suite's definition_manifest: read its selectors,
+registry/source-file inventory and pinned original files. Verify selector/registry coverage;
+inventories are navigation aids. Overview pages and directory listings alone are insufficient.
+"""
 CHECK = obj(
     name=S, operator={"type": "string", "enum": ["<=", ">=", "==", "<", ">"]}, threshold=N, unit=S
 )

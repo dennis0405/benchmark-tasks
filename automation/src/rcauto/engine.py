@@ -13,6 +13,7 @@ from pypdf.errors import PdfReadError
 
 from . import contracts as C
 from .agents import clean_environment, command
+from .benchmarks import validate_benchmarks
 from .catalog import get_source
 from .gates import (
     GateError,
@@ -450,12 +451,18 @@ class Production:
             for s in sources.values()
             if s["kind"].startswith("benchmark:")
         }
+        existing_index = self.workspace / "input/benchmark-sources.json"
+        if existing_index.exists():
+            for name, descriptor in read(existing_index).items():
+                if descriptor.get("definition_manifest"):
+                    benchmarks[name] = descriptor
         write_json(self.workspace / "input" / "benchmark-sources.json", benchmarks)
         write_json(self.artifact("research"), {"sources": list(sources), "failures": failures})
         if len(sources) < 2:
             raise GateError("industrial originals could not be acquired")
         if set(self.config.get("benchmarks", [])) - set(benchmarks):
             raise GateError("required existing benchmark originals missing")
+        validate_benchmarks(self.workspace, self.config.get("benchmarks", []))
         return {"sources": list(sources)}
 
     def candidates(self):
@@ -490,6 +497,7 @@ class Production:
         return {"selected": selected[0]["id"]}
 
     def novelty(self):
+        validate_benchmarks(self.workspace, self.config.get("benchmarks", []))
         selected = read(self.artifact("selected"))
         pool = read(self.artifact("candidates"))["candidates"]
         pool = [selected] + [c for c in pool if c["id"] != selected["id"]]
@@ -518,8 +526,14 @@ class Production:
                     "input/catalog.json and input/benchmark-sources.json. Challenge superficial distinctions "
                     "and compare against LIBERO, RoboCasa, SimplerEnv, BEHAVIOR, DataCenterBench and RoboDojo "
                     "using original suite definitions. Search original task definitions as needed. "
-                    "If coverage or a potentially similar objective is unknown, block. Record source URLs "
-                    "and specific task names in findings even when passing.",
+                    "If required coverage or a potentially similar required objective is unknown, block. "
+                    "Record source URLs and specific task names in findings even when passing. "
+                    "This is the ideation novelty gate: the objective, essential mechanism and tested "
+                    "ability must already be clear and sourced. Numeric thresholds and modeling "
+                    "assumptions are frozen in the next contract stage; do not demand completed "
+                    "environment code, measured physics, demos, scorer or Dream evidence here. "
+                    "Their later mandatory gates remain unchanged and no downstream success is claimed."
+                    + C.NOVELTY_SCOPE,
                 )
                 write_json(
                     self.artifact("selection-history"),

@@ -65,3 +65,29 @@ still return overlap/uncertain. All coverage, objective/skill/outcome criteria a
 novelty gates remain mandatory. Regression coverage confirms notes cannot force a pass
 and unrelated exact comparisons remain reusable. This is review infrastructure, not
 evidence any proposed task passed novelty or physical validation.
+
+## Original benchmark definitions and stage-aware review
+
+The first full catalog sweep completed2,210 comparisons but the novelty critic correctly
+found that several benchmark references were only overviews/registration modules. Those
+pages do not establish coverage of actual task definitions. `rcauto.benchmarks` now collects
+commit-pinned original definition files, validates Git blob bytes, rejects truncated trees,
+missing selector groups and changed/missing local sources, and retains a per-suite manifest
+with the exact selectors and registry/navigation inventory. The review must still verify
+that those selectors cover the registered benchmark; an inventory is not a semantic verdict.
+
+The live source acquisition verified1,759 files/pages: LIBERO135, RoboCasa381, SimplerEnv11
+(including the implementation submodule pinned by its parent), BEHAVIOR1,121 (current1K
+plus original100 definitions), DataCenterBench1 published task page and RoboDojo110. These
+are source-file counts, not unique task counts or simulator results. Originals remain
+private references; public evidence records versions and coverage metadata. Collection
+runs locally before GPU startup and refreshes again for final novelty review. Missing
+originals now fail before an expensive catalog sweep.
+
+The critic is explicitly given the same archival uncertainty rules as the catalog gate:
+closed/unmerged, explicitly other-team, non-board-required unknown history is retained as
+unknown; all known overlaps and all required-scope uncertainty continue to block. At
+ideation, numeric assumptions are formalized at the following contract stage. Physics,
+demo, scorer and evaluation evidence are required by their later gates, not presumed to
+exist before a candidate can be selected. This change does not assert that the damper task
+has passed novelty, physics, YAM demos or Dream.
