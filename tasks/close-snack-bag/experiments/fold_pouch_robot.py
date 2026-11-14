@@ -545,7 +545,7 @@ def main():
                   controller_diagnostics=({k:controller.marks[k] for k in (
                       "press_plans","press_ik_plans","press_diagnostics","crease_passes","fold_drag_m","clip_grasp_transform",
                       "left_clear_kinematic_plan","left_cleared_for_clip","last_move_error","blade_insertion_servo",
-                      "pinch_lift_reference","pinch_lift_failure_measurement","pinch_lift_target_delta_m","pinch_lift_pitch_deg","pinch_lift_hold_reference_local")
+                      "pinch_lift_reference","pinch_lift_failure_measurement","pinch_lift_target_delta_m","pinch_lift_pitch_deg","pinch_lift_hold_reference_local","pinch_lift_target_reached")
                       if k in controller.marks} if controller else {}),
                   contact_capacity=capacity.report() if capacity else None,
                   contents_damage=fracture.report() if fracture else None,

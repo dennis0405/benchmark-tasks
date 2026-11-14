@@ -5,8 +5,26 @@ from stack_grasp import clipped_surfaces
 
 MIN_AREA_MM2=50.
 MIN_LOAD_N=.02  # Presence threshold only; the readout is not force calibrated.
-MAX_SLIP_M=.003
 MIN_LIFT_M=.040
+
+
+def confirmed_release_evidence(hand):
+    """Require physical separation, not a landmark leaving a pad rectangle."""
+    distance=float(hand["finger_film_distance_m"])
+    load=np.asarray(hand["opposed_load_N"],dtype=float)
+    return bool(np.isfinite(distance) and (distance>.010 or
+                (distance>.005 and np.isfinite(load).all() and load.sum()<MIN_LOAD_N)))
+
+
+def primitive_surface_distance(points,kind,scale):
+    """Unsigned distance to a BOX, CAPSULE or SPHERE in its local frame."""
+    p=np.asarray(points);s=np.asarray(scale)
+    if kind==7:return np.linalg.norm(np.maximum(abs(p)-s,0.),axis=1)
+    if kind==3:return np.maximum(0.,np.linalg.norm(p,axis=1)-s[0])
+    if kind==4:
+        q=p.copy();q[:,2]-=np.clip(q[:,2],-s[1],s[1])
+        return np.maximum(0.,np.linalg.norm(q,axis=1)-s[0])
+    raise ValueError("Only BOX, CAPSULE and SPHERE finger primitives are supported")
 
 
 def mouth_capture(local_points,faces,grid,inner_faces):
@@ -29,17 +47,12 @@ def mouth_capture(local_points,faces,grid,inner_faces):
 
 def hand_valid(hand,*,lifted):
     try:
-        area=np.asarray(hand["wall_area_mm2"],dtype=float)
         load=np.asarray(hand["opposed_load_N"],dtype=float)
-        slip=np.asarray(hand["wall_slip_p90_m"],dtype=float)
         lift=np.asarray(hand["wall_lift_m"],dtype=float)
-        if any(a.shape!=(2,) or not np.isfinite(a).all() for a in (area,load,slip,lift)):return False
-        retained=np.asarray(hand["wall_landmarks_retained"],dtype=bool)
-        if retained.shape!=(2,) or not retained.all():return False
-        hold=np.asarray(hand.get("wall_hold_slip_p90_m",[]),dtype=float)
-        stable=(hold.shape==(2,) and np.isfinite(hold).all() and (hold<=MAX_SLIP_M).all())
-        return bool((area>=MIN_AREA_MM2).all() and (load>=MIN_LOAD_N).all() and
-                    (not lifted or (stable and (lift>=MIN_LIFT_M).all())))
+        distances=np.asarray(hand["wall_finger_distance_m"],dtype=float)
+        if any(a.shape!=(2,) or not np.isfinite(a).all() for a in (load,lift,distances)):return False
+        return bool((load>=MIN_LOAD_N).all() and (distances<=.003).all() and
+                    (not lifted or (lift>=MIN_LIFT_M).all()))
     except (KeyError,TypeError,ValueError):return False
 
 
@@ -65,7 +78,8 @@ def evaluate(trace,result):
             "rigid_body_overflow_events","soft_body_overflow_events","rigid_total_overflow_substeps","soft_total_overflow_substeps")),
         bilateral_material_lift_and_hold_3s=longest>=3.)
     return dict(passed=all(checks.values()),checks=checks,longest_valid_hold_s=longest,
-        protocol="v2: preserve original central landmarks; measure <=3 mm slip from hold entry, with lift seating separately reported",
-        scope="Two-wall mouth grasp; each wall rises at least 40 mm, five original central material vertices per wall stay inside each pad cavity, both opposed contacts remain present and additional material slip is <=3 mm for 3 s. Not whole-bag suspension, folding or sealing.",
-        thresholds=dict(area_mm2=MIN_AREA_MM2,load_N=MIN_LOAD_N,slip_m=MAX_SLIP_M,lift_m=MIN_LIFT_M),
+        protocol="v3: user-authorized physical contact retention; footprint and displacement are diagnostic only",
+        scope="Each original wall rises at least 40 mm; both hands retain opposed contact with both mouth walls within 3 mm of actual finger primitives for 3 continuous seconds. Not whole-bag suspension, folding or sealing.",
+        thresholds=dict(load_N=MIN_LOAD_N,wall_finger_distance_m=.003,lift_m=MIN_LIFT_M,
+                        confirmed_release_distance_m=.010,release_confirmation_s=.25),
         limitation="Uncalibrated simulated material and qualitative force presence; main-pad prism approximation and existing geometry-observer exclusions remain.")

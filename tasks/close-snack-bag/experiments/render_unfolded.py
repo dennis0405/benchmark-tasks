@@ -205,9 +205,16 @@ def main():
                     marks="UNMEASURED" if retained is None else ("IN" if all(retained) else "OUT")
                     hold=hand.get("wall_hold_slip_p90_m",[])
                     creep=f"{max(hold)*1000:.1f} mm" if len(hold) else "--"
-                    text=f"{arm.upper()}: film rise {lift[0]*1000:.1f}/{lift[1]*1000:.1f} mm | original points {marks} | hold drift {creep} | total shift {max(slip)*1000:.1f} mm | contacts {contact}"
+                    gap=hand.get("wall_finger_distance_m")
+                    if gap is not None:
+                        text=f"{arm.upper()}: film rise {lift[0]*1000:.1f}/{lift[1]*1000:.1f} mm | finger gap {max(gap)*1000:.2f} mm | pad-edge {marks} (diag) | drift {creep} | contacts {contact}"
+                    else:
+                        text=f"{arm.upper()}: film rise {lift[0]*1000:.1f}/{lift[1]*1000:.1f} mm | original points {marks} | hold drift {creep} | total shift {max(slip)*1000:.1f} mm | contacts {contact}"
                 cv2.putText(canvas,text,(20,651+number*25),cv2.FONT_HERSHEY_SIMPLEX,.52,(30,40,50),1,cv2.LINE_AA)
-            cv2.putText(canvas,"NO FOLD / NO CLIP | mouth lift only; whole-bag suspension is a separate check",(20,703),
+            legend=("NO FOLD / NO CLIP | contact + raised film judge retention; edge flags diagnostic | mouth lift only"
+                    if measured.get("hands",{}).get("left",{}).get("wall_finger_distance_m") is not None else
+                    "NO FOLD / NO CLIP | mouth lift only; whole-bag suspension is a separate check")
+            cv2.putText(canvas,legend,(20,703),
                         cv2.FONT_HERSHEY_SIMPLEX,.52,(30,40,50),1,cv2.LINE_AA)
         writer.append_data(canvas)
         if args.stride>=30 or step in (0, 60, 300, 600, 900) or key == keys[-1]:
