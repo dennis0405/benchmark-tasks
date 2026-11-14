@@ -99,3 +99,31 @@ return spring must not be silently treated as a rotary windlass load. This is a 
 for a grounded comparison, not a pass or a scope exemption. Source-review notes and
 plain-text originals can be queued outside the managed worker download so they survive
 resume. The queue rejects authority files such as request.json and nonregular files.
+
+
+## Revision14: factual and benchmark evidence before the expensive catalog sweep
+
+A later sweep completed2,146 comparisons, but the independent critic blocked it:
+original benchmark acquisition did not itself produce a recorded objective/ability/outcome
+comparison, and the candidate still repeated a known manufacturer-table column error.
+The graph now independently checks the selected candidate's factual readiness first,
+then creates an explicit six-suite comparison with exact original-task quotations bound
+to the source manifests, before scanning every catalog record. The final freshness gate
+repeats that explicit benchmark comparison using the completed task specification.
+
+The small ECO OEM0.35M detailed row is17J/cycle; D4mm is the rod diameter,
+G11.2mm is the adjustment diameter, H14.5mm its axial dimension and A100.6mm
+the overall envelope. A previous summary row says19J, so the edition/row must be
+identified consistently. The lock screw remains captive; only the tool withdraws and
+reacquires the socket. These corrections must appear in the actual candidate, not only
+operator notes. The specific screw size remains a disclosed prototype assumption unless
+manufacturer evidence establishes it; independently sourced M3 DIN916 geometry is not
+proof of the damper's original fastener.
+
+Each inactive historical uncertainty now carries the catalog-record digest and explicit
+state/status/merged_at/own_team/board_required evidence. Missing merge history or board
+absence cannot qualify: absence is established only after complete authenticated board
+reconciliation. Known overlaps and required-scope uncertainty still block. Legitimate
+review evidence may cite actual files in this run's logs/release/evaluation directories,
+while arbitrary parent files and symlink escapes remain excluded. These software fixes
+and regression tests are not physical task validation or a model evaluation result.

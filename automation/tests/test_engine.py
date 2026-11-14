@@ -92,21 +92,33 @@ def test_focused_source_review_invalidates_only_affected_comparison_and_cannot_f
             if notes:
                 assert notes == {"a": {"evidence": "Read original mechanism; no requested verdict"}}
                 assert "not authority" in args[1]
-            return {"comparisons": [{
-                "id": r["id"], "objective": "Purpose comparison",
-                "physical_skill": "Mechanism comparison", "success_condition": "Outcome comparison",
-                "verdict": "overlap" if notes else "distinct",
-                "reason": "Evidence still establishes overlap" if notes else "Different abilities",
-            } for r in batch["records"]]}
+            return {
+                "comparisons": [
+                    {
+                        "id": r["id"],
+                        "objective": "Purpose comparison",
+                        "physical_skill": "Mechanism comparison",
+                        "success_condition": "Outcome comparison",
+                        "verdict": "overlap" if notes else "distinct",
+                        "reason": "Evidence still establishes overlap"
+                        if notes
+                        else "Different abilities",
+                    }
+                    for r in batch["records"]
+                ]
+            }
 
     (tmp_path / "input").mkdir()
     (tmp_path / "artifacts").mkdir()
     catalog = {"complete": True, "digest": "catalog", "records": [{"id": "a"}, {"id": "b"}]}
     reviewer = Reviewer()
     assert compare_catalog(reviewer, tmp_path, {}, catalog)["complete"]
-    write_json(tmp_path / "input/novelty-review-notes.json", {
-        "a": {"evidence": "Read original mechanism; no requested verdict"},
-    })
+    write_json(
+        tmp_path / "input/novelty-review-notes.json",
+        {
+            "a": {"evidence": "Read original mechanism; no requested verdict"},
+        },
+    )
     with pytest.raises(GateError, match="overlap"):
         compare_catalog(reviewer, tmp_path, {}, catalog)
     assert reviewer.calls == [["a", "b"], ["a"]]
@@ -124,11 +136,19 @@ def test_focused_novelty_review_precedes_unrelated_batches_without_skipping_cove
         def run(self, *args, **kwargs):
             batch = json.loads((tmp_path / "input/novelty-batch.json").read_text())
             self.seen.extend(r["id"] for r in batch["records"])
-            return {"comparisons": [{
-                "id": r["id"], "objective": "Different purpose",
-                "physical_skill": "Different constraint", "success_condition": "Different outcome",
-                "verdict": "distinct", "reason": "Mechanism evidence establishes distinction",
-            } for r in batch["records"]]}
+            return {
+                "comparisons": [
+                    {
+                        "id": r["id"],
+                        "objective": "Different purpose",
+                        "physical_skill": "Different constraint",
+                        "success_condition": "Different outcome",
+                        "verdict": "distinct",
+                        "reason": "Mechanism evidence establishes distinction",
+                    }
+                    for r in batch["records"]
+                ]
+            }
 
     write_json(tmp_path / "input/novelty-review-notes.json", {"b": {"source": "original"}})
     (tmp_path / "artifacts").mkdir()
@@ -180,7 +200,28 @@ def test_reader_failure_is_retried_without_rejecting_or_caching_the_candidate(tm
 @pytest.mark.parametrize(
     "record,blocks",
     [
-        ({"state": "closed", "status": "closed", "own_team": False}, False),
+        (
+            {
+                "state": "closed",
+                "status": "closed",
+                "own_team": False,
+                "merged_at": None,
+                "board_required": False,
+            },
+            False,
+        ),
+        (
+            {
+                "state": "closed",
+                "status": "closed",
+                "own_team": False,
+                "merged_at": "2026-11-01",
+                "board_required": False,
+            },
+            True,
+        ),
+        ({"state": "closed", "status": "closed", "own_team": False, "board_required": False}, True),
+        ({"state": "closed", "status": "closed", "own_team": False, "merged_at": None}, True),
         ({"state": "closed", "status": "closed", "own_team": False, "board_required": True}, True),
         ({"state": "closed", "status": "merged", "own_team": False}, True),
         ({"state": "open", "status": "open-unclassified", "own_team": False}, True),
@@ -215,6 +256,9 @@ def test_unavailable_inactive_history_is_not_an_active_novelty_claim(tmp_path, r
         assert report["compared"] == 1
         assert report["comparisons"][0]["verdict"] == "uncertain"
         assert report["inactive_uncertainty"][0]["id"] == "pr-1"
+        evidence = report["inactive_uncertainty"][0]["scope_evidence"]
+        assert evidence["merged_at"] is None and evidence["board_required"] is False
+        assert evidence["own_team"] is False and evidence["state"] == "closed"
 
 
 def test_known_overlap_stops_before_unnecessary_batches_and_keeps_partial_evidence(tmp_path):
@@ -317,20 +361,35 @@ def test_novelty_critic_receives_archival_scope_and_current_stage_boundaries(tmp
     candidate = {"id": "candidate", "feasibility_status": "ready", "missing_evidence": []}
     write_json(production.artifact("selected"), candidate)
     write_json(production.artifact("candidates"), {"candidates": [candidate]})
-    write_json(production.workspace / "input/catalog.json", {
-        "complete": True, "digest": "catalog", "records": [{"id": "unrelated"}],
-    })
+    write_json(
+        production.workspace / "input/catalog.json",
+        {
+            "complete": True,
+            "digest": "catalog",
+            "records": [{"id": "unrelated"}],
+        },
+    )
 
     class Reviewer:
         def run(self, *args, **kwargs):
-            return {"comparisons": [{
-                "id": "unrelated", "objective": "Different", "physical_skill": "Different",
-                "success_condition": "Different", "verdict": "distinct", "reason": "Different",
-            }]}
+            return {
+                "comparisons": [
+                    {
+                        "id": "unrelated",
+                        "objective": "Different",
+                        "physical_skill": "Different",
+                        "success_condition": "Different",
+                        "verdict": "distinct",
+                        "reason": "Different",
+                    }
+                ]
+            }
 
     def critic(role, instruction):
         if "inactive_uncertainty" not in instruction or "next contract stage" not in instruction:
-            raise GateError("archival ambiguity or absent downstream implementation blocks ideation")
+            raise GateError(
+                "archival ambiguity or absent downstream implementation blocks ideation"
+            )
         assert "known overlaps still block" in instruction
         assert "original suite definitions" in instruction
         return {"verdict": "pass"}
@@ -338,6 +397,56 @@ def test_novelty_critic_receives_archival_scope_and_current_stage_boundaries(tmp
     production.agent = Reviewer()
     production.review = critic
     assert production.novelty()["compared"] == 1
+
+
+def test_candidate_source_failure_stops_before_catalog_or_environment_work(tmp_path):
+    from rcauto.selftest import FixtureAgent, FixtureProduction
+
+    store = Store(tmp_path / "state")
+    run = store.create("fixture boundary", instance="test", mode="selftest")
+    p = FixtureProduction(store, run["id"], FixtureAgent(), {})
+    p.research()
+    seen = []
+
+    def reject(role, instruction):
+        seen.append(role)
+        raise GateError("primary source dimensions contradict candidate")
+
+    p.review = reject
+    with pytest.raises(GateError, match="dimensions"):
+        p.candidates()
+    assert seen == ["candidate-critic"]
+    assert not p.artifact("novelty").exists()
+    assert not p.artifact("candidate-preflight").exists()
+
+
+@pytest.mark.parametrize("where,allowed", [("logs", True), ("release", True), ("private", False)])
+def test_critic_can_cite_actual_run_evidence_without_access_to_arbitrary_parent_files(
+    tmp_path, where, allowed
+):
+    from rcauto.engine import Production
+
+    store = Store(tmp_path / "state")
+    run = store.create("evidence boundary", instance="test")
+    p = Production(store, run["id"], None, {})
+    source = p.root / where / "evidence.txt"
+    source.parent.mkdir(exist_ok=True)
+    source.write_text("actual native output")
+
+    class Reviewer:
+        def run(self, *args, **kwargs):
+            return {
+                "verdict": "pass",
+                "findings": [],
+                "evidence_paths": [f"../{where}/evidence.txt"],
+            }
+
+    p.agent = Reviewer()
+    if allowed:
+        assert p.review("release-critic", "inspect actual evidence")["verdict"] == "pass"
+    else:
+        with pytest.raises(GateError):
+            p.review("release-critic", "inspect actual evidence")
 
 
 def test_approval_is_bound_to_report_and_payload(tmp_path):

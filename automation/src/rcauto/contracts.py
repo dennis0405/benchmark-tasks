@@ -53,6 +53,32 @@ NOVELTY = obj(
         )
     )
 )
+BENCHMARK_NOVELTY = obj(
+    comparisons=array(
+        obj(
+            suite=S,
+            coverage_method=S,
+            objective=S,
+            physical_skill=S,
+            success_condition=S,
+            evidence_paths=array(S),
+            closest_tasks=array(
+                obj(
+                    name=S,
+                    source_path=S,
+                    quote=S,
+                    objective=S,
+                    physical_skill=S,
+                    success_condition=S,
+                    reason=S,
+                    verdict={"type": "string", "enum": ["distinct", "overlap", "uncertain"]},
+                )
+            ),
+            verdict={"type": "string", "enum": ["distinct", "overlap", "uncertain"]},
+            reason=S,
+        )
+    ),
+)
 NOVELTY_SCOPE = """
 Respect the catalog scope encoded in artifacts/novelty.json.inactive_uncertainty.
 Verify those exemptions against input/catalog.json: only uncertain, closed AND unmerged,

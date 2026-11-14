@@ -37,6 +37,16 @@ class Coordinator:
         from .secrets import credentials
 
         auth = credentials(self.store.root)
+        if snapshot["complete"] and not (
+            auth.get("ROBOCURVE_TEAM") and auth.get("ROBOCURVE_TOKEN")
+        ):
+            snapshot["complete"] = False
+            snapshot["missing"].append(
+                {
+                    "source": "official-board",
+                    "reason": "team authentication required; run rcauto auth board",
+                }
+            )
         if snapshot["complete"] and auth.get("ROBOCURVE_TEAM") and auth.get("ROBOCURVE_TOKEN"):
             try:
 
@@ -75,21 +85,28 @@ class Coordinator:
     def fresh_novelty(self, rid):
         root = self.store.run_dir(rid)
         catalog = self.sync()
-        sync_benchmarks(root / "workspace", self.store.root / "benchmark-corpus-cache",
-                        self.config.get("benchmarks", []))
+        write_json(root / "workspace/input/catalog.json", catalog)
+        sync_benchmarks(
+            root / "workspace",
+            self.store.root / "benchmark-corpus-cache",
+            self.config.get("benchmarks", []),
+        )
         folders = list((root / "release" / "tasks").iterdir())
         final_spec = read(folders[0] / "task.json")
         candidate = {
             "task_spec": final_spec,
             "contract": read(root / "workspace/artifacts/contract.json"),
         }
-        agent = Agent(model=self.config.get("model"), deny_paths=[self.store.root / "private"])
-        result = compare_catalog(agent, root / "workspace", candidate, catalog)
         write_json(root / "workspace/input/final-spec.json", candidate)
-        Production(self.store, rid, agent, self.config).review(
+        agent = Agent(model=self.config.get("model"), deny_paths=[self.store.root / "private"])
+        production = Production(self.store, rid, agent, self.config)
+        production.benchmark_novelty(candidate, stage="final")
+        result = compare_catalog(agent, root / "workspace", candidate, catalog)
+        production.review(
             "final-novelty-critic",
             "Read input/final-spec.json and the actual final task under ../release/tasks/. "
-            "Read artifacts/novelty.json and input/benchmark-sources.json. Verify final objective, "
+            "Read artifacts/novelty.json, artifacts/benchmark-novelty-final.json and "
+            "input/benchmark-sources.json. Verify final objective, "
             "physical skills and scoring against the latest PR catalog and all required benchmark "
             "originals. Recheck original URLs if changed/stale. Block overlaps, superficial variants "
             "or missing coverage. This is a CPU-only final check, not permission to run simulation."
@@ -111,7 +128,8 @@ class Coordinator:
             attachments = list(queue.iterdir())
             for attachment in attachments:
                 if (
-                    not attachment.is_file() or attachment.is_symlink()
+                    not attachment.is_file()
+                    or attachment.is_symlink()
                     or attachment.stat().st_size > 25 * 1024 * 1024
                     or not re.fullmatch(
                         r"novelty-review-notes\.json|pr-\d+-[a-zA-Z0-9._-]+\.txt", attachment.name
@@ -137,8 +155,9 @@ class Coordinator:
             "repos/robocurve/benchmark-tasks/contents/AGENTS.md"
         )
         (workspace / "input/repository-AGENTS.md").write_bytes(base64.b64decode(rules["content"]))
-        sync_benchmarks(workspace, self.store.root / "benchmark-corpus-cache",
-                        self.config.get("benchmarks", []))
+        sync_benchmarks(
+            workspace, self.store.root / "benchmark-corpus-cache", self.config.get("benchmarks", [])
+        )
 
     def download_run(self, rid, remote_run):
         import tempfile

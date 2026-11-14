@@ -187,6 +187,8 @@ class GitHub:
                 else "closed",
                 "own_team": pr["user"]["login"] in own_authors,
                 "head_sha": pr["head"]["sha"],
+                "merged_at": pr.get("merged_at", "unknown"),
+                "board_required": None,  # Unknown until authenticated board reconciliation.
                 "specs": [],
             }
             if active or record["own_team"]:

@@ -140,6 +140,10 @@ def collect_board(team, token, client=None, own_detail=None):
 
 
 def merge_board_catalog(snapshot, board):
+    if board.get("complete") is not True:
+        raise CatalogError("cannot reconcile scope from an incomplete board snapshot")
+    for record in snapshot["records"]:
+        record["board_required"] = False
     # Exact task text only: retrieval is never a semantic novelty verdict.
     normalize = lambda s: " ".join(str(s).lower().split())
     index = {}

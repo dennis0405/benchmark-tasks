@@ -93,13 +93,30 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
 
     def checkpoint():
         inactive = [
-            {"id": row["id"], "reason": "closed unmerged other-team history; uncertainty retained"}
+            {
+                "id": row["id"],
+                "reason": "closed unmerged other-team history; uncertainty retained",
+                "catalog_record_digest": digest(by_id[row["id"]]),
+                "scope_evidence": {
+                    key: by_id[row["id"]].get(key)
+                    for key in (
+                        "state",
+                        "status",
+                        "merged_at",
+                        "own_team",
+                        "board_required",
+                        "url",
+                        "head_sha",
+                    )
+                },
+            }
             for row in comparisons
             if row["verdict"] == "uncertain"
             and by_id[row["id"]].get("state") == "closed"
             and by_id[row["id"]].get("status") == "closed"
             and by_id[row["id"]].get("own_team") is False
-            and not by_id[row["id"]].get("board_required")
+            and by_id[row["id"]].get("merged_at", "unknown") is None
+            and by_id[row["id"]].get("board_required") is False
         ]
         exempt = {row["id"] for row in inactive}
         blockers = [
@@ -208,8 +225,7 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
                     "records": missing,
                     "record_files": record_files,
                     "review_notes": {
-                        r["id"]: review_notes[r["id"]]
-                        for r in missing if r["id"] in review_notes
+                        r["id"]: review_notes[r["id"]] for r in missing if r["id"] in review_notes
                     },
                 },
             )
@@ -228,7 +244,8 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
                     "when meaningful distinction is not established. New industrial names or "
                     "extra difficulty alone cannot overturn an overlap. Cite concrete mechanism "
                     "and ability evidence when resolving a disputed comparison."
-                    if any(r["id"] in review_notes for r in missing) else ""
+                    if any(r["id"] in review_notes for r in missing)
+                    else ""
                 ),
                 workspace,
                 C.NOVELTY,
@@ -353,7 +370,9 @@ class Production:
             name,
             instruction + "\nInspect actual code and evidence files. "
             "Read images with image tools and verify logs; do not infer a pass from "
-            "another role's assertion. Return pass only with no material unresolved issues.",
+            "another role's assertion. Cite actual files relative to the workspace. Permitted "
+            "evidence locations are this workspace and this run's ../logs, ../release and "
+            "../evaluation directories. Return pass only with no material unresolved issues.",
             C.REVIEW,
         )
         write_json(self.artifact(name), result)
@@ -361,10 +380,22 @@ class Production:
             raise GateError(name + ": " + "; ".join(result["findings"]))
         if not result["evidence_paths"]:
             raise GateError("review missing evidence paths")
-        for p in result["evidence_paths"]:
-            if not inside(self.workspace, p).exists():
-                raise GateError("review references nonexistent evidence")
+        for path in result["evidence_paths"]:
+            self.evidence_file(path)
         return result
+
+    def evidence_file(self, path):
+        allowed = [self.workspace.resolve()]
+        for evidence_folder in ("logs", "release", "evaluation"):
+            directory = self.root / evidence_folder
+            if not directory.is_symlink() and directory.resolve().is_relative_to(
+                self.root.resolve()
+            ):
+                allowed.append(directory.resolve())
+        target = (self.workspace / path).resolve()
+        if not target.is_file() or not any(target.is_relative_to(root) for root in allowed):
+            raise GateError("review evidence missing or outside approved run directories")
+        return target
 
     def run(self, from_stage=None):
         completed = self.store.completed(self.rid)
@@ -494,11 +525,103 @@ class Production:
         if selected[0].get("feasibility_status") != "ready" or selected[0].get("missing_evidence"):
             raise GateError("selected candidate lacks build-ready industrial/physics evidence")
         write_json(self.artifact("selected"), selected[0])
+        self.candidate_preflight(selected[0])
         return {"selected": selected[0]["id"]}
+
+    def candidate_preflight(self, candidate):
+        sources = read(self.workspace / "input/sources.json")
+        review = self.review(
+            "candidate-critic",
+            "Read artifacts/candidates.json, artifacts/selected.json, input/sources.json and "
+            "input/operator-source-notes.json if present. Independently verify the selected "
+            "candidate's industrial evidence, actual equipment dimensions, essential mechanism, "
+            "units/ratings, source provenance and feasible pinned-YAM build plan. Inspect primary "
+            "diagrams/tables with image tools, not just flattened PDF text. Known column-reading "
+            "errors must be corrected in the candidate, not deferred as contradictory facts. "
+            "A representative prototype and explicitly disclosed testable modeling assumptions "
+            "are allowed; do not demand proprietary calibration or already completed physics/demos. "
+            "This gate establishes sufficient factual evidence to attempt construction, not measured "
+            "physical success. The full numerical contract follows. Distinguish captive screw "
+            "loosening/bit withdrawal from full screw extraction. Block missing essential mechanics, "
+            "false quotations, unsourced exact-replica claims and unsupported selected readiness.",
+        )
+        write_json(
+            self.artifact("candidate-preflight"),
+            {
+                "candidate_digest": digest(candidate),
+                "source_digest": digest({k: v.get("sha256") for k, v in sources.items()}),
+                "review": review,
+            },
+        )
+        return review
+
+    def benchmark_novelty(self, candidate, stage="selection"):
+        names = self.config.get("benchmarks", [])
+        if not names:
+            return {"comparisons": []}
+        validate_benchmarks(self.workspace, names)
+        index = read(self.workspace / "input/benchmark-sources.json")
+        write_json(self.workspace / "input/benchmark-candidate.json", candidate)
+        result = self.ask(
+            "benchmark-novelty-analyst",
+            "Read input/benchmark-candidate.json (authoritative), input/benchmark-sources.json "
+            "and every suite's definition_manifest. Produce an EXPLICIT comparison for each exact "
+            "required suite: " + json.dumps(names) + ". Verify selector coverage against original "
+            "registries and the complete source-file inventories. Inspect original definitions "
+            "for the closest potentially similar tasks. Record each suite's coverage method, "
+            "objective/physical-ability/success-condition comparison, exact task names, original "
+            "source paths, verbatim supporting excerpts, and a reasoned verdict. Inventories are "
+            "navigation aids, not task-level evidence. Do not substitute industry names, geometry, "
+            "harder parameters or a list of generic primitives for a meaningfully different tested "
+            "ability. Known near-neighbors to investigate include LIBERO turn_on_the_stove, "
+            "RoboCasa stove tasks, SimplerEnv drawer tasks, BEHAVIOR locking tasks, DataCenterBench "
+            "knob/key tasks and RoboDojo fasten_screws; these are search leads, not a requested "
+            "verdict or exhaustive neighbor list. Read complete original files for inspected "
+            "neighbors and quote short exact supporting excerpts. Report uncertain for genuine "
+            "required coverage/ability ambiguity. Do not "
+            "claim any simulator/demo/model success from this source comparison. This is the "
+            + stage
+            + " novelty analysis; retain every required source/novelty quality gate.",
+            C.BENCHMARK_NOVELTY,
+        )
+        rows = result["comparisons"]
+        if len(rows) != len(names) or {r["suite"] for r in rows} != set(names):
+            raise CoverageError("benchmark comparison suite coverage incomplete")
+        for row in rows:
+            corpus = read(self.workspace / index[row["suite"]]["definition_manifest"])
+            originals = {source["local_path"]: source for source in corpus["files"]}
+            if not row["closest_tasks"] or not row["evidence_paths"]:
+                raise CoverageError("benchmark comparison lacks original task evidence")
+            for path in row["evidence_paths"]:
+                self.evidence_file(path)
+            for task in row["closest_tasks"]:
+                if task["source_path"] not in originals:
+                    raise GateError("benchmark comparison must cite an original suite definition")
+                text = inside(self.workspace, task["source_path"]).read_text()
+                if not task["quote"].strip() or task["quote"] not in text:
+                    raise GateError("benchmark comparison original quote absent")
+        report = {
+            **result,
+            "candidate_digest": digest(candidate),
+            "at": now(),
+            "definition_manifests": {name: index[name]["manifest_sha256"] for name in names},
+        }
+        write_json(self.artifact("benchmark-novelty-" + stage), report)
+        if any(
+            row["verdict"] != "distinct"
+            or any(task["verdict"] != "distinct" for task in row["closest_tasks"])
+            for row in rows
+        ):
+            raise GateError("required benchmark overlap/uncertainty; inspect explicit comparison")
+        return report
 
     def novelty(self):
         validate_benchmarks(self.workspace, self.config.get("benchmarks", []))
         selected = read(self.artifact("selected"))
+        if self.config.get("benchmarks"):
+            path = self.artifact("candidate-preflight")
+            if not path.exists() or read(path).get("candidate_digest") != digest(selected):
+                raise GateError("candidate factual preflight missing/stale; resume from candidates")
         pool = read(self.artifact("candidates"))["candidates"]
         pool = [selected] + [c for c in pool if c["id"] != selected["id"]]
         rejected, skipped = [], []
@@ -514,6 +637,11 @@ class Production:
                 continue
             write_json(self.artifact("selected"), candidate)
             try:
+                if self.config.get("benchmarks") and read(self.artifact("candidate-preflight")).get(
+                    "candidate_digest"
+                ) != digest(candidate):
+                    self.candidate_preflight(candidate)
+                self.benchmark_novelty(candidate)
                 result = compare_catalog(
                     self.agent,
                     self.workspace,
@@ -523,6 +651,7 @@ class Production:
                 self.review(
                     "novelty-critic",
                     "Read artifacts/selected.json, artifacts/novelty.json, "
+                    "artifacts/benchmark-novelty-selection.json, "
                     "input/catalog.json and input/benchmark-sources.json. Challenge superficial distinctions "
                     "and compare against LIBERO, RoboCasa, SimplerEnv, BEHAVIOR, DataCenterBench and RoboDojo "
                     "using original suite definitions. Search original task definitions as needed. "
@@ -550,9 +679,7 @@ class Production:
                 "selected": None,
             },
         )
-        raise GateError(
-            "all proposed candidates duplicate/uncertain; inspect selection-history.json"
-        )
+        raise GateError("no candidate passed the ideation gates; inspect selection-history.json")
 
     def contract(self):
         result = self.ask(

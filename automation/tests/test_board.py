@@ -61,6 +61,15 @@ def test_board_auth_failure_never_means_empty_complete_catalog():
         collect_board("team", "secret", client=client)
 
 
+def test_board_absence_is_only_established_by_a_complete_snapshot():
+    snapshot = {"scope": "github", "records": [{"id": "pr-1", "specs": [], "board_required": None}]}
+    with pytest.raises(CatalogError, match="incomplete"):
+        merge_board_catalog(snapshot, {"complete": False, "records": []})
+    assert snapshot["records"][0]["board_required"] is None
+    merge_board_catalog(snapshot, {"complete": True, "records": []})
+    assert snapshot["records"][0]["board_required"] is False
+
+
 def test_exact_board_match_promotes_team_identity_without_losing_distinct_versions():
     from copy import deepcopy
 

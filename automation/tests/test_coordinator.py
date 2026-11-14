@@ -5,6 +5,24 @@ from rcauto.runtime import RuntimeErrorState
 from rcauto.store import Store
 
 
+def test_missing_team_auth_cannot_claim_complete_required_board_coverage(tmp_path, monkeypatch):
+    from rcauto import coordinator, secrets
+    from rcauto.gates import GateError
+
+    class API:
+        def __init__(self, *args):
+            pass
+
+        def sync(self, *args, **kwargs):
+            return {"complete": True, "missing": [], "records": [], "scope": "github"}
+
+    monkeypatch.setattr(coordinator, "GitHub", API)
+    monkeypatch.setattr(secrets, "credentials", lambda *a: {})
+    c = Coordinator(Store(tmp_path / "state"), {"instance": "vm", "instance_id": "id"}, tmp_path)
+    with pytest.raises(GateError, match="catalog incomplete"):
+        c.sync()
+
+
 def test_source_review_queue_survives_replaced_worker_input_without_overwriting_authority(tmp_path):
     import json
 
@@ -24,9 +42,13 @@ def test_source_review_queue_survives_replaced_worker_input_without_overwriting_
         }
     (queue / "request.json").write_text('{"prompt":"different objective"}')
     from rcauto.gates import GateError
+
     with pytest.raises(GateError, match="source-review"):
         c.prepare_input(r["id"], {"complete": True})
-    assert json.loads((root / "workspace/input/request.json").read_text())["prompt"] == "original objective"
+    assert (
+        json.loads((root / "workspace/input/request.json").read_text())["prompt"]
+        == "original objective"
+    )
 
 
 def test_failed_deploy_stops_newly_started_instance_without_a_worker(tmp_path):
