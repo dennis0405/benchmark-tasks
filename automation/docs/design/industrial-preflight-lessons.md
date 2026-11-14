@@ -91,3 +91,11 @@ ideation, numeric assumptions are formalized at the following contract stage. Ph
 demo, scorer and evaluation evidence are required by their later gates, not presumed to
 exist before a candidate can be selected. This change does not assert that the damper task
 has passed novelty, physics, YAM demos or Dream.
+
+A subsequent catalog refresh produced conflicting assessments for the open tourniquet
+windlass PR1026. A source-review request records both judgments and asks whether the
+candidate actually shares the windlass rotational backdrive constraint; an axial piston
+return spring must not be silently treated as a rotary windlass load. This is a request
+for a grounded comparison, not a pass or a scope exemption. Source-review notes and
+plain-text originals can be queued outside the managed worker download so they survive
+resume. The queue rejects authority files such as request.json and nonregular files.

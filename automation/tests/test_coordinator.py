@@ -5,6 +5,30 @@ from rcauto.runtime import RuntimeErrorState
 from rcauto.store import Store
 
 
+def test_source_review_queue_survives_replaced_worker_input_without_overwriting_authority(tmp_path):
+    import json
+
+    s = Store(tmp_path / "state")
+    r = s.create("original objective", instance="vm", mode="selftest")
+    root = s.run_dir(r["id"])
+    queue = root / "pending-source-review"
+    queue.mkdir()
+    (queue / "novelty-review-notes.json").write_text('{"pr-1":{"source":"original"}}')
+    c = Coordinator(s, {"instance": "vm", "instance_id": "id", "runtime": {}}, tmp_path)
+    for _ in range(2):
+        (root / "workspace/input").mkdir(parents=True, exist_ok=True)
+        (root / "workspace/input/novelty-review-notes.json").write_text("{}")
+        c.prepare_input(r["id"], {"complete": True})
+        assert json.loads((root / "workspace/input/novelty-review-notes.json").read_text()) == {
+            "pr-1": {"source": "original"},
+        }
+    (queue / "request.json").write_text('{"prompt":"different objective"}')
+    from rcauto.gates import GateError
+    with pytest.raises(GateError, match="source-review"):
+        c.prepare_input(r["id"], {"complete": True})
+    assert json.loads((root / "workspace/input/request.json").read_text())["prompt"] == "original objective"
+
+
 def test_failed_deploy_stops_newly_started_instance_without_a_worker(tmp_path):
     class FakeBrev:
         stopped = False

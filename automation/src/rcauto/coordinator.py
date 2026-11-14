@@ -3,6 +3,7 @@
 import html
 import json
 import logging
+import re
 import shlex
 import shutil
 import time
@@ -103,6 +104,22 @@ class Coordinator:
         write_json(workspace / "input/request.json", self.store.get(rid))
         write_json(workspace / "input/catalog.json", catalog)
         write_json(workspace / "input/runtime.json", self.config["runtime"])
+        queue = root / "pending-source-review"
+        if queue.exists():
+            if queue.is_symlink():
+                raise GateError("source-review queue may not be a symlink")
+            attachments = list(queue.iterdir())
+            for attachment in attachments:
+                if (
+                    not attachment.is_file() or attachment.is_symlink()
+                    or attachment.stat().st_size > 25 * 1024 * 1024
+                    or not re.fullmatch(
+                        r"novelty-review-notes\.json|pr-\d+-[a-zA-Z0-9._-]+\.txt", attachment.name
+                    )
+                ):
+                    raise GateError("invalid source-review attachment: " + attachment.name)
+            for attachment in attachments:
+                shutil.copy2(attachment, workspace / "input" / attachment.name)
         if self.store.get(rid).get("mode") == "selftest":
             return
         for name in ["review-prompt"]:
