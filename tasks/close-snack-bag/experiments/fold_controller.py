@@ -228,6 +228,10 @@ class FoldController:
                 self.failure=f"no bilateral film contact at {arm} pinch";return
         self.phase="pinch"
         self.marks["pinched"] = self.sim.state.particle_q.numpy()[entity.particles].copy()
+        if self.after_fold=="pinch_lift":
+            from pinch_lift_controller import drive
+            yield from drive(self,hands)
+            return
         if not ready:
             self.phase = "lift_to_board"
             points = {a: self.takes._fold_jaws(self.film, a).copy() for a in hands}

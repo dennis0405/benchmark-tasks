@@ -29,7 +29,7 @@ def main():
     parser.add_argument("--checkpoint-every",type=int,default=120)
     parser.add_argument("--material-profile",choices=("derived","permanent","laminate","paper_matched"),default="derived")
     parser.add_argument("--yield-curvature",type=float,default=100.)
-    parser.add_argument("--stage",choices=("fold","fold_hold","regrasp","seal","clip_grasp","rest"),default="fold")
+    parser.add_argument("--stage",choices=("fold","fold_hold","regrasp","seal","clip_grasp","rest","pinch_lift"),default="fold")
     parser.add_argument("--fold-handoff",choices=("overfold","upright_press"),default="overfold")
     parser.add_argument("--grasp-inset-mm",type=float,default=8.)
     parser.add_argument("--body-anchor",action="store_true")
@@ -83,6 +83,8 @@ def main():
     parser.add_argument("--finger-friction",type=float,default=None)
     parser.add_argument("--override-contact-materials",action="store_true")
     args = parser.parse_args()
+    if args.stage=="pinch_lift" and (not args.drive or args.clip or args.body_anchor or args.clip_component_seed):
+        parser.error("pinch_lift requires --drive, no clip, no body anchor and a fresh reset")
     if not -5.<=args.grasp_inset_mm<=8.:
         parser.error("grasp-inset-mm must be in -5..8")
     if args.override_physics and not args.clip_component_seed:
@@ -214,6 +216,10 @@ def main():
         controller.release_style=args.release_style
         controller.support_hold_enabled=args.support_hold=="admittance"
         controller.press_floor_m=args.press_floor_mm/1000.
+        if args.stage=="pinch_lift":
+            controller.after_fold="pinch_lift"
+            for name in ("pinch_lift_controller.py","pinch_lift_metrics.py"):
+                shutil.copy2(Path(__file__).with_name(name),sources/name)
         if args.stage=="fold_hold":
             controller.after_fold="hold"
         elif args.stage in ("regrasp","seal"):
@@ -411,6 +417,9 @@ def main():
                     save_record()
                     raise RuntimeError("Initial rigid clip/BOX intersection; reject before motion")
         if controller:
+            if args.stage=="pinch_lift":
+                from pinch_lift_controller import observe
+                trace[-1]["pinch_lift"]=observe(controller)
             target_q=sim.control.joint_target_q.numpy()
             trace[-1]["robot_targets"]={a:dict(joints=target_q[sim.arm(a).arm_coords].tolist(),
                 gripper_joint_targets=target_q[sim.scene.embodiment.arms[a].gripper_coords].tolist(),
@@ -527,7 +536,8 @@ def main():
                   controller_completed=controller_completed,
                   controller_diagnostics=({k:controller.marks[k] for k in (
                       "press_plans","press_ik_plans","press_diagnostics","crease_passes","fold_drag_m","clip_grasp_transform",
-                      "left_clear_kinematic_plan","left_cleared_for_clip","last_move_error","blade_insertion_servo")
+                      "left_clear_kinematic_plan","left_cleared_for_clip","last_move_error","blade_insertion_servo",
+                      "pinch_lift_reference","pinch_lift_failure_measurement")
                       if k in controller.marks} if controller else {}),
                   contact_capacity=capacity.report() if capacity else None,
                   contents_damage=fracture.report() if fracture else None,
@@ -535,6 +545,14 @@ def main():
                   substep_geometry=watcher.report() if watcher else None,
                   limitation="Uncalibrated material; contents may be rigid or use predefined brittle seams; air not integrated; ready-start places open hands around the unfolded rim at reset; controller completion is not a physical success assessment")
     (args.output / "result.json").write_text(json.dumps(result, indent=2))
+    if args.stage=="pinch_lift":
+        import hashlib
+        from pinch_lift_metrics import evaluate
+        assessment=evaluate(trace,result)
+        assessment.update(states_sha256=hashlib.sha256((args.output/"states.npz").read_bytes()).hexdigest(),
+            trace_sha256=hashlib.sha256((args.output/"trace.json").read_bytes()).hexdigest())
+        (args.output/"pinch-lift-assessment.json").write_text(json.dumps(assessment,indent=2))
+        print("PINCH_LIFT_ASSESSMENT",assessment,flush=True)
     print("RESULT", result, flush=True)
     if session:
         session.teardown()
