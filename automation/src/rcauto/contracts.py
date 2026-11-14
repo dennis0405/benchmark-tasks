@@ -102,6 +102,7 @@ CONTRACT = obj(
     instruction=S,
     industrial_mapping=S,
     run_steps={"type": "integer"},
+    timing=obj(control_hz=N, physics_hz=N, refinement_physics_hz=N, episode_seconds=N),
     physics_checks=array(CHECK),
     damage_rules=array(S),
     assets=array(S),

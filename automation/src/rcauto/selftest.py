@@ -62,6 +62,12 @@ class FixtureAgent:
                 "instruction": "fixture",
                 "industrial_mapping": "not an industry task",
                 "run_steps": 10,
+                "timing": {
+                    "control_hz": 20,
+                    "physics_hz": 240,
+                    "refinement_physics_hz": 480,
+                    "episode_seconds": 0.5,
+                },
                 "physics_checks": [
                     {"name": f"fixture-{i}", "operator": "==", "threshold": 0, "unit": "fixture"}
                     for i in range(4)

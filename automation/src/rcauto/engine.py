@@ -1,6 +1,7 @@
 """Task production gates. Runtime execution is separate from human approval/publication."""
 
 import json
+import math
 import re
 import shutil
 import subprocess
@@ -48,6 +49,44 @@ def numerical_report(report, requirements):
         if not actual or any(actual.get(k) != v for k, v in expected.items()):
             raise GateError("measurement contract changed/missing: " + expected["name"])
     validate_checks(report)
+
+
+def validate_contract(contract):
+    try:
+        validate(contract, C.CONTRACT)
+    except ValidationError as e:
+        raise GateError("invalid task contract: " + e.message) from e
+    checks = contract["physics_checks"]
+    names = [c["name"].strip().casefold() for c in checks]
+    if len(names) != len(set(names)):
+        raise GateError("duplicate physics check names in contract")
+    if len(checks) < 4 or any(not n for n in names):
+        raise GateError("insufficient or unnamed physics checks")
+    if any(not math.isfinite(c["threshold"]) or not c["unit"].strip() for c in checks):
+        raise GateError("invalid physics threshold or unit")
+    controls = contract["required_controls"]
+    names = [c["name"].strip().casefold() for c in controls]
+    if not names or any(not n for n in names) or len(names) != len(set(names)):
+        raise GateError("missing or duplicate contract control names")
+    if any(
+        not math.isfinite(c["expected_score"]) or not 0 <= c["expected_score"] <= 1
+        for c in controls
+    ):
+        raise GateError("invalid expected control score")
+    timing = contract["timing"]
+    if any(not math.isfinite(v) or v <= 0 for v in timing.values()):
+        raise GateError("invalid contract timebase")
+    if timing["control_hz"] != 20:
+        raise GateError("contract control rate differs from trusted 20 Hz evaluator")
+    ratio = timing["physics_hz"] / timing["control_hz"]
+    if ratio < 1 or not math.isclose(ratio, round(ratio), abs_tol=1e-9):
+        raise GateError("physics rate must be an integral multiple of the control rate")
+    if timing["refinement_physics_hz"] != 2 * timing["physics_hz"]:
+        raise GateError("contract refinement must halve the physics timestep")
+    if contract["run_steps"] <= 0 or not math.isclose(
+        timing["episode_seconds"], contract["run_steps"] / timing["control_hz"], rel_tol=1e-9
+    ):
+        raise GateError("contract episode duration must count control steps, not physics steps")
 
 
 class CoverageError(StateError):
@@ -407,12 +446,7 @@ class Production:
             ]
             self.store.invalidate(self.rid, self.STAGES[self.STAGES.index(from_stage) :])
         for stage in self.STAGES:
-            if (self.root / "cancel.json").exists():
-                self.store.update(self.rid, status="paused", stage=stage)
-                write_json(
-                    self.root / "worker-status.json",
-                    {"status": "paused", "stage": stage, "at": now()},
-                )
+            if self.pause_requested(stage):
                 return
             if stage in completed:
                 continue
@@ -421,6 +455,8 @@ class Production:
             write_json(checkpoint, {"status": "working", "stage": stage, "at": now()})
             attempts = self.config.get("repair_attempts", 2) if stage != "novelty" else 0
             for attempt in range(attempts + 1):
+                if self.pause_requested(stage):
+                    return
                 try:
                     receipt = getattr(self, stage)()
                     self.store.stage_done(self.rid, stage, receipt)
@@ -452,6 +488,16 @@ class Production:
         write_json(
             self.root / "worker-status.json", {"status": "pre-evaluation-ready", "at": now()}
         )
+
+    def pause_requested(self, stage):
+        if not (self.root / "cancel.json").exists():
+            return False
+        self.store.update(self.rid, status="paused", stage=stage)
+        write_json(
+            self.root / "worker-status.json",
+            {"status": "paused", "stage": stage, "at": now()},
+        )
+        return True
 
     def research(self):
         result = self.ask(
@@ -541,7 +587,9 @@ class Production:
             if self.artifact(name).exists()
         }
         if previous:
-            archive = self.workspace / "artifacts/history" / ("candidate-review-" + digest(previous))
+            archive = (
+                self.workspace / "artifacts/history" / ("candidate-review-" + digest(previous))
+            )
             archive.mkdir(parents=True, exist_ok=True)
             for filename in previous:
                 (self.workspace / "artifacts" / filename).replace(archive / filename)
@@ -780,17 +828,42 @@ class Production:
             "Numerical physics_checks must include stability, no initial success, joint/contact "
             "mechanics, camera validity and relevant penetration/damage constraints. Units/thresholds "
             "need industrial sources or explicit assumptions. Cover damage shortcuts and measurable "
-            "success/partial/failure. Slug must be lowercase kebab-case. Do not develop demo yet.",
+            "success/partial/failure. Use UNIQUE check and control names; give lower/upper bounds "
+            "different names. timing separates control_hz (trusted evaluator:20), physics_hz, "
+            "refinement_physics_hz (twice physics_hz) and episode_seconds (run_steps/control_hz). "
+            "Read the pinned runtime and actual physics configuration, never infer control time "
+            "from physics substeps. Check the untouched initial score and every expected partial "
+            "score against the complete scoring formula and hard-failure timing. Bad physical "
+            "events must remain possible in simulation and then fail scoring; do not prevent "
+            "physical breakage merely because the action is invalid. Slug must be lowercase "
+            "kebab-case. Do not develop demo yet.",
             C.CONTRACT,
         )
         if not re.fullmatch(r"[a-z][a-z0-9-]{2,70}", result["slug"]) or result["run_steps"] <= 0:
             raise GateError("invalid task slug or run limit")
-        if len(result["physics_checks"]) < 4 or not result["required_controls"]:
-            raise GateError("insufficient physics checks/negative controls")
+        validate_contract(result)
         suffix = "-" + self.rid.rsplit("-", 1)[-1]
         if not result["slug"].endswith(suffix):
             result["slug"] += suffix
         write_json(self.artifact("contract"), result)
+        review = self.review(
+            "contract-critic",
+            "Independently review artifacts/contract.json against artifacts/selected.json, "
+            "the actual pinned runtime sources and industrial evidence. Recompute initial, "
+            "partial, full and hard-failure scores for EVERY required control from the stated "
+            "formula, including when a bonus first becomes available and whether timeout changes "
+            "the outcome. Reject contradictions or ambiguous measurement names. Verify the "
+            "control/physics timestep distinction, episode duration, refinement rates and "
+            "freshness of contact measurements. Ensure bad physical events are simulated and "
+            "scored as failures rather than suppressed by a desired-action condition. Respect "
+            "physically valid alternatives and preserve the selected essential ability. This "
+            "is a specification consistency gate; native tests and demos come later. "
+            "Do not lower validity, novelty, damage or numerical criteria to obtain a pass.",
+        )
+        write_json(
+            self.artifact("contract-preflight"),
+            {"contract_digest": digest(result), "review": review},
+        )
         return {"contract_digest": digest(result)}
 
     def execute_scripts(self, plan, requirements=None):
@@ -800,9 +873,14 @@ class Production:
         for script in plan["scripts"]:
             if not re.fullmatch(r"[a-z][a-z0-9_-]{0,60}", script["id"]):
                 raise GateError("invalid diagnostic id")
-            path = inside(self.workspace / "task", script["script"])
+            relative = Path(script["script"])
+            if relative.is_absolute():
+                raise GateError("diagnostic script must be task-relative")
+            if relative.parts and relative.parts[0] == "task":
+                relative = Path(*relative.parts[1:])
+            path = inside(self.workspace / "task", relative)
             if path.suffix != ".py" or not path.is_file():
-                raise GateError("runner accepts existing task-local Python scripts only")
+                raise GateError("diagnostic script does not exist under task/: " + str(relative))
             report_path = inside(self.workspace, script["report"])
             if not report_path.is_relative_to((self.workspace / "measurements").resolve()):
                 raise GateError("diagnostic reports must stay in measurements/")
@@ -909,12 +987,24 @@ class Production:
 
     def environment(self):
         contract = read(self.artifact("contract"))
+        validate_contract(contract)
+        preflight = self.artifact("contract-preflight")
+        if not preflight.exists() or read(preflight).get("contract_digest") != digest(contract):
+            raise GateError("missing/stale contract review; resume from contract stage")
         plan = self.ask(
             "environment-builder",
             "Implement task/scene, actual equipment assets, reset and "
             "component physics checks for artifacts/contract.json. Read pinned runtime source and "
             "examples using paths in input/runtime.json; use public task.py YAM interface. "
-            "No complete demo yet. Return Python diagnostic scripts and relative report paths. "
+            "No complete demo yet. Return Python diagnostic scripts relative to task/ "
+            "(e.g. run_component_diagnostics.py) and workspace-relative report paths "
+            "(e.g. measurements/physics.json). "
+            "This Codex role is sandboxed for source inspection and code generation. Return "
+            "COMPLETE native GPU diagnostic scripts for the trusted controller to execute outside "
+            "that role sandbox. A CUDA error from a command inside this role is not evidence "
+            "that the host lacks a GPU. Do not run GPU rollouts inside the role, substitute static "
+            "facts/null values for native measurements, or return only a blocked stub. On host "
+            "execution failure read the actual ../logs/ runtime error and repair the script. "
             "Create task/asset-manifest.json with assets [{path,sha256,source_url,license,license_reference,"
             "units:'m',dimensions_m:[x,y,z],geometry_kind}]. Include license text and actual geometry files, "
             "or procedural geometry source. Asset hashes must match. "
@@ -942,6 +1032,8 @@ class Production:
         plan = self.ask(
             "demo-and-scoring-builder",
             "Environment passed. Implement real YAM action demo, "
+            "returning complete GPU runner scripts for controller execution; do not launch GPU "
+            "rollouts inside the restricted Codex role. "
             "stateful scoring and raw trace. Run at least two clean-reset full-score episodes, "
             "all contract negative controls and trace replay. Required script ids: demo, controls, "
             "replay. Each writes checks+requirements arrays and actual artifacts as environment scripts. "
