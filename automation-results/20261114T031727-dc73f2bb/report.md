@@ -20,7 +20,7 @@ Status: **blocked**
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 
 
-worker paused at stage boundary
+runtime/private file cannot be released: __pycache__/procedural_geometry.cpython-312.pyc
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`
