@@ -79,6 +79,9 @@ def test_fork_checkpoint_pushes_exact_task_and_verifies_remote_sha(tmp_path):
     (task / "task.py").write_text("# fixture")
     write_json(root / "release-manifest.json", manifest(root / "release"))
     quotation = " ".join(["private-source-word"] * 40)
+    prototype = root / "workspace/task/native_mechanism.py"
+    prototype.parent.mkdir(parents=True)
+    prototype.write_text("# unfinished native prototype, not a certified task\n")
     research = {"evidence": [{"source_id": "source-1", "quote": quotation, "locator": "p2"}]}
     write_json(root / "workspace/artifacts/candidates.json", research)
 
@@ -90,9 +93,16 @@ def test_fork_checkpoint_pushes_exact_task_and_verifies_remote_sha(tmp_path):
     first = publisher.checkpoint(r["id"])
     assert first["sha"] == git("--git-dir", origin, "rev-parse", "refs/heads/automation/fixture")
     assert (work / "tasks/fixture/task.py").read_text() == "# fixture"
+    saved = work / "automation-results" / r["id"] / "task-prototype/native_mechanism.py"
+    assert saved.read_bytes() == prototype.read_bytes()
+    meta = json.loads((saved.parent.parent / "prototype-manifest.json").read_text())
+    assert meta["certification"] == "unvalidated-working-prototype"
     published = work / "automation-results" / r["id"] / "artifacts/candidates.json"
     public = json.loads(published.read_text())["evidence"][0]
     assert "quote" not in public and public["quote_sha256"]
     assert quotation not in published.read_text()
     assert json.loads((root / "workspace/artifacts/candidates.json").read_text()) == research
     assert publisher.checkpoint(r["id"])["sha"] == first["sha"]
+    s.update(r["id"], preservation_error="previous checkpoint failed")
+    publisher.checkpoint(r["id"])
+    assert s.get(r["id"])["preservation_error"] is None

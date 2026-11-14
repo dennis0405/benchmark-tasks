@@ -126,6 +126,26 @@ class Publisher:
         if destination.exists():
             shutil.rmtree(destination)
         destination.mkdir(parents=True, exist_ok=True)
+        receipt = root / "production-receipt.json"
+        certified_revision = (
+            release.exists()
+            and receipt.is_file()
+            and read(receipt).get("revision") == self.store.get(rid).get("revision", 0)
+        )
+        prototype = root / "workspace/task"
+        if not certified_revision and prototype.is_dir() and any(prototype.iterdir()):
+            target = destination / "task-prototype"
+            shutil.copytree(
+                prototype, target,
+                symlinks=True,
+                ignore=shutil.ignore_patterns("__pycache__", "*.pyc", ".pytest_cache"),
+            )
+            write_json(
+                destination / "prototype-manifest.json",
+                {"certification": "unvalidated-working-prototype",
+                 "revision": self.store.get(rid).get("revision", 0),
+                 "manifest": manifest(target)},
+            )
         # Preserve only explicit output files. Never rsync credentials/state/home into a public fork.
         for name in ["release", "release-manifest.json", "report.json", "report.html", "report.md"]:
             source = root / name
@@ -209,7 +229,10 @@ class Publisher:
         if self.git(repo, "status", "--porcelain").strip():
             self.git(repo, "commit", "-m", "Preserve RoboCurve production " + rid)
         result = self.push(repo)
-        self.store.update(rid, checkpoint=result)
+        if self.store.get(rid).get("preservation_error"):
+            self.store.update(rid, checkpoint=result, preservation_error=None)
+        else:
+            self.store.update(rid, checkpoint=result)
         return result
 
     def submit(self, rid, approval_id, fresh_novelty, credentials=None):
