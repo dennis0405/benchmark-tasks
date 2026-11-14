@@ -1,40 +1,40 @@
 {
-  "id": "orv3-toolless-it-support-bracket-installation",
-  "title": "Install a tool-less Open Rack V3 IT support bracket from inside the frame",
-  "objective": "Orient one Open Rack V3 IT support bracket inside the rack, align its tool-less mounting features with the specified frame cutouts, engage and lock the bracket without external access, and leave it seated without interfering with adjacent brackets or chassis space.",
+  "id": "er32-collet-nut-preassembly",
+  "title": "Preassemble an ER32 collet into its eccentric clamping nut",
+  "objective": "Orient a matching ER32 collet and clamping nut, place the collet extraction groove into the eccentric ring at the nut’s marked point, then tilt and roll the collet until it audibly and mechanically seats. Stop before tool insertion, threading onto a holder, or torque tightening.",
   "skills": [
-    "inside-frame approach planning",
-    "multi-feature bracket-to-frame alignment",
-    "bimanual support of an elongated load-bearing part",
-    "sequential hook or latch engagement",
-    "force-controlled seating",
-    "clearance management around adjacent rack hardware"
+    "small-part pose recognition",
+    "groove-to-eccentric-lip alignment",
+    "bimanual stabilization",
+    "tilt-and-roll insertion",
+    "force-controlled snap engagement",
+    "retention verification without destructive pulling"
   ],
-  "success_conditions": "Blocked pending the referenced OCP CAD/drawing and a concrete bracket design. At minimum, a valid rubric would require all documented tool-less mounting features to be engaged from inside the frame, correct OpenU registration, self-support after release, no interference with nearby brackets or chassis envelopes, and no permanent deformation. No hook count, insertion motion, latch state, force threshold, or success claim may be invented from the currently acquired text.",
-  "industrial_value": "The Open Rack Meta Frame V3 specification defines these brackets as the shelf support for IT gear, requires tool-less direct mounting, inside-frame serviceability, and substantial load capacity. This establishes industrial relevance, but not yet an executable manipulation sequence.",
-  "dexterity": "Potentially high because a long load-bearing bracket must be registered and latched within a constrained rack interior. The exact dexterity cannot be asserted until the referenced bracket CAD and drawing reveal its real mounting features.",
+  "success_conditions": "The correct collet is retained continuously around the nut’s eccentric ring after both grippers release it for 3 seconds, and a light nondestructive withdrawal check does not separate it. The mark and initial groove entry must be used, with no direct axial forcing. Zero score for an unretained or inverted collet, substituting a scripted latch, threading the nut onto a holder before verified engagement, permanent collet deformation, nut damage, dropped parts, or teleport/state overwrite. Partial credit may recognize correct orientation and initial groove capture, but not false retention.",
+  "industrial_value": "REGO-FIX specifies nut-collet preassembly as a required tooling-system step and warns that improper assembly can damage collet concentricity or destroy the nut. Hiteco documents industrial MTC electrospindles using ER32 tooling, supporting relevance to robot-associated machining equipment without claiming that arbitrary manufacturers’ internal retention geometries are interchangeable.",
+  "dexterity": "High. The defining motion is a constrained eccentric-lip capture followed by a changing-axis tilt/roll and snap engagement, not connector mating or ordinary peg insertion.",
   "evidence": [
     {
-      "source_id": "s-22e97655548371b0",
-      "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8, IT Support Bracket",
-      "quote_sha256": "86f8a5af6ac4e15231a2cc3f12482c4c3bede8393c2a94b8ebf32f48317ca4de"
+      "source_id": "s-383797c64106a344",
+      "locator": "ER System Operating Manual, page 1, “Assembling collet and clamping nut”",
+      "quote_sha256": "cfbe4912fccbca2fa64c5630329232b47f812cb376ab4fa6717aef9e4d8cd242"
     },
     {
-      "source_id": "s-22e97655548371b0",
-      "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8.1",
-      "quote_sha256": "57eb48170d409ccc7cd85578d3d3aa6e02c4e33930cbd0c8365d01215c45dcd7"
+      "source_id": "s-383797c64106a344",
+      "locator": "ER System Operating Manual, page 1, “Assembling collet and clamping nut”",
+      "quote_sha256": "74d289f8d2ad5f7a1de55c45fb8375240465bfa1294d12c6f32abeba2e34b28f"
     },
     {
-      "source_id": "s-22e97655548371b0",
-      "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8.3",
-      "quote_sha256": "a978fae3b021b0ace860d3979376e95827a93b95706d4f36920003af3e774aa7"
+      "source_id": "s-383797c64106a344",
+      "locator": "ER System Operating Manual, page 2, warning beneath assembly/removal diagrams",
+      "quote_sha256": "96ac6778351fa1fa8905ac7d31dad12c4847e5c4443de86b6ae0b85bf7d989aa"
     },
     {
-      "source_id": "s-22e97655548371b0",
-      "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8.4",
-      "quote_sha256": "87d4f0811b9ea4bfa0ef7bcce2bd1ee77433ff79390d6b93d6f05da36eddda90"
+      "source_id": "s-7bbd8662e186099c",
+      "locator": "Hiteco MTC Electrospindles Catalog, page 12, ER32DX equipment listing",
+      "quote_sha256": "1ae056b625b30a7e878d0c67f6da61a03dfcc99777fc566aa439e343eb252345"
     }
   ],
-  "asset_plan": "Do not begin task construction from the prose alone. First obtain the exact OCP collateral named in section 12.8, confirm its license, select one bracket revision, and extract its mounting-feature geometry and rack interface without mixing revisions. Then build an independent rigid PhysX model, validate every engagement feature, incorrect-level rejection, self-support, adjacent-clearance, overload behavior, and reset repeatability before considering YAM integration.",
-  "risk": "Blocked and not selected. The acquired specification proves purpose, access direction, tool-less mounting, and load requirements, but the referenced CAD/drawing is not present in the acquired package. The actual hooks, tabs, latches, insertion trajectory, dimensions, and retention mechanics are therefore unknown. Treating this as build-ready would require invented geometry and success criteria; it may also be semantically close to other rack-rail or shelf-support installation tasks."
+  "asset_plan": "Do not build from nominal ER32 envelope dimensions alone. Acquire one mutually compatible physical REGO-FIX ER32 collet/nut pair or manufacturer-authorized internal CAD, measure the marked eccentric ring, extraction groove, lip eccentricity, lead-in, and elastic deflection, and record provenance. First test whether the pinned Isaac Sim 6.1 rigid-contact model can reproduce correct marked-point entry, snap retention, wrong-angle rejection, removal resistance, and reset repeatability. If essential collet spring deformation cannot be reproduced without an already validated compliant model, reject the task rather than using a magic latch. YAM reach and fingertip clearance must be checked at full scale before demo work.",
+  "risk": "Blocked, not selected. The acquired sources prove the sequence and consequence but do not expose the internal eccentric-lip geometry, permissible deformation, snap force, or a licensed downloadable ER32 nut/collet asset. The available Hiteco dimensions establish ER32 industrial equipment, not interchangeability with REGO-FIX retention geometry. Existing novelty records include unrelated push-fit-collet release tasks; this assembly objective appears mechanically distinct, but a complete synchronized submission review remains required."
 }

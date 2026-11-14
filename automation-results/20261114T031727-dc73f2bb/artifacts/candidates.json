@@ -1,142 +1,126 @@
 {
   "candidates": [
     {
-      "id": "dgx-a100-spring-prong-rail-installation",
-      "title": "Install and secure one NVIDIA DGX A100 rack rail",
-      "objective": "Orient the correct left or right DGX A100 rail, support and level it across the rack depth, depress the front metal tab, align and insert both spring-loaded prongs into the designated front-post holes, extend the rail to the matching rear rack unit, insert both rear prongs, verify full spring extension, and secure the rail using the specified bottom-hole screws.",
+      "id": "er32-collet-nut-preassembly",
+      "title": "Preassemble an ER32 collet into its eccentric clamping nut",
+      "objective": "Orient a matching ER32 collet and clamping nut, place the collet extraction groove into the eccentric ring at the nut’s marked point, then tilt and roll the collet until it audibly and mechanically seats. Stop before tool insertion, threading onto a holder, or torque tightening.",
       "skills": [
-        "bimanual support and regrasping of a long rigid rail",
-        "front/back and left/right orientation recognition",
-        "simultaneous tab depression and two-prong hole alignment",
-        "compliant insertion against spring forces",
-        "maintaining level alignment across separated rack posts",
-        "rear telescoping adjustment without losing front engagement",
-        "Phillips-driver alignment and controlled screw fastening"
+        "small-part pose recognition",
+        "groove-to-eccentric-lip alignment",
+        "bimanual stabilization",
+        "tilt-and-roll insertion",
+        "force-controlled snap engagement",
+        "retention verification without destructive pulling"
       ],
-      "success_conditions": "The correct rail is installed at the designated rack unit through robot-applied forces only; both front and rear pairs of prongs occupy their intended holes; each retaining spring is fully extended; front and rear attachments are at the same rack unit; the rail supports itself after release; and the required screws occupy the bottom holes while the reserved top holes remain empty. The final state must persist for 3 seconds after the robot releases the rail and tool. Score zero for a wrong-side or reversed rail, mismatched rack units, partial or false prong engagement, use of the reserved top holes, dropped hardware, permanent rack/rail deformation, or teleporting, welding, or state overwrite. Partial credit may separately recognize correct orientation, front retention, level rear alignment, rear retention, and correct screw placement. Component physics must pass unsupported retention, spring-return, telescoping, screw-thread, wrong-hole, and overload controls before a robot demo.",
-      "industrial_value": "NVIDIA's DGX A100 service manual defines this as installation of the server rack-mount kit and states that the kit acts as the shelf supporting the system. It is therefore a real data-center installation operation, not generic object placement. The procedure requires correct rack-unit registration and complete spring-prong engagement before the heavy server can be mounted.",
-      "dexterity": "High but feasible with rigid PhysX. A robot must control a long, asymmetric articulated rail with separated contact sites, depress a retaining tab while inserting two spring-loaded prongs, preserve the first attachment while extending and aligning the rear, and then change to a screwdriver grasp. The defining capability is staged, load-bearing mechanical latching across two rack posts, not connector mating or simple pick-and-place.",
+      "success_conditions": "The correct collet is retained continuously around the nut’s eccentric ring after both grippers release it for 3 seconds, and a light nondestructive withdrawal check does not separate it. The mark and initial groove entry must be used, with no direct axial forcing. Zero score for an unretained or inverted collet, substituting a scripted latch, threading the nut onto a holder before verified engagement, permanent collet deformation, nut damage, dropped parts, or teleport/state overwrite. Partial credit may recognize correct orientation and initial groove capture, but not false retention.",
+      "industrial_value": "REGO-FIX specifies nut-collet preassembly as a required tooling-system step and warns that improper assembly can damage collet concentricity or destroy the nut. Hiteco documents industrial MTC electrospindles using ER32 tooling, supporting relevance to robot-associated machining equipment without claiming that arbitrary manufacturers’ internal retention geometries are interchangeable.",
+      "dexterity": "High. The defining motion is a constrained eccentric-lip capture followed by a changing-axis tilt/roll and snap engagement, not connector mating or ordinary peg insertion.",
       "evidence": [
         {
-          "source_id": "s-4e272159a21baf44",
-          "locator": "Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual, Installing the Rails, introductory paragraph",
-          "quote_sha256": "9715d3c43dff757038a817a4beed27278ac6475fa1cfeda4f14bfbb58a77c791"
+          "source_id": "s-383797c64106a344",
+          "locator": "ER System Operating Manual, page 1, “Assembling collet and clamping nut”",
+          "quote_sha256": "cfbe4912fccbca2fa64c5630329232b47f812cb376ab4fa6717aef9e4d8cd242"
         },
         {
-          "source_id": "s-4e272159a21baf44",
-          "locator": "Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual, Installing the Rails, orientation instruction",
-          "quote_sha256": "fd5d80a00f926f787a0fdb12a1b4ab1d0e81ccc6255efde5e7bd947fba8ff3c5"
+          "source_id": "s-383797c64106a344",
+          "locator": "ER System Operating Manual, page 1, “Assembling collet and clamping nut”",
+          "quote_sha256": "74d289f8d2ad5f7a1de55c45fb8375240465bfa1294d12c6f32abeba2e34b28f"
         },
         {
-          "source_id": "s-4e272159a21baf44",
-          "locator": "Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual, Installing the Rails, front attachment step",
-          "quote_sha256": "cb6111f07b4f3167d7269039e07428ca73003629ab5b63766be4e6296ccbb814"
+          "source_id": "s-383797c64106a344",
+          "locator": "ER System Operating Manual, page 2, warning beneath assembly/removal diagrams",
+          "quote_sha256": "96ac6778351fa1fa8905ac7d31dad12c4847e5c4443de86b6ae0b85bf7d989aa"
         },
         {
-          "source_id": "s-4e272159a21baf44",
-          "locator": "Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual, Installing the Rails, front engagement check",
-          "quote_sha256": "0eaecd557cbf14fa2e9a443d7cc9f669755fe80ce3192e0218be805557a69131"
-        },
-        {
-          "source_id": "s-4e272159a21baf44",
-          "locator": "Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual, Installing the Rails, rear alignment instruction",
-          "quote_sha256": "1d14d76445e2aeafbacea8e2b72d3ec08ba574496e2520c5767088d3607f7c73"
-        },
-        {
-          "source_id": "s-4e272159a21baf44",
-          "locator": "Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual, Installing the Rails, securing step",
-          "quote_sha256": "a0fe886e4df4a976e4cbb3648792c3fed964f9c53fb7174b0af32c117fde7556"
-        },
-        {
-          "source_id": "s-4e272159a21baf44",
-          "locator": "Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual, Installing the Rails, screw-hole warning",
-          "quote_sha256": "0df6ad93ba2b7a8ebec1eb2cb976dbb0fdf71c68ea9756e9e7ca666ac4552258"
+          "source_id": "s-7bbd8662e186099c",
+          "locator": "Hiteco MTC Electrospindles Catalog, page 12, ER32DX equipment listing",
+          "quote_sha256": "1ae056b625b30a7e878d0c67f6da61a03dfcc99777fc566aa439e343eb252345"
         }
       ],
-      "asset_plan": "Independently model a square-hole rack segment and one DGX A100 rail from the manual's depicted geometry and measurements from legally obtained reference hardware; do not redistribute NVIDIA manual media or an unlicensed mesh. Use rigid links for the rail body and telescoping section, prismatic joints for extension, and articulated rigid tab/prong/spring proxies calibrated from hardware. Preserve the actual two-prong pattern, rack-hole pitch, handedness markings, front/rear interfaces, bottom screw holes, and reserved top chassis holes. First validate collision clearances, tab travel, spring return, full/partial insertion discrimination, front retention during extension, rear rack-unit alignment, screw capture, load-bearing stability, and reset repeatability. Only after those tests pass should the task be connected to pinned Isaac Sim 6.1.0 and YAM commit 0059d02a1a91bc6834c1d0846022891df0c78730. The robot must manipulate every task object through contacts; static rack anchoring is allowed, but the rail and fasteners may not be teleported or dynamically welded.",
-      "risk": "Medium implementation risk. The acquired manual establishes the sequence and engagement checks but does not provide rail CAD, prong spring constants, thread dimensions, allowable insertion force, or damage limits. Those properties require reference-part measurement, and no numerical force threshold should be claimed beforehand. The acquired benchmark catalogs include rack-adjacent operations such as pressing a cable into a clip and tightening a thumbscrew, but no objective combining handed long-rail handling, spring-prong latching at two posts, rack-unit leveling, and prescribed screw-hole use was found. That screen is not proof against every accepted, pending, open, or team submission; selection remains conditional on a complete synchronized semantic review before implementation and again after completion."
+      "asset_plan": "Do not build from nominal ER32 envelope dimensions alone. Acquire one mutually compatible physical REGO-FIX ER32 collet/nut pair or manufacturer-authorized internal CAD, measure the marked eccentric ring, extraction groove, lip eccentricity, lead-in, and elastic deflection, and record provenance. First test whether the pinned Isaac Sim 6.1 rigid-contact model can reproduce correct marked-point entry, snap retention, wrong-angle rejection, removal resistance, and reset repeatability. If essential collet spring deformation cannot be reproduced without an already validated compliant model, reject the task rather than using a magic latch. YAM reach and fingertip clearance must be checked at full scale before demo work.",
+      "risk": "Blocked, not selected. The acquired sources prove the sequence and consequence but do not expose the internal eccentric-lip geometry, permissible deformation, snap force, or a licensed downloadable ER32 nut/collet asset. The available Hiteco dimensions establish ER32 industrial equipment, not interchangeability with REGO-FIX retention geometry. Existing novelty records include unrelated push-fit-collet release tasks; this assembly objective appears mechanically distinct, but a complete synchronized submission review remains required."
     },
     {
-      "id": "thinksystem-sr590-hot-swap-fan-removal",
-      "title": "Release and remove a Lenovo ThinkSystem SR590 hot-swap fan",
-      "objective": "With the documented service access already established and hazardous fan motion absent, press the fan-cage bracket toward the server front, maintain the release, grasp the top of the specified system fan, and lift it vertically from its bay without disturbing neighboring fans or the cage.",
+      "id": "az100-vertical-tooling-centerline-adjustment",
+      "title": "Align AZ-100 end-of-arm tooling to the mold centerline and lock the adjustment",
+      "objective": "On a de-energized AZ-100 vertical-position adjustment fixture, loosen the adjusting-screw jam nut and both clamp bolts, rotate the adjusting screw until the end-of-arm-tooling datum coincides with the specified mold centerline, tighten both clamp bolts while preserving alignment, and finally tighten the jam nut without shifting the setting.",
       "skills": [
-        "confined-access bracket depression",
-        "bimanual coordination between latch release and extraction",
-        "top grasp on a closely packed module",
-        "vertical constrained withdrawal",
-        "contact avoidance around neighboring modules",
-        "force control that preserves the cage and fan housing"
+        "tool engagement on three fasteners",
+        "ordered loosening and tightening",
+        "fine screw-driven linear adjustment",
+        "visual datum alignment",
+        "counterholding against lock-nut reaction",
+        "bimanual stabilization while clamping"
       ],
-      "success_conditions": "The designated fan is removed vertically by robot contact after the cage bracket is moved toward the front; it is placed stably in the service area; the cage, neighboring fans, and bay guides remain seated and undamaged. The final state must persist for 3 seconds. Score zero for removing the wrong fan, lifting before release, contacting a moving rotor, displacing another fan, dropping the module, damaging the cage, or changing object state without robot action. Partial credit may distinguish correct bracket actuation, secure fan grasp, and partial guide-controlled withdrawal. Development must remain blocked until the exact latch dependency and bay geometry are verified on reference hardware.",
-      "industrial_value": "Lenovo explicitly identifies the part as a hot-swap fan and says removal can avoid significant interruption to system operation. That establishes a real availability-sensitive data-center maintenance operation.",
-      "dexterity": "Moderate. The task couples a directional cage-bracket release with a constrained lift in a crowded server interior. It is more meaningful than free pick-and-place, though less demanding than the selected rail task because the source specifies only a short two-action sequence and does not establish a complex regrasp or fastening phase.",
+      "success_conditions": "After release and a 3-second hold, the tooling datum remains within a preregistered measurement tolerance derived from reference hardware of the mold-centerline target; both clamp bolts and the jam nut are restored to hardware-measured service torque windows; and the adjustment has not been used to limit cylinder stroke. Zero score for tightening clamps before alignment, leaving any lock loose, moving a proximity-switch actuator clamp as a shortcut, damaging threads or guide tubes, energizing the fixture, dropping a tool, or teleport/state overwrite. Partial credit may distinguish safe unlock, correct adjustment direction, achieved alignment before locking, and retained alignment after locking.",
+      "industrial_value": "The manufacturer defines this operation specifically as alignment of end-of-arm tooling to a mold centerline and warns that using the proximity-switch actuator clamp instead can damage robot components. It is therefore a robot setup operation whose quality directly affects the tooling-to-process interface.",
+      "dexterity": "High but rigid-body feasible. The robot must sequence a jam nut, paired clamp bolts, and a screw-driven alignment, then manage tightening reaction without losing the calibrated position. That tests preservation of an adjusted state under later fastening forces rather than generic nut tightening.",
       "evidence": [
         {
-          "source_id": "s-1166d37d9e5c5fa5",
-          "locator": "Remove a System Fan — ThinkSystem SR590, introductory paragraph",
-          "quote_sha256": "c2377835fcd35dfb207cc1412917a1f42a1e955eed72547fa29bb09bd7ec3025"
+          "source_id": "s-74c3dbd7c10379f7",
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 24, section 4.1.1 “Vertical Position Adjustment,” step 1",
+          "quote_sha256": "3038065bdae550d3a0e8be58f35095863a0a7fbaccc29e5f65566529f8e7e111"
         },
         {
-          "source_id": "s-1166d37d9e5c5fa5",
-          "locator": "Remove a System Fan — ThinkSystem SR590, S017 caution",
-          "quote_sha256": "78fb6ad4eef86dd66753d5b92c9c580532be96d77094b3fd1e707de317afe4c0"
+          "source_id": "s-74c3dbd7c10379f7",
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 24, section 4.1.1, step 2",
+          "quote_sha256": "a68db5225510c3a8eed4bbcea396b98f3808e20ceaf6613c438727d42d2572dd"
         },
         {
-          "source_id": "s-1166d37d9e5c5fa5",
-          "locator": "Remove a System Fan — ThinkSystem SR590, removal procedure, step shown under Figure 1",
-          "quote_sha256": "7085abc434b4533efb1fc401247d59240982c7fc9e93c575e34e0657c0bfd56b"
+          "source_id": "s-74c3dbd7c10379f7",
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 24, section 4.1.1, step 3",
+          "quote_sha256": "226179f26c79fd171f28e69f1c3251721b435f37ba0de7005368b9992a1e2a50"
         },
         {
-          "source_id": "s-1166d37d9e5c5fa5",
-          "locator": "Remove a System Fan — ThinkSystem SR590, removal procedure, step shown under Figure 1",
-          "quote_sha256": "f909e03a2e5edf78fa5456a6a6c26fe70e40c7fea885f2448fbef319be180fa8"
+          "source_id": "s-74c3dbd7c10379f7",
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 24, section 4.1.1, note",
+          "quote_sha256": "c1e3f6a3a603418a70576b42b5f6a01bbfa925c974bdc453e0527eb03ecefa62"
         }
       ],
-      "asset_plan": "Model the SR590 fan bay, cage bracket, neighboring fan envelopes, guide surfaces, and removable fan as rigid bodies using the official figure plus measurements from matching hardware. Represent the bracket/latch with an articulated joint and calibrated retention, not a scripted release. Validate that an unreleased fan remains retained, correct bracket motion permits vertical extraction, neighboring modules remain constrained, and reset restores retention. A full YAM scene should be attempted only after these tests pass in the pinned runtime.",
-      "risk": "Not selected. The acquired source does not provide dimensions, latch travel, retention forces, or an explicit statement that bracket pressure must be maintained during lifting. The hot-swap wording also creates a safety ambiguity: although the manual permits powered service, a robot demo should use a stationary de-energized fan unless an equipment-specific safe powered test is separately justified. Its short release-and-lift skill overlaps broadly with existing latched-module removal tasks and offers weaker novelty than the rail objective."
+      "asset_plan": "Create a full-scale rigid test fixture only after measuring a matching AZ-100 adjustment assembly or obtaining its applicable drawing: screw pitches, lock-nut and clamp-bolt sizes, clamp compliance, travel, tool access, and fastening torques are absent from the acquired text. Use revolute/prismatic PhysX joints and frictional threaded-drive equivalents whose displacement follows actual screw rotation; never map gripper pose directly to alignment state. Validate unlock dependence, screw direction and pitch, clamp retention, jam-nut reaction, wrong-order controls, overload damage thresholds, and repeated resets before connecting YAM.",
+      "risk": "Promising but not selected because the currently acquired manual lacks fastener dimensions, screw pitch, torque specifications for these adjustment fasteners, allowable centerline error, and accessible fixture geometry. Those are mandatory reference-hardware measurements, not values to invent. The operation is semantically different from benchmark knob turning or generic fastening, but full accepted/pending/open/team comparison is still incomplete."
     },
     {
-      "id": "orv3-toolless-it-support-bracket-installation",
-      "title": "Install a tool-less Open Rack V3 IT support bracket from inside the frame",
-      "objective": "Orient one Open Rack V3 IT support bracket inside the rack, align its tool-less mounting features with the specified frame cutouts, engage and lock the bracket without external access, and leave it seated without interfering with adjacent brackets or chassis space.",
+      "id": "az100-proximity-switch-registration",
+      "title": "Register and secure an AZ-100 proximity switch beneath its actuator",
+      "objective": "With the robot de-energized and its cylinder first retracted, loosen the proximity-switch mount screws, slide the switch beneath the actuator until the indicator changes state while maintaining at most 6 mm sensing clearance and actuator overtravel past switch centerline, then tighten the mount screws without losing registration; repeat for the extended endpoint.",
       "skills": [
-        "inside-frame approach planning",
-        "multi-feature bracket-to-frame alignment",
-        "bimanual support of an elongated load-bearing part",
-        "sequential hook or latch engagement",
-        "force-controlled seating",
-        "clearance management around adjacent rack hardware"
+        "confined screwdriver alignment",
+        "controlled partial screw loosening",
+        "bimanual slide-and-hold coordination",
+        "fine sensor-to-actuator registration",
+        "maintaining clearance during fastening",
+        "two-endpoint procedural memory"
       ],
-      "success_conditions": "Blocked pending the referenced OCP CAD/drawing and a concrete bracket design. At minimum, a valid rubric would require all documented tool-less mounting features to be engaged from inside the frame, correct OpenU registration, self-support after release, no interference with nearby brackets or chassis envelopes, and no permanent deformation. No hook count, insertion motion, latch state, force threshold, or success claim may be invented from the currently acquired text.",
-      "industrial_value": "The Open Rack Meta Frame V3 specification defines these brackets as the shelf support for IT gear, requires tool-less direct mounting, inside-frame serviceability, and substantial load capacity. This establishes industrial relevance, but not yet an executable manipulation sequence.",
-      "dexterity": "Potentially high because a long load-bearing bracket must be registered and latched within a constrained rack interior. The exact dexterity cannot be asserted until the referenced bracket CAD and drawing reveal its real mounting features.",
+      "success_conditions": "For both retracted and extended endpoints, robot-applied motions alone place the actuator past the switch centerline, leave the sensing surface no more than 6 mm away, produce the modeled indicator transition only from physical proximity, and retain the switch pose for 3 seconds after mount-screw tightening and tool release. Zero score for adjusting while powered, failing to retract before the first adjustment, registering only one endpoint, relying on indicator state without geometric clearance, actuator collision, loose or stripped screws, moving the actuator instead of the switch, or teleport/state overwrite. Partial credit may recognize safe initial state, correct screw release, one valid endpoint, and retained registration after tightening.",
+      "industrial_value": "AAC requires this adjustment after any position adjustment, so it is a recurring calibration step in maintenance of an industrial take-out robot. The manual supplies both the physical registration procedure and a quantitative sensing-clearance limit.",
+      "dexterity": "Moderate-to-high and feasible as a rigid PhysX task. It combines partial fastener release, constrained sliding, sensing-state interpretation, sub-centimeter clearance control, holding position against screw-tightening reaction, and repetition at two articulated endpoint configurations.",
       "evidence": [
         {
-          "source_id": "s-22e97655548371b0",
-          "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8, IT Support Bracket",
-          "quote_sha256": "86f8a5af6ac4e15231a2cc3f12482c4c3bede8393c2a94b8ebf32f48317ca4de"
+          "source_id": "s-74c3dbd7c10379f7",
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 30, section 4.2.1 “Proximity Switch Adjustment”",
+          "quote_sha256": "c3257e7237d9607fa4e7cf254ff96e4850c40af9e858b14b7d43d2f121bf69e6"
         },
         {
-          "source_id": "s-22e97655548371b0",
-          "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8.1",
-          "quote_sha256": "57eb48170d409ccc7cd85578d3d3aa6e02c4e33930cbd0c8365d01215c45dcd7"
+          "source_id": "s-74c3dbd7c10379f7",
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 30, section 4.2.1, step 3",
+          "quote_sha256": "4a62029ecaee2e8bf4f98310a88fcf71410aa810cf7fba1c06bde09d7eddb575"
         },
         {
-          "source_id": "s-22e97655548371b0",
-          "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8.3",
-          "quote_sha256": "a978fae3b021b0ace860d3979376e95827a93b95706d4f36920003af3e774aa7"
+          "source_id": "s-74c3dbd7c10379f7",
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 30, section 4.2.1, steps 4 and continuation",
+          "quote_sha256": "5f156d89807fbba99c8fcb2170e0c01e411aed3d5eeef8d674816d4c79fc82e4"
         },
         {
-          "source_id": "s-22e97655548371b0",
-          "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8.4",
-          "quote_sha256": "87d4f0811b9ea4bfa0ef7bcce2bd1ee77433ff79390d6b93d6f05da36eddda90"
+          "source_id": "s-74c3dbd7c10379f7",
+          "locator": "AZ-100 Series Robot Installation and Maintenance Manual, page 30, section 4.2.1, note",
+          "quote_sha256": "dda98ef6eb9c82b1c51015d0656e14c7eae0258b8ac02dc0e0a23b49eb47066b"
         }
       ],
-      "asset_plan": "Do not begin task construction from the prose alone. First obtain the exact OCP collateral named in section 12.8, confirm its license, select one bracket revision, and extract its mounting-feature geometry and rack interface without mixing revisions. Then build an independent rigid PhysX model, validate every engagement feature, incorrect-level rejection, self-support, adjacent-clearance, overload behavior, and reset repeatability before considering YAM integration.",
-      "risk": "Blocked and not selected. The acquired specification proves purpose, access direction, tool-less mounting, and load requirements, but the referenced CAD/drawing is not present in the acquired package. The actual hooks, tabs, latches, insertion trajectory, dimensions, and retention mechanics are therefore unknown. Treating this as build-ready would require invented geometry and success criteria; it may also be semantically close to other rack-rail or shelf-support installation tasks."
+      "asset_plan": "Use the official section 4.2.1 arrangement plus measurements from one matching AZ-100 switch, actuator, slot, bracket, and screws. Build the cylinder/actuator and slotted switch mount as rigid articulated bodies at actual scale. Implement indicator state solely as a readout of sensor-actuator distance and relative pose, never as an action-triggered success flag. Before YAM integration, validate screw retention, sliding only when loosened, the 6 mm boundary, over-center criterion, collision rejection, endpoint articulation, tightening drift, reset repeatability, fingertip clearance, and full-scale reach in pinned Isaac Sim 6.1.0/YAM commit 0059d02a1a91bc6834c1d0846022891df0c78730.",
+      "risk": "Lowest implementation risk of the three, but still conditional on acquiring matching component geometry, fastener dimensions, and a safe full-scale fixture. The sourced benchmark catalogs contain switch flipping, knob turning, sliders, insertion, latching, and generic fastening, but no objective combining loosen-slide-sense-hold-retighten calibration at two articulated endpoints was found. Cached submission records searched by objective/skill terms revealed no confirmed same task, but that is not proof of complete novelty; synchronized accepted/pending/open/team review is required before construction and again after completion."
     }
   ],
-  "selected_id": "dgx-a100-spring-prong-rail-installation",
-  "selection_reason": "The DGX A100 rail objective is the strongest valid non-connector candidate. It has an official manufacturer procedure with explicit orientation, rack-unit alignment, spring-prong insertion, visible engagement checks, rear extension, prescribed fastening, and a prohibited screw-hole choice. These constraints support a rigid-body task that tests bimanual long-part handling, compliant latching, maintained alignment, regrasping, and tool use. The SR590 fan objective is industrially real but shorter, safety-sensitive, and more similar to generic latched-module removal. The OCP bracket objective has strong industrial importance but is blocked because its defining mounting geometry is only referenced, not acquired. Selection is conditional: rail geometry, spring and thread behavior, damage limits, YAM reachability, and the complete accepted/pending/open/team novelty comparison remain unverified, so no demo or submission success is asserted."
+  "selected_id": "az100-proximity-switch-registration",
+  "selection_reason": "This is the only candidate presently supported by a manufacturer procedure, an explicit quantitative geometric criterion, rigid-body physics, and a compact full-scale fixture plausibly reachable by YAM. It tests calibration under fastening reaction rather than a cosmetic variant of switching, sliding, or screw tightening. ER32 preassembly remains blocked by missing eccentric-lip geometry and potentially essential elastic collet deformation; the AZ-100 centerline adjustment is valuable but lacks the dimensions, torque limits, and allowable alignment error needed for a defensible scorer. Selection is conditional rather than a success assertion: reference-component measurement, complete novelty synchronization, rigid environment diagnostics, and YAM reach/force tests must pass before full demo development."
 }
