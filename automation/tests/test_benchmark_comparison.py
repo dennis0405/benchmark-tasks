@@ -19,6 +19,7 @@ def setup_production(tmp_path, verdict="distinct", quote="(:goal (turned stove))
             "files": [
                 {
                     "local_path": "input/task.bddl",
+                    "path": "benchmark/task.bddl",
                     "sha256": file_hash(source),
                     "url": "https://example.com/task.bddl",
                 }
@@ -99,4 +100,31 @@ def test_benchmark_gate_rejects_overlap_incomplete_coverage_and_unsupported_evid
         path.write_text("(:goal (turned stove))")
         report["comparisons"][0]["closest_tasks"][0]["source_path"] = "input/proposal.txt"
     with pytest.raises((GateError, CoverageError)):
+        p.benchmark_novelty({"id": "damper"})
+
+
+def test_unique_original_repository_path_resolves_to_verified_local_source(tmp_path):
+    p, report = setup_production(tmp_path)
+    task = report["comparisons"][0]["closest_tasks"][0]
+    task["source_path"] = "benchmark/task.bddl"
+    result = p.benchmark_novelty({"id": "damper"})
+    assert result["comparisons"][0]["closest_tasks"][0]["source_path"] == "input/task.bddl"
+
+
+def test_ambiguous_original_repository_path_does_not_select_arbitrary_version(tmp_path):
+    import json
+
+    p, report = setup_production(tmp_path)
+    other = p.workspace / "input/other-version.bddl"
+    other.write_text((p.workspace / "input/task.bddl").read_text())
+    corpus = p.workspace / "input/manifest.json"
+    data = json.loads(corpus.read_text())
+    data["files"].append({**data["files"][0], "local_path": "input/other-version.bddl"})
+    write_json(corpus, data)
+    index_path = p.workspace / "input/benchmark-sources.json"
+    index = json.loads(index_path.read_text())
+    index["LIBERO"].update(definition_files=2, manifest_sha256=file_hash(corpus))
+    write_json(index_path, index)
+    report["comparisons"][0]["closest_tasks"][0]["source_path"] = "benchmark/task.bddl"
+    with pytest.raises(GateError, match="original suite definition"):
         p.benchmark_novelty({"id": "damper"})

@@ -579,7 +579,8 @@ class Production:
             "registries and the complete source-file inventories. Inspect original definitions "
             "for the closest potentially similar tasks. Record each suite's coverage method, "
             "objective/physical-ability/success-condition comparison, exact task names, original "
-            "source paths, verbatim supporting excerpts, and a reasoned verdict. Inventories are "
+            "source paths (use each manifest entry's exact local_path), verbatim supporting "
+            "excerpts, and a reasoned verdict. Inventories are "
             "navigation aids, not task-level evidence. Do not substitute industry names, geometry, "
             "harder parameters or a list of generic primitives for a meaningfully different tested "
             "ability. Known near-neighbors to investigate include LIBERO turn_on_the_stove, "
@@ -605,7 +606,16 @@ class Production:
                 self.evidence_file(path)
             for task in row["closest_tasks"]:
                 if task["source_path"] not in originals:
-                    raise GateError("benchmark comparison must cite an original suite definition")
+                    matches = [
+                        source["local_path"]
+                        for source in corpus["files"]
+                        if source.get("path") == task["source_path"]
+                    ]
+                    if len(matches) != 1:
+                        raise GateError(
+                            "benchmark comparison must cite an original suite definition"
+                        )
+                    task["source_path"] = matches[0]
                 text = inside(self.workspace, task["source_path"]).read_text()
                 if not task["quote"].strip() or task["quote"] not in text:
                     raise GateError("benchmark comparison original quote absent")
