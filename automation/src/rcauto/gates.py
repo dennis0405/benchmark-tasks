@@ -96,7 +96,7 @@ def manifest(root, max_file_mb=50):
         }:
             text = p.read_text(errors="replace")
             if re.search(
-                r"(?:sk-[A-Za-z0-9_-]{25,}|gh[pousr]_[A-Za-z0-9]{25,}|BEGIN .*PRIVATE KEY)", text
+                r"(?:\bsk-[A-Za-z0-9_-]{25,}|gh[pousr]_[A-Za-z0-9]{25,}|BEGIN .*PRIVATE KEY)", text
             ):
                 raise GateError(f"possible secret in release: {name}")
         files[name] = {"sha256": file_hash(p), "bytes": p.stat().st_size}

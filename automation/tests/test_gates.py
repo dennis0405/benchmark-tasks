@@ -81,3 +81,20 @@ def test_secrets_cannot_be_released(tmp_path):
     (tmp_path / "auth.json").write_text("{}")
     with pytest.raises(GateError):
         manifest(tmp_path)
+
+
+def test_task_measurement_identifier_is_not_a_secret_key(tmp_path):
+    (tmp_path / "diagnostic.py").write_text(
+        "check = 'lifecycle-task-callback-handle-count-error-maximum'\n"
+    )
+    assert "diagnostic.py" in manifest(tmp_path)["files"]
+
+
+@pytest.mark.parametrize(
+    "value",
+    ["sk-" + "A" * 30, "ghp_" + "B" * 30, "-----BEGIN " + "PRIVATE KEY-----"],
+)
+def test_real_credential_patterns_still_block_release(tmp_path, value):
+    (tmp_path / "diagnostic.py").write_text("credential = " + repr(value) + "\n")
+    with pytest.raises(GateError, match="possible secret"):
+        manifest(tmp_path)
