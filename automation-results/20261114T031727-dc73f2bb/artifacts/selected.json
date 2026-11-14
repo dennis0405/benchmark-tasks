@@ -1,35 +1,34 @@
 {
-  "id": "pcie-expansion-card-seat-latch",
-  "title": "Seat and latch a server PCIe expansion card",
-  "objective": "With the server electrically isolated and open, grasp the expansion card only by its edges, align its card-edge connector with the riser connector, press it to full seating, and close the expansion-card latch.",
+  "id": "minifit-5378-single-blade-extraction",
+  "title": "Extract a 5378-series terminal with a single HT60630B blade",
+  "objective": "Hold the compatible housing with its locking tab upward, bend the wire down, insert one HT60630B blade beneath the locking tab, and pull the wire and tool together to remove the terminal.",
   "skills": [
-    "edge-only grasping and regrasping",
-    "six-degree-of-freedom connector alignment",
-    "constrained rigid insertion",
-    "force-controlled seating",
-    "latch closure",
-    "collision avoidance around the riser"
+    "housing orientation",
+    "wire deflection without crimp damage",
+    "single-blade insertion beneath a recessed tab",
+    "maintained tool-wire contact",
+    "coordinated same-direction tool and wire pull"
   ],
-  "success_conditions": "Proposed rubric: connector reaches the fixture-calibrated fully seated pose; the card remains within 2 mm translation and 2 degrees rotation of that pose; the latch reaches its closed detent and remains closed for 3 seconds. Zero score for connector bypass, broken or displaced parts, unsafe powered-state setup, or moving the card by teleportation/state overwrite. Exact insertion-force and damage thresholds remain blocked until the physical proxy is measured.",
-  "industrial_value": "This reproduces Dell's documented server expansion-card installation sequence, including connector alignment, firm seating, and mechanical latching. It exercises maintenance manipulation beyond generic pick-and-place.",
-  "dexterity": "High. The robot must preserve a thin edge grasp, visually align a long keyed connector, regulate insertion force without rocking the PCB, then regrasp or use the second arm to close the latch while stabilizing the assembly.",
+  "success_conditions": "The selected 5378 terminal exits its cavity through robot-applied blade and pulling forces while the housing remains intact and no neighboring terminal is released. Zero for bypassing the locking tab, wire/crimp separation, housing damage, unintended extraction, or state overwrite. Exact force and damage thresholds remain blocked pending measurements.",
+  "industrial_value": "Molex provides an explicit manufacturer procedure for extracting individual 5378 terminals with this tool, establishing a real connector-service operation.",
+  "dexterity": "High. Unlike the selected dual-blade process, this sequence requires wire bending, insertion of one blade beneath a specific tab, and simultaneous withdrawal of the wire and tool.",
   "evidence": [
     {
-      "source_id": "s-91ac4f79da494329",
-      "quote": "Holding the card by its edges, position the card so that the card-edge connector aligns with the expansion-card connector on the expansion-card riser.",
-      "locator": "PowerEdge R510 Hardware Owner's Manual, Installing an Expansion Card, page 125, step 6"
+      "source_id": "s-c7c184615f4af9fb",
+      "quote": "Individual terminals may be extracted from the housing using this tool.",
+      "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series"
     },
     {
-      "source_id": "s-91ac4f79da494329",
-      "quote": "Insert the card-edge connector firmly into the expansion-card connector until the card is fully seated.",
-      "locator": "PowerEdge R510 Hardware Owner's Manual, Installing an Expansion Card, page 125, step 7"
+      "source_id": "s-c7c184615f4af9fb",
+      "quote": "Hold the housing with the locking tab facing up. Bend the wire down and insert one of the blades of the extraction tool into the housing under the locking tab.",
+      "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series, step 1"
     },
     {
-      "source_id": "s-91ac4f79da494329",
-      "quote": "Close the expansion-card latch.",
-      "locator": "PowerEdge R510 Hardware Owner's Manual, Installing an Expansion Card, page 125, step 8"
+      "source_id": "s-c7c184615f4af9fb",
+      "quote": "Hold the wire against the extraction tool and gently pull the terminal by the wire and the extraction tool at the same time out from the housing in the direction shown.",
+      "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series, step 2"
     }
   ],
-  "asset_plan": "Build rigid, dimensioned proxy assets for the riser connector, PCB, bracket, chassis obstacles, and revolute latch from the manual's Figure 3-20 and measured reference hardware. Use PhysX contact and joint constraints; do not weld the card into place. Validate connector clearance, insertion resistance, latch detent, collision behavior, and failure recovery before integrating the pinned Isaac Sim 6.1.0/YAM runtime. No acquired public asset establishes suitable PCIe geometry, so asset dimensions and license provenance must be completed before development proceeds.",
-  "risk": "Medium. The acquired manual proves the procedure but does not provide complete connector, bracket, or latch dimensions or insertion-force limits. Reference hardware measurement or an authoritative mechanical specification is required. The complete 1,970-record catalog contained no text match for expansion-card, PCIe-card, or card-edge-connector insertion, but semantic and post-build comparison is still required."
+  "asset_plan": "Acquire the authoritative 5378 housing and terminal drawings and reference hardware before modeling. Use rigid PhysX geometry and an articulated locking tab calibrated from the actual parts. Validate wire-bending clearance, tab release, simultaneous pull, damage modes, and YAM reachability before full-demo work.",
+  "risk": "Not selected. It is meaningfully different in contact mechanics from the dual-blade 5556 procedure, but the acquired package lacks a 5378 housing drawing, selected part number, complete geometry, and robot-application evidence. It also shares the broader depinning objective, so it offers weaker novelty separation than the selected, better-specified four-circuit Mini-Fit Jr. setup."
 }

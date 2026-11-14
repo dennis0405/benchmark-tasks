@@ -1,116 +1,164 @@
 {
   "candidates": [
     {
-      "id": "pcie-expansion-card-seat-latch",
-      "title": "Seat and latch a server PCIe expansion card",
-      "objective": "With the server electrically isolated and open, grasp the expansion card only by its edges, align its card-edge connector with the riser connector, press it to full seating, and close the expansion-card latch.",
+      "id": "minifit-5556-terminal-extraction",
+      "title": "Depin a Mini-Fit Jr. 5556 terminal from a 5557 housing",
+      "objective": "With a de-energized four-circuit Mini-Fit Jr. 39012040/5557 receptacle fixed in a service fixture, guide the HT60630B extraction tool around the selected 5556 terminal, depress both locking tangs, maintain tool engagement, push the wire toward the tool if needed, and then pull the wire and terminal from the rear without releasing neighboring terminals or damaging the reusable housing.",
       "skills": [
-        "edge-only grasping and regrasping",
-        "six-degree-of-freedom connector alignment",
-        "constrained rigid insertion",
-        "force-controlled seating",
-        "latch closure",
-        "collision avoidance around the riser"
+        "precision tool-tip alignment with housing guide slots",
+        "constrained dual-blade insertion around a recessed contact",
+        "contact and force control while depressing two locking tangs",
+        "bimanual coordination between sustained tool engagement and opposite-side wire pull",
+        "directional push-then-pull load sequencing",
+        "regrasping a slender tool and wire",
+        "avoidance of neighboring terminals and housing walls"
       ],
-      "success_conditions": "Proposed rubric: connector reaches the fixture-calibrated fully seated pose; the card remains within 2 mm translation and 2 degrees rotation of that pose; the latch reaches its closed detent and remains closed for 3 seconds. Zero score for connector bypass, broken or displaced parts, unsafe powered-state setup, or moving the card by teleportation/state overwrite. Exact insertion-force and damage thresholds remain blocked until the physical proxy is measured.",
-      "industrial_value": "This reproduces Dell's documented server expansion-card installation sequence, including connector alignment, firm seating, and mechanical latching. It exercises maintenance manipulation beyond generic pick-and-place.",
-      "dexterity": "High. The robot must preserve a thin edge grasp, visually align a long keyed connector, regulate insertion force without rocking the PCB, then regrasp or use the second arm to close the latch while stabilizing the assembly.",
+      "success_conditions": "Research-stage rubric: the designated terminal and its wire must exit through the rear of its original cavity through robot-applied contact forces; the housing stays fixed and reusable; all other terminals remain fully retained; the wire remains attached to the extracted terminal; and the tool, housing, insulation, contact body, and adjacent terminals show no prohibited displacement or damage. Success must persist for 3 seconds after both grippers release the extracted terminal and tool. Score zero for extracting the wrong or an additional terminal, pulling the wire out of its crimp, breaking or permanently displacing the housing, bypassing the tangs, or teleporting/welding/state-overwriting the terminal. Partial credit may distinguish correct tool entry, both tangs depressed, and partial rearward withdrawal, but no unmeasured numerical force or damage threshold is asserted. Development is blocked until the rigid tang/contact abstraction passes insertion, retention, overload, and reset tests with measured proxy hardware.",
+      "industrial_value": "Molex identifies HT60630B as tooling specifically designed to extract crimped Mini-Fit terminals, while TE identifies terminal extraction without housing damage as important to OEM and aftermarket rework and repair. Molex also lists Mini-Fit connectors for commercial-cleaning-robot drive and motion-control interconnects. This supports harness rework as an industrial manipulation objective, without claiming that every 39012040 housing is installed in that particular robot application.",
+      "dexterity": "High but feasible. The robot must enter narrow housing slots with two blades outside the contact, recognize terminal contact, maintain tang-depressing engagement, optionally unload the tangs by pushing the wire forward, and coordinate an opposing gentle pull. This is materially different from mating a completed connector or operating its external latch.",
       "evidence": [
         {
-          "source_id": "s-91ac4f79da494329",
-          "quote": "Holding the card by its edges, position the card so that the card-edge connector aligns with the expansion-card connector on the expansion-card riser.",
-          "locator": "PowerEdge R510 Hardware Owner's Manual, Installing an Expansion Card, page 125, step 6"
+          "source_id": "s-c7c184615f4af9fb",
+          "quote": "This tool is designed to extract crimped Mini-Fit series terminals from their housings.",
+          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 1, FEATURES"
         },
         {
-          "source_id": "s-91ac4f79da494329",
-          "quote": "Insert the card-edge connector firmly into the expansion-card connector until the card is fully seated.",
-          "locator": "PowerEdge R510 Hardware Owner's Manual, Installing an Expansion Card, page 125, step 7"
+          "source_id": "s-c7c184615f4af9fb",
+          "quote": "Use the slots located on the inside of the housing to guide the extraction tool blades into the housing until contact is made with terminal.",
+          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, OPERATION, step 2"
         },
         {
-          "source_id": "s-91ac4f79da494329",
-          "quote": "Close the expansion-card latch.",
-          "locator": "PowerEdge R510 Hardware Owner's Manual, Installing an Expansion Card, page 125, step 8"
+          "source_id": "s-c7c184615f4af9fb",
+          "quote": "If the terminal locking tabs are still not totally depressed, hold on tight to the wire and push it toward the extraction tool.",
+          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, OPERATION, step 4"
+        },
+        {
+          "source_id": "s-c7c184615f4af9fb",
+          "quote": "Grasp the terminal by the wire, and gently pull it out from the housing.",
+          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, OPERATION, step 5"
+        },
+        {
+          "source_id": "s-c7c184615f4af9fb",
+          "quote": "Note: When a terminal is removed in this manner the locking tangs are damaged and the terminal is not reusable.",
+          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, note below Terminal and Housing Application Chart"
+        },
+        {
+          "source_id": "s-f251010cce66cd83",
+          "quote": "Our insertion tools and extraction tools are designed to respectively insert and extract a terminal from the connector housing without damaging the terminal or housing—a key criteria in quality wire processing that is especially important for rework and repair at the OEM and in the after-market.",
+          "locator": "TE Connectivity, Insertion and Extraction Tools for Wire Processing, High-Precision Insertion and Extraction Tools section"
+        },
+        {
+          "source_id": "s-3b2ffb1f5e4549e5",
+          "quote": "Pitch Mating Interface 4.20mm",
+          "locator": "Molex part 39012040 product page, Physical Specifications"
+        },
+        {
+          "source_id": "s-b8dfc5566fdc008f",
+          "quote": "Motors and motion systems in cleaning robots need vibration-resistant connectors to maintain reliable power and signal transmission despite exposure to moisture and cleaning chemicals.",
+          "locator": "Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors section"
         }
       ],
-      "asset_plan": "Build rigid, dimensioned proxy assets for the riser connector, PCB, bracket, chassis obstacles, and revolute latch from the manual's Figure 3-20 and measured reference hardware. Use PhysX contact and joint constraints; do not weld the card into place. Validate connector clearance, insertion resistance, latch detent, collision behavior, and failure recovery before integrating the pinned Isaac Sim 6.1.0/YAM runtime. No acquired public asset establishes suitable PCIe geometry, so asset dimensions and license provenance must be completed before development proceeds.",
-      "risk": "Medium. The acquired manual proves the procedure but does not provide complete connector, bracket, or latch dimensions or insertion-force limits. Reference hardware measurement or an authoritative mechanical specification is required. The complete 1,970-record catalog contained no text match for expansion-card, PCIe-card, or card-edge-connector insertion, but semantic and post-build comparison is still required."
+      "asset_plan": "Use the documented four-circuit 39012040/5557 housing and a compatible 5556 terminal only; do not mix the 5378 geometry or another extraction-tool series. Build dimensioned rigid housing, terminal, crimp barrel, wire, and HT60630B proxy meshes from the acquired Molex drawing plus measurements of reference parts. Represent each terminal tang as a constrained articulated rigid leaf with calibrated detent and irreversible damage state rather than a deformable solver. The wire may initially be a short rigid handle for component-physics tests; any later segmented cable must use an already validated YAM-compatible model. Validate blade clearance, outside-contact guidance, tang release, retained-state pull resistance, extraction after release, neighbor retention, overload damage, and reset repeatability before attempting a full robot demo in pinned Isaac Sim 6.1.0/YAM 0059d02a1a91bc6834c1d0846022891df0c78730. No task object may be teleported or welded to produce extraction.",
+      "risk": "Medium-high implementation risk. The acquired sources establish procedure, pitch, compatible families, intended tooling, and terminal non-reusability, but do not provide blade thickness, tang stiffness, release force, pull-out force, or allowable housing-load limits. Those values require measured reference hardware. The catalog text screen found no direct depin/terminal-extraction objective, but this is not conclusive semantic proof; the complete accepted, pending, open, team, and benchmark comparison must be repeated after the objective and physics are implemented."
     },
     {
-      "id": "hot-swap-drive-carrier-lock",
-      "title": "Insert and cam-lock a hot-swap server drive carrier",
-      "objective": "With the carrier lever open, align the drive carrier to the correct bay, slide it until it contacts the backplane, and close the handle to lock it.",
+      "id": "minifit-5378-single-blade-extraction",
+      "title": "Extract a 5378-series terminal with a single HT60630B blade",
+      "objective": "Hold the compatible housing with its locking tab upward, bend the wire down, insert one HT60630B blade beneath the locking tab, and pull the wire and tool together to remove the terminal.",
       "skills": [
-        "bay alignment",
-        "long-stroke constrained insertion",
-        "contact detection at the backplane",
-        "bimanual stabilization",
-        "cam-handle closure",
-        "force control near adjacent carriers"
+        "housing orientation",
+        "wire deflection without crimp damage",
+        "single-blade insertion beneath a recessed tab",
+        "maintained tool-wire contact",
+        "coordinated same-direction tool and wire pull"
       ],
-      "success_conditions": "Proposed rubric: carrier reaches the calibrated backplane-contact depth, its handle closes into the locked detent, and it remains locked for 3 seconds. Zero score for closing the handle before backplane contact, disturbing an adjacent carrier, damage, unsafe shortcuts, or state overwrite. Force limits require physical calibration.",
-      "industrial_value": "Dell documents this as the installation procedure for a server hot-swap drive. The task captures alignment, backplane contact, and cam locking while making adjacent-carrier damage a scored failure.",
-      "dexterity": "Moderate to high. It combines narrow-tolerance rail insertion with contact detection and a change from pushing the carrier body to rotating its handle.",
+      "success_conditions": "The selected 5378 terminal exits its cavity through robot-applied blade and pulling forces while the housing remains intact and no neighboring terminal is released. Zero for bypassing the locking tab, wire/crimp separation, housing damage, unintended extraction, or state overwrite. Exact force and damage thresholds remain blocked pending measurements.",
+      "industrial_value": "Molex provides an explicit manufacturer procedure for extracting individual 5378 terminals with this tool, establishing a real connector-service operation.",
+      "dexterity": "High. Unlike the selected dual-blade process, this sequence requires wire bending, insertion of one blade beneath a specific tab, and simultaneous withdrawal of the wire and tool.",
       "evidence": [
         {
-          "source_id": "s-91ac4f79da494329",
-          "quote": "With the lever on the hard drive carrier open, slide the hard drive into the drive bay until the carrier contacts the backplane.",
-          "locator": "PowerEdge R510 Hardware Owner's Manual, Installing a Hot-Swap Hard Drive, page 94, step 4"
+          "source_id": "s-c7c184615f4af9fb",
+          "quote": "Individual terminals may be extracted from the housing using this tool.",
+          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series"
         },
         {
-          "source_id": "s-91ac4f79da494329",
-          "quote": "Close the handle to lock the drive in place.",
-          "locator": "PowerEdge R510 Hardware Owner's Manual, Installing a Hot-Swap Hard Drive, page 94, step 5"
+          "source_id": "s-c7c184615f4af9fb",
+          "quote": "Hold the housing with the locking tab facing up. Bend the wire down and insert one of the blades of the extraction tool into the housing under the locking tab.",
+          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series, step 1"
         },
         {
-          "source_id": "s-91ac4f79da494329",
-          "quote": "attempting to lock its handle next to a partially installed carrier can damage the partially installed carrier's shield spring",
-          "locator": "PowerEdge R510 Hardware Owner's Manual, Installing a Hot-Swap Hard Drive, page 93, caution"
+          "source_id": "s-c7c184615f4af9fb",
+          "quote": "Hold the wire against the extraction tool and gently pull the terminal by the wire and the extraction tool at the same time out from the housing in the direction shown.",
+          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series, step 2"
         }
       ],
-      "asset_plan": "Create rigid carrier, bay rails, backplane stop, neighboring carrier, and articulated cam handle using measured reference geometry. Validate rail capture, backplane contact, handle mechanics, and adjacent-carrier damage conditions before robot integration.",
-      "risk": "High novelty risk: catalog record pr-146 is open and titled \"Seat a hot-swap drive carrier with its cam handle,\" which is substantively the same objective. This candidate must not proceed."
+      "asset_plan": "Acquire the authoritative 5378 housing and terminal drawings and reference hardware before modeling. Use rigid PhysX geometry and an articulated locking tab calibrated from the actual parts. Validate wire-bending clearance, tab release, simultaneous pull, damage modes, and YAM reachability before full-demo work.",
+      "risk": "Not selected. It is meaningfully different in contact mechanics from the dual-blade 5556 procedure, but the acquired package lacks a 5378 housing drawing, selected part number, complete geometry, and robot-application evidence. It also shares the broader depinning objective, so it offers weaker novelty separation than the selected, better-specified four-circuit Mini-Fit Jr. setup."
     },
     {
-      "id": "ddr5-dimm-dual-end-seat",
-      "title": "Align and seat a keyed DDR5 server DIMM with both latches",
-      "objective": "Hold a DDR5 RDIMM by its edges, orient its off-center key to the socket, insert both ends simultaneously, apply balanced end pressure, and seat it until both ejectors close.",
+      "id": "nondestructive-harness-terminal-rework",
+      "title": "Non-destructively extract a reusable harness terminal for OEM rework",
+      "objective": "Identify a specified harness cavity, insert the connector-specific extraction tool, release the internal retention feature, and remove the terminal while preserving both terminal and housing for inspected reuse.",
       "skills": [
-        "thin-object edge grasp",
-        "keyed orientation",
-        "submillimeter slot alignment",
-        "balanced bimanual force application",
-        "simultaneous insertion",
-        "dual-latch engagement"
+        "connector-specific tool selection",
+        "fine tool alignment",
+        "retention-feature release",
+        "low-force terminal withdrawal",
+        "damage-sensitive inspection and handling"
       ],
-      "success_conditions": "Proposed rubric: key orientation is correct; both module ends reach the calibrated seated depth within 1 mm of one another; both ejectors reach their closed detents; the module remains seated for 3 seconds. Zero score for center pressing, bending beyond the measured elastic limit, metallic-contact grasping, damage, or state overwrite. Force limits require physical calibration.",
-      "industrial_value": "Dell explicitly prescribes keyed alignment, simultaneous insertion of both ends, balanced pressure, and ejector closure for server memory installation.",
-      "dexterity": "High. A long, thin PCB must remain unflexed while two ends enter a keyed socket and receive balanced force sufficient to close two latches.",
+      "success_conditions": "The correct terminal is removed by the specified tool; both terminal and housing pass geometry and retention inspections defined by the selected manufacturer's service specification; adjacent terminals remain retained. Zero for wrong-tool use, terminal or housing damage, wire pull-out, unintended release, or state overwrite. This objective is blocked because no acquired source supplies a complete compatible part/tool set, procedure, reuse inspection, or numerical acceptance limits.",
+      "industrial_value": "TE explicitly states that avoiding terminal or housing damage is important for OEM and aftermarket rework and repair, so the objective has real industrial value.",
+      "dexterity": "Potentially high because success depends on releasing an internal feature while keeping two reusable parts undamaged, but difficulty cannot be specified credibly until a concrete connector and tool are chosen.",
       "evidence": [
         {
-          "source_id": "s-944b7661517cebfe",
-          "quote": "Align the edge connector of the memory module with the alignment key of the memory module socket",
-          "locator": "PowerEdge XR8620t Installation and Service Manual, Installing a memory module, step 2"
+          "source_id": "s-f251010cce66cd83",
+          "quote": "Our insertion tools and extraction tools are designed to respectively insert and extract a terminal from the connector housing without damaging the terminal or housing—a key criteria in quality wire processing that is especially important for rework and repair at the OEM and in the after-market.",
+          "locator": "TE Connectivity, Insertion and Extraction Tools for Wire Processing, High-Precision Insertion and Extraction Tools section"
         },
         {
-          "source_id": "s-944b7661517cebfe",
-          "quote": "do not bend or flex the memory module; insert both ends of the memory module simultaneously.",
-          "locator": "PowerEdge XR8620t Installation and Service Manual, Installing a memory module, caution after step 2"
+          "source_id": "s-f251010cce66cd83",
+          "quote": "Extraction tools are compatible with the vast majority of connectors used in wiring harnesses.",
+          "locator": "TE Connectivity, Insertion and Extraction Tools for Wire Processing, extraction-tool overview"
         },
         {
-          "source_id": "s-944b7661517cebfe",
-          "quote": "Do not apply pressure at the center of the memory module; apply pressure at both ends of the memory module evenly.",
-          "locator": "PowerEdge XR8620t Installation and Service Manual, Installing a memory module, caution"
-        },
-        {
-          "source_id": "s-6076f9237bbf153d",
-          "quote": "DIMM dimensions (nominal) 133.35mm x 31.25mm",
-          "locator": "Micron 288-Pin DDR5 RDIMM Core, page 2, Table 1"
+          "source_id": "s-f251010cce66cd83",
+          "quote": "An illustrated booklet is included with information on general contact extraction techniques and photos of all connectors compatible with the kit.",
+          "locator": "TE Connectivity, Insertion and Extraction Tools for Wire Processing, training and documentation section"
         }
       ],
-      "asset_plan": "Use the Micron 133.35 mm by 31.25 mm nominal module envelope and model its key and end notches explicitly. The acquired CC0 RAM asset may provide visual meshes, but its heat spreader must be removed or revised to match server RDIMM geometry. Build a rigid socket and articulated ejectors; validate clearances, balanced insertion, latch contacts, and bending/damage detection before YAM integration.",
-      "risk": "Disqualifying novelty risk. Catalog records pr-1874 and pr-1875 already describe installing and replacing a memory module, and pr-398 covers server DIMM population. New geometry or a stricter force rubric would not establish novelty."
+      "asset_plan": "Do not build from the generic TE page. First acquire one manufacturer procedure, exact tool identifier, terminal and housing drawings, reuse policy, inspection criteria, and measured reference hardware. Only then construct and validate rigid contact, retention, and damage physics.",
+      "risk": "Blocked and not selected. The available evidence establishes industrial relevance but not an executable equipment-specific procedure or geometry. It would be invalid to invent a connector, release mechanism, force threshold, or reuse criterion."
+    },
+    {
+      "id": "robot-motion-connector-replacement",
+      "title": "Replace a drive-and-motion-control connector in a commercial cleaning robot",
+      "objective": "Remove a failed motion-control harness connector and install its replacement while preserving surrounding wiring and seals.",
+      "skills": [
+        "confined connector access",
+        "latch manipulation",
+        "connector extraction and alignment",
+        "controlled mating",
+        "cable and seal management"
+      ],
+      "success_conditions": "Blocked: no defensible success rubric can be written from the acquired sources because they do not identify a cleaning-robot assembly, connector part number, access geometry, removal procedure, insertion procedure, or sealing inspection.",
+      "industrial_value": "Molex documents that commercial cleaning-robot motors and motion systems require reliable power and signal connectors in demanding environments, establishing the subsystem's industrial importance.",
+      "dexterity": "Potentially high, but currently unsubstantiated for any actual equipment geometry.",
+      "evidence": [
+        {
+          "source_id": "s-b8dfc5566fdc008f",
+          "quote": "Motors and motion systems in cleaning robots need vibration-resistant connectors to maintain reliable power and signal transmission despite exposure to moisture and cleaning chemicals.",
+          "locator": "Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors section"
+        },
+        {
+          "source_id": "s-b8dfc5566fdc008f",
+          "quote": "Mini-Fit Connectors",
+          "locator": "Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors product-family listing"
+        }
+      ],
+      "asset_plan": "No asset development should begin. Obtain an OEM service manual or public assembly procedure naming the exact robot, Mini-Fit part set, access envelope, latch/seal configuration, and replacement inspection requirements.",
+      "risk": "Blocked and not selected. The source proves application relevance only; treating it as an assembly or service instruction would invent the task geometry and procedure."
     }
   ],
-  "selected_id": "pcie-expansion-card-seat-latch",
-  "selection_reason": "Selected because it has direct manufacturer procedure evidence, uses feasible rigid-body PhysX mechanics, and requires meaningful alignment, insertion, force control, and latching. The complete catalog is marked complete with no missing records; text screening found no matching PCIe expansion-card objective, while the drive and DIMM candidates have direct catalog overlaps. Selection remains conditional on authoritative geometry or measured reference hardware, physics validation, and a second full novelty review before any submission-stage work."
+  "selected_id": "minifit-5556-terminal-extraction",
+  "selection_reason": "This is the only candidate that combines a manufacturer-specified manipulation sequence, an exact extraction tool, a concrete four-circuit housing family with 4.20 mm pitch, rigid-body-compatible contact mechanics, and evidence for industrial rework relevance. It requires internal tang release plus coordinated opposite-side withdrawal rather than completed-connector insertion or external-latch operation. The 5378 variant lacks acquired housing geometry, the generic nondestructive TE objective lacks an equipment-specific procedure, and cleaning-robot connector replacement lacks an OEM service procedure. Selection is for research and component-physics validation only: measured blade/tang geometry, forces, damage thresholds, YAM reachability, and full semantic novelty review remain mandatory before demo development or submission review."
 }

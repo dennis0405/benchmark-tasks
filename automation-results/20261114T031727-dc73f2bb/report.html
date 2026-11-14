@@ -14,96 +14,109 @@
 - 결과는 이 run의 새로운 origin 브랜치에 보존한다. 원본 매뉴얼 전체/인증 정보는 공개하지 않는다. 50MB/file 또는 100MB checkpoint 초과는 먼저 보고한다.
 - 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
-</p><p>evidence quote is absent from acquired source</p><p>Release digest: none</p><h2>selected</h2><pre>{
-  &quot;id&quot;: &quot;pcie-expansion-card-seat-latch&quot;,
-  &quot;title&quot;: &quot;Seat and latch a server PCIe expansion card&quot;,
-  &quot;objective&quot;: &quot;With the server electrically isolated and open, grasp the expansion card only by its edges, align its card-edge connector with the riser connector, press it to full seating, and close the expansion-card latch.&quot;,
+</p><p>novelty cancelled at batch boundary; partial evidence preserved</p><p>Release digest: none</p><h2>selected</h2><pre>{
+  &quot;id&quot;: &quot;minifit-5378-single-blade-extraction&quot;,
+  &quot;title&quot;: &quot;Extract a 5378-series terminal with a single HT60630B blade&quot;,
+  &quot;objective&quot;: &quot;Hold the compatible housing with its locking tab upward, bend the wire down, insert one HT60630B blade beneath the locking tab, and pull the wire and tool together to remove the terminal.&quot;,
   &quot;skills&quot;: [
-    &quot;edge-only grasping and regrasping&quot;,
-    &quot;six-degree-of-freedom connector alignment&quot;,
-    &quot;constrained rigid insertion&quot;,
-    &quot;force-controlled seating&quot;,
-    &quot;latch closure&quot;,
-    &quot;collision avoidance around the riser&quot;
+    &quot;housing orientation&quot;,
+    &quot;wire deflection without crimp damage&quot;,
+    &quot;single-blade insertion beneath a recessed tab&quot;,
+    &quot;maintained tool-wire contact&quot;,
+    &quot;coordinated same-direction tool and wire pull&quot;
   ],
-  &quot;success_conditions&quot;: &quot;Proposed rubric: connector reaches the fixture-calibrated fully seated pose; the card remains within 2 mm translation and 2 degrees rotation of that pose; the latch reaches its closed detent and remains closed for 3 seconds. Zero score for connector bypass, broken or displaced parts, unsafe powered-state setup, or moving the card by teleportation/state overwrite. Exact insertion-force and damage thresholds remain blocked until the physical proxy is measured.&quot;,
-  &quot;industrial_value&quot;: &quot;This reproduces Dell&#x27;s documented server expansion-card installation sequence, including connector alignment, firm seating, and mechanical latching. It exercises maintenance manipulation beyond generic pick-and-place.&quot;,
-  &quot;dexterity&quot;: &quot;High. The robot must preserve a thin edge grasp, visually align a long keyed connector, regulate insertion force without rocking the PCB, then regrasp or use the second arm to close the latch while stabilizing the assembly.&quot;,
+  &quot;success_conditions&quot;: &quot;The selected 5378 terminal exits its cavity through robot-applied blade and pulling forces while the housing remains intact and no neighboring terminal is released. Zero for bypassing the locking tab, wire/crimp separation, housing damage, unintended extraction, or state overwrite. Exact force and damage thresholds remain blocked pending measurements.&quot;,
+  &quot;industrial_value&quot;: &quot;Molex provides an explicit manufacturer procedure for extracting individual 5378 terminals with this tool, establishing a real connector-service operation.&quot;,
+  &quot;dexterity&quot;: &quot;High. Unlike the selected dual-blade process, this sequence requires wire bending, insertion of one blade beneath a specific tab, and simultaneous withdrawal of the wire and tool.&quot;,
   &quot;evidence&quot;: [
     {
-      &quot;source_id&quot;: &quot;s-91ac4f79da494329&quot;,
-      &quot;quote&quot;: &quot;Holding the card by its edges, position the card so that the card-edge connector aligns with the expansion-card connector on the expansion-card riser.&quot;,
-      &quot;locator&quot;: &quot;PowerEdge R510 Hardware Owner&#x27;s Manual, Installing an Expansion Card, page 125, step 6&quot;
+      &quot;source_id&quot;: &quot;s-c7c184615f4af9fb&quot;,
+      &quot;quote&quot;: &quot;Individual terminals may be extracted from the housing using this tool.&quot;,
+      &quot;locator&quot;: &quot;Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-91ac4f79da494329&quot;,
-      &quot;quote&quot;: &quot;Insert the card-edge connector firmly into the expansion-card connector until the card is fully seated.&quot;,
-      &quot;locator&quot;: &quot;PowerEdge R510 Hardware Owner&#x27;s Manual, Installing an Expansion Card, page 125, step 7&quot;
+      &quot;source_id&quot;: &quot;s-c7c184615f4af9fb&quot;,
+      &quot;quote&quot;: &quot;Hold the housing with the locking tab facing up. Bend the wire down and insert one of the blades of the extraction tool into the housing under the locking tab.&quot;,
+      &quot;locator&quot;: &quot;Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series, step 1&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-91ac4f79da494329&quot;,
-      &quot;quote&quot;: &quot;Close the expansion-card latch.&quot;,
-      &quot;locator&quot;: &quot;PowerEdge R510 Hardware Owner&#x27;s Manual, Installing an Expansion Card, page 125, step 8&quot;
+      &quot;source_id&quot;: &quot;s-c7c184615f4af9fb&quot;,
+      &quot;quote&quot;: &quot;Hold the wire against the extraction tool and gently pull the terminal by the wire and the extraction tool at the same time out from the housing in the direction shown.&quot;,
+      &quot;locator&quot;: &quot;Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series, step 2&quot;
     }
   ],
-  &quot;asset_plan&quot;: &quot;Build rigid, dimensioned proxy assets for the riser connector, PCB, bracket, chassis obstacles, and revolute latch from the manual&#x27;s Figure 3-20 and measured reference hardware. Use PhysX contact and joint constraints; do not weld the card into place. Validate connector clearance, insertion resistance, latch detent, collision behavior, and failure recovery before integrating the pinned Isaac Sim 6.1.0/YAM runtime. No acquired public asset establishes suitable PCIe geometry, so asset dimensions and license provenance must be completed before development proceeds.&quot;,
-  &quot;risk&quot;: &quot;Medium. The acquired manual proves the procedure but does not provide complete connector, bracket, or latch dimensions or insertion-force limits. Reference hardware measurement or an authoritative mechanical specification is required. The complete 1,970-record catalog contained no text match for expansion-card, PCIe-card, or card-edge-connector insertion, but semantic and post-build comparison is still required.&quot;
+  &quot;asset_plan&quot;: &quot;Acquire the authoritative 5378 housing and terminal drawings and reference hardware before modeling. Use rigid PhysX geometry and an articulated locking tab calibrated from the actual parts. Validate wire-bending clearance, tab release, simultaneous pull, damage modes, and YAM reachability before full-demo work.&quot;,
+  &quot;risk&quot;: &quot;Not selected. It is meaningfully different in contact mechanics from the dual-blade 5556 procedure, but the acquired package lacks a 5378 housing drawing, selected part number, complete geometry, and robot-application evidence. It also shares the broader depinning objective, so it offers weaker novelty separation than the selected, better-specified four-circuit Mini-Fit Jr. setup.&quot;
 }</pre><h2>sources</h2><pre>[
   {
-    &quot;id&quot;: &quot;s-1d888282d5be5951&quot;,
-    &quot;title&quot;: &quot;IRT 510 Datasheet and Dimension Drawing&quot;,
-    &quot;publisher&quot;: &quot;ABB Robotics&quot;,
-    &quot;url&quot;: &quot;https://library.e.abb.com/public/bdd2f8cc16a440048b74b382b2e61f74/IRT_510_datasheet_0618_v3_DIGITAL.pdf&quot;,
-    &quot;sha256&quot;: &quot;4a775fe10c416da5a872b070328125786a9d322a6700b5eecbe07376cf7d6369&quot;
+    &quot;id&quot;: &quot;s-c7c184615f4af9fb&quot;,
+    &quot;title&quot;: &quot;Extraction Tool HT60630B for Mini-Fit Series Terminals&quot;,
+    &quot;publisher&quot;: &quot;Molex&quot;,
+    &quot;url&quot;: &quot;https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/applicationtoolingspecificationpdf/606/60630/ATS-011030044-001.pdf&quot;,
+    &quot;sha256&quot;: &quot;282ec14827762474966a8d51ff0ae6e25dafd3797f8e9ae6f875807694514568&quot;
   },
   {
-    &quot;id&quot;: &quot;s-2490ba9f38c22b9a&quot;,
-    &quot;title&quot;: &quot;SKF Gear Coupling Installation Instructions&quot;,
-    &quot;publisher&quot;: &quot;SKF&quot;,
-    &quot;url&quot;: &quot;https://cdn.skfmediahub.skf.com/api/public/09fcddce7482fd45/pdf_preview_medium/Gear_Coupling_section_from_15822_3_EN_-_SKF_Couplings_pdf_preview_medium.pdf&quot;,
-    &quot;sha256&quot;: &quot;eff16bb7cd286caa60e1838b32f8b400249d23a60ecf450fa16eb6ceda74d26f&quot;
+    &quot;id&quot;: &quot;s-3107198351100d42&quot;,
+    &quot;title&quot;: &quot;Mini-Fit Jr. Receptacle Housing Dual Row 2–24 Circuit Product Drawing&quot;,
+    &quot;publisher&quot;: &quot;Molex&quot;,
+    &quot;url&quot;: &quot;https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/salesdrawingpdf/555/5557/039012020_sd.pdf&quot;,
+    &quot;sha256&quot;: &quot;006bb06a775c0100f3184a02d0aa9e6cc09caf77630144b19a7b5f15ae5b2386&quot;
   },
   {
-    &quot;id&quot;: &quot;s-b53363bc84a511b3&quot;,
-    &quot;title&quot;: &quot;RobotStudio Operating Manual: CAD Geometry and License Requirements&quot;,
-    &quot;publisher&quot;: &quot;ABB Robotics&quot;,
-    &quot;url&quot;: &quot;https://library.e.abb.com/public/d8d142186b6e45b7b5c8ab5174d3af12/3HAC032104-001_en_BC_Operating%20manual%20-%20RobotStudio.pdf&quot;,
-    &quot;sha256&quot;: &quot;d3045e588da19f41cb23def257cb50b64c9956d3d8dacd316849990bd2c06f10&quot;
+    &quot;id&quot;: &quot;s-3b2ffb1f5e4549e5&quot;,
+    &quot;title&quot;: &quot;Mini-Fit Jr. Four-Circuit Receptacle Housing 39012040&quot;,
+    &quot;publisher&quot;: &quot;Molex&quot;,
+    &quot;url&quot;: &quot;https://www.molex.com/en-us/products/part-detail/39012040&quot;,
+    &quot;sha256&quot;: &quot;1d0cbe0c72adc795dc3bc3621bc4d6fc22366289993831d62cb24ebd9f63fd5f&quot;
   },
   {
-    &quot;id&quot;: &quot;s-296268c6b07cb9a7&quot;,
-    &quot;title&quot;: &quot;General Terms and Conditions for TraceParts Product Catalog Services&quot;,
-    &quot;publisher&quot;: &quot;TraceParts&quot;,
-    &quot;url&quot;: &quot;https://info.traceparts.com/it/legal/general-terms-and-conditions-for-traceparts-product-catalog-services-applicable-to-parts-manufacturers/&quot;,
-    &quot;sha256&quot;: &quot;f898acb453ae85c6a16d70ef82def47d627c0d33735955c66023515af6fcaac1&quot;
+    &quot;id&quot;: &quot;s-cd3351d2310a9bbd&quot;,
+    &quot;title&quot;: &quot;Legal Notice&quot;,
+    &quot;publisher&quot;: &quot;Molex&quot;,
+    &quot;url&quot;: &quot;https://www.molex.com/en-us/about/legal&quot;,
+    &quot;sha256&quot;: &quot;f076a97f1cf9b713e18ec045f64fa730537d482f1d56ea2f0c7b4f0b1a6fc592&quot;
+  },
+  {
+    &quot;id&quot;: &quot;s-b8dfc5566fdc008f&quot;,
+    &quot;title&quot;: &quot;Connectors and Cable Assemblies for Commercial Cleaning Robots&quot;,
+    &quot;publisher&quot;: &quot;Molex&quot;,
+    &quot;url&quot;: &quot;https://www.molex.com/en-us/industries-applications/robotics-connectors/commercial-cleaning-robot&quot;,
+    &quot;sha256&quot;: &quot;e640bf97f4c228ca846bf1509090153031cf2a78f41ec8e7e6333956c05531f0&quot;
+  },
+  {
+    &quot;id&quot;: &quot;s-f251010cce66cd83&quot;,
+    &quot;title&quot;: &quot;Insertion and Extraction Tools for Wire Processing&quot;,
+    &quot;publisher&quot;: &quot;TE Connectivity&quot;,
+    &quot;url&quot;: &quot;https://www.te.com/en/products/application-tooling/insertion-and-extraction-tools.html&quot;,
+    &quot;sha256&quot;: &quot;0a15d17f8d420564d652fa8b79a686440d71a58037c8314704564c1c518d89aa&quot;
   },
   {
     &quot;id&quot;: &quot;s-ba1ff6896ed10cd2&quot;,
     &quot;title&quot;: &quot;LIBERO Benchmark Task Registry&quot;,
     &quot;publisher&quot;: &quot;Lifelong Robot Learning&quot;,
     &quot;url&quot;: &quot;https://github.com/Lifelong-Robot-Learning/LIBERO/blob/master/libero/libero/benchmark/__init__.py&quot;,
-    &quot;sha256&quot;: &quot;d688fb4a90a65ba6ba2664a46d69559234595e12f55c6d6298969d21f7da530f&quot;
+    &quot;sha256&quot;: &quot;6b0e58da51e81c54be7d7589154443cab3ad561565af8da213f333d95d48e365&quot;
   },
   {
     &quot;id&quot;: &quot;s-e9a991225cb77788&quot;,
     &quot;title&quot;: &quot;RoboCasa Benchmarking Overview&quot;,
     &quot;publisher&quot;: &quot;RoboCasa&quot;,
     &quot;url&quot;: &quot;https://github.com/robocasa/robocasa/blob/main/docs/benchmarking/benchmarking_overview.md&quot;,
-    &quot;sha256&quot;: &quot;c860b926a736a3ac3d5d4bd029111782c0ba9fee353d0324ea8854d3caa7026f&quot;
+    &quot;sha256&quot;: &quot;deb4deee9b66febf3546c07bdc7a197476a910604a25ebe3aceb0693ccf5bbe7&quot;
   },
   {
     &quot;id&quot;: &quot;s-ba10be5ef4742367&quot;,
     &quot;title&quot;: &quot;SimplerEnv Task and Environment Definitions&quot;,
     &quot;publisher&quot;: &quot;SimplerEnv&quot;,
     &quot;url&quot;: &quot;https://github.com/simpler-env/SimplerEnv/blob/main/README.md&quot;,
-    &quot;sha256&quot;: &quot;faa6388f6be64846b29b5c83b331f9db0f2ca922aee2cc982e29ce9dd82813c9&quot;
+    &quot;sha256&quot;: &quot;4bb6839ac2bf2248cbdb9461557b3f5e03d64a0ca13b121c1601fbcf32d7b974&quot;
   },
   {
     &quot;id&quot;: &quot;s-d013a72cf7ffba86&quot;,
     &quot;title&quot;: &quot;BEHAVIOR-1K Task Library and BDDL Definitions&quot;,
     &quot;publisher&quot;: &quot;Stanford Vision and Learning Lab&quot;,
     &quot;url&quot;: &quot;https://github.com/StanfordVL/BEHAVIOR-1K/blob/main/docs/behavior_components/behavior_tasks.md&quot;,
-    &quot;sha256&quot;: &quot;54d3252a2a4a2babe695b862f1ea3c0e625d8e24bd52e920089de57dc2a33135&quot;
+    &quot;sha256&quot;: &quot;8c2385f3fe72de76a5999689582c18e37639b3ef31da9ac0147ce0bc5390a163&quot;
   },
   {
     &quot;id&quot;: &quot;s-6ed524b5f205e074&quot;,
@@ -117,6 +130,6 @@
     &quot;title&quot;: &quot;RoboDojo Task Definitions&quot;,
     &quot;publisher&quot;: &quot;RoboDojo Benchmark&quot;,
     &quot;url&quot;: &quot;https://github.com/robodojo-benchmark/RoboDojo/tree/main/task/RoboDojo&quot;,
-    &quot;sha256&quot;: &quot;7e444401fef3cc037ab8769cd2309bea3453a86eab706031d9bffef2145cb447&quot;
+    &quot;sha256&quot;: &quot;88259243221376605b4f530bbec9ec12fcb14b0920f312de6286fb5792dade34&quot;
   }
 ]</pre><p>Approval and submission require separate CLI commands.</p>

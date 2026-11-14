@@ -47,20 +47,20 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 61183,
+    "supervisor_pid": 65080,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log",
-    "error": "evidence quote is absent from acquired source",
+    "error": "novelty cancelled at batch boundary; partial evidence preserved",
     "approval": null,
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb",
     "remote_status": {
       "status": "blocked",
-      "error": "evidence quote is absent from acquired source",
-      "type": "GateError",
-      "at": "2026-11-14T03:44:08.522347+00:00"
+      "error": "novelty cancelled at batch boundary; partial evidence preserved",
+      "type": "StateError",
+      "at": "2026-11-14T03:53:11.648822+00:00"
     },
     "compute": "stopped",
-    "revision": 2,
-    "revision_request": "중복 검사에서 PCIe 확장카드 압입 후보를 탈락시킨다: accepted pr-20(Reseat the half-inserted plug), pr-22(Plug both ends of a patch cord into a cable tester)와 목적·주요 조작·성공 조건이 겹친다. 핫스왑 드라이브는 pr-146, 메모리는 pr-1874/pr-1875/pr-398과 겹쳐 이미 탈락이다. 이 세 후보와 모든 커넥터 삽입/장착+래치 변형을 다시 제안하지 말 것. input/revision-request.txt와 기존 artifacts/candidates.json 및 이전 novelty-reviewer 결과를 읽어 실패 근거를 보존한다. 산업 원문 조사 범위를 서버 부품 교환 외 로봇/기계 구동계 조립·조정·정비로 넓혀 실제 절차의 서로 다른 물리 능력을 찾는다. 단순 일반 조작에 산업 이름을 붙이지 않는다. 예를 들어 정렬/맞물림 조정, 구동부 텐션/유격 교정, 조립용 기구 작동 등은 검색 방향 예시일 뿐, 반드시 실제 제조사 절차로 검증해야 한다. 후보는 이미 중복인 대조 예시로 숫자를 채우지 말고, 초기 전체 카탈로그 검색에서 명백한 중복이 발견되지 않은 실행 가능한 서로 다른 목표 세 개를 확보할 것. 기존 벤치마크와 semantic novelty도 중요하며, 실제 장비 형상·치수 및 YAM 실현성 근거가 있어야 한다. 공개 자료만 사용하고 현재 fork 브랜치·기존 런·GPU 사용 범위·Dream 1회·최종 사람 승인 조건은 그대로 유지한다.",
+    "revision": 3,
+    "revision_request": "PDF 행말 하이픈(clear- 줄바꿈 ance)이 인용 불일치의 원인이었다. 검증기를 수정했고 실제 실패 인용문과 56개 테스트를 통과했다. 산업 근거나 신규성 기준을 낮추지 않는다.\n\n새 조사 seed: 로봇 배선 하네스의 내부 단자를 전용 추출 공구로 해제하고 인출하여 하우징을 재사용하는 작업. 완성 커넥터의 삽입·외부 래치 조작이 아니라, 공구 끝으로 내부 리테이닝 탱을 해제한 채 반대쪽에서 와이어/단자를 당기는 재작업이다. 전체 카탈로그 제목에서 depin/terminal extraction의 직접 대응 과제는 찾지 못했지만 의미상 전수 비교를 거쳐야 한다.\n\n제조사 원문 출발점:\n- https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/applicationtoolingspecificationpdf/606/60630/ATS-011030044-001.pdf (Mini-Fit HT60630B 전용 공구, 적용 단자/하우징 도면과 사용 절차)\n- https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/applicationtoolingspecificationpdf/217/2174/ATS-011030016-001.pdf (안으로 밀기, 공구 삽입·피벗 유지와 반대편 당김)\n- https://www.molex.com/en-us/industries-applications/robotics-connectors/commercial-cleaning-robot (실제 로봇 구동·모션 제어에서 Mini-Fit 적용)\n- https://www.molex.com/en-us/industries-applications/humanoid-robotics/humanoid-robotics-connectors\n- https://www.te.com/en/products/application-tooling/insertion-and-extraction-tools.html (OEM 재작업에서 단자·하우징을 손상하지 않는 추출의 실제 목적)\n\n시리즈별 형상·치수·공구를 섞지 말고 실제 부품 세트 하나를 고른 후 제조사 치수도 확보한다. 강체/관절 근사를 쓰더라도 핵심 접촉·공구 해제 원리와 실제 손상 조건이 보존되어야 한다. 제조사가 추출 후 단자 재사용을 금지한다면 소모되는 탱 자체는 허용하며, 하우징 파손·접점 변형·절연 손상/와이어 인발·이웃 단자 이탈을 구분한다. YAM 공구 파지·끝점 정밀 동작과 반대쪽 인출의 물리 실현성을 진단한다.\n\n여러 후보를 비교하되 신규성 있는 실행 가능 후보 하나 확보가 목표다. 탈락한 다른 목적은 비교 대안으로 기록할 수 있지만 재선정하지 않는다. PCIe·메모리·드라이브 삽입/체결과 커플링 정렬·유격 조정은 기존 중복 위험으로 재선정하지 않는다. 이 seed도 유사한 기존 능력의 변형이거나 실제 물리 시연이 불가능하면 근거와 함께 차단한다. 산업 매뉴얼 근거 없는 새 작업을 상상해서 통과시키지 않는다.\n\n기존 조건: 전 분야 accepted/pending·우리 팀·기존 벤치마크 비교, 환경·물리 완성 후 데모, 실제 YAM 동작과 채점·대조군, Dream은 마지막 episode 1회만, origin 별도 브랜치 보존 후 GPU stop. 실제 미디어 업로드·대회 PR·제출 승인은 하지 않는다.\n",
     "resume_from_stage": "research"
   },
   "events": [
@@ -591,6 +591,162 @@
       "run": "20261114T031727-dc73f2bb",
       "at": "2026-11-14T03:44:24.882890+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"evidence quote is absent from acquired source\"}"
+    },
+    {
+      "seq": 101,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:44:56.738516+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 102,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:47:01.062789+00:00",
+      "data": "{\"revision\": 3, \"revision_request\": \"PDF \\ud589\\ub9d0 \\ud558\\uc774\\ud508(clear- \\uc904\\ubc14\\uafc8 ance)\\uc774 \\uc778\\uc6a9 \\ubd88\\uc77c\\uce58\\uc758 \\uc6d0\\uc778\\uc774\\uc5c8\\ub2e4. \\uac80\\uc99d\\uae30\\ub97c \\uc218\\uc815\\ud588\\uace0 \\uc2e4\\uc81c \\uc2e4\\ud328 \\uc778\\uc6a9\\ubb38\\uacfc 56\\uac1c \\ud14c\\uc2a4\\ud2b8\\ub97c \\ud1b5\\uacfc\\ud588\\ub2e4. \\uc0b0\\uc5c5 \\uadfc\\uac70\\ub098 \\uc2e0\\uaddc\\uc131 \\uae30\\uc900\\uc744 \\ub0ae\\ucd94\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n\\n\\uc0c8 \\uc870\\uc0ac seed: \\ub85c\\ubd07 \\ubc30\\uc120 \\ud558\\ub124\\uc2a4\\uc758 \\ub0b4\\ubd80 \\ub2e8\\uc790\\ub97c \\uc804\\uc6a9 \\ucd94\\ucd9c \\uacf5\\uad6c\\ub85c \\ud574\\uc81c\\ud558\\uace0 \\uc778\\ucd9c\\ud558\\uc5ec \\ud558\\uc6b0\\uc9d5\\uc744 \\uc7ac\\uc0ac\\uc6a9\\ud558\\ub294 \\uc791\\uc5c5. \\uc644\\uc131 \\ucee4\\ub125\\ud130\\uc758 \\uc0bd\\uc785\\u00b7\\uc678\\ubd80 \\ub798\\uce58 \\uc870\\uc791\\uc774 \\uc544\\ub2c8\\ub77c, \\uacf5\\uad6c \\ub05d\\uc73c\\ub85c \\ub0b4\\ubd80 \\ub9ac\\ud14c\\uc774\\ub2dd \\ud0f1\\uc744 \\ud574\\uc81c\\ud55c \\ucc44 \\ubc18\\ub300\\ucabd\\uc5d0\\uc11c \\uc640\\uc774\\uc5b4/\\ub2e8\\uc790\\ub97c \\ub2f9\\uae30\\ub294 \\uc7ac\\uc791\\uc5c5\\uc774\\ub2e4. \\uc804\\uccb4 \\uce74\\ud0c8\\ub85c\\uadf8 \\uc81c\\ubaa9\\uc5d0\\uc11c depin/terminal extraction\\uc758 \\uc9c1\\uc811 \\ub300\\uc751 \\uacfc\\uc81c\\ub294 \\ucc3e\\uc9c0 \\ubabb\\ud588\\uc9c0\\ub9cc \\uc758\\ubbf8\\uc0c1 \\uc804\\uc218 \\ube44\\uad50\\ub97c \\uac70\\uccd0\\uc57c \\ud55c\\ub2e4.\\n\\n\\uc81c\\uc870\\uc0ac \\uc6d0\\ubb38 \\ucd9c\\ubc1c\\uc810:\\n- https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/applicationtoolingspecificationpdf/606/60630/ATS-011030044-001.pdf (Mini-Fit HT60630B \\uc804\\uc6a9 \\uacf5\\uad6c, \\uc801\\uc6a9 \\ub2e8\\uc790/\\ud558\\uc6b0\\uc9d5 \\ub3c4\\uba74\\uacfc \\uc0ac\\uc6a9 \\uc808\\ucc28)\\n- https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/applicationtoolingspecificationpdf/217/2174/ATS-011030016-001.pdf (\\uc548\\uc73c\\ub85c \\ubc00\\uae30, \\uacf5\\uad6c \\uc0bd\\uc785\\u00b7\\ud53c\\ubc97 \\uc720\\uc9c0\\uc640 \\ubc18\\ub300\\ud3b8 \\ub2f9\\uae40)\\n- https://www.molex.com/en-us/industries-applications/robotics-connectors/commercial-cleaning-robot (\\uc2e4\\uc81c \\ub85c\\ubd07 \\uad6c\\ub3d9\\u00b7\\ubaa8\\uc158 \\uc81c\\uc5b4\\uc5d0\\uc11c Mini-Fit \\uc801\\uc6a9)\\n- https://www.molex.com/en-us/industries-applications/humanoid-robotics/humanoid-robotics-connectors\\n- https://www.te.com/en/products/application-tooling/insertion-and-extraction-tools.html (OEM \\uc7ac\\uc791\\uc5c5\\uc5d0\\uc11c \\ub2e8\\uc790\\u00b7\\ud558\\uc6b0\\uc9d5\\uc744 \\uc190\\uc0c1\\ud558\\uc9c0 \\uc54a\\ub294 \\ucd94\\ucd9c\\uc758 \\uc2e4\\uc81c \\ubaa9\\uc801)\\n\\n\\uc2dc\\ub9ac\\uc988\\ubcc4 \\ud615\\uc0c1\\u00b7\\uce58\\uc218\\u00b7\\uacf5\\uad6c\\ub97c \\uc11e\\uc9c0 \\ub9d0\\uace0 \\uc2e4\\uc81c \\ubd80\\ud488 \\uc138\\ud2b8 \\ud558\\ub098\\ub97c \\uace0\\ub978 \\ud6c4 \\uc81c\\uc870\\uc0ac \\uce58\\uc218\\ub3c4 \\ud655\\ubcf4\\ud55c\\ub2e4. \\uac15\\uccb4/\\uad00\\uc808 \\uadfc\\uc0ac\\ub97c \\uc4f0\\ub354\\ub77c\\ub3c4 \\ud575\\uc2ec \\uc811\\ucd09\\u00b7\\uacf5\\uad6c \\ud574\\uc81c \\uc6d0\\ub9ac\\uc640 \\uc2e4\\uc81c \\uc190\\uc0c1 \\uc870\\uac74\\uc774 \\ubcf4\\uc874\\ub418\\uc5b4\\uc57c \\ud55c\\ub2e4. \\uc81c\\uc870\\uc0ac\\uac00 \\ucd94\\ucd9c \\ud6c4 \\ub2e8\\uc790 \\uc7ac\\uc0ac\\uc6a9\\uc744 \\uae08\\uc9c0\\ud55c\\ub2e4\\uba74 \\uc18c\\ubaa8\\ub418\\ub294 \\ud0f1 \\uc790\\uccb4\\ub294 \\ud5c8\\uc6a9\\ud558\\uba70, \\ud558\\uc6b0\\uc9d5 \\ud30c\\uc190\\u00b7\\uc811\\uc810 \\ubcc0\\ud615\\u00b7\\uc808\\uc5f0 \\uc190\\uc0c1/\\uc640\\uc774\\uc5b4 \\uc778\\ubc1c\\u00b7\\uc774\\uc6c3 \\ub2e8\\uc790 \\uc774\\ud0c8\\uc744 \\uad6c\\ubd84\\ud55c\\ub2e4. YAM \\uacf5\\uad6c \\ud30c\\uc9c0\\u00b7\\ub05d\\uc810 \\uc815\\ubc00 \\ub3d9\\uc791\\uacfc \\ubc18\\ub300\\ucabd \\uc778\\ucd9c\\uc758 \\ubb3c\\ub9ac \\uc2e4\\ud604\\uc131\\uc744 \\uc9c4\\ub2e8\\ud55c\\ub2e4.\\n\\n\\uc5ec\\ub7ec \\ud6c4\\ubcf4\\ub97c \\ube44\\uad50\\ud558\\ub418 \\uc2e0\\uaddc\\uc131 \\uc788\\ub294 \\uc2e4\\ud589 \\uac00\\ub2a5 \\ud6c4\\ubcf4 \\ud558\\ub098 \\ud655\\ubcf4\\uac00 \\ubaa9\\ud45c\\ub2e4. \\ud0c8\\ub77d\\ud55c \\ub2e4\\ub978 \\ubaa9\\uc801\\uc740 \\ube44\\uad50 \\ub300\\uc548\\uc73c\\ub85c \\uae30\\ub85d\\ud560 \\uc218 \\uc788\\uc9c0\\ub9cc \\uc7ac\\uc120\\uc815\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. PCIe\\u00b7\\uba54\\ubaa8\\ub9ac\\u00b7\\ub4dc\\ub77c\\uc774\\ube0c \\uc0bd\\uc785/\\uccb4\\uacb0\\uacfc \\ucee4\\ud50c\\ub9c1 \\uc815\\ub82c\\u00b7\\uc720\\uaca9 \\uc870\\uc815\\uc740 \\uae30\\uc874 \\uc911\\ubcf5 \\uc704\\ud5d8\\uc73c\\ub85c \\uc7ac\\uc120\\uc815\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc774 seed\\ub3c4 \\uc720\\uc0ac\\ud55c \\uae30\\uc874 \\ub2a5\\ub825\\uc758 \\ubcc0\\ud615\\uc774\\uac70\\ub098 \\uc2e4\\uc81c \\ubb3c\\ub9ac \\uc2dc\\uc5f0\\uc774 \\ubd88\\uac00\\ub2a5\\ud558\\uba74 \\uadfc\\uac70\\uc640 \\ud568\\uaed8 \\ucc28\\ub2e8\\ud55c\\ub2e4. \\uc0b0\\uc5c5 \\ub9e4\\ub274\\uc5bc \\uadfc\\uac70 \\uc5c6\\ub294 \\uc0c8 \\uc791\\uc5c5\\uc744 \\uc0c1\\uc0c1\\ud574\\uc11c \\ud1b5\\uacfc\\uc2dc\\ud0a4\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n\\n\\uae30\\uc874 \\uc870\\uac74: \\uc804 \\ubd84\\uc57c accepted/pending\\u00b7\\uc6b0\\ub9ac \\ud300\\u00b7\\uae30\\uc874 \\ubca4\\uce58\\ub9c8\\ud06c \\ube44\\uad50, \\ud658\\uacbd\\u00b7\\ubb3c\\ub9ac \\uc644\\uc131 \\ud6c4 \\ub370\\ubaa8, \\uc2e4\\uc81c YAM \\ub3d9\\uc791\\uacfc \\ucc44\\uc810\\u00b7\\ub300\\uc870\\uad70, Dream\\uc740 \\ub9c8\\uc9c0\\ub9c9 episode 1\\ud68c\\ub9cc, origin \\ubcc4\\ub3c4 \\ube0c\\ub79c\\uce58 \\ubcf4\\uc874 \\ud6c4 GPU stop. \\uc2e4\\uc81c \\ubbf8\\ub514\\uc5b4 \\uc5c5\\ub85c\\ub4dc\\u00b7\\ub300\\ud68c PR\\u00b7\\uc81c\\ucd9c \\uc2b9\\uc778\\uc740 \\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n\", \"approval\": null}"
+    },
+    {
+      "seq": 103,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:47:01.063254+00:00",
+      "data": "{\"resume_from_stage\": \"research\"}"
+    },
+    {
+      "seq": 104,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:47:01.067801+00:00",
+      "data": "{\"supervisor_pid\": 65080, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log\"}"
+    },
+    {
+      "seq": 105,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:47:01.136926+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 106,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:47:48.066657+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 107,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:48:53.777764+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb\"}"
+    },
+    {
+      "seq": 108,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:48:54.242365+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T03:48:54.052066+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 109,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:49:09.684547+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T03:48:54.052066+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 110,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:49:25.244581+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T03:48:54.052066+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 111,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:49:40.707279+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T03:48:54.052066+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 112,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:49:56.170444+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T03:48:54.052066+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 113,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:50:11.632260+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:50:10.266781+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 114,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:50:27.066934+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:50:10.266781+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 115,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:50:42.539573+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:50:10.266781+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 116,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:50:57.972755+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:50:10.266781+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 117,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:51:13.396355+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:50:10.266781+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 118,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:51:28.829707+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:50:10.266781+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 119,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:51:44.258582+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T03:50:10.266781+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 120,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:51:59.769323+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T03:51:55.545512+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 121,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:52:15.641808+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T03:51:55.545512+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 122,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:52:31.498175+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T03:51:55.545512+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 123,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:52:47.357345+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T03:51:55.545512+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 124,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:53:03.334428+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T03:51:55.545512+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 125,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:53:19.189720+00:00",
+      "data": "{\"remote_status\": {\"status\": \"blocked\", \"error\": \"novelty cancelled at batch boundary; partial evidence preserved\", \"type\": \"StateError\", \"at\": \"2026-11-14T03:53:11.648822+00:00\"}, \"stage\": null}"
+    },
+    {
+      "seq": 126,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T03:53:26.277255+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"novelty cancelled at batch boundary; partial evidence preserved\"}"
     }
   ],
   "effects": {
