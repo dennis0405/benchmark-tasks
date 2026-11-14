@@ -59,12 +59,23 @@ def restore(sim,session,directory,*,reset_tool=False,gripper_relief_m=0.,tool_li
             relieved.append(dict(joint=int(joint),coord=coord,before=before,after=float(joints[coord])))
         if len(relieved)!=2:raise ValueError("expected two YAM finger slides")
         excluded.update(fingers)
+    body_primary=getattr(sim,"snack_coupling",None)=="unified" and "w" in data
+    if body_primary and (data["w"].shape!=sim.state.body_qd.numpy().shape or not np.isfinite(data["w"]).all()):
+        raise ValueError("invalid recorded body velocities")
     for state in (sim.pipeline.state_0,sim.pipeline.state_1):
         q=state.particle_q.numpy();q[entity.particles]=data["q"];state.particle_q.assign(q)
         v=state.particle_qd.numpy();v[entity.particles]=data["v"];state.particle_qd.assign(v)
         state.particle_f.zero_();state.body_f.zero_()
         state.joint_q.assign(joints);state.joint_qd.assign(velocities)
         newton.eval_fk(sim.model,state.joint_q,state.joint_qd,state)
+        if body_primary:
+            poses=data["b"].copy();rates=data["w"].copy()
+            if excluded:
+                changed=list(excluded)
+                poses[changed]=state.body_q.numpy()[changed]
+                rates[changed]=state.body_qd.numpy()[changed]
+            state.body_q.assign(poses);state.body_qd.assign(rates)
+            newton.eval_ik(sim.model,state,state.joint_q,state.joint_qd)
     compare=np.ones(sim.model.body_count,bool)
     if excluded:compare[list(excluded)]=False
     pos_error=float(abs(sim.state.body_q.numpy()[compare,:3]-data["b"][compare,:3]).max())
@@ -105,5 +116,6 @@ def restore(sim,session,directory,*,reset_tool=False,gripper_relief_m=0.,tool_li
                 left_cleared_for_clip=metadata.get("left_cleared_for_clip",False),
                 support_holds=metadata.get("support_holds",{}),
                 seed_sha256=hashlib.sha256(raw).hexdigest(),fk_position_error_m=pos_error,
+                body_primary_exact_restore=body_primary,
                 target_source=target_source,target_q=targets.tolist(),
                 limitation=__doc__.strip())

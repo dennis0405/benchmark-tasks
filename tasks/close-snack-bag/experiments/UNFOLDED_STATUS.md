@@ -382,3 +382,28 @@ projecting compliant body poses through forward kinematics.
 
 Focused geometry/material/controller suite: 34 tests passed on the Brev CPU/GPU.
 These checks do not establish successful film capture or physical calibration.
+
+The unified supported closure `unified-readout-v12` completed 65 control frames
+(3.25 s, 3,900 observed substeps), finite with no observed film intersections.
+Its heel stand remains present. Readout forces are uncalibrated and strongly
+biased, so the observed geometry is not proof of realistic contact loads.
+Selected evidence is `unified-supported-closure-v12`.
+
+Robot port comparisons found that imported YAM finger constraints are legacy
+sparse mimic rows, which VBD ignores. Translating them to supported joint-owned
+metadata caused large arm disturbances and a film intersection during the first
+pinch (v3); it is not the current execution path. The current experimental
+gripper instead applies bounded opposed actuator forces plus a passive
+centering spring/damper through `Control.joint_f`. This is an explicitly
+compliant approximation to the transmission, not exact native MuJoCo mechanics.
+The active force limit is 5 N per slide; passive spring reactions are separate.
+Its CPU/CUDA checks verify force limits and dissipative transmission damping.
+The v37 rigid comparison physically grasped and lifted the free clip; carry
+and insertion verification are ongoing.
+
+A rebased world and 1 mm top skin split preserve the board's outer solid and
+leave all colliders active. This did not by itself fix the resting force
+readout bias (v5). A lower contact stiffness comparison is ongoing. CUDA graph
+capture is active (v5: one eager frame, nine replayed frames); this is not a
+Python eager-loop bottleneck. Full unified film work is several seconds per
+20 Hz control frame and is being profiled before tuning iteration counts.

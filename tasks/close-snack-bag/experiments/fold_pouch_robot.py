@@ -29,6 +29,7 @@ def main():
     parser.add_argument("--self-radius-mm",type=float,default=.5)
     parser.add_argument("--rigid-contact-ke",type=float,default=None)
     parser.add_argument("--body-particle-buffer",type=int,default=None)
+    parser.add_argument("--board-skin-mm",type=float,default=0.)
     parser.add_argument("--rebase-z",action="store_true")
     parser.add_argument("--hz",type=int,choices=(20,60),default=60)
     parser.add_argument("--physics-hz",type=int,choices=(600,1200,2400),default=None)
@@ -86,7 +87,7 @@ def main():
                     seed_meta["arguments"][key],args.clip_style}=={"thin_lower","thin_strong"}:
                     continue
                 parser.error(f"checkpoint scene mismatch: {key}")
-        for key,default in (("mouth_support","narrow"),("support_extension_mm",0.),("rebase_z",False)):
+        for key,default in (("mouth_support","narrow"),("support_extension_mm",0.),("rebase_z",False),("board_skin_mm",0.)):
             if seed_meta["arguments"].get(key,default)!=getattr(args,key):
                 parser.error(f"checkpoint support geometry mismatch: {key}")
         for key,default in (("board_friction",1.),("finger_friction",None),("self_filter_rings",0),("self_radius_mm",.5)):
@@ -107,7 +108,7 @@ def main():
                    Path(__file__).with_name("assets")/"yam_ready_pose.json"):
         shutil.copy2(source, sources/source.name)
     if args.coupling=="unified":
-        for name in ("unified_contact.py","robot_gravity_compensation.py","passive_clip_spring.py","contact_average.py"):
+        for name in ("unified_contact.py","robot_gravity_compensation.py","native_joint_mimics.py","finite_gripper_drive.py","passive_clip_spring.py","contact_average.py"):
             source=Path(__file__).with_name(name)
             shutil.copy2(source,sources/name)
     if args.workspace!="original":
@@ -147,7 +148,7 @@ def main():
                            board_friction=args.board_friction,finger_friction=args.finger_friction,
                            self_filter_rings=args.self_filter_rings,self_radius=args.self_radius_mm/1000.,
                            rebase_z=args.rebase_z,rigid_contact_ke=args.rigid_contact_ke,
-                           body_particle_buffer=args.body_particle_buffer)
+                           body_particle_buffer=args.body_particle_buffer,board_skin_mm=args.board_skin_mm)
     timings = dict(build_s=time.monotonic()-started, driver_tick_s=0., readback_and_metrics_s=0., recording_s=0.)
     entity = sim.scene.by_name["pouch"]
     export_render_geometry(sim, args.output)
@@ -376,6 +377,13 @@ def main():
                     if average:
                         trace[-1]["clip_mean_force_world_N"]={label:mean_forces[owners==body].sum(0).tolist()
                             for label,body in zip(("lower","upper"),clip_entity.bodies)}
+        if average and not controller:
+            mean_forces=average.forces()
+            owners=sim.model.shape_body.numpy()
+            trace[-1]["force_window_s"]=float(average.duration.numpy()[0])
+            trace[-1]["all_shape_mean_force_world_N"]=mean_forces.sum(0).tolist()
+            trace[-1]["fixture_mean_force_world_N"]={str(sim.model.shape_label[i]):mean_forces[i].tolist()
+                                                       for i in np.flatnonzero(owners<0)}
         timings["readback_and_metrics_s"]+=time.monotonic()-before
         if controller and hasattr(controller,"layout"):
             geometry=watcher.report() if watcher else None
@@ -417,6 +425,10 @@ def main():
                   clip_style=args.clip_style,table_insert=args.table_insert,
                   material_profile=args.material_profile,
                   material=sim.snack_material_parameters,
+                  robot_gripper=getattr(getattr(sim,"snack_finite_gripper",None),"metadata",None),
+                  gravity_compensation=getattr(getattr(sim,"snack_robot_gravcomp",None),"metadata",None),
+                  pipeline_graph=dict(captured=sim.pipeline.captured,steps_replayed=sim.pipeline.steps_replayed,
+                      steps_eager=sim.pipeline.steps_eager,capture_error=str(sim.pipeline.capture_error)),
                   timings=timings,
                   interrupted=interrupted[0],
                   controller_failure=controller.failure if controller else None,

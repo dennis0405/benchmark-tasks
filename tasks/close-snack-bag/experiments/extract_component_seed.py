@@ -23,6 +23,7 @@ def main():
     if not layout_path.exists():layout_path=Path(args["clip_component_seed"])/"clip-entry.json"
     meta=json.loads(layout_path.read_text())
     data={k:states[f"{k}_{step:05d}"] for k in ("q","b","j","d","v","r")}
+    if f"w_{step:05d}" in states:data["w"]=states[f"w_{step:05d}"]
     data.update({k:states[k] for k in ("faces","grid","edge_rows")})
     if not all(np.isfinite(v).all() for v in data.values()):raise ValueError("non-finite seed")
     a.output.mkdir(parents=True,exist_ok=False)

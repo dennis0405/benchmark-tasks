@@ -30,6 +30,8 @@ def configure_rigid_model(model,ready_start,structural_fk=False,finger_friction=
                 q[int(starts[j])]=-.0045
         model.joint_q.assign(q)
     if structural_fk:
+        from finite_gripper_drive import configure
+        configure(model)
         newton.eval_fk(model,model.joint_q,model.joint_qd,model)
     model.shape_material_ke.assign(np.full(model.shape_count,contact_ke,np.float32))
     if finger_friction is not None:
@@ -106,9 +108,10 @@ class PouchEntity(EntityPaper):
             particle_radius=material.particle_radius, label=self.name)
 
 
-def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None,self_filter_rings=0,self_radius=.0005,rebase_z=False,rigid_contact_ke=None,body_particle_buffer=None):
+def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 32), coupling="one_way", ready_start=False, with_clip=False, material_profile="derived", control_hz=60, side_access=False, physics_hz=None, rigid_cpu=False,rigid_only=False,workspace="original",clip_style="standard",support_extension=0.,board_friction=1.,finger_friction=None,self_filter_rings=0,self_radius=.0005,rebase_z=False,rigid_contact_ke=None,body_particle_buffer=None,board_skin_mm=0.):
     if embodiment != "yam_bimanual":
         raise ValueError("This research scene currently supports yam_bimanual only")
+    if not 0<=board_skin_mm<=2.:raise ValueError("board skin must be 0..2 mm")
     contact_ke=rigid_contact_ke if rigid_contact_ke is not None else (1e4 if coupling=="unified" else 1e6)
     particle_buffer=body_particle_buffer or (4096 if coupling=="unified" else 16384)
     if contact_ke<=0 or particle_buffer<=0:raise ValueError("positive contact stiffness and capacity required")
@@ -204,8 +207,18 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         half,at=(.07,.12,height/2),(.07+shift,0,height/2)
         scene.add(rss.slab(name="mouth_support",half=(.015,.06,height/2),
                            at=(-.015+shift,0,height/2),color=(.64,.47,.30),friction=board_friction))
-    scene.add(rss.slab(name="board", half=half, at=at,
-                       color=(.64, .47, .30), friction=board_friction))
+    skin=board_skin_mm/1000.
+    if skin:
+        # Same closed outer solid, split into a base and thin top collider.
+        # With a rebased world, top-surface arithmetic stays near zero.
+        if skin>=2*half[2]:raise ValueError("skin must be thinner than the board")
+        scene.add(rss.slab(name="board_base",half=(*half[:2],half[2]-skin/2),
+            at=(*at[:2],at[2]-skin/2),color=(.64,.47,.30),friction=board_friction))
+        scene.add(rss.slab(name="board",half=(*half[:2],skin/2),
+            at=(*at[:2],at[2]+half[2]-skin/2),color=(.64,.47,.30),friction=board_friction))
+    else:
+        scene.add(rss.slab(name="board", half=half, at=at,
+                           color=(.64, .47, .30), friction=board_friction))
     if rigid_only:
         scene.add(RigidSetupSpec(ready_start=ready_start,finger_friction=finger_friction,
                                 structural_fk=coupling=="unified",contact_ke=contact_ke))
@@ -241,6 +254,10 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         from unified_contact import install,install_joint_encoder
         if not rigid_only:env.snack_unified_readout=install(env)
         install_joint_encoder(env)
+        from finite_gripper_drive import FiniteGripperDrive
+        gripper=FiniteGripperDrive(env)
+        env.pipeline.hooks.add("pre_solve",gripper.before_solve,name="finite-gripper-drive",cadence=1)
+        env.snack_finite_gripper=gripper
         from robot_gravity_compensation import RobotGravityCompensation
         compensation=RobotGravityCompensation(env)
         env.pipeline.hooks.add("pre_solve",compensation.before_solve,name="authored-robot-gravcomp",cadence=1)
@@ -264,6 +281,7 @@ def make_environment(embodiment="yam_bimanual", device="cuda:0", *, cells=(40, 3
         env.pipeline.reset_solvers(flags=0)
         env.pipeline.reset_finite_flags()
         env.pipeline.invalidate_graph()
+    env.snack_board_skin_mm=board_skin_mm
     env.snack_world_z_offset=z_offset
     env.snack_board_height = height
     env.snack_ready_start = ready_start

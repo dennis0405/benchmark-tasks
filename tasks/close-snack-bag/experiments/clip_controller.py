@@ -32,6 +32,14 @@ def grasp_clip(controller, arm="right"):
         pose=clip_pose(c)
         rotation=Rotation.from_quat(pose[3:])
         quat=(rotation*Rotation.from_euler("x",-np.pi/2)*nominal).as_quat()
+        if getattr(c.sim,"snack_coupling",None)=="unified":
+            # Track the actual two end pads as the upper lever rotates.
+            # Their midpoint shifts during squeezing; a fixed root offset
+            # pushes the free clip sideways instead of centering the jaws.
+            upper=c.sim.state.body_q.numpy()[c.sim.scene.by_name["clip"].bodies[1]]
+            lower_end=pose[:3]+rotation.apply([-.083,0,-.040])
+            upper_end=upper[:3]+Rotation.from_quat(upper[3:]).apply([-.083,0,.040])
+            return (lower_end+upper_end)/2,quat
         return pose[:3]+rotation.apply([-.060,0,0]),quat
     handle,quat=target()
     yield from c.move({arm:handle+[0,0,.15]},{arm:quat},.15,100)
@@ -78,6 +86,13 @@ def grasp_clip(controller, arm="right"):
             break
         request=min(.85,request+.15/hz)
         panel.grip_request=request
+        if getattr(c.sim,"snack_coupling",None)=="unified":
+            handle,turn=target()
+            desired=c.takes._fold_targets(c.film,{arm:handle},{arm:turn})[arm]
+            current=np.asarray(panel.cursor_pos)
+            delta=.35*(desired-current)
+            delta*=min(1.,.0015/max(np.linalg.norm(delta),1e-12))
+            panel.aim(current+delta,turn,moving=True)
         yield
     yield from c.wait(30)
     angle=clip_angle(c)

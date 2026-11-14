@@ -56,7 +56,7 @@ def main():
         shutil.copy2(root/name,sources/name)
     for name in ("clip_rigid_probe.py","fold_controller.py","clip_controller.py","check_rigid_tool.py",
                  "gpu_contact_checks.py","film_material.py","plan_clip_poses.py","passive_clip_spring.py",
-                 "unified_contact.py","robot_gravity_compensation.py","contact_average.py","assets/clip_spring_v2.xml","assets/yam_ready_pose.json"):
+                 "unified_contact.py","robot_gravity_compensation.py","native_joint_mimics.py","finite_gripper_drive.py","contact_average.py","assets/clip_spring_v2.xml","assets/yam_ready_pose.json"):
         shutil.copy2(root/"experiments"/name,sources/Path(name).name)
     if args.workspace!="original":
         name=f"assets/yam_{args.workspace}_pose.json"
