@@ -165,3 +165,16 @@ retains every novelty judgment, neighbor and reason; overlap/uncertain remains b
 Missing suite coverage and unverified sources are not repaired by this path. Regression
 checks cover successful excerpt correction, unchanged blocking verdicts, source-switch
 rejection and bounded failure. This fixes evidence formatting, not task novelty itself.
+
+
+## Revision21: reject the support-transfer family before environment construction
+
+HSR12X transfer passed factual and six-suite comparison gates. At200/2,124 catalog
+comparisons, required open PR901 was judged overlapping: its full pipe-repair spec already
+requires holding two end-to-end supports aligned while sliding a guided coupling across
+the seam. Adding rolling-element-loss consequences was insufficient to establish a new
+central ability. The candidate was rejected without requesting a favorable rereview;
+checkpoint9212c23 preserves the findings. Research now moves beyond alignment/insertion,
+fastening and calibration families. Controlled demagnetization is a primary-source research
+lead only, with industrial relevance, manipulation difficulty and actual material-state
+physics still to establish; no native prototype, demo or Dream success is claimed.
