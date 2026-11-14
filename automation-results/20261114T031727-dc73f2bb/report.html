@@ -15,38 +15,65 @@
 - 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 </p><p>novelty cancelled at batch boundary; partial evidence preserved</p><p>Release digest: none</p><h2>selected</h2><pre>{
-  &quot;id&quot;: &quot;minifit-5378-single-blade-extraction&quot;,
-  &quot;title&quot;: &quot;Extract a 5378-series terminal with a single HT60630B blade&quot;,
-  &quot;objective&quot;: &quot;Hold the compatible housing with its locking tab upward, bend the wire down, insert one HT60630B blade beneath the locking tab, and pull the wire and tool together to remove the terminal.&quot;,
+  &quot;id&quot;: &quot;minifit-5556-terminal-extraction&quot;,
+  &quot;title&quot;: &quot;Depin a Mini-Fit Jr. 5556 terminal from a 5557 housing&quot;,
+  &quot;objective&quot;: &quot;With a de-energized four-circuit Mini-Fit Jr. 39012040/5557 receptacle fixed in a service fixture, guide the HT60630B extraction tool around the selected 5556 terminal, depress both locking tangs, maintain tool engagement, push the wire toward the tool if needed, and then pull the wire and terminal from the rear without releasing neighboring terminals or damaging the reusable housing.&quot;,
   &quot;skills&quot;: [
-    &quot;housing orientation&quot;,
-    &quot;wire deflection without crimp damage&quot;,
-    &quot;single-blade insertion beneath a recessed tab&quot;,
-    &quot;maintained tool-wire contact&quot;,
-    &quot;coordinated same-direction tool and wire pull&quot;
+    &quot;precision tool-tip alignment with housing guide slots&quot;,
+    &quot;constrained dual-blade insertion around a recessed contact&quot;,
+    &quot;contact and force control while depressing two locking tangs&quot;,
+    &quot;bimanual coordination between sustained tool engagement and opposite-side wire pull&quot;,
+    &quot;directional push-then-pull load sequencing&quot;,
+    &quot;regrasping a slender tool and wire&quot;,
+    &quot;avoidance of neighboring terminals and housing walls&quot;
   ],
-  &quot;success_conditions&quot;: &quot;The selected 5378 terminal exits its cavity through robot-applied blade and pulling forces while the housing remains intact and no neighboring terminal is released. Zero for bypassing the locking tab, wire/crimp separation, housing damage, unintended extraction, or state overwrite. Exact force and damage thresholds remain blocked pending measurements.&quot;,
-  &quot;industrial_value&quot;: &quot;Molex provides an explicit manufacturer procedure for extracting individual 5378 terminals with this tool, establishing a real connector-service operation.&quot;,
-  &quot;dexterity&quot;: &quot;High. Unlike the selected dual-blade process, this sequence requires wire bending, insertion of one blade beneath a specific tab, and simultaneous withdrawal of the wire and tool.&quot;,
+  &quot;success_conditions&quot;: &quot;Research-stage rubric: the designated terminal and its wire must exit through the rear of its original cavity through robot-applied contact forces; the housing stays fixed and reusable; all other terminals remain fully retained; the wire remains attached to the extracted terminal; and the tool, housing, insulation, contact body, and adjacent terminals show no prohibited displacement or damage. Success must persist for 3 seconds after both grippers release the extracted terminal and tool. Score zero for extracting the wrong or an additional terminal, pulling the wire out of its crimp, breaking or permanently displacing the housing, bypassing the tangs, or teleporting/welding/state-overwriting the terminal. Partial credit may distinguish correct tool entry, both tangs depressed, and partial rearward withdrawal, but no unmeasured numerical force or damage threshold is asserted. Development is blocked until the rigid tang/contact abstraction passes insertion, retention, overload, and reset tests with measured proxy hardware.&quot;,
+  &quot;industrial_value&quot;: &quot;Molex identifies HT60630B as tooling specifically designed to extract crimped Mini-Fit terminals, while TE identifies terminal extraction without housing damage as important to OEM and aftermarket rework and repair. Molex also lists Mini-Fit connectors for commercial-cleaning-robot drive and motion-control interconnects. This supports harness rework as an industrial manipulation objective, without claiming that every 39012040 housing is installed in that particular robot application.&quot;,
+  &quot;dexterity&quot;: &quot;High but feasible. The robot must enter narrow housing slots with two blades outside the contact, recognize terminal contact, maintain tang-depressing engagement, optionally unload the tangs by pushing the wire forward, and coordinate an opposing gentle pull. This is materially different from mating a completed connector or operating its external latch.&quot;,
   &quot;evidence&quot;: [
     {
       &quot;source_id&quot;: &quot;s-c7c184615f4af9fb&quot;,
-      &quot;quote&quot;: &quot;Individual terminals may be extracted from the housing using this tool.&quot;,
-      &quot;locator&quot;: &quot;Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series&quot;
+      &quot;quote&quot;: &quot;This tool is designed to extract crimped Mini-Fit series terminals from their housings.&quot;,
+      &quot;locator&quot;: &quot;Extraction Tool HT60630B for Mini-Fit Series Terminals, page 1, FEATURES&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-c7c184615f4af9fb&quot;,
-      &quot;quote&quot;: &quot;Hold the housing with the locking tab facing up. Bend the wire down and insert one of the blades of the extraction tool into the housing under the locking tab.&quot;,
-      &quot;locator&quot;: &quot;Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series, step 1&quot;
+      &quot;quote&quot;: &quot;Use the slots located on the inside of the housing to guide the extraction tool blades into the housing until contact is made with terminal.&quot;,
+      &quot;locator&quot;: &quot;Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, OPERATION, step 2&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-c7c184615f4af9fb&quot;,
-      &quot;quote&quot;: &quot;Hold the wire against the extraction tool and gently pull the terminal by the wire and the extraction tool at the same time out from the housing in the direction shown.&quot;,
-      &quot;locator&quot;: &quot;Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series, step 2&quot;
+      &quot;quote&quot;: &quot;If the terminal locking tabs are still not totally depressed, hold on tight to the wire and push it toward the extraction tool.&quot;,
+      &quot;locator&quot;: &quot;Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, OPERATION, step 4&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;s-c7c184615f4af9fb&quot;,
+      &quot;quote&quot;: &quot;Grasp the terminal by the wire, and gently pull it out from the housing.&quot;,
+      &quot;locator&quot;: &quot;Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, OPERATION, step 5&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;s-c7c184615f4af9fb&quot;,
+      &quot;quote&quot;: &quot;Note: When a terminal is removed in this manner the locking tangs are damaged and the terminal is not reusable.&quot;,
+      &quot;locator&quot;: &quot;Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, note below Terminal and Housing Application Chart&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;s-f251010cce66cd83&quot;,
+      &quot;quote&quot;: &quot;Our insertion tools and extraction tools are designed to respectively insert and extract a terminal from the connector housing without damaging the terminal or housing—a key criteria in quality wire processing that is especially important for rework and repair at the OEM and in the after-market.&quot;,
+      &quot;locator&quot;: &quot;TE Connectivity, Insertion and Extraction Tools for Wire Processing, High-Precision Insertion and Extraction Tools section&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;s-3b2ffb1f5e4549e5&quot;,
+      &quot;quote&quot;: &quot;Pitch Mating Interface 4.20mm&quot;,
+      &quot;locator&quot;: &quot;Molex part 39012040 product page, Physical Specifications&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;s-b8dfc5566fdc008f&quot;,
+      &quot;quote&quot;: &quot;Motors and motion systems in cleaning robots need vibration-resistant connectors to maintain reliable power and signal transmission despite exposure to moisture and cleaning chemicals.&quot;,
+      &quot;locator&quot;: &quot;Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors section&quot;
     }
   ],
-  &quot;asset_plan&quot;: &quot;Acquire the authoritative 5378 housing and terminal drawings and reference hardware before modeling. Use rigid PhysX geometry and an articulated locking tab calibrated from the actual parts. Validate wire-bending clearance, tab release, simultaneous pull, damage modes, and YAM reachability before full-demo work.&quot;,
-  &quot;risk&quot;: &quot;Not selected. It is meaningfully different in contact mechanics from the dual-blade 5556 procedure, but the acquired package lacks a 5378 housing drawing, selected part number, complete geometry, and robot-application evidence. It also shares the broader depinning objective, so it offers weaker novelty separation than the selected, better-specified four-circuit Mini-Fit Jr. setup.&quot;
+  &quot;asset_plan&quot;: &quot;Use the documented four-circuit 39012040/5557 housing and a compatible 5556 terminal only; do not mix the 5378 geometry or another extraction-tool series. Build dimensioned rigid housing, terminal, crimp barrel, wire, and HT60630B proxy meshes from the acquired Molex drawing plus measurements of reference parts. Represent each terminal tang as a constrained articulated rigid leaf with calibrated detent and irreversible damage state rather than a deformable solver. The wire may initially be a short rigid handle for component-physics tests; any later segmented cable must use an already validated YAM-compatible model. Validate blade clearance, outside-contact guidance, tang release, retained-state pull resistance, extraction after release, neighbor retention, overload damage, and reset repeatability before attempting a full robot demo in pinned Isaac Sim 6.1.0/YAM 0059d02a1a91bc6834c1d0846022891df0c78730. No task object may be teleported or welded to produce extraction.&quot;,
+  &quot;risk&quot;: &quot;Medium-high implementation risk. The acquired sources establish procedure, pitch, compatible families, intended tooling, and terminal non-reusability, but do not provide blade thickness, tang stiffness, release force, pull-out force, or allowable housing-load limits. Those values require measured reference hardware. The catalog text screen found no direct depin/terminal-extraction objective, but this is not conclusive semantic proof; the complete accepted, pending, open, team, and benchmark comparison must be repeated after the objective and physics are implemented.&quot;
 }</pre><h2>sources</h2><pre>[
   {
     &quot;id&quot;: &quot;s-c7c184615f4af9fb&quot;,
