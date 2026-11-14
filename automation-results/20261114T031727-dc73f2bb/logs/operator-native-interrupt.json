@@ -1,0 +1,23 @@
+{
+  "run": "20261114T031727-dc73f2bb",
+  "pid": 3824,
+  "argv": [
+    "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+    "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb/workspace/task/run_component_diagnostics.py",
+    "--worker-hz",
+    "240",
+    "--worker-output",
+    "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb/workspace/measurements/raw-component/native-240hz.json",
+    "--headless"
+  ],
+  "elapsed_seconds": 368,
+  "signal": "SIGINT",
+  "at": "2026-11-14T18:31:24.103305+00:00",
+  "reason": "Investigate native render hang: SDK Replicator.step defaults pause_timeline=True; SimulationContext.step waits_for_playing. Interrupt only this run child material probe and retain captured traceback; no result success claimed.",
+  "source_sha256": "926271ac042c555987f68eb49ef02291b11dfe8f8beeeed3aec998d30b18b1cf",
+  "escalation": {
+    "signal": "SIGTERM",
+    "at": "2026-11-14T18:32:00.585378+00:00",
+    "reason": "Scoped native child remained alive after SIGINT; Kit signal handler did not exit. Preserve the failed run without waiting for30-minute timeout."
+  }
+}
