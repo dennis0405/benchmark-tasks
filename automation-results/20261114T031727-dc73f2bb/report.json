@@ -2,8 +2,8 @@
   "run": "20261114T031727-dc73f2bb",
   "status": "blocked",
   "prompt": "사용자 요청 원문:\n좋아. 이제 인스턴스를 다시 켜고 첫 태스크를 만들어보자.\n필요한 CLI 인증부터 확인하고, 로봇 조립·데이터센터 정비 분야에서 산업 근거가 있고 기존 제출과 겹치지 않는 후보를 골라 제출 전 검토 단계까지 진행해줘.\n\n확정된 제작 조건:\n- Category: Impact on AI timelines. 로봇 조립 또는 데이터센터 정비 중 실제 산업에서 자동화할 의미가 있는 물리 조작 하나를 선택한다.\n- 제조사 설치·정비 매뉴얼, 공식 조립 절차, 공개 설계, 실제 작업 영상·보고서의 원문으로 작업과 장비 형상·치수·절차를 입증한다. 추측이나 가상 산업 용도를 만들어내지 않는다.\n- 여러 후보를 비교하고 목적·물리 기술·성공 조건의 신규성과 로봇의 어려운 조작 능력을 함께 검토하여 하나만 제작한다. 조작의 어려움은 극단적일 필요는 없지만 단순 물체 옮기기를 산업 이름만 바꾼 작업은 피한다.\n- 모든 분야의 기존 accepted/pending/open 제출 및 우리 팀 기존 제출, 지정된 기존 벤치마크와 비교한다. 기하·색상·배치·시작 자세·난도만 다른 것은 새 태스크가 아니다. 선정 시점 및 완성 후 다시 전수 비교한다. 불확실한 중복을 통과시키지 않는다.\n- 가능한 강체 PhysX 작업을 선택한다. 기존의 검증된 연성 에셋이 없다면 새 연성 솔버 연구는 하지 않는다. 실제 산업 장비의 형태와 중요한 물리 제약을 재현한다. 공개 에셋은 라이선스·출처·치수를 기록하고 적합하지 않으면 직접 제작한다.\n- objective와 환경·부품 물리를 먼저 완성·진단한 뒤 YAM 전체 데모·채점기를 연결한다. 물체 순간이동/상태 덮어쓰기로 성공을 만들지 않는다. 관련 부품 파손·금지 동작·실패·부분 점수와 성공 유지 시간을 수치로 평가한다.\n- 실제 simulator 측정·두 번의 full-score YAM 데모·실패/부분 점수 대조군·영상/원시 trace 및 깨끗한 경로 재현 검사를 수행한다. 미검증 수치와 성공을 만들어 보고하지 않는다.\n- 모든 제작·검증을 마친 후에만 Dream 최종 평가 episode 1회. 실패나 불명 결과도 자동 재평가하지 않는다. 누적 $20 ledger를 준수하고 인증이 없으면 제작을 보존한 뒤 평가 대기한다.\n- 결과는 이 run의 새로운 origin 브랜치에 보존한다. 원본 매뉴얼 전체/인증 정보는 공개하지 않는다. 50MB/file 또는 100MB checkpoint 초과는 먼저 보고한다.\n- 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.\n- 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.\n",
-  "at": "2026-11-14T17:10:49.580845+00:00",
-  "error": "worker paused at stage boundary",
+  "at": "2026-11-14T17:30:03.757556+00:00",
+  "error": "review evidence missing or outside approved run directories",
   "mode": "production",
   "dream": null,
   "release": null,
@@ -63,9 +63,9 @@
   },
   "contract": {
     "slug": "odri-m25-helicoil-tang-break-and-recover-dc73f2bb",
-    "objective": "Finish four already-installed M2.5 × 3.75 mm HELICOIL inserts in a representative ODRI actuator shell-base fixture. Hold a straight tang break-off mandrel coaxially in each recessed insert, strike it with a separately manipulated hammer to fracture the modeled notched tang, withdraw it without displacing the retained insert, and physically recover all four free tangs into the tray. Full success requires four credited contact-caused fractures, four retained undamaged inserts, four distinct fragments resting in the tray, released tools, a valid RGB-D camera, and a stable two-second terminal state.",
+    "objective": "Finish four already-installed M2.5 × 3.75 mm HELICOIL inserts in a representative ODRI actuator shell-base fixture. Hold a straight tang break-off mandrel coaxially in each recessed insert, strike it with a separately manipulated hammer to fracture the modeled notched tang, withdraw the mandrel without displacing the retained insert, and physically recover all four free tangs into the tray. Full success requires four credited contact-caused fractures, four retained undamaged inserts, four distinct fragments resting in the tray, released tools, valid RGB-D observations, and a stable two-second terminal state.",
     "instruction": "Break the tang from each of the four installed thread inserts using the straight mandrel and hammer. Keep every insert and the shell undamaged. Find each released tang, place all four in the collection tray, and release both tools.",
-    "industrial_mapping": "The pinned Open Dynamic Robot Initiative actuator-module-v1 shell-preparation instructions specify four M2.5 × 3.75 mm HELICOIL inserts in the shell base, removal of their tangs with a tang break-off tool, and verification that tangs do not remain inside the part (source s-df759bd2377bbb57, pinned commit 66af1522b4fba0ec4a1d7790e66f5e4652208d30). The Böllhoff HELICOIL Plus manufacturer catalog states that the tang is broken at its notch, depicts hammer actuation of a straight mandrel on page 17, and lists straight mandrel 0158 040 1000 for M2.5 on page 55 (source s-6195df1bebbb33ef). The fixture is an independently authored representative rigid test article, not an exact current ODRI product or a scale reconstruction of the historical unitless STL.",
+    "industrial_mapping": "The pinned Open Dynamic Robot Initiative actuator-module-v1 shell-preparation instructions specify four M2.5 × 3.75 mm HELICOIL inserts in the shell base, removal of their tangs with a tang break-off tool, and verification that tangs do not remain inside the part (source s-df759bd2377bbb57, pinned commit 66af1522b4fba0ec4a1d7790e66f5e4652208d30). The Böllhoff HELICOIL Plus manufacturer catalog states that the tang is broken at its notch, depicts hammer actuation of a straight mandrel, and lists straight mandrel 0158 040 1000 for M2.5 (source s-6195df1bebbb33ef, pages 17 and 55). The fixture is an independently authored representative rigid test article, not an exact current ODRI product or a scaled reconstruction of the historical unitless STL.",
     "run_steps": 7200,
     "timing": {
       "control_hz": 20,
@@ -117,10 +117,16 @@
         "unit": "m"
       },
       {
-        "name": "initial-rigid-body-interpenetration-maximum",
+        "name": "initial-rigid-body-penetration-maximum",
         "operator": "<=",
         "threshold": 0.0002,
         "unit": "m"
+      },
+      {
+        "name": "initial-open-contact-episode-count",
+        "operator": "==",
+        "threshold": 0,
+        "unit": "count"
       },
       {
         "name": "credited-impact-axis-angle-maximum",
@@ -135,26 +141,32 @@
         "unit": "m"
       },
       {
-        "name": "completed-insert-continuous-strike-count-minimum",
+        "name": "completed-insert-strike-count-minimum",
         "operator": ">=",
         "threshold": 1,
         "unit": "count"
       },
       {
-        "name": "qualified-axial-impulse-minimum",
+        "name": "qualified-strike-axial-impulse-minimum",
         "operator": ">=",
         "threshold": 0.012,
         "unit": "N*s"
       },
       {
-        "name": "qualified-axial-impulse-maximum",
+        "name": "qualified-strike-axial-impulse-maximum",
         "operator": "<=",
         "threshold": 0.035,
         "unit": "N*s"
       },
       {
-        "name": "insert-contact-off-axis-impulse-maximum",
+        "name": "qualified-strike-cumulative-offaxis-impulse-maximum",
         "operator": "<=",
+        "threshold": 0.008,
+        "unit": "N*s"
+      },
+      {
+        "name": "invalid-strike-cumulative-offaxis-impulse-minimum",
+        "operator": ">",
         "threshold": 0.008,
         "unit": "N*s"
       },
@@ -189,177 +201,211 @@
         "unit": "deg"
       },
       {
-        "name": "shell-contact-damage-work-maximum",
+        "name": "shell-incident-contact-work-maximum",
         "operator": "<=",
         "threshold": 0.02,
         "unit": "J"
       },
       {
-        "name": "post-fracture-forbidden-penetration-maximum",
+        "name": "postfracture-forbidden-penetration-maximum",
         "operator": "<=",
         "threshold": 0.0002,
         "unit": "m"
       },
       {
-        "name": "finite-rgb-depth-frame-fraction",
+        "name": "camera-workspace-valid-depth-fraction-minimum",
         "operator": ">=",
         "threshold": 0.99,
         "unit": "fraction"
       },
       {
-        "name": "workspace-corners-visible-in-camera",
+        "name": "camera-workspace-corners-visible",
         "operator": "==",
         "threshold": 1,
         "unit": "boolean"
       },
       {
-        "name": "final-stable-hold-duration-minimum",
+        "name": "terminal-hold-valid-camera-frame-count-minimum",
+        "operator": ">=",
+        "threshold": 41,
+        "unit": "count"
+      },
+      {
+        "name": "terminal-stable-hold-duration-minimum",
         "operator": ">=",
         "threshold": 2,
         "unit": "s"
       },
       {
-        "name": "final-fragment-linear-speed-maximum",
+        "name": "terminal-fragment-linear-speed-maximum",
         "operator": "<=",
         "threshold": 0.01,
         "unit": "m/s"
       },
       {
-        "name": "production-post-physics-callback-dt",
+        "name": "terminal-fragment-angular-speed-maximum",
+        "operator": "<=",
+        "threshold": 0.5,
+        "unit": "rad/s"
+      },
+      {
+        "name": "production-postphysics-callback-dt",
         "operator": "==",
         "threshold": 0.004166666666666667,
         "unit": "s"
       },
       {
-        "name": "refinement-post-physics-callback-dt",
+        "name": "refinement-postphysics-callback-dt",
         "operator": "==",
         "threshold": 0.0020833333333333333,
         "unit": "s"
+      },
+      {
+        "name": "registered-task-callback-handle-count",
+        "operator": "==",
+        "threshold": 2,
+        "unit": "count"
+      },
+      {
+        "name": "unsafe-self-contact-impulse-maximum",
+        "operator": "<=",
+        "threshold": 0.02,
+        "unit": "N*s"
       }
     ],
     "damage_rules": [
-      "Native joint breakage and component displacement must never be suppressed because a strike is invalid. Log every native attached-to-free transition separately from credited-valid-fracture events; invalid physical breakage remains visible and causes hard failure.",
-      "At reset, clear contact-pair episode IDs, impulse accumulators, native-transition records, credit records, hold timers, and camera freshness counters before the first physics step. At each POST_PHYSICS_STEP callback, consume only contacts stamped for the just-completed native step. Integrate contact impulse using the callback dt and the runtime-reported contact force in newtons; reject missing, stale, duplicated, non-finite, or unit-unverified readings.",
-      "A continuous strike begins on hammer-head–mandrel contact onset and ends only after that pair separates for at least one completed physics step. Adjacent solver samples during uninterrupted contact share one episode ID and cannot be counted as additional hammer blows.",
-      "For a strike episode, axial impulse is the sum over fresh hammer-head–mandrel samples of max(0, force dot the target insert axis) multiplied by callback dt. Off-axis impulse is the norm of the time-integrated force component perpendicular to that axis across all fresh contacts involving the mandrel, target insert, tang, or boss during the episode.",
-      "Shell contact-damage work is the cumulative positive closing contact work over shell/boss contacts: sum max(0, force dot negative relative contact-point velocity) multiplied by callback dt. The accumulator is monotonic from reset. Shell work above 0.02 J, visible shell fracture, or hammer-head–shell contact is irreversible hard failure.",
-      "Post-fracture forbidden penetration is the maximum positive signed overlap of the mandrel beyond the target tang-notch plane along the insert axis into the authored retained-coil or shell forbidden volumes, computed from collision geometry after the native fracture. More than 0.2 mm is irreversible hard failure.",
-      "Insert translation above 0.25 mm from its authored seat, rotation above 3 degrees from its authored orientation, coil-proxy fracture, or unthreading is irreversible hard failure.",
-      "A native tang fracture earns credit only when its single continuous hammer-head–mandrel episode supplies 0.012–0.035 N*s axial impulse, no more than 0.008 N*s off-axis impulse, no more than 5 degrees axis error, and no more than 0.35 mm radial offset. A fracture caused by another force path remains native breakage but is uncredited hard failure.",
-      "More than three distinct hammer-head–mandrel contact episodes for one insert, any strike after that insert's tang is free, or any strike exceeding 0.035 N*s axial impulse is irreversible hard failure.",
-      "Direct hammer contact with a tang or insert, use of a robot link instead of the mandrel to cause fracture, or carrying the fixture is a prohibited shortcut and hard failure.",
-      "A fragment is tray-contained only when its collision body is wholly inside the tray's interior XY bounds, above its floor, below its rim, contacting the tray, and moving no faster than 0.01 m/s. Credit is revoked immediately if any condition ceases to hold.",
-      "A released fragment leaving the bounded workcell, disappearing, being deleted, or being counted without its distinct rigid body resting in the tray is hard failure. At timeout, a fragment is deterministically inaccessible when its entire collision body lies inside an authored closed trap region of the shell that has no opening at least as wide as the fragment's smallest collision extent; this overrides partial credit. Pre-timeout partial controls are sampled before this timeout rule.",
-      "Task objects may move only through robot contact, native rigid-body contact, native breakable-joint dynamics, and gravity. Runtime pose or velocity writes, teleportation, hidden attachment, collision suppression, scripted grasp welds, deletion, or waypoint, timer, desired-action, or object-identity flags used to manufacture success set score to zero.",
-      "Dropping a tool outside the catch surface, unsafe robot self-collision, or any non-finite body, joint, contact, score, or camera datum is hard failure.",
-      "Slow pressing, one-handed stabilization, and other physically valid strategies are not banned by identity. Diagnostics must report their native outcomes under the same fracture, retention, damage, containment, and terminal rules. Unexpected safe success blocks acceptance pending ability and novelty reassessment."
+      "Lifecycle and native-step indexing: retain exactly one PRE_PHYSICS_STEP and one POST_PHYSICS_STEP callback handle for the task context. Reset happens at time 0 before the first integration interval and clears all task state exactly once. The first interval (0,dt] is native step n=1: PRE(1) snapshots fresh rigid poses, COM twists, geometry transforms, and joint states at time 0; POST(1) consumes only contacts generated by that interval and represents time dt. Generally POST(n) is time n*dt. Production 300 s sampling is after POST(72000), refinement sampling after POST(144000); production timeout is after POST(86400), refinement timeout after POST(172800). On reset deregister old handles and clear step tags, open contact episodes, transition records, impulse/work/penetration accumulators, hard-failure state, credits, camera counters, and hold timers. POST rejects stale, future, duplicate, untagged, non-finite, or wrong-dt data and sets H. Multiple score() or success() reads during one native step cannot mutate state.",
+      "Contact quantities: C_n is the set of fresh native contact points produced by solver step n and read once at POST(n). A reported contact force f_c,n in N becomes impulse J_c,n=f_c,n*dt exactly once. A native impulse field in N*s is used directly and never multiplied by dt. Construction must verify the selected field, direction, units, finite values, freshness, and callback ordering in native tests. Contact-point velocity is v_b(p)=v_b,COM+omega_b×(p-x_b,COM), using PRE(n) values.",
+      "Impact segmentation: a physical strike opens at the first fresh compressive hammer_head↔mandrel contact. It includes consecutive contact samples and intermittent gaps shorter than 1/240 s. It closes when accumulated consecutive physical contact-free time reaches 1/240 s: one absent sample at 240 Hz or two absent samples at 480 Hz. The closing gap samples contribute no impulse. A solver tick is not a new strike. Time may segment real contact but cannot schedule fracture.",
+      "Force path: a credited strike for tang i requires at least one identical native step tag n in which C_n contains both compressive hammer_head↔mandrel and mandrel↔target_tang_i contacts. Contacts occurring only in different steps or merely within the same episode do not qualify. No hammer_head↔tang, hammer_head↔insert, hammer_head↔shell, robot_link↔tang, or robot_link↔insert contact may occur in a credited episode.",
+      "Each tang_i is an independent rigid body connected only to retained_coil_i by named native breakable fixed joint J_tang_i. Each retained coil has named seat joint J_seat_i; shell integrity uses named joints J_shell_q. Joint state is sampled at PRE(n) and POST(n). A physical fracture occurs only on an intact-at-PRE(n) to broken-at-POST(n) transition. Breakage is never suppressed or conditioned on score eligibility. A non-target tang transition, any seat or shell-joint break, body deletion, or scripted state transition sets H while preserving the physical outcome.",
+      "For insert i, a_i is the authored unit axis from retained coil toward removable tang. For each hammer_head↔mandrel contact sample in the episode, orient J_c,n as impulse applied by the hammer to the mandrel. Axial impulse is J_ax,i=Σ max(0,J_c,n·a_i). For every contact involving that mandrel with the hammer head, target tang, target insert, or target boss, compute j_perp=J_c,n-(J_c,n·a_i)a_i and define the non-cancelling cumulative off-axis impulse J_offaxis,i=Σ||j_perp||. Opposing lateral impulses therefore cannot cancel. Report credited-event minima/maxima only over credited strikes; retain separate invalid-event extrema for deliberately bad controls and all rejected events.",
+      "At strike closure, J_ax>0.035 N*s or J_offaxis>0.008 N*s irreversibly sets H whether or not fracture or other damage occurred. Values and native outcomes remain logged. More than three closed strikes for one insert, a strike after its tang is free, direct hammer contact with tang/insert/shell, fracture caused by a robot link, fixture carrying, or use of the tray as a striking tool also sets H.",
+      "Axis angle is acos(clamp(u_m·a_i,-1,1)), where u_m is the PRE contact-onset mandrel shaft axis. Radial offset is ||(I-a_i a_i^T)(p_tip-p_axis,i)||. Credit requires a simultaneous real force path, the target J_tang transition, J_ax in [0.012,0.035] N*s, J_offaxis≤0.008 N*s, angle≤5 degrees, offset≤0.00035 m, and no H event. Each physical tang can be credited at most once.",
+      "Shell damage uses monotonic incident-contact-work proxy W_shell=Σ max(0,J_onV·(v_A(p)-v_V(p))) in J. For each included unordered pair, vulnerable body V is shell/boss for tool, robot-link, tang, or coil contacts against shell/boss, and retained_coil_i for free_tang↔retained_coil contact; A is the other body. J_onV is impulse applied to V by A, reported directly or integrated from force once. Both point velocities use PRE(n), including angular terms. Exclude intended hammer_head↔mandrel, mandrel↔target_tang, tang↔tray, and tool↔table contacts. W_shell resets only at episode reset and never decreases. W_shell>0.02 J, J_shell/J_seat breakage, or direct hammer_head↔shell contact sets H. This is an incident-energy proxy, not a calibrated shell-cracking model.",
+      "Signed penetration uses the exact collision representations supplied to PhysX, not render meshes. Every task collision shape must be a primitive or an authored finite union of convex shapes. For each non-intentionally-connected convex-shape pair, run deterministic double-precision GJK distance; if disjoint, signed separation s is the positive GJK distance. If intersecting or touching, run EPA from the terminal GJK simplex; s=-d_EPA for positive EPA penetration depth and s=0 for exact touching within 1e-9 m. Primitive pairs may use algebraically equivalent analytic distance. For unions, the geometry-pair separation is min over constituent convex pairs and penetration is P=max(0,-s). Nonconvex render meshes are never queried directly; if a collision mesh cannot be represented by the frozen convex decomposition, construction is blocked. Exclude only intact notch mating faces and authored coil-seat mating faces. Accumulate the maximum P during initial settle and separately after every fracture for shell, coil, boss, mandrel, tools, tray, robot, and fragments. P>0.0002 m sets H. Mandrel overlap with retained-coil or shell convex forbidden volumes beyond the target notch plane is forbidden penetration under the same algorithm.",
+      "Insert axial displacement is |(x_i-x_i,0)·a_i|. Angular displacement is acos(clamp((trace(R_i,0^T R_i)-1)/2,-1,1)). Axial displacement>0.00025 m, rotation>3 degrees, J_seat breakage, coil fracture, or withdrawal beyond the authored seat interval sets H.",
+      "For tool q, L_q and R_q are fresh contacts with the named left and right finger collision bodies of one gripper. Safe grasp holds for 0.25 s of unique POST timestamps iff both contact sets have inward normal impulse, q has no table/tray/catch support, its lowest collision point is at least 0.002 m above its last support plane, and its pose relative to the palm stays within 0.001 m translation and 2 degrees rotation of the first qualifying pose. Tool q is held by the same two-finger/support-free predicate. It is unheld after 0.10 s with no gripper contact and with native table/tray/catch support. Pre-held, welded, or hidden-attached tools cannot earn G.",
+      "Alignment holds when a post-reset safe mandrel grasp exists and, for 0.25 s of unique POST timestamps, radial offset≤0.00035 m, axis angle≤5 degrees, fresh mandrel_tip↔unbroken_target_tang contact exists, and no forbidden penetration or fracture occurs. A persists after legitimate withdrawal, but H overrides it. Pre-existing alignment earns nothing.",
+      "Fragment containment: G_j is the complete transformed collision geometry of fragment j. A fragment is contained iff every point of G_j lies inside the closed tray interior prism T_xy×[z_floor,z_rim], fresh tray support has upward normal, linear speed≤0.01 m/s, and angular speed≤0.5 rad/s. Containment is current-state credit and is revoked immediately when any term becomes false.",
+      "Loss is irreversible if any point of complete fragment geometry crosses outside the declared closed workcell bound, all geometry crosses the floor-loss plane, state becomes non-finite, or the native body is deleted or unaddressable. A fragment merely outside the tray remains unfinished and is not loss or inaccessibility.",
+      "At timeout, before final scoring, fragment j is inaccessible only if all of G_j lies in an explicitly authored visible closed free-space component and every continuous collision-free opening from that component to robot-accessible workspace is narrower than the fragment's smallest oriented collision extent. Components and opening widths are computed deterministically from the frozen collision geometry, with the fragment Minkowski-expanded against obstacles; a component with any connecting opening of sufficient width is accessible. No hidden trap, planner failure, waypoint label, elapsed-time flag, or mere absence from the tray establishes inaccessibility. Loss or true inaccessibility sets H.",
+      "Pre-timeout partial controls are sampled at exactly 300.0 s: control step 6000 after production POST(72000) or refinement POST(144000), before timeout logic. Timeout occurs at 360.0 s after POST(86400) or POST(172800), respectively.",
+      "Terminal physical rest requires four contained fragments; fragment linear speed≤0.01 m/s and angular speed≤0.5 rad/s; both tools unheld, natively supported, and within the same limits; fixture speed≤0.002 m/s; and no open strike. It must hold continuously for 2.0 s measured by distinct native POST timestamps. Repeated scoring reads cannot advance it.",
+      "Camera workspace mask M is the union of pixels inside the projected convex hull of the eight declared task-AABB corners and pixels bearing shell, insert/tang, tool, tray, or fragment geometry IDs. The terminal camera hold starts only on a valid 20 Hz control observation at native time t0. Exactly 41 observations are required at target times t0+m/20 s for m=0..40, including both endpoints. Each frame must have a strictly increasing native render timestamp in [target_time,target_time+0.05 s], and must be newly consumed once. At every frame all eight AABB corners must have positive camera-space depth and project inside image bounds, RGB must be finite on M, and count(finite depth>0 on M)/|M|≥0.99. A missing, late, duplicated, stale, non-finite, or invalid frame immediately breaks and resets T-hold accumulation; no interpolation is allowed.",
+      "Unsafe self-collision uses declared set S_self: all cross-arm collision-link pairs and same-arm pairs separated by at least two kinematic joints, excluding intended finger↔held-tool contact. Any fresh pair normal impulse>0.02 N*s sets H. Tool loss outside the catch surface, non-finite measurements, stale camera reuse, or callback duplication also sets H.",
+      "Task objects may move only through robot actuation/contact, native rigid-body contact, native joint dynamics, and gravity. Pose/velocity writes, teleportation, deletion, hidden attachment, scripted welds, collision suppression, or waypoint, timer, desired-action, object-ID, or grasp-state flags used as physical success evidence set H. Slow pressing, one-handed stabilization, and other physically valid strategies are not banned; unexpected safe success blocks acceptance pending ability and novelty reassessment."
     ],
     "assets": [
-      "Independently authored representative rigid shell-base fixture with four recessed M2.5 insert bosses, an open recovery cavity, explicit forbidden volumes, and deterministic closed trap regions",
-      "Four retained HELICOIL proxy bodies with four distinct tang rigid bodies and native breakable fixed joints at modeled manufactured notches",
-      "Representative straight M2.5 tang break-off mandrel with a frozen prototype shaft diameter small enough to enter the modeled insert bore",
-      "Representative small hammer with separately modeled rigid head and handle joined by a native fixed joint",
-      "Rigid four-fragment containment tray with raised walls",
+      "Independently authored rigid shell-base fixture with four recessed M2.5 insert bosses, open recovery cavity, declared workcell/catch bounds, explicit forbidden volumes, and only geometrically genuine visible trap regions",
+      "Four retained rigid HELICOIL proxies, four distinct tang rigid bodies, four native breakable notch joints J_tang_i, four retained-seat joints J_seat_i, and named shell-integrity joints J_shell_q",
+      "Representative straight M2.5 tang break-off mandrel whose frozen shaft fits the modeled insert bore",
+      "Representative small hammer with separate rigid head and handle connected by a native fixed joint",
+      "Rigid four-fragment containment tray with floor and raised walls",
       "Table and bounded catch surface",
-      "YAM dual-arm robot and physical grippers",
+      "YAM dual-arm robot with physical grippers and declared self-collision pair set",
       "Fixed RGB-D task camera"
     ],
     "approximations": [
-      "The ODRI procedure establishes four M2.5 × 3.75 mm inserts but does not publish local boss CAD in the acquired instructions. Boss spacing, recess depth, cavity openings, and access clearance are frozen representative dimensions, not exact ODRI geometry.",
+      "The ODRI procedure establishes four M2.5 × 3.75 mm inserts but does not publish local boss CAD in the acquired instructions. Boss spacing, recess depth, cavity openings, trap topology, and access clearance are frozen representative dimensions, not exact ODRI geometry.",
       "The historical shell-base STL is outdated and unitless and is used only as qualitative shape context, never as proof of current dimensions or scale.",
-      "The 0.012–0.035 N*s axial window, 0.008 N*s off-axis limit, 0.02 J shell-work limit, notch section, wire diameter, masses, friction, restitution, and tool dimensions are disclosed prototype assumptions because the acquired manufacturer sources do not publish M2.5 tang fracture calibration.",
-      "The 0.35 mm radial, 5 degree angular, 0.25 mm axial-retention, 3 degree rotational-retention, 0.2 mm penetration, and two-second hold limits are frozen scoring assumptions requiring native validation, not manufacturer tolerances.",
-      "Fracture is approximated by a native breakable fixed joint at the modeled notch and monitored through fresh native contacts. Physical breakage outside the credit window remains in the failed state; free tangs are never hidden, deleted, or reattached.",
-      "All task geometry is rigid-body PhysX. No deformable solver, rate-dependent material law, or exact helical-wire contact is claimed; retained-coil proxies preserve fracture, retention, collision, and damage constraints.",
-      "The pinned configuration specifies 240 physics steps per second and the trusted evaluator supplies 20 control steps per second. Production uses callback dt 1/240 s and refinement uses 1/480 s. Thus 7200 control steps equal 360 seconds. These are configuration facts pending native callback, reset, contact-field, unit, and state-freshness validation.",
-      "The selected numerical limits are frozen prototype assumptions rather than measured industrial specifications. Failure of native diagnostics at these limits rejects the environment; it does not authorize relaxing the contract."
+      "The 0.012–0.035 N*s axial window, 0.008 N*s cumulative off-axis limit, 0.02 J work limit, 0.02 N*s self-contact limit, notch section, wire diameter, masses, friction, restitution, break force/torque, and tool dimensions are prototype assumptions because acquired manufacturer sources do not publish M2.5 tang fracture calibration.",
+      "The 0.35 mm radial, 5 degree angular, 0.25 mm retention, 3 degree rotation, 0.2 mm penetration, 0.01 m/s rest, 0.5 rad/s rest, and two-second hold limits are frozen scoring assumptions requiring native validation, not manufacturer tolerances.",
+      "Fracture is approximated by a native breakable fixed joint at the modeled notch. Invalid impacts may still break or displace bodies and must remain in that physical state; tangs are never hidden, deleted, or reattached.",
+      "All task geometry uses rigid PhysX bodies with deterministic primitive or convex-decomposition collision geometry. No deformable solver, material rate dependence, exact helical-wire contact, or calibrated shell-crack model is claimed.",
+      "The incident-work quantity is a monotonic proxy based on fresh native impulse and PRE-step relative contact-point velocity; it is not claimed to equal plastic work or fracture energy.",
+      "Pinned source inspection establishes only that PhysxManager.register_callback supports PRE_PHYSICS_STEP and POST_PHYSICS_STEP and returns handles. It does not validate contacts, fields, units, timing, state freshness, fracture, or reset behavior.",
+      "The trusted evaluator supplies 20 control steps per second. Production physics is 240 Hz with dt=1/240 s; refinement is 480 Hz with dt=1/480 s. Thus 7200 control steps equal 360 s. Physics steps never define the control clock.",
+      "Failure of native component diagnostics, timestep convergence, penetration queries, camera checks, or controls at these frozen limits rejects the environment and does not authorize relaxing the contract.",
+      "This prospective specification does not claim the retained historical scaffold implements these mechanisms or has passed physics validation.",
+      "The role workspace exposes artifacts read-only; this returned object is the frozen TaskContract for controller persistence to artifacts/selected.json."
     ],
-    "scoring_spec": "At every control step, evaluate irreversible hard-failure and shortcut rules first; any violation sets current and final score to 0. Otherwise score = grasp_bonus + alignment_bonus + fracture_credit + retained_insert_bonus + containment_credit + terminal_bonus, capped at 1.00. grasp_bonus is 0.10 only while both tools have each been safely acquired through real gripper contact and neither has subsequently been dropped outside the catch surface. alignment_bonus is 0.10 after a valid coaxial placement at an unbroken insert and persists as demonstrated safe progress unless a later hard failure occurs. fracture_credit is 0.10 per distinct credited fracture, maximum 0.40. retained_insert_bonus is 0.10 only after all four credited fractures and only while all four inserts remain within retention limits; it is zero before the fourth credited fracture and revoked by any later violation. containment_credit is 0.05 per distinct released tang currently resting in the tray, maximum 0.20, and is revoked when a fragment ceases to satisfy containment. terminal_bonus is 0.10 only when four native and four credited fractures exist, all four fragments rest in the tray, all inserts remain retained, neither tool is held, all camera checks pass, and the complete state persists continuously for 2.0 seconds. Untouched score is exactly 0. Invalid native fracture is uncredited hard failure. At the 360-second timeout, fragment loss or deterministic inaccessibility is evaluated before final scoring. Controls explicitly named pre-timeout are sampled at their stated checkpoint before timeout. All score inputs must derive from replayable native body, joint, contact, gripper, and camera records; desired actions and scripted phase flags are not score evidence.",
+    "scoring_spec": "Let H be irreversible, initially false, and reset only by actual episode reset. At each distinct POST(n), update native observables once, close and classify eligible contact episodes, apply H transitions, update progress/current bonuses, then compute score. If H=true, score=0 permanently; otherwise score=min(1,G+A+F+R+C+T). G=0.10 after both tools independently satisfy post-reset safe grasp; G persists after legitimate release. A=0.10 after post-reset alignment holds for 0.25 s at an initially unbroken tang; A persists after legitimate withdrawal. H overrides G and A. F=0.10 per distinct credited tang fracture, capped at 0.40; one tang can be credited once. R=0.10 iff all four fracture credits exist, every J_seat_i remains intact, insert displacements remain within limits, and shell damage predicates remain false; R is ineligible before four credits and revoked immediately when any condition becomes false. C=0.05 per distinct released tang currently contained, capped at 0.20, and revoked per fragment when containment becomes false. T=0.10 iff four native and credited fractures exist, all four fragments are contained, R is eligible, both tools are unheld and supported, tools and fragments are at rest, no strike is open, and 41 consecutive valid 20 Hz RGB-D observations span the same continuous 2.0 s physical hold; T is revoked if any terminal condition breaks before episode end. Untouched score is exactly 0. At timeout POST(physics_hz*360), evaluate loss and geometric inaccessibility before final scoring and set H if either is true. Pre-timeout controls sample at 300.0 s after POST(physics_hz*300). All event state, credits, extrema, accumulators, and camera counters reset once per actual episode reset. Body/contact sets, equations, step indexing, sampling order, segmentation, eligibility, revocation, and deterministic failure predicates are defined in damage_rules and must be replayable from step-tagged native body, joint, contact, gripper, collision-geometry, and camera records.",
     "required_controls": [
       {
         "name": "untouched-initial-zero-score",
         "expected_score": 0,
-        "reason": "No grasp, alignment, fracture, eligible retention, containment, or terminal credit; also detects spontaneous breakage, pre-containment, penetration, instability, stale contacts, and invalid camera state."
+        "reason": "No post-reset grasp, alignment, fracture, retention eligibility, containment, or terminal event exists."
       },
       {
-        "name": "aligned-subthreshold-tap-pretimeout",
+        "name": "aligned-subthreshold-tap-at-300s",
         "expected_score": 0.2,
-        "reason": "Safe tool grasps contribute 0.10 and valid alignment contributes 0.10; axial impulse below 0.012 N*s earns no fracture, retention, containment, or terminal credit."
+        "reason": "At control step 6000, G=0.10 and A=0.10; every closed strike has J_ax<0.012 N*s and cumulative J_offaxis≤0.008 N*s, so no fracture credit exists."
       },
       {
-        "name": "offaxis-glancing-strike-hard-failure",
+        "name": "offaxis-glancing-strike-closed-episode-failure",
         "expected_score": 0,
-        "reason": "Off-axis impulse above 0.008 N*s, retention damage, or an off-axis native fracture is hard failure; any physical breakage remains present but uncredited."
+        "reason": "At episode closure cumulative non-cancelling J_offaxis>0.008 N*s sets H even without fracture; the physical outcome remains logged."
       },
       {
-        "name": "overimpulse-strike-hard-failure",
+        "name": "overimpulse-strike-closed-episode-failure",
         "expected_score": 0,
-        "reason": "Axial impulse above 0.035 N*s is hard failure even when the native joint breaks."
+        "reason": "At episode closure J_ax>0.035 N*s sets H even if the native joint breaks."
       },
       {
-        "name": "fourth-distinct-strike-hard-failure",
+        "name": "fourth-distinct-strike-failure",
         "expected_score": 0,
-        "reason": "Four distinct contact episodes exceed the three-strike limit; solver samples in one uninterrupted contact episode count only once."
+        "reason": "A fourth closed strike for one insert exceeds the three-strike limit; uninterrupted solver contact samples remain one strike."
       },
       {
-        "name": "direct-hammer-tang-hard-failure",
+        "name": "direct-hammer-tang-contact-failure",
         "expected_score": 0,
-        "reason": "Direct physical fracture remains simulated but is a prohibited force path and uncredited hard failure."
+        "reason": "Direct hammer contact violates the required force path and sets H while physical breakage remains represented."
       },
       {
-        "name": "one-valid-fracture-pretimeout",
+        "name": "one-valid-fracture-at-300s",
         "expected_score": 0.3,
-        "reason": "Grasp 0.10 + alignment 0.10 + one credited fracture 0.10; the accessible fragment is not yet contained and retention bonus remains ineligible."
+        "reason": "G=0.10+A=0.10+F=0.10; the accessible fragment is not contained and R is ineligible."
       },
       {
-        "name": "four-valid-fractures-three-contained-pretimeout",
+        "name": "four-valid-fractures-three-contained-at-300s",
         "expected_score": 0.85,
-        "reason": "Grasp 0.10 + alignment 0.10 + fractures 0.40 + eligible retention 0.10 + three contained fragments 0.15; the accessible fourth fragment prevents containment and terminal completion."
+        "reason": "G=0.10+A=0.10+F=0.40+R=0.10+C=0.15; the accessible fourth fragment prevents T."
       },
       {
-        "name": "inaccessible-fragment-at-timeout-hard-failure",
+        "name": "inaccessible-fragment-at-360s-failure",
         "expected_score": 0,
-        "reason": "A fragment meeting the deterministic closed-trap predicate at 360 seconds overrides all accumulated partial credit."
+        "reason": "At timeout POST(86400) or POST(172800), the complete-geometry closed-component predicate sets H before final scoring."
       },
       {
-        "name": "insert-displacement-hard-failure",
+        "name": "insert-seat-displacement-failure",
         "expected_score": 0,
-        "reason": "Out-of-tolerance native insert movement remains physically represented as damage and never counts as progress."
+        "reason": "Out-of-tolerance movement or J_seat breakage remains physically represented and sets H."
       },
       {
-        "name": "shell-work-or-penetration-hard-failure",
+        "name": "shell-work-or-forbidden-penetration-failure",
         "expected_score": 0,
-        "reason": "Cumulative positive shell contact work above 0.02 J or signed forbidden penetration above 0.2 mm overrides all progress."
+        "reason": "W_shell>0.02 J or GJK/EPA signed penetration>0.0002 m sets H."
       },
       {
-        "name": "fragment-escape-hard-failure",
+        "name": "fragment-workcell-escape-failure",
         "expected_score": 0,
-        "reason": "A fragment leaving the bounded workcell remains lost and cannot disappear into a scripted state flag."
+        "reason": "Complete geometry leaving the workcell, crossing the loss plane, becoming non-finite, or disappearing sets H without scripted deletion."
       },
       {
         "name": "complete-stable-terminal-full-score",
         "expected_score": 1,
-        "reason": "Grasp 0.10 + alignment 0.10 + fractures 0.40 + retention 0.10 + containment 0.20 + terminal hold 0.10."
+        "reason": "G 0.10+A 0.10+F 0.40+R 0.10+C 0.20+T 0.10 after the physical two-second hold and 41 valid camera observations."
       },
       {
         "name": "clean-reset-replay-full-score",
         "expected_score": 1,
-        "reason": "The same real-action trajectory must reproduce full score without stale joints, contacts, callbacks, counters, timers, or camera frames."
+        "reason": "The real-action trajectory must reproduce full score after callback deregistration and complete state clearing."
       },
       {
         "name": "refinement-480hz-replay-full-score",
         "expected_score": 1,
-        "reason": "Twice-rate replay must preserve event ordering, strike grouping, classifications, containment, and full score while integrating with actual 1/480-second callback dt."
+        "reason": "The twice-rate replay must preserve physical-time segmentation, event ordering, classifications, containment, camera cadence, and score using dt=1/480 s."
       },
       {
-        "name": "slow-press-route-characterization",
+        "name": "slow-press-outcome-bounded-characterization-at-300s",
         "expected_score": 0.2,
-        "reason": "Safe grasp and alignment score 0.20, but the slow press is expected to produce no credited impact fracture. Any native break remains present and reported; safe progress above 0.20 blocks acceptance pending reassessment."
+        "reason": "After both safe grasps and alignment, park the hammer on its support with no hammer_head↔mandrel contact. Command the mandrel gripper along the insert axis at 0.0001 m/s for exactly 1.0 s under Cartesian impedance with axial force saturated at 8 N, hold zero commanded axial velocity for 0.25 s, then retract at 0.0001 m/s for 1.0 s; lateral command is zero. Hammer-path J_ax and J_offaxis are therefore exactly zero by contact definition. Require no fracture, no H, and score G+A=0.20 at POST(72000). This is an outcome-bounded characterization: any native break, damage, or safe score above 0.20 rejects the environment and triggers ability reassessment rather than changing thresholds."
       },
       {
-        "name": "one-hand-route-characterization",
+        "name": "one-hand-characterization-at-300s",
         "expected_score": 0.2,
-        "reason": "Safe sequential tool handling and valid alignment score 0.20, but this route is expected not to create a credited fracture. Any safe progress above 0.20 blocks acceptance pending reassessment."
+        "reason": "One arm alone sequentially safe-grasps mandrel then hammer, never holds both simultaneously, establishes alignment, and ends every hammer contact episode with J_ax<0.012 N*s and cumulative J_offaxis≤0.008 N*s; sample after POST(72000). Expected G+A=0.20. Any break, H, or safe score above 0.20 rejects characterization and triggers reassessment."
       }
     ]
   },
