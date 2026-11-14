@@ -643,3 +643,12 @@ explicitly interrupted before the body press; its 2.5 mm floor would have
 missed the flat side seam. v66 instead permits the seam toe to descend to
 0.5 mm and is running from a new unfolded reset. The scene still begins
 unfolded, without particle attachments or imposed object poses.
+
+### Visual review handoff
+
+The user requested an actual recorded video to guide the next modification.
+The complete failed v58 attempt is rendered at 1x (9.35 s), with a labelled
+translucent-robot close-up, and preserved in `fold-review-v58`. It never
+reaches clip insertion or retention. v65/v66 are saved and explicitly
+interrupted at 139/90 control frames for this handoff; their comparisons
+remain incomplete. Brev is left on, with no further trial launched.

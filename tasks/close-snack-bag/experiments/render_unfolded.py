@@ -50,7 +50,11 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("run", type=Path)
     p.add_argument("--stride", type=int, default=4)
-    p.add_argument("--detail",choices=("mouth","mouth_side","clip"),default="mouth")
+    p.add_argument("--detail",choices=("mouth","mouth_side","mouth_front","clip"),default="mouth")
+    p.add_argument("--translucent-robot-detail",action="store_true",
+                   help="Show the recorded robot translucently in the labelled close-up only")
+    p.add_argument("--first-step",type=int,default=0)
+    p.add_argument("--last-step",type=int,default=None)
     args = p.parse_args()
     recording_bytes=(args.run/"states.npz").read_bytes()
     trace_bytes=(args.run/"trace.json").read_bytes()
@@ -92,7 +96,9 @@ def main():
         validated=(report.get("core_passed") is True and
                    report.get("states_sha256")==hashlib.sha256(recording_bytes).hexdigest() and
                    report.get("trace_sha256")==hashlib.sha256(trace_bytes).hexdigest())
-    keys = sorted(k for k in data.files if k.startswith("q_" if has_film else "b_") and int(k[2:])<len(trace))[::args.stride]
+    keys = sorted(k for k in data.files if k.startswith("q_" if has_film else "b_") and
+                  args.first_step<=int(k[2:])<len(trace) and
+                  (args.last_step is None or int(k[2:])<=args.last_step))[::args.stride]
     output = args.run / f"{'unfolded-yam' if has_film else 'rigid-clip'}-{args.detail}-{'core-demo' if validated else 'diagnostic'}.mp4"
     writer = imageio.get_writer(str(output), fps=hz/args.stride, codec="libx264",
                                quality=8, ffmpeg_params=["-pix_fmt", "yuv420p", "-movflags", "+faststart"])
@@ -119,16 +125,33 @@ def main():
         if args.detail=="mouth_side":
             # Oblique side view of the mouth, away from the torso and elbow.
             detail_eye=center+[.05,-.28,.28]
+        if args.detail=="mouth_front":
+            detail_eye=center+[-.20,-.18,.17]
+            detail_target=center+[-.075,0,.005]
         if args.detail=="clip":
             detail_target=np.asarray(trace[step]["clip_root_pose"][:3])
             detail_eye=detail_target+[.18,-.25,.20]
-        for eye, target in ((center+[.75, -.60, .65], center+[-.10, 0, .08]),
-                            (detail_eye,detail_target)):
+        for view_index,(eye, target) in enumerate(((center+[.75, -.60, .65], center+[-.10, 0, .08]),
+                            (detail_eye,detail_target))):
+            changed=[]
+            if view_index==1 and args.translucent_robot_detail:
+                for part,node in nodes:
+                    if "yam_bimanual" not in part["name"]:continue
+                    for primitive in node.mesh.primitives:
+                        material=primitive.material
+                        changed.append((material,material.baseColorFactor.copy(),material.alphaMode))
+                        color=material.baseColorFactor.copy();color[3]=.16
+                        material.baseColorFactor=color;material.alphaMode="BLEND"
             scene.set_pose(camera, camera_pose(eye, target))
             rgb, _ = renderer.render(scene)
             views.append(rgb)
+            for material,color,mode in changed:
+                material.baseColorFactor=color;material.alphaMode=mode
         canvas = np.full((640, 1280, 3), 245, np.uint8)
         canvas[55:595] = np.concatenate(views, axis=1)
+        if args.translucent_robot_detail:
+            cv2.putText(canvas,"Close-up: robot translucent; recorded geometry unchanged",(655,80),
+                        cv2.FONT_HERSHEY_SIMPLEX,.48,(30,40,50),1,cv2.LINE_AA)
         label = trace[step]["phase"]
         title="YAM + UNFOLDED FILM POUCH" if has_film else "YAM + SPRING CLIP | NO FILM"
         validation_label=(" | CONTENTS-PROTECTED MECHANICS" if cracker else " | EMPTY-POUCH MECHANICS")
@@ -149,6 +172,7 @@ def main():
         video_sha256=hashlib.sha256(output.read_bytes()).hexdigest(),
         source_steps=[int(key[2:]) for key in keys], fps=hz/args.stride,detail=args.detail,
         physics_modified=False,position_interpolation=False,
+        translucent_robot_in_closeup=args.translucent_robot_detail,
         core_assessment_verified=validated,
         wrapper_print="original procedural outer print, fixed UV, silver inner liner; no collision effect"),indent=2))
     print(output)
