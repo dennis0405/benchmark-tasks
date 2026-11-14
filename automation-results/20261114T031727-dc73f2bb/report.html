@@ -15,269 +15,136 @@
 - 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 </p><p>all proposed candidates duplicate/uncertain; inspect selection-history.json</p><p>Release digest: none</p><h2>last_candidate</h2><pre>{
-  &quot;id&quot;: &quot;robot-motion-connector-replacement&quot;,
-  &quot;title&quot;: &quot;Replace a drive-and-motion-control connector in a commercial cleaning robot&quot;,
-  &quot;objective&quot;: &quot;Remove a failed motion-control harness connector and install its replacement while preserving surrounding wiring and seals.&quot;,
+  &quot;id&quot;: &quot;orv3-toolless-it-support-bracket-installation&quot;,
+  &quot;title&quot;: &quot;Install a tool-less Open Rack V3 IT support bracket from inside the frame&quot;,
+  &quot;objective&quot;: &quot;Orient one Open Rack V3 IT support bracket inside the rack, align its tool-less mounting features with the specified frame cutouts, engage and lock the bracket without external access, and leave it seated without interfering with adjacent brackets or chassis space.&quot;,
   &quot;skills&quot;: [
-    &quot;confined connector access&quot;,
-    &quot;latch manipulation&quot;,
-    &quot;connector extraction and alignment&quot;,
-    &quot;controlled mating&quot;,
-    &quot;cable and seal management&quot;
+    &quot;inside-frame approach planning&quot;,
+    &quot;multi-feature bracket-to-frame alignment&quot;,
+    &quot;bimanual support of an elongated load-bearing part&quot;,
+    &quot;sequential hook or latch engagement&quot;,
+    &quot;force-controlled seating&quot;,
+    &quot;clearance management around adjacent rack hardware&quot;
   ],
-  &quot;success_conditions&quot;: &quot;Blocked: no defensible success rubric can be written from the acquired sources because they do not identify a cleaning-robot assembly, connector part number, access geometry, removal procedure, insertion procedure, or sealing inspection.&quot;,
-  &quot;industrial_value&quot;: &quot;Molex documents that commercial cleaning-robot motors and motion systems require reliable power and signal connectors in demanding environments, establishing the subsystem&#x27;s industrial importance.&quot;,
-  &quot;dexterity&quot;: &quot;Potentially high, but currently unsubstantiated for any actual equipment geometry.&quot;,
+  &quot;success_conditions&quot;: &quot;Blocked pending the referenced OCP CAD/drawing and a concrete bracket design. At minimum, a valid rubric would require all documented tool-less mounting features to be engaged from inside the frame, correct OpenU registration, self-support after release, no interference with nearby brackets or chassis envelopes, and no permanent deformation. No hook count, insertion motion, latch state, force threshold, or success claim may be invented from the currently acquired text.&quot;,
+  &quot;industrial_value&quot;: &quot;The Open Rack Meta Frame V3 specification defines these brackets as the shelf support for IT gear, requires tool-less direct mounting, inside-frame serviceability, and substantial load capacity. This establishes industrial relevance, but not yet an executable manipulation sequence.&quot;,
+  &quot;dexterity&quot;: &quot;Potentially high because a long load-bearing bracket must be registered and latched within a constrained rack interior. The exact dexterity cannot be asserted until the referenced bracket CAD and drawing reveal its real mounting features.&quot;,
   &quot;evidence&quot;: [
     {
-      &quot;source_id&quot;: &quot;s-b8dfc5566fdc008f&quot;,
-      &quot;locator&quot;: &quot;Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors section&quot;,
-      &quot;quote_sha256&quot;: &quot;f1ea2ce88472d8ade8b3d8ba4c1779113f8d19a5be908d7d4c45fe5912222dc1&quot;
+      &quot;source_id&quot;: &quot;s-22e97655548371b0&quot;,
+      &quot;locator&quot;: &quot;Open Rack Meta Frame V3 Specification, page 23, section 12.8, IT Support Bracket&quot;,
+      &quot;quote_sha256&quot;: &quot;86f8a5af6ac4e15231a2cc3f12482c4c3bede8393c2a94b8ebf32f48317ca4de&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-b8dfc5566fdc008f&quot;,
-      &quot;locator&quot;: &quot;Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors product-family listing&quot;,
-      &quot;quote_sha256&quot;: &quot;e759fb5ade9591ded51501e045fac7c58df34ddc5a6ef5e6f9af780c246765a9&quot;
+      &quot;source_id&quot;: &quot;s-22e97655548371b0&quot;,
+      &quot;locator&quot;: &quot;Open Rack Meta Frame V3 Specification, page 23, section 12.8.1&quot;,
+      &quot;quote_sha256&quot;: &quot;57eb48170d409ccc7cd85578d3d3aa6e02c4e33930cbd0c8365d01215c45dcd7&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;s-22e97655548371b0&quot;,
+      &quot;locator&quot;: &quot;Open Rack Meta Frame V3 Specification, page 23, section 12.8.3&quot;,
+      &quot;quote_sha256&quot;: &quot;a978fae3b021b0ace860d3979376e95827a93b95706d4f36920003af3e774aa7&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;s-22e97655548371b0&quot;,
+      &quot;locator&quot;: &quot;Open Rack Meta Frame V3 Specification, page 23, section 12.8.4&quot;,
+      &quot;quote_sha256&quot;: &quot;87d4f0811b9ea4bfa0ef7bcce2bd1ee77433ff79390d6b93d6f05da36eddda90&quot;
     }
   ],
-  &quot;asset_plan&quot;: &quot;No asset development should begin. Obtain an OEM service manual or public assembly procedure naming the exact robot, Mini-Fit part set, access envelope, latch/seal configuration, and replacement inspection requirements.&quot;,
-  &quot;risk&quot;: &quot;Blocked and not selected. The source proves application relevance only; treating it as an assembly or service instruction would invent the task geometry and procedure.&quot;
+  &quot;asset_plan&quot;: &quot;Do not begin task construction from the prose alone. First obtain the exact OCP collateral named in section 12.8, confirm its license, select one bracket revision, and extract its mounting-feature geometry and rack interface without mixing revisions. Then build an independent rigid PhysX model, validate every engagement feature, incorrect-level rejection, self-support, adjacent-clearance, overload behavior, and reset repeatability before considering YAM integration.&quot;,
+  &quot;risk&quot;: &quot;Blocked and not selected. The acquired specification proves purpose, access direction, tool-less mounting, and load requirements, but the referenced CAD/drawing is not present in the acquired package. The actual hooks, tabs, latches, insertion trajectory, dimensions, and retention mechanics are therefore unknown. Treating this as build-ready would require invented geometry and success criteria; it may also be semantically close to other rack-rail or shelf-support installation tasks.&quot;
 }</pre><h2>selection_history</h2><pre>{
   &quot;rejected&quot;: [
     {
-      &quot;candidate&quot;: &quot;minifit-5556-terminal-extraction&quot;,
+      &quot;candidate&quot;: &quot;dgx-a100-spring-prong-rail-installation&quot;,
+      &quot;reason&quot;: &quot;novelty overlap/uncertainty: 2 records; inspect novelty.json&quot;
+    },
+    {
+      &quot;candidate&quot;: &quot;thinksystem-sr590-hot-swap-fan-removal&quot;,
       &quot;reason&quot;: &quot;novelty overlap/uncertainty: 1 records; inspect novelty.json&quot;
     },
     {
-      &quot;candidate&quot;: &quot;minifit-5378-single-blade-extraction&quot;,
-      &quot;reason&quot;: &quot;novelty overlap/uncertainty: 1 records; inspect novelty.json&quot;
-    },
-    {
-      &quot;candidate&quot;: &quot;nondestructive-harness-terminal-rework&quot;,
-      &quot;reason&quot;: &quot;novelty overlap/uncertainty: 1 records; inspect novelty.json&quot;
-    },
-    {
-      &quot;candidate&quot;: &quot;robot-motion-connector-replacement&quot;,
-      &quot;reason&quot;: &quot;novelty overlap/uncertainty: 4 records; inspect novelty.json&quot;
+      &quot;candidate&quot;: &quot;orv3-toolless-it-support-bracket-installation&quot;,
+      &quot;reason&quot;: &quot;novelty overlap/uncertainty: 7 records; inspect novelty.json&quot;
     }
   ],
   &quot;selected&quot;: null
-}</pre><h2>pilot_outcome</h2><pre>{
-  &quot;run&quot;: &quot;20261114T031727-dc73f2bb&quot;,
-  &quot;at&quot;: &quot;2026-11-14T04:45:50.494862+00:00&quot;,
-  &quot;state&quot;: &quot;blocked_before_environment&quot;,
-  &quot;catalog_records&quot;: 2089,
-  &quot;board&quot;: {
-    &quot;complete&quot;: true,
-    &quot;views&quot;: {
-      &quot;accepted&quot;: 94,
-      &quot;pending&quot;: 510,
-      &quot;revision&quot;: 340
-    },
-    &quot;view_status_counts&quot;: {
-      &quot;accepted&quot;: {
-        &quot;accepted&quot;: 94
-      },
-      &quot;pending&quot;: {
-        &quot;pending&quot;: 364,
-        &quot;rejected&quot;: 56,
-        &quot;pilot&quot;: 90
-      },
-      &quot;revision&quot;: {
-        &quot;rejected&quot;: 340
-      }
-    },
-    &quot;own_history&quot;: 24,
-    &quot;ignored_nonheld_revision_history&quot;: 21,
-    &quot;at&quot;: &quot;2026-11-14T04:18:32.335060+00:00&quot;,
-    &quot;matched_github&quot;: 770
-  },
-  &quot;candidate_reviews&quot;: {
-    &quot;minifit-5556-terminal-extraction&quot;: {
-      &quot;title&quot;: &quot;Depin a Mini-Fit Jr. 5556 terminal from a 5557 housing&quot;,
-      &quot;compared&quot;: 100,
-      &quot;blockers&quot;: [
-        {
-          &quot;id&quot;: &quot;pr-1784&quot;,
-          &quot;verdict&quot;: &quot;overlap&quot;,
-          &quot;reason&quot;: &quot;Both centrally test sustaining a connector release feature while withdrawing the retained line/component. The candidate adds finer dual-blade access and neighbor protection, but those are difficulty and geometry differences around the same release-and-pull ability.&quot;,
-          &quot;title&quot;: &quot;Disconnect a pneumatic line from a push-to-connect manifold port and blank the port&quot;,
-          &quot;url&quot;: &quot;https://github.com/robocurve/benchmark-tasks/pull/1784&quot;,
-          &quot;source_status&quot;: &quot;open-unclassified&quot;,
-          &quot;own_team&quot;: false
-        }
-      ]
-    },
-    &quot;minifit-5378-single-blade-extraction&quot;: {
-      &quot;title&quot;: &quot;Extract a 5378-series terminal with a single HT60630B blade&quot;,
-      &quot;compared&quot;: 200,
-      &quot;blockers&quot;: [
-        {
-          &quot;id&quot;: &quot;pr-662&quot;,
-          &quot;verdict&quot;: &quot;overlap&quot;,
-          &quot;reason&quot;: &quot;The core tested ability is the same release-while-pulling pattern; smaller connector geometry and a blade tool add difficulty but do not by themselves establish a meaningfully different ability.&quot;,
-          &quot;title&quot;: &quot;Release a push-fit fitting and pull the pipe out&quot;,
-          &quot;url&quot;: &quot;https://github.com/robocurve/benchmark-tasks/pull/662&quot;,
-          &quot;source_status&quot;: &quot;merged&quot;,
-          &quot;own_team&quot;: false
-        }
-      ]
-    },
-    &quot;nondestructive-harness-terminal-rework&quot;: {
-      &quot;title&quot;: &quot;Non-destructively extract a reusable harness terminal for OEM rework&quot;,
-      &quot;compared&quot;: 25,
-      &quot;blockers&quot;: [
-        {
-          &quot;id&quot;: &quot;pr-209&quot;,
-          &quot;verdict&quot;: &quot;uncertain&quot;,
-          &quot;reason&quot;: &quot;Both centrally test release-before-pull extraction without disturbing the holder. The candidate claims finer hidden-feature access and reuse inspection, but lacks a concrete connector, tool, procedure, damage model, and numeric acceptance limits, so a meaningful tested distinction is not yet established.&quot;,
-          &quot;title&quot;: &quot;Add release a spring clamp before pulling&quot;,
-          &quot;url&quot;: &quot;https://github.com/robocurve/benchmark-tasks/pull/209&quot;,
-          &quot;source_status&quot;: &quot;open-unclassified&quot;,
-          &quot;own_team&quot;: false
-        }
-      ]
-    },
-    &quot;robot-motion-connector-replacement&quot;: {
-      &quot;title&quot;: &quot;Replace a drive-and-motion-control connector in a commercial cleaning robot&quot;,
-      &quot;compared&quot;: 25,
-      &quot;blockers&quot;: [
-        {
-          &quot;id&quot;: &quot;pr-1289&quot;,
-          &quot;verdict&quot;: &quot;uncertain&quot;,
-          &quot;reason&quot;: &quot;Both are component reattachment tasks, and missing attachment details on both sides prevent a confident determination of whether they test meaningfully different mechanics.&quot;,
-          &quot;title&quot;: &quot;Reattach your detached wrist camera&quot;,
-          &quot;url&quot;: &quot;https://github.com/robocurve/benchmark-tasks/pull/1289&quot;,
-          &quot;source_status&quot;: &quot;open-unclassified&quot;,
-          &quot;own_team&quot;: false
-        },
-        {
-          &quot;id&quot;: &quot;pr-1970&quot;,
-          &quot;verdict&quot;: &quot;uncertain&quot;,
-          &quot;reason&quot;: &quot;The tasks may share the same essential insertion-and-latching ability, and the underspecified candidate does not establish that its claimed extraction or seal work is actually tested.&quot;,
-          &quot;title&quot;: &quot;Load four Han-Modular modules into a HARTING hinged frame its spring holds open, then squeeze it shut until it clicks&quot;,
-          &quot;url&quot;: &quot;https://github.com/robocurve/benchmark-tasks/pull/1970&quot;,
-          &quot;source_status&quot;: &quot;open-unclassified&quot;,
-          &quot;own_team&quot;: false
-        },
-        {
-          &quot;id&quot;: &quot;pr-1797&quot;,
-          &quot;verdict&quot;: &quot;uncertain&quot;,
-          &quot;reason&quot;: &quot;The candidate explicitly includes cable management, but its absent geometry and rubric make it impossible to show whether that ability is more than the routing-and-retention skill already tested here.&quot;,
-          &quot;title&quot;: &quot;Route a cable between two posts and secure its final clip&quot;,
-          &quot;url&quot;: &quot;https://github.com/robocurve/benchmark-tasks/pull/1797&quot;,
-          &quot;source_status&quot;: &quot;open-unclassified&quot;,
-          &quot;own_team&quot;: false
-        },
-        {
-          &quot;id&quot;: &quot;pr-1891&quot;,
-          &quot;verdict&quot;: &quot;uncertain&quot;,
-          &quot;reason&quot;: &quot;The core tested ability may reduce to alignment and controlled electrical mating, and the candidate lacks enough geometry or rubric to establish a meaningful distinction.&quot;,
-          &quot;title&quot;: &quot;Seat a robot controller&#x27;s add-on board on its two rows of header pins without bending any pin&quot;,
-          &quot;url&quot;: &quot;https://github.com/robocurve/benchmark-tasks/pull/1891&quot;,
-          &quot;source_status&quot;: &quot;open-unclassified&quot;,
-          &quot;own_team&quot;: false
-        }
-      ]
-    }
-  },
-  &quot;full_catalog_pass&quot;: false,
-  &quot;physical_environment_built&quot;: false,
-  &quot;yam_demo_complete&quot;: false,
-  &quot;dream_attempts&quot;: 0,
-  &quot;upstream_submission&quot;: false,
-  &quot;compute&quot;: {
-    &quot;instance&quot;: &quot;robocurve-automation-256&quot;,
-    &quot;observed_state&quot;: &quot;STOPPED&quot;
-  },
-  &quot;pipeline_checks&quot;: {
-    &quot;pytest_passed&quot;: 63,
-    &quot;ruff&quot;: &quot;passed&quot;
-  },
-  &quot;next_research_focus&quot;: &quot;Find a different physical ability outside connector insertion, release-and-pull extraction and keyed seating; ground it in an industrial procedure before construction.&quot;
 }</pre><h2>sources</h2><pre>[
   {
-    &quot;id&quot;: &quot;s-c7c184615f4af9fb&quot;,
-    &quot;title&quot;: &quot;Extraction Tool HT60630B for Mini-Fit Series Terminals&quot;,
-    &quot;publisher&quot;: &quot;Molex&quot;,
-    &quot;url&quot;: &quot;https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/applicationtoolingspecificationpdf/606/60630/ATS-011030044-001.pdf&quot;,
-    &quot;sha256&quot;: &quot;282ec14827762474966a8d51ff0ae6e25dafd3797f8e9ae6f875807694514568&quot;
+    &quot;id&quot;: &quot;s-4e272159a21baf44&quot;,
+    &quot;title&quot;: &quot;Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual&quot;,
+    &quot;publisher&quot;: &quot;NVIDIA&quot;,
+    &quot;url&quot;: &quot;https://docs.nvidia.com/dgx/dgxa100-service-manual/installing-the-rack-mount-kit.html&quot;,
+    &quot;sha256&quot;: &quot;396a058b75027013ac35e00e8ab2e042897b0d2ec18ffe0823d283d8f2ade078&quot;
   },
   {
-    &quot;id&quot;: &quot;s-3107198351100d42&quot;,
-    &quot;title&quot;: &quot;Mini-Fit Jr. Receptacle Housing Dual Row 2–24 Circuit Product Drawing&quot;,
-    &quot;publisher&quot;: &quot;Molex&quot;,
-    &quot;url&quot;: &quot;https://www.molex.com/content/dam/molex/molex-dot-com/products/automated/en-us/salesdrawingpdf/555/5557/039012020_sd.pdf&quot;,
-    &quot;sha256&quot;: &quot;006bb06a775c0100f3184a02d0aa9e6cc09caf77630144b19a7b5f15ae5b2386&quot;
+    &quot;id&quot;: &quot;s-69f0786d8d5c5a39&quot;,
+    &quot;title&quot;: &quot;Introduction to the NVIDIA DGX A100 System — Mechanical Specifications&quot;,
+    &quot;publisher&quot;: &quot;NVIDIA&quot;,
+    &quot;url&quot;: &quot;https://docs.nvidia.com/dgx/dgxa100-user-guide/introduction-to-dgxa100.html&quot;,
+    &quot;sha256&quot;: &quot;15eb3ddff32fd802bbe069f8c2a862f11e21f95e254cec2bf63f995ae352b9ee&quot;
   },
   {
-    &quot;id&quot;: &quot;s-3b2ffb1f5e4549e5&quot;,
-    &quot;title&quot;: &quot;Mini-Fit Jr. Four-Circuit Receptacle Housing 39012040&quot;,
-    &quot;publisher&quot;: &quot;Molex&quot;,
-    &quot;url&quot;: &quot;https://www.molex.com/en-us/products/part-detail/39012040&quot;,
-    &quot;sha256&quot;: &quot;1d0cbe0c72adc795dc3bc3621bc4d6fc22366289993831d62cb24ebd9f63fd5f&quot;
+    &quot;id&quot;: &quot;s-95d717ba7201260a&quot;,
+    &quot;title&quot;: &quot;Rack &amp; Power — Specifications and CAD Releases&quot;,
+    &quot;publisher&quot;: &quot;Open Compute Project&quot;,
+    &quot;url&quot;: &quot;https://www.opencompute.org/projects/rack-and-power/&quot;,
+    &quot;sha256&quot;: &quot;a595accee012d03e3cfd929d74717e8c1dd507346f6fa7dfc3f63d5f2dc826d1&quot;
   },
   {
-    &quot;id&quot;: &quot;s-cd3351d2310a9bbd&quot;,
-    &quot;title&quot;: &quot;Legal Notice&quot;,
-    &quot;publisher&quot;: &quot;Molex&quot;,
-    &quot;url&quot;: &quot;https://www.molex.com/en-us/about/legal&quot;,
-    &quot;sha256&quot;: &quot;f076a97f1cf9b713e18ec045f64fa730537d482f1d56ea2f0c7b4f0b1a6fc592&quot;
+    &quot;id&quot;: &quot;s-22e97655548371b0&quot;,
+    &quot;title&quot;: &quot;Open Rack Meta Frame V3 Specification&quot;,
+    &quot;publisher&quot;: &quot;Open Compute Project&quot;,
+    &quot;url&quot;: &quot;https://www.opencompute.org/documents/open-rack-version-meta-v3-rev1pt3-june032024-pdf&quot;,
+    &quot;sha256&quot;: &quot;5f21029c9b56c321df050e05277a33ba59e526c1e794c969c1b39661ea9d1be0&quot;
   },
   {
-    &quot;id&quot;: &quot;s-b8dfc5566fdc008f&quot;,
-    &quot;title&quot;: &quot;Connectors and Cable Assemblies for Commercial Cleaning Robots&quot;,
-    &quot;publisher&quot;: &quot;Molex&quot;,
-    &quot;url&quot;: &quot;https://www.molex.com/en-us/industries-applications/robotics-connectors/commercial-cleaning-robot&quot;,
-    &quot;sha256&quot;: &quot;e640bf97f4c228ca846bf1509090153031cf2a78f41ec8e7e6333956c05531f0&quot;
+    &quot;id&quot;: &quot;s-1166d37d9e5c5fa5&quot;,
+    &quot;title&quot;: &quot;Remove a System Fan — ThinkSystem SR590&quot;,
+    &quot;publisher&quot;: &quot;Lenovo&quot;,
+    &quot;url&quot;: &quot;https://pubs.lenovo.com/sr590/remove_the_system_fan&quot;,
+    &quot;sha256&quot;: &quot;bc36271ad67cd111b8cec1966a2ad86b24147756e193446d61c207c7bea65133&quot;
   },
   {
-    &quot;id&quot;: &quot;s-f251010cce66cd83&quot;,
-    &quot;title&quot;: &quot;Insertion and Extraction Tools for Wire Processing&quot;,
-    &quot;publisher&quot;: &quot;TE Connectivity&quot;,
-    &quot;url&quot;: &quot;https://www.te.com/en/products/application-tooling/insertion-and-extraction-tools.html&quot;,
-    &quot;sha256&quot;: &quot;0a15d17f8d420564d652fa8b79a686440d71a58037c8314704564c1c518d89aa&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-ba1ff6896ed10cd2&quot;,
-    &quot;title&quot;: &quot;LIBERO Benchmark Task Registry&quot;,
+    &quot;id&quot;: &quot;s-5e772eec6aabdfd7&quot;,
+    &quot;title&quot;: &quot;LIBERO Official Repository and Task Suites&quot;,
     &quot;publisher&quot;: &quot;Lifelong Robot Learning&quot;,
-    &quot;url&quot;: &quot;https://github.com/Lifelong-Robot-Learning/LIBERO/blob/master/libero/libero/benchmark/__init__.py&quot;,
-    &quot;sha256&quot;: &quot;6b0e58da51e81c54be7d7589154443cab3ad561565af8da213f333d95d48e365&quot;
+    &quot;url&quot;: &quot;https://github.com/Lifelong-Robot-Learning/LIBERO&quot;,
+    &quot;sha256&quot;: &quot;eac7c5244dff836791dc21972349d7f8e3b2893a1035a1e33ad58d8a6ef3ca4d&quot;
   },
   {
-    &quot;id&quot;: &quot;s-e9a991225cb77788&quot;,
-    &quot;title&quot;: &quot;RoboCasa Benchmarking Overview&quot;,
+    &quot;id&quot;: &quot;s-1891aacd5a2e06f7&quot;,
+    &quot;title&quot;: &quot;RoboCasa Official Repository&quot;,
     &quot;publisher&quot;: &quot;RoboCasa&quot;,
-    &quot;url&quot;: &quot;https://github.com/robocasa/robocasa/blob/main/docs/benchmarking/benchmarking_overview.md&quot;,
-    &quot;sha256&quot;: &quot;deb4deee9b66febf3546c07bdc7a197476a910604a25ebe3aceb0693ccf5bbe7&quot;
+    &quot;url&quot;: &quot;https://github.com/robocasa/robocasa&quot;,
+    &quot;sha256&quot;: &quot;f72d740534573172e59b2062320f5030754cecccb315b874775888016b8d7e0d&quot;
   },
   {
-    &quot;id&quot;: &quot;s-ba10be5ef4742367&quot;,
-    &quot;title&quot;: &quot;SimplerEnv Task and Environment Definitions&quot;,
-    &quot;publisher&quot;: &quot;SimplerEnv&quot;,
-    &quot;url&quot;: &quot;https://github.com/simpler-env/SimplerEnv/blob/main/README.md&quot;,
-    &quot;sha256&quot;: &quot;4bb6839ac2bf2248cbdb9461557b3f5e03d64a0ca13b121c1601fbcf32d7b974&quot;
+    &quot;id&quot;: &quot;s-43eb8e9fe55c611d&quot;,
+    &quot;title&quot;: &quot;SimplerEnv Official Repository and Task Catalog&quot;,
+    &quot;publisher&quot;: &quot;Allen Institute for AI&quot;,
+    &quot;url&quot;: &quot;https://github.com/allenai/SimplerEnv&quot;,
+    &quot;sha256&quot;: &quot;0e5cb027816232cd961c464492685171d1e30651b5c298643c22b1b829d4232b&quot;
   },
   {
     &quot;id&quot;: &quot;s-d013a72cf7ffba86&quot;,
-    &quot;title&quot;: &quot;BEHAVIOR-1K Task Library and BDDL Definitions&quot;,
+    &quot;title&quot;: &quot;BEHAVIOR-1K Task Definitions&quot;,
     &quot;publisher&quot;: &quot;Stanford Vision and Learning Lab&quot;,
     &quot;url&quot;: &quot;https://github.com/StanfordVL/BEHAVIOR-1K/blob/main/docs/behavior_components/behavior_tasks.md&quot;,
-    &quot;sha256&quot;: &quot;8c2385f3fe72de76a5999689582c18e37639b3ef31da9ac0147ce0bc5390a163&quot;
+    &quot;sha256&quot;: &quot;a427bd1cd0eb845576e3fcb15d6ac584d34cb46de4edde50a1c5b746c61aee86&quot;
   },
   {
     &quot;id&quot;: &quot;s-6ed524b5f205e074&quot;,
     &quot;title&quot;: &quot;DataCenterBench Tier 1 Tasks and Rubrics&quot;,
-    &quot;publisher&quot;: &quot;Robocurve&quot;,
+    &quot;publisher&quot;: &quot;RoboCurve&quot;,
     &quot;url&quot;: &quot;https://robocurve.org/datacenterbench/&quot;,
     &quot;sha256&quot;: &quot;8a8351a763ba4a806d420d435b5df0188c496a29e9f30f026e06d8569619baf5&quot;
   },
   {
-    &quot;id&quot;: &quot;s-5d66f9b402b33e5c&quot;,
-    &quot;title&quot;: &quot;RoboDojo Task Definitions&quot;,
+    &quot;id&quot;: &quot;s-9a9c3f065d783499&quot;,
+    &quot;title&quot;: &quot;RoboDojo Official Repository and Task Definitions&quot;,
     &quot;publisher&quot;: &quot;RoboDojo Benchmark&quot;,
-    &quot;url&quot;: &quot;https://github.com/robodojo-benchmark/RoboDojo/tree/main/task/RoboDojo&quot;,
-    &quot;sha256&quot;: &quot;88259243221376605b4f530bbec9ec12fcb14b0920f312de6286fb5792dade34&quot;
+    &quot;url&quot;: &quot;https://github.com/RoboDojo-Benchmark/RoboDojo&quot;,
+    &quot;sha256&quot;: &quot;60ab9bbfa6c6d32990fdb9c0867396dacf606114be16a08033f59088098bfb82&quot;
   }
 ]</pre><p>Approval and submission require separate CLI commands.</p>

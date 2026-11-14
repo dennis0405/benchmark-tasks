@@ -47,7 +47,7 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 75229,
+    "supervisor_pid": 85826,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log",
     "error": "all proposed candidates duplicate/uncertain; inspect selection-history.json",
     "approval": null,
@@ -56,12 +56,12 @@
       "status": "blocked",
       "error": "all proposed candidates duplicate/uncertain; inspect selection-history.json",
       "type": "GateError",
-      "at": "2026-11-14T04:37:58.137365+00:00"
+      "at": "2026-11-14T05:10:40.547456+00:00"
     },
-    "compute": "stopped",
-    "revision": 4,
-    "revision_request": "공식 보드 인증 연동을 보강했다. accepted/pending/재검토 보유 이력, 공식 pilot 90건의 실제 정의, 우리 팀 전체 24건(철회 1건은 공식 접수 댓글과 접수 시점 커밋으로 복구)을 GitHub와 합쳐 전수 검사한다. exact title+instruction만 연결하며 다른 버전은 보존하고, 설정된 보드 인증을 역할에 전달하지 않는다. 보드의 빈 setup/scoring은 missing_fields로 명시하며 실제로 없는 수치를 만들지 않는다. 원문에 있는 명확한 목적/조작 능력이 서로 다르면 수치 세부가 없다는 이유만으로 자동 중복으로 보지 않되, 동일 능력 가능성을 배제할 수 없으면 uncertain으로 차단한다. 비교는 후보와 유사한 기록부터 처리하나 통과에는 전체 기록 확인이 필요하다. 마지막으로 선정한 minifit-5556-terminal-extraction 후보를 유지하여 novelty부터 재개한다. 기존 모든 물리·데모·Dream 1회·예산·제출 전 사용자 검토 조건을 유지한다.",
-    "resume_from_stage": "novelty"
+    "compute": "running",
+    "revision": 5,
+    "revision_request": "좋아. 커넥터 삽입·해제류는 제외하고 로봇 조립·데이터센터 정비의 다른 작업군에서 후보를 다시 찾아보자.\n기존 품질·중복 기준은 유지하고,\n통과한 후보 하나를 골라 환경·YAM 데모·채점·Dream 최종 평가까지 진행해서 제출 전 검토 단계까지 완성해줘.\n\n운영 조건과 이전 실패에서 얻은 조사 지침:\n- 기존 run과 origin 브랜치에서 이어서 진행한다. 이전 pilot-outcome.json, selection-history.json과 기존 후보를 읽고 실패한 커넥터 삽입·체결·해제·단자 추출 변형을 다시 선정하지 않는다.\n- Category는 Impact on AI timelines. 실제 로봇 조립/정비 또는 데이터센터 물리 정비의 유의미한 작업이어야 한다. 제조사 매뉴얼·공식 조립 절차·공개 설계·실제 작업 보고서에서 자동화할 가치와 실제 동작을 확인한다. 제품 이름만 산업용으로 바꾼 일반 조작을 제안하지 않는다.\n- 처음부터 하나의 부품/매뉴얼에 수렴하지 않는다. 여러 제조사와 적어도 서로 다른 3개 작업군을 조사한다. 가능성이 있는 여러 실제 절차를 카탈로그와 빠르게 대조한 뒤, 서로 다른 목적과 물리 능력을 가진 후보를 비교한다. 같은 커넥터나 도구의 크기·형상 변형을 별개 후보로 세어 후보 수를 채우지 않는다.\n- 강체 기구의 조립·고정·조정, 공구를 이용한 작업, 실제 장비 점검/정비 등 다른 작업군을 탐색할 수 있다. 이는 검색 방향일 뿐 신규성이나 채택을 가정하지 않는다. 이전 유격·커플링 정렬 아이디어도 기존 과제와 유사성이 지적됐으니 검토 기록을 읽고 되풀이하지 않는다.\n- 공개 에셋의 재사용 또는 직접 제작을 허용한다. 실제 선택할 부품 세트의 형태·치수·절차 자료를 충분히 확보한다. 구입 불가한 구형 부품이나 산업 적용 근거가 불명확한 부품을 무리하게 고르지 않는다. CAD 사용권이 불명확하면 독립적으로 작성한 형상과 근거를 사용하고, 매뉴얼/메시 전체를 재배포하지 않는다.\n- 극단적인 난도는 필수가 아니지만, 중요한 dexterous manipulation 능력을 실제로 검증해야 한다. 산업적 의미가 신규성이나 조작 능력 검증을 대신하지 않는다. 공통적인 grasp/push/rotate가 있다는 이유만으로 무조건 중복은 아니며, 목적·구체적인 물리 능력·성공 조건을 함께 비교한다. 반대로 같은 핵심 능력에 도구·형상·난도만 추가한 것은 신규성이 아니다.\n- 모든 분야의 accepted/pending, 재검토 보유 과제, 우리 팀 전체 이력 및 기존 벤치마크를 선정 시와 완료 후에 비교한다. 확인이 부족한 유사성은 통과시키지 않는다. 동기화와 비교를 생략하거나 통과 결과를 만들어내지 않는다.\n- Deformable은 이미 검증된 에셋/예제의 재사용만 고려한다. 새 연성 솔버 개발로 빠지지 않는다. 수치·재질 가정은 명시하고 실제 측정과 가정을 구별한다. 매뉴얼의 서로 다른 부품 시리즈·작업 절차를 혼합하지 않는다.\n- 환경과 부품의 접촉·관절·안정성부터 완성한 다음 YAM 데모와 채점기를 만든다. 실제 로봇 제어만 사용하며 물체 순간이동/동적 용접으로 성공을 만들지 않는다. 관련 손상·금지 동작·부분 점수·실패 대조군을 포함한다. 데모 성공·채점 재현·이식 검사와 실제 영상이 통과한 뒤에만 Dream 최종 평가를 진행한다.\n- Dream은 태스크당 최종 episode 1회만 허용하며 실패·불명 결과도 자동 재평가하지 않는다. 누적 $20 ledger를 유지한다. 키와 토큰을 역할에 전달하지 않는다.\n- 결과를 origin에 보존하고 인스턴스를 stop한 뒤 제출 전 검토 보고서를 제공한다. 실제 미디어 업로드·대회 PR·제출 승인은 하지 않는다. 기존 다른 실험 인스턴스와 feature/close-snack-bag checkout은 조작하지 않는다.\n",
+    "resume_from_stage": "research"
   },
   "events": [
     {
@@ -1467,6 +1467,408 @@
       "run": "20261114T031727-dc73f2bb",
       "at": "2026-11-14T04:38:42.162304+00:00",
       "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 251,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:53:16.502231+00:00",
+      "data": "{\"revision\": 5, \"revision_request\": \"\\uc88b\\uc544. \\ucee4\\ub125\\ud130 \\uc0bd\\uc785\\u00b7\\ud574\\uc81c\\ub958\\ub294 \\uc81c\\uc678\\ud558\\uace0 \\ub85c\\ubd07 \\uc870\\ub9bd\\u00b7\\ub370\\uc774\\ud130\\uc13c\\ud130 \\uc815\\ube44\\uc758 \\ub2e4\\ub978 \\uc791\\uc5c5\\uad70\\uc5d0\\uc11c \\ud6c4\\ubcf4\\ub97c \\ub2e4\\uc2dc \\ucc3e\\uc544\\ubcf4\\uc790.\\n\\uae30\\uc874 \\ud488\\uc9c8\\u00b7\\uc911\\ubcf5 \\uae30\\uc900\\uc740 \\uc720\\uc9c0\\ud558\\uace0,\\n\\ud1b5\\uacfc\\ud55c \\ud6c4\\ubcf4 \\ud558\\ub098\\ub97c \\uace8\\ub77c \\ud658\\uacbd\\u00b7YAM \\ub370\\ubaa8\\u00b7\\ucc44\\uc810\\u00b7Dream \\ucd5c\\uc885 \\ud3c9\\uac00\\uae4c\\uc9c0 \\uc9c4\\ud589\\ud574\\uc11c \\uc81c\\ucd9c \\uc804 \\uac80\\ud1a0 \\ub2e8\\uacc4\\uae4c\\uc9c0 \\uc644\\uc131\\ud574\\uc918.\\n\\n\\uc6b4\\uc601 \\uc870\\uac74\\uacfc \\uc774\\uc804 \\uc2e4\\ud328\\uc5d0\\uc11c \\uc5bb\\uc740 \\uc870\\uc0ac \\uc9c0\\uce68:\\n- \\uae30\\uc874 run\\uacfc origin \\ube0c\\ub79c\\uce58\\uc5d0\\uc11c \\uc774\\uc5b4\\uc11c \\uc9c4\\ud589\\ud55c\\ub2e4. \\uc774\\uc804 pilot-outcome.json, selection-history.json\\uacfc \\uae30\\uc874 \\ud6c4\\ubcf4\\ub97c \\uc77d\\uace0 \\uc2e4\\ud328\\ud55c \\ucee4\\ub125\\ud130 \\uc0bd\\uc785\\u00b7\\uccb4\\uacb0\\u00b7\\ud574\\uc81c\\u00b7\\ub2e8\\uc790 \\ucd94\\ucd9c \\ubcc0\\ud615\\uc744 \\ub2e4\\uc2dc \\uc120\\uc815\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- Category\\ub294 Impact on AI timelines. \\uc2e4\\uc81c \\ub85c\\ubd07 \\uc870\\ub9bd/\\uc815\\ube44 \\ub610\\ub294 \\ub370\\uc774\\ud130\\uc13c\\ud130 \\ubb3c\\ub9ac \\uc815\\ube44\\uc758 \\uc720\\uc758\\ubbf8\\ud55c \\uc791\\uc5c5\\uc774\\uc5b4\\uc57c \\ud55c\\ub2e4. \\uc81c\\uc870\\uc0ac \\ub9e4\\ub274\\uc5bc\\u00b7\\uacf5\\uc2dd \\uc870\\ub9bd \\uc808\\ucc28\\u00b7\\uacf5\\uac1c \\uc124\\uacc4\\u00b7\\uc2e4\\uc81c \\uc791\\uc5c5 \\ubcf4\\uace0\\uc11c\\uc5d0\\uc11c \\uc790\\ub3d9\\ud654\\ud560 \\uac00\\uce58\\uc640 \\uc2e4\\uc81c \\ub3d9\\uc791\\uc744 \\ud655\\uc778\\ud55c\\ub2e4. \\uc81c\\ud488 \\uc774\\ub984\\ub9cc \\uc0b0\\uc5c5\\uc6a9\\uc73c\\ub85c \\ubc14\\uafbc \\uc77c\\ubc18 \\uc870\\uc791\\uc744 \\uc81c\\uc548\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\ucc98\\uc74c\\ubd80\\ud130 \\ud558\\ub098\\uc758 \\ubd80\\ud488/\\ub9e4\\ub274\\uc5bc\\uc5d0 \\uc218\\ub834\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc5ec\\ub7ec \\uc81c\\uc870\\uc0ac\\uc640 \\uc801\\uc5b4\\ub3c4 \\uc11c\\ub85c \\ub2e4\\ub978 3\\uac1c \\uc791\\uc5c5\\uad70\\uc744 \\uc870\\uc0ac\\ud55c\\ub2e4. \\uac00\\ub2a5\\uc131\\uc774 \\uc788\\ub294 \\uc5ec\\ub7ec \\uc2e4\\uc81c \\uc808\\ucc28\\ub97c \\uce74\\ud0c8\\ub85c\\uadf8\\uc640 \\ube60\\ub974\\uac8c \\ub300\\uc870\\ud55c \\ub4a4, \\uc11c\\ub85c \\ub2e4\\ub978 \\ubaa9\\uc801\\uacfc \\ubb3c\\ub9ac \\ub2a5\\ub825\\uc744 \\uac00\\uc9c4 \\ud6c4\\ubcf4\\ub97c \\ube44\\uad50\\ud55c\\ub2e4. \\uac19\\uc740 \\ucee4\\ub125\\ud130\\ub098 \\ub3c4\\uad6c\\uc758 \\ud06c\\uae30\\u00b7\\ud615\\uc0c1 \\ubcc0\\ud615\\uc744 \\ubcc4\\uac1c \\ud6c4\\ubcf4\\ub85c \\uc138\\uc5b4 \\ud6c4\\ubcf4 \\uc218\\ub97c \\ucc44\\uc6b0\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\uac15\\uccb4 \\uae30\\uad6c\\uc758 \\uc870\\ub9bd\\u00b7\\uace0\\uc815\\u00b7\\uc870\\uc815, \\uacf5\\uad6c\\ub97c \\uc774\\uc6a9\\ud55c \\uc791\\uc5c5, \\uc2e4\\uc81c \\uc7a5\\ube44 \\uc810\\uac80/\\uc815\\ube44 \\ub4f1 \\ub2e4\\ub978 \\uc791\\uc5c5\\uad70\\uc744 \\ud0d0\\uc0c9\\ud560 \\uc218 \\uc788\\ub2e4. \\uc774\\ub294 \\uac80\\uc0c9 \\ubc29\\ud5a5\\uc77c \\ubfd0 \\uc2e0\\uaddc\\uc131\\uc774\\ub098 \\ucc44\\ud0dd\\uc744 \\uac00\\uc815\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc774\\uc804 \\uc720\\uaca9\\u00b7\\ucee4\\ud50c\\ub9c1 \\uc815\\ub82c \\uc544\\uc774\\ub514\\uc5b4\\ub3c4 \\uae30\\uc874 \\uacfc\\uc81c\\uc640 \\uc720\\uc0ac\\uc131\\uc774 \\uc9c0\\uc801\\ub410\\uc73c\\ub2c8 \\uac80\\ud1a0 \\uae30\\ub85d\\uc744 \\uc77d\\uace0 \\ub418\\ud480\\uc774\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\uacf5\\uac1c \\uc5d0\\uc14b\\uc758 \\uc7ac\\uc0ac\\uc6a9 \\ub610\\ub294 \\uc9c1\\uc811 \\uc81c\\uc791\\uc744 \\ud5c8\\uc6a9\\ud55c\\ub2e4. \\uc2e4\\uc81c \\uc120\\ud0dd\\ud560 \\ubd80\\ud488 \\uc138\\ud2b8\\uc758 \\ud615\\ud0dc\\u00b7\\uce58\\uc218\\u00b7\\uc808\\ucc28 \\uc790\\ub8cc\\ub97c \\ucda9\\ubd84\\ud788 \\ud655\\ubcf4\\ud55c\\ub2e4. \\uad6c\\uc785 \\ubd88\\uac00\\ud55c \\uad6c\\ud615 \\ubd80\\ud488\\uc774\\ub098 \\uc0b0\\uc5c5 \\uc801\\uc6a9 \\uadfc\\uac70\\uac00 \\ubd88\\uba85\\ud655\\ud55c \\ubd80\\ud488\\uc744 \\ubb34\\ub9ac\\ud558\\uac8c \\uace0\\ub974\\uc9c0 \\uc54a\\ub294\\ub2e4. CAD \\uc0ac\\uc6a9\\uad8c\\uc774 \\ubd88\\uba85\\ud655\\ud558\\uba74 \\ub3c5\\ub9bd\\uc801\\uc73c\\ub85c \\uc791\\uc131\\ud55c \\ud615\\uc0c1\\uacfc \\uadfc\\uac70\\ub97c \\uc0ac\\uc6a9\\ud558\\uace0, \\ub9e4\\ub274\\uc5bc/\\uba54\\uc2dc \\uc804\\uccb4\\ub97c \\uc7ac\\ubc30\\ud3ec\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\uadf9\\ub2e8\\uc801\\uc778 \\ub09c\\ub3c4\\ub294 \\ud544\\uc218\\uac00 \\uc544\\ub2c8\\uc9c0\\ub9cc, \\uc911\\uc694\\ud55c dexterous manipulation \\ub2a5\\ub825\\uc744 \\uc2e4\\uc81c\\ub85c \\uac80\\uc99d\\ud574\\uc57c \\ud55c\\ub2e4. \\uc0b0\\uc5c5\\uc801 \\uc758\\ubbf8\\uac00 \\uc2e0\\uaddc\\uc131\\uc774\\ub098 \\uc870\\uc791 \\ub2a5\\ub825 \\uac80\\uc99d\\uc744 \\ub300\\uc2e0\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uacf5\\ud1b5\\uc801\\uc778 grasp/push/rotate\\uac00 \\uc788\\ub2e4\\ub294 \\uc774\\uc720\\ub9cc\\uc73c\\ub85c \\ubb34\\uc870\\uac74 \\uc911\\ubcf5\\uc740 \\uc544\\ub2c8\\uba70, \\ubaa9\\uc801\\u00b7\\uad6c\\uccb4\\uc801\\uc778 \\ubb3c\\ub9ac \\ub2a5\\ub825\\u00b7\\uc131\\uacf5 \\uc870\\uac74\\uc744 \\ud568\\uaed8 \\ube44\\uad50\\ud55c\\ub2e4. \\ubc18\\ub300\\ub85c \\uac19\\uc740 \\ud575\\uc2ec \\ub2a5\\ub825\\uc5d0 \\ub3c4\\uad6c\\u00b7\\ud615\\uc0c1\\u00b7\\ub09c\\ub3c4\\ub9cc \\ucd94\\uac00\\ud55c \\uac83\\uc740 \\uc2e0\\uaddc\\uc131\\uc774 \\uc544\\ub2c8\\ub2e4.\\n- \\ubaa8\\ub4e0 \\ubd84\\uc57c\\uc758 accepted/pending, \\uc7ac\\uac80\\ud1a0 \\ubcf4\\uc720 \\uacfc\\uc81c, \\uc6b0\\ub9ac \\ud300 \\uc804\\uccb4 \\uc774\\ub825 \\ubc0f \\uae30\\uc874 \\ubca4\\uce58\\ub9c8\\ud06c\\ub97c \\uc120\\uc815 \\uc2dc\\uc640 \\uc644\\ub8cc \\ud6c4\\uc5d0 \\ube44\\uad50\\ud55c\\ub2e4. \\ud655\\uc778\\uc774 \\ubd80\\uc871\\ud55c \\uc720\\uc0ac\\uc131\\uc740 \\ud1b5\\uacfc\\uc2dc\\ud0a4\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ub3d9\\uae30\\ud654\\uc640 \\ube44\\uad50\\ub97c \\uc0dd\\ub7b5\\ud558\\uac70\\ub098 \\ud1b5\\uacfc \\uacb0\\uacfc\\ub97c \\ub9cc\\ub4e4\\uc5b4\\ub0b4\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- Deformable\\uc740 \\uc774\\ubbf8 \\uac80\\uc99d\\ub41c \\uc5d0\\uc14b/\\uc608\\uc81c\\uc758 \\uc7ac\\uc0ac\\uc6a9\\ub9cc \\uace0\\ub824\\ud55c\\ub2e4. \\uc0c8 \\uc5f0\\uc131 \\uc194\\ubc84 \\uac1c\\ubc1c\\ub85c \\ube60\\uc9c0\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc218\\uce58\\u00b7\\uc7ac\\uc9c8 \\uac00\\uc815\\uc740 \\uba85\\uc2dc\\ud558\\uace0 \\uc2e4\\uc81c \\uce21\\uc815\\uacfc \\uac00\\uc815\\uc744 \\uad6c\\ubcc4\\ud55c\\ub2e4. \\ub9e4\\ub274\\uc5bc\\uc758 \\uc11c\\ub85c \\ub2e4\\ub978 \\ubd80\\ud488 \\uc2dc\\ub9ac\\uc988\\u00b7\\uc791\\uc5c5 \\uc808\\ucc28\\ub97c \\ud63c\\ud569\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\ud658\\uacbd\\uacfc \\ubd80\\ud488\\uc758 \\uc811\\ucd09\\u00b7\\uad00\\uc808\\u00b7\\uc548\\uc815\\uc131\\ubd80\\ud130 \\uc644\\uc131\\ud55c \\ub2e4\\uc74c YAM \\ub370\\ubaa8\\uc640 \\ucc44\\uc810\\uae30\\ub97c \\ub9cc\\ub4e0\\ub2e4. \\uc2e4\\uc81c \\ub85c\\ubd07 \\uc81c\\uc5b4\\ub9cc \\uc0ac\\uc6a9\\ud558\\uba70 \\ubb3c\\uccb4 \\uc21c\\uac04\\uc774\\ub3d9/\\ub3d9\\uc801 \\uc6a9\\uc811\\uc73c\\ub85c \\uc131\\uacf5\\uc744 \\ub9cc\\ub4e4\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uad00\\ub828 \\uc190\\uc0c1\\u00b7\\uae08\\uc9c0 \\ub3d9\\uc791\\u00b7\\ubd80\\ubd84 \\uc810\\uc218\\u00b7\\uc2e4\\ud328 \\ub300\\uc870\\uad70\\uc744 \\ud3ec\\ud568\\ud55c\\ub2e4. \\ub370\\ubaa8 \\uc131\\uacf5\\u00b7\\ucc44\\uc810 \\uc7ac\\ud604\\u00b7\\uc774\\uc2dd \\uac80\\uc0ac\\uc640 \\uc2e4\\uc81c \\uc601\\uc0c1\\uc774 \\ud1b5\\uacfc\\ud55c \\ub4a4\\uc5d0\\ub9cc Dream \\ucd5c\\uc885 \\ud3c9\\uac00\\ub97c \\uc9c4\\ud589\\ud55c\\ub2e4.\\n- Dream\\uc740 \\ud0dc\\uc2a4\\ud06c\\ub2f9 \\ucd5c\\uc885 episode 1\\ud68c\\ub9cc \\ud5c8\\uc6a9\\ud558\\uba70 \\uc2e4\\ud328\\u00b7\\ubd88\\uba85 \\uacb0\\uacfc\\ub3c4 \\uc790\\ub3d9 \\uc7ac\\ud3c9\\uac00\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ub204\\uc801 $20 ledger\\ub97c \\uc720\\uc9c0\\ud55c\\ub2e4. \\ud0a4\\uc640 \\ud1a0\\ud070\\uc744 \\uc5ed\\ud560\\uc5d0 \\uc804\\ub2ec\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\uacb0\\uacfc\\ub97c origin\\uc5d0 \\ubcf4\\uc874\\ud558\\uace0 \\uc778\\uc2a4\\ud134\\uc2a4\\ub97c stop\\ud55c \\ub4a4 \\uc81c\\ucd9c \\uc804 \\uac80\\ud1a0 \\ubcf4\\uace0\\uc11c\\ub97c \\uc81c\\uacf5\\ud55c\\ub2e4. \\uc2e4\\uc81c \\ubbf8\\ub514\\uc5b4 \\uc5c5\\ub85c\\ub4dc\\u00b7\\ub300\\ud68c PR\\u00b7\\uc81c\\ucd9c \\uc2b9\\uc778\\uc740 \\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uae30\\uc874 \\ub2e4\\ub978 \\uc2e4\\ud5d8 \\uc778\\uc2a4\\ud134\\uc2a4\\uc640 feature/close-snack-bag checkout\\uc740 \\uc870\\uc791\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n\", \"approval\": null}"
+    },
+    {
+      "seq": 252,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:53:16.502612+00:00",
+      "data": "{\"resume_from_stage\": \"research\"}"
+    },
+    {
+      "seq": 253,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:53:16.505372+00:00",
+      "data": "{\"supervisor_pid\": 85826, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log\"}"
+    },
+    {
+      "seq": 254,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:53:16.572710+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 255,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:54:27.727373+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 256,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:55:07.092786+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 257,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:55:34.635341+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb\"}"
+    },
+    {
+      "seq": 258,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:55:50.700540+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T04:55:34.958667+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 259,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:56:06.366512+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T04:55:34.958667+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 260,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:56:21.828272+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T04:55:34.958667+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 261,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:56:37.394694+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T04:55:34.958667+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 262,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:56:52.850705+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-14T04:55:34.958667+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 263,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:57:08.422118+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T04:56:52.777462+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 264,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:57:23.857654+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T04:56:52.777462+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 265,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:57:39.449823+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T04:56:52.777462+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 266,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:57:55.013063+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T04:56:52.777462+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 267,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:58:10.451077+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-14T04:56:52.777462+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 268,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:58:25.940207+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 269,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:58:41.365597+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 270,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:58:56.857606+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 271,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:59:12.430463+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 272,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:59:27.866419+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 273,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:59:43.357154+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 274,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T04:59:58.784547+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 275,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:00:14.279771+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 276,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:00:29.719182+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 277,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:00:45.155259+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 278,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:01:00.576974+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 279,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:01:16.011167+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 280,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:01:31.431596+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 281,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:01:46.852503+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 282,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:02:02.312983+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 283,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:02:17.737502+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 284,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:02:33.166453+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 285,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:02:48.698176+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 286,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:03:04.166364+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 287,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:03:19.730706+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 288,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:03:35.293150+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 289,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:03:50.856924+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 290,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:04:06.421140+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 291,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:04:21.885418+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 292,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:04:37.341958+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 293,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:04:52.805212+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 294,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:05:08.273906+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 295,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:05:23.706414+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 296,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:05:39.300461+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 297,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:05:54.766634+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 298,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:06:10.227922+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 299,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:06:25.681680+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 300,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:06:41.151363+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 301,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:06:56.615477+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 302,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:07:12.175455+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 303,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:07:27.642593+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 304,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:07:43.088195+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 305,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:07:58.638424+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 306,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:08:14.067792+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 307,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:08:29.696032+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 308,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:08:45.125714+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 309,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:09:00.626418+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 310,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:09:16.079212+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 311,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:09:31.647782+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 312,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:09:47.077338+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 313,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:10:02.502807+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 314,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:10:17.941589+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 315,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:10:33.396877+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-14T04:58:20.552937+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 316,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:10:48.853787+00:00",
+      "data": "{\"remote_status\": {\"status\": \"blocked\", \"error\": \"all proposed candidates duplicate/uncertain; inspect selection-history.json\", \"type\": \"GateError\", \"at\": \"2026-11-14T05:10:40.547456+00:00\"}, \"stage\": null}"
+    },
+    {
+      "seq": 317,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-14T05:10:58.533587+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"all proposed candidates duplicate/uncertain; inspect selection-history.json\"}"
     }
   ],
   "effects": {

@@ -1,164 +1,142 @@
 {
   "candidates": [
     {
-      "id": "minifit-5556-terminal-extraction",
-      "title": "Depin a Mini-Fit Jr. 5556 terminal from a 5557 housing",
-      "objective": "With a de-energized four-circuit Mini-Fit Jr. 39012040/5557 receptacle fixed in a service fixture, guide the HT60630B extraction tool around the selected 5556 terminal, depress both locking tangs, maintain tool engagement, push the wire toward the tool if needed, and then pull the wire and terminal from the rear without releasing neighboring terminals or damaging the reusable housing.",
+      "id": "dgx-a100-spring-prong-rail-installation",
+      "title": "Install and secure one NVIDIA DGX A100 rack rail",
+      "objective": "Orient the correct left or right DGX A100 rail, support and level it across the rack depth, depress the front metal tab, align and insert both spring-loaded prongs into the designated front-post holes, extend the rail to the matching rear rack unit, insert both rear prongs, verify full spring extension, and secure the rail using the specified bottom-hole screws.",
       "skills": [
-        "precision tool-tip alignment with housing guide slots",
-        "constrained dual-blade insertion around a recessed contact",
-        "contact and force control while depressing two locking tangs",
-        "bimanual coordination between sustained tool engagement and opposite-side wire pull",
-        "directional push-then-pull load sequencing",
-        "regrasping a slender tool and wire",
-        "avoidance of neighboring terminals and housing walls"
+        "bimanual support and regrasping of a long rigid rail",
+        "front/back and left/right orientation recognition",
+        "simultaneous tab depression and two-prong hole alignment",
+        "compliant insertion against spring forces",
+        "maintaining level alignment across separated rack posts",
+        "rear telescoping adjustment without losing front engagement",
+        "Phillips-driver alignment and controlled screw fastening"
       ],
-      "success_conditions": "Research-stage rubric: the designated terminal and its wire must exit through the rear of its original cavity through robot-applied contact forces; the housing stays fixed and reusable; all other terminals remain fully retained; the wire remains attached to the extracted terminal; and the tool, housing, insulation, contact body, and adjacent terminals show no prohibited displacement or damage. Success must persist for 3 seconds after both grippers release the extracted terminal and tool. Score zero for extracting the wrong or an additional terminal, pulling the wire out of its crimp, breaking or permanently displacing the housing, bypassing the tangs, or teleporting/welding/state-overwriting the terminal. Partial credit may distinguish correct tool entry, both tangs depressed, and partial rearward withdrawal, but no unmeasured numerical force or damage threshold is asserted. Development is blocked until the rigid tang/contact abstraction passes insertion, retention, overload, and reset tests with measured proxy hardware.",
-      "industrial_value": "Molex identifies HT60630B as tooling specifically designed to extract crimped Mini-Fit terminals, while TE identifies terminal extraction without housing damage as important to OEM and aftermarket rework and repair. Molex also lists Mini-Fit connectors for commercial-cleaning-robot drive and motion-control interconnects. This supports harness rework as an industrial manipulation objective, without claiming that every 39012040 housing is installed in that particular robot application.",
-      "dexterity": "High but feasible. The robot must enter narrow housing slots with two blades outside the contact, recognize terminal contact, maintain tang-depressing engagement, optionally unload the tangs by pushing the wire forward, and coordinate an opposing gentle pull. This is materially different from mating a completed connector or operating its external latch.",
+      "success_conditions": "The correct rail is installed at the designated rack unit through robot-applied forces only; both front and rear pairs of prongs occupy their intended holes; each retaining spring is fully extended; front and rear attachments are at the same rack unit; the rail supports itself after release; and the required screws occupy the bottom holes while the reserved top holes remain empty. The final state must persist for 3 seconds after the robot releases the rail and tool. Score zero for a wrong-side or reversed rail, mismatched rack units, partial or false prong engagement, use of the reserved top holes, dropped hardware, permanent rack/rail deformation, or teleporting, welding, or state overwrite. Partial credit may separately recognize correct orientation, front retention, level rear alignment, rear retention, and correct screw placement. Component physics must pass unsupported retention, spring-return, telescoping, screw-thread, wrong-hole, and overload controls before a robot demo.",
+      "industrial_value": "NVIDIA's DGX A100 service manual defines this as installation of the server rack-mount kit and states that the kit acts as the shelf supporting the system. It is therefore a real data-center installation operation, not generic object placement. The procedure requires correct rack-unit registration and complete spring-prong engagement before the heavy server can be mounted.",
+      "dexterity": "High but feasible with rigid PhysX. A robot must control a long, asymmetric articulated rail with separated contact sites, depress a retaining tab while inserting two spring-loaded prongs, preserve the first attachment while extending and aligning the rear, and then change to a screwdriver grasp. The defining capability is staged, load-bearing mechanical latching across two rack posts, not connector mating or simple pick-and-place.",
       "evidence": [
         {
-          "source_id": "s-c7c184615f4af9fb",
-          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 1, FEATURES",
-          "quote_sha256": "6a34f727b3a7afa7852ff6ce5a4b303d088a3d2062bef32ea4763643afa8b589"
+          "source_id": "s-4e272159a21baf44",
+          "locator": "Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual, Installing the Rails, introductory paragraph",
+          "quote_sha256": "9715d3c43dff757038a817a4beed27278ac6475fa1cfeda4f14bfbb58a77c791"
         },
         {
-          "source_id": "s-c7c184615f4af9fb",
-          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, OPERATION, step 2",
-          "quote_sha256": "48057f3e762fae148e89e802e88785e2f130946ad0580b9abcccf3fd35474622"
+          "source_id": "s-4e272159a21baf44",
+          "locator": "Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual, Installing the Rails, orientation instruction",
+          "quote_sha256": "fd5d80a00f926f787a0fdb12a1b4ab1d0e81ccc6255efde5e7bd947fba8ff3c5"
         },
         {
-          "source_id": "s-c7c184615f4af9fb",
-          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, OPERATION, step 4",
-          "quote_sha256": "eaa2edd1082cc320b08ba5306d151cea433dab0bea31af1b9507f43c338f98f8"
+          "source_id": "s-4e272159a21baf44",
+          "locator": "Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual, Installing the Rails, front attachment step",
+          "quote_sha256": "cb6111f07b4f3167d7269039e07428ca73003629ab5b63766be4e6296ccbb814"
         },
         {
-          "source_id": "s-c7c184615f4af9fb",
-          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, OPERATION, step 5",
-          "quote_sha256": "4d407b892404d76b637a6bfcd1132e46a101c0417d09745107feb837241d17b4"
+          "source_id": "s-4e272159a21baf44",
+          "locator": "Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual, Installing the Rails, front engagement check",
+          "quote_sha256": "0eaecd557cbf14fa2e9a443d7cc9f669755fe80ce3192e0218be805557a69131"
         },
         {
-          "source_id": "s-c7c184615f4af9fb",
-          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 2, note below Terminal and Housing Application Chart",
-          "quote_sha256": "93dc7db1f672e809a715529a71b93f515f9cebf1b57eb92c1bc18ac9b009b27f"
+          "source_id": "s-4e272159a21baf44",
+          "locator": "Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual, Installing the Rails, rear alignment instruction",
+          "quote_sha256": "1d14d76445e2aeafbacea8e2b72d3ec08ba574496e2520c5767088d3607f7c73"
         },
         {
-          "source_id": "s-f251010cce66cd83",
-          "locator": "TE Connectivity, Insertion and Extraction Tools for Wire Processing, High-Precision Insertion and Extraction Tools section",
-          "quote_sha256": "793bfa2d4084ebec5a7f24ea71738c09a5ed256dc2da3ddb38a04ae29a16a1e7"
+          "source_id": "s-4e272159a21baf44",
+          "locator": "Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual, Installing the Rails, securing step",
+          "quote_sha256": "a0fe886e4df4a976e4cbb3648792c3fed964f9c53fb7174b0af32c117fde7556"
         },
         {
-          "source_id": "s-3b2ffb1f5e4549e5",
-          "locator": "Molex part 39012040 product page, Physical Specifications",
-          "quote_sha256": "ab4da4a7f2a421df1430a335d62b23df6bc6de09085f1791059be7cc7092d550"
-        },
-        {
-          "source_id": "s-b8dfc5566fdc008f",
-          "locator": "Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors section",
-          "quote_sha256": "f1ea2ce88472d8ade8b3d8ba4c1779113f8d19a5be908d7d4c45fe5912222dc1"
+          "source_id": "s-4e272159a21baf44",
+          "locator": "Installing the Rack Mount Kit — NVIDIA DGX A100 Service Manual, Installing the Rails, screw-hole warning",
+          "quote_sha256": "0df6ad93ba2b7a8ebec1eb2cb976dbb0fdf71c68ea9756e9e7ca666ac4552258"
         }
       ],
-      "asset_plan": "Use the documented four-circuit 39012040/5557 housing and a compatible 5556 terminal only; do not mix the 5378 geometry or another extraction-tool series. Build dimensioned rigid housing, terminal, crimp barrel, wire, and HT60630B proxy meshes from the acquired Molex drawing plus measurements of reference parts. Represent each terminal tang as a constrained articulated rigid leaf with calibrated detent and irreversible damage state rather than a deformable solver. The wire may initially be a short rigid handle for component-physics tests; any later segmented cable must use an already validated YAM-compatible model. Validate blade clearance, outside-contact guidance, tang release, retained-state pull resistance, extraction after release, neighbor retention, overload damage, and reset repeatability before attempting a full robot demo in pinned Isaac Sim 6.1.0/YAM 0059d02a1a91bc6834c1d0846022891df0c78730. No task object may be teleported or welded to produce extraction.",
-      "risk": "Medium-high implementation risk. The acquired sources establish procedure, pitch, compatible families, intended tooling, and terminal non-reusability, but do not provide blade thickness, tang stiffness, release force, pull-out force, or allowable housing-load limits. Those values require measured reference hardware. The catalog text screen found no direct depin/terminal-extraction objective, but this is not conclusive semantic proof; the complete accepted, pending, open, team, and benchmark comparison must be repeated after the objective and physics are implemented."
+      "asset_plan": "Independently model a square-hole rack segment and one DGX A100 rail from the manual's depicted geometry and measurements from legally obtained reference hardware; do not redistribute NVIDIA manual media or an unlicensed mesh. Use rigid links for the rail body and telescoping section, prismatic joints for extension, and articulated rigid tab/prong/spring proxies calibrated from hardware. Preserve the actual two-prong pattern, rack-hole pitch, handedness markings, front/rear interfaces, bottom screw holes, and reserved top chassis holes. First validate collision clearances, tab travel, spring return, full/partial insertion discrimination, front retention during extension, rear rack-unit alignment, screw capture, load-bearing stability, and reset repeatability. Only after those tests pass should the task be connected to pinned Isaac Sim 6.1.0 and YAM commit 0059d02a1a91bc6834c1d0846022891df0c78730. The robot must manipulate every task object through contacts; static rack anchoring is allowed, but the rail and fasteners may not be teleported or dynamically welded.",
+      "risk": "Medium implementation risk. The acquired manual establishes the sequence and engagement checks but does not provide rail CAD, prong spring constants, thread dimensions, allowable insertion force, or damage limits. Those properties require reference-part measurement, and no numerical force threshold should be claimed beforehand. The acquired benchmark catalogs include rack-adjacent operations such as pressing a cable into a clip and tightening a thumbscrew, but no objective combining handed long-rail handling, spring-prong latching at two posts, rack-unit leveling, and prescribed screw-hole use was found. That screen is not proof against every accepted, pending, open, or team submission; selection remains conditional on a complete synchronized semantic review before implementation and again after completion."
     },
     {
-      "id": "minifit-5378-single-blade-extraction",
-      "title": "Extract a 5378-series terminal with a single HT60630B blade",
-      "objective": "Hold the compatible housing with its locking tab upward, bend the wire down, insert one HT60630B blade beneath the locking tab, and pull the wire and tool together to remove the terminal.",
+      "id": "thinksystem-sr590-hot-swap-fan-removal",
+      "title": "Release and remove a Lenovo ThinkSystem SR590 hot-swap fan",
+      "objective": "With the documented service access already established and hazardous fan motion absent, press the fan-cage bracket toward the server front, maintain the release, grasp the top of the specified system fan, and lift it vertically from its bay without disturbing neighboring fans or the cage.",
       "skills": [
-        "housing orientation",
-        "wire deflection without crimp damage",
-        "single-blade insertion beneath a recessed tab",
-        "maintained tool-wire contact",
-        "coordinated same-direction tool and wire pull"
+        "confined-access bracket depression",
+        "bimanual coordination between latch release and extraction",
+        "top grasp on a closely packed module",
+        "vertical constrained withdrawal",
+        "contact avoidance around neighboring modules",
+        "force control that preserves the cage and fan housing"
       ],
-      "success_conditions": "The selected 5378 terminal exits its cavity through robot-applied blade and pulling forces while the housing remains intact and no neighboring terminal is released. Zero for bypassing the locking tab, wire/crimp separation, housing damage, unintended extraction, or state overwrite. Exact force and damage thresholds remain blocked pending measurements.",
-      "industrial_value": "Molex provides an explicit manufacturer procedure for extracting individual 5378 terminals with this tool, establishing a real connector-service operation.",
-      "dexterity": "High. Unlike the selected dual-blade process, this sequence requires wire bending, insertion of one blade beneath a specific tab, and simultaneous withdrawal of the wire and tool.",
+      "success_conditions": "The designated fan is removed vertically by robot contact after the cage bracket is moved toward the front; it is placed stably in the service area; the cage, neighboring fans, and bay guides remain seated and undamaged. The final state must persist for 3 seconds. Score zero for removing the wrong fan, lifting before release, contacting a moving rotor, displacing another fan, dropping the module, damaging the cage, or changing object state without robot action. Partial credit may distinguish correct bracket actuation, secure fan grasp, and partial guide-controlled withdrawal. Development must remain blocked until the exact latch dependency and bay geometry are verified on reference hardware.",
+      "industrial_value": "Lenovo explicitly identifies the part as a hot-swap fan and says removal can avoid significant interruption to system operation. That establishes a real availability-sensitive data-center maintenance operation.",
+      "dexterity": "Moderate. The task couples a directional cage-bracket release with a constrained lift in a crowded server interior. It is more meaningful than free pick-and-place, though less demanding than the selected rail task because the source specifies only a short two-action sequence and does not establish a complex regrasp or fastening phase.",
       "evidence": [
         {
-          "source_id": "s-c7c184615f4af9fb",
-          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series",
-          "quote_sha256": "61151162a570c3bd4a4b8ac4cdfa692d8bdf75ea49ddf97fa88fe30290ddb7a9"
+          "source_id": "s-1166d37d9e5c5fa5",
+          "locator": "Remove a System Fan — ThinkSystem SR590, introductory paragraph",
+          "quote_sha256": "c2377835fcd35dfb207cc1412917a1f42a1e955eed72547fa29bb09bd7ec3025"
         },
         {
-          "source_id": "s-c7c184615f4af9fb",
-          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series, step 1",
-          "quote_sha256": "b94cc1f5dc203ff16e2139f51bfa18f36a8d86bf66dee0888a9b9aa25cc86748"
+          "source_id": "s-1166d37d9e5c5fa5",
+          "locator": "Remove a System Fan — ThinkSystem SR590, S017 caution",
+          "quote_sha256": "78fb6ad4eef86dd66753d5b92c9c580532be96d77094b3fd1e707de317afe4c0"
         },
         {
-          "source_id": "s-c7c184615f4af9fb",
-          "locator": "Extraction Tool HT60630B for Mini-Fit Series Terminals, page 3, For 5378 Terminal Series, step 2",
-          "quote_sha256": "2c19be9d85e4d3800ba6d3319fa14c6461a6e7b9ee14cb2e610985c940ddcac5"
+          "source_id": "s-1166d37d9e5c5fa5",
+          "locator": "Remove a System Fan — ThinkSystem SR590, removal procedure, step shown under Figure 1",
+          "quote_sha256": "7085abc434b4533efb1fc401247d59240982c7fc9e93c575e34e0657c0bfd56b"
+        },
+        {
+          "source_id": "s-1166d37d9e5c5fa5",
+          "locator": "Remove a System Fan — ThinkSystem SR590, removal procedure, step shown under Figure 1",
+          "quote_sha256": "f909e03a2e5edf78fa5456a6a6c26fe70e40c7fea885f2448fbef319be180fa8"
         }
       ],
-      "asset_plan": "Acquire the authoritative 5378 housing and terminal drawings and reference hardware before modeling. Use rigid PhysX geometry and an articulated locking tab calibrated from the actual parts. Validate wire-bending clearance, tab release, simultaneous pull, damage modes, and YAM reachability before full-demo work.",
-      "risk": "Not selected. It is meaningfully different in contact mechanics from the dual-blade 5556 procedure, but the acquired package lacks a 5378 housing drawing, selected part number, complete geometry, and robot-application evidence. It also shares the broader depinning objective, so it offers weaker novelty separation than the selected, better-specified four-circuit Mini-Fit Jr. setup."
+      "asset_plan": "Model the SR590 fan bay, cage bracket, neighboring fan envelopes, guide surfaces, and removable fan as rigid bodies using the official figure plus measurements from matching hardware. Represent the bracket/latch with an articulated joint and calibrated retention, not a scripted release. Validate that an unreleased fan remains retained, correct bracket motion permits vertical extraction, neighboring modules remain constrained, and reset restores retention. A full YAM scene should be attempted only after these tests pass in the pinned runtime.",
+      "risk": "Not selected. The acquired source does not provide dimensions, latch travel, retention forces, or an explicit statement that bracket pressure must be maintained during lifting. The hot-swap wording also creates a safety ambiguity: although the manual permits powered service, a robot demo should use a stationary de-energized fan unless an equipment-specific safe powered test is separately justified. Its short release-and-lift skill overlaps broadly with existing latched-module removal tasks and offers weaker novelty than the rail objective."
     },
     {
-      "id": "nondestructive-harness-terminal-rework",
-      "title": "Non-destructively extract a reusable harness terminal for OEM rework",
-      "objective": "Identify a specified harness cavity, insert the connector-specific extraction tool, release the internal retention feature, and remove the terminal while preserving both terminal and housing for inspected reuse.",
+      "id": "orv3-toolless-it-support-bracket-installation",
+      "title": "Install a tool-less Open Rack V3 IT support bracket from inside the frame",
+      "objective": "Orient one Open Rack V3 IT support bracket inside the rack, align its tool-less mounting features with the specified frame cutouts, engage and lock the bracket without external access, and leave it seated without interfering with adjacent brackets or chassis space.",
       "skills": [
-        "connector-specific tool selection",
-        "fine tool alignment",
-        "retention-feature release",
-        "low-force terminal withdrawal",
-        "damage-sensitive inspection and handling"
+        "inside-frame approach planning",
+        "multi-feature bracket-to-frame alignment",
+        "bimanual support of an elongated load-bearing part",
+        "sequential hook or latch engagement",
+        "force-controlled seating",
+        "clearance management around adjacent rack hardware"
       ],
-      "success_conditions": "The correct terminal is removed by the specified tool; both terminal and housing pass geometry and retention inspections defined by the selected manufacturer's service specification; adjacent terminals remain retained. Zero for wrong-tool use, terminal or housing damage, wire pull-out, unintended release, or state overwrite. This objective is blocked because no acquired source supplies a complete compatible part/tool set, procedure, reuse inspection, or numerical acceptance limits.",
-      "industrial_value": "TE explicitly states that avoiding terminal or housing damage is important for OEM and aftermarket rework and repair, so the objective has real industrial value.",
-      "dexterity": "Potentially high because success depends on releasing an internal feature while keeping two reusable parts undamaged, but difficulty cannot be specified credibly until a concrete connector and tool are chosen.",
+      "success_conditions": "Blocked pending the referenced OCP CAD/drawing and a concrete bracket design. At minimum, a valid rubric would require all documented tool-less mounting features to be engaged from inside the frame, correct OpenU registration, self-support after release, no interference with nearby brackets or chassis envelopes, and no permanent deformation. No hook count, insertion motion, latch state, force threshold, or success claim may be invented from the currently acquired text.",
+      "industrial_value": "The Open Rack Meta Frame V3 specification defines these brackets as the shelf support for IT gear, requires tool-less direct mounting, inside-frame serviceability, and substantial load capacity. This establishes industrial relevance, but not yet an executable manipulation sequence.",
+      "dexterity": "Potentially high because a long load-bearing bracket must be registered and latched within a constrained rack interior. The exact dexterity cannot be asserted until the referenced bracket CAD and drawing reveal its real mounting features.",
       "evidence": [
         {
-          "source_id": "s-f251010cce66cd83",
-          "locator": "TE Connectivity, Insertion and Extraction Tools for Wire Processing, High-Precision Insertion and Extraction Tools section",
-          "quote_sha256": "793bfa2d4084ebec5a7f24ea71738c09a5ed256dc2da3ddb38a04ae29a16a1e7"
+          "source_id": "s-22e97655548371b0",
+          "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8, IT Support Bracket",
+          "quote_sha256": "86f8a5af6ac4e15231a2cc3f12482c4c3bede8393c2a94b8ebf32f48317ca4de"
         },
         {
-          "source_id": "s-f251010cce66cd83",
-          "locator": "TE Connectivity, Insertion and Extraction Tools for Wire Processing, extraction-tool overview",
-          "quote_sha256": "f623eabd6a06240f6271069af72069ab633cb9ad87e664f872ad6a62ea8c0fcf"
+          "source_id": "s-22e97655548371b0",
+          "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8.1",
+          "quote_sha256": "57eb48170d409ccc7cd85578d3d3aa6e02c4e33930cbd0c8365d01215c45dcd7"
         },
         {
-          "source_id": "s-f251010cce66cd83",
-          "locator": "TE Connectivity, Insertion and Extraction Tools for Wire Processing, training and documentation section",
-          "quote_sha256": "b989391670a16bd68773a2bd143ebc7e1a086a0055a34767b81e815741cc467a"
+          "source_id": "s-22e97655548371b0",
+          "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8.3",
+          "quote_sha256": "a978fae3b021b0ace860d3979376e95827a93b95706d4f36920003af3e774aa7"
+        },
+        {
+          "source_id": "s-22e97655548371b0",
+          "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8.4",
+          "quote_sha256": "87d4f0811b9ea4bfa0ef7bcce2bd1ee77433ff79390d6b93d6f05da36eddda90"
         }
       ],
-      "asset_plan": "Do not build from the generic TE page. First acquire one manufacturer procedure, exact tool identifier, terminal and housing drawings, reuse policy, inspection criteria, and measured reference hardware. Only then construct and validate rigid contact, retention, and damage physics.",
-      "risk": "Blocked and not selected. The available evidence establishes industrial relevance but not an executable equipment-specific procedure or geometry. It would be invalid to invent a connector, release mechanism, force threshold, or reuse criterion."
-    },
-    {
-      "id": "robot-motion-connector-replacement",
-      "title": "Replace a drive-and-motion-control connector in a commercial cleaning robot",
-      "objective": "Remove a failed motion-control harness connector and install its replacement while preserving surrounding wiring and seals.",
-      "skills": [
-        "confined connector access",
-        "latch manipulation",
-        "connector extraction and alignment",
-        "controlled mating",
-        "cable and seal management"
-      ],
-      "success_conditions": "Blocked: no defensible success rubric can be written from the acquired sources because they do not identify a cleaning-robot assembly, connector part number, access geometry, removal procedure, insertion procedure, or sealing inspection.",
-      "industrial_value": "Molex documents that commercial cleaning-robot motors and motion systems require reliable power and signal connectors in demanding environments, establishing the subsystem's industrial importance.",
-      "dexterity": "Potentially high, but currently unsubstantiated for any actual equipment geometry.",
-      "evidence": [
-        {
-          "source_id": "s-b8dfc5566fdc008f",
-          "locator": "Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors section",
-          "quote_sha256": "f1ea2ce88472d8ade8b3d8ba4c1779113f8d19a5be908d7d4c45fe5912222dc1"
-        },
-        {
-          "source_id": "s-b8dfc5566fdc008f",
-          "locator": "Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors product-family listing",
-          "quote_sha256": "e759fb5ade9591ded51501e045fac7c58df34ddc5a6ef5e6f9af780c246765a9"
-        }
-      ],
-      "asset_plan": "No asset development should begin. Obtain an OEM service manual or public assembly procedure naming the exact robot, Mini-Fit part set, access envelope, latch/seal configuration, and replacement inspection requirements.",
-      "risk": "Blocked and not selected. The source proves application relevance only; treating it as an assembly or service instruction would invent the task geometry and procedure."
+      "asset_plan": "Do not begin task construction from the prose alone. First obtain the exact OCP collateral named in section 12.8, confirm its license, select one bracket revision, and extract its mounting-feature geometry and rack interface without mixing revisions. Then build an independent rigid PhysX model, validate every engagement feature, incorrect-level rejection, self-support, adjacent-clearance, overload behavior, and reset repeatability before considering YAM integration.",
+      "risk": "Blocked and not selected. The acquired specification proves purpose, access direction, tool-less mounting, and load requirements, but the referenced CAD/drawing is not present in the acquired package. The actual hooks, tabs, latches, insertion trajectory, dimensions, and retention mechanics are therefore unknown. Treating this as build-ready would require invented geometry and success criteria; it may also be semantically close to other rack-rail or shelf-support installation tasks."
     }
   ],
-  "selected_id": "minifit-5556-terminal-extraction",
-  "selection_reason": "This is the only candidate that combines a manufacturer-specified manipulation sequence, an exact extraction tool, a concrete four-circuit housing family with 4.20 mm pitch, rigid-body-compatible contact mechanics, and evidence for industrial rework relevance. It requires internal tang release plus coordinated opposite-side withdrawal rather than completed-connector insertion or external-latch operation. The 5378 variant lacks acquired housing geometry, the generic nondestructive TE objective lacks an equipment-specific procedure, and cleaning-robot connector replacement lacks an OEM service procedure. Selection is for research and component-physics validation only: measured blade/tang geometry, forces, damage thresholds, YAM reachability, and full semantic novelty review remain mandatory before demo development or submission review."
+  "selected_id": "dgx-a100-spring-prong-rail-installation",
+  "selection_reason": "The DGX A100 rail objective is the strongest valid non-connector candidate. It has an official manufacturer procedure with explicit orientation, rack-unit alignment, spring-prong insertion, visible engagement checks, rear extension, prescribed fastening, and a prohibited screw-hole choice. These constraints support a rigid-body task that tests bimanual long-part handling, compliant latching, maintained alignment, regrasping, and tool use. The SR590 fan objective is industrially real but shorter, safety-sensitive, and more similar to generic latched-module removal. The OCP bracket objective has strong industrial importance but is blocked because its defining mounting geometry is only referenced, not acquired. Selection is conditional: rail geometry, spring and thread behavior, damage limits, YAM reachability, and the complete accepted/pending/open/team novelty comparison remain unverified, so no demo or submission success is asserted."
 }

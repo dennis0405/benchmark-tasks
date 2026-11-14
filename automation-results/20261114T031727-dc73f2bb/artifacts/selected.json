@@ -1,29 +1,40 @@
 {
-  "id": "robot-motion-connector-replacement",
-  "title": "Replace a drive-and-motion-control connector in a commercial cleaning robot",
-  "objective": "Remove a failed motion-control harness connector and install its replacement while preserving surrounding wiring and seals.",
+  "id": "orv3-toolless-it-support-bracket-installation",
+  "title": "Install a tool-less Open Rack V3 IT support bracket from inside the frame",
+  "objective": "Orient one Open Rack V3 IT support bracket inside the rack, align its tool-less mounting features with the specified frame cutouts, engage and lock the bracket without external access, and leave it seated without interfering with adjacent brackets or chassis space.",
   "skills": [
-    "confined connector access",
-    "latch manipulation",
-    "connector extraction and alignment",
-    "controlled mating",
-    "cable and seal management"
+    "inside-frame approach planning",
+    "multi-feature bracket-to-frame alignment",
+    "bimanual support of an elongated load-bearing part",
+    "sequential hook or latch engagement",
+    "force-controlled seating",
+    "clearance management around adjacent rack hardware"
   ],
-  "success_conditions": "Blocked: no defensible success rubric can be written from the acquired sources because they do not identify a cleaning-robot assembly, connector part number, access geometry, removal procedure, insertion procedure, or sealing inspection.",
-  "industrial_value": "Molex documents that commercial cleaning-robot motors and motion systems require reliable power and signal connectors in demanding environments, establishing the subsystem's industrial importance.",
-  "dexterity": "Potentially high, but currently unsubstantiated for any actual equipment geometry.",
+  "success_conditions": "Blocked pending the referenced OCP CAD/drawing and a concrete bracket design. At minimum, a valid rubric would require all documented tool-less mounting features to be engaged from inside the frame, correct OpenU registration, self-support after release, no interference with nearby brackets or chassis envelopes, and no permanent deformation. No hook count, insertion motion, latch state, force threshold, or success claim may be invented from the currently acquired text.",
+  "industrial_value": "The Open Rack Meta Frame V3 specification defines these brackets as the shelf support for IT gear, requires tool-less direct mounting, inside-frame serviceability, and substantial load capacity. This establishes industrial relevance, but not yet an executable manipulation sequence.",
+  "dexterity": "Potentially high because a long load-bearing bracket must be registered and latched within a constrained rack interior. The exact dexterity cannot be asserted until the referenced bracket CAD and drawing reveal its real mounting features.",
   "evidence": [
     {
-      "source_id": "s-b8dfc5566fdc008f",
-      "locator": "Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors section",
-      "quote_sha256": "f1ea2ce88472d8ade8b3d8ba4c1779113f8d19a5be908d7d4c45fe5912222dc1"
+      "source_id": "s-22e97655548371b0",
+      "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8, IT Support Bracket",
+      "quote_sha256": "86f8a5af6ac4e15231a2cc3f12482c4c3bede8393c2a94b8ebf32f48317ca4de"
     },
     {
-      "source_id": "s-b8dfc5566fdc008f",
-      "locator": "Molex, Connectors and Cable Assemblies for Commercial Cleaning Robots, Drive and Motion Control Connectors product-family listing",
-      "quote_sha256": "e759fb5ade9591ded51501e045fac7c58df34ddc5a6ef5e6f9af780c246765a9"
+      "source_id": "s-22e97655548371b0",
+      "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8.1",
+      "quote_sha256": "57eb48170d409ccc7cd85578d3d3aa6e02c4e33930cbd0c8365d01215c45dcd7"
+    },
+    {
+      "source_id": "s-22e97655548371b0",
+      "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8.3",
+      "quote_sha256": "a978fae3b021b0ace860d3979376e95827a93b95706d4f36920003af3e774aa7"
+    },
+    {
+      "source_id": "s-22e97655548371b0",
+      "locator": "Open Rack Meta Frame V3 Specification, page 23, section 12.8.4",
+      "quote_sha256": "87d4f0811b9ea4bfa0ef7bcce2bd1ee77433ff79390d6b93d6f05da36eddda90"
     }
   ],
-  "asset_plan": "No asset development should begin. Obtain an OEM service manual or public assembly procedure naming the exact robot, Mini-Fit part set, access envelope, latch/seal configuration, and replacement inspection requirements.",
-  "risk": "Blocked and not selected. The source proves application relevance only; treating it as an assembly or service instruction would invent the task geometry and procedure."
+  "asset_plan": "Do not begin task construction from the prose alone. First obtain the exact OCP collateral named in section 12.8, confirm its license, select one bracket revision, and extract its mounting-feature geometry and rack interface without mixing revisions. Then build an independent rigid PhysX model, validate every engagement feature, incorrect-level rejection, self-support, adjacent-clearance, overload behavior, and reset repeatability before considering YAM integration.",
+  "risk": "Blocked and not selected. The acquired specification proves purpose, access direction, tool-less mounting, and load requirements, but the referenced CAD/drawing is not present in the acquired package. The actual hooks, tabs, latches, insertion trajectory, dimensions, and retention mechanics are therefore unknown. Treating this as build-ready would require invented geometry and success criteria; it may also be semantically close to other rack-rail or shelf-support installation tasks."
 }
