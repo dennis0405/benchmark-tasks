@@ -6,7 +6,35 @@ test, not the Arena scorer or a whole-bag suspension test. The hands start
 open around the mouth; no particle is attached, and only robot cursor/grip
 requests change during the episode.
 
-## Observation contract
+## Active observation contract: v3
+
+The user explicitly requested that small footprint excursions no longer stop
+the test. The same lifting commands now run through the hold unless physical
+release or invalid/intersecting physics is observed. This is a component-test
+change, not a change to the public task scorer.
+
+- Pad-footprint flags, original point escape and accumulated displacement are
+  logged and displayed; they neither stop nor reject retained contact.
+- Physical separation is checked against all BOX/CAPSULE/SPHERE colliders on
+  both finger bodies, including the wing geometry, not just the 12 mm pad.
+  Separation over 10 mm, or separation over 5 mm together with absent force,
+  must persist for 0.25 s before declaring a hand has released the film.
+- An incomplete position target is recorded rather than aborting the hold.
+- For the positive 3 s verdict, both hands need opposed mean contact presence,
+  both mouth walls within 3 mm of actual finger primitives, and the original
+  tracked material on both walls at least 40 mm above its acquisition height.
+- Intersections, nonfinite states and incomplete collision-capacity data still
+  invalidate the test. No artificial object attachments or position writes.
+
+The original 50 mm lift and 35-degree tilt are unchanged in v76. The new
+`verify_contact_hold.py` independently recomputes material rise and distances
+from recorded particle/body states and reads primary mean force vectors;
+cursor targets and footprint flags cannot establish a pass. Tests cover a
+retained grasp despite escaped fiducials, real separated hands, and film at
+the end of a long pad far from the jaw centre. Fifteen focused tests pass.
+v76 is pending at this checkpoint.
+
+## Historical observation contract: v2
 
 - Both the front and back mouth wall must occupy at least 50 mm2 of each
   measured main-pad cavity. Both opposed contact readouts must be present.
@@ -74,7 +102,7 @@ export OMP_NUM_THREADS=4 OPENBLAS_NUM_THREADS=4 JAX_PLATFORMS=cpu
   --contents --contents-mode brittle --workspace raised_flat \
   --material-profile laminate --yield-curvature 10 \
   --mouth-half-gap-mm .2 --self-radius-mm .1 --self-filter-rings 0 \
-  --grasp-inset-mm 6 --lift-pitch-deg 0 --lift-advance-mm 0 \
+  --grasp-inset-mm 6 --lift-pitch-deg 35 --lift-advance-mm 0 \
   --arm-gain-scale 10 --finger-contact-ke 1000000 --rigid-contact-ke 10000 \
   --rigid-contact-threads 32 --body-particle-buffer 16384 \
   --mouth-support full --support-extension-mm 14 --board-skin-mm 1 --rebase-z \
