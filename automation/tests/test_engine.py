@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from rcauto.engine import CoverageError, approval_valid, approve, compare_catalog, numerical_report
@@ -418,6 +420,30 @@ def test_candidate_source_failure_stops_before_catalog_or_environment_work(tmp_p
     assert seen == ["candidate-critic"]
     assert not p.artifact("novelty").exists()
     assert not p.artifact("candidate-preflight").exists()
+
+
+def test_new_candidate_rejection_cannot_leave_a_prior_candidate_pass(tmp_path):
+    from rcauto.selftest import FixtureAgent, FixtureProduction
+
+    store = Store(tmp_path / "state")
+    run = store.create("stale candidate review", instance="test", mode="selftest")
+    p = FixtureProduction(store, run["id"], FixtureAgent(), {})
+    p.research()
+    old_pass = {"candidate_digest": "old", "review": {"verdict": "pass"}}
+    write_json(p.artifact("candidate-preflight"), old_pass)
+    write_json(p.artifact("candidate-critic"), {"verdict": "pass", "reason": "old"})
+
+    def reject(role, instruction):
+        assert not p.artifact("candidate-preflight").exists()
+        assert not p.artifact("candidate-critic").exists()
+        raise GateError("new candidate rejected")
+
+    p.review = reject
+    with pytest.raises(GateError, match="new candidate rejected"):
+        p.candidates()
+    archives = list((p.workspace / "artifacts/history").glob("*/candidate-preflight.json"))
+    assert len(archives) == 1
+    assert json.loads(archives[0].read_text()) == old_pass
 
 
 @pytest.mark.parametrize("where,allowed", [("logs", True), ("release", True), ("private", False)])

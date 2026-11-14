@@ -535,6 +535,16 @@ class Production:
         return {"selected": selected[0]["id"]}
 
     def candidate_preflight(self, candidate):
+        previous = {
+            self.artifact(name).name: read(self.artifact(name))
+            for name in ("candidate-preflight", "candidate-critic")
+            if self.artifact(name).exists()
+        }
+        if previous:
+            archive = self.workspace / "artifacts/history" / ("candidate-review-" + digest(previous))
+            archive.mkdir(parents=True, exist_ok=True)
+            for filename in previous:
+                (self.workspace / "artifacts" / filename).replace(archive / filename)
         sources = read(self.workspace / "input/sources.json")
         review = self.review(
             "candidate-critic",
