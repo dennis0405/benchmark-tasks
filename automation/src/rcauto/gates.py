@@ -104,13 +104,31 @@ def evaluation_identity(release):
 def validate_evidence(evidence, sources):
     if not evidence:
         raise GateError("missing industrial evidence")
-    normalize = lambda s: " ".join(s.split())
+
+    def normalize(s, dehyphenate=False):
+        # PDF line-wrap hyphens are layout, not a changed quotation. Keep real
+        # inline hyphens, and accept either reading at a line-end boundary.
+        s = re.sub(
+            r"(?<=\w)-[ \t]*\r?\n[ \t]*(?=\w)",
+            "" if dehyphenate else "-",
+            s.replace("\u00ad", ""),
+        )
+        return " ".join(s.split())
+
     for e in evidence:
         source = sources.get(e.get("source_id"))
         if not source or not e.get("locator") or len(e.get("quote", "")) < 12:
             raise GateError("incomplete evidence reference")
-        if normalize(e["quote"]) not in normalize(source["text"]):
-            raise GateError("evidence quote is absent from acquired source")
+        if not any(
+            normalize(e["quote"]) in normalize(source["text"], dehyphenate)
+            for dehyphenate in (False, True)
+        ):
+            raise GateError(
+                "evidence quote is absent from acquired source "
+                + str(e["source_id"])
+                + ": "
+                + repr(e["quote"][:160])
+            )
 
 
 def validate_checks(report):

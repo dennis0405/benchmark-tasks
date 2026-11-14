@@ -29,6 +29,18 @@ def test_fabricated_quote_cannot_support_candidate():
         )
 
 
+def test_pdf_line_wrapping_is_not_a_fabricated_quote():
+    validate_evidence(
+        [{"source_id": "pdf", "quote": "Measure the clearance between faces.", "locator": "p29"}],
+        {"pdf": {"text": "Measure the clear-\nance between faces."}},
+    )
+    with pytest.raises(GateError):
+        validate_evidence(
+            [{"source_id": "pdf", "quote": "Fit a springloaded latch.", "locator": "p29"}],
+            {"pdf": {"text": "Fit a spring-loaded latch."}},
+        )
+
+
 def test_success_claim_without_measurements_is_not_a_physics_check():
     with pytest.raises(GateError):
         validate_checks({"checks": [{"name": "stable", "passed": True}]})
