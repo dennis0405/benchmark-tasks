@@ -1,0 +1,143 @@
+{
+  "experiment": "rapid-feasibility-20261115",
+  "catalog_snapshot": {
+    "path": "input/catalog.json",
+    "records": 2207,
+    "complete": true,
+    "scope": "accepted/pending/revision board records, repository PR metadata, and complete own-team history"
+  },
+  "selection_policy": "Build the first objective that preserves a real industrial contact/alignment operation using only pinned public TaskFile primitives and the stock YAM action/scorer interfaces. Do not treat a material check, an IK plan, or a score of 1.0 as final task certification.",
+  "build_first_order": [
+    "lm-rail-datum-seat",
+    "lm-table-four-block-seat",
+    "thread-limit-gauge-check"
+  ],
+  "candidates": [
+    {
+      "id": "lm-rail-datum-seat",
+      "objective": "With two arms, grasp a full-size short LM rail at two separated points, carry it onto its mounting base, and seat its marked reference side against the base side datum before temporary fastening.",
+      "industrial_operation": "Initial datum seating of a linear-motion rail; the prototype ends before bolt insertion or torqueing.",
+      "source_evidence": [
+        {
+          "source_id": "s-5fe1603e9dcf87a9",
+          "locator": "THK LM Guide Mounting Procedure, 'Mounting the LM Rail(s)', Fig. 7 text",
+          "url": "https://www.thk.com/in/en/products/lm_guide/maintenance/0002/",
+          "support": "THK instructs the installer to gently place the LM rail on the base and align the line-marked rail side with the base side reference surface."
+        },
+        {
+          "source_id": "new-official-thk-mounting-pdf",
+          "locator": "THK Mounting Procedure LM Guide, B1-89, Reference Surface Indicators",
+          "url": "https://tech.thk.com/en/products/pdf/en_b01_089.pdf",
+          "support": "The official THK drawing identifies the line-marked side as the rail reference surface."
+        }
+      ],
+      "closest_catalog_comparisons": [
+        {
+          "id": "pr-38 / board-TK-L264XR",
+          "status": "accepted",
+          "title": "Slide a carriage onto a linear rail until it clicks",
+          "meaningful_difference": "That task feeds a small carriage through a close-fitting T profile and detent. This objective transports the long rail itself with two grasp points and registers its side face to a machine datum; there is no carriage insertion or detent."
+        },
+        {
+          "id": "pr-325",
+          "status": "closed; no task spec retained",
+          "title": "Lay a long DIN rail into both standoff cradles with two arms",
+          "meaningful_difference": "This is the closest historical concept and must remain disclosed. Cradle placement constrains two discrete supports; the proposed THK operation registers a precision rail continuously against a planar side datum on its mounting base. Novelty still needs a later full similarity review."
+        },
+        {
+          "id": "pr-1113 / board-TK-T6GWHJ",
+          "status": "accepted",
+          "title": "Feed a hex shaft through two bearings",
+          "meaningful_difference": "That task is axial insertion through two bores with regrasping. This is bimanual planar placement and side-datum seating with no bore insertion."
+        }
+      ],
+      "asset_runtime_feasibility": {
+        "prototype_kind": "actual standard-YAM runnable prototype",
+        "scene": "station",
+        "native_assets": "One loose Box rail and fixed Box base/datum/stops; no compound rigid body, joint, deformable, mesh, or hidden constraint.",
+        "control": "Stock yam_scripted policy, two simultaneous public Waypoint lists, 14-D absolute joint targets through the pinned embodiment.",
+        "scoring": "TaskFile object pose/velocity only; final rail centre, height, yaw, side-datum gap, and rest state.",
+        "industrial_scale": "320 x 28 x 16 mm rail on a 380 x 150 mm base; not miniaturized metrology.",
+        "known_gap": "The first GPU run must establish whether two independent parallel grippers can stably share this single rigid rail. Bolt-hole alignment and fastening are deliberately outside this prototype."
+      },
+      "build_status": "built-first; GPU execution intentionally delegated to trusted host"
+    },
+    {
+      "id": "lm-table-four-block-seat",
+      "objective": "Bimanually place a rigid machine table plate onto four pre-mounted LM blocks and register its datum edge before temporary fastening.",
+      "industrial_operation": "Machine-table installation on linear guide blocks.",
+      "source_evidence": [
+        {
+          "source_id": "s-5fe1603e9dcf87a9",
+          "locator": "THK LM Guide Mounting Procedure, 'Mounting the LM Blocks', Fig. 5 text",
+          "url": "https://www.thk.com/in/en/products/lm_guide/maintenance/0002/",
+          "support": "THK instructs the installer to gently place the table on the LM blocks, temporarily fasten it, and press the master-side blocks to the table reference surface."
+        }
+      ],
+      "closest_catalog_comparisons": [
+        {
+          "id": "pr-325",
+          "status": "closed; no task spec retained",
+          "title": "Lay a long DIN rail into both standoff cradles with two arms",
+          "meaningful_difference": "Both require bimanual long-part support, but this objective registers one broad table over four distributed LM blocks rather than laying a rail into two cradles."
+        },
+        {
+          "id": "pr-38 / board-TK-L264XR",
+          "status": "accepted",
+          "title": "Slide a carriage onto a linear rail until it clicks",
+          "meaningful_difference": "This is a table-to-four-block mating operation, not a carriage-on-profile insertion."
+        }
+      ],
+      "asset_runtime_feasibility": {
+        "prototype_kind": "material design only in this experiment",
+        "native_assets": "A loose Box plate and four fixed Box blocks are representable.",
+        "control": "A two-point bimanual Waypoint plan is possible with stock YAM.",
+        "blocking_risk": "With plain boxes, the four blocks provide only support surfaces and do not preserve the real LM-block/table fastener registration. Building it now would collapse the objective toward generic plate placement."
+      },
+      "build_status": "not built; held behind build-first candidate pending a supported registration feature"
+    },
+    {
+      "id": "thread-limit-gauge-check",
+      "objective": "Inspect a finished threaded robot part with the GO and NO-GO ends of a thread limit gauge, accepting free GO travel and no more than three NO-GO turns.",
+      "industrial_operation": "Post-finish functional inspection of thread pitch/diameter using a threaded plug or ring gauge.",
+      "source_evidence": [
+        {
+          "source_id": "s-9f1bcba789f796ad",
+          "locator": "Thorlabs Mechanical Standards SQ-PO-001 Rev 2.0, page 2 anodizing requirement 3(a), and page 3 Gauging Techniques 5(c)",
+          "url": "https://media.thorlabs.com/contentassets/0bfda553ab5e460ca0d8605b3bc78cf3/thorlabs-mechanical-standards.pdf?v=0116023127",
+          "support": "The standard requires finished threads to remain within major/minor/pitch diameter specifications and states the GO free-spin and three-turn NO-GO procedures."
+        }
+      ],
+      "closest_catalog_comparisons": [
+        {
+          "id": "pr-1849",
+          "status": "historically submitted/rejected board variants",
+          "title": "Sort machined blocks with a go/no-go gap gauge",
+          "meaningful_difference": "That task classifies block width by gravity seating in two linear gaps. Thread gauging tests coupled axial/rotational engagement and turn count, but it remains close in the broader limit-gauging family."
+        },
+        {
+          "id": "pr-1880 / board-TK-84X8VV",
+          "status": "pending",
+          "title": "Set a telescoping gauge to a bearing housing's bore diameter and leave it on its stand",
+          "meaningful_difference": "That task captures an internal diameter through sprung radial contact and lock retention. Thread gauging is a functional helical fit test."
+        },
+        {
+          "id": "pr-1471",
+          "status": "closed; no task spec retained",
+          "title": "Start a hex nut on a stud the trained way",
+          "meaningful_difference": "That concept is assembly/cross-thread avoidance; this is dimensional acceptance with two calibrated limit members."
+        }
+      ],
+      "asset_runtime_feasibility": {
+        "prototype_kind": "rejected for current runtime",
+        "blocking_risk": "The public TaskFile has no joint hook or helical constraint. Plain cylinders would turn this into relabelled insertion, while task-local thread contact would introduce untested microscopic/helical physics. It is also too close to existing limit-gauge work to justify that risk."
+      },
+      "build_status": "not built; exact physics and novelty blockers recorded"
+    }
+  ],
+  "explicit_non_duplicates": [
+    "pr-1849 go/no-go gap sorting",
+    "pr-1880 telescoping bore gauge",
+    "pr-827 TCP calibration"
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "robocurve.rapid_feasibility.material_check.v1",
+  "candidate_id": "lm-rail-datum-seat",
+  "prototype_kind": "material_only_no_physics",
+  "requirements": [
+    "TaskFile declaration loads",
+    "Both public waypoint plans are finite and IK-reachable"
+  ],
+  "checks": [
+    {
+      "id": "taskfile_load",
+      "passed": true,
+      "actual": 5
+    },
+    {
+      "id": "left_finite_ik",
+      "passed": true,
+      "actual": 0.07960420349759142
+    },
+    {
+      "id": "right_finite_ik",
+      "passed": true,
+      "actual": 0.07766123175633326
+    }
+  ],
+  "actual_measurements": {
+    "left": {
+      "duration_s": 11.5,
+      "action_samples": 231,
+      "worst_ik_position_error_mm": 0.07960420349759142,
+      "worst_ik_rotation_error_deg": 0.013076889805607794
+    },
+    "right": {
+      "duration_s": 11.5,
+      "action_samples": 231,
+      "worst_ik_position_error_mm": 0.07766123175633326,
+      "worst_ik_rotation_error_deg": 0.012998699988680208
+    }
+  },
+  "warning": "This report does not establish grasp, contact, shared-load stability, media, or native task success."
+}

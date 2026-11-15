@@ -1,0 +1,41 @@
+{
+  "schema": "robocurve.rapid_feasibility.material_check.v1",
+  "candidate_id": "lm-rail-parallel-jig",
+  "prototype_kind": "material_only_no_physics",
+  "requirements": [
+    "TaskFile declaration loads",
+    "Both public waypoint plans are finite and IK-reachable"
+  ],
+  "checks": [
+    {
+      "id": "taskfile_load",
+      "passed": true,
+      "actual": 4
+    },
+    {
+      "id": "left_finite_ik",
+      "passed": true,
+      "actual": 0.09140688083595047
+    },
+    {
+      "id": "right_finite_ik",
+      "passed": true,
+      "actual": 0.07791100469063122
+    }
+  ],
+  "actual_measurements": {
+    "left": {
+      "duration_s": 43.0,
+      "action_samples": 861,
+      "worst_ik_position_error_mm": 0.09140688083595047,
+      "worst_ik_rotation_error_deg": 0.012961875967555103
+    },
+    "right": {
+      "duration_s": 43.0,
+      "action_samples": 861,
+      "worst_ik_position_error_mm": 0.07791100469063122,
+      "worst_ik_rotation_error_deg": 0.0112296295198767
+    }
+  },
+  "warning": "This report does not establish grasp, contact, shared-load stability, media, or native task success."
+}

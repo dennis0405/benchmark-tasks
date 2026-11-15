@@ -1,0 +1,31 @@
+{
+  "summary": "Built the build-first THK LM-rail datum-seating prototype using native rigid TaskFile primitives and stock bimanual YAM control. CPU declaration/IK checks pass for both arms; no GPU/native-success claim was made. Three source-grounded candidates and historical comparisons are recorded.",
+  "scripts": [
+    {
+      "id": "material-check",
+      "script": "/bin/bash",
+      "args": [
+        "-lc",
+        "source /data/robocurve-automation/sources/IsaacLab-Arena/yam.env && /data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python task/lm-rail-datum-seat/validate_material.py --report measurements/lm-rail-datum-seat/material_check.json"
+      ],
+      "report": "measurements/lm-rail-datum-seat/material_check.json"
+    },
+    {
+      "id": "build-lm-rail-datum-seat",
+      "script": "/bin/bash",
+      "args": [
+        "-lc",
+        "source /data/robocurve-automation/sources/IsaacLab-Arena/yam.env && /data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python task/lm-rail-datum-seat/run_prototype.py --report measurements/lm-rail-datum-seat/measurement.json --max-steps 600 --control-hz 20"
+      ],
+      "report": "measurements/lm-rail-datum-seat/measurement.json"
+    }
+  ],
+  "files": [
+    "task/rapid_candidates.json",
+    "task/lm-rail-datum-seat/task.py",
+    "task/lm-rail-datum-seat/run_prototype.py",
+    "task/lm-rail-datum-seat/validate_material.py",
+    "task/lm-rail-datum-seat/README.md",
+    "measurements/lm-rail-datum-seat/material_check.json"
+  ]
+}
