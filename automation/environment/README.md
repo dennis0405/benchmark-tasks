@@ -1,5 +1,12 @@
 # 자동화용 환경 준비 기록
 
+2026-11-15: 시작 실패한 기존 환경은 보존하고 `robocurve-automation-r2`
+(`ffss1b4z8`, Crusoe L40S48GB/256GiB)를 새로 준비했다. 실행 설정은 이 환경을
+가리킨다. `restore_native_runtime.sh`로 원래 소스·패키지 버전을 복원했고,
+원격 ChatGPT 로그인과 실제 `stack_cubes`1.0점을 확인했다. 이는 기본 환경의
+복원 검증이며 새 산업 태스크·Dream·제출 완료를 뜻하지 않는다.
+실제 관측은 `2026-11-15/replacement-*.json`을 참조한다.
+
 이 디렉터리는 설치·검증·재현에 필요한 **비밀정보 없는 환경 자료**를 보존한다.
 이 파일은 최초 환경 준비 기록이다. 현재 CLI·skill·에이전트 구현과 검증 상태는 [프로젝트 README](../README.md)와 [구현 현황](../tasks/implementation-status.md)을 따른다.
 날짜별 상태는 해당 `bootstrap-status.json` 및 준비 보고서와 함께 확인한다.

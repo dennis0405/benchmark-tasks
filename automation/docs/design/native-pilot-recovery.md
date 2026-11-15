@@ -7,6 +7,12 @@ The current candidate is removal and recovery of four installation tangs from
 M2.5 HELICOIL inserts in an ODRI-informed actuator case. Connector work is excluded.
 This is an **unfinished prototype**, not a submission-ready task.
 
+Later on 2026-11-15 the user approved a replacement L40S and asked to broaden
+the search, prioritizing actual native prototypes and a completed task over
+repeated review loops. The HELICOIL files remain archived; continuing that
+candidate is optional. Mechanical inspection is preferred, with broader robot
+assembly and data-center service also in scope. Connector work stays excluded.
+
 | Area | Evidence and limit |
 | --- | --- |
 | Industrial sources | Pinned ODRI preparation procedure, photographs, and Böllhoff manual inspected. Geometry and fracture calibration still need validation. |
@@ -17,7 +23,7 @@ This is an **unfinished prototype**, not a submission-ready task.
 | Native mechanics | Prior raw states showed up to 22.094 mm case-relative insert displacement and 75.329 degrees rotation. End-state return is not stability. No completed physics gate. |
 | Public YAM integration | Primitive-only TaskFile declarations do not yet instantiate the shared native mechanism. A task-local lazy factory adapter and actual READY/reset/camera smoke remain necessary. |
 | Full YAM / Dream / submission | No full-score task demo, final Dream episode, or external contest submission. |
-| Compute | Brev instance `th9ih02z4` reports `FAILURE / UNHEALTHY / NOT READY`; refreshed console says `START FAILED`. Ordinary stop returned but STOPPED was not confirmed. Exact cause unknown. |
+| Compute | Previous `th9ih02z4` remains intact after START FAILED. Replacement `robocurve-automation-r2` / `ffss1b4z8` is RUNNING with verified L40S/data disk, restored pinned packages and ChatGPT login. The native stock `stack_cubes` example scored1.0; this is environment validation, not a new industrial task. |
 
 ## Lessons now implemented in the controller
 

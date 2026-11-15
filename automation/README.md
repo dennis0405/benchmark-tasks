@@ -5,7 +5,8 @@
 2026-11-14 기준 CLI·skill·Brev 실행 경로를 구현했다. 첫 산업 파일럿은 후보군이 신규성 검사에서
 차단되어 종료했다. [실행에서 발견한 문제와 결과](docs/design/first-industrial-pilot.md)를 남겼다.
 모의 실행·기존 YAM 예제 성공과 신규 태스크 완성·채택을 구분한다.
-후속 HELICOIL 파일럿은 아직 물리·YAM 검증 전이며, Brev 시작 실패로 재개가 막혔다.
+후속 HELICOIL 파일럿은 물리·YAM 검증 전이다. Brev 시작 실패 뒤 새 L40S에 환경을
+복원했고, 사용자 요청에 따라 작업군을 넓혀 실제 시제품 실행을 먼저 확인하고 있다.
 [측정 결과·보존 및 복구 기록](docs/design/native-pilot-recovery.md)을 참고한다.
 
 ```text
