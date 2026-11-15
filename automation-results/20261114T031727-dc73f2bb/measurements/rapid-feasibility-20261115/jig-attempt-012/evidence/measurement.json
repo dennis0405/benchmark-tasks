@@ -1,0 +1,68 @@
+{
+  "schema": "robocurve.rapid_feasibility.measurement.v1",
+  "candidate_id": "lm-rail-parallel-jig",
+  "prototype_kind": "actual_standard_yam",
+  "fresh_started_unix_s": 1794712027.1447608,
+  "requirements": [
+    "Pinned Isaac Sim/YAM runtime launches the unmodified yam_arena embodiment.",
+    "The scripted expert reads permitted object poses and joint states, and commands standard guarded 14-D joint actions. It never writes simulator object state.",
+    "The compound jig and the loose rail interact through native rigid contact; no pose or velocity writes occur after initialization.",
+    "The jig traverses all six stations while engaged; final rail endpoint spacing errors are at most 2 mm, the jig is parked, and both bodies rest for two seconds.",
+    "Raw actions, per-step body states, an H.264 top-camera video, and setup image are produced."
+  ],
+  "checks": [
+    {
+      "id": "runner_exit",
+      "passed": true,
+      "actual": 0
+    },
+    {
+      "id": "finite_action_trace",
+      "passed": true,
+      "actual": 2400
+    },
+    {
+      "id": "both_arms_moved",
+      "passed": true,
+      "actual": 0.9682514828377807
+    },
+    {
+      "id": "body_state_trace",
+      "passed": true,
+      "actual": 2400
+    },
+    {
+      "id": "native_task_score",
+      "passed": false,
+      "actual": 0.0
+    },
+    {
+      "id": "media",
+      "passed": true,
+      "actual": 1268295
+    }
+  ],
+  "actual_measurements": {
+    "task_score": 0.0,
+    "action_rows": 2400,
+    "body_state_samples": 2400,
+    "left_action_span_proxy_rad": 0.9682514828377807,
+    "right_action_span_proxy_rad": 1.2379579301641062,
+    "final_centre_xy_error_m": 0.0036084895310762475,
+    "final_height_error_m": 1.1138916016228961e-06,
+    "final_yaw_error_rad": 0.020409105783023605,
+    "final_datum_gap_m": 0.006870918151951483,
+    "elapsed_wall_s": 381.412713766098
+  },
+  "artifacts": {
+    "trial_log": "measurements/lm-rail-parallel-jig/inspect_logs/adhoc_c5847fe8.json",
+    "runner_log": "measurements/lm-rail-parallel-jig/raw/runner.log",
+    "raw_actions": "measurements/lm-rail-parallel-jig/raw/actions.json",
+    "raw_body_states": "measurements/lm-rail-parallel-jig/raw/body_states.jsonl",
+    "h264_video": "measurements/lm-rail-parallel-jig/artifacts/top_cam_h264.mp4",
+    "setup_image": "measurements/lm-rail-parallel-jig/artifacts/setup.png"
+  },
+  "certification_note": "A prototype task_score of 1.0 establishes only this run's physical feasibility; it is not final task certification.",
+  "completed": false,
+  "fresh_completed_unix_s": 1794712408.557733
+}
