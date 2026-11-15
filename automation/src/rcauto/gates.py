@@ -145,7 +145,14 @@ def validate_evidence(evidence, sources):
     for e in evidence:
         source = sources.get(e.get("source_id"))
         if not source or not e.get("locator") or len(e.get("quote", "")) < 12:
-            raise GateError("incomplete evidence reference")
+            raise GateError(
+                "incomplete evidence reference: "
+                f"source_id={e.get('source_id')!r}, known_source={bool(source)}, "
+                f"has_locator={bool(e.get('locator'))}, "
+                f"quote_chars={len(e.get('quote', ''))} (minimum 12). "
+                "Use an exact acquired-text excerpt; inspect images separately, "
+                "rather than quoting a short figure label."
+            )
         if not any(
             normalize(e["quote"]) in normalize(source["text"], dehyphenate)
             for dehyphenate in (False, True)
