@@ -50,16 +50,21 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 58191,
+    "supervisor_pid": 82004,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log",
-    "error": "Brev startup failed: provider FAILURE / UNHEALTHY / NOT READY; console START FAILED; SSH closed. Ordinary stop returned but STOPPED is unconfirmed. No r38 remote worker or Dream was launched. Waiting for recovery choice.",
+    "error": "candidate-critic: The THK web procedure, inspected Fig. 17(b), and public PDF page B1-94 support the essential mechanism: a jig spans the master and subsidiary rails and checks parallelism successively before fastening. The 320 × 28 × 16 mm proxies and 2 mm tolerance are clearly disclosed modeling assumptions, and the two native prototype trials provide credible feasibility evidence without claiming physics-substep validation or final certification.; The prior incomplete-evidence failure is not fully repaired: artifacts/research.json still indexes the unusable login-page source s-4d99336d94e3c1ea and omits the replacement public PDF source s-b87581f510c6e535 now cited by artifacts/candidates.json and artifacts/selected.json. Update the research source manifest so every selected evidence reference is complete and resolvable.; The selected candidate claims relevance to robot assembly, but its cited THK material establishes generic LM Guide mounting on machines and does not establish that this operation is part of robot building or data-center maintenance. Because the requested category is Impact on AI timelines, add primary industrial evidence tying this rail-alignment operation to robot assembly, or narrow/reselect the candidate; missing_evidence cannot remain empty meanwhile.",
     "approval": null,
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb",
-    "remote_status": null,
+    "remote_status": {
+      "status": "blocked",
+      "error": "candidate-critic: The THK web procedure, inspected Fig. 17(b), and public PDF page B1-94 support the essential mechanism: a jig spans the master and subsidiary rails and checks parallelism successively before fastening. The 320 × 28 × 16 mm proxies and 2 mm tolerance are clearly disclosed modeling assumptions, and the two native prototype trials provide credible feasibility evidence without claiming physics-substep validation or final certification.; The prior incomplete-evidence failure is not fully repaired: artifacts/research.json still indexes the unusable login-page source s-4d99336d94e3c1ea and omits the replacement public PDF source s-b87581f510c6e535 now cited by artifacts/candidates.json and artifacts/selected.json. Update the research source manifest so every selected evidence reference is complete and resolvable.; The selected candidate claims relevance to robot assembly, but its cited THK material establishes generic LM Guide mounting on machines and does not establish that this operation is part of robot building or data-center maintenance. Because the requested category is Impact on AI timelines, add primary industrial evidence tying this rail-alignment operation to robot assembly, or narrow/reselect the candidate; missing_evidence cannot remain empty meanwhile.",
+      "type": "GateError",
+      "at": "2026-11-15T04:17:33.933213+00:00"
+    },
     "compute": "running",
-    "revision": 38,
-    "revision_request": "PRIORITY FOR NEXT SAME-RUN ENVIRONMENT REVISION: genuine native work, not another static-only completion. Root stopped r37 cooperatively after preserving a real successful contact-API probe to fix a controller mismatch. The code-generation role finished; no process was forcibly killed and no Dream call was made.\n\nCONTROLLER FIX: execute_scripts(plan, frozen_physics_checks) now treats earlier scripts as auxiliary preflights with their own actual nonempty passing checks, and ALWAYS applies ALL unchanged frozen35 checks to the FINAL script. An auxiliary success alone, missing final checks or eased final thresholds still fails.127 offline software tests/Ruff pass. Keep a short native contact probe first and the complete component aggregate LAST, not duplicate all35 into the tiny probe or report missing values as measured. This fixes orchestration, not the physical model. Root also removed an arbitrary80 action-request ceiling because pinned Dream uses at most48 rows per request: the ONE final7200-control episode may need150+ internal requests. No extra physical evaluation/restart is authorized.\n\nACTUAL NATIVE CONTACT FINDING: measurements/contact-observation-probe.json and raw-component/contact-observation-probe.jsonl show legacy contact event rows0 but tensor rows152 at240Hz, callback exceptions0. This is only observation-API evidence. The first actual tensor record has force_on_sensor_N=[30.41104507446289] (lengthONE), normal=[0,0,1], scalar normal impulse0.12671268781026204Ns, separation=-0.0018005603924393654. get_contact_data first array is a NORMAL FORCE SCALAR, not a3D vector. The r37 final code now multiplies by the normal; verify the actual new native run, vector lengths/units and compare with get_contact_force_matrix or net forces plus momentum on the known simple impact. Do not label a scalar as a world-space vector or assume normal points sensor->filter; a falling sensor resting on a target has upward contact response. Impulse transmitted to mandrel is the opposite of impulse ON the hammer sensor. Old sum(max(0,-jz)) using the hammer-on-sensor positiveZ response would falsely classify0 axial impulse. Actor ordering/force signs and friction must be physically correct, not patched with abs to force a pass.\n\nCompound hollow inserts/bosses contain several collider shapes. get_contact_data counts/starts are per actual filter SHAPE; do not insist there is exactly one count just because the filter names one rigid actor. Preserve actual native shape mapping and sum only legitimate contact rows without double counting. Callback exceptions, missing streams and capacity overflow invalidate affected readings. Pinned working source: source/isaaclab_physx/isaaclab_physx/sensors/contact_sensor/contact_sensor.py in the pinned IsaacLab checkout, create_rigid_contact_view lines352-370; actual get_contact_data at517, get_net_contact_forces502/get_contact_force_matrix507.\n\nROOT INDEPENDENT RAW-TRACE AUDIT: existing r36 raw240Hz SHA256a5abf5a915fa7418f0736a284beb40ea1c942a08ee5e97dfa7acebc807979480 contains1736 PRE/POST body states but no contact/joint-break rows. Using each PRE1 insert pose transformed into the live case-root frame at every POST (not end-only/world-Z), insert1 peak axial drift13.543386mm atstep249; insert2 peak Euclidean drift22.094160mm and rotation75.32937deg atstep246; insert3 rotation22.20345deg. Thus final return near initial pose is NOT stability or intactness evidence. Required max over full pass windows must observe those violations. Fix collision scale/contact offsets, solver stability, physical inertia/mass ratios, joint frames/material mechanics through genuine native tests; do not hide transients, relabel nominal strikes as damage probes, or lower thresholds. Raw runtime callback/body ordering must be verified.\n\nPUBLIC TASK RUNTIME IS AN ESSENTIAL UNFINISHED PIECE: r37 said primitive-only TaskFile lacks scene/callback hooks. This limitation of the declaration API is real, but a narrow TASK-LOCAL LAZY SCENE-FACTORY ADAPTER was already authorized. Do not edit installed/shared SDK/action/observation/guard logic. Implement that adapter, not an unrelated primitive scene with default0 snapshot, and exercise it on the actual host. One viable approach to VERIFY against pinned source: task.py installs a path-scoped wrapper of yam_arena.inspect_embodiment's _ensure_sim; ensure AppLauncher is started with the SDK's SAME flags/lifecycle first, then import yam_arena.scene and temporarily wrap build_task_environment ONLY for this exact TaskFile, delegate original _ensure_sim so READY/robot/observations/guards remain original, and restore the factory in finally. If Kit already exists, use it; never create a second app. The pinned inspect_embodiment.py original _ensure_sim244-290 creates AppLauncher253-263, imports scene.make_env268 and builds at279. scene.make_env460-467 resolves build_task_environment from module globals at465; build_task_environment367-374 creates the Arena Scene. These observed sources make a lazy scoped factory possible without changing SDK source, unlike importing simulator modules pre-App. Alternative supported task-local mechanisms are fine if proven. Do not claim this proposed adapter has run until it actually does.\n\nUse ONE shared declarative body/shape/joint definition for both material tests and the actual Arena scene. Native compound hollow bodies need proper ObjectCfg custom spawners with unscaled rigid roots and collider children; register each independently observed dynamic body with the Arena world, and create native notch/seat/structural joints before physics starts. Scope prim paths under the actual Arena namespace, do not duplicate /World private material table/rigs into public YAM. A final static mechanism-link spawner can connect already spawned bodies if confirmed by the actual Arena construction order. Keep physical collision/grasp behavior and clean reset/lifecycle, never weld a grasp. Hook the same actual POST observer and outcome scorer and restore native joints/release state on clean reset at the appropriate lifecycle boundary. Contact report flags are sensors only, never force/collision suppression. ALL native model/guard/action/observation semantics must remain original.\n\nRun trusted-host, clean-cwd TaskFile load + actual native YAM environment RESET/CAMERA/INITIAL-SCORE smoke with both arms at READY and verify shared bodies and native joints actually present; no full demo before the physics gate. Read actual errors and repair, no source-only certification. If a specific essential task-local factory/spawner hook proves technically unsupported, provide its exact tested failure/source restriction rather than declaring all integration impossible solely from TaskFile's primitive schema. Real material rig figures are never YAM success.\n\nKeep source form faithful to actual ODRI elongated-case pictures; tang is the installation tab at the far end INSIDE the insert bore, not a bar above its top. Keep representative assumptions explicit, no unsupported physical calibration claim or capture-through-hole. Genuine portable-case tilt/pour cleanup is allowed. Complete the actual shared scene/physics before robot scripting. Current approved outcome contract remains digestacc74d5535d48dea995f5b2948e92d8e0aabfe0936053ee9e30571626f1b96da with35 checks/15 controls; do not regenerate/re-ideate or restore hand/force-window grading. Every later quality, actual-built fresh novelty, one-final-Dream, preservation and providerSTOPPED/no-submission condition below stays in force.\n\nContinue SAME run20261114T031727-dc73f2bb, SAME objective and origin result branch from ENVIRONMENT. The revised outcome-based contract has ACTUALLY PASSED independent review with digestacc74d5535d48dea995f5b2948e92d8e0aabfe0936053ee9e30571626f1b96da. It has35 physics checks and15 outcome controls. Preserve it EXACTLY; do not repeat contract, re-ideate or restore old hand/force-window/strike-count grading. Source/novelty/actual native quality standards remain. The earlier candidate novelty pass is historical; valid simpler alternatives and the actual final ability must be reviewed honestly.\n\nr35 stopped because the manifest's secret regex falsely detected sk- INSIDE the legitimate frozen field name lifecycle-task-callback-handle-count-error-maximum in run_component_diagnostics.py. Root inspected only line/prefix/preceding-character metadata: the match is preceded by ta and belongs to task-, not an actual credential. The controller now requires a token word boundary for sk-; actual OpenAI/GitHub-style keys, private-key markers and credential files still fail.120 software tests and Ruff passed, including reproducing this exact false positive and preserving actual credential rejection. Do not rename frozen check names, weaken their criteria, split legitimate strings into opaque fragments, invent a missing credential requirement, or seek keys to resolve it. Use normal readable canonical identifiers. This was a controller false positive, NOT measured native success or a physical failure. The fresh controller also checks pending stop before any Dream budget reservation.\n\nThe public-task adapter is STILL UNFINISHED: a pure pre-App pinned TaskFile.load from clean cwd/tmp failed ModuleNotFoundError: procedural_geometry at task.py line11, for SHA256d3044e59ee29d73e226cf1558a4c5716e09992bcd63da921e05dffcce2f4bd9d. No simulator/GPU or robot actions were run in that preflight. Fix portable helper imports using __file__/a scoped package; do not depend on current cwd/private PYTHONPATH. In this ENVIRONMENT stage wire the shared native geometry/joints/reset/contact observers and actual outcome scorer into public task.py, then run a trusted-host clean-cwd public TaskFile load + native YAM environment reset/camera/initial-score smoke with both arms at READY. Show that the actual native notch/seat/case mechanisms exist in that scene and share code/geometry/scorer identity with material probes. A separate material scene plus unrelated primitive declarations/constant score0 is not a completed environment. The smoke is not a full robot demo; full YAM action trajectories still come only after the physics gate.\n\nUse actual host diagnostics outside the restricted code-generation role. The source reads/AST checks here do not prove native results. All35 measurements need the contract's exact probe/phase/aggregation/unavailability scopes. Initial, nominal, adversarial, terminal and lifecycle/refinement scopes are distinct. A deliberate damage probe must be observed/scored as damage rather than contaminating a pass-only safety maximum. Missing contacts/empty required event sets/callback exceptions yield incomplete failing evidence with saved raw data, never fabricated zeros or JSON infinities.\n\nThe current scorer is S=0.125*N_removed+0.10*N_collected+0.10*T, with actual damage/loss/invalid-state H overriding0; T requires the contract's genuine unassisted2s/41fresh observations. Safe alternative strategies get the same score. Physical impulses/energy/force paths validate mechanics, not hidden grading eligibility. Every other definition and number is authoritative in the approved contract, including relative-case insert damage, portable intact workpiece handling, initial shell/seat integrity and max callback-count error0. No native object pose/velocity injection after episode initialization, hidden grasp weld, disabled collision, fabricated forces/results or shared SDK/guard/action/observation semantic edits.\n\nMEASURED NATIVE FAILURES THAT MUST BE ENGINEERED AWAY, not reclassified as success: r32 aggregate/raw240&480 logs and component-rgb.png exist and finished. Valid strikes0, tang fractures0, tray fragments0; contact rows0; five J_shell_0..4 native breaks at step1; camera depth valid0.745833 vs0.99, cornersfalse, valid terminalframes0; poorly lit collapsed deck. Numerically passing empty-set/hardcoded zeros are not valid measurements. Inspect all actual evidence and images. Native material hammers have AddScaleOp before AddTranslateOp, scaling initial translation to near world origin rather than their intended coil coordinates. Shared INSERT_XY changed but rig/radial code still copies old literal targets. Verify actual view names/order and native/authored initial poses; use one shared geometry/axis definition and non-scaled rigid Xform roots with collider children and correct joint anchors. Do not repair after-start state by pose/velocity writes. Zero native contact rows must be resolved with a genuine native contact probe/stream and callback error checks; configuration/commands do not prove contact.\n\nMatch actual ODRI elongated open-case form/boss locations/access using the source-visuals photographs; no generic square deck or unsupported through-hole invented for capture. Empty-base mass should be a disclosed defensible assumption informed by the source's61g WHOLE prepared shell assembly, not320g. Old unitless/outdated STL only supplies qualitative context. Free case parts may be connected by real structural joints; the stationary support is distinct. Relative insert damage must follow the case frame. Native fracture events remain independent of desired actions/scoring. Use actual contact/gravity for collection. Provide real lighting, public YAM-compatible floor/table/camera context and correct projected masks/framing; do not shrink/fill masks or lower depth0.99/corner/41frame conditions. Preserve the now-working Isaac Lab Camera path, explicit float32(4,3)/uint32 GPU actuation, depthH×W normalization, per-attempt fresh raw data/source metadata and pre-camera progress persistence. Material rigs are NOT YAM success.\n\nTHEN all revised component/physics gates and independent actual-physics review; two genuine clean-reset full-score YAM demos; all revised outcome controls/independent raw scorer replay/valid-alternative characterization; H264 video, setup images and clean-directory portability. No SDK/guard/action/observation semantic changes. Source/novelty validity must not be inferred from the obsolete restrictive scoring design. Full final all-category accepted/pending/team catalog+six-original-suite comparison is mandatory; required-scope uncertainty/known overlap still block. ExactlyONE final Dream episode AFTER ALL native gates, no automatic repeat/reset even failure/unknown,20USD cumulative ledger. Same origin automation/20261114T031727-dc73f2bb, discuss >50MB/file or >100MB checkpoint, no secrets/whole manuals, provider-confirm STOPPED for pre-submission review. NO actual contest/media submission/PR and NO snack VM/checkout changes.\n\n\nNo software test/selftest/plan/prospective review is a native task pass. Continue until actual component/physics gate,2 real full-score clean-reset YAM episodes, all15 outcome controls plus real valid-alternative characterization, independent raw-trace scoring, actual H264/video/images and portable clean-directory execution. Only then exactlyONE final Dream episode (no automatic rerun/reset,20USD cumulative), fresh full actual-built novelty check, same-fork preservation and provider STOPPED for human pre-submission review. No actual contest/media submission/PR or snack VM/checkout changes.\n",
-    "resume_from_stage": "environment",
+    "revision": 39,
+    "revision_request": "Continue SAME run 20261114T031727-dc73f2bb and SAME origin result branch, from RESEARCH, on the new actually demonstrated LM-rail parallel-spacing jig candidate. User explicitly asks for a completed real task instead of repeated speculative scoring rejection. Do not lower novelty, physical validity, scoring, evidence or approval standards. Exclude connector insertion/removal. Prior HELICOIL work and its 35-check/15-control contract were a DIFFERENT abandoned candidate, archived outside workspace; do not reuse that contract, its geometry, or its failed assumptions.\n\nACTUAL STARTING POINT: task/ contains the exact native-successful rail+jig task and permitted simulator-state expert. measurements/rapid-feasibility-20261115/jig-attempt-013 and -014 contain independent native full-score1.0 trials, same source digest42b994785b5aef054577be5db9fbf7c0223b9ff006ae1f6310d5a05af5bee1cb, each1035 standard14D joint actions at20Hz, no object pose writes/hidden weld/shared SDK changes. Raw actual body/joint/action traces, exact source, canonical native trial/actions, source manifest, H264/setup and independently measured-validation.json are there. Replay agrees1.0; actual sampled worst jig/rail overlap14.53micrometres at20Hz; floor6.27micrometres; last41samples span2seconds with BOTH grippersopen>=.99998 and TCP-to-object AABB clearance>=.0839m. These are genuine FEASIBILITY results, not waived formal gates. Physics substeps were NOT observed; do not claim they were. Current source's geometry/scoring/controller core WORKS. Preserve this baseline and minimally polish it, rather than replacing it with a new complex mechanism or default0 scaffold.\n\nPrimary industrial reference: THK https://www.thk.com/in/en/products/lm_guide/maintenance/0002/ \"Using a Jig\" Fig17(b), rail master/subsidiary parallelism before fastening. Actual figure https://www.thk.com/in/assets/images/products/lm_guide_en_maintenance_img_17.png has a rigid spacer between rails moving lengthwise; inspect image with tools. Supporting primary https://tech.thk.com/en/products/pdf/en_b01_089.pdf. Independently authored representative rigid 320x28x16mm rail proxies and a travelling spacing jig with chamfered inner faces/top bridge. This models COARSE pre-fastening rail spacing/parallelism verification, not exact THK hardware, ball recirculation, preload, bolt tightening, or micron manufacturing metrology. Units are metres. Justify/report millimetre tolerances as modelling assumptions. Find at least3 actual industrial/geometry/licensing sources as the standard research stage requires; do not invent exact product dimensions or public-asset licenses. Rigid custom primitive/USDA asset is fine.\n\nNOVELTY is genuinely still pending. Compare ALL required latest accepted/pending/revision/team/history catalog entries AND6 original benchmark corpora, meaningfully on objective/physical skill/success. Closest original full specs include pr31 workpiece-against-corner-stop handover/squaring, pr38/pr1083 carriage on fixed rail past detent, pr1799 square machine vise with indicator and lock, pr2013 racked gantry beam carriages on fixed endstops, pr2006 DINrail screw mounting, pr1841 stud spacing jig. Historical closed-other-team unmerged pr325 longDINrail into cradle has acknowledged partial-source uncertainty and only qualifies for the controller's existing narrow exemption; known overlap still blocks. New objective is adjustment of relative free planar rail pose using a THIRD-BODY spacing gauge across BOTH rails, verification at6 positions, return gauge and leave aligned/resting. It is NOT merely long-block placement at corner stops or carriage insertion. Independently evaluate without forcing a pass or inventing distinctions. If genuinely overlap, report the exact overlapping ability, not another arbitrary low difficulty score.\n\nCollector fixed DataCenterBench to actual official /data/setups.json and /data/tasks.json,10 selected task rubrics with their actual grading. Read latest definition manifests and original files for all6 suites, not overview pages. Stored prior catalog/benchmark passes are historical and not current clearance.\n\nResearch and candidate stages should retain the several prior physically attempted candidate comparison (thread-gauge inspection, bearing lost motion, rail setup) with sourced evidence, and select the now-proven rail jig if genuinely distinct and justified. No invented filler. Subsequent contract should be MINIMAL BUT COMPLETE for THIS task:20Hz control,120sec2400steps, actual pinnedphysics rate and twice-rate refinement if claimed; numerical checks for initial0, gravity/settling/contact/collision/stability, clear camera, truthful sample resolution, release, actual alternative paths, reproducible reset and no source/runtime/state-write cheat. Do not invent fragile complicated force/breakage mechanics irrelevant to these rigid rails. No permanent damage falsely modelled in unbreakable rigid solids; falls/loss/inaccessible final states and alignment undone must fail appropriately. Separate grading outcomes from diagnostic safety checks.\n\nPOLISH: add six thin visible paint station ticks at x=.200,.236,.272,.308,.344,.380 just outside master rail, y~+.125 flush with tabletop; no raised obstruction. Blue parking rectangle already exists. Instruction must require verification at marked positions, allow lifting/reseating and either arm/valid equivalent strategies rather than a hidden forced sweep order. Make native instruction/task.json consistent. Existing scored gauge yaw permits180degree equivalent; keep. Preserve standard YAM/guard/camera/model observations. Final rest should include jig angular as well as linear speed if needed and actual clear robot release evidence; remove arbitrary workspace exclusions unless tied to real loss. Define orientation/flatness safely and do not change working core unnecessarily. Scores align-only=.15, each verified markedstation=.10 (max.75), allverified+parked+settled4sec1.0; visits revoked if alignment is lost. Same score for safe alternative motions. Workstation marking/observation and scorer quantities must agree. Existing4sec own81fresh-sample dwell prevents native single-step score1 before dwell.\n\nIMPORTANT official review prompt permits scripted demo to READ object poses/joints/latch flags. Oracle in oracle_demo_cli.py is compliant normal joint control; read task._latest_objects updated by actual score snapshots. Do not reject oracle reads as simulator modification. Initial source run_prototype.py currently uses experiments-specific ROOT and prototype report schema: repair portable paths, current-episode linkage, CLI timing/instruction and final report schema. task.py AssetRegistry registration before App works. Use source as verified baseline. Do not launch native GPU inside restricted generation role; return scripts for trusted execute_scripts controller. Required schema checks entries use name,measured,operator,threshold,unit and requirements, not prototype id/passed/actual. Canonical SDK media/action mapping must use returned trial_metadata.actions runID, never maximum across old histories. All stateful trials fresh process --epochs1, not shared state.\n\nFinish full pipeline: independently reviewed prospective contract; native component checks and review; two full-score fresh-process final-source YAM demos; real native initial/no-op, align-only, verification-without-parking partial controls and any frozen loss/adversarial controls with raw trace replay, valid alternative characterization; image/H264 media; actual isolated-copy portable rerun; final checked assets/licenses/task.json/evaluate.py wrapper and clean reproducibility. Keep all scripts task-local, raw outputs under workspace/measurements outside source, no private-root dependence, no SDK/source mutation or fabricated metrics. Preserve every successful baseline through source hash and history.\n\nThen trusted controller runs EXACTLY ONE final Dream episode AFTER all gates, no paid call by role, no retry/reset on failure/unknown; existing20USD cumulative reservation. Dream result need not be fullscore, honest model failure is allowed with fullscore demo. Finally refresh actual-built full novelty, checkpoint SAME origin branch, provider-confirmSTOPPED and produce exact reviewable release+digest. NO officialmedia upload/PR/finalsubmission before separate explicit human digest approval. No snackVM/checkout or oldfailedVM changes. Don't stop at source-only completion/prototype; continue through concrete review-ready result.",
+    "resume_from_stage": "research",
     "preservation_error": null,
     "stop_error": "refusing stop in unknown state",
     "provider_state": {
@@ -18729,6 +18734,498 @@
       "run": "20261114T031727-dc73f2bb",
       "at": "2026-11-15T03:48:50.564467+00:00",
       "data": "{\"operator_experiment\": {\"status\": \"native-feasibility-passed\", \"candidate\": \"lm-rail-parallel-jig\", \"updated_at\": \"2026-11-15T03:48:50.563455+00:00\", \"native_scores\": [1.0, 1.0], \"same_source_digest\": \"42b994785b5aef054577be5db9fbf7c0223b9ff006ae1f6310d5a05af5bee1cb\", \"samples_each\": 1035, \"final_spacing_error_m\": 0.0003017968430078233, \"sampled_max_penetration_m\": 1.4533537182725986e-05, \"released_window_s\": 2.0, \"minimum_tcp_clearance_m\": 0.0839317127429644, \"production_gates\": \"pending; no Dream call\"}}"
+    },
+    {
+      "seq": 3153,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T03:55:49.537004+00:00",
+      "data": "{\"revision\": 39, \"revision_request\": \"Continue SAME run 20261114T031727-dc73f2bb and SAME origin result branch, from RESEARCH, on the new actually demonstrated LM-rail parallel-spacing jig candidate. User explicitly asks for a completed real task instead of repeated speculative scoring rejection. Do not lower novelty, physical validity, scoring, evidence or approval standards. Exclude connector insertion/removal. Prior HELICOIL work and its 35-check/15-control contract were a DIFFERENT abandoned candidate, archived outside workspace; do not reuse that contract, its geometry, or its failed assumptions.\\n\\nACTUAL STARTING POINT: task/ contains the exact native-successful rail+jig task and permitted simulator-state expert. measurements/rapid-feasibility-20261115/jig-attempt-013 and -014 contain independent native full-score1.0 trials, same source digest42b994785b5aef054577be5db9fbf7c0223b9ff006ae1f6310d5a05af5bee1cb, each1035 standard14D joint actions at20Hz, no object pose writes/hidden weld/shared SDK changes. Raw actual body/joint/action traces, exact source, canonical native trial/actions, source manifest, H264/setup and independently measured-validation.json are there. Replay agrees1.0; actual sampled worst jig/rail overlap14.53micrometres at20Hz; floor6.27micrometres; last41samples span2seconds with BOTH grippersopen>=.99998 and TCP-to-object AABB clearance>=.0839m. These are genuine FEASIBILITY results, not waived formal gates. Physics substeps were NOT observed; do not claim they were. Current source's geometry/scoring/controller core WORKS. Preserve this baseline and minimally polish it, rather than replacing it with a new complex mechanism or default0 scaffold.\\n\\nPrimary industrial reference: THK https://www.thk.com/in/en/products/lm_guide/maintenance/0002/ \\\"Using a Jig\\\" Fig17(b), rail master/subsidiary parallelism before fastening. Actual figure https://www.thk.com/in/assets/images/products/lm_guide_en_maintenance_img_17.png has a rigid spacer between rails moving lengthwise; inspect image with tools. Supporting primary https://tech.thk.com/en/products/pdf/en_b01_089.pdf. Independently authored representative rigid 320x28x16mm rail proxies and a travelling spacing jig with chamfered inner faces/top bridge. This models COARSE pre-fastening rail spacing/parallelism verification, not exact THK hardware, ball recirculation, preload, bolt tightening, or micron manufacturing metrology. Units are metres. Justify/report millimetre tolerances as modelling assumptions. Find at least3 actual industrial/geometry/licensing sources as the standard research stage requires; do not invent exact product dimensions or public-asset licenses. Rigid custom primitive/USDA asset is fine.\\n\\nNOVELTY is genuinely still pending. Compare ALL required latest accepted/pending/revision/team/history catalog entries AND6 original benchmark corpora, meaningfully on objective/physical skill/success. Closest original full specs include pr31 workpiece-against-corner-stop handover/squaring, pr38/pr1083 carriage on fixed rail past detent, pr1799 square machine vise with indicator and lock, pr2013 racked gantry beam carriages on fixed endstops, pr2006 DINrail screw mounting, pr1841 stud spacing jig. Historical closed-other-team unmerged pr325 longDINrail into cradle has acknowledged partial-source uncertainty and only qualifies for the controller's existing narrow exemption; known overlap still blocks. New objective is adjustment of relative free planar rail pose using a THIRD-BODY spacing gauge across BOTH rails, verification at6 positions, return gauge and leave aligned/resting. It is NOT merely long-block placement at corner stops or carriage insertion. Independently evaluate without forcing a pass or inventing distinctions. If genuinely overlap, report the exact overlapping ability, not another arbitrary low difficulty score.\\n\\nCollector fixed DataCenterBench to actual official /data/setups.json and /data/tasks.json,10 selected task rubrics with their actual grading. Read latest definition manifests and original files for all6 suites, not overview pages. Stored prior catalog/benchmark passes are historical and not current clearance.\\n\\nResearch and candidate stages should retain the several prior physically attempted candidate comparison (thread-gauge inspection, bearing lost motion, rail setup) with sourced evidence, and select the now-proven rail jig if genuinely distinct and justified. No invented filler. Subsequent contract should be MINIMAL BUT COMPLETE for THIS task:20Hz control,120sec2400steps, actual pinnedphysics rate and twice-rate refinement if claimed; numerical checks for initial0, gravity/settling/contact/collision/stability, clear camera, truthful sample resolution, release, actual alternative paths, reproducible reset and no source/runtime/state-write cheat. Do not invent fragile complicated force/breakage mechanics irrelevant to these rigid rails. No permanent damage falsely modelled in unbreakable rigid solids; falls/loss/inaccessible final states and alignment undone must fail appropriately. Separate grading outcomes from diagnostic safety checks.\\n\\nPOLISH: add six thin visible paint station ticks at x=.200,.236,.272,.308,.344,.380 just outside master rail, y~+.125 flush with tabletop; no raised obstruction. Blue parking rectangle already exists. Instruction must require verification at marked positions, allow lifting/reseating and either arm/valid equivalent strategies rather than a hidden forced sweep order. Make native instruction/task.json consistent. Existing scored gauge yaw permits180degree equivalent; keep. Preserve standard YAM/guard/camera/model observations. Final rest should include jig angular as well as linear speed if needed and actual clear robot release evidence; remove arbitrary workspace exclusions unless tied to real loss. Define orientation/flatness safely and do not change working core unnecessarily. Scores align-only=.15, each verified markedstation=.10 (max.75), allverified+parked+settled4sec1.0; visits revoked if alignment is lost. Same score for safe alternative motions. Workstation marking/observation and scorer quantities must agree. Existing4sec own81fresh-sample dwell prevents native single-step score1 before dwell.\\n\\nIMPORTANT official review prompt permits scripted demo to READ object poses/joints/latch flags. Oracle in oracle_demo_cli.py is compliant normal joint control; read task._latest_objects updated by actual score snapshots. Do not reject oracle reads as simulator modification. Initial source run_prototype.py currently uses experiments-specific ROOT and prototype report schema: repair portable paths, current-episode linkage, CLI timing/instruction and final report schema. task.py AssetRegistry registration before App works. Use source as verified baseline. Do not launch native GPU inside restricted generation role; return scripts for trusted execute_scripts controller. Required schema checks entries use name,measured,operator,threshold,unit and requirements, not prototype id/passed/actual. Canonical SDK media/action mapping must use returned trial_metadata.actions runID, never maximum across old histories. All stateful trials fresh process --epochs1, not shared state.\\n\\nFinish full pipeline: independently reviewed prospective contract; native component checks and review; two full-score fresh-process final-source YAM demos; real native initial/no-op, align-only, verification-without-parking partial controls and any frozen loss/adversarial controls with raw trace replay, valid alternative characterization; image/H264 media; actual isolated-copy portable rerun; final checked assets/licenses/task.json/evaluate.py wrapper and clean reproducibility. Keep all scripts task-local, raw outputs under workspace/measurements outside source, no private-root dependence, no SDK/source mutation or fabricated metrics. Preserve every successful baseline through source hash and history.\\n\\nThen trusted controller runs EXACTLY ONE final Dream episode AFTER all gates, no paid call by role, no retry/reset on failure/unknown; existing20USD cumulative reservation. Dream result need not be fullscore, honest model failure is allowed with fullscore demo. Finally refresh actual-built full novelty, checkpoint SAME origin branch, provider-confirmSTOPPED and produce exact reviewable release+digest. NO officialmedia upload/PR/finalsubmission before separate explicit human digest approval. No snackVM/checkout or oldfailedVM changes. Don't stop at source-only completion/prototype; continue through concrete review-ready result.\", \"approval\": null}"
+    },
+    {
+      "seq": 3154,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T03:55:49.537410+00:00",
+      "data": "{\"resume_from_stage\": \"research\"}"
+    },
+    {
+      "seq": 3155,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T03:55:49.540385+00:00",
+      "data": "{\"supervisor_pid\": 82004, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261114T031727-dc73f2bb/supervisor.log\"}"
+    },
+    {
+      "seq": 3156,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T03:55:49.614219+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 3157,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T03:57:44.035383+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 3158,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T03:58:02.407586+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 3159,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T03:58:54.587559+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb\"}"
+    },
+    {
+      "seq": 3160,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T03:58:54.997623+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3161,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T03:59:10.534880+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3162,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T03:59:25.996867+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3163,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T03:59:41.459946+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3164,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T03:59:56.921304+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3165,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:00:12.340138+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3166,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:00:27.762429+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3167,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:00:43.179853+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3168,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:00:58.670929+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3169,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:01:14.100810+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3170,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:01:29.515797+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3171,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:01:44.944923+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3172,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:02:00.361975+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3173,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:02:15.780290+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3174,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:02:31.230665+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3175,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:02:46.703240+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3176,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:03:02.166940+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-15T03:58:56.878004+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 3177,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:03:17.628883+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3178,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:03:33.081140+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3179,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:03:48.486566+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3180,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:04:04.006792+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3181,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:04:19.478060+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3182,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:04:34.930248+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3183,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:04:50.378533+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3184,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:05:05.867040+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3185,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:05:21.319938+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3186,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:05:36.748076+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3187,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:05:52.154316+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3188,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:06:07.608097+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3189,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:06:23.074334+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3190,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:06:38.540115+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3191,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:06:53.959652+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3192,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:07:09.372938+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3193,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:07:24.825263+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3194,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:07:40.386729+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3195,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:07:55.946531+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3196,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:08:11.411188+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3197,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:08:26.880418+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3198,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:08:42.341393+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3199,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:08:57.805932+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3200,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:09:13.267354+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3201,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:09:28.695597+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3202,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:09:44.125716+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3203,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:09:59.645155+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3204,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:10:15.114508+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3205,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:10:30.564839+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3206,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:10:46.039292+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3207,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:11:01.523592+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3208,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:11:16.968529+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3209,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:11:32.429541+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3210,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:11:47.853366+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3211,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:12:03.352941+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3212,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:12:18.819320+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3213,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:12:34.381989+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3214,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:12:49.796566+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3215,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:13:05.299604+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3216,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:13:20.726063+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3217,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:13:36.233873+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3218,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:13:51.701141+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3219,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:14:07.261812+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3220,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:14:22.724077+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3221,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:14:38.139658+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3222,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:14:53.750753+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3223,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:15:09.178163+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3224,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:15:24.602230+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3225,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:15:40.140396+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3226,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:15:55.560422+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3227,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:16:11.057977+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3228,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:16:26.521162+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3229,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:16:42.086083+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3230,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:16:57.554915+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3231,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:17:13.010623+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3232,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:17:28.426262+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-15T04:03:18.417188+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 3233,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:17:43.845319+00:00",
+      "data": "{\"remote_status\": {\"status\": \"blocked\", \"error\": \"candidate-critic: The THK web procedure, inspected Fig. 17(b), and public PDF page B1-94 support the essential mechanism: a jig spans the master and subsidiary rails and checks parallelism successively before fastening. The 320 \\u00d7 28 \\u00d7 16 mm proxies and 2 mm tolerance are clearly disclosed modeling assumptions, and the two native prototype trials provide credible feasibility evidence without claiming physics-substep validation or final certification.; The prior incomplete-evidence failure is not fully repaired: artifacts/research.json still indexes the unusable login-page source s-4d99336d94e3c1ea and omits the replacement public PDF source s-b87581f510c6e535 now cited by artifacts/candidates.json and artifacts/selected.json. Update the research source manifest so every selected evidence reference is complete and resolvable.; The selected candidate claims relevance to robot assembly, but its cited THK material establishes generic LM Guide mounting on machines and does not establish that this operation is part of robot building or data-center maintenance. Because the requested category is Impact on AI timelines, add primary industrial evidence tying this rail-alignment operation to robot assembly, or narrow/reselect the candidate; missing_evidence cannot remain empty meanwhile.\", \"type\": \"GateError\", \"at\": \"2026-11-15T04:17:33.933213+00:00\"}, \"stage\": null}"
+    },
+    {
+      "seq": 3234,
+      "run": "20261114T031727-dc73f2bb",
+      "at": "2026-11-15T04:18:21.316288+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"candidate-critic: The THK web procedure, inspected Fig. 17(b), and public PDF page B1-94 support the essential mechanism: a jig spans the master and subsidiary rails and checks parallelism successively before fastening. The 320 \\u00d7 28 \\u00d7 16 mm proxies and 2 mm tolerance are clearly disclosed modeling assumptions, and the two native prototype trials provide credible feasibility evidence without claiming physics-substep validation or final certification.; The prior incomplete-evidence failure is not fully repaired: artifacts/research.json still indexes the unusable login-page source s-4d99336d94e3c1ea and omits the replacement public PDF source s-b87581f510c6e535 now cited by artifacts/candidates.json and artifacts/selected.json. Update the research source manifest so every selected evidence reference is complete and resolvable.; The selected candidate claims relevance to robot assembly, but its cited THK material establishes generic LM Guide mounting on machines and does not establish that this operation is part of robot building or data-center maintenance. Because the requested category is Impact on AI timelines, add primary industrial evidence tying this rail-alignment operation to robot assembly, or narrow/reselect the candidate; missing_evidence cannot remain empty meanwhile.\"}"
     }
   ],
   "effects": {

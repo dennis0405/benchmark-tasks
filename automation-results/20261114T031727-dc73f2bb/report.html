@@ -14,497 +14,156 @@
 - 결과는 이 run의 새로운 origin 브랜치에 보존한다. 원본 매뉴얼 전체/인증 정보는 공개하지 않는다. 50MB/file 또는 100MB checkpoint 초과는 먼저 보고한다.
 - 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
-</p><p>Brev startup failed: provider FAILURE / UNHEALTHY / NOT READY; console START FAILED; SSH closed. Ordinary stop returned but STOPPED is unconfirmed. No r38 remote worker or Dream was launched. Waiting for recovery choice.</p><p>Release digest: none</p><h2>selected</h2><pre>{
-  &quot;id&quot;: &quot;odri-m25-helicoil-tang-removal&quot;,
-  &quot;title&quot;: &quot;Break and recover four M2.5 HELICOIL tangs from an ODRI actuator shell base&quot;,
-  &quot;objective&quot;: &quot;Finish four already-installed M2.5 × 3.75 mm HELICOIL inserts in a representative ODRI actuator shell base: align and hold the specified straight tang break-off mandrel in each insert, strike it with a separately manipulated hammer to fracture the tang at its manufactured notch, then physically recover every released tang into a tray without damaging the retained inserts or shell.&quot;,
+</p><p>candidate-critic: The THK web procedure, inspected Fig. 17(b), and public PDF page B1-94 support the essential mechanism: a jig spans the master and subsidiary rails and checks parallelism successively before fastening. The 320 × 28 × 16 mm proxies and 2 mm tolerance are clearly disclosed modeling assumptions, and the two native prototype trials provide credible feasibility evidence without claiming physics-substep validation or final certification.; The prior incomplete-evidence failure is not fully repaired: artifacts/research.json still indexes the unusable login-page source s-4d99336d94e3c1ea and omits the replacement public PDF source s-b87581f510c6e535 now cited by artifacts/candidates.json and artifacts/selected.json. Update the research source manifest so every selected evidence reference is complete and resolvable.; The selected candidate claims relevance to robot assembly, but its cited THK material establishes generic LM Guide mounting on machines and does not establish that this operation is part of robot building or data-center maintenance. Because the requested category is Impact on AI timelines, add primary industrial evidence tying this rail-alignment operation to robot assembly, or narrow/reselect the candidate; missing_evidence cannot remain empty meanwhile.</p><p>Release digest: none</p><h2>selected</h2><pre>{
+  &quot;id&quot;: &quot;lm-rail-parallel-jig&quot;,
+  &quot;title&quot;: &quot;Align a subsidiary LM rail with a travelling spacing jig&quot;,
+  &quot;objective&quot;: &quot;Adjust the free planar pose of an unfastened subsidiary LM rail relative to a fixed master rail, seat a rigid third-body spacing jig across both rails at six marked longitudinal stations, then return the jig to its parking mark while leaving the rails aligned and at rest.&quot;,
   &quot;skills&quot;: [
-    &quot;precision grasping of a narrow mandrel&quot;,
-    &quot;coaxial alignment with recessed M2.5 inserts&quot;,
-    &quot;bimanual mandrel stabilization and hammering&quot;,
-    &quot;impact and lateral-force regulation&quot;,
-    &quot;tool withdrawal without coil displacement&quot;,
-    &quot;millimetre-scale fragment search and recovery&quot;
+    &quot;bimanual rail repositioning&quot;,
+    &quot;planar translation and yaw correction&quot;,
+    &quot;simultaneous gauge contact with two reference surfaces&quot;,
+    &quot;guarded sliding, lifting, and reseating&quot;,
+    &quot;regrasping without disturbing alignment&quot;,
+    &quot;tool parking and collision-free release&quot;
   ],
-  &quot;success_conditions&quot;: &quot;Full success requires four contact-loaded fractures at the modeled notches, four independently simulated free tangs physically deposited in a containment tray, no tang remaining in or escaping from the shell, every insert retained within frozen pose tolerances, no shell or coil damage, all tools released, and a two-second stable final state. Partial credit may cover safe alignment or fewer completed fractures only while every released fragment remains contained. Insufficient or repeated impacts, glancing blows, off-axis overload, insert displacement, shell damage, tool jamming, fragment loss, or any pose/velocity injection invalidates full success.&quot;,
-  &quot;industrial_value&quot;: &quot;The pinned ODRI robot-actuator procedure requires four M2.5 × 3.75 mm inserts in the shell base, removal of their tangs, and verification that tangs do not remain inside the part. Böllhoff documents notch fracture and identifies the M2.5 straight tang break-off mandrel.&quot;,
-  &quot;dexterity&quot;: &quot;One arm must maintain a narrow mandrel coaxially inside a small recessed insert while the other delivers a controlled hammer impact. The robot must avoid lateral loading of the retained coil and printed boss, withdraw the mandrel without snagging, and recover four small loose metal fragments from an open shell cavity.&quot;,
+  &quot;success_conditions&quot;: &quot;Score 0.15 when the subsidiary rail is flat and its full-length datum-gap error is at most 2 mm. Award 0.10 for each of six visibly marked stations where the jig is simultaneously seated across both rails while alignment remains valid, capped at 0.75 before completion; revoke station credit if alignment is subsequently lost. Award 1.0 only when all six stations have been verified, the jig is flat and within 15 mm of its parking target, the rail and jig remain below declared linear and angular speed limits for 4 seconds using fresh observations, and both grippers are open and clear. A dropped or inaccessible rail or jig, non-finite state, or lost final alignment scores 0. Arm choice, station order, action count, and arbitrary impulse windows are not graded.&quot;,
+  &quot;industrial_value&quot;: &quot;THK’s official mounting procedure recommends a jig to establish parallelism between master- and subsidiary-side reference surfaces and confirmation at each mounting hole before fastening. The objective isolates pre-fastening rail adjustment and verification used in machine and robot assembly; it does not claim bolt tightening, rolling-element behavior, preload adjustment, or manufacturing metrology.&quot;,
+  &quot;dexterity&quot;: &quot;The robot must correct the coupled translation and yaw of a long free rail, then manipulate a bridge-shaped gauge whose two inner faces must engage separate rails simultaneously. Sliding, lifting, or reseating the gauge can undo the alignment, requiring guarded contact, stabilization, regrasping, repeated verification, and clean release rather than simple placement.&quot;,
   &quot;evidence&quot;: [
     {
-      &quot;source_id&quot;: &quot;s-df759bd2377bbb57&quot;,
-      &quot;locator&quot;: &quot;Details Shell Preparation, “Installing the Helicoil Inserts,” shell-base step&quot;,
-      &quot;quote_sha256&quot;: &quot;64253869545fb5f306ad3a0515b17c2d59f6b28ddde42c205a17bf5eb51b08e4&quot;
+      &quot;source_id&quot;: &quot;s-5fe1603e9dcf87a9&quot;,
+      &quot;locator&quot;: &quot;THK Mounting Procedure, “Mounting the Subsidiary LM Rail”&quot;,
+      &quot;quote_sha256&quot;: &quot;96ee6faea8aa80efa569e3d44830c9a78ad6da0ccfe18ed4219f006d1a64d7a5&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-df759bd2377bbb57&quot;,
-      &quot;locator&quot;: &quot;Details Shell Preparation, “Installing the Helicoil Inserts,” shell-base step&quot;,
-      &quot;quote_sha256&quot;: &quot;2f831484053c44174f7775195ef67869a07588a81e37a54b7ad6a36c6749efe1&quot;
+      &quot;source_id&quot;: &quot;s-5fe1603e9dcf87a9&quot;,
+      &quot;locator&quot;: &quot;THK Mounting Procedure, “Using a Jig,” Fig. 17&quot;,
+      &quot;quote_sha256&quot;: &quot;53ae508eb06dcce277e6fb9091313ca8b5a8324763b3a87cc8cd4b2a71cdc6ca&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-df759bd2377bbb57&quot;,
-      &quot;locator&quot;: &quot;Details Shell Preparation, “Installing the Helicoil Inserts,” shell-base step&quot;,
-      &quot;quote_sha256&quot;: &quot;ab11aa977c8a5cde65af28ab4773d5d8d25a18294fc4708dae4485eb4ef45ff7&quot;
+      &quot;source_id&quot;: &quot;s-5fe1603e9dcf87a9&quot;,
+      &quot;locator&quot;: &quot;THK Mounting Procedure, “Using a Jig,” Fig. 17&quot;,
+      &quot;quote_sha256&quot;: &quot;62984ae8efb6aaa854f560a487dc8ce1c090053caff2729d6a98c99776535478&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-6195df1bebbb33ef&quot;,
-      &quot;locator&quot;: &quot;HELICOIL Plus manufacturer catalog, page 17, “Breaking off the tang”&quot;,
-      &quot;quote_sha256&quot;: &quot;546c8e46c17cb3ac989938505e76679ff273e01c17dc6465ac408d24cbe36c28&quot;
+      &quot;source_id&quot;: &quot;s-5b841f695edcea19&quot;,
+      &quot;locator&quot;: &quot;THK, “Selecting a Radial Clearance (Preload)”&quot;,
+      &quot;quote_sha256&quot;: &quot;18afeaba4e0ad6130830505d83c08d4511a74fc10e4bafaf24bca55a80b40579&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-6195df1bebbb33ef&quot;,
-      &quot;locator&quot;: &quot;HELICOIL Plus manufacturer catalog, page 55, M2.5 tang break-off tool row&quot;,
-      &quot;quote_sha256&quot;: &quot;9d2706184ef14ebd66d4b1c1edfb9051f5dd3fd64bafd508d5e0dea405fa3a45&quot;
-    },
-    {
-      &quot;source_id&quot;: &quot;s-c392a734cb5007d7&quot;,
-      &quot;locator&quot;: &quot;Pinned ODRI repository LICENSE, BSD 3-Clause License&quot;,
-      &quot;quote_sha256&quot;: &quot;d5c22c75f54623d0c00cd65d119bdc89f755463a4f1992744c7fdce6d5ffe0fc&quot;
+      &quot;source_id&quot;: &quot;s-b233d4ba6542e4f5&quot;,
+      &quot;locator&quot;: &quot;THK Online Services Terms of Use, section 7.1&quot;,
+      &quot;quote_sha256&quot;: &quot;fd82089d80092b3e4bb1a7c25a9642ee1a448052f24c230cd375561c7c89f298&quot;
     }
   ],
-  &quot;asset_plan&quot;: &quot;Build an independently authored representative rigid fixture rather than claiming an exact current-product replica. The four inspected pinned ODRI images establish four marked shell-base insert bosses, vertical installation access, the open cavity and large through-openings, and completed inserts. Use the documented M2.5 × 3.75 mm insert and Böllhoff M2.5 mandrel family to anchor the local interaction. Treat the historical unitless STL and 2019 v1 overview only as explicitly outdated geometry references. Model retained coil proxies, separate tangs, manufactured notches, mandrel, hammer, shell, and tray as native rigid PhysX bodies. Freeze and disclose uncited wire, notch, handle, friction, fracture-load, impulse, damage, and tolerance values as prototype assumptions. Before YAM integration, validate contact-driven axial fracture, insufficient and repeated impacts, glancing blows, off-axis damage, coil retention, freely moving fragment containment, reset freshness, callback timing, force/impulse/energy logging, timestep convergence, and failure controls in the pinned runtime.&quot;,
-  &quot;risk&quot;: &quot;Exact notch strength and tool-handle dimensions are not published and must remain frozen testable assumptions. The inspected images support a representative accessible cavity fixture but not exact CAD correspondence to the outdated STL. Native PhysX may fail to provide stable millimetre-scale impact fracture or fragment behavior; that is a later component-test rejection condition. Early comparison found different central outcomes from automatic center punching (one dent), nail hammering (fastener penetration), blind riveting (joining plus spent-stem disposal), PCB/tile depaneling (supported bulk fracture), and slide-hammer extraction (momentum-driven pin removal). Full fresh catalog, board, team, and six-suite novelty review remains mandatory after selection.&quot;,
+  &quot;asset_plan&quot;: &quot;Use independently authored rigid PhysX geometry: two representative 320 × 28 × 16 mm steel rail proxies and a travelling bridge jig with chamfered inner contact faces. Independent inspection of source s-e0c2d90a34baaa51, THK Fig. 17(b), confirms a rigid cross-rail jig spanning two rails and moving longitudinally; source s-b87581f510c6e535, page B1-94, independently confirms the associated jig procedure. Add six flush paint ticks at x=0.200, 0.236, 0.272, 0.308, 0.344, and 0.380 m and a flush parking rectangle. Treat dimensions, masses, friction, and millimetre tolerances as disclosed representative modeling assumptions. Do not redistribute THK imagery or claim an exact THK product replica. Preserve the demonstrated custom USDA geometry and validate reset, gravity, settling, contact, release, loss cases, and timestep sensitivity in the pinned runtime.&quot;,
+  &quot;risk&quot;: &quot;The 2 mm threshold measures coarse assembly alignment, not micron-grade metrology. Two independent native feasibility trials reached 1.0 using 1,035 guarded 14D actions at 20 Hz with matching source digest and replay; sampled worst jig/rail overlap was 14.53 µm, floor overlap 6.27 µm, and the final two-second window had both grippers open with at least 83.9 mm TCP-to-object AABB clearance. These are control-rate observations, not physics-substep measurements or final certification. Closest known abilities—corner-stop squaring, travel on a fixed rail, vise indication, gantry end-stop alignment, DIN-rail mounting, and stud-spacing gauges—do not combine adjustment of a free rail with a third body spanning both rails and multi-position verification. Historical unmerged PR 325 remains a final-catalog novelty risk because its incomplete record concerns a long DIN rail and cradle.&quot;,
   &quot;feasibility_status&quot;: &quot;ready&quot;,
   &quot;missing_evidence&quot;: []
-}</pre><h2>selection_history</h2><pre>{
-  &quot;rejected&quot;: [],
-  &quot;skipped&quot;: [],
-  &quot;selected&quot;: &quot;odri-m25-helicoil-tang-removal&quot;
-}</pre><h2>contract</h2><pre>{
-  &quot;slug&quot;: &quot;odri-m25-helicoil-tang-removal-and-recovery-dc73f2bb&quot;,
-  &quot;objective&quot;: &quot;Remove the four installation tangs from four already-installed M2.5 × 3.75 mm HELICOIL inserts in a portable representative ODRI actuator shell base through each tang’s native modeled notch-fracture mechanism, then physically recover the four released tangs in a tray without damaging the retained inserts, shell, robot, tools, or workcell. Any physically safe strategy receives identical credit for identical observable outcomes.&quot;,
-  &quot;instruction&quot;: &quot;Remove all four HELICOIL installation tangs, collect every removed tang in the tray, preserve the inserts and shell, and finish with every shell body, tool, and tang fragment released by both grippers, physically supported, and at rest. The tray and stationary jig are not members of this terminal release set.&quot;,
-  &quot;industrial_mapping&quot;: &quot;The pinned Open Dynamic Robot Initiative actuator-module-v1 shell-preparation procedure specifies four M2.5 × 3.75 mm HELICOIL inserts in the shell base, instructs removal with a tang break-off tool, and requires checking that tangs do not remain inside the part (source s-df759bd2377bbb57, pinned commit 66af1522b4fba0ec4a1d7790e66f5e4652208d30). The Böllhoff HELICOIL Plus catalog states that a through-hole insert tang is broken at its notch and lists straight M2.5 tang-break mandrel 0158 040 1000 (source s-6195df1bebbb33ef, pages 17 and 55). The tested industrial ability is precision removal of retained-insert installation remnants followed by accountable small-fragment recovery while preserving a portable robot component. The independently authored rigid fixture follows sourced photographs showing an elongated open shell, four marked bosses, vertical access, a cavity, and large openings; it is not claimed to be exact current-product CAD. Reviewed neighbors pr-1774, pr-1945, pr-1979, pr-1983, and pr-1987 do not test notched insert-tang fracture together with retained-insert protection and fragment accountability. A fresh full catalog, board, team, and six-suite comparison remains required against the ability actually demonstrated by valid strategies.&quot;,
-  &quot;run_steps&quot;: 7200,
-  &quot;timing&quot;: {
-    &quot;control_hz&quot;: 20,
-    &quot;physics_hz&quot;: 240,
-    &quot;refinement_physics_hz&quot;: 480,
-    &quot;episode_seconds&quot;: 360
-  },
-  &quot;physics_checks&quot;: [
-    {
-      &quot;name&quot;: &quot;initial-settle-station-fixture-linear-speed-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 0.002,
-      &quot;unit&quot;: &quot;m/s&quot;
-    },
-    {
-      &quot;name&quot;: &quot;initial-settle-loose-body-linear-speed-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 0.01,
-      &quot;unit&quot;: &quot;m/s&quot;
-    },
-    {
-      &quot;name&quot;: &quot;initial-untouched-task-score&quot;,
-      &quot;operator&quot;: &quot;==&quot;,
-      &quot;threshold&quot;: 0,
-      &quot;unit&quot;: &quot;score&quot;
-    },
-    {
-      &quot;name&quot;: &quot;initial-native-fractured-tang-count&quot;,
-      &quot;operator&quot;: &quot;==&quot;,
-      &quot;threshold&quot;: 0,
-      &quot;unit&quot;: &quot;count&quot;
-    },
-    {
-      &quot;name&quot;: &quot;initial-tray-contained-fragment-count&quot;,
-      &quot;operator&quot;: &quot;==&quot;,
-      &quot;threshold&quot;: 0,
-      &quot;unit&quot;: &quot;count&quot;
-    },
-    {
-      &quot;name&quot;: &quot;initial-shell-integrity-joint-break-count&quot;,
-      &quot;operator&quot;: &quot;==&quot;,
-      &quot;threshold&quot;: 0,
-      &quot;unit&quot;: &quot;count&quot;
-    },
-    {
-      &quot;name&quot;: &quot;initial-insert-seat-joint-break-count&quot;,
-      &quot;operator&quot;: &quot;==&quot;,
-      &quot;threshold&quot;: 0,
-      &quot;unit&quot;: &quot;count&quot;
-    },
-    {
-      &quot;name&quot;: &quot;initial-insert-case-relative-translation-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 0.0001,
-      &quot;unit&quot;: &quot;m&quot;
-    },
-    {
-      &quot;name&quot;: &quot;initial-rigid-body-penetration-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 0.0002,
-      &quot;unit&quot;: &quot;m&quot;
-    },
-    {
-      &quot;name&quot;: &quot;nominal-all-inserts-closed-contact-episode-count-minimum&quot;,
-      &quot;operator&quot;: &quot;&gt;=&quot;,
-      &quot;threshold&quot;: 1,
-      &quot;unit&quot;: &quot;count/insert&quot;
-    },
-    {
-      &quot;name&quot;: &quot;nominal-native-fractured-tang-count&quot;,
-      &quot;operator&quot;: &quot;==&quot;,
-      &quot;threshold&quot;: 4,
-      &quot;unit&quot;: &quot;count&quot;
-    },
-    {
-      &quot;name&quot;: &quot;nominal-released-tang-dynamic-body-count&quot;,
-      &quot;operator&quot;: &quot;==&quot;,
-      &quot;threshold&quot;: 4,
-      &quot;unit&quot;: &quot;count&quot;
-    },
-    {
-      &quot;name&quot;: &quot;nominal-contact-stream-row-count-total&quot;,
-      &quot;operator&quot;: &quot;&gt;=&quot;,
-      &quot;threshold&quot;: 1,
-      &quot;unit&quot;: &quot;count&quot;
-    },
-    {
-      &quot;name&quot;: &quot;nominal-impact-axis-angle-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 5,
-      &quot;unit&quot;: &quot;deg&quot;
-    },
-    {
-      &quot;name&quot;: &quot;nominal-impact-radial-offset-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 0.00035,
-      &quot;unit&quot;: &quot;m&quot;
-    },
-    {
-      &quot;name&quot;: &quot;nominal-qualified-axial-impulse-minimum&quot;,
-      &quot;operator&quot;: &quot;&gt;=&quot;,
-      &quot;threshold&quot;: 0.012,
-      &quot;unit&quot;: &quot;N*s&quot;
-    },
-    {
-      &quot;name&quot;: &quot;nominal-qualified-axial-impulse-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 0.035,
-      &quot;unit&quot;: &quot;N*s&quot;
-    },
-    {
-      &quot;name&quot;: &quot;nominal-qualified-offaxis-impulse-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 0.008,
-      &quot;unit&quot;: &quot;N*s&quot;
-    },
-    {
-      &quot;name&quot;: &quot;adversarial-offaxis-impulse-minimum&quot;,
-      &quot;operator&quot;: &quot;&gt;&quot;,
-      &quot;threshold&quot;: 0.008,
-      &quot;unit&quot;: &quot;N*s&quot;
-    },
-    {
-      &quot;name&quot;: &quot;adversarial-visible-damage-event-count-minimum&quot;,
-      &quot;operator&quot;: &quot;&gt;=&quot;,
-      &quot;threshold&quot;: 1,
-      &quot;unit&quot;: &quot;count/probe&quot;
-    },
-    {
-      &quot;name&quot;: &quot;retained-insert-case-relative-translation-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 0.00025,
-      &quot;unit&quot;: &quot;m&quot;
-    },
-    {
-      &quot;name&quot;: &quot;retained-insert-case-relative-rotation-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 3,
-      &quot;unit&quot;: &quot;deg&quot;
-    },
-    {
-      &quot;name&quot;: &quot;postfracture-forbidden-penetration-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 0.0002,
-      &quot;unit&quot;: &quot;m&quot;
-    },
-    {
-      &quot;name&quot;: &quot;terminal-tray-contained-fragment-count&quot;,
-      &quot;operator&quot;: &quot;==&quot;,
-      &quot;threshold&quot;: 4,
-      &quot;unit&quot;: &quot;count&quot;
-    },
-    {
-      &quot;name&quot;: &quot;terminal-loose-body-linear-speed-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 0.01,
-      &quot;unit&quot;: &quot;m/s&quot;
-    },
-    {
-      &quot;name&quot;: &quot;terminal-loose-body-angular-speed-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 0.5,
-      &quot;unit&quot;: &quot;rad/s&quot;
-    },
-    {
-      &quot;name&quot;: &quot;terminal-continuous-rest-duration-minimum&quot;,
-      &quot;operator&quot;: &quot;&gt;=&quot;,
-      &quot;threshold&quot;: 2,
-      &quot;unit&quot;: &quot;s&quot;
-    },
-    {
-      &quot;name&quot;: &quot;camera-workspace-valid-depth-fraction-minimum&quot;,
-      &quot;operator&quot;: &quot;&gt;=&quot;,
-      &quot;threshold&quot;: 0.99,
-      &quot;unit&quot;: &quot;fraction&quot;
-    },
-    {
-      &quot;name&quot;: &quot;camera-workspace-corners-visible&quot;,
-      &quot;operator&quot;: &quot;==&quot;,
-      &quot;threshold&quot;: 1,
-      &quot;unit&quot;: &quot;boolean&quot;
-    },
-    {
-      &quot;name&quot;: &quot;terminal-fresh-valid-camera-frame-count-minimum&quot;,
-      &quot;operator&quot;: &quot;&gt;=&quot;,
-      &quot;threshold&quot;: 41,
-      &quot;unit&quot;: &quot;count&quot;
-    },
-    {
-      &quot;name&quot;: &quot;production-postphysics-callback-dt-error-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 1e-09,
-      &quot;unit&quot;: &quot;s&quot;
-    },
-    {
-      &quot;name&quot;: &quot;refinement-postphysics-callback-dt-error-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 1e-09,
-      &quot;unit&quot;: &quot;s&quot;
-    },
-    {
-      &quot;name&quot;: &quot;lifecycle-task-callback-handle-count-error-maximum&quot;,
-      &quot;operator&quot;: &quot;==&quot;,
-      &quot;threshold&quot;: 0,
-      &quot;unit&quot;: &quot;count&quot;
-    },
-    {
-      &quot;name&quot;: &quot;reset-stale-event-count&quot;,
-      &quot;operator&quot;: &quot;==&quot;,
-      &quot;threshold&quot;: 0,
-      &quot;unit&quot;: &quot;count&quot;
-    },
-    {
-      &quot;name&quot;: &quot;unsafe-robot-self-contact-impulse-maximum&quot;,
-      &quot;operator&quot;: &quot;&lt;=&quot;,
-      &quot;threshold&quot;: 0.02,
-      &quot;unit&quot;: &quot;N*s&quot;
-    }
-  ],
-  &quot;damage_rules&quot;: [
-    &quot;At reset freeze B_case as all portable shell rigid bodies, B_fixture as only the world-stationary jig, B_insert={insert_i|i=0..3}, B_tang={tang_i|i=0..3}, B_tool as all mandrel and hammer bodies, B_tray as tray floor and walls, and B_robot as every robot collision link. J_shell connects structural case parts to the portable case root, J_seat_i connects insert_i to its case seat, and J_tang_i is the native breakable notch joint. J_jig is separately named and never connects the portable case to world. The terminal release set is exactly R_release=B_case∪B_tool∪B_tang; B_tray and B_fixture are excluded consistently from release grading.&quot;,
-    &quot;At reset define case transform T_WC, insert baseline T_CI_i,0=T_WC,0^-1*T_WI_i,0, seat origin o_C,i, and insert axis a_C,i from one shared geometry record. At sample n, T_CI_i=T_WC^-1*T_WI_i. Insert displacement d_i=norm(x_CI_i-x_CI_i,0). Insert rotation r_i=acos(clamp((trace(R_CI_i,0^T*R_CI_i)-1)/2,-1,1)). Whole-case translation or reorientation is not damage.&quot;,
-    &quot;A genuine removal of tang i is exactly one native transition J_tang_i:intact at PRE(n) to broken at POST(n), with the original insert_i and tang_i finite and addressable and tang_i thereafter exhibiting independent six-degree-of-freedom dynamics. Commands, elapsed time, waypoints, contact labels, decoys, deletion, or fabricated flags cannot count. N_removed is the number of the four original tangs satisfying this predicate.&quot;,
-    &quot;At scoring POST sample n, genuinely removed tang i is collected iff every point of its transformed collision geometry is in the closed tray-interior prism, it has fresh upward support from B_tray, norm(v_i)&lt;=0.01 m/s, and norm(omega_i)&lt;=0.5 rad/s. N_collected is the current count; credit is revoked immediately when any condition stops holding. Being above the tray or supported elsewhere is insufficient.&quot;,
-    &quot;Fragment loss is irreversible when any point of complete fragment geometry crosses the closed workcell escape boundary, all fragment geometry crosses the floor-loss plane, or its native state becomes non-finite, deleted, or unaddressable. A recoverable fragment inside the workcell but outside the tray at timeout is not lost. Occlusion, elapsed time, failed grasping, or planner failure never establishes loss or inaccessibility.&quot;,
-    &quot;For each declared collision-primitive pair, double-precision signed separation s is positive when disjoint, zero for touching within 1e-9 m, and negative by EPA penetration depth when intersecting; penetration P=max(0,-s). Exclusions are only declared intact notch mating faces, coil-seat mating faces, and structural case-part mating faces. Evaluate case, bosses, inserts, tangs, tools, tray, jig, robot, and fragments at every applicable diagnostic POST. P&gt;0.0002 m outside exclusions sets hard failure H. Missing collision geometry makes the applicable proof unavailable and failing.&quot;,
-    &quot;A fresh unsafe robot self-contact is a normal impulse greater than 0.02 N*s between cross-arm links or same-arm links separated by at least two joints, excluding intended finger-to-held-object contacts. Actual robot, tool, tray, jig, shell, or insert joint/geometry damage also sets H. The 0.02 N*s limit is a disclosed prototype assumption and does not prohibit safe task-object contact.&quot;,
-    &quot;Contact set C_n contains every fresh native contact-point row for interval (t_(n-1),t_n]. Native force f in N is converted once to impulse J=f*dt_n; native impulse is used directly. Preserve units, signs, body IDs, point, normal, original float32 dt, interval ID, and source metadata. Point velocity uses PRE state v(p)=v_COM+omega×(p-x_COM). Empty contact is legitimate only where contact is not required; an empty required qualifying set is unavailable and failing, never a zero or infinite extremum.&quot;,
-    &quot;For physics validation only, an impact episode opens on fresh compressive hammer-head-to-mandrel contact and closes after contact-free physical time reaches 1/240 s. A qualified nominal episode for insert i requires a same-step hammer-to-mandrel and mandrel-to-tang_i path. Axis angle and radial offset use PRE geometry. Axial impulse is sum(max(0,J·a_W,i)); off-axis impulse is sum(norm(J-(J·a_W,i)*a_W,i)) without cancellation. These diagnostics do not govern scoring eligibility. Direct contact, controlled pressing, repeated taps, one-arm use, alternate tool routes, reorientation, and pouring are graded only by physical outcome and damage.&quot;,
-    &quot;H resets only on actual environment reset. H becomes true on any J_shell or J_seat break; d_i&gt;0.00025 m; r_i&gt;3 degrees; coil fracture; task, robot, tool, or workcell body becoming non-finite, deleted, or unaddressable; fragment loss; forbidden penetration; unsafe collision; callback exception; unavailable scorer evidence; or outcome-affecting teleport, pose/velocity overwrite, hidden weld, disabled collision, fabricated fracture, fake airflow/magnetism, or deletion. H forces score 0. High impulse, work, action count, hand identity, route, tap count, or order alone never sets H.&quot;,
-    &quot;A member of R_release is released iff neither gripper has native contact supporting it and no hidden attachment exists. Native support requires fresh upward contact from the tray, table, jig, or another declared supporting rigid body. Merely commanding a gripper open is insufficient. Shell and tools need not return to their initial poses.&quot;,
-    &quot;Terminal predicate Q holds iff N_removed=4, N_collected=4, H=false, every member of R_release is released by both grippers, every member of R_release is natively supported with linear speed&lt;=0.01 m/s and angular speed&lt;=0.5 rad/s, B_fixture speed&lt;=0.002 m/s, all J_shell and J_seat remain intact, insert transforms remain within limits, and the current camera observation is valid. T becomes 1 only after Q holds at 41 consecutive fresh 20 Hz observations whose first and last timestamps differ by at least 2.0 s. Any violation immediately resets the consecutive hold and T=0.&quot;,
-    &quot;Camera mask M is the union of projected convex hulls of the eight corners of every declared task AABB and pixels carrying case, insert, tang, tool, tray, or fragment geometry IDs. A consumed frame must have a strictly increasing timestamp in [target,target+0.05 s], finite RGB on M, finite positive depth on at least 99% of M, and every declared workspace corner at positive depth inside image bounds. Missing depth cannot be filled, M cannot be shrunk, and frames cannot be reused. Invalid frames reset terminal hold and fail applicable camera checks.&quot;,
-    &quot;Each physical step is ordered PRE pose/twist/joint/collision capture; native integration and contact; POST consumption of only that interval’s contacts; native joint-transition and damage update; loss and containment update; due camera consumption; terminal-hold update; score calculation. Repeated score reads cannot mutate state. Any task callback exception invalidates every dependent measurement and sets H.&quot;,
-    &quot;Reset deregisters old callback handles, restores authored pre-integration state through normal environment reset, registers exactly one PRE_PHYSICS_STEP and one POST_PHYSICS_STEP callback, and clears baselines, interval IDs, episodes, extrema, impulses, fractures, containment, loss, H, camera counters, and hold state. No post-start pose or velocity repair is allowed. Bad physical outcomes remain possible and are failed by observation rather than prevented.&quot;
-  ],
-  &quot;assets&quot;: [
-    &quot;Independently authored elongated portable ODRI-informed open shell-base/cover assembly with four insert bosses, access openings, shared case/seat geometry definitions, real structural joints, and an assumed empty-shell mass below the sourced 61 g completed assembly&quot;,
-    &quot;Four rigid M2.5 × 3.75 mm HELICOIL proxies, four original tang bodies, native breakable J_tang_i notch joints, case-relative J_seat_i joints, and named J_shell integrity joints&quot;,
-    &quot;Separate stationary support jig with named J_jig joints, physically distinct from the portable workpiece&quot;,
-    &quot;Representative straight M2.5 tang-break mandrel based on Böllhoff family 0158 040 1000&quot;,
-    &quot;Representative small hammer with an unscaled rigid Xform root and separately scaled collider/render children&quot;,
-    &quot;Rigid tray with true floor, raised walls, declared closed interior prism, bounded table/workcell, and loss plane&quot;,
-    &quot;YAM bimanual robot using normal actuation, physical grippers, native contacts, and declared self-collision pairs&quot;,
-    &quot;Fixed, lit 640×480 RGB-D camera providing native RGB, depth, geometry IDs, and projected-corner validation&quot;
-  ],
-  &quot;approximations&quot;: [
-    &quot;Industrial sources establish the task, insert count and size, notch removal, tang accountability, and M2.5 mandrel family, but not exact boss geometry, notch strength, wire section, empty-shell mass, tool dimensions, friction, or fracture loads. Those values are frozen prototype assumptions requiring native validation. The sourced 61 g value is for a completed shell assembly, so modeled empty-shell mass must be lower and disclosed.&quot;,
-    &quot;The historical unitless ODRI STL is qualitative context only. Geometry follows sourced elongated open-case photographs and cannot be replaced by a generic square deck or invented capture hole. Fracture is a native breakable fixed joint at the notch; all bodies are rigid PhysX bodies. No calibrated deformable, rate-dependent, exact helical-wire, or shell-crack model is claimed.&quot;,
-    &quot;The 0.25 mm insert displacement, 3 degree rotation, 0.2 mm penetration, 0.01 m/s and 0.5 rad/s rest limits, 2 s hold, 0.02 N*s robot-contact limit, and nominal impact bounds are prototype assumptions, not manufacturer tolerances. Only observable damage predicates affect grading; impact/alignment bounds are physics diagnostics.&quot;,
-    &quot;INITIAL-SETTLE mapping: run 1.0 s with zero action from authored reset. initial-settle-station-fixture-linear-speed-maximum=max over B_fixture POST speeds in the final 0.25 s; initial-settle-loose-body-linear-speed-maximum=max over B_case∪B_insert∪B_tang∪B_tool POST speeds in that window. Immediately after the final settle POST, sample initial-untouched-task-score, initial-native-fractured-tang-count, initial-tray-contained-fragment-count, initial-shell-integrity-joint-break-count, initial-insert-seat-joint-break-count, and initial-insert-case-relative-translation-maximum=max_i(d_i). initial-rigid-body-penetration-maximum=max P over every settle POST. Any missing body, joint, score, collision pair, POST sample, or callback makes its check unavailable and failing.&quot;,
-    &quot;NOMINAL-MATERIAL mapping: run separately labeled real-contact episodes for each i=0..3. closed_nominal_episodes_i counts fully closed qualified episodes for insert i; nominal-all-inserts-closed-contact-episode-count-minimum=min_i(closed_nominal_episodes_i). nominal-native-fractured-tang-count=sum of genuine removals at the completed suite’s final POST. nominal-released-tang-dynamic-body-count=sum of those tangs with independent finite 6-DoF native state at that POST. nominal-contact-stream-row-count-total is the sum of genuine native contact rows across the suite. Over the nonempty set of all closed qualified nominal episodes, nominal-impact-axis-angle-maximum=max angle, nominal-impact-radial-offset-maximum=max offset, nominal-qualified-axial-impulse-minimum=min episode axial impulse, nominal-qualified-axial-impulse-maximum=max episode axial impulse, and nominal-qualified-offaxis-impulse-maximum=max episode off-axis impulse. A missing insert episode or empty qualifying set is unavailable and failing.&quot;,
-    &quot;ADVERSARIAL-MATERIAL mapping: adversarial-offaxis-impulse-minimum is the minimum episode off-axis impulse over a nonempty separately labeled off-axis bad-probe record. adversarial-visible-damage-event-count-minimum is min_p(D_p) across separately required native seat-break, shell-break, and forbidden-penetration probes p, where D_p counts that probe’s own newly observed target damage events from its first PRE through final POST. Thus every required damage probe must independently produce at least one visible event; events cannot be pooled across probes. Missing probe, target event stream, or qualifying episode is unavailable and failing. These checks never apply to untouched, grading, terminal, or safe-alternative episodes.&quot;,
-    &quot;RETENTION/PENETRATION mapping: retained-insert-case-relative-translation-maximum=max d_i and retained-insert-case-relative-rotation-maximum=max r_i over every POST in nominal-success, terminal, and targeted seat-load pass probes. postfracture-forbidden-penetration-maximum=max P over every POST beginning with each genuine release through that probe’s final POST in non-damage/pass probes only: nominal-success, terminal, and separately labeled safe adversarial off-axis probes. The separately required seat-break, shell-break, and forbidden-penetration damage-observability probes are explicitly excluded from this pass-bound aggregation; their target events are measured only by adversarial-visible-damage-event-count-minimum and their scorer hard failure H. Empty required pass windows or missing geometry/transforms are unavailable and failing. Damage-probe samples may never be relabeled or pooled into pass probes.&quot;,
-    &quot;TERMINAL/REST mapping: apply only to each separately labeled full terminal-camera/rest probe and each full demonstration. Within run r, at every fresh 20 Hz scoring observation from the first Q candidate through the run’s final observation, c_r=min observed N_collected, v_r=max linear speed over R_release bodies and observations, w_r=max angular speed analogously, and h_r=maximum uninterrupted duration from first-to-last timestamps of consecutive observations satisfying release, support, speed, integrity, containment, and H=false. Across all required applicable runs report terminal-tray-contained-fragment-count=min_r(c_r), terminal-loose-body-linear-speed-maximum=max_r(v_r), terminal-loose-body-angular-speed-maximum=max_r(w_r), and terminal-continuous-rest-duration-minimum=min_r(h_r). Thus every required run must pass; no run may be hidden by pooling samples. A missing required run, body, support/contact row, timestamp, or observation makes the applicable check unavailable and failing.&quot;,
-    &quot;TERMINAL/CAMERA mapping: over the same separately labeled terminal candidate window in run r, d_r=min across fresh frames of count(finite positive depth pixels in M)/count(M), k_r=min Boolean across frames with true=1 only when every declared corner is in bounds at positive depth, and f_r=count of distinct strictly increasing valid frame timestamps in the final uninterrupted Q window including both endpoints. Across all required applicable runs report camera-workspace-valid-depth-fraction-minimum=min_r(d_r), camera-workspace-corners-visible=min_r(k_r), and terminal-fresh-valid-camera-frame-count-minimum=min_r(f_r). terminal-tray-contained-fragment-count and camera checks do not apply to untouched or partial controls. Empty run/frame/window sets, a missing required run or mask, reused timestamps, or acquisition failure are unavailable and failing.&quot;,
-    &quot;PRODUCTION/REFINEMENT mapping: production-postphysics-callback-dt-error-maximum=max_n(abs(float32(dt_n)-1/240)) over all unique actual production POST callbacks; refinement-postphysics-callback-dt-error-maximum=max_n(abs(float32(dt_n)-1/480)) over all unique actual refinement POST callbacks. Preserve raw float32 dt and counts; never substitute configuration or rounded values. Expected observations 0.004166666883975267 and 0.0020833334419876337 are evidence targets only. Missing, duplicate, non-finite, exception-producing, or untagged POST samples make the respective proof unavailable and failing.&quot;,
-    &quot;LIFECYCLE mapping: lifecycle-task-callback-handle-count-error-maximum=max_s abs(h_s-2), where h_s counts ONLY this task’s active PhysxManager PRE_PHYSICS_STEP plus POST_PHYSICS_STEP callback pair at every required active-lifecycle sample s immediately after initial registration and immediately after every clean reset. Other SDK or camera callbacks and contact or joint-event subscriptions are distinct and excluded. Intentional after-deregistration shutdown samples are outside the active window. Missing required samples, registration failures, callback exceptions, generation IDs, or an empty sample set make this check unavailable and failing; never report 0 without evidence. reset-stale-event-count counts, from reset completion through the first 1.0 s settle and then the complete second full trajectory, any contact row, joint transition, camera frame, interval ID, or episode carrying a pre-reset generation ID; aggregate by sum. Missing generation IDs, missing observation interval, callback exceptions, or incomplete second trajectory make reset-stale-event-count unavailable and failing.&quot;,
-    &quot;ROBOT-CONTACT mapping: unsafe-robot-self-contact-impulse-maximum=max fresh normal impulse across declared unsafe link pairs over every robot-running component probe, grading control, safe-alternative characterization, and demonstration, sampled at every POST. A genuinely empty unsafe-contact set yields measured 0 only when the complete native contact stream and declared pair coverage are both proven; missing contacts, pair metadata, intervals, or units is unavailable and failing.&quot;,
-    &quot;Aggregate reporting combines separately labeled initial-settle, nominal-material, adversarial-material, terminal-camera/rest, lifecycle, production, and refinement probes. A check is not applicable outside its declared scope and cannot fail an unrelated grading episode. Within an applicable scope, an empty required qualifying set is unavailable rather than zero, infinity, or a sentinel. Save all available raw values and an explicit missing_observables list.&quot;,
-    &quot;Pinned source inspection establishes that PhysxManager.register_callback exposes dt-bearing PRE_PHYSICS_STEP and POST_PHYSICS_STEP handles. It does not validate ordering, freshness, reset behavior, contact units, fracture dynamics, penetration, or camera output. These require native tests. Control remains 20 Hz independently of 240/480 Hz physics; 7200 controls equal 360 s.&quot;,
-    &quot;Prior native evidence reported zero contacts and fractures, five shell-joint breaks at step 1, invalid 0.745833 camera depth coverage, invisible corners, and a collapsed poorly lit deck. Those remain construction failures to engineer away, not valid empty sets or evidence of success. This contract is prospective and makes no claim that retained scaffolds, rigs, or earlier episodes pass it. A simpler successful safe strategy triggers a fresh novelty comparison against the ability actually demonstrated.&quot;
-  ],
-  &quot;scoring_spec&quot;: &quot;At every unique POST sample, after physical transition, damage, loss, containment, camera, and rest updates, compute H from damage_rules. If H=true, S=0. Otherwise N_removed∈{0,1,2,3,4} counts original tangs genuinely detached through native J_tang transitions, and N_collected∈{0,…,N_removed} counts those currently entirely inside the true tray interior with fresh tray support and stated rest limits. Define R_release=B_case∪B_tool∪B_tang; it explicitly excludes B_tray and B_fixture. T=1 only when all four tangs are removed and collected, every member of R_release is released by both grippers, physically supported and at rest, shell/insert integrity holds, the fixture is stable, and Q has held for 41 consecutive fresh valid 20 Hz RGB-D observations spanning at least 2.0 s; otherwise T=0. S=0.125*N_removed+0.10*N_collected+0.10*T. Untouched=0; one removed outside tray=0.125; one removed and collected=0.225; four removed and none collected=0.50; four removed and three collected=0.80; all four removed/collected before terminal hold=0.90; full terminal outcome=1.00. No grasp, alignment, hammer, hand, route, action-order, strike-count, force-window, or direct-contact bonus or exclusion exists. Each removal term begins only at its genuine transition and persists while evidence remains finite/addressable and H=false. Each collection term is revoked immediately when current containment/support/rest fails. T is revoked on any Q violation. Timeout adds no failure; recoverable uncollected fragments retain removal credit. Reset clears every score input. Independent replay must reproduce scores from raw PRE/POST body, joint, contact, camera, generation-ID, and timestamp records with the same ordering.&quot;,
-  &quot;required_controls&quot;: [
-    {
-      &quot;name&quot;: &quot;control-untouched-initial&quot;,
-      &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;N_removed=0, N_collected=0, and T=0.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control-tools-grasped-and-aligned-no-removal&quot;,
-      &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;Grasping, alignment, contact, and tool possession are not industrial outcomes.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control-one-removed-uncollected&quot;,
-      &quot;expected_score&quot;: 0.125,
-      &quot;reason&quot;: &quot;N_removed=1, N_collected=0, and T=0.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control-one-removed-and-collected&quot;,
-      &quot;expected_score&quot;: 0.225,
-      &quot;reason&quot;: &quot;N_removed=1 and N_collected=1.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control-four-removed-no-tray-collection&quot;,
-      &quot;expected_score&quot;: 0.5,
-      &quot;reason&quot;: &quot;N_removed=4, N_collected=0, and T=0.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control-four-removed-three-collected&quot;,
-      &quot;expected_score&quot;: 0.8,
-      &quot;reason&quot;: &quot;N_removed=4 and N_collected=3.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control-four-collected-but-release-set-held&quot;,
-      &quot;expected_score&quot;: 0.9,
-      &quot;reason&quot;: &quot;All removal and collection terms apply, but at least one member of R_release remains supported by a gripper, so T=0.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control-four-collected-released-hold-under-two-seconds&quot;,
-      &quot;expected_score&quot;: 0.9,
-      &quot;reason&quot;: &quot;R_release is released, but fewer than 41 valid observations spanning 2.0 s keeps T=0.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control-complete-stable-terminal&quot;,
-      &quot;expected_score&quot;: 1,
-      &quot;reason&quot;: &quot;N_removed=4, N_collected=4, and the uninterrupted terminal predicate earns T=1.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control-clean-reset-complete-stable-terminal&quot;,
-      &quot;expected_score&quot;: 1,
-      &quot;reason&quot;: &quot;A second real-action run after reset independently reproduces full outcome without stale events.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control-refinement-480hz-complete-stable-terminal&quot;,
-      &quot;expected_score&quot;: 1,
-      &quot;reason&quot;: &quot;The twice-rate native replay preserves the same full physical outcome and passes its distinct timing probe.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control-actual-insert-seat-damage&quot;,
-      &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;Native seat break, displacement above 0.25 mm, or rotation above 3 degrees sets H.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control-actual-shell-integrity-break&quot;,
-      &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;A native J_shell break sets H.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control-actual-fragment-workcell-loss&quot;,
-      &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;Physical escape, floor loss, deletion, unaddressability, or non-finite fragment state sets H.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control-four-removed-two-collected-two-recoverable-at-timeout&quot;,
-      &quot;expected_score&quot;: 0.7,
-      &quot;reason&quot;: &quot;Timeout creates no invented failure: 0.50 removal plus 0.20 current collection credit.&quot;
-    }
-  ]
 }</pre><h2>sources</h2><pre>[
   {
-    &quot;id&quot;: &quot;s-df759bd2377bbb57&quot;,
-    &quot;title&quot;: &quot;ODRI actuator-module shell preparation&quot;,
-    &quot;publisher&quot;: &quot;Open Dynamic Robot Initiative&quot;,
-    &quot;url&quot;: &quot;https://github.com/open-dynamic-robot-initiative/open_robot_actuator_hardware/blob/66af1522b4fba0ec4a1d7790e66f5e4652208d30/mechanics/actuator_module_v1/details/details_shell_preparation.md&quot;,
-    &quot;sha256&quot;: &quot;943f03330457a97e19aa1b8aae6e6f313369867e2b4d5a0a36c1992d680c762b&quot;
+    &quot;id&quot;: &quot;s-5fe1603e9dcf87a9&quot;,
+    &quot;title&quot;: &quot;LM Guide Mounting Procedure — Using a Jig, Fig. 17&quot;,
+    &quot;publisher&quot;: &quot;THK&quot;,
+    &quot;url&quot;: &quot;https://www.thk.com/in/en/products/lm_guide/maintenance/0002/&quot;,
+    &quot;sha256&quot;: &quot;92e4d88b99128ebb4c50dd015df46c253fbb1b2f5509f94cedb9c5bab205dba2&quot;
   },
   {
-    &quot;id&quot;: &quot;s-569187001f8c3978&quot;,
-    &quot;title&quot;: &quot;Installation of HELICOIL thread inserts&quot;,
-    &quot;publisher&quot;: &quot;Böllhoff&quot;,
-    &quot;url&quot;: &quot;https://www.boellhoff.com/de-en/products/assembly-technology/installation-of-helicoil-thread-inserts/&quot;,
-    &quot;sha256&quot;: &quot;fe0bd53b744a25016a73b28107ee8584611ca477ccd96d81ff1286879291e4ee&quot;
+    &quot;id&quot;: &quot;s-e0c2d90a34baaa51&quot;,
+    &quot;title&quot;: &quot;LM Guide mounting jig illustration, Fig. 17&quot;,
+    &quot;publisher&quot;: &quot;THK&quot;,
+    &quot;url&quot;: &quot;https://www.thk.com/in/assets/images/products/lm_guide_en_maintenance_img_17.png&quot;,
+    &quot;sha256&quot;: &quot;f44c6db7fc5d223a2f1a4677e4b129211c59b46da76e2e58d7454f92fe63da8b&quot;
   },
   {
-    &quot;id&quot;: &quot;s-27e9832170aeb95b&quot;,
-    &quot;title&quot;: &quot;Brushless actuator module core v1: dimensions, parts and STL links&quot;,
-    &quot;publisher&quot;: &quot;Open Dynamic Robot Initiative&quot;,
-    &quot;url&quot;: &quot;https://github.com/open-dynamic-robot-initiative/open_robot_actuator_hardware/blob/66af1522b4fba0ec4a1d7790e66f5e4652208d30/mechanics/actuator_module_v1/README.md&quot;,
-    &quot;sha256&quot;: &quot;4094df3181caa77f619f7e3d52ddaa5e67800f6aef150eb4d322b7c193cf0d3b&quot;
+    &quot;id&quot;: &quot;s-4d99336d94e3c1ea&quot;,
+    &quot;title&quot;: &quot;LM Guide catalog 515-3E: dimensional drawings, rail dimensions and mounting guidance&quot;,
+    &quot;publisher&quot;: &quot;THK&quot;,
+    &quot;url&quot;: &quot;https://tech.thk.com/en/products/pdf_download.php?file=E_01_LMGuide.pdf&quot;,
+    &quot;sha256&quot;: &quot;b72fd87d0c6102dd0975d3fed40b9bf6a2cb3110b23c4522abf5a1fb20074a77&quot;
   },
   {
-    &quot;id&quot;: &quot;s-c392a734cb5007d7&quot;,
-    &quot;title&quot;: &quot;ODRI repository LICENSE: BSD 3-Clause License&quot;,
-    &quot;publisher&quot;: &quot;Open Dynamic Robot Initiative&quot;,
-    &quot;url&quot;: &quot;https://github.com/open-dynamic-robot-initiative/open_robot_actuator_hardware/blob/66af1522b4fba0ec4a1d7790e66f5e4652208d30/LICENSE&quot;,
-    &quot;sha256&quot;: &quot;f4e5355f27e0bd4abac0d438f9b8b866e15eba9d75fa64a264b92901b8407380&quot;
+    &quot;id&quot;: &quot;s-5b841f695edcea19&quot;,
+    &quot;title&quot;: &quot;LM Guide selection, preload and industrial-robot applications&quot;,
+    &quot;publisher&quot;: &quot;THK&quot;,
+    &quot;url&quot;: &quot;https://www.thk.com/eu/en/products/lm_guide/selection/0008/&quot;,
+    &quot;sha256&quot;: &quot;484746b8330d78e74f4c8681b6fc78f2b91a7f966fce06d8aede14716134d7b2&quot;
   },
   {
-    &quot;id&quot;: &quot;s-863944427b8e3519&quot;,
-    &quot;title&quot;: &quot;LIBERO original BDDL task definition&quot;,
-    &quot;publisher&quot;: &quot;Lifelong Robot Learning&quot;,
-    &quot;url&quot;: &quot;https://raw.githubusercontent.com/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.bddl&quot;,
-    &quot;sha256&quot;: &quot;491835cc2eb6956f7ce3d1ee4e266377116168fe453e6529fe105e3b0333635d&quot;
+    &quot;id&quot;: &quot;s-b233d4ba6542e4f5&quot;,
+    &quot;title&quot;: &quot;THK Online Services Terms of Use&quot;,
+    &quot;publisher&quot;: &quot;THK&quot;,
+    &quot;url&quot;: &quot;https://www.thk.com/us/en/terms-of-use/&quot;,
+    &quot;sha256&quot;: &quot;b790c91785868a8f515ee0ac9c8d48993fa89ddd95db25b2e5754e2199e8ad51&quot;
   },
   {
-    &quot;id&quot;: &quot;s-0839942e794e7f8e&quot;,
-    &quot;title&quot;: &quot;RoboCasa original environment registry&quot;,
+    &quot;id&quot;: &quot;s-00204ffe01e0db3d&quot;,
+    &quot;title&quot;: &quot;Isaac Lab repository and asset/dependency licensing notice&quot;,
+    &quot;publisher&quot;: &quot;Isaac Lab Project&quot;,
+    &quot;url&quot;: &quot;https://github.com/isaac-sim/IsaacLab&quot;,
+    &quot;sha256&quot;: &quot;e358267bfd7d493ffcccf93357d884be1bf7829741a5e7d410ddf133ea46c434&quot;
+  },
+  {
+    &quot;id&quot;: &quot;s-36bce776de75b342&quot;,
+    &quot;title&quot;: &quot;Precision GO/NO-GO Thread Plug Gauges&quot;,
+    &quot;publisher&quot;: &quot;VÖLKEL&quot;,
+    &quot;url&quot;: &quot;https://voelkel.com/en/products/thread-gauges/precision-thread-plug-gauges&quot;,
+    &quot;sha256&quot;: &quot;62ae4eb4190315b20dd09302c9d7b85ce1543ab6126a33b9f88894418fa06042&quot;
+  },
+  {
+    &quot;id&quot;: &quot;s-177ba6de7901f9b4&quot;,
+    &quot;title&quot;: &quot;Mounting and dismounting — measuring bearing clearance reduction&quot;,
+    &quot;publisher&quot;: &quot;SKF&quot;,
+    &quot;url&quot;: &quot;https://cdn.skfmediahub.skf.com/api/public/0901d196802809de/pdf_preview_medium/0901d196802809de_pdf_preview_medium.pdf&quot;,
+    &quot;sha256&quot;: &quot;65e0919bee24975b9563ca0d9adf721a9e7efcf6d0fa32c18b8d119d37b190b2&quot;
+  },
+  {
+    &quot;id&quot;: &quot;s-ec315a3d0f0be293&quot;,
+    &quot;title&quot;: &quot;LIBERO original BDDL task definitions&quot;,
+    &quot;publisher&quot;: &quot;Lifelong-Robot-Learning&quot;,
+    &quot;url&quot;: &quot;https://github.com/Lifelong-Robot-Learning/LIBERO/tree/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files&quot;,
+    &quot;sha256&quot;: &quot;42ef15e627cd156fec79b061715449c5c79b66379054ff03d3b68912b074c149&quot;
+  },
+  {
+    &quot;id&quot;: &quot;s-b9e8a93277da132a&quot;,
+    &quot;title&quot;: &quot;RoboCasa original kitchen task definitions&quot;,
     &quot;publisher&quot;: &quot;RoboCasa&quot;,
-    &quot;url&quot;: &quot;https://raw.githubusercontent.com/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/__init__.py&quot;,
-    &quot;sha256&quot;: &quot;db2b99b1555167a2a7f7c93024e84e7e6fef41b739f7f4520a5a1ddfb0c24e17&quot;
+    &quot;url&quot;: &quot;https://github.com/robocasa/robocasa/tree/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen&quot;,
+    &quot;sha256&quot;: &quot;a96c12d80b8d42c06ef43ca62ef31e03d9f0ce30a6802bf5dff25f387336c3b3&quot;
   },
   {
-    &quot;id&quot;: &quot;s-396760d996a2e1d5&quot;,
-    &quot;title&quot;: &quot;SimplerEnv original task registry&quot;,
+    &quot;id&quot;: &quot;s-316e4e7057a70cb8&quot;,
+    &quot;title&quot;: &quot;SimplerEnv ManiSkill2-real2sim original environment definitions&quot;,
     &quot;publisher&quot;: &quot;SimplerEnv&quot;,
-    &quot;url&quot;: &quot;https://raw.githubusercontent.com/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/__init__.py&quot;,
-    &quot;sha256&quot;: &quot;ed5079f2aa8d9c85938f86440195ecdf90c4ee3afebb96b778375aad7cccac25&quot;
+    &quot;url&quot;: &quot;https://github.com/simpler-env/ManiSkill2_real2sim/tree/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs&quot;,
+    &quot;sha256&quot;: &quot;45b789a2442244c2b307b280cd9403d127fa03bd9b440b4c9aad84531797c14e&quot;
   },
   {
-    &quot;id&quot;: &quot;s-92e8044e74199c7c&quot;,
-    &quot;title&quot;: &quot;BEHAVIOR-1K original BDDL activity definition&quot;,
+    &quot;id&quot;: &quot;s-aee9c856aec99b93&quot;,
+    &quot;title&quot;: &quot;BEHAVIOR-1K original BDDL activity definitions&quot;,
     &quot;publisher&quot;: &quot;Stanford Vision and Learning Lab&quot;,
-    &quot;url&quot;: &quot;https://raw.githubusercontent.com/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/assembling_gift_baskets/problem0.bddl&quot;,
-    &quot;sha256&quot;: &quot;6e6c82bae96d3b4efaf3026ed84c2e0ea1aefa57e2f4763c51d2c2fe7b96267e&quot;
+    &quot;url&quot;: &quot;https://github.com/StanfordVL/BEHAVIOR-1K/tree/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions&quot;,
+    &quot;sha256&quot;: &quot;024041b87f3c2c87b219f4d86707a060ae0d9a6de693f9dbaaece6c6112b8d33&quot;
   },
   {
-    &quot;id&quot;: &quot;s-6ed524b5f205e074&quot;,
-    &quot;title&quot;: &quot;DataCenterBench published task definitions&quot;,
+    &quot;id&quot;: &quot;s-46ed257e6f29003f&quot;,
+    &quot;title&quot;: &quot;DataCenterBench official task procedures and grading rubrics&quot;,
     &quot;publisher&quot;: &quot;RoboCurve&quot;,
-    &quot;url&quot;: &quot;https://robocurve.org/datacenterbench/&quot;,
-    &quot;sha256&quot;: &quot;8a8351a763ba4a806d420d435b5df0188c496a29e9f30f026e06d8569619baf5&quot;
+    &quot;url&quot;: &quot;https://robocurve.org/datacenterbench/data/tasks.json&quot;,
+    &quot;sha256&quot;: &quot;88a2339f720ff977b7201890af172a3518ce5692ec35d679baaf4a5fb21ad448&quot;
   },
   {
-    &quot;id&quot;: &quot;s-508a257a209ad599&quot;,
-    &quot;title&quot;: &quot;RoboDojo original fasten-screws task definition&quot;,
+    &quot;id&quot;: &quot;s-2f3188056fcdd2f8&quot;,
+    &quot;title&quot;: &quot;RoboDojo original task definitions&quot;,
     &quot;publisher&quot;: &quot;RoboDojo Benchmark&quot;,
-    &quot;url&quot;: &quot;https://raw.githubusercontent.com/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/config/fasten_screws.yml&quot;,
-    &quot;sha256&quot;: &quot;5fbe4cf5b3ee2eafc2771137b13176f01617f8b2131f02503e676a7b62e2eabf&quot;
+    &quot;url&quot;: &quot;https://github.com/robodojo-benchmark/RoboDojo/tree/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks&quot;,
+    &quot;sha256&quot;: &quot;f9615a4e37c71cd637a51fb0a96840297013321e9a9ad094220eaeede920e5b9&quot;
   },
   {
-    &quot;id&quot;: &quot;s-6195df1bebbb33ef&quot;,
-    &quot;title&quot;: &quot;HELICOIL Plus manufacturer catalog&quot;,
-    &quot;publisher&quot;: &quot;Bollhoff&quot;,
-    &quot;url&quot;: &quot;https://media.boellhoff.com/files/pdf1/0100-helicoil-plus-en.pdf&quot;,
-    &quot;sha256&quot;: &quot;79c31a1d8cdc5a361c77b9f0980d5a192f9966ea684cf7ff901675162bd1a8df&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-23ad7bc62bf91e58&quot;,
-    &quot;title&quot;: &quot;Heli-Coil HC2000 revision12 catalog&quot;,
-    &quot;publisher&quot;: &quot;Stanley Engineered Fastening&quot;,
-    &quot;url&quot;: &quot;https://www.stanleyengineeredfastening.com/-/media/web/sef/resources/docs/heli-coil/heli-coil_catalog_hc2000_rev12.pdf&quot;,
-    &quot;sha256&quot;: &quot;e117911c7e0655a16b385d3da6a6b8363e025190f91cb171e71e40b6259a422a&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-c7d2ba6a6bae616b&quot;,
-    &quot;title&quot;: &quot;Manufacturer thread gauge inspection procedure&quot;,
-    &quot;publisher&quot;: &quot;Volkel&quot;,
-    &quot;url&quot;: &quot;https://voelkel.com/en/voelkel-precision-thread-plug-gauge&quot;,
-    &quot;sha256&quot;: &quot;c0b5448361fcb0dd05f43b08eec0fa586c578571138057183ad9c173f49a89e5&quot;
+    &quot;id&quot;: &quot;s-b87581f510c6e535&quot;,
+    &quot;title&quot;: &quot;THK LM Guide Mounting Procedure — public original PDF&quot;,
+    &quot;publisher&quot;: &quot;THK&quot;,
+    &quot;url&quot;: &quot;https://tech.thk.com/en/products/pdf/en_b01_089.pdf&quot;,
+    &quot;sha256&quot;: &quot;fe4471d851753cae20c5e3e1a621111c974e8acde158cb4d8baa5d1fafb29561&quot;
   }
 ]</pre><p>Approval and submission require separate CLI commands.</p>
