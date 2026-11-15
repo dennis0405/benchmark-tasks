@@ -148,10 +148,19 @@ def test_worker_download_replaces_managed_release_without_deleting_local_approva
     remote = tmp_path / "remote"
     (remote / "release").mkdir(parents=True)
     (remote / "release/new.py").write_text("new")
+    (remote / "experiments").mkdir()
+    (remote / "experiments/raw-frames.bin").write_bytes(b"separately retained camera data")
 
     class FakeBrev:
-        def rsync(self, src, dst, download=False):
-            shutil.copytree(remote, dst, dirs_exist_ok=True, symlinks=True)
+        def rsync(self, src, dst, download=False, exclude=()):
+            assert download
+            shutil.copytree(
+                remote,
+                dst,
+                dirs_exist_ok=True,
+                symlinks=True,
+                ignore=shutil.ignore_patterns(*(p.strip("/") for p in exclude)),
+            )
 
     c = Coordinator(s, {"instance": "vm", "instance_id": "id"}, tmp_path)
     c.brev = FakeBrev()
@@ -159,6 +168,7 @@ def test_worker_download_replaces_managed_release_without_deleting_local_approva
     assert not (root / "release/stale.py").exists()
     assert (root / "release/new.py").read_text() == "new"
     assert (root / "approval.json").read_text() == "local authority"
+    assert not (root / "experiments").exists()
 
 
 def test_downloaded_symlink_cannot_dereference_mac_credentials(tmp_path):
@@ -166,7 +176,7 @@ def test_downloaded_symlink_cannot_dereference_mac_credentials(tmp_path):
     r = s.create("fixture", instance="vm")
 
     class FakeBrev:
-        def rsync(self, src, dst, download=False):
+        def rsync(self, src, dst, download=False, exclude=()):
             from pathlib import Path
 
             (Path(dst) / "escape").symlink_to("/etc/passwd")
@@ -202,8 +212,10 @@ def test_stop_arriving_during_evaluation_transfer_prevents_dream_call(tmp_path):
     task = root / "release/tasks/probe"
     task.mkdir(parents=True)
     (task / "task.py").write_text("# validated fixture for cancellation test\n")
-    write_json(task / "task.json", {"instruction": "fixture", "setup": "fixture",
-                                    "scoring": "fixture", "run_limit": "7200"})
+    write_json(
+        task / "task.json",
+        {"instruction": "fixture", "setup": "fixture", "scoring": "fixture", "run_limit": "7200"},
+    )
     write_json(root / "release-manifest.json", manifest(root / "release"))
     write_json(root / "workspace/artifacts/contract.json", {"run_steps": 7200})
 
@@ -214,9 +226,18 @@ def test_stop_arriving_during_evaluation_transfer_prevents_dream_call(tmp_path):
         def ssh(self, *args, **kwargs):
             pytest.fail("Dream must not launch after a stop during transfer")
 
-    c = Coordinator(s, {"instance": "vm", "instance_id": "id", "remote_root": "/test",
-                         "dream_episode_reserve_usd": 20, "dream_cumulative_usd": 20,
-                         "runtime": {"python": "/usr/bin/python3"}}, tmp_path)
+    c = Coordinator(
+        s,
+        {
+            "instance": "vm",
+            "instance_id": "id",
+            "remote_root": "/test",
+            "dream_episode_reserve_usd": 20,
+            "dream_cumulative_usd": 20,
+            "runtime": {"python": "/usr/bin/python3"},
+        },
+        tmp_path,
+    )
     c.brev = FakeBrev()
     with pytest.raises(GateError, match="stop requested before Dream"):
         c.evaluate(r["id"], credentials={"DREAM_API_KEY": "unused-test-value"})

@@ -90,7 +90,7 @@ class Brev:
     def ssh(self, script, timeout=120, stdin=None):
         return capture(self.ssh_argv(script), timeout=timeout, stdin=stdin)
 
-    def rsync(self, source, destination, download=False):
+    def rsync(self, source, destination, download=False, exclude=()):
         if "\n" in str(source) + str(destination):
             raise RuntimeErrorState("invalid transfer path")
         remote = str(source if download else destination)
@@ -106,6 +106,7 @@ class Brev:
                 "--exclude=.venv",
                 "--exclude=.git",
                 "--exclude=.pytest_cache",
+                *["--exclude=" + pattern for pattern in exclude],
                 "-e",
                 "ssh -o BatchMode=yes -o ConnectTimeout=20",
                 src,

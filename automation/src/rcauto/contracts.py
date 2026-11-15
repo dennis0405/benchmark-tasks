@@ -130,6 +130,17 @@ Review all objectives, manipulation skills and success conditions, across all ca
 our team's work. New color, shape, layout or difficulty does not establish novelty.
 Do not lower criteria to make a demo succeed. Damage, spill, loss and unsafe shortcuts matter.
 Environment and component physics must pass before full robot demo development.
+The official review prompt permits scripted experts to READ simulator object poses,
+joint states and latch flags to plan actions. This oracle access is not a simulation edit;
+keep the model's observations unchanged. Use normal guarded joint actions, not object
+state writes, fake grasp welds or disabled collisions. CPU IK reachability alone does not
+prove a physical grasp or tracking. Verify actual joint/body traces and release clearance.
+Check the pinned public AssetRegistry/custom USD interface before declaring an asset
+impossible. Link scores, action journals and videos to the CURRENT native trial ID only;
+never aggregate unrelated old trials. Stateful dwell requires fresh observations spanning
+the stated time, and prior progress must be revoked when its physical prerequisites fail.
+Label collision checks by their actual sample rate; control samples do not prove physics
+substep behavior. Preserve prototypes as feasibility evidence, not final certification.
 Only real robot actions in demos; never teleport/weld a task object to achieve success.
 Do not invoke Dream, call any paid evaluation, publish, push, submit, or write approvals.
 Do not access credentials, modify the orchestration package or its input/contracts, spawn

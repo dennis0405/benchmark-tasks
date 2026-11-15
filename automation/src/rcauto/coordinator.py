@@ -165,7 +165,14 @@ class Coordinator:
         root = self.store.run_dir(rid)
         staging = Path(tempfile.mkdtemp(prefix=".worker-download-", dir=root))
         try:
-            self.brev.rsync(remote_run + "/", str(staging) + "/", download=True)
+            # Operator experiments are separately curated and can contain many GB of
+            # raw camera frames. They are not managed production outputs below.
+            self.brev.rsync(
+                remote_run + "/",
+                str(staging) + "/",
+                download=True,
+                exclude=("/experiments/",),
+            )
             if any(p.is_symlink() for p in staging.rglob("*")):
                 raise GateError(
                     "worker output contains a symlink; refusing to follow it on the Mac"
