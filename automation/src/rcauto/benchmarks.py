@@ -3,6 +3,7 @@
 import ast
 import fnmatch
 import hashlib
+import json
 import re
 import shutil
 import sys
@@ -59,6 +60,79 @@ CORPORA = {
         ],
     ),
 }
+
+DATACENTER_SOURCES = (
+    ("official-setups.json", "https://robocurve.org/datacenterbench/data/setups.json"),
+    ("official-procedures.json", "https://robocurve.org/datacenterbench/data/tasks.json"),
+)
+
+
+def _datacenter_catalog(setups, procedures):
+    """The Tier 1 setup JSON, not the overview's 19-candidate table, selects the ten tasks."""
+    try:
+        tasks = setups["tasks"]
+        designs = {task["id"]: task for group in procedures["groups"] for task in group["tasks"]}
+        if len(tasks) != 10 or len({task["id"] for task in tasks}) != 10:
+            raise ValueError("Tier 1 requires ten unique complete task records")
+        for task in tasks:
+            if any(
+                not isinstance(task.get(key), str) or not task[key].strip()
+                for key in ("id", "name", "design", "setup", "reset", "instruction")
+            ):
+                raise ValueError("setup, reset or instruction missing")
+            if task["design"] not in designs:
+                raise ValueError("selected task has no original industrial procedure")
+            levels = task["levels"]
+            if not isinstance(levels, list) or not levels:
+                raise ValueError("scoring rubric missing")
+            for level in levels:
+                if (
+                    isinstance(level.get("score"), bool)
+                    or not isinstance(level.get("score"), (int, float))
+                    or not 0 <= level["score"] <= 1
+                    or not isinstance(level.get("description"), str)
+                    or not level["description"].strip()
+                ):
+                    raise ValueError("scoring rubric incomplete")
+            if not {0, 1}.issubset({level["score"] for level in levels}):
+                raise ValueError("scoring rubric lacks success or failure")
+    except (KeyError, TypeError, ValueError, AttributeError) as error:
+        raise GateError("DataCenterBench original definitions incomplete: " + str(error)) from error
+    return {
+        "edition": "Tier 1",
+        "task_count": len(tasks),
+        "task_ids": [task["id"] for task in tasks],
+        "selected_design_ids": [task["design"] for task in tasks],
+        "scope": "The ten published setup/instruction/reset/rubric records and their linked "
+        "industrial procedures. Unselected draft procedures are context, not benchmark tasks.",
+    }
+
+
+def collect_datacenter_bench(target, cache, fetch=None):
+    """Retain complete official JSON definitions, including dynamically rendered rubrics."""
+    target, cache = Path(target), Path(cache)
+    acquire = fetch or get_source
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        sources = list(pool.map(lambda item: acquire(item[1], cache), DATACENTER_SOURCES))
+    try:
+        records = [json.loads(source["text"]) for source in sources]
+    except (KeyError, TypeError, ValueError) as error:
+        raise GateError("DataCenterBench original task JSON unavailable") from error
+    catalog = _datacenter_catalog(*records)
+    target.mkdir(parents=True, exist_ok=True)
+    files = []
+    for (name, url), source in zip(DATACENTER_SOURCES, sources, strict=True):
+        path = target / name
+        path.write_text(source["text"])
+        files.append(
+            {
+                "path": name,
+                "url": url,
+                "sha256": file_hash(path),
+                "original_response_sha256": source["sha256"],
+            }
+        )
+    return files, catalog
 
 
 def select_definitions(tree, patterns):
@@ -197,18 +271,9 @@ def sync_benchmarks(workspace, cache, names, api=None):
         target = workspace / "input/benchmark-corpora" / name
         target.mkdir(parents=True, exist_ok=True)
         if name == "DataCenterBench":
-            source = get_source("https://robocurve.org/datacenterbench/", cache / "official-page")
-            path = target / "published-task-definitions.txt"
-            path.write_text(source["text"])
-            files = [
-                {
-                    "path": "published-task-definitions.txt",
-                    "local_path": str(path.relative_to(workspace)),
-                    "url": source["url"],
-                    "sha256": file_hash(path),
-                    "original_response_sha256": source["sha256"],
-                }
-            ]
+            files, task_catalog = collect_datacenter_bench(target, cache / "official-page")
+            for item in files:
+                item["local_path"] = str((target / item["path"]).relative_to(workspace))
             components = []
         else:
             if name not in CORPORA:
@@ -259,6 +324,9 @@ def sync_benchmarks(workspace, cache, names, api=None):
             "files": files,
             "coverage": "Every original definition file matched by recorded selectors. Reviewer must verify selector/registry coverage; inventory is a navigation aid, not a substitute for originals.",
         }
+        if name == "DataCenterBench":
+            result["task_catalog"] = task_catalog
+            result["coverage"] = task_catalog["scope"]
         path = target / "manifest.json"
         write_json(path, result)
         index[name] = {
@@ -284,8 +352,6 @@ def sync_benchmarks(workspace, cache, names, api=None):
 
 
 def validate_benchmarks(workspace, names):
-    import json
-
     workspace = Path(workspace)
     if not names:
         return
@@ -313,3 +379,14 @@ def validate_benchmarks(workspace, names):
                 or file_hash(source) != original["sha256"]
             ):
                 raise GateError("benchmark original missing/changed: " + name)
+        if name == "DataCenterBench":
+            try:
+                originals = {item["path"]: item for item in corpus["files"]}
+                records = [
+                    json.loads((workspace / originals[key]["local_path"]).read_text())
+                    for key, _ in DATACENTER_SOURCES
+                ]
+            except (KeyError, OSError, ValueError) as error:
+                raise GateError("DataCenterBench complete original task JSON is missing") from error
+            if _datacenter_catalog(*records) != corpus.get("task_catalog"):
+                raise GateError("DataCenterBench task coverage changed or absent")
