@@ -20,7 +20,7 @@ Status: **blocked**
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 
 
-candidate-critic: The THK web procedure, inspected Fig. 17(b), and public PDF page B1-94 support the essential mechanism: a jig spans the master and subsidiary rails and checks parallelism successively before fastening. The 320 × 28 × 16 mm proxies and 2 mm tolerance are clearly disclosed modeling assumptions, and the two native prototype trials provide credible feasibility evidence without claiming physics-substep validation or final certification.; The prior incomplete-evidence failure is not fully repaired: artifacts/research.json still indexes the unusable login-page source s-4d99336d94e3c1ea and omits the replacement public PDF source s-b87581f510c6e535 now cited by artifacts/candidates.json and artifacts/selected.json. Update the research source manifest so every selected evidence reference is complete and resolvable.; The selected candidate claims relevance to robot assembly, but its cited THK material establishes generic LM Guide mounting on machines and does not establish that this operation is part of robot building or data-center maintenance. Because the requested category is Impact on AI timelines, add primary industrial evidence tying this rail-alignment operation to robot assembly, or narrow/reselect the candidate; missing_evidence cannot remain empty meanwhile.
+no candidate passed the ideation gates; inspect selection-history.json
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`

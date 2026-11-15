@@ -12,9 +12,9 @@
         "regrasping without disturbing alignment",
         "tool parking and collision-free release"
       ],
-      "success_conditions": "Score 0.15 when the subsidiary rail is flat and its full-length datum-gap error is at most 2 mm. Award 0.10 for each of six visibly marked stations where the jig is simultaneously seated across both rails while alignment remains valid, capped at 0.75 before completion; revoke station credit if alignment is subsequently lost. Award 1.0 only when all six stations have been verified, the jig is flat and within 15 mm of its parking target, the rail and jig remain below declared linear and angular speed limits for 4 seconds using fresh observations, and both grippers are open and clear. A dropped or inaccessible rail or jig, non-finite state, or lost final alignment scores 0. Arm choice, station order, action count, and arbitrary impulse windows are not graded.",
-      "industrial_value": "THK’s official mounting procedure recommends a jig to establish parallelism between master- and subsidiary-side reference surfaces and confirmation at each mounting hole before fastening. The objective isolates pre-fastening rail adjustment and verification used in machine and robot assembly; it does not claim bolt tightening, rolling-element behavior, preload adjustment, or manufacturing metrology.",
-      "dexterity": "The robot must correct the coupled translation and yaw of a long free rail, then manipulate a bridge-shaped gauge whose two inner faces must engage separate rails simultaneously. Sliding, lifting, or reseating the gauge can undo the alignment, requiring guarded contact, stabilization, regrasping, repeated verification, and clean release rather than simple placement.",
+      "success_conditions": "Score 0.15 when the subsidiary rail is flat and its full-length datum-gap error is at most 2 mm. Add 0.10 for each of six marked stations physically verified by simultaneous jig seating across both rails, for a maximum partial score of 0.75; revoke all station credit whenever alignment is lost. Award 1.0 only after all six stations are verified, the jig is flat and within 15 mm of its parking target, rail and jig satisfy declared linear and angular settling limits for 4 seconds of fresh observations, and both grippers are open and clear. A dropped or inaccessible rail or jig, non-finite state, or lost final alignment scores 0. Arm choice, station order, action count, and arbitrary impulse windows are not graded.",
+      "industrial_value": "THK documents establishing master/subsidiary LM-rail parallelism with a jig and checking successively along the rail before fastening. Yamaha’s Cartesian Robot XY-X manual independently requires setting parallelism between the X-axis and adjustable support guide rail during gantry-support installation. Thus rail alignment is grounded in robot assembly, while the particular cross-rail jig is grounded separately by THK Fig. 17(b). The task is an independently authored coarse subassembly proxy, not an exact Yamaha or THK product, and does not claim bolt tightening, rolling-element behavior, preload adjustment, or micron metrology.",
+      "dexterity": "The robot must correct coupled translation and yaw of a long free rail, then manipulate a bridge-shaped gauge whose two inner faces engage separate rails simultaneously. Sliding, lifting, or reseating the gauge can undo alignment, demanding guarded contact, stabilization, regrasping, repeated verification, and clean release rather than simple placement.",
       "evidence": [
         {
           "source_id": "s-5fe1603e9dcf87a9",
@@ -40,10 +40,20 @@
           "source_id": "s-b233d4ba6542e4f5",
           "locator": "THK Online Services Terms of Use, section 7.1",
           "quote_sha256": "fd82089d80092b3e4bb1a7c25a9642ee1a448052f24c230cd375561c7c89f298"
+        },
+        {
+          "source_id": "s-43e5b0fba5202d92",
+          "locator": "Yamaha Cartesian Robot XY-X User Manual E25-Ver.1.10, Chapter 9 MXYX section 1-5, printed page 9-4/PDF page 158; repeated in Chapter 10 HXYX section 1-3",
+          "quote_sha256": "0cb309711182fe9678602a6c8da7ab578a44ba901274bf6765313214026825e3"
+        },
+        {
+          "source_id": "s-cd887334c751eacb",
+          "locator": "THK “Determining the Accuracy,” accuracy-grade guidelines table, machine type row paired with “Cartesian coordinate”",
+          "quote_sha256": "ffa710db39281674dd2a997236ecacd5f79846ec84427ae12cbbb512ad135e11"
         }
       ],
-      "asset_plan": "Use independently authored rigid PhysX geometry: two representative 320 × 28 × 16 mm steel rail proxies and a travelling bridge jig with chamfered inner contact faces. Independent inspection of source s-e0c2d90a34baaa51, THK Fig. 17(b), confirms a rigid cross-rail jig spanning two rails and moving longitudinally; source s-b87581f510c6e535, page B1-94, independently confirms the associated jig procedure. Add six flush paint ticks at x=0.200, 0.236, 0.272, 0.308, 0.344, and 0.380 m and a flush parking rectangle. Treat dimensions, masses, friction, and millimetre tolerances as disclosed representative modeling assumptions. Do not redistribute THK imagery or claim an exact THK product replica. Preserve the demonstrated custom USDA geometry and validate reset, gravity, settling, contact, release, loss cases, and timestep sensitivity in the pinned runtime.",
-      "risk": "The 2 mm threshold measures coarse assembly alignment, not micron-grade metrology. Two independent native feasibility trials reached 1.0 using 1,035 guarded 14D actions at 20 Hz with matching source digest and replay; sampled worst jig/rail overlap was 14.53 µm, floor overlap 6.27 µm, and the final two-second window had both grippers open with at least 83.9 mm TCP-to-object AABB clearance. These are control-rate observations, not physics-substep measurements or final certification. Closest known abilities—corner-stop squaring, travel on a fixed rail, vise indication, gantry end-stop alignment, DIN-rail mounting, and stud-spacing gauges—do not combine adjustment of a free rail with a third body spanning both rails and multi-position verification. Historical unmerged PR 325 remains a final-catalog novelty risk because its incomplete record concerns a long DIN rail and cradle.",
+      "asset_plan": "Use independently authored rigid PhysX geometry: two representative 320 × 28 × 16 mm steel rail proxies and a travelling bridge jig with chamfered inner contact faces. Independent inspection of source s-e0c2d90a34baaa51, THK Fig. 17(b), confirms a cross-rail jig spanning two rails and travelling lengthwise; source s-b87581f510c6e535, page B1-94, independently contains the associated procedure. Add six flush paint ticks at x=0.200, 0.236, 0.272, 0.308, 0.344, and 0.380 m and a flush parking rectangle. Treat dimensions, masses, friction, and millimetre tolerances as disclosed representative modeling assumptions. Do not redistribute THK imagery or claim an exact product replica. Preserve the demonstrated custom USDA geometry and validate reset, gravity, settling, contact, release, loss cases, and timestep sensitivity in the pinned runtime.",
+      "risk": "The 2 mm threshold represents coarse assembly alignment rather than manufacturing metrology. Two independent native feasibility trials reached 1.0 with the same source digest using 1,035 guarded 14D actions at 20 Hz; measured overlap and final release evidence support feasibility but are control-rate observations, not physics-substep certification. THK and Yamaha establish related alignment operations but do not establish that Yamaha uses this particular jig. Full current-catalog and six-suite novelty clearance remains a separate required phase; historical unmerged PR 325 is a specific risk because its incomplete record concerns a long DIN rail and cradle.",
       "feasibility_status": "ready",
       "missing_evidence": []
     },
@@ -60,8 +70,8 @@
         "pass/reject discrimination from physical engagement"
       ],
       "success_conditions": "For each hole, award partial credit when the GO end enters coaxially and advances within the modeled torque limit, and further credit when it traverses the complete thread and is withdrawn without damage. Full success requires the NO-GO end to stop within two turns for every conforming hole, correct pass/reject sorting, release of all gauges, and no cross-threading, forced entry, dropped part, or inaccessible tool. A NO-GO end exceeding two turns, a GO end failing to traverse a conforming thread, or excessive torque fails that inspection.",
-      "industrial_value": "VÖLKEL describes thread plug gauges as a rapid inspection method for internal threads with distinct GO and NO-GO acceptance behavior. This is a genuine industrial quality-control operation, but the acquired evidence does not yet establish a specific recurring robot-assembly application needed for the selected category.",
-      "dexterity": "The robot must repeatedly establish coaxial engagement, coordinate rotation and axial compliance through multiple turns, detect a torque/advance boundary, withdraw without binding, and regrasp the opposite end. The result must arise from thread geometry and contact rather than a peg-in-hole approximation.",
+      "industrial_value": "VÖLKEL describes thread plug gauges as a rapid industrial inspection method for internal threads with distinct GO and NO-GO acceptance behavior. The acquired evidence does not yet establish this as a specific recurring robot-assembly or data-center operation.",
+      "dexterity": "The robot must establish coaxial engagement, coordinate rotation and axial compliance through multiple turns, detect a torque/advance boundary, withdraw without binding, and regrasp the opposite end. The outcome must arise from thread geometry and contact rather than a peg-in-hole approximation.",
       "evidence": [
         {
           "source_id": "s-36bce776de75b342",
@@ -84,12 +94,12 @@
           "quote_sha256": "59d239ee2cde708b24c33fe0b1876aad8572c5ad3f3a4ede9b934924870be6cc"
         }
       ],
-      "asset_plan": "Select an authoritatively dimensioned gauge size and matching internal thread, then create independently authored rigid gauge and workpiece geometry with true helical advance or a contact-equivalent mechanism that preserves rotation, axial compliance, and torque-dependent rejection. Include conforming and nonconforming controls and verify that outcomes arise from physical geometry rather than hidden flags, attachments, or state writes.",
-      "risk": "A cylindrical peg approximation would remove the tested skill. Stable multi-turn contact, realistic torque limits, reject geometries, and a full-score YAM execution have not been demonstrated. The acquired source also does not yet tie this operation specifically to robot building or data-center maintenance.",
+      "asset_plan": "Select an authoritatively dimensioned gauge and matching internal thread, then create independently authored rigid gauge and workpiece geometry with true helical advance or a validated contact-equivalent mechanism preserving rotation, axial compliance, and torque-dependent rejection. Include conforming and nonconforming controls and verify that results arise from physical geometry rather than hidden flags, attachments, or state writes.",
+      "risk": "A cylindrical peg approximation would remove the tested ability. Stable multi-turn contact, realistic torque limits, reject geometries, and full-score YAM execution have not been demonstrated. Category-specific industrial evidence is also absent.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
         "Authoritative dimensions for a selected gauge and matching thread",
-        "Robot-assembly or data-center source establishing category relevance",
+        "Robot-assembly or data-center evidence establishing category relevance",
         "Native validation of physical multi-turn engagement and withdrawal",
         "Evidence that GO/NO-GO outcomes arise from contact rather than scripted state",
         "Reachable full-score YAM trial with torque and damage controls"
@@ -108,32 +118,32 @@
         "preservation of bearing pose across measurements"
       ],
       "success_conditions": "Award partial credit for valid physical measurements at the upper, 9 o’clock, and 3 o’clock gaps. Each reading requires a blade to pass below a declared low-force limit while the next calibrated thickness is blocked. Full success requires all three readings without moving or damaging the bearing, a computed 0.5(a+b+c) within the reference tolerance, recovery of every blade, and a stable released final state. Forcing a blade, moving the bearing, probing the wrong gap, losing a blade, or reporting a value unsupported by blade passage invalidates the affected reading.",
-      "industrial_value": "SKF identifies feeler gauges as the usual method for measuring radial internal clearance in medium-size and large spherical and CARB toroidal roller bearings during mounting. The operation is industrially meaningful, but the acquired evidence does not yet identify a specific robot-assembly bearing model or establish that its real clearance is robustly simulatable.",
-      "dexterity": "The robot must align thin blades with narrow gaps around a heavy bearing, regulate insertion force, discriminate adjacent thicknesses, exchange tools, and preserve the bearing pose while sampling three orientations.",
+      "industrial_value": "SKF identifies feeler gauges as the usual method for measuring radial internal clearance in medium-size and large spherical and CARB toroidal roller bearings during mounting. The acquired evidence does not yet identify a relevant robot-assembly bearing or show that its true clearance can be simulated robustly.",
+      "dexterity": "The robot must align thin blades with narrow gaps around a heavy bearing, regulate insertion force, discriminate adjacent thicknesses, exchange tools, and preserve bearing pose while sampling three orientations.",
       "evidence": [
         {
           "source_id": "s-177ba6de7901f9b4",
-          "locator": "SKF manual, page 207, “Measuring the clearance reduction”",
+          "locator": "SKF manual, printed page 204/PDF page 207, “Measuring the clearance reduction”",
           "quote_sha256": "363a4f1c3b52b911ebcc6c15b366d7b82f77b8caa737e70b6d2a78b6798956df"
         },
         {
           "source_id": "s-177ba6de7901f9b4",
-          "locator": "SKF manual, page 207, “Measuring the clearance reduction”",
+          "locator": "SKF manual, printed page 204/PDF page 207, “Measuring the clearance reduction”",
           "quote_sha256": "b27a2e0e2ed7bcaa018e0e8cada6d8a923cefe5836b3ac325ec6ed1f2016504e"
         },
         {
           "source_id": "s-177ba6de7901f9b4",
-          "locator": "SKF manual, page 207, true-clearance procedure, step 2",
+          "locator": "SKF manual, printed page 204/PDF page 207, true-clearance procedure, step 2",
           "quote_sha256": "46f9440ee347437bad1f6d39a71fbec4feb5c5efbe247d5558e2d5b4c39ee5d9"
         },
         {
           "source_id": "s-177ba6de7901f9b4",
-          "locator": "SKF manual, page 207, true-clearance procedure, step 3",
+          "locator": "SKF manual, printed page 204/PDF page 207, true-clearance procedure, step 3",
           "quote_sha256": "b2d82882ea63efe971b4071d0bf5cc43f408c334a049d42dfc9d47617a800491"
         }
       ],
-      "asset_plan": "Select a documented medium or large spherical or CARB bearing with authoritative ring, roller, and clearance dimensions. Build independently authored rigid rings and rollers and a calibrated rigid blade set only if full-scale blade access remains physically meaningful. Validate low-force passage, adjacent-thickness blocking, bearing stability, visibility, and reset behavior before robot integration.",
-      "risk": "The procedure is established, but no bearing model, clearance class, accessible fixture, or blade set has been selected. Real clearances may be below stable PhysX contact resolution; enlarging them without evidence would undermine construct validity. No native contact trial or full-score YAM demonstration exists, and robot-building relevance remains unverified.",
+      "asset_plan": "Select a documented medium or large spherical or CARB bearing with authoritative ring, roller, and clearance dimensions. Build independently authored rigid rings, rollers, and a calibrated blade set only if full-scale blade access remains physically meaningful. Validate low-force passage, adjacent-thickness blocking, bearing stability, visibility, and reset behavior before robot integration.",
+      "risk": "No bearing model, clearance class, accessible fixture, or blade set has been selected. Real clearances may be below stable PhysX contact resolution; enlarging them without evidence would undermine construct validity. No native contact trial or full-score YAM demonstration exists, and robot-building relevance remains unverified.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
         "Selected bearing model with authoritative geometry and clearance range",
@@ -146,5 +156,5 @@
     }
   ],
   "selected_id": "lm-rail-parallel-jig",
-  "selection_reason": "The rail-jig objective is the only candidate with a manufacturer procedure, independently inspected mechanism geometry, an explicitly representative rigid asset plan, and repeated native physical success in the pinned YAM runtime. It tests coupled free-rail adjustment plus third-body multi-position verification, while the alternatives still lack validated contact mechanisms, category-specific evidence, and full-robot feasibility."
+  "selection_reason": "The rail-jig objective is the only candidate with a manufacturer procedure, independently inspected mechanism geometry, direct robot-assembly grounding, an explicitly representative rigid asset plan, and repeated native physical success in the pinned YAM runtime. It tests coupled free-rail adjustment plus third-body multi-position verification. The alternatives still lack validated contact mechanisms, category-specific evidence, and full-robot feasibility. Selection does not imply the still-pending full novelty clearance or production certification."
 }
