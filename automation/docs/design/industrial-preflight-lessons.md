@@ -277,3 +277,16 @@ preflight phase still needs its normal requirements; failed probe values still
 stop execution. Final qualification continues to compare every unchanged frozen
 requirement. Regression tests reproduce the original rejection and cover the
 passing, failing and unscoped discovery cases.
+
+## 2026-11-16: preserve newly withdrawn own-team history
+
+The board collector correctly stopped on own task `TK-JQRFWD` when its
+original detail was unavailable. A public search located PR2303 and the
+[actual official receipt](https://github.com/robocurve/benchmark-tasks/pull/2303#issuecomment-6916643529)
+from trusted author `achyutha11`, posted2026-11-16T12:38:37Z. The task is the
+headlight-bulb replacement proposal, subsequently withdrawn for revision;
+receipt means received, not accepted. Its verified ID-to-PR mapping is now
+registered in `board_history_receipts`. The existing recovery still checks
+the bot receipt, original commit preceding receipt, and matching board title.
+No withdrawn own-team task is silently exempted or replaced with an invented
+description. This read-only recovery does not modify or resubmit PR2303.
