@@ -1879,5 +1879,227 @@
       }
     ],
     "at": "2026-11-16T15:51:23.129725+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Added a bounded native CUDA probe for the missing filtered-contact API. It samples equal-and-opposite pair forces at completed 240/480 Hz physics intervals and verifies a sustained contact dwell. This directly addresses the prior script’s unsupported contact inference, but does not claim screen-component or full qualification. The script passes static syntax validation; native execution is delegated to the trusted controller.",
+      "scripts": [
+        {
+          "id": "filtered_contact_api_probe_240hz",
+          "script": "task/run_filtered_contact_api_probe.py",
+          "args": [
+            "--physics-hz",
+            "240",
+            "--steps",
+            "720",
+            "--report",
+            "../measurements/filtered-contact-api-240hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/filtered-contact-api-240hz.json"
+        },
+        {
+          "id": "filtered_contact_api_probe_480hz",
+          "script": "task/run_filtered_contact_api_probe.py",
+          "args": [
+            "--physics-hz",
+            "480",
+            "--steps",
+            "1440",
+            "--report",
+            "../measurements/filtered-contact-api-480hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/filtered-contact-api-480hz.json"
+        }
+      ],
+      "files": [
+        "task/run_filtered_contact_api_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The planned scripts are honest, bounded API-discovery probes and do not claim apparatus or frozen-contract qualification.",
+        "Both runs observe equivalent 3-second native windows: 720 completed intervals at 240 Hz and 1440 at 480 Hz.",
+        "The probe reads the filtered native normal-force matrices in both body directions after each completed physics step, records raw force traces, and checks sustained contact plus equal-and-opposite consistency in newtons.",
+        "The geometry creates a genuine dynamic-on-kinematic collision with contact sensors activated on both bodies; no object-state writes, fake welds, disabled collisions, or inferred pose-only contact are used.",
+        "Workspace-relative report and trace paths are consistent with the executor cwd contract, and the script passes static AST parsing.",
+        "The earlier full-component deficiencies remain outside this discovery probe and must still be resolved by later component qualification; this pass certifies only the generated probe source."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_filtered_contact_api_probe.py",
+        "input/last-failure.json",
+        "input/runtime-api-preflight.json"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_filtered_contact_api_probe.py",
+          "--physics-hz",
+          "240",
+          "--steps",
+          "720",
+          "--report",
+          "../measurements/filtered-contact-api-240hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/filtered_contact_api_probe_240hz-bb3ab04523.log",
+        "finished_at": "2026-11-16T16:20:09.886586+00:00",
+        "id": "filtered_contact_api_probe_240hz",
+        "report": "measurements/filtered-contact-api-240hz.json",
+        "report_sha256": "838a010348952bf51ca664fdceeb8ac36ce77fbfb2961c40a9c63dc0f6d8c193",
+        "source_digest": "20cb82aad35c22e9792b651826fb2b0c96c638c9d81628004e73ee56bfea7168",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_screen_components_native_probe.cpython-310.pyc"
+        ],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "cuda_backed_contact_matrix",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "filtered_contact_sample_count",
+              "measured": 697,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_consecutive_contact_samples",
+              "measured": 697,
+              "operator": ">=",
+              "threshold": 12,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_observed_pair_force",
+              "measured": 25.469890594482422,
+              "operator": ">",
+              "threshold": 0.0,
+              "unit": "N"
+            },
+            {
+              "name": "maximum_equal_opposite_force_residual",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 0.001,
+              "unit": "N"
+            },
+            {
+              "name": "fresh_physics_sample_count",
+              "measured": 720,
+              "operator": "==",
+              "threshold": 720,
+              "unit": "samples"
+            }
+          ],
+          "artifacts": [
+            "measurements/filtered-contact-api-240hz-trace.json"
+          ]
+        }
+      },
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_filtered_contact_api_probe.py",
+          "--physics-hz",
+          "480",
+          "--steps",
+          "1440",
+          "--report",
+          "../measurements/filtered-contact-api-480hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/filtered_contact_api_probe_480hz-5368cb8d58.log",
+        "finished_at": "2026-11-16T16:20:16.890080+00:00",
+        "id": "filtered_contact_api_probe_480hz",
+        "report": "measurements/filtered-contact-api-480hz.json",
+        "report_sha256": "be7a17a924e84c45577d996765f14a54e19264c49185cd6579d97fd985ceee05",
+        "source_digest": "20cb82aad35c22e9792b651826fb2b0c96c638c9d81628004e73ee56bfea7168",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "cuda_backed_contact_matrix",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "filtered_contact_sample_count",
+              "measured": 1393,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_consecutive_contact_samples",
+              "measured": 1393,
+              "operator": ">=",
+              "threshold": 12,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_observed_pair_force",
+              "measured": 48.981605529785156,
+              "operator": ">",
+              "threshold": 0.0,
+              "unit": "N"
+            },
+            {
+              "name": "maximum_equal_opposite_force_residual",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 0.001,
+              "unit": "N"
+            },
+            {
+              "name": "fresh_physics_sample_count",
+              "measured": 1440,
+              "operator": "==",
+              "threshold": 1440,
+              "unit": "samples"
+            }
+          ],
+          "artifacts": [
+            "measurements/filtered-contact-api-480hz-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-16T16:20:17.007809+00:00"
   }
 ]

@@ -1,17 +1,15 @@
 {
-  "verdict": "pass",
+  "verdict": "repair",
   "findings": [
-    "The planned scripts are valid bounded discovery probes, not aggregate qualification claims. They derive checks from fresh native pose, mass, inertia, timestep, and swept full-body clearance data at 240 Hz and 480 Hz.",
-    "Report paths correctly resolve from the executor’s workspace/task cwd to workspace/measurements. The source explicitly distinguishes timestep arithmetic from observed control sampling and labels transverse-media and washer-proxy results as non-qualification observations.",
-    "The prior failure was controller-side cancellation before native launch; no generated-source defect remains. Native results are appropriately deferred until after this source review."
+    "`PlaneCrossingTracker` still does not implement the frozen swept-volume test. It records vertex trajectories and triangle-edge intersections only at the interval endpoints; a rotating face can sweep across a rib between those endpoint configurations without any sampled point showing it. Therefore `clear_aperture` is not proven to have nonnegative signed distance from every rib (`task/run_screen_components_native_probe.py:269-316`; frozen requirement `artifacts/contract.json:194`).",
+    "The dynamic penetration metric is not the frozen signed-distance metric. It tests only mesh vertices lying within the floor slab and uses depth within that slab; it can miss face/edge penetration into ribs and does not measure the required dynamic-body pairs against screen, receiver, cup, table, media, and washer bodies (`task/run_screen_components_native_probe.py:493-504`; `artifacts/contract.json:93-100,188`).",
+    "The full-fixture penetration check samples only two underside lines above the support beams and derives receiver clearance from the receiver wall-top height. It does not compute signed distance over the complete screen floor, band, and wall geometry against receiver, supports, and table, so its passing aggregate cannot qualify `screen_fixture_signed_penetration_max` (`task/run_screen_components_native_probe.py:590-615,640-643`; `artifacts/contract.json:87-92,188`).",
+    "Bridge classification still uses the world-frame COM predicate `settled[2] > SCREEN_FLOOR_Z` instead of transforming the COM into the observed screen frame and testing screen-frame z > 0. This does not meet the frozen frame definition when the driven screen has residual translation or rotation (`task/run_screen_components_native_probe.py:514-519`; `artifacts/contract.json:200`)."
   ],
   "evidence_paths": [
+    "task/run_screen_components_native_probe.py",
     "artifacts/component-source-plan.json",
-    "task/run_aperture_native_probe.py",
-    "input/last-failure.json",
     "artifacts/contract.json",
-    "input/runtime-api-preflight.json",
-    "input/pinned-runtime-sources/03238610d9750b565ca5badbd31975a6888dfc393e6d3bca0dff1769551dfc64-meshes.py",
-    "input/pinned-runtime-sources/841ca674429d5bd405d212f93494c42ff32ae162e4add373474193adbec746f7-base_rigid_object_data.py"
+    "input/last-failure.json"
   ]
 }

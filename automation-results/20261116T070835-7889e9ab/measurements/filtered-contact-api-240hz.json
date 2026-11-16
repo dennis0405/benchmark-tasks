@@ -1,0 +1,56 @@
+{
+  "checks": [
+    {
+      "name": "physics_dt_absolute_error",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-09,
+      "unit": "s"
+    },
+    {
+      "name": "cuda_backed_contact_matrix",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "filtered_contact_sample_count",
+      "measured": 697,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "maximum_consecutive_contact_samples",
+      "measured": 697,
+      "operator": ">=",
+      "threshold": 12,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "maximum_observed_pair_force",
+      "measured": 25.469890594482422,
+      "operator": ">",
+      "threshold": 0.0,
+      "unit": "N"
+    },
+    {
+      "name": "maximum_equal_opposite_force_residual",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 0.001,
+      "unit": "N"
+    },
+    {
+      "name": "fresh_physics_sample_count",
+      "measured": 720,
+      "operator": "==",
+      "threshold": 720,
+      "unit": "samples"
+    }
+  ],
+  "artifacts": [
+    "measurements/filtered-contact-api-240hz-trace.json"
+  ]
+}
