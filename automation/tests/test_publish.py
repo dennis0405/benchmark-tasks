@@ -128,3 +128,37 @@ def test_fork_checkpoint_pushes_exact_task_and_verifies_remote_sha(tmp_path):
     s.update(r["id"], preservation_error="previous checkpoint failed")
     publisher.checkpoint(r["id"])
     assert s.get(r["id"])["preservation_error"] is None
+
+    # An explicit storage decision retains exact private bytes and only removes
+    # the approved failed diagnostic from the public checkpoint copy.
+    raw_sha = file_hash(trace)
+    blob = root / f"workspace/measurements/native-output-blobs/{raw_sha}.json"
+    blob.parent.mkdir()
+    blob.write_bytes(raw_trace)
+    backup = root / f"private-experimental-evidence/{raw_sha}.json"
+    backup.parent.mkdir()
+    backup.write_bytes(raw_trace)
+    failure = {"qualification": False, "overall_pass": False,
+               "native_trial_id": "fixture-failed", "artifacts": ["measurements/raw-trace.json"]}
+    failure_file = root / "failure.json"
+    write_json(failure_file, failure)
+    failure_sha = file_hash(failure_file)
+    (blob.parent / (failure_sha + ".json")).write_bytes(failure_file.read_bytes())
+    summary = trace.with_name("raw-state-trace.json")
+    write_json(summary, {"provenance": {"qualification": False,
+                                      "raw_trace_sha256": raw_sha}, "samples": [0.1]})
+    write_json(root / "external-evidence-policy.json", {
+        "scope": "failed-native-diagnostics", "actor": "fixture-user",
+        "statement": "Keep raw bytes on Mac and Brev; publish states.",
+        "files": [{"sha256": raw_sha, "bytes": len(raw_trace),
+                   "report_sha256": failure_sha, "trial": "fixture-failed",
+                   "aliases": ["measurements/raw-trace.json"],
+                   "summary": "measurements/raw-state-trace.json",
+                   "summary_sha256": file_hash(summary)}],
+    })
+    preserved = publisher.checkpoint(r["id"])
+    assert preserved["sha"] == git("--git-dir", origin, "rev-parse", "refs/heads/automation/fixture")
+    assert not (evidence / "measurements/raw-trace.json.gz").exists()
+    assert not (evidence / f"measurements/native-output-blobs/{raw_sha}.json").exists()
+    assert (evidence / "external-evidence.json").is_file()
+    assert trace.read_bytes() == blob.read_bytes() == backup.read_bytes() == raw_trace

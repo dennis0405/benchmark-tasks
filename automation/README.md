@@ -120,6 +120,13 @@ stop을 검증하지만 모델·Dream·대회 제출을 호출하지 않는다. 
 이식 검사를 실행하고 실제 검증 범위를 적는다. 50MB 초과 파일 또는 100MB 초과 공개 checkpoint는
 업로드 전에 보관 방식 검토로 보낸다. 산업 매뉴얼 전체·인증 cache는 공개 보존하지 않는다.
 공개 checkpoint의 1MiB 이상 원시 JSON·JSONL·텍스트 로그는 gzip으로 손실 없이 압축한다.
+압축 후에도 한도를 넘는 **실패한 native 사전 시험의 접촉 상세 기록**은 사용자가 보관 방식을
+정한 경우에만 별도로 처리한다. run 밖으로 원본을 삭제하지 않고 Mac의
+`private-experimental-evidence/`와 Brev에 보존하며, SHA-256으로 확인한 원본·실패 보고서·
+전체 스텝의 경량 동작 기록을 `external-evidence-policy.json`에 연결한다.
+GitHub 복사본에서는 승인한 해시의 상세 기록만 제외하고 `external-evidence.json`에
+누락 경로와 원본 해시를 남긴다. 이 경우 GitHub만으로 전체 원시 접촉 기록을 복원할 수 없다.
+새 실험으로 해시가 바뀐 기록이나 성공·qualification 결과에는 이 예외를 적용하지 않는다.
 실험 작업 공간의 원본은 그대로 유지한다. 다운로드한 checkpoint에서
 `python3 restore-evidence.py`를 실행하면 `evidence-archive.json`의 크기·SHA-256을 검증하고
 기존 경로로 복원한다. 압축 후에도 기존 용량 제한을 적용하며, 데모 영상·작은 채점 보고서와
