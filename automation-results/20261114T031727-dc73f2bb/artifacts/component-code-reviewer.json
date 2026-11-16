@@ -1,20 +1,20 @@
 {
   "verdict": "pass",
   "findings": [
-    "The planned program is a bounded native discovery probe and consistently reports qualification=false; it does not claim environment, task, or physical-success certification.",
-    "The source applies real native rotor effort, samples fresh 240 Hz DOF/contact states, and fail-closes on bidirectional signed contact transmission, sustained settling rate, inferred bearing stiffness, hard-helix residual, release displacement, finite data, sample count, and applied-effort accuracy.",
-    "The serial topology preserves the stated 1 mm/revolution lead, 1e6 N/m bearing stiffness, 4000 N·s/m authored damping, 0.005 N·m test torque, and the prior 1e-6 m/s settling threshold without weakening the failed criterion. Damping identification and full frozen-contract qualification remain correctly outside this discovery probe's claims.",
-    "The opposed-plate geometry measures only the intended carrier contacts, and force, stiffness, and helix metrics are derived from recorded native samples rather than constants or proxy rotation ratios.",
-    "Planned arguments and workspace-relative report paths match the executor contract. The complete source parses successfully, and the relevant pinned runtime snapshots match their indexed SHA-256 digests. Native execution is correctly pending."
+    "The repaired preflight resolves the prior contact-freshness issue by copying known-pair contact buffers at both PRE_PHYSICS_STEP and POST_PHYSICS_STEP, requiring a nonzero same-substep transition, and checking every POST buffer against the next PRE buffer.",
+    "External rotor torque and input work are now explicitly labeled as commanded quantities; delivered behavior is independently constrained through native contact reaction, PRE/POST generalized-momentum balance, motion, contact work, and energy consistency checks.",
+    "The probe preserves the frozen 1 mm/revolution lead, K=1e6 N/m, D=4000 N·s/m, 9 g moving mass, and normative inertia without the rejected tenfold rotor inertia or added support mass. Its disclosed 1 mg auxiliary-link partition is checked using native mass properties, common-frame COM/inertia, and every entry of the reduced generalized mass matrix.",
+    "The program is appropriately scoped as qualification=false component discovery under real known-pair bilateral contact. It uses native callbacks and tensor states, performs no post-reset pose, velocity, joint-state, contact-state, or drive-target writes, and fails closed on incomplete execution or any failed check.",
+    "No material generated-source issue remains. Native execution must still determine whether the component passes; this source-gate verdict is not physical qualification of the fixture or the frozen 28 task-level criteria."
   ],
   "evidence_paths": [
     "artifacts/component-source-plan.json",
-    "task/run_serial_bearing_helix_probe.py",
+    "task/run_series_elastic_helix_preflight.py",
     "input/last-failure.json",
-    "input/runtime-api-preflight.json",
     "input/operator-source-notes.json",
+    "input/runtime-api-preflight.json",
     "input/pinned-runtime-sources/1ba654210857a63b98236512e5f225723c3eb1dee64e867eaa4fade0578ccb7b-tensors-api.py",
-    "input/pinned-runtime-sources/4a7638c3890522bbe7c25600c0090e6cb7f403550ccb8be7641bf84034213b83-generatedSchema.usda",
-    "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py"
+    "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py",
+    "artifacts/contract.json"
   ]
 }

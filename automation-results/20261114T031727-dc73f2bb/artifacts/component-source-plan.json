@@ -1,24 +1,24 @@
 {
   "phase": "preflight",
-  "summary": "The native PGS trial failed the frozen settling, stiffness, damping, constitutive-fit, and energy checks, so the positive-compliance mimic route is retired without weakening criteria. This bounded probe tests a disclosed serial alternative: the supported hard helical coupling plus a native prismatic bearing spring/damper retaining K=1e6 N/m, D=4000 N·s/m, 1 mm/revolution lead, 0.005 N·m torque, and 240 Hz timing. It measures bidirectional contact transmission, settling, stiffness, helix residual, and release; even a pass is discovery evidence only and requires independent contract/fidelity review before qualification.",
+  "summary": "Repaired the bounded series-elastic helix probe without changing physical thresholds. It now verifies PRE-to-POST contact-buffer transitions and POST-to-next-PRE chronology, explicitly labels external torque and input work as commanded, and retains independent native contact, momentum, motion, and work observables. Static AST/bytecode validation passed; trusted native GPU execution remains required and no qualification is claimed.",
   "scripts": [
     {
-      "id": "serial-bearing-helix-preflight",
-      "script": "task/run_serial_bearing_helix_probe.py",
+      "id": "series-elastic-helix-preflight",
+      "script": "task/run_series_elastic_helix_preflight.py",
       "args": [
         "--device",
         "cuda:0",
         "--visualizer",
         "none",
         "--output",
-        "../measurements/serial-bearing-helix-preflight.json",
+        "../measurements/series-elastic-helix-preflight.json",
         "--trace",
-        "../measurements/serial-bearing-helix-preflight-trace.json"
+        "../measurements/series-elastic-helix-preflight-trace.json"
       ],
-      "report": "measurements/serial-bearing-helix-preflight.json"
+      "report": "measurements/series-elastic-helix-preflight.json"
     }
   ],
   "files": [
-    "task/run_serial_bearing_helix_probe.py"
+    "task/run_series_elastic_helix_preflight.py"
   ]
 }
