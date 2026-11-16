@@ -1,35 +1,39 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the bounded native component probe for the current review failure. It now enforces the frozen transverse pass-rate limit, samples triangle edges/faces for swept aperture crossings and rib clearance, pivots screen actuation about the tested aperture center, compares washer joints using body-relative transforms, applies the exact 60-physics-interval bridge criterion in the moving screen frame, records nonempty physics-rate and 20 Hz traces, and reports sampled dynamic penetration. Python compilation passed. Native GPU execution remains for the trusted controller; this is not qualification.",
+  "summary": "Repaired the current native failure in the bounded annular-bore probe: each square-hole plate rib is now an immobile kinematic rigid body, enabling filtered contact sensing in the pinned Isaac Lab runtime while preserving fixture physics. Static compilation passes. The probe remains limited to compound annulus geometry, mass properties, 6 mm bore passage, and 10 mm washer-only support; no segmented-washer or full-environment qualification is claimed.",
   "scripts": [
     {
-      "id": "screen_components_native_240hz",
-      "script": "task/run_screen_components_native_probe.py",
+      "id": "annular_bore_native_probe_240hz",
+      "script": "task/run_annular_bore_native_probe.py",
       "args": [
         "--physics-hz",
         "240",
+        "--seconds",
+        "4.0",
         "--report",
-        "../measurements/screen-components-native-240hz.json",
+        "../measurements/annular-bore-native-probe-240hz.json",
         "--device",
         "cuda:0"
       ],
-      "report": "measurements/screen-components-native-240hz.json"
+      "report": "measurements/annular-bore-native-probe-240hz.json"
     },
     {
-      "id": "screen_components_native_480hz",
-      "script": "task/run_screen_components_native_probe.py",
+      "id": "annular_bore_native_probe_480hz",
+      "script": "task/run_annular_bore_native_probe.py",
       "args": [
         "--physics-hz",
         "480",
+        "--seconds",
+        "4.0",
         "--report",
-        "../measurements/screen-components-native-480hz.json",
+        "../measurements/annular-bore-native-probe-480hz.json",
         "--device",
         "cuda:0"
       ],
-      "report": "measurements/screen-components-native-480hz.json"
+      "report": "measurements/annular-bore-native-probe-480hz.json"
     }
   ],
   "files": [
-    "task/run_screen_components_native_probe.py"
+    "task/run_annular_bore_native_probe.py"
   ]
 }

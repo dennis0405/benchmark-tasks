@@ -1,0 +1,33 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1794847668.015386   10059 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto
+W0000 00:00:1794847668.016299   10059 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto
+[ISAACLAB] AppLauncher initialization complete
+[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl
+[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl
+[ISAACLAB] Kit hash:    00c488ae
+Warp 1.16.0 initialized:
+   CUDA Toolkit 12.9, Driver 12.7
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA L40S" (44 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /home/ubuntu/.cache/warp/1.16.0
+Loading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'
+2026-11-16T16:47:48Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.
+2026-11-16T16:47:48Z [30ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX
+2026-11-16T16:48:00Z [11,947ms] [Warning] [isaaclab.sim.schemas.schemas] [activate_contact_sensors] no rigid bodies found under prim='/World/SmallCell/Rib_0' (type='Xform', descendants=4)
+Traceback (most recent call last):
+  File "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_annular_bore_native_probe.py", line 470, in <module>
+    main()
+  File "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_annular_bore_native_probe.py", line 201, in main
+    plate_with_square_hole(xs[0], "SmallCell")
+  File "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_annular_bore_native_probe.py", line 167, in plate_with_square_hole
+    c.func(f"/World/{name}/Rib_{i}", c, translation=(px, py, PLATE_TOP_Z - PLATE_THICKNESS / 2))
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/utils/string.py", line 221, in __call__
+    return self._resolve()(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/sim/utils/prims.py", line 763, in wrapper
+    _schemas.activate_contact_sensors(prim_spawn_path)
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/sim/schemas/schemas.py", line 1275, in activate_contact_sensors
+    raise ValueError(
+ValueError: No contact sensors added to the prim: '/World/SmallCell/Rib_0'. This means that no rigid bodies are present under this prim. Please check the prim path.

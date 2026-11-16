@@ -51,7 +51,7 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 40173,
+    "supervisor_pid": 52244,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log",
     "compute": "running",
     "migration": {
@@ -85,16 +85,16 @@
       "tool_write_verified": true,
       "production_task_validated": false
     },
-    "revision": 17,
-    "revision_request": "사용자의 명시적 확정 방향은 그대로다: 체로 세라믹 연마재와 금속 와셔를 분리하는 실제 task, scorer, YAM demo와 영상을 만든다. 직군 중요성은 채점자 판단에 남기고 내부 제작 차단 사유로 쓰지 않는다. 같은 run 20261116T070835-7889e9ab, 전용 instance, branch를 유지한다. 제출 승인과 Dream 단일 시도/예산 조건은 그대로다. 새 아이디어/과거 snack film/carton/lifting pin은 하지 않는다.\n\n현재 native 결과를 읽고 다음 미구현 구성요소로 전진한다:\n- environment-preflights.json과 최신 실제 240/480Hz API 및 aperture report/trace/receipts를 읽는다. API cuboid는 이미 두 설정 통과했고, angle-cut end-first aperture도 두 설정에서 20/20 통과했다. CAD mesh*2500에서 도출한 mass/inertia의 native readback 일치도 통과했다. 기록을 독립 확인하고 이 좁은 결과 이상으로 주장하지 않는다.\n- 같은 probe를 매번 다시 plan으로 반환하지 않는다. last-failure.json에는 이전 source-plan 또는 cancellation 실패가 남을 수 있다. 그것이 실제 후속 source-review 및 current source_digest-bound successful receipt로 해결되었으면 다음 미해결 질문으로 진행한다. 같은 실패가 현재도 유효한 경우만 수리한다. 오래된 입력이 해결된 API나 aperture를 반복시키지 않도록 한다.\n- 다음 environment-builder plan은 미구현 실제 구성요소의 완전한 프로그램이어야 한다: 실제 annular washer/segment geometry와 접촉/잔류, 가로 media 걸림과 물리적 screen actuation에 의한 release, 실제 full-screen geometry와 receiver/support. 이미 통과한 probe를 그대로 다시 실행하는 plan은 이 요청을 이행하지 못한다. 필요한 source-backed API discovery는 해당 새 문제에 한정한다. 구성요소 발견 후 source/native 검토를 거쳐 full YAM 환경과 데모로 이어간다.\n- API/하나의 aperture discovery를 qualification 또는 YAM 성공으로 부르지 않는다. 수치/영상/계측은 실제 native state에서 만들며 source-only pass와 구분한다. 전체 scene 구현 전에 모든 frozen qualification을 이미 통과했다는 주장도 하지 않는다.\n\n이번 contract 단계에서 필요한 단 하나의 채점 인과관계 정정 (operator engineering amendment):\n현재 batch_loaded가 all 28 assemblies simultaneously full_inside_screen를 요구하고 eligible_receiver가 그 이후의 passage만 인정하면, 정상적으로 컵에서 붓는 도중 먼저 체를 통과한 media가 영원히 회수로 인정되지 않을 수 있다. 실제 투입 중 체질되는 정상 경로를 인정해야 한다.\n- 각 medium의 FEED -> cup-mouth exit -> multi-sample free flight -> screen entry -> genuine clear-aperture crossing -> receiver containment의 시간 순서를 추적한다. 마지막 assembly의 투입보다 먼저 genuine passage한 입자도 이 인과 경로가 확인되면 회수 후보로 기록한다.\n- complete loading은 모든 원래 assembly가 valid admission했고 모든 washer가 체에 남으며, admitted media는 체에 있거나 genuine passage 후 수거함 안에 있는 상태로 정의할 수 있다. full loading 전의 legitimate recovery를 쏟아짐으로 취급하지 않는다. cup->receiver 직접 붓기, 개별 선별/별도 적치, loss/spill/contamination/tampering은 그대로 실패다.\n- initial/partial/full score, immutable faults, final supported/released fresh3s, 20Hz actions/240Hz physics/480Hz refinement는 유지하고 모든 affected required_controls의 산술과 경로를 다시 명확히 한다. 원본 selected는 보존하고 현재 contract approximations에 이 정정 이유를 기록한다. 정정한 명세를 독립 contract review한 뒤 환경으로 진행한다. 나머지 모델/치수/가정은 재설계하지 않는다.\n- earlier permanent-deformation clause는 이미 accepted contract에서 실제 authored-joint fracture-only cap으로 정정했다. 그 정정을 유지하며 지원하지 않는 plastic deformation을 다시 요구/주장하지 않는다.\n\n물성 기록 정확성:\n3.504496907g은 L-D*tan15 centerline을 반영한 이상적 원형단면 angle-cut body이며 full uncut cylinder가 아니다. 32-sided watertight mesh V=1.3928088187296442e-6m3, rho2500 ->3.4820220468g. 질량과 COM/관성은 같은 형상·밀도에서 도출해 USD에 author하고 실제 native값과 비교한다. 자동 cooked mass 문제를 해결했다고 주장하지 않으며 이 CAD mass approximation을 공개한다. 몰래 density/mass/threshold를 바꾸거나 proxy를 실제 washer 검증으로 부르지 않는다.\n\nrcauto가 실행·GPU·checkpoint를 관리한다. 실제 taskobject pose/velocity write, teleport, fake weld, collider disable, particle freeze, hidden forces, 유실을 숨기는 낮은 velocity cap은 금지한다. 진단 fixture와 robot success를 분리한다. 코드·assets·raw measurements·재현 명령·영상·한계를 기존 branch에 보존한다.\n",
+    "revision": 18,
+    "revision_request": "사용자 확정 방향 유지: 체로 세라믹 연마재와 금속 와셔를 분리하는 task, scorer, 실제 YAM demo/영상. 직군상 중요성은 채점자 판단에 남기며 제작을 막지 않는다. 다른 주제로 변경하지 않는다. 같은 run20261116T070835-7889e9ab/전용instance/branch를 유지한다. rcauto가 실행과 checkpoint를 관리하고 공식 제출은 reviewed digest 승인 후다.\n\n현재 통과한 명세와 native 결과를 보존한다. 계약은 조기 회수 경로 정정까지 독립 검토를 통과했다. 작은 API pose, end-first aperture, filtered-contact probes는 실제240/480Hz에서 통과했다. environment-preflights.json의 실제 receipts와 input/operator-source-notes.json을 읽는다. 해결된 과거 last-failure 때문에 같은 probe를 다시 반환하지 않는다.\n\n여러 번 실패한 광범위 run_screen_components_native_probe.py를 다음 plan으로 또 반환하지 않는다. 전체 체/40washer/20bridge/fixture stability를 한 프로그램에서 불완전하게 주장하는 접근을 중단하고, 하나의 미해결 물리 질문을 완전하게 검증한다. 최종 frozen qualification을 약화시키는 지시가 아니며 그 단계는 이후 모두 이행한다.\n\n다음 bounded discovery 질문 (아래 질문의 실제 successful receipt가 아직 없을 때만 실행):\n- 실제 8mm bore를 가진 annular washer collision geometry를 구현하고, 중심 bore를 6mm pin은 통과하고10mm pin은 멈추는지 실제 native contact와 궤적으로 시험한다.\n- geometry 방법은 full-ring convex hull을 쓰지 않는다. inner/outer radii4/15mm, thickness4mm를 유지하는 명시적 작은 convex wedge들의 compound collider를 사용한다. convex wedge union이 bore를 유지하는지 생성 형상을 감사한다. 선언한 tessellation과 CAD mass/COM/inertia 일관성을 기록한다. material density7850kg/m3 기준이며 단순 target mass override로 성공을 만들지 않는다.\n- 이 작은 시험은 독립된 undeformable single rigid annulus를 쓸 수 있다. 최종 four-segment/breakable washer나 fracture/40orientation qualification의 통과라고 주장하지 않는다. collision geometry 제작법과 bore-contact API의 발견에만 한정한다. 이후 이 방법을 최종 segment 구현에 재사용한다.\n- 두 개의 물리적으로 분리된 작은 test cell을 준비한다. 각각 중앙12.7mm square hole을 가진50mm plate 위에 dynamic annulus를 수평으로 놓고, 동축 vertical pin을10mm 위에서 중력으로 놓는다. 한 cell은6mm pin, 다른 cell은10mm pin. pin길이/재질/질량/초기clearance/pose를 명시한다. 추가벽/용접/kinematicwasher/fake state제어는 쓰지 않는다.\n- 두 주파수240/480Hz에서 같은 물리 시간으로 실제 integrated root pose/quaternion, pin-washer filtered contacts, finite states와 boundary outcomes를 읽는다. 6mm pin은 실제 bore와platehole을 통해 아래로 통과하고,10mm pin은 실제 washer contact에 의해3초 동안 지지되며 완전히 빠지거나 관통하지 않는지 판정한다. 보고서의 범위는 이 두 경우만이며40orientation retained pass나 robot success로 부르지 않는다. 실제 raw physics traces와 재현 명령을 보존한다.\n- native AppLauncher/XYZW/ProxyArray/filtered contact 접근은 이미 검증된 작은 프로그램을 참고한다. USD prim 이름은 유효 identifier를 써서 부호/소수점 이름을 피한다. root/child local-to-world 배치를 실제 composed geometry와 native pose로 확인한다. geometry/source review만 실제 native 성공이라고 부르지 않는다.\n- 이 새 probe가 실제로 통과하면 다음 iteration은 그대로 재실행하지 말고 새로운 미검증 구성요소(실제 segment joint mechanics, physical hinge/readback, moving-frame crossing)에 한정하여 전진한다. bounded probes의 scope를 정직하게 유지하며 전체 environment ready는 모든 frozen 측정을 구현·실행한 뒤에만 선언한다. 매번 같은 '다음단일probe' 문장을 무조건 반복 지시로 해석하지 않는다.\n\n최종 scorer 전에 input/operator-source-notes.json의 receiver/floor contact-boundary 일관성 이슈를 반영한 명세 정정과 독립 검토가 필요하다. 그 문제를 지금 annulus API-discovery native 결과 전에 요구하거나 현재 계약을 임의 변경하지 않는다. 바닥에 놓인 정상 물체를 strict open interior 때문에 거부하지 않는 수치적 접촉 허용을 명세로 분명히 해야 한다. 실제 spill/contamination/tunneling/tampering 실패는 유지한다.\n\n전체 task에서 post-reset taskobject pose/velocity writes, teleport, fake weld, collider disable, particle freezing, hidden forces와 유실을 숨기는 낮은 속도 cap은 금지한다. diagnostic reset/fixture와 robot success를 분리한다. 원시 자료가 크면 lossless 압축을 사용하고 한계/재현성을 보존한다. Dream single-attempt/$20 ledger와 submission approval 조건은 기존 그대로다.\n",
     "approval": null,
-    "resume_from_stage": "contract",
-    "error": "component-code-reviewer: `PlaneCrossingTracker` still does not implement the frozen swept-volume test. It records vertex trajectories and triangle-edge intersections only at the interval endpoints; a rotating face can sweep across a rib between those endpoint configurations without any sampled point showing it. Therefore `clear_aperture` is not proven to have nonnegative signed distance from every rib (`task/run_screen_components_native_probe.py:269-316`; frozen requirement `artifacts/contract.json:194`).; The dynamic penetration metric is not the frozen signed-distance metric. It tests only mesh vertices lying within the floor slab and uses depth within that slab; it can miss face/edge penetration into ribs and does not measure the required dynamic-body pairs against screen, receiver, cup, table, media, and washer bodies (`task/run_screen_components_native_probe.py:493-504`; `artifacts/contract.json:93-100,188`).; The full-fixture penetration check samples only two underside lines above the support beams and derives receiver clearance from the receiver wall-top height. It does not compute signed distance over the complete screen floor, band, and wall geometry against receiver, supports, and table, so its passing aggregate cannot qualify `screen_fixture_signed_penetration_max` (`task/run_screen_components_native_probe.py:590-615,640-643`; `artifacts/contract.json:87-92,188`).; Bridge classification still uses the world-frame COM predicate `settled[2] > SCREEN_FLOOR_Z` instead of transforming the COM into the observed screen frame and testing screen-frame z > 0. This does not meet the frozen frame definition when the driven screen has residual translation or rotation (`task/run_screen_components_native_probe.py:514-519`; `artifacts/contract.json:200`).",
+    "resume_from_stage": "environment",
+    "error": "component-code-reviewer: The 6 mm qualification does not prove passage through the annulus bore and square plate hole. `six_mm_pin_complete_downward_passage` checks only the pin's final world-Z position, while `six_mm_pin_washer_contact_samples == 0` checks only absence of washer contact; there is no XY/axis-alignment or orientation bound during the crossing window. A pin deflected or tipped around the outside of the 50 mm fixture could satisfy both checks. Derive the aperture-crossing window from native poses and require the pin to remain within the geometric clearance and sufficiently upright while its body traverses both the washer and plate planes; preserve those measurements in the trace/report.",
     "remote_status": {
       "status": "blocked",
-      "error": "component-code-reviewer: `PlaneCrossingTracker` still does not implement the frozen swept-volume test. It records vertex trajectories and triangle-edge intersections only at the interval endpoints; a rotating face can sweep across a rib between those endpoint configurations without any sampled point showing it. Therefore `clear_aperture` is not proven to have nonnegative signed distance from every rib (`task/run_screen_components_native_probe.py:269-316`; frozen requirement `artifacts/contract.json:194`).; The dynamic penetration metric is not the frozen signed-distance metric. It tests only mesh vertices lying within the floor slab and uses depth within that slab; it can miss face/edge penetration into ribs and does not measure the required dynamic-body pairs against screen, receiver, cup, table, media, and washer bodies (`task/run_screen_components_native_probe.py:493-504`; `artifacts/contract.json:93-100,188`).; The full-fixture penetration check samples only two underside lines above the support beams and derives receiver clearance from the receiver wall-top height. It does not compute signed distance over the complete screen floor, band, and wall geometry against receiver, supports, and table, so its passing aggregate cannot qualify `screen_fixture_signed_penetration_max` (`task/run_screen_components_native_probe.py:590-615,640-643`; `artifacts/contract.json:87-92,188`).; Bridge classification still uses the world-frame COM predicate `settled[2] > SCREEN_FLOOR_Z` instead of transforming the COM into the observed screen frame and testing screen-frame z > 0. This does not meet the frozen frame definition when the driven screen has residual translation or rotation (`task/run_screen_components_native_probe.py:514-519`; `artifacts/contract.json:200`).",
+      "error": "component-code-reviewer: The 6 mm qualification does not prove passage through the annulus bore and square plate hole. `six_mm_pin_complete_downward_passage` checks only the pin's final world-Z position, while `six_mm_pin_washer_contact_samples == 0` checks only absence of washer contact; there is no XY/axis-alignment or orientation bound during the crossing window. A pin deflected or tipped around the outside of the 50 mm fixture could satisfy both checks. Derive the aperture-crossing window from native poses and require the pin to remain within the geometric clearance and sufficiently upright while its body traverses both the washer and plate planes; preserve those measurements in the trace/report.",
       "type": "GateError",
-      "at": "2026-11-16T16:32:08.140028+00:00"
+      "at": "2026-11-16T16:49:29.281637+00:00"
     },
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab",
     "stop_error": "command failed: brev: you're logged out — run `brev login` to authenticate\n"
@@ -6729,6 +6729,366 @@
       "run": "20261116T070835-7889e9ab",
       "at": "2026-11-16T16:32:37.462738+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"component-code-reviewer: `PlaneCrossingTracker` still does not implement the frozen swept-volume test. It records vertex trajectories and triangle-edge intersections only at the interval endpoints; a rotating face can sweep across a rib between those endpoint configurations without any sampled point showing it. Therefore `clear_aperture` is not proven to have nonnegative signed distance from every rib (`task/run_screen_components_native_probe.py:269-316`; frozen requirement `artifacts/contract.json:194`).; The dynamic penetration metric is not the frozen signed-distance metric. It tests only mesh vertices lying within the floor slab and uses depth within that slab; it can miss face/edge penetration into ribs and does not measure the required dynamic-body pairs against screen, receiver, cup, table, media, and washer bodies (`task/run_screen_components_native_probe.py:493-504`; `artifacts/contract.json:93-100,188`).; The full-fixture penetration check samples only two underside lines above the support beams and derives receiver clearance from the receiver wall-top height. It does not compute signed distance over the complete screen floor, band, and wall geometry against receiver, supports, and table, so its passing aggregate cannot qualify `screen_fixture_signed_penetration_max` (`task/run_screen_components_native_probe.py:590-615,640-643`; `artifacts/contract.json:87-92,188`).; Bridge classification still uses the world-frame COM predicate `settled[2] > SCREEN_FLOOR_Z` instead of transforming the COM into the observed screen frame and testing screen-frame z > 0. This does not meet the frozen frame definition when the driven screen has residual translation or rotation (`task/run_screen_components_native_probe.py:514-519`; `artifacts/contract.json:200`).\"}"
+    },
+    {
+      "seq": 6510,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:33:30.642645+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 6512,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:33:45.774705+00:00",
+      "data": "{\"revision\": 18, \"revision_request\": \"\\uc0ac\\uc6a9\\uc790 \\ud655\\uc815 \\ubc29\\ud5a5 \\uc720\\uc9c0: \\uccb4\\ub85c \\uc138\\ub77c\\ubbf9 \\uc5f0\\ub9c8\\uc7ac\\uc640 \\uae08\\uc18d \\uc640\\uc154\\ub97c \\ubd84\\ub9ac\\ud558\\ub294 task, scorer, \\uc2e4\\uc81c YAM demo/\\uc601\\uc0c1. \\uc9c1\\uad70\\uc0c1 \\uc911\\uc694\\uc131\\uc740 \\ucc44\\uc810\\uc790 \\ud310\\ub2e8\\uc5d0 \\ub0a8\\uae30\\uba70 \\uc81c\\uc791\\uc744 \\ub9c9\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ub2e4\\ub978 \\uc8fc\\uc81c\\ub85c \\ubcc0\\uacbd\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uac19\\uc740 run20261116T070835-7889e9ab/\\uc804\\uc6a9instance/branch\\ub97c \\uc720\\uc9c0\\ud55c\\ub2e4. rcauto\\uac00 \\uc2e4\\ud589\\uacfc checkpoint\\ub97c \\uad00\\ub9ac\\ud558\\uace0 \\uacf5\\uc2dd \\uc81c\\ucd9c\\uc740 reviewed digest \\uc2b9\\uc778 \\ud6c4\\ub2e4.\\n\\n\\ud604\\uc7ac \\ud1b5\\uacfc\\ud55c \\uba85\\uc138\\uc640 native \\uacb0\\uacfc\\ub97c \\ubcf4\\uc874\\ud55c\\ub2e4. \\uacc4\\uc57d\\uc740 \\uc870\\uae30 \\ud68c\\uc218 \\uacbd\\ub85c \\uc815\\uc815\\uae4c\\uc9c0 \\ub3c5\\ub9bd \\uac80\\ud1a0\\ub97c \\ud1b5\\uacfc\\ud588\\ub2e4. \\uc791\\uc740 API pose, end-first aperture, filtered-contact probes\\ub294 \\uc2e4\\uc81c240/480Hz\\uc5d0\\uc11c \\ud1b5\\uacfc\\ud588\\ub2e4. environment-preflights.json\\uc758 \\uc2e4\\uc81c receipts\\uc640 input/operator-source-notes.json\\uc744 \\uc77d\\ub294\\ub2e4. \\ud574\\uacb0\\ub41c \\uacfc\\uac70 last-failure \\ub54c\\ubb38\\uc5d0 \\uac19\\uc740 probe\\ub97c \\ub2e4\\uc2dc \\ubc18\\ud658\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n\\n\\uc5ec\\ub7ec \\ubc88 \\uc2e4\\ud328\\ud55c \\uad11\\ubc94\\uc704 run_screen_components_native_probe.py\\ub97c \\ub2e4\\uc74c plan\\uc73c\\ub85c \\ub610 \\ubc18\\ud658\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc804\\uccb4 \\uccb4/40washer/20bridge/fixture stability\\ub97c \\ud55c \\ud504\\ub85c\\uadf8\\ub7a8\\uc5d0\\uc11c \\ubd88\\uc644\\uc804\\ud558\\uac8c \\uc8fc\\uc7a5\\ud558\\ub294 \\uc811\\uadfc\\uc744 \\uc911\\ub2e8\\ud558\\uace0, \\ud558\\ub098\\uc758 \\ubbf8\\ud574\\uacb0 \\ubb3c\\ub9ac \\uc9c8\\ubb38\\uc744 \\uc644\\uc804\\ud558\\uac8c \\uac80\\uc99d\\ud55c\\ub2e4. \\ucd5c\\uc885 frozen qualification\\uc744 \\uc57d\\ud654\\uc2dc\\ud0a4\\ub294 \\uc9c0\\uc2dc\\uac00 \\uc544\\ub2c8\\uba70 \\uadf8 \\ub2e8\\uacc4\\ub294 \\uc774\\ud6c4 \\ubaa8\\ub450 \\uc774\\ud589\\ud55c\\ub2e4.\\n\\n\\ub2e4\\uc74c bounded discovery \\uc9c8\\ubb38 (\\uc544\\ub798 \\uc9c8\\ubb38\\uc758 \\uc2e4\\uc81c successful receipt\\uac00 \\uc544\\uc9c1 \\uc5c6\\uc744 \\ub54c\\ub9cc \\uc2e4\\ud589):\\n- \\uc2e4\\uc81c 8mm bore\\ub97c \\uac00\\uc9c4 annular washer collision geometry\\ub97c \\uad6c\\ud604\\ud558\\uace0, \\uc911\\uc2ec bore\\ub97c 6mm pin\\uc740 \\ud1b5\\uacfc\\ud558\\uace010mm pin\\uc740 \\uba48\\ucd94\\ub294\\uc9c0 \\uc2e4\\uc81c native contact\\uc640 \\uada4\\uc801\\uc73c\\ub85c \\uc2dc\\ud5d8\\ud55c\\ub2e4.\\n- geometry \\ubc29\\ubc95\\uc740 full-ring convex hull\\uc744 \\uc4f0\\uc9c0 \\uc54a\\ub294\\ub2e4. inner/outer radii4/15mm, thickness4mm\\ub97c \\uc720\\uc9c0\\ud558\\ub294 \\uba85\\uc2dc\\uc801 \\uc791\\uc740 convex wedge\\ub4e4\\uc758 compound collider\\ub97c \\uc0ac\\uc6a9\\ud55c\\ub2e4. convex wedge union\\uc774 bore\\ub97c \\uc720\\uc9c0\\ud558\\ub294\\uc9c0 \\uc0dd\\uc131 \\ud615\\uc0c1\\uc744 \\uac10\\uc0ac\\ud55c\\ub2e4. \\uc120\\uc5b8\\ud55c tessellation\\uacfc CAD mass/COM/inertia \\uc77c\\uad00\\uc131\\uc744 \\uae30\\ub85d\\ud55c\\ub2e4. material density7850kg/m3 \\uae30\\uc900\\uc774\\uba70 \\ub2e8\\uc21c target mass override\\ub85c \\uc131\\uacf5\\uc744 \\ub9cc\\ub4e4\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\uc774 \\uc791\\uc740 \\uc2dc\\ud5d8\\uc740 \\ub3c5\\ub9bd\\ub41c undeformable single rigid annulus\\ub97c \\uc4f8 \\uc218 \\uc788\\ub2e4. \\ucd5c\\uc885 four-segment/breakable washer\\ub098 fracture/40orientation qualification\\uc758 \\ud1b5\\uacfc\\ub77c\\uace0 \\uc8fc\\uc7a5\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. collision geometry \\uc81c\\uc791\\ubc95\\uacfc bore-contact API\\uc758 \\ubc1c\\uacac\\uc5d0\\ub9cc \\ud55c\\uc815\\ud55c\\ub2e4. \\uc774\\ud6c4 \\uc774 \\ubc29\\ubc95\\uc744 \\ucd5c\\uc885 segment \\uad6c\\ud604\\uc5d0 \\uc7ac\\uc0ac\\uc6a9\\ud55c\\ub2e4.\\n- \\ub450 \\uac1c\\uc758 \\ubb3c\\ub9ac\\uc801\\uc73c\\ub85c \\ubd84\\ub9ac\\ub41c \\uc791\\uc740 test cell\\uc744 \\uc900\\ube44\\ud55c\\ub2e4. \\uac01\\uac01 \\uc911\\uc55912.7mm square hole\\uc744 \\uac00\\uc9c450mm plate \\uc704\\uc5d0 dynamic annulus\\ub97c \\uc218\\ud3c9\\uc73c\\ub85c \\ub193\\uace0, \\ub3d9\\ucd95 vertical pin\\uc74410mm \\uc704\\uc5d0\\uc11c \\uc911\\ub825\\uc73c\\ub85c \\ub193\\ub294\\ub2e4. \\ud55c cell\\uc7406mm pin, \\ub2e4\\ub978 cell\\uc74010mm pin. pin\\uae38\\uc774/\\uc7ac\\uc9c8/\\uc9c8\\ub7c9/\\ucd08\\uae30clearance/pose\\ub97c \\uba85\\uc2dc\\ud55c\\ub2e4. \\ucd94\\uac00\\ubcbd/\\uc6a9\\uc811/kinematicwasher/fake state\\uc81c\\uc5b4\\ub294 \\uc4f0\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\ub450 \\uc8fc\\ud30c\\uc218240/480Hz\\uc5d0\\uc11c \\uac19\\uc740 \\ubb3c\\ub9ac \\uc2dc\\uac04\\uc73c\\ub85c \\uc2e4\\uc81c integrated root pose/quaternion, pin-washer filtered contacts, finite states\\uc640 boundary outcomes\\ub97c \\uc77d\\ub294\\ub2e4. 6mm pin\\uc740 \\uc2e4\\uc81c bore\\uc640platehole\\uc744 \\ud1b5\\ud574 \\uc544\\ub798\\ub85c \\ud1b5\\uacfc\\ud558\\uace0,10mm pin\\uc740 \\uc2e4\\uc81c washer contact\\uc5d0 \\uc758\\ud5743\\ucd08 \\ub3d9\\uc548 \\uc9c0\\uc9c0\\ub418\\uba70 \\uc644\\uc804\\ud788 \\ube60\\uc9c0\\uac70\\ub098 \\uad00\\ud1b5\\ud558\\uc9c0 \\uc54a\\ub294\\uc9c0 \\ud310\\uc815\\ud55c\\ub2e4. \\ubcf4\\uace0\\uc11c\\uc758 \\ubc94\\uc704\\ub294 \\uc774 \\ub450 \\uacbd\\uc6b0\\ub9cc\\uc774\\uba7040orientation retained pass\\ub098 robot success\\ub85c \\ubd80\\ub974\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc2e4\\uc81c raw physics traces\\uc640 \\uc7ac\\ud604 \\uba85\\ub839\\uc744 \\ubcf4\\uc874\\ud55c\\ub2e4.\\n- native AppLauncher/XYZW/ProxyArray/filtered contact \\uc811\\uadfc\\uc740 \\uc774\\ubbf8 \\uac80\\uc99d\\ub41c \\uc791\\uc740 \\ud504\\ub85c\\uadf8\\ub7a8\\uc744 \\ucc38\\uace0\\ud55c\\ub2e4. USD prim \\uc774\\ub984\\uc740 \\uc720\\ud6a8 identifier\\ub97c \\uc368\\uc11c \\ubd80\\ud638/\\uc18c\\uc218\\uc810 \\uc774\\ub984\\uc744 \\ud53c\\ud55c\\ub2e4. root/child local-to-world \\ubc30\\uce58\\ub97c \\uc2e4\\uc81c composed geometry\\uc640 native pose\\ub85c \\ud655\\uc778\\ud55c\\ub2e4. geometry/source review\\ub9cc \\uc2e4\\uc81c native \\uc131\\uacf5\\uc774\\ub77c\\uace0 \\ubd80\\ub974\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\uc774 \\uc0c8 probe\\uac00 \\uc2e4\\uc81c\\ub85c \\ud1b5\\uacfc\\ud558\\uba74 \\ub2e4\\uc74c iteration\\uc740 \\uadf8\\ub300\\ub85c \\uc7ac\\uc2e4\\ud589\\ud558\\uc9c0 \\ub9d0\\uace0 \\uc0c8\\ub85c\\uc6b4 \\ubbf8\\uac80\\uc99d \\uad6c\\uc131\\uc694\\uc18c(\\uc2e4\\uc81c segment joint mechanics, physical hinge/readback, moving-frame crossing)\\uc5d0 \\ud55c\\uc815\\ud558\\uc5ec \\uc804\\uc9c4\\ud55c\\ub2e4. bounded probes\\uc758 scope\\ub97c \\uc815\\uc9c1\\ud558\\uac8c \\uc720\\uc9c0\\ud558\\uba70 \\uc804\\uccb4 environment ready\\ub294 \\ubaa8\\ub4e0 frozen \\uce21\\uc815\\uc744 \\uad6c\\ud604\\u00b7\\uc2e4\\ud589\\ud55c \\ub4a4\\uc5d0\\ub9cc \\uc120\\uc5b8\\ud55c\\ub2e4. \\ub9e4\\ubc88 \\uac19\\uc740 '\\ub2e4\\uc74c\\ub2e8\\uc77cprobe' \\ubb38\\uc7a5\\uc744 \\ubb34\\uc870\\uac74 \\ubc18\\ubcf5 \\uc9c0\\uc2dc\\ub85c \\ud574\\uc11d\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n\\n\\ucd5c\\uc885 scorer \\uc804\\uc5d0 input/operator-source-notes.json\\uc758 receiver/floor contact-boundary \\uc77c\\uad00\\uc131 \\uc774\\uc288\\ub97c \\ubc18\\uc601\\ud55c \\uba85\\uc138 \\uc815\\uc815\\uacfc \\ub3c5\\ub9bd \\uac80\\ud1a0\\uac00 \\ud544\\uc694\\ud558\\ub2e4. \\uadf8 \\ubb38\\uc81c\\ub97c \\uc9c0\\uae08 annulus API-discovery native \\uacb0\\uacfc \\uc804\\uc5d0 \\uc694\\uad6c\\ud558\\uac70\\ub098 \\ud604\\uc7ac \\uacc4\\uc57d\\uc744 \\uc784\\uc758 \\ubcc0\\uacbd\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ubc14\\ub2e5\\uc5d0 \\ub193\\uc778 \\uc815\\uc0c1 \\ubb3c\\uccb4\\ub97c strict open interior \\ub54c\\ubb38\\uc5d0 \\uac70\\ubd80\\ud558\\uc9c0 \\uc54a\\ub294 \\uc218\\uce58\\uc801 \\uc811\\ucd09 \\ud5c8\\uc6a9\\uc744 \\uba85\\uc138\\ub85c \\ubd84\\uba85\\ud788 \\ud574\\uc57c \\ud55c\\ub2e4. \\uc2e4\\uc81c spill/contamination/tunneling/tampering \\uc2e4\\ud328\\ub294 \\uc720\\uc9c0\\ud55c\\ub2e4.\\n\\n\\uc804\\uccb4 task\\uc5d0\\uc11c post-reset taskobject pose/velocity writes, teleport, fake weld, collider disable, particle freezing, hidden forces\\uc640 \\uc720\\uc2e4\\uc744 \\uc228\\uae30\\ub294 \\ub0ae\\uc740 \\uc18d\\ub3c4 cap\\uc740 \\uae08\\uc9c0\\ud55c\\ub2e4. diagnostic reset/fixture\\uc640 robot success\\ub97c \\ubd84\\ub9ac\\ud55c\\ub2e4. \\uc6d0\\uc2dc \\uc790\\ub8cc\\uac00 \\ud06c\\uba74 lossless \\uc555\\ucd95\\uc744 \\uc0ac\\uc6a9\\ud558\\uace0 \\ud55c\\uacc4/\\uc7ac\\ud604\\uc131\\uc744 \\ubcf4\\uc874\\ud55c\\ub2e4. Dream single-attempt/$20 ledger\\uc640 submission approval \\uc870\\uac74\\uc740 \\uae30\\uc874 \\uadf8\\ub300\\ub85c\\ub2e4.\\n\", \"approval\": null}"
+    },
+    {
+      "seq": 6513,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:33:45.776426+00:00",
+      "data": "{\"resume_from_stage\": \"environment\"}"
+    },
+    {
+      "seq": 6514,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:33:45.780191+00:00",
+      "data": "{\"supervisor_pid\": 52244, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log\"}"
+    },
+    {
+      "seq": 6515,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:33:45.855437+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 6522,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:35:23.701718+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 6526,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:36:05.464494+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 6530,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:36:51.257925+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab\"}"
+    },
+    {
+      "seq": 6531,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:36:51.648206+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6533,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:37:07.095063+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6535,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:37:22.572764+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6537,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:37:37.980157+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6539,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:37:53.384463+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6541,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:38:08.794622+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6543,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:38:24.304215+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6545,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:38:39.715780+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6547,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:38:55.117149+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6549,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:39:10.606704+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6551,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:39:26.034398+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6553,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:39:41.531850+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6555,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:39:56.981855+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6557,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:40:12.393368+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6559,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:40:27.919440+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6561,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:40:43.365912+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6563,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:40:58.768488+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6565,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:41:14.170461+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6567,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:41:29.665896+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6569,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:41:45.128719+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6571,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:42:00.591468+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6573,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:42:15.997889+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6575,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:42:31.499423+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6577,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:42:46.907699+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6579,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:43:02.440728+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6581,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:43:17.972797+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6583,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:43:33.373620+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6585,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:43:48.797428+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6587,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:44:04.260157+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6589,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:44:19.664600+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6591,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:44:35.185555+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6593,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:44:50.649838+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6595,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:45:06.092819+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6597,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:45:21.575371+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6599,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:45:36.992132+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6601,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:45:52.502025+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6603,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:46:07.904010+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6605,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:46:23.323321+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6607,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:46:38.728531+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6609,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:46:54.141881+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6611,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:47:09.540138+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6613,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:47:25.073677+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6615,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:47:40.479100+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6617,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:47:55.998853+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6619,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:48:11.459147+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6621,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:48:26.866940+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6623,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:48:42.280043+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6625,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:48:57.693130+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6627,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:49:13.098641+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6629,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:49:28.504566+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:36:51.590222+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6631,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:49:43.912586+00:00",
+      "data": "{\"remote_status\": {\"status\": \"blocked\", \"error\": \"component-code-reviewer: The 6 mm qualification does not prove passage through the annulus bore and square plate hole. `six_mm_pin_complete_downward_passage` checks only the pin's final world-Z position, while `six_mm_pin_washer_contact_samples == 0` checks only absence of washer contact; there is no XY/axis-alignment or orientation bound during the crossing window. A pin deflected or tipped around the outside of the 50 mm fixture could satisfy both checks. Derive the aperture-crossing window from native poses and require the pin to remain within the geometric clearance and sufficiently upright while its body traverses both the washer and plate planes; preserve those measurements in the trace/report.\", \"type\": \"GateError\", \"at\": \"2026-11-16T16:49:29.281637+00:00\"}, \"stage\": null}"
+    },
+    {
+      "seq": 6633,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:50:07.383772+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"component-code-reviewer: The 6 mm qualification does not prove passage through the annulus bore and square plate hole. `six_mm_pin_complete_downward_passage` checks only the pin's final world-Z position, while `six_mm_pin_washer_contact_samples == 0` checks only absence of washer contact; there is no XY/axis-alignment or orientation bound during the crossing window. A pin deflected or tipped around the outside of the 50 mm fixture could satisfy both checks. Derive the aperture-crossing window from native poses and require the pin to remain within the geometric clearance and sufficiently upright while its body traverses both the washer and plate planes; preserve those measurements in the trace/report.\"}"
     }
   ],
   "effects": {

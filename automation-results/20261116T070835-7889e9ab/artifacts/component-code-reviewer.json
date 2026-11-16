@@ -1,15 +1,12 @@
 {
   "verdict": "repair",
   "findings": [
-    "`PlaneCrossingTracker` still does not implement the frozen swept-volume test. It records vertex trajectories and triangle-edge intersections only at the interval endpoints; a rotating face can sweep across a rib between those endpoint configurations without any sampled point showing it. Therefore `clear_aperture` is not proven to have nonnegative signed distance from every rib (`task/run_screen_components_native_probe.py:269-316`; frozen requirement `artifacts/contract.json:194`).",
-    "The dynamic penetration metric is not the frozen signed-distance metric. It tests only mesh vertices lying within the floor slab and uses depth within that slab; it can miss face/edge penetration into ribs and does not measure the required dynamic-body pairs against screen, receiver, cup, table, media, and washer bodies (`task/run_screen_components_native_probe.py:493-504`; `artifacts/contract.json:93-100,188`).",
-    "The full-fixture penetration check samples only two underside lines above the support beams and derives receiver clearance from the receiver wall-top height. It does not compute signed distance over the complete screen floor, band, and wall geometry against receiver, supports, and table, so its passing aggregate cannot qualify `screen_fixture_signed_penetration_max` (`task/run_screen_components_native_probe.py:590-615,640-643`; `artifacts/contract.json:87-92,188`).",
-    "Bridge classification still uses the world-frame COM predicate `settled[2] > SCREEN_FLOOR_Z` instead of transforming the COM into the observed screen frame and testing screen-frame z > 0. This does not meet the frozen frame definition when the driven screen has residual translation or rotation (`task/run_screen_components_native_probe.py:514-519`; `artifacts/contract.json:200`)."
+    "The 6 mm qualification does not prove passage through the annulus bore and square plate hole. `six_mm_pin_complete_downward_passage` checks only the pin's final world-Z position, while `six_mm_pin_washer_contact_samples == 0` checks only absence of washer contact; there is no XY/axis-alignment or orientation bound during the crossing window. A pin deflected or tipped around the outside of the 50 mm fixture could satisfy both checks. Derive the aperture-crossing window from native poses and require the pin to remain within the geometric clearance and sufficiently upright while its body traverses both the washer and plate planes; preserve those measurements in the trace/report."
   ],
   "evidence_paths": [
-    "task/run_screen_components_native_probe.py",
     "artifacts/component-source-plan.json",
-    "artifacts/contract.json",
-    "input/last-failure.json"
+    "task/run_annular_bore_native_probe.py",
+    "input/last-failure.json",
+    "../logs/annular_bore_native_probe_240hz-68ba63adb0.log"
   ]
 }
