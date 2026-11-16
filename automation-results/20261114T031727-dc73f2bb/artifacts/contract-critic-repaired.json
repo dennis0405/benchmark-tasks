@@ -1,21 +1,22 @@
 {
-  "verdict": "repair",
+  "verdict": "pass",
   "findings": [
-    "The normative geometry manifest is not actually frozen to the hash declared by the contract: artifacts/contract.json names SHA-256 f8935abd03b1355495e1d8511114598f0c59cf39a3242518fe81c96b65e0449e, while the current input/fixture-geometry-contract.json hashes to 7ff316ca62bdc79e9e7c9d9e2516ab207e52a886b90d2e1cbd448d35ff1690e6. Because this manifest supplies authoritative materials, thread mechanics, geometry, and precedence over prototype labels, the mismatch leaves the frozen specification identity unresolved.",
-    "The camera geometry is internally inconsistent: input/fixture-geometry-contract.json places the stock D435 collider at TOP_CAM_POS, but the pinned constants place its collision-box center at D435_BOX_POS, offset half the camera depth behind TOP_CAM_POS. Replace the manifest description with the exact D435_BOX_POS construction or freeze its resolved numeric pose.",
-    "The 14 required terminal control scores recompute consistently as 0, 0.25, 0.5, 0.75, 1.0, 0, 0, 0, 0.25, 0, 0, 0, 0, and 1.0. The original 27 physics thresholds remain unchanged and the added released/vented preload threshold is 2 N continuously for 0.25 s.",
-    "The prior substantive issues are otherwise repaired prospectively: frame/cover prototype Steel labels are explicitly superseded; bench, camera, mast, and rack materials are supplied; the right-handed S/frame and N73/S helices, compliance, damping, friction, bearing coefficients, and force/torque gradients are frozen; guide friction and interference are forbidden substitutes; R_move excludes both bases; joint-7/8 bounds, piston signs, centric coupling, stop contact, release, finite mount failure, revocation, and final dwell are numeric. No future native evidence is improperly required at this specification gate."
+    "No material specification issue remains. The manifest raw-byte SHA-256 recomputes to 807d43b90b315c82d3ffbf0b5cd45373417d84f0ab504394c49e56bff63f7cd3, exactly matching artifacts/contract.json.",
+    "The D435 collider and mast coordinates exactly reproduce the pinned D435_BOX_POS construction and remain distinct from TOP_CAM_POS.",
+    "The 14 terminal controls recompute to 0, 0.25, 0.5, 0.75, 1.0, 0, 0, 0, 0.25, 0, 0, 0, 0, and 1.0. The original 27 physics thresholds are unchanged, with the added 2 N released/vented preload threshold lasting 0.25 s.",
+    "Eligibility, revocation, lever/piston causality, final dwell, finite mount failure, material precedence, thread mechanics, units, reset rules, and prospective native-validation boundaries are explicit and internally consistent."
   ],
   "evidence_paths": [
     "artifacts/contract.json",
     "artifacts/selected.json",
-    "input/contract-repair-baseline-v3/contract-critic-repaired.json",
+    "input/contract-repair-baseline-v4/contract-critic-repaired.json",
     "input/fixture-geometry-contract.json",
-    "input/first-party-seeds/drg80_stop/assets/geometry.json",
-    "input/first-party-seeds/drg80_stop/fixture/fixture-proposal.json",
+    "input/last-failure.json",
     "input/sources/s-0b3ec636c6201fe9.json",
     "input/sources/s-604022b1979c380c.json",
     "input/runtime-api-preflight.json",
+    "input/first-party-seeds/drg80_stop/assets/geometry.json",
+    "input/first-party-seeds/drg80_stop/fixture/fixture-proposal.json",
     "input/pinned-runtime-sources/8c44cc2e96ac491255211f2e0b807dda4c1f7547db5a6c62b809764ef69ca2c2-constants.py",
     "input/pinned-runtime-sources/7c4081aa811b2839f908d533e12885dac7a0aaed62ff8da59e36995b50b87809-scene.py",
     "input/pinned-runtime-sources/58b2f7cdff95a6a0116340a1cbb8d00d69b710c97969358e12a6992e7a85b5ce-trusted-evaluation.py",

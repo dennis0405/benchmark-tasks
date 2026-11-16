@@ -1,0 +1,29 @@
+{
+  "contract_digest": "c1ba7e545c69bb13e7a04afbb9d614ea0aab3b46dda886986ccc8014d7e2523e",
+  "review": {
+    "verdict": "pass",
+    "findings": [
+      "No material specification issue remains. The manifest raw-byte SHA-256 recomputes to 807d43b90b315c82d3ffbf0b5cd45373417d84f0ab504394c49e56bff63f7cd3, exactly matching artifacts/contract.json.",
+      "The D435 collider and mast coordinates exactly reproduce the pinned D435_BOX_POS construction and remain distinct from TOP_CAM_POS.",
+      "The 14 terminal controls recompute to 0, 0.25, 0.5, 0.75, 1.0, 0, 0, 0, 0.25, 0, 0, 0, 0, and 1.0. The original 27 physics thresholds are unchanged, with the added 2 N released/vented preload threshold lasting 0.25 s.",
+      "Eligibility, revocation, lever/piston causality, final dwell, finite mount failure, material precedence, thread mechanics, units, reset rules, and prospective native-validation boundaries are explicit and internally consistent."
+    ],
+    "evidence_paths": [
+      "artifacts/contract.json",
+      "artifacts/selected.json",
+      "input/contract-repair-baseline-v4/contract-critic-repaired.json",
+      "input/fixture-geometry-contract.json",
+      "input/last-failure.json",
+      "input/sources/s-0b3ec636c6201fe9.json",
+      "input/sources/s-604022b1979c380c.json",
+      "input/runtime-api-preflight.json",
+      "input/first-party-seeds/drg80_stop/assets/geometry.json",
+      "input/first-party-seeds/drg80_stop/fixture/fixture-proposal.json",
+      "input/pinned-runtime-sources/8c44cc2e96ac491255211f2e0b807dda4c1f7547db5a6c62b809764ef69ca2c2-constants.py",
+      "input/pinned-runtime-sources/7c4081aa811b2839f908d533e12885dac7a0aaed62ff8da59e36995b50b87809-scene.py",
+      "input/pinned-runtime-sources/58b2f7cdff95a6a0116340a1cbb8d00d69b710c97969358e12a6992e7a85b5ce-trusted-evaluation.py",
+      "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py"
+    ]
+  },
+  "authoring_method": "operator repair of independently rejected draft"
+}

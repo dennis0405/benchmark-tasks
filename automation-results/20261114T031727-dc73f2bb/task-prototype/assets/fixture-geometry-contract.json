@@ -1,0 +1,260 @@
+{
+  "status": "Normative proposed benchmark geometry; first-party CPU assets, NOT native proof",
+  "units": "m,kg,rad except explicitly stated degrees",
+  "fixture_root_world_m": [
+    0.36,
+    0,
+    0.75
+  ],
+  "fixture_root_orientation_xyzw": [
+    0,
+    0,
+    0,
+    1
+  ],
+  "datum": "native rigid body named fixture_frame; its root is seed frame local origin on tabletop. T_F0 is authored reset transform before first physics step. Record resolved USD path/native ID once per reset. Translation is Euclidean root displacement; tilt is quaternion geodesic angle2acos(abs(dot(q,q0))).",
+  "table": {
+    "size_m": [
+      0.8,
+      1.2,
+      0.04
+    ],
+    "top_z_m": 0.75,
+    "center_x_m": 0.35,
+    "source": "pinned YAM constants.py, SHA2568c44cc2e96ac491255211f2e0b807dda4c1f7547db5a6c62b809764ef69ca2c2"
+  },
+  "source_geometry": [
+    {
+      "path": "input/first-party-seeds/drg80_stop/assets/geometry.json",
+      "sha256": "8f3aff94c62f8bb9944ba6d587af7bdbedd0eb3109c2571c9cf0fed19c0eb842",
+      "meaning": "Normative dimensions, compound pieces, masses, inertias, datums and relative layout. Not vendor CAD."
+    },
+    {
+      "path": "input/first-party-seeds/drg80_stop/fixture/fixture-proposal.json",
+      "sha256": "862ecd2dc5452e1b2cc133f18ace9e7aebe3b430ba79f41a63620927b01da216",
+      "meaning": "Normative dimensions, compound pieces, masses, inertias, datums and relative layout. Not vendor CAD."
+    }
+  ],
+  "lever": {
+    "pivot_fixture_local_m": [
+      -0.07,
+      -0.025,
+      0.07
+    ],
+    "axis": "local Y",
+    "neutral_handle_direction": "local +Z",
+    "cylinder_radius_m": 0.008,
+    "cylinder_length_m": 0.09,
+    "mass_kg": 0.06,
+    "grasp_from_pivot_m": 0.07,
+    "material": "aluminum/polymer bench handle",
+    "detents_deg": {
+      "neutral": [
+        -5,
+        5
+      ],
+      "close": [
+        -35,
+        -25
+      ],
+      "open": [
+        25,
+        35
+      ]
+    },
+    "finite_piston_force_cap_N": 10
+  },
+  "rack": {
+    "D_cradle_bounds_world_m": [
+      [
+        0.21,
+        0.09,
+        0.75
+      ],
+      [
+        0.27,
+        0.25,
+        0.84
+      ]
+    ],
+    "W_cradle_bounds_world_m": [
+      [
+        0.09,
+        -0.2,
+        0.75
+      ],
+      [
+        0.27,
+        -0.14,
+        0.84
+      ]
+    ],
+    "base_thickness_m": 0.012,
+    "material": "nylon",
+    "D_reset_tip_world_m": [
+      0.24,
+      0.11,
+      0.793
+    ],
+    "D_local_Z_world": [
+      0,
+      1,
+      0
+    ],
+    "D_support_top_z_m": {
+      "shaft": 0.79,
+      "grip_end": 0.781
+    },
+    "W_reset_nut_axis_world_m": [
+      0.24,
+      -0.17,
+      0.79
+    ],
+    "W_local_axes": "world XYZ",
+    "W_support_centers_xy_m": [
+      [
+        0.115,
+        -0.17
+      ],
+      [
+        0.235,
+        -0.17
+      ]
+    ],
+    "W_support_top_z_m": 0.788,
+    "support_cross_section_m": [
+      0.008,
+      0.026
+    ],
+    "grasp_segment_under_clearance_m": 0.015,
+    "cradle_base_boxes_m": {
+      "D": [
+        0.06,
+        0.16,
+        0.012
+      ],
+      "W": [
+        0.18,
+        0.06,
+        0.012
+      ]
+    },
+    "D_support_centers_xy_m": [
+      [
+        0.24,
+        0.15
+      ],
+      [
+        0.24,
+        0.23
+      ]
+    ],
+    "D_support_cross_section_m": [
+      0.008,
+      0.008
+    ]
+  },
+  "fixture_mount": {
+    "type": "native finite fixed joint; dynamic fixture, fixed bench",
+    "break_force_N": 150,
+    "break_torque_Nm": 15,
+    "failure_probe": "Ramp external world+X force0to200N linearly over1s at fixture-local(0,0,0.10)m, then hold up to2s or until native mount break plus datum translation>10mm. No pose/velocity writes.",
+    "probe_reference": "fixture_frame root reset T_F0 and local application point fixed before integration; external force is transformed from specified world+X; terminate on native broken mount and translation>10mm, or at3s with failure if the event did not occur."
+  },
+  "material_assumptions": {
+    "fixture": "anodized aluminum",
+    "jaws_screw_nuts_wrench": "steel",
+    "driver_handle": "polymer",
+    "rack": "nylon",
+    "steel_contact_static_dynamic_friction": [
+      0.45,
+      0.3
+    ],
+    "handle_contact_static_dynamic_friction": [
+      1.2,
+      1.0
+    ],
+    "restitution": 0,
+    "thread_coefficient_status": "must be disclosed/frozen in native implementation; no vendor calibration claim",
+    "bench": "rigid coated wood top, steel support, static collider; mu_static0.6/mu_dynamic0.5,restitution0",
+    "camera": "rigid anodized aluminum housing; actual stock camera collider dimensions from pinned YAM constants",
+    "mast": "rigid steel; standard fixed camera mast geometry from pinned YAM assets",
+    "fixture_frame_cover": "anodized aluminum; explicit per-piece material override of prototype Steel visual labels",
+    "N73_cover_bearing": "lubricated metal bearing interface; mu_static0.08/mu_dynamic0.05, a declared benchmark assumption, not vendor calibration",
+    "rack_density_kg_m3": 1150
+  },
+  "partial_score_meaning": "0.25requires a physically preloaded locked low-precision endpoint, not an unseated nut.",
+  "native_joint_parameters": {
+    "closed_total_angle_deg": 3,
+    "jaw_total_angle_rad_per_m": 300,
+    "piston_closed_m": 0,
+    "piston_upper_limit_m": 0.010297442586766544,
+    "right_hand_thread_lead_m_per_rev": 0.001,
+    "status": "Supersedes prototype joint-angle offsets/limits only; normative part shapes/masses/relative anchor locations remain in referenced manifests. Native implementation must validate both angle signs and actual stop contact."
+  },
+  "material_precedence": "THIS manifest is authoritative for material/contact assignments. Referenced first-party manifests are normative for geometry, masses, inertia, datums and part placement ONLY. Their generic Steel/Grip visual labels are CPU-prototype placeholders, explicitly superseded for frame/cover and other roles below; they are not physics material assignments.",
+  "thread_model": {
+    "kind": "compliant right-handed helical constitutive model; native implicit realization required",
+    "coordinates": "world/local common+Z up; counterclockwise positive unwrapped radians; z in metres. Frame-fixed axis. Constants zS0,thetaS0,zRel0,thetaRel0 are authored reset thread references, fixed throughout episode, not scoring targets.",
+    "lead_m_per_turn": 0.001,
+    "p_m_per_rad": 0.00015915494309189535,
+    "extensions": "eS=(zS-zS0)-p*(thetaS-thetaS0); eN=(zN-zS-zRel0)-p*(thetaN-thetaS-thetaRel0). Clockwise rotation advances downward. N73 is coupled RELATIVE TO S, not to an independent world guide.",
+    "elastic_energy": "U=0.5*KS*eS^2+0.5*KN*eN^2",
+    "axial_stiffness_N_per_m": {
+      "KS": 1000000,
+      "KN": 100000
+    },
+    "axial_damping_Ns_per_m": {
+      "DS": 4000,
+      "DN": 2500
+    },
+    "loads": "QS=KS*eS+DS*edotS; QN=KN*eN+DN*edotN. Frame thread applies FzS=-QS,tauS=+p*QS; nut thread applies FzN=-QN,FzS=+QN,tauN=+p*QN,tauS=-p*QN. All torques N*m, angular velocities rad/s. Equal/opposite reactions and power must be logged/verified.",
+    "thread_mean_radius_m": 0.0035,
+    "friction_coefficients": {
+      "frame_screw_static": 0.08,
+      "frame_screw_sliding": 0.064,
+      "nut_screw_static": 0.35,
+      "nut_screw_sliding": 0.28
+    },
+    "static_friction": "For each thread, at zero relative speed support only the required resisting torque within +/-mu_static*abs(Q)*r. At sliding use -mu_sliding*abs(Q)*r*sign(relative omega). Screw-frame torque opposes thetaSdot; nut/screw torque opposes thetaNdot-thetaSdot and acts equally/oppositely on N/S. Dissipative work cannot be negative. Native implicit friction/constraint solve is preferred.",
+    "regularized_solver_alternative": "A declared native implicit regularization tau=-mu_sliding*abs(Q)*r*tanh(relative_omega/0.001rad_per_s) is allowed; report the choice and actual creep, force and timestep data. Do not apply explicit high-gain20Hz spring forces or pose/velocity projection. All constitutive states are native or energy-consistent physical forces, never scorer flags.",
+    "forbidden_substitutes": "No extra axial guide friction, arbitrary lock flag, target-angle servo, contact overlap pad or artificial weld may supply the required N73/cover preload or hold the target. Guide constraint friction is zero except the explicit thread law. Bearing contact/friction remains native.",
+    "status": "All coefficients are frozen benchmark assumptions. No native implementation/pass claimed."
+  },
+  "camera_mast_geometry": {
+    "camera": "Use the exact pinned D435_BOX_POS and D435_BOX_ROT_XYZW, NOT the optical TOP_CAM_POS. D435_BOX_POS[i]=TOP_CAM_POS[i]-0.5*D435_SIZE_XYZ[0]*TOP_CAM_FORWARD[i], with TOP_CAM_FORWARD computed by the pinned quaternion function.",
+    "mast_box_size_m": [
+      0.02,
+      0.02,
+      1.1713394132500001
+    ],
+    "mast_box_center_world_m": [
+      -0.22883851775,
+      0,
+      0.5856697066250001
+    ],
+    "mast": "Enable the optional stock YAM CAMERA_MAST_SIZE/CAMERA_MAST_POS geometry from pinned constants.py; material is benchmark rigid steel, not real mount calibration.",
+    "bench_material": "coated rigid wood tabletop collider; background support is fixed infrastructure",
+    "camera_size_m": [
+      0.025,
+      0.09,
+      0.025
+    ],
+    "camera_box_center_world_m": [
+      -0.19883851775,
+      0,
+      1.18883941325
+    ],
+    "camera_box_orientation_xyzw": [
+      0,
+      0.3827,
+      0,
+      0.9239
+    ],
+    "optical_center_world_m": [
+      -0.19,
+      0,
+      1.18
+    ]
+  }
+}
