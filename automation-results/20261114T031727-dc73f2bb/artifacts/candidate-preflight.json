@@ -1,28 +1,29 @@
 {
-  "candidate_digest": "29a2dd2e1eb3cd7af97bd32ccdc3c884fc2afeab7deb8f05fd5d976cf6c5a0f7",
+  "candidate_digest": "8f72c3d9b02732d01d5125ed2cc9634acdc2c912a53bd023c02d523a21fa1916",
   "source_digest": "b76fc93c07dac3cc54b852364865af6a632a57094d6a4472a48288bc54b0f3ea",
   "review": {
     "verdict": "pass",
     "findings": [
-      "The prior failure is fully addressed: catalog dimensions are treated as reference dimensions rather than a bounding envelope, nut 74 is retained and its unspecified role disclosed, and evidence excerpts no longer reproduce PDF extraction artifacts.",
-      "Rendered manual page 28 verifies the two-nut installation, adjustment-screw insertion, locking with nut 73, and pneumatic functional test. Rendered page 40 confirms the articulated jaw/linkage topology while explicitly identifying the exploded drawing as illustrative.",
-      "The DRG 80 catalog supports the 20°–180° adjustable range, anodized-aluminum housing, steel jaws, 100 × 71.6 × 135.5 mm reference dimensions, and the separately drawn 183.35 mm extent. Raw PDF hashes match their provenance records.",
-      "The proposed full-scale, independently authored rigid fixture preserves the essential adjustable-stop and locking mechanism. The 90° target, tolerances, cold lever, counterholding choreography, hardware details, torque/friction law, and cycle count are clearly disclosed as benchmark assumptions rather than manufacturer specifications.",
-      "The sensor and spring-piston alternatives are grounded in the same manual and appropriately withheld due to overlap or missing internal force/geometry evidence. The selected candidate has sufficient factual support to attempt construction without claiming native physics or demo success.",
-      "Novelty remains explicitly deferred to the separate next-stage review, as required; no stale novelty finding is used as a factual blocker here."
+      "The previous failure is resolved: the candidate treats 100 × 71.6 × 135.5 mm as catalog reference dimensions, separately preserves the drawing’s 183.35 mm extent, retains nut 74, and discloses its unspecified function and placement as modeling assumptions.",
+      "Direct inspection of manual page 28 confirms the unpressurized closed starting condition, installation of nuts 73 and 74, adjustment through screw 70/71/72, locking using nut 73, and subsequent functional testing by actuation.",
+      "Direct inspection of manual page 40 and catalog pages 6–7 confirms the articulated two-jaw mechanism, central actuator/linkage form, 90° angle per jaw, materials, ratings, and dimensional claims. The drawing is correctly treated as illustrative/reference geometry rather than exact CAD.",
+      "The acquired PDFs match the SHA-256 values recorded in input/sources.json, and the quoted excerpts are accurate, clean excerpts from the cited pages.",
+      "The selected task preserves the essential setting-locking-retention operation while clearly disclosing the 90° target, tolerances, cold test lever, hardware sizing, torque/friction behavior, and counterholding choreography as benchmark assumptions rather than manufacturer specifications.",
+      "The full-scale independently authored rigid-geometry plan is sufficiently grounded to attempt a pinned-runtime build without claiming completed native physics, YAM demonstrations, or exact proprietary replication. Novelty remains a separate subsequent gate."
     ],
     "evidence_paths": [
       "artifacts/selected.json",
       "artifacts/candidates.json",
+      "input/request.json",
       "input/last-failure.json",
+      "input/repository-AGENTS.md",
+      "input/review-prompt.txt",
       "input/operator-source-notes.json",
       "input/sources.json",
       "input/sources/s-0b3ec636c6201fe9.raw",
       "input/sources/s-604022b1979c380c.raw",
       "input/pr-1892-accepted-reference.txt",
-      "input/pr-1893-accepted-reference.txt",
-      "input/request.json",
-      "input/review-prompt.txt"
+      "input/pr-1893-accepted-reference.txt"
     ]
   }
 }

@@ -2,16 +2,365 @@
   "run": "20261114T031727-dc73f2bb",
   "status": "blocked",
   "prompt": "사용자 요청 원문:\n좋아. 이제 인스턴스를 다시 켜고 첫 태스크를 만들어보자.\n필요한 CLI 인증부터 확인하고, 로봇 조립·데이터센터 정비 분야에서 산업 근거가 있고 기존 제출과 겹치지 않는 후보를 골라 제출 전 검토 단계까지 진행해줘.\n\n확정된 제작 조건:\n- Category: Impact on AI timelines. 로봇 조립 또는 데이터센터 정비 중 실제 산업에서 자동화할 의미가 있는 물리 조작 하나를 선택한다.\n- 제조사 설치·정비 매뉴얼, 공식 조립 절차, 공개 설계, 실제 작업 영상·보고서의 원문으로 작업과 장비 형상·치수·절차를 입증한다. 추측이나 가상 산업 용도를 만들어내지 않는다.\n- 여러 후보를 비교하고 목적·물리 기술·성공 조건의 신규성과 로봇의 어려운 조작 능력을 함께 검토하여 하나만 제작한다. 조작의 어려움은 극단적일 필요는 없지만 단순 물체 옮기기를 산업 이름만 바꾼 작업은 피한다.\n- 모든 분야의 기존 accepted/pending/open 제출 및 우리 팀 기존 제출, 지정된 기존 벤치마크와 비교한다. 기하·색상·배치·시작 자세·난도만 다른 것은 새 태스크가 아니다. 선정 시점 및 완성 후 다시 전수 비교한다. 불확실한 중복을 통과시키지 않는다.\n- 가능한 강체 PhysX 작업을 선택한다. 기존의 검증된 연성 에셋이 없다면 새 연성 솔버 연구는 하지 않는다. 실제 산업 장비의 형태와 중요한 물리 제약을 재현한다. 공개 에셋은 라이선스·출처·치수를 기록하고 적합하지 않으면 직접 제작한다.\n- objective와 환경·부품 물리를 먼저 완성·진단한 뒤 YAM 전체 데모·채점기를 연결한다. 물체 순간이동/상태 덮어쓰기로 성공을 만들지 않는다. 관련 부품 파손·금지 동작·실패·부분 점수와 성공 유지 시간을 수치로 평가한다.\n- 실제 simulator 측정·두 번의 full-score YAM 데모·실패/부분 점수 대조군·영상/원시 trace 및 깨끗한 경로 재현 검사를 수행한다. 미검증 수치와 성공을 만들어 보고하지 않는다.\n- 모든 제작·검증을 마친 후에만 Dream 최종 평가 episode 1회. 실패나 불명 결과도 자동 재평가하지 않는다. 누적 $20 ledger를 준수하고 인증이 없으면 제작을 보존한 뒤 평가 대기한다.\n- 결과는 이 run의 새로운 origin 브랜치에 보존한다. 원본 매뉴얼 전체/인증 정보는 공개하지 않는다. 50MB/file 또는 100MB checkpoint 초과는 먼저 보고한다.\n- 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.\n- 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.\n",
-  "at": "2026-11-16T10:12:13.768656+00:00",
-  "error": "no candidate passed the ideation gates; inspect selection-history.json",
+  "at": "2026-11-16T10:50:07.451117+00:00",
+  "error": "contract-critic: Recomputed terminal scores for the 14 required controls are 0, 0.25, 0.5, 0.75, 0.75, 0, 0.25, 0, 0.25, 0, 0, 0, 0, and 0.75. Controls 5 and 14 cannot reach their declared 1.0: CLEAR requires every robot rigid link in R to remain at least 30 mm from F, which includes the bench. The pinned YAM link set includes each arm's base, and both bases are placed at TABLE_HEIGHT on the tabletop, so their surface separation from the bench is not 30 mm. Restrict clearance to the grippers/moving arm links versus the task work area, consistent with selected.json.; The score can be gamed without demonstrating retained stop function. A released window excludes robot/tool contact only with S and N73, so the robot may hold or directly move the jaws; cycle qualification observes only jaw-angle crossings and never requires cold-lever/piston actuation. After C3, L is not revoked by a wrong final open angle and CLEAR does not require the jaws to remain released, settled, and within ±3 degrees. Require externally released stop endpoints, native lever/piston-linked cycles without direct robot/tool jaw driving, and the final angle tolerance throughout the one-second clearance dwell.; The fixture-displacement hard-failure control is not physically executable as specified: F explicitly contains an anchored fixture frame, cover, and bench, yet the control requires fixture translation over 10 mm. A static anchored body cannot produce that event through normal robot actions, and an after-initialization state write is forbidden. Specify a finite, physically breakable fixture mount and its datum, or replace this control with a physically realizable loss event without weakening damage handling.; Several score-critical terms remain ambiguous: “open settled endpoint,” “released settled endpoint,” “adjustment motion occurs,” and “endpoint range” lack complete numeric predicates. In particular, undefined adjustment motion can revoke L on arbitrary numerical jitter, while g73<=0.5 mm has no lower bound and therefore accepts substantial nut/seat penetration until the separate 2 mm damage threshold. Define stop-contact/release and settling observables, a motion threshold with units, the exact endpoint set used for range, and a tight signed seating interval.; selected.json says angle credit is revoked whenever locking prerequisites fail, but contract.json deliberately awards 0.25 for an unseated locking nut in the angle-only and wrong-seating controls. Resolve this contradiction explicitly while preserving meaningful partial credit.; Timing and freshness are otherwise internally consistent: 4800 actions at 20 Hz equal 240 seconds; 240 Hz uses 12 substeps/action and 480 Hz refinement uses 24; the 60-, 48-, and 240-sample windows equal 0.25, 0.20, and 1.00 seconds; action 4800 completes before current-score evaluation; no post-timeout progress or bonus exists. The restored runtime preflight and pinned sources support the 20 Hz configuration path and pre/post physics callbacks, while correctly reserving contact, force, joint-state, and refinement certification for later native probes.; The prior contact-manifold and energized-motion specification failures are repaired: contact force, penetration, and work are now point-wise with explicit pair aggregation/event reset rules, and energized axial motion uses fresh consecutive substep displacement. Industrial evidence also supports the unpressurized closed-position adjustment, nuts 73 and 74, locking with nut 73, and subsequent actuation test; the cold lever, counterholding law, target, and tolerances are properly disclosed as benchmark assumptions.",
   "mode": "production",
   "dream": null,
   "release": null,
   "review_path": "workspace/artifacts",
   "note": "local report; not a contest submission",
+  "selected": {
+    "id": "drg80-opening-stop-lock",
+    "title": "Set and lock a robot gripper opening stop, then verify retained motion",
+    "objective": "On an unpressurized, already-assembled representative SCHUNK DRG 80 bench fixture, adjust the opening-stop screw to a declared 90° total opening, lock it without changing the setting, withdraw both tools, and operate a cold test lever to verify retained opening over repeated cycles.",
+    "skills": [
+      "coaxial hex-driver seating",
+      "open-ended wrench seating on a thin jam nut",
+      "coupled screw adjustment and nut locking",
+      "bimanual counterholding against tightening reaction",
+      "tool regrasping and withdrawal",
+      "functional verification through articulated motion"
+    ],
+    "success_conditions": "Initial score is 0. Award 0.25 for a released opening within 6° of the declared 90° target; 0.5 when within 3° with nut 73 seated against the cover and nut 74 retained in its modeled installed position; 0.75 when both tools are removed and one close-open cycle returns within 3°; 1.0 after three cycles each return within 3°, stop drift is at most 2°, both nuts remain retained, and tools and robot grippers remain at least 30 mm clear for one second. Revoke angle and cycle credit whenever locking, retention, or clearance prerequisites fail. A missing screw or nut, a dropped or inaccessible tool, fixture displacement, non-finite state, or a configured maximum-opening setting outside the modeled 20°–180° adjustment range, or a violation of the fixture's actual mechanical limits, scores 0. Ordinary closing below 20° during functional cycles is permitted. Equivalent safe strategies earn the same outcome score; arm identity, order, path, action count, and impulse windows are not graded. The target, tolerances, cycle count, and clearance are explicit benchmark assumptions checkable by protractor, witness marks, nut-gap inspection, and video.",
+    "industrial_value": "SCHUNK specifies opening-angle adjustment, locking, and pneumatic functional testing for its DRG 44–80 industrial grippers, making this direct robot-end-effector setup work within Impact on AI timelines. Its tested ability differs from generic tightening and the accepted hose-clamp task: the robot must preserve an adjustable stop against locknut reaction and then demonstrate hands-off functional retention. It also differs from PR 1540 because two concentric tools act on a coupled screw-and-nut setting rather than stabilizing a sensor body during connector assembly, and from PR 2229 because no third-body feeler gauge or cam clamp establishes the target.",
+    "dexterity": "One gripper must keep a driver seated in the adjustment screw while the other seats and turns a wrench on nut 73. Tightening must physically tend to disturb an unrestrained screw, requiring coordinated countertorque, angular regulation, possible wrench regrasping, clean tool withdrawal, and subsequent operation of the articulated test fixture.",
+    "evidence": [
+      {
+        "source_id": "s-0b3ec636c6201fe9",
+        "locator": "SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 3, printed page 28",
+        "quote_sha256": "ddfaa95db0b248715bdd5689773bae1381ddb9fcbac323311485fef914f7c4af"
+      },
+      {
+        "source_id": "s-0b3ec636c6201fe9",
+        "locator": "SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 4, printed page 28",
+        "quote_sha256": "bce5082c3575ebe98d6deeb6988ffa928ee9e937fe18000f45effcccfcee3c5b"
+      },
+      {
+        "source_id": "s-0b3ec636c6201fe9",
+        "locator": "SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 6, printed page 28",
+        "quote_sha256": "a67751d180a0ac0ac773716337f87b81dd5d5eea6509558933d0875954766bc3"
+      },
+      {
+        "source_id": "s-0b3ec636c6201fe9",
+        "locator": "SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 7, printed page 28",
+        "quote_sha256": "bfbe1345287d1ab7656a4757b8b1698629a2f57ed37cd53deb4cefec31c7e4a4"
+      },
+      {
+        "source_id": "s-604022b1979c380c",
+        "locator": "SCHUNK DRG 80 product data sheet, page 2, Advantages – Your benefits",
+        "quote_sha256": "8a65163526bb1ac1dd5909a4e724ca0b7594151f4950537237f49fd94cb6196f"
+      },
+      {
+        "source_id": "s-604022b1979c380c",
+        "locator": "SCHUNK DRG 80 product data sheet, page 4, General notes about the series",
+        "quote_sha256": "78f2448bdfc688a3cb1c4f1a76b22323315fc68d01c07f0dbb8607df3f6542fb"
+      },
+      {
+        "source_id": "s-604022b1979c380c",
+        "locator": "SCHUNK DRG 80 product data sheet, page 4, General notes about the series",
+        "quote_sha256": "289420e37b9a5beb18ef165bba7f5de013f603cf7f0a55ddb4e9a0c096cdd661"
+      },
+      {
+        "source_id": "s-604022b1979c380c",
+        "locator": "SCHUNK DRG 80 product data sheet, page 6, Technical data",
+        "quote_sha256": "42aefa762721f795f4df3520e379e507f1b18724cd3dc194af71731e0d9a7799"
+      }
+    ],
+    "asset_plan": "Build independently authored, full-scale representative rigid geometry, not a redistributed SCHUNK CAD model. Preserve the catalog drawing’s dimensional semantics: 100 × 71.6 × 135.5 mm are catalog X/Y/Z reference dimensions, not a claimed bounding envelope, and the page-7 drawing separately shows a 183.35 mm extent to point P. Represent the anodized-aluminum housing, steel angular jaws, native revolute jaw joints, common centric coupling, accessible adjustment screw, nut 73 as the locking nut, and retained nut 74 as the second manufacturer-specified nut; its precise spacing and role beyond installation are disclosed fixture assumptions because the manual does not explain them. Provide real hex and wrench contact geometry and a native or conservative task-local torque/friction mechanism in which tightening disturbs an unrestrained screw. The cold lever replaces pneumatic actuation only for bench verification. Target angle, hardware dimensions absent from the manual, friction, preload, and tolerances remain declared assumptions. Before demo development, validate reset, tool seating, restrained-versus-unrestrained causality, joint traces, loss cases, release clearance, and timestep sensitivity in the pinned Isaac Sim 6.1/YAM runtime.",
+    "risk": "Closest ability-level neighbors include PR 1540, PR 1799, PR 1865, PR 2018, PR 2167, and PR 2229. Novelty depends on retaining genuine concentric two-tool screw/nut countertorque and functional-cycle verification; an implementation with zero driver reaction or a scripted phase flag would collapse into existing stabilization or adjustment tasks. No current native gripper trial exists, so implementation feasibility and physics validation remain future gates rather than claimed evidence.",
+    "feasibility_status": "ready",
+    "missing_evidence": []
+  },
+  "contract": {
+    "slug": "drg80-opening-stop-lock-dc73f2bb",
+    "objective": "On an unpressurized, already-assembled representative SCHUNK DRG 80 bench fixture, set the maximum total jaw opening to 90 degrees, lock the adjustment with nut 73 without disturbing the setting, retain nut 74, withdraw both tools, and use the cold test lever for three close-open cycles that demonstrate retained adjustment.",
+    "instruction": "Set and lock the gripper's maximum opening at 90 degrees. Remove the tools, operate the test lever through three complete close-open cycles, and leave the gripper open with both tools racked and the work area clear.",
+    "industrial_mapping": "SCHUNK DRG Assembly and Operation Manual 389041 v5.00, section 5.4.1, printed page 28, directs opening-angle adjustment with the compressed-air supply off and the gripper closed, installation of nuts 73 and 74, locking using nut 73, and subsequent functional testing by actuation. The SCHUNK DRG 80 product data sheet specifies an adjustable 20–180 degree maximum opening, an anodized-aluminum housing, steel base jaws, and 100 × 71.6 × 135.5 mm reference dimensions; its drawing separately labels 183.35 mm to point P. This task tests robot-end-effector setup through coaxial driver engagement, thin-wrench seating, coupled screw and jam-nut counterholding, preservation of an adjustable motion stop, tool withdrawal, and hands-off functional verification. The 90 degree target, simultaneous counterholding mechanism, cold test lever, tolerances, and torque/friction model are disclosed benchmark assumptions rather than manufacturer-prescribed calibration or choreography.",
+    "run_steps": 4800,
+    "timing": {
+      "control_hz": 20,
+      "physics_hz": 240,
+      "refinement_physics_hz": 480,
+      "episode_seconds": 240
+    },
+    "physics_checks": [
+      {
+        "name": "reset_fixture_translation_stability_max",
+        "operator": "<=",
+        "threshold": 1,
+        "unit": "mm maximum over final 1 s of 2 s settle"
+      },
+      {
+        "name": "reset_fixture_tilt_stability_max",
+        "operator": "<=",
+        "threshold": 0.5,
+        "unit": "degree maximum over final 1 s of 2 s settle"
+      },
+      {
+        "name": "reset_dynamic_body_linear_speed_max",
+        "operator": "<=",
+        "threshold": 0.02,
+        "unit": "m/s maximum over immutable B_dyn during final 0.5 s"
+      },
+      {
+        "name": "reset_dynamic_body_angular_speed_max",
+        "operator": "<=",
+        "threshold": 0.1,
+        "unit": "rad/s maximum over immutable B_dyn during final 0.5 s"
+      },
+      {
+        "name": "initial_score_exact",
+        "operator": "==",
+        "threshold": 0,
+        "unit": "score after untouched settle"
+      },
+      {
+        "name": "initial_success_flag_exact",
+        "operator": "==",
+        "threshold": 0,
+        "unit": "boolean after untouched settle"
+      },
+      {
+        "name": "initial_target_error_min",
+        "operator": ">=",
+        "threshold": 6.01,
+        "unit": "degree absolute settled maximum-opening error"
+      },
+      {
+        "name": "revolute_anchor_separation_max",
+        "operator": "<=",
+        "threshold": 1,
+        "unit": "mm maximum over both jaw joints during three cycles"
+      },
+      {
+        "name": "centric_jaw_coupling_error_max",
+        "operator": "<=",
+        "threshold": 1,
+        "unit": "degree maximum left-right magnitude mismatch during three cycles"
+      },
+      {
+        "name": "maximum_opening_setting_lower_bound",
+        "operator": ">=",
+        "threshold": 20,
+        "unit": "degree configured maximum total opening"
+      },
+      {
+        "name": "maximum_opening_setting_upper_bound",
+        "operator": "<=",
+        "threshold": 180,
+        "unit": "degree configured maximum total opening"
+      },
+      {
+        "name": "driver_socket_coaxial_error_max",
+        "operator": "<=",
+        "threshold": 1.5,
+        "unit": "mm radial axis offset while transmitting adjustment torque"
+      },
+      {
+        "name": "wrench_nut_face_seating_error_max",
+        "operator": "<=",
+        "threshold": 1,
+        "unit": "mm maximum active wrench-face to corresponding nut-flat separation while transmitting locking torque"
+      },
+      {
+        "name": "unrestrained_locking_setting_drift_min",
+        "operator": ">=",
+        "threshold": 6.01,
+        "unit": "degree absolute opening-setting change in the zero-counterhold control"
+      },
+      {
+        "name": "restrained_locking_setting_drift_max",
+        "operator": "<=",
+        "threshold": 2,
+        "unit": "degree absolute opening-setting change in the restrained control"
+      },
+      {
+        "name": "screw_reaction_to_nut_torque_ratio_min",
+        "operator": ">=",
+        "threshold": 0.7,
+        "unit": "dimensionless integrated absolute torque ratio"
+      },
+      {
+        "name": "locked_three_cycle_stop_drift_max",
+        "operator": "<=",
+        "threshold": 2,
+        "unit": "degree range of three settled endpoints"
+      },
+      {
+        "name": "nonessential_contact_penetration_max",
+        "operator": "<=",
+        "threshold": 2,
+        "unit": "mm maximum point-wise positive penetration at 240 Hz"
+      },
+      {
+        "name": "intended_contact_penetration_max",
+        "operator": "<=",
+        "threshold": 2,
+        "unit": "mm maximum point-wise positive penetration at 240 Hz"
+      },
+      {
+        "name": "nonessential_pair_normal_force_peak_max",
+        "operator": "<=",
+        "threshold": 150,
+        "unit": "N maximum manifold-summed substep-average normal force at 240 Hz"
+      },
+      {
+        "name": "intended_pair_normal_force_peak_max",
+        "operator": "<=",
+        "threshold": 250,
+        "unit": "N maximum manifold-summed substep-average normal force at 240 Hz"
+      },
+      {
+        "name": "nonessential_pair_contact_event_work_max",
+        "operator": "<=",
+        "threshold": 5,
+        "unit": "J accumulated positive closing work per pair event"
+      },
+      {
+        "name": "intended_pair_contact_event_work_max",
+        "operator": "<=",
+        "threshold": 8,
+        "unit": "J accumulated positive closing work per pair event"
+      },
+      {
+        "name": "camera_finite_rgb_fraction_min",
+        "operator": ">=",
+        "threshold": 0.999,
+        "unit": "fraction of finite RGB channels per sampled frame"
+      },
+      {
+        "name": "camera_fixture_pixel_fraction_min",
+        "operator": ">=",
+        "threshold": 0.01,
+        "unit": "fraction of 224x224 pixels carrying immutable fixture segmentation IDs"
+      },
+      {
+        "name": "refinement_final_angle_difference_max",
+        "operator": "<=",
+        "threshold": 1,
+        "unit": "degree absolute 240-versus-480 Hz difference"
+      },
+      {
+        "name": "refinement_peak_pair_force_relative_difference_max",
+        "operator": "<=",
+        "threshold": 0.2,
+        "unit": "fraction using max(240 Hz peak,1 N) denominator"
+      }
+    ],
+    "damage_rules": [
+      "At reset define immutable disjoint body sets: F={anchored fixture frame, cover and bench}; M={left jaw, right jaw, piston/linkage, adjusting screw S, locking nut N73, retained nut N74 and cold lever}; T={hex driver D and open wrench W}; R={every robot rigid link and finger}; Q={tool-rack base and cradle bodies}; C={camera and mast}. Define B_dyn as every body in M∪T∪R whose native rigid-body or articulation-link state is dynamic. Anchored F, Q and C never contribute to reset dynamic-speed maxima. These memberships are fixed until reset.",
+      "Intended unordered contact pairs I are exactly D/socket faces of S, W/designated flats of N73, robot fingers/designated tool handles, robot fingers/cold-lever handle, each jaw/its authored stop, authored internal linkage or guide mates, and D or W/their designated rack cradles. Every other unordered pair involving F, M, T, R, Q or C is nonessential N. Pair classification is fixed until reset; changing manifold point count never changes classification.",
+      "After every native physics integration and contact-resolution substep k, the POST_PHYSICS_STEP callback must refresh joint coordinates, body poses and velocities, actuator generalized force, and every reported point c in each pair manifold P_ab,k before any latch, cycle, dwell or score update. For point c, n_c,k is the unit normal directed from canonical lower-ID body a to higher-ID body b, J_c,k is the resolved impulse vector in N·s applied to b, s_c,k is signed separation in metres with positive meaning gap and negative meaning penetration, and u_c,k=(v_b,c,k−v_a,c,k)·n_c,k in m/s uses point velocities including angular motion.",
+      "For every manifold point define compressive impulse j_c,k=max(0,J_c,k·n_c,k) in N·s, positive penetration p_c,k=max(0,−s_c,k) in metres, and positive closing-work increment e_c,k=(j_c,k/dt_phys)·max(0,−u_c,k)·dt_phys in joules. For pair ab at substep k define j_ab,k=Σ over current P_ab,k of j_c,k, f_ab,k=j_ab,k/dt_phys in newtons, e_ab,k=Σ e_c,k, and p_ab,k=max over current P_ab,k of p_c,k, with all four equal to zero for an empty manifold. Force limits apply to f_ab,k, penetration limits to p_ab,k, and work accumulates e_ab,k. Points may be added, removed or reordered without identity tracking; only the immutable body pair owns event state, preventing manifold splitting from evading limits.",
+      "For each immutable pair, event work E_ab starts at zero on reset. A pair contact event is a maximal substep sequence with j_ab,k>0, permitting one intervening zero-impulse substep. While active, update E_ab←E_ab+e_ab,k, including zero for the permitted gap. After two consecutive substeps with j_ab,k=0, reset E_ab and the pair event state before processing any later contact. Episode hard-failure latches never reset before environment reset.",
+      "Hard failure H starts false and permanently latches on any non-finite required body, contact or joint state; broken or detached required joint; S, N73 or N74 leaving its guide or retainer by more than 3 mm; configured maximum opening outside 20–180 degrees; jaw travel more than 1 degree beyond authored mechanical limits; fixture datum translation over 10 mm or tilt over 5 degrees; or any tool-drop, tool-loss, energized-adjustment, retention, penetration, force or work violation. H immediately makes current and terminal score zero. Physics remains active: the scorer must not restore, clamp, delete or collision-disable the damaged state.",
+      "The energized-adjustment hazard is independent of tool identity and contact. Let Fact,k be absolute piston-joint generalized force in newtons; qS,k and q73,k be fresh unwrapped rotations in radians; and zS,k be fresh screw axial position in millimetres along its authored guide axis. If Fact,k>1 N and any of |qS,k−qS,k−1|/dt_phys>0.01 rad/s, |q73,k−q73,k−1|/dt_phys>0.01 rad/s, or |zS,k−zS,k−1|/dt_phys>0.01 mm/s, H latches. The force and motion thresholds are conservative benchmark assumptions. The first post-reset sample initializes previous values and cannot alone trigger this predicate.",
+      "For N pairs, H latches if p_ab,k>2 mm, f_ab,k>150 N at any physics substep, or E_ab>5 J in one pair event. For I pairs the respective limits are 2 mm, 250 N and 8 J. These conservative simulation limits are benchmark assumptions requiring independent 480 Hz refinement. Contacts, excessive forces and physical breakage remain possible and are failed by observation rather than prevented.",
+      "A tool drop occurs when D or W is neither held by simultaneous opposing robot-finger contacts nor wholly inside its designated rack cradle, its centroid falls at least 50 mm below the most recent centroid height at which it was supported by a gripper or cradle, and it subsequently reports contact impulse with F, M, Q or C. A tool is lost immediately if its centroid is more than 50 mm below the tabletop plane, outside the tabletop footprint expanded horizontally by 50 mm, or inside an enclosed fixture region while the complete designated grasp handle lacks a collision-free straight extraction cylinder 35 mm in diameter to outside that region. Either predicate latches H. A tool wholly within its designated rack cradle is supported and is not dropped.",
+      "N74 retention requires center displacement from its installed guide pose at most 2 mm and axial guide engagement at least 3 mm. N73 retention requires axial guide engagement at least 3 mm. Guide engagement is the axial overlap length between the authored nut-bore interval and guide-cylinder interval projected on their common guide axis. Rotation about that axis alone does not violate retention. Loss of either nut latches H.",
+      "No rule disables essential collisions, writes an object pose or velocity after initialization, welds a grasp, teleports a task object, grades arm identity, prescribes action order, or uses an arbitrary action or impulse window. Scripted experts may read poses, joint states, contacts and latch flags to plan normal guarded 14D joint actions but may not edit simulation state."
+    ],
+    "assets": [
+      "Independently authored full-scale rigid compound representative DRG 80 fixture with anodized-aluminum frame and cover, steel angular jaws, piston/linkage, and native revolute/prismatic joints",
+      "Native guided adjustment screw S, thin locking nut N73, and separately retained nut N74 with explicit collision geometry",
+      "Hex driver D with socket-engaging tip and graspable handle",
+      "Open-ended wrench W sized for N73 with physical jaw-face contact geometry",
+      "Cold articulated test lever and finite-force actuator linkage; no pneumatic supply is represented",
+      "Rigid workbench, marked three-dimensional tool rack, camera mast and colliders, and standard bimanual YAM embodiment",
+      "Task-local independently authored source geometry and materials; manufacturer PDFs and proprietary CAD are evidence only and are not redistributed"
+    ],
+    "approximations": [
+      "The 90 degree target, ±6 and ±3 degree bands, 2 degree drift allowance, three-cycle test, 1 second clearance dwell, 30 mm clearance, hardware dimensions absent from the sources, 1.0 mm/revolution thread lead, torque, friction, force/work limits, motion thresholds and all damage thresholds are explicit benchmark assumptions rather than manufacturer calibration or safety ratings.",
+      "The manufacturer’s 20–180 degree value is the adjustable maximum total opening. Ordinary functional cycles may close below 20 degrees and are not failures.",
+      "Catalog values 100 × 71.6 × 135.5 mm are reference dimensions rather than a complete moving envelope; the separately labeled 183.35 mm extent to point P is preserved in the authored layout.",
+      "Nut 74 is present and retained, but its precise spacing and function beyond manufacturer-specified installation are modeling assumptions because the cited procedure does not explain them.",
+      "A cold finite-force lever substitutes for compressed-air functional testing. It must move the actual piston/jaw mechanism and encounter the physical stop; scorer flags or goal-driven motion cannot produce a cycle.",
+      "The assumed right-handed screw uses a 1.0 mm/revolution helical coupling. N73 tightening must transmit reaction to S. The zero-counterhold control is deliberately continued until measured setting drift exceeds 6 degrees, while the physically restrained control must stay within 2 degrees. This torque law is benchmark physics, not a claimed manufacturer procedure.",
+      "For the torque-ratio check, integrate |tauS| and |tau73| over the maximal contiguous interval in which N73 is tightening, W contacts N73 and S has no driver or robot contact. The ratio is ∫|tauS|dt/∫|tau73|dt. The test is invalid rather than passed if the denominator is below 0.05 N·m·s. Wrench seating error is the maximum distance from each active wrench jaw face to its corresponding N73 flat during that interval.",
+      "The trusted evaluator source independently sets control_hz=20. At pinned YAM commit 0059d02a1a91bc6834c1d0846022891df0c78730, scene constants set PHYSICS_DT=1/240 s and env_cfg_callback separately computes decimation from the supplied control rate; for 20 Hz this is 12 and step_dt must be 0.05 s. Native startup must assert control_hz=20, sim.dt=1/240 s, decimation=12, render_interval=12 and step_dt=0.05 s. Control timing is not inferred from observed substep count.",
+      "Refinement uses task-local sim.dt=1/480 s, decimation=24 and render_interval=24 while independently retaining the trusted 20 Hz control rate, identical initial state, commands, solver settings, materials and scoring definitions. It is a new native run, not trace resampling.",
+      "The restored input/runtime-api-preflight.json hash-verifies the pinned PhysxManager source and confirms PRE_PHYSICS_STEP and POST_PHYSICS_STEP subscriptions receive dt. It is source inspection only. Certification remains blocked until native probes verify callback order, exactly 12 or 24 fresh post-step samples per control action, reset subscription cleanup, contact-manifold point impulses and normals, point velocities, unwrapped joint coordinates, actuator generalized force/torque freshness, and units/signs.",
+      "Reset stability metrics use maxima over their stated fresh post-settle windows. Camera checks use the minimum across ten consecutive reset frames and ten final frames. Fixture pixel fraction is the number of pixels carrying immutable fixture segmentation IDs divided by 224². A missing segmentation buffer, malformed frame or zero fixture pixels fails rather than being ignored.",
+      "Refinement force difference is |P480−P240|/max(P240,1 N), where each P is the maximum manifold-summed pair force f_ab,k over the identical immutable pair set and corresponding action interval. Final-angle difference uses the final settled physical jaw angle. Contact events, work accumulators, previous axial/rotation samples, dwell counters, extrema, certificates and latches reset independently for each run.",
+      "No native component pass, YAM demonstration or successful episode is claimed by this contract. All physics observables and rates require construction-stage native validation before demo development."
+    ],
+    "scoring_spec": "After each physics substep k, and only after the fresh POST_PHYSICS_STEP sampling and damage update defined above, let alpha_k be the total physical angle in degrees between the two jaw reference axes; thetaS,k and theta73,k be fresh unwrapped rotations; g73,k be the minimum signed axial gap in millimetres between N73’s locking face and the cover seat, positive for separation; and p74,k be N74 center displacement from its installed guide pose. For disjoint body sets A and B, clear(A,B) is the minimum signed surface separation over their collision shapes, positive when disjoint. The target alpha*=90 degrees. The adjustment work volume V is the closed cylinder coaxial with S, radius 45 mm, from 10 mm below the cover seat to 35 mm beyond the reset screw tip. A tool is outside V only when every point of every collision shape of that tool is outside V. A released measurement window is the latest 60 consecutive fresh 240 Hz post-physics samples, exactly 0.25 s, during which R∪T has no contact point with S∪N73. stable6 is true only at an open settled endpoint when |alpha−90|<=6 degrees and |dalpha/dt|<=2 degrees/s at every sample of that released window. A fresh lock certificate L is created only at an open settled endpoint when |alpha−90|<=3 degrees, g73<=0.5 mm, both nut-retention predicates hold, |thetaS,end−thetaS,start|<=1 degree across the released window, and stable6 is true. L records alphaL, thetaS_at_L and the certificate substep, allowing the jaws to close while maximum opening is temporarily unobservable. At every later substep L is revoked before cycle or score updates if H is true, either retention predicate fails, g73>0.5 mm, |thetaS−thetaS_at_L|>1 degree, R∪T contacts S∪N73, or adjustment motion occurs. Closure alone does not revoke L. Revocation clears all cycle records and clearance dwell. A cycle begins only with valid L when alpha crosses downward through 10 degrees. It completes only if the same uninterrupted L later crosses upward through 80 degrees and reaches a released settled endpoint lasting 48 consecutive fresh samples, exactly 0.20 s; ai is the angle at the last sample and L is then replaced by a newly recomputed certificate. Each cycle is the maximal interval between those crossings. Reversals, oscillations and repeated threshold crossings inside one interval cannot add cycles. Cycle records also clear on endpoint range over 2 degrees. C1 means at least one recorded cycle with |a1−90|<=3 degrees. C3 means three distinct recorded cycles, every |ai−90|<=3 degrees, and max(ai)−min(ai)<=2 degrees. Define fixture_work={cover,left jaw,right jaw,S,N73,N74,cold lever}. CLEAR is true only after C3 while D and W are wholly inside their respective rack cradles, clear(T,fixture_work)>=30 mm, clear(R,F∪M∪T∪Q)>=30 mm, both robot grippers are open, and all these predicates hold for 240 consecutive fresh 240 Hz samples, exactly 1.00 s. Eligibility is E25=stable6; E50=fresh valid L; E75=L∧C1∧(D outside V)∧(W outside V); E100=L∧C3∧CLEAR. After the final physics substep of every 20 Hz action, score=0 if H, otherwise max({0,0.25·1[E25],0.50·1[E50],0.75·1[E75],1.00·1[E100]}). The reported score is current, never a historical maximum. Reset clears H, pair-event state and work, previous motion samples, dwell counters, extrema, L and cycle records before the untouched settled state is sampled; that state must score exactly 0. Action 4800 executes all 12 native physics substeps, then its current score is evaluated once and returned as terminal score. Termination freezes all counters: no post-timeout physics, dwell advancement, certificate creation or score recovery occurs. Early termination uses the same current-score rule. Arm identity, safe action order, path, action count below the limit and physically valid alternative tool strategies do not enter the formula.",
+    "required_controls": [
+      {
+        "name": "control_untouched_initial_noop",
+        "expected_score": 0,
+        "reason": "The untouched settled maximum opening remains more than 6 degrees from 90 degrees with no inherited dwell, certificate or cycle history."
+      },
+      {
+        "name": "control_angle_only_released_within_six",
+        "expected_score": 0.25,
+        "reason": "The released opening is within 6 degrees, but N73 remains unseated so no lock certificate exists."
+      },
+      {
+        "name": "control_locked_within_three_no_cycle",
+        "expected_score": 0.5,
+        "reason": "A fresh released lock certificate exists within 3 degrees, but no physical cycle has completed."
+      },
+      {
+        "name": "control_locked_one_cycle_tools_withdrawn",
+        "expected_score": 0.75,
+        "reason": "One retained cycle and both tools outside the adjustment volume qualify, but three cycles and final clearance dwell are absent."
+      },
+      {
+        "name": "control_full_three_cycle_clear_dwell",
+        "expected_score": 1,
+        "reason": "The locked setting survives three valid cycles and the racked tools and open robot grippers remain clear for one fresh second."
+      },
+      {
+        "name": "control_wrong_angle_locked",
+        "expected_score": 0,
+        "reason": "A safely locked 105 degree setting lies outside both grading bands."
+      },
+      {
+        "name": "control_wrong_nut_seating",
+        "expected_score": 0.25,
+        "reason": "A released angle within 6 degrees earns angle credit, but a 2 mm N73 gap prevents certificate creation."
+      },
+      {
+        "name": "control_unrestrained_locking_reaction",
+        "expected_score": 0,
+        "reason": "Starting from 90 degrees, zero-counterhold tightening continues until measured absolute setting drift is at least 6.01 degrees, leaving the released terminal angle outside the inclusive 6 degree band without invoking damage."
+      },
+      {
+        "name": "control_postcycle_retention_drift",
+        "expected_score": 0.25,
+        "reason": "A controlled 4 degree screw drift revokes the lock certificate and clears cycles while a newly released endpoint remains within the 6 degree band."
+      },
+      {
+        "name": "control_nut74_removed",
+        "expected_score": 0,
+        "reason": "N74 retention loss latches hard failure regardless of angle or prior progress."
+      },
+      {
+        "name": "control_tool_drop_to_table",
+        "expected_score": 0,
+        "reason": "A qualifying unsupported 50 mm fall followed by impact latches deterministic tool-drop failure."
+      },
+      {
+        "name": "control_fixture_displacement",
+        "expected_score": 0,
+        "reason": "Fixture translation over 10 mm latches hard failure and prevents scoring by moving the workpiece."
+      },
+      {
+        "name": "control_energized_adjustment",
+        "expected_score": 0,
+        "reason": "Measured S or N73 motion above its explicit rate threshold while actuator force exceeds 1 N latches failure regardless of manipulating body or contact state."
+      },
+      {
+        "name": "control_refinement_full_outcome",
+        "expected_score": 1,
+        "reason": "The independently executed safe full trajectory at 480 Hz must retain final score 1 and satisfy the declared angle and pair-force convergence checks."
+      }
+    ]
+  },
   "novelty": {
     "catalog_digest": "043d6b72dffef5245d51a5332312286a410b8e7b2d8bfe31e5d8d612220eb62a",
-    "candidate_digest": "29a2dd2e1eb3cd7af97bd32ccdc3c884fc2afeab7deb8f05fd5d976cf6c5a0f7",
+    "candidate_digest": "8f72c3d9b02732d01d5125ed2cc9634acdc2c912a53bd023c02d523a21fa1916",
     "catalog_total": 2397,
     "complete": true,
     "required_total": 687,
@@ -33973,7 +34322,21 @@
         }
       }
     ],
-    "at": "2026-11-16T10:06:29.208302+00:00"
+    "at": "2026-11-16T10:06:29.208302+00:00",
+    "comparison_candidate_digest": "29a2dd2e1eb3cd7af97bd32ccdc3c884fc2afeab7deb8f05fd5d976cf6c5a0f7",
+    "source_correction": {
+      "at": "2026-11-16T10:19:24.075554+00:00",
+      "original_candidate_digest": "29a2dd2e1eb3cd7af97bd32ccdc3c884fc2afeab7deb8f05fd5d976cf6c5a0f7",
+      "corrected_candidate_digest": "8f72c3d9b02732d01d5125ed2cc9634acdc2c912a53bd023c02d523a21fa1916",
+      "original_clause": "motion outside the modeled 20°–180° range scores 0.",
+      "corrected_clause": "a configured maximum-opening setting outside the modeled 20°–180° adjustment range, or a violation of the fixture's actual mechanical limits, scores 0. Ordinary closing below 20° during functional cycles is permitted.",
+      "reason": "SCHUNK20-180 refers to adjustable MAXIMUM opening, not normal closing motion.",
+      "baseline": "input/opening-range-correction-baseline",
+      "cache_policy": "Original comparison caches remain unchanged and retain their original context.",
+      "decision": "independently revalidated",
+      "review_path": "artifacts/novelty-critic-corrected.json",
+      "review_digest": "1300949c0ef31d95dd07aba0a53887ee93ca58296022a25a9e2942d6c647e5c6"
+    }
   },
   "selection_history": {
     "rejected": [
@@ -34003,69 +34366,20 @@
         ]
       }
     ],
-    "selected": null
-  },
-  "last_candidate": {
-    "id": "drg80-opening-stop-lock",
-    "title": "Set and lock a robot gripper opening stop, then verify retained motion",
-    "objective": "On an unpressurized, already-assembled representative SCHUNK DRG 80 bench fixture, adjust the opening-stop screw to a declared 90° total opening, lock it without changing the setting, withdraw both tools, and operate a cold test lever to verify retained opening over repeated cycles.",
-    "skills": [
-      "coaxial hex-driver seating",
-      "open-ended wrench seating on a thin jam nut",
-      "coupled screw adjustment and nut locking",
-      "bimanual counterholding against tightening reaction",
-      "tool regrasping and withdrawal",
-      "functional verification through articulated motion"
-    ],
-    "success_conditions": "Initial score is 0. Award 0.25 for a released opening within 6° of the declared 90° target; 0.5 when within 3° with nut 73 seated against the cover and nut 74 retained in its modeled installed position; 0.75 when both tools are removed and one close-open cycle returns within 3°; 1.0 after three cycles each return within 3°, stop drift is at most 2°, both nuts remain retained, and tools and robot grippers remain at least 30 mm clear for one second. Revoke angle and cycle credit whenever locking, retention, or clearance prerequisites fail. A missing screw or nut, a dropped or inaccessible tool, fixture displacement, non-finite state, or motion outside the modeled 20°–180° range scores 0. Equivalent safe strategies earn the same outcome score; arm identity, order, path, action count, and impulse windows are not graded. The target, tolerances, cycle count, and clearance are explicit benchmark assumptions checkable by protractor, witness marks, nut-gap inspection, and video.",
-    "industrial_value": "SCHUNK specifies opening-angle adjustment, locking, and pneumatic functional testing for its DRG 44–80 industrial grippers, making this direct robot-end-effector setup work within Impact on AI timelines. Its tested ability differs from generic tightening and the accepted hose-clamp task: the robot must preserve an adjustable stop against locknut reaction and then demonstrate hands-off functional retention. It also differs from PR 1540 because two concentric tools act on a coupled screw-and-nut setting rather than stabilizing a sensor body during connector assembly, and from PR 2229 because no third-body feeler gauge or cam clamp establishes the target.",
-    "dexterity": "One gripper must keep a driver seated in the adjustment screw while the other seats and turns a wrench on nut 73. Tightening must physically tend to disturb an unrestrained screw, requiring coordinated countertorque, angular regulation, possible wrench regrasping, clean tool withdrawal, and subsequent operation of the articulated test fixture.",
-    "evidence": [
-      {
-        "source_id": "s-0b3ec636c6201fe9",
-        "locator": "SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 3, printed page 28",
-        "quote_sha256": "ddfaa95db0b248715bdd5689773bae1381ddb9fcbac323311485fef914f7c4af"
-      },
-      {
-        "source_id": "s-0b3ec636c6201fe9",
-        "locator": "SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 4, printed page 28",
-        "quote_sha256": "bce5082c3575ebe98d6deeb6988ffa928ee9e937fe18000f45effcccfcee3c5b"
-      },
-      {
-        "source_id": "s-0b3ec636c6201fe9",
-        "locator": "SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 6, printed page 28",
-        "quote_sha256": "a67751d180a0ac0ac773716337f87b81dd5d5eea6509558933d0875954766bc3"
-      },
-      {
-        "source_id": "s-0b3ec636c6201fe9",
-        "locator": "SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 7, printed page 28",
-        "quote_sha256": "bfbe1345287d1ab7656a4757b8b1698629a2f57ed37cd53deb4cefec31c7e4a4"
-      },
-      {
-        "source_id": "s-604022b1979c380c",
-        "locator": "SCHUNK DRG 80 product data sheet, page 2, Advantages – Your benefits",
-        "quote_sha256": "8a65163526bb1ac1dd5909a4e724ca0b7594151f4950537237f49fd94cb6196f"
-      },
-      {
-        "source_id": "s-604022b1979c380c",
-        "locator": "SCHUNK DRG 80 product data sheet, page 4, General notes about the series",
-        "quote_sha256": "78f2448bdfc688a3cb1c4f1a76b22323315fc68d01c07f0dbb8607df3f6542fb"
-      },
-      {
-        "source_id": "s-604022b1979c380c",
-        "locator": "SCHUNK DRG 80 product data sheet, page 4, General notes about the series",
-        "quote_sha256": "289420e37b9a5beb18ef165bba7f5de013f603cf7f0a55ddb4e9a0c096cdd661"
-      },
-      {
-        "source_id": "s-604022b1979c380c",
-        "locator": "SCHUNK DRG 80 product data sheet, page 6, Technical data",
-        "quote_sha256": "42aefa762721f795f4df3520e379e507f1b18724cd3dc194af71731e0d9a7799"
-      }
-    ],
-    "asset_plan": "Build independently authored, full-scale representative rigid geometry, not a redistributed SCHUNK CAD model. Preserve the catalog drawing’s dimensional semantics: 100 × 71.6 × 135.5 mm are catalog X/Y/Z reference dimensions, not a claimed bounding envelope, and the page-7 drawing separately shows a 183.35 mm extent to point P. Represent the anodized-aluminum housing, steel angular jaws, native revolute jaw joints, common centric coupling, accessible adjustment screw, nut 73 as the locking nut, and retained nut 74 as the second manufacturer-specified nut; its precise spacing and role beyond installation are disclosed fixture assumptions because the manual does not explain them. Provide real hex and wrench contact geometry and a native or conservative task-local torque/friction mechanism in which tightening disturbs an unrestrained screw. The cold lever replaces pneumatic actuation only for bench verification. Target angle, hardware dimensions absent from the manual, friction, preload, and tolerances remain declared assumptions. Before demo development, validate reset, tool seating, restrained-versus-unrestrained causality, joint traces, loss cases, release clearance, and timestep sensitivity in the pinned Isaac Sim 6.1/YAM runtime.",
-    "risk": "Closest ability-level neighbors include PR 1540, PR 1799, PR 1865, PR 2018, PR 2167, and PR 2229. Novelty depends on retaining genuine concentric two-tool screw/nut countertorque and functional-cycle verification; an implementation with zero driver reaction or a scripted phase flag would collapse into existing stabilization or adjustment tasks. No current native gripper trial exists, so implementation feasibility and physics validation remain future gates rather than claimed evidence.",
-    "feasibility_status": "ready",
-    "missing_evidence": []
+    "selected": "drg80-opening-stop-lock",
+    "source_correction": {
+      "at": "2026-11-16T10:19:24.075554+00:00",
+      "original_candidate_digest": "29a2dd2e1eb3cd7af97bd32ccdc3c884fc2afeab7deb8f05fd5d976cf6c5a0f7",
+      "corrected_candidate_digest": "8f72c3d9b02732d01d5125ed2cc9634acdc2c912a53bd023c02d523a21fa1916",
+      "original_clause": "motion outside the modeled 20°–180° range scores 0.",
+      "corrected_clause": "a configured maximum-opening setting outside the modeled 20°–180° adjustment range, or a violation of the fixture's actual mechanical limits, scores 0. Ordinary closing below 20° during functional cycles is permitted.",
+      "reason": "SCHUNK20-180 refers to adjustable MAXIMUM opening, not normal closing motion.",
+      "baseline": "input/opening-range-correction-baseline",
+      "cache_policy": "Original comparison caches remain unchanged and retain their original context.",
+      "decision": "independently revalidated",
+      "review_path": "artifacts/novelty-critic-corrected.json",
+      "review_digest": "1300949c0ef31d95dd07aba0a53887ee93ca58296022a25a9e2942d6c647e5c6"
+    }
   },
   "sources": [
     {

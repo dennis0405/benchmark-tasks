@@ -172,7 +172,7 @@
       "reason": "Shared tightening does not establish overlap: RoboDojo measures independent fastener insertion and depth, while the candidate measures countertorque-preserved calibration, locking, and functional retention."
     }
   ],
-  "candidate_digest": "29a2dd2e1eb3cd7af97bd32ccdc3c884fc2afeab7deb8f05fd5d976cf6c5a0f7",
+  "candidate_digest": "8f72c3d9b02732d01d5125ed2cc9634acdc2c912a53bd023c02d523a21fa1916",
   "at": "2026-11-16T09:59:02.571187+00:00",
   "definition_manifests": {
     "LIBERO": "9758371e29558a05065faeab3eb12f209ce84dd61e954924b42bbd2ff7da747e",
@@ -181,5 +181,19 @@
     "BEHAVIOR": "1bc3c32a17d46a788ee7a53784274c918ba78a4ea18b776d0a2bfb168e595ead",
     "DataCenterBench": "6f9998c874ebd4df9edb474f8751c9352837b7ae62ef045c313f92bff02f7f89",
     "RoboDojo": "97976497358a09cec50405ad6e68bc7187fc7091ab6a41b5868ac9c171f0b729"
+  },
+  "comparison_candidate_digest": "29a2dd2e1eb3cd7af97bd32ccdc3c884fc2afeab7deb8f05fd5d976cf6c5a0f7",
+  "source_correction": {
+    "at": "2026-11-16T10:19:24.075554+00:00",
+    "original_candidate_digest": "29a2dd2e1eb3cd7af97bd32ccdc3c884fc2afeab7deb8f05fd5d976cf6c5a0f7",
+    "corrected_candidate_digest": "8f72c3d9b02732d01d5125ed2cc9634acdc2c912a53bd023c02d523a21fa1916",
+    "original_clause": "motion outside the modeled 20°–180° range scores 0.",
+    "corrected_clause": "a configured maximum-opening setting outside the modeled 20°–180° adjustment range, or a violation of the fixture's actual mechanical limits, scores 0. Ordinary closing below 20° during functional cycles is permitted.",
+    "reason": "SCHUNK20-180 refers to adjustable MAXIMUM opening, not normal closing motion.",
+    "baseline": "input/opening-range-correction-baseline",
+    "cache_policy": "Original comparison caches remain unchanged and retain their original context.",
+    "decision": "independently revalidated",
+    "review_path": "artifacts/novelty-critic-corrected.json",
+    "review_digest": "1300949c0ef31d95dd07aba0a53887ee93ca58296022a25a9e2942d6c647e5c6"
   }
 }
