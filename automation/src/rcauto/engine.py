@@ -1053,6 +1053,15 @@ class Production:
             report = read(report_path)
             validation_scope = "script-requirements"
             expected = requirements or report.get("requirements", [])
+            if not requirements and plan.get("phase") == "preflight":
+                # These reviewed discovery programs intentionally have no full
+                # production contract. Validate every actual probe measurement,
+                # but never label the receipt as environment qualification.
+                validation_scope = "native-discovery"
+                expected = [
+                    {k: c.get(k) for k in ("name", "operator", "threshold", "unit")}
+                    for c in report.get("checks", [])
+                ]
             if requirements:
                 if index == len(plan["scripts"]) - 1:
                     validation_scope = "frozen-physics-aggregate"

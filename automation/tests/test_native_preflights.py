@@ -70,3 +70,26 @@ def test_failed_auxiliary_probe_stops_before_full_physics_launch(tmp_path):
     with pytest.raises(GateError, match="failed check api_probe"):
         p.execute_scripts(plan, req)
     assert not (p.workspace / "measurements/result_1.json").exists()
+
+
+def test_discovery_only_plan_validates_its_measured_checks_without_qualification(tmp_path):
+    p, plan, _ = setup_plan(tmp_path, passing_aggregate())
+    plan.update(phase="preflight", scripts=plan["scripts"][:1])
+    receipts = p.execute_scripts(plan)
+    assert len(receipts) == 1
+    assert receipts[0]["validation_scope"] == "native-discovery"
+    assert not p.artifact("environment").exists()
+
+
+def test_discovery_only_plan_still_rejects_failed_measurements(tmp_path):
+    p, plan, _ = setup_plan(tmp_path, passing_aggregate(), preflight_value=0)
+    plan.update(phase="preflight", scripts=plan["scripts"][:1])
+    with pytest.raises(GateError, match="failed check api_probe"):
+        p.execute_scripts(plan)
+
+
+def test_unscoped_plan_cannot_self_declare_frozen_requirements(tmp_path):
+    p, plan, _ = setup_plan(tmp_path, passing_aggregate())
+    plan["scripts"] = plan["scripts"][:1]
+    with pytest.raises(GateError, match="no frozen numerical requirements"):
+        p.execute_scripts(plan)
