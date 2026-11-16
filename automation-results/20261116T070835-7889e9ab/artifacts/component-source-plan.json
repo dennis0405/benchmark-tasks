@@ -1,36 +1,25 @@
 {
   "phase": "preflight",
-  "summary": "Repaired both reviewer findings in the bounded 37-case native aperture-release exploration. Bridge geometry now uses the maximum aperture-local X/Y span, preserving sustained distinct-rib contact as the physical support evidence and admitting yaw=90° bridges. The no_support label now additionally requires the existing settling-speed bound; moving unsupported cases remain unstable_support. Added auditable in-plane span measurements to child reports and traces. Both scripts pass Python static compilation. Native GPU execution remains for the trusted controller; no qualification is claimed.",
+  "summary": "Repaired the full-screen YAM component diagnostic after the contact-validation review. Bilateral grasp now requires finite, nonzero tab-mapped raw reactions; signed scalar×normal vectors must reconcile with each fingertip’s native filtered force tensor; opposition uses mapped tab reactions rather than whole-screen aggregate forces. Raw signed values and reconciliation diagnostics are retained in the trace. Static AST validation passed. No GPU rollout or qualification claim was made.",
   "scripts": [
     {
-      "id": "aperture_release_grid_240hz",
-      "script": "task/run_aperture_release_grid.py",
+      "id": "full_screen_yam_component",
+      "script": "task/run_full_screen_yam_preflight.py",
       "args": [
-        "--physics-hz",
-        "240",
-        "--report",
-        "../measurements/aperture-release-grid-240hz.json",
+        "--headless",
         "--device",
-        "cuda:0"
-      ],
-      "report": "measurements/aperture-release-grid-240hz.json"
-    },
-    {
-      "id": "aperture_release_grid_480hz",
-      "script": "task/run_aperture_release_grid.py",
-      "args": [
-        "--physics-hz",
-        "480",
+        "cuda:0",
         "--report",
-        "../measurements/aperture-release-grid-480hz.json",
-        "--device",
-        "cuda:0"
+        "../measurements/full-screen-yam-preflight.json",
+        "--video",
+        "../measurements/full-screen-yam-preflight.mp4",
+        "--screenshot",
+        "../measurements/full-screen-yam-initial.png"
       ],
-      "report": "measurements/aperture-release-grid-480hz.json"
+      "report": "measurements/full-screen-yam-preflight.json"
     }
   ],
   "files": [
-    "task/run_moving_aperture_crossing_probe.py",
-    "task/run_aperture_release_grid.py"
+    "task/run_full_screen_yam_preflight.py"
   ]
 }

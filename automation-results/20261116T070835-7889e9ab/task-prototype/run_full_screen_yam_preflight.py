@@ -1,0 +1,327 @@
+#!/usr/bin/env python3
+"""Native 240 Hz full-screen + bimanual YAM grasp/lift component preflight."""
+from __future__ import annotations
+
+import argparse, itertools, json, math
+from pathlib import Path
+
+from isaaclab.app import AppLauncher
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--report", type=Path, default=Path("../measurements/full-screen-yam-preflight.json"))
+parser.add_argument("--video", type=Path, default=Path("../measurements/full-screen-yam-preflight.mp4"))
+parser.add_argument("--screenshot", type=Path, default=Path("../measurements/full-screen-yam-initial.png"))
+parser.add_argument("--seed", type=int, default=2601)
+AppLauncher.add_app_launcher_args(parser)
+args = parser.parse_args()
+args.enable_cameras = True
+launcher = AppLauncher(args)
+simulation_app = launcher.app
+
+import imageio.v2 as imageio
+import numpy as np
+import torch
+import isaaclab.sim as sim_utils
+from isaaclab.sensors import ContactSensor, ContactSensorCfg
+from pxr import Usd, UsdGeom, UsdPhysics
+from shapely.geometry import Point
+from yam_arena import demo
+from yam_arena.constants import FINGER_CLOSED, FINGER_OPEN, LEFT_BASE_POS, READY, RIGHT_BASE_POS
+from yam_arena.robot import asset_link_paths
+
+from full_screen_scene import (CONTROL_HZ, DEPTH, FLOOR_T, INNER_R, OUTER_R, SCREEN_ROOT_Z,
+    SCREEN_X, TAB_SIZE, TAB_Y, TAB_Z, build_environment, geometry_audit, mass_properties)
+
+PHYSICS_HZ, DT = 240, 1/240
+
+
+def make_env():
+    from isaaclab_arena.environments.arena_env_builder import ArenaEnvBuilder
+    from isaaclab_arena.environments.arena_env_builder_cfg import ArenaEnvBuilderCfg
+    return ArenaEnvBuilder(build_environment(), ArenaEnvBuilderCfg(
+        num_envs=1, solve_relations=False, device=args.device)).make_registered()
+
+
+def tip_paths_and_positions():
+    paths=asset_link_paths(); stage=sim_utils.get_current_stage(); cache=UsdGeom.XformCache()
+    names=[]; positions=[]
+    for arm in ("LeftArm","RightArm"):
+        for tip in ("tip_left","tip_right"):
+            path=f"/World/envs/env_0/{arm}"+paths[tip]; names.append(path)
+            m=cache.GetLocalToWorldTransform(stage.GetPrimAtPath(path))
+            positions.append(np.array([float(m[3][i]) for i in range(3)]))
+    return names, positions
+
+
+def tip_collision_bounding_radii(tip_paths):
+    """Conservative radii enclosing every collision shape below each tip link.
+
+    The radius is derived from the authored collision geometry's world bounds,
+    not from a visual mesh or a guessed fingertip size.  Subtracting it from
+    link-origin clearance gives a conservative collision-geometry clearance.
+    """
+    stage=sim_utils.get_current_stage(); cache=UsdGeom.XformCache()
+    bbox_cache=UsdGeom.BBoxCache(0.0,["default","render","proxy"],useExtentsHint=False)
+    radii=[]; collider_paths=[]
+    for path in tip_paths:
+        root=stage.GetPrimAtPath(path)
+        origin_m=cache.GetLocalToWorldTransform(root)
+        origin=np.array([float(origin_m[3][i]) for i in range(3)])
+        radius=0.0; paths=[]
+        for prim in Usd.PrimRange(root):
+            if not prim.HasAPI(UsdPhysics.CollisionAPI): continue
+            paths.append(prim.GetPath().pathString)
+            aligned=bbox_cache.ComputeWorldBound(prim).ComputeAlignedRange()
+            lo=np.array(aligned.GetMin(),dtype=float); hi=np.array(aligned.GetMax(),dtype=float)
+            for corner in itertools.product(*zip(lo,hi)):
+                radius=max(radius,float(np.linalg.norm(np.asarray(corner)-origin)))
+        if not paths or radius <= 0: raise RuntimeError(f"no collision geometry below fingertip {path}")
+        radii.append(radius); collider_paths.append(paths)
+    return radii,collider_paths
+
+
+def world_to_screen(point, screen_state):
+    p=np.asarray(point)-screen_state[:3]
+    x,y,z,w=screen_state[3:7]; q=np.array([x,y,z])
+    return (2*w*w-1)*p+2*np.dot(q,p)*q-2*w*np.cross(q,p)
+
+
+def raw_tip_contact(sensor, screen_state, native_pair_force):
+    """Return tab contacts and signed-raw/native force reconciliation.
+
+    Raw PhysX contact force entries are signed scalars.  Their vector form is
+    the scalar multiplied by the reported unit normal.  A mapped tab point is
+    usable only when that reconstruction is finite and nonzero *and* the sum
+    over the complete raw pair slice agrees with the native filtered tensor.
+    """
+    raw_force,raw_points,raw_normals,raw_sep,counts,starts=sensor.contact_view.get_contact_data(DT)
+    points=raw_points.numpy(); normals=raw_normals.numpy(); forces=raw_force.numpy()
+    counts_np=counts.numpy(); starts_np=starts.numpy(); count=int(counts_np[0,0]); start=int(starts_np[0,0])
+    if start < 0 or count < 0 or start+count > int(points.shape[0]):
+        raise RuntimeError(f"invalid raw contact slice start={start} count={count} capacity={points.shape[0]}")
+    mapped=[]; reconstructed=[]; all_finite=bool(np.all(np.isfinite(native_pair_force)))
+    for p,n,f in zip(points[start:start+count],normals[start:start+count],forces[start:start+count],strict=True):
+        values=np.asarray(f,dtype=float).reshape(-1)
+        if values.size != 1: raise RuntimeError(f"unexpected raw normal-force shape {values.shape}")
+        scalar=float(values[0]); normal=np.asarray(n,dtype=float)
+        vector=scalar*normal
+        finite=bool(np.all(np.isfinite(p)) and np.all(np.isfinite(normal))
+                    and np.isfinite(scalar) and np.all(np.isfinite(vector)))
+        all_finite=all_finite and finite
+        reconstructed.append(vector if finite else np.zeros(3,dtype=float))
+        local=world_to_screen(p,screen_state)
+        for sign in (-1,1):
+            if (abs(local[0]) <= TAB_SIZE[0]/2+0.002 and
+                abs(local[1]-sign*TAB_Y) <= TAB_SIZE[1]/2+0.002 and
+                TAB_Z-TAB_SIZE[2]/2-0.002 <= local[2] <= TAB_Z+TAB_SIZE[2]/2+0.002):
+                mapped.append({"point_w_m":np.asarray(p,dtype=float).tolist(),
+                  "normal_w":normal.tolist(),"signed_normal_force_N":scalar if np.isfinite(scalar) else None,
+                  "reconstructed_signed_scalar_times_normal_N":vector.tolist() if finite else [None]*3,
+                  "reaction_magnitude_N":float(np.linalg.norm(vector)) if finite else None,
+                  "finite_fields":finite,"nonzero_reaction":bool(finite and np.linalg.norm(vector)>1e-9),
+                  "tab_sign":sign})
+                break
+    raw_sum=np.sum(np.asarray(reconstructed),axis=0) if reconstructed else np.zeros(3)
+    native=np.asarray(native_pair_force,dtype=float); raw_norm=float(np.linalg.norm(raw_sum))
+    native_norm=float(np.linalg.norm(native)); residual=float(np.linalg.norm(raw_sum-native))
+    scale=max(raw_norm,native_norm); relative=residual/scale if scale>1e-9 else None
+    cosine=(float(np.dot(raw_sum,native)/(raw_norm*native_norm))
+            if raw_norm>1e-9 and native_norm>1e-9 else None)
+    tolerance=max(1e-5,0.05*scale)
+    verified=bool(all_finite and raw_norm>1e-9 and native_norm>1e-9
+                  and residual<=tolerance and cosine is not None and cosine>=0.99)
+    return mapped,{"signed_scalar_times_normal_sum_N":raw_sum.tolist(),
+      "native_pair_force_vector_N":native.tolist(),"residual_norm_N":residual,
+      "relative_residual":relative,"direction_cosine":cosine,"tolerance_N":tolerance,
+      "all_fields_finite":all_finite,"verified":verified}
+
+
+def point_to_screen_clearance(world, screen_state):
+    """Distance from a point to floor, wall, or either tab collision volume."""
+    p=world_to_screen(world,screen_state)
+    def slab(shape, za, zb):
+        dxy=shape.distance(Point(float(p[0]),float(p[1])))
+        dz=max(za-p[2],0.0,p[2]-zb)
+        return math.hypot(dxy,dz)
+    from full_screen_scene import mass_properties
+    props=mass_properties(); floor=props["floor"]
+    wall=Point(0,0).buffer(OUTER_R,resolution=96).difference(Point(0,0).buffer(INNER_R,resolution=96))
+    from shapely.geometry import box
+    tabs=[box(-TAB_SIZE[0]/2,s*TAB_Y-TAB_SIZE[1]/2,TAB_SIZE[0]/2,s*TAB_Y+TAB_SIZE[1]/2) for s in (-1,1)]
+    return min(slab(floor,-FLOOR_T,0),slab(wall,0,DEPTH),
+               *(slab(t,TAB_Z-TAB_SIZE[2]/2,TAB_Z+TAB_SIZE[2]/2) for t in tabs))
+
+
+def main():
+    np.random.seed(args.seed); torch.manual_seed(args.seed)
+    audit=geometry_audit(); expected=mass_properties(); env=make_env()
+    base=env.unwrapped; screen=base.scene.rigid_objects["screen"]
+    tip_names,_=tip_paths_and_positions()
+    screen_expr="/World/envs/env_0/screen"
+    sensors=[]
+    for path in tip_names:
+        sensors.append(ContactSensor(ContactSensorCfg(prim_path=path, update_period=0.0,
+          history_length=0, track_air_time=False, filter_prim_paths_expr=[screen_expr],
+          max_contact_data_count_per_prim=32)))
+    env.reset(seed=args.seed)
+    tip_radii,tip_collider_paths=tip_collision_bounding_radii(tip_names)
+    def state():
+        screen.update(DT)
+        return np.r_[screen.data.root_pos_w.torch[0].detach().cpu().numpy(),
+          screen.data.root_quat_w.torch[0].detach().cpu().numpy(),
+          screen.data.root_lin_vel_w.torch[0].detach().cpu().numpy(),
+          screen.data.root_ang_vel_w.torch[0].detach().cpu().numpy()]
+    initial=state()
+    native_mass=float(screen.data.body_mass.torch[0,0].detach().cpu())
+    native_inertia=screen.data.body_inertia.torch[0,0].detach().reshape(3,3).cpu().numpy()
+    native_principal=np.linalg.eigvalsh(native_inertia)
+
+    tab_z=SCREEN_ROOT_Z+TAB_Z
+    left_pick=(SCREEN_X,TAB_Y,tab_z+0.013); right_pick=(SCREEN_X,-TAB_Y,tab_z+0.013)
+    def waypoints(p):
+        x,y,z=p
+        return [demo.Waypoint(2,(x,y,z+0.10),FINGER_OPEN,"approach"),
+          demo.Waypoint(2,(x,y,z),FINGER_OPEN,"descend"),
+          demo.Waypoint(1,(x,y,z),FINGER_CLOSED,"close"),
+          demo.Waypoint(2,(x,y,z+0.030),FINGER_CLOSED,"lift"),
+          # Command longer than the frozen 3.0 s qualification threshold: at
+          # 20 Hz, 66 observations span 65 completed intervals (3.25 s).
+          demo.Waypoint(3.25,(x,y,z+0.030),FINGER_CLOSED,"hold"),
+          demo.Waypoint(2,(x,y,z),FINGER_CLOSED,"return"),
+          demo.Waypoint(1,(x,y,z),FINGER_OPEN,"release"),
+          demo.Waypoint(1,(x,y,z+0.10),FINGER_OPEN,"clear")]
+    lp=demo.ArmPlan(waypoints(left_pick),LEFT_BASE_POS,q_start=READY)
+    rp=demo.ArmPlan(waypoints(right_pick),RIGHT_BASE_POS,q_start=READY)
+    samples=math.ceil(max(lp.duration,rp.duration)*CONTROL_HZ)
+    initial_z=float(initial[2]); frames=[]; trace=[]; hold_good=[]; bilateral=[]
+    finite_rgb_fractions=[]; nonblank_rgb=[]; screen_semantic_pixels=[]; tab_semantic_pixels=[]
+    raw_nonzero_tab_reactions=0; reconciled_positive_pair_samples=0; positive_pair_samples=0
+    max_z=initial_z; min_release_clear=math.inf; screenshot_written=False
+    for n in range(samples):
+        t=n/CONTROL_HZ; la,ll=lp.action7(t); ra,rl=rp.action7(t)
+        action=torch.tensor(np.r_[la,ra],dtype=torch.float32,device=args.device).unsqueeze(0)
+        env.step(action); s=state(); names,tips=tip_paths_and_positions(); max_z=max(max_z,float(s[2]))
+        forces=[]; force_vectors=[]; raw_tab_contacts=[]; force_reconciliations=[]
+        for sensor in sensors:
+            sensor.update(1/CONTROL_HZ,force_recompute=True)
+            f=sensor.data.normal_force_matrix_w.torch
+            vec=f[0,0,0].detach().cpu().numpy() if f is not None else np.zeros(3)
+            force_vectors.append(vec); forces.append(float(np.linalg.norm(vec)))
+            contacts,reconciliation=raw_tip_contact(sensor,s,vec)
+            raw_tab_contacts.append(contacts); force_reconciliations.append(reconciliation)
+            raw_nonzero_tab_reactions += sum(int(c["nonzero_reaction"]) for c in contacts)
+            if forces[-1] > 1e-9:
+                positive_pair_samples += 1
+                reconciled_positive_pair_samples += int(reconciliation["verified"])
+        # Both fingertips of each arm must map to the same physical tab, and
+        # their measured world-frame force vectors must oppose one another.
+        arm_ok=[]; opposition=[]; arm_tab_signs=[]
+        for i,j in ((0,1),(2,3)):
+            valid_i=[c for c in raw_tab_contacts[i] if c["nonzero_reaction"]]
+            valid_j=[c for c in raw_tab_contacts[j] if c["nonzero_reaction"]]
+            signs_i={c["tab_sign"] for c in valid_i}; signs_j={c["tab_sign"] for c in valid_j}
+            aggregate_signs=signs_i | signs_j
+            mapped_i=np.sum([c["reconstructed_signed_scalar_times_normal_N"] for c in valid_i],axis=0) if valid_i else np.zeros(3)
+            mapped_j=np.sum([c["reconstructed_signed_scalar_times_normal_N"] for c in valid_j],axis=0) if valid_j else np.zeros(3)
+            mapped_i_norm=float(np.linalg.norm(mapped_i)); mapped_j_norm=float(np.linalg.norm(mapped_j))
+            cosine=(float(np.dot(mapped_i,mapped_j)/(mapped_i_norm*mapped_j_norm))
+                    if mapped_i_norm>1e-9 and mapped_j_norm>1e-9 else 1.0)
+            opposition.append(cosine)
+            arm_tab_signs.append(aggregate_signs)
+            # Each arm must have contacts only on one tab, both fingertips of
+            # that arm must map to it, and the two fingertip forces must oppose.
+            arm_ok.append(bool(len(aggregate_signs)==1 and signs_i==signs_j==aggregate_signs
+                               and force_reconciliations[i]["verified"] and force_reconciliations[j]["verified"]
+                               and mapped_i_norm>1e-4 and mapped_j_norm>1e-4 and cosine<=-0.25))
+        both=all(arm_ok) and arm_tab_signs[0] in ({-1},{1}) and arm_tab_signs[1]=={-next(iter(arm_tab_signs[0]))}
+        bilateral.append(both)
+        lifted=float(s[2])>=initial_z+0.028
+        stationary=np.linalg.norm(s[7:10])<=0.01 and np.linalg.norm(s[10:13])<=0.10
+        if ll=="hold" and rl=="hold": hold_good.append(bool(both and lifted and stationary))
+        if ll=="clear" and rl=="clear":
+            min_release_clear=min(min_release_clear,*
+              (point_to_screen_clearance(p,s)-r for p,r in zip(tips,tip_radii,strict=True)))
+        cam=base.scene.sensors.get("overview_cam",base.scene.sensors.get("top_cam"))
+        rgb_raw=cam.data.output["rgb"][0].detach().cpu().numpy()[...,:3]
+        finite_rgb_fractions.append(float(np.isfinite(rgb_raw).mean()))
+        rgb=np.nan_to_num(rgb_raw,nan=0.0,posinf=255.0,neginf=0.0).clip(0,255).astype(np.uint8)
+        nonblank_rgb.append(float(np.std(rgb.astype(np.float32))))
+        semantic=cam.data.output["semantic_segmentation"][0].detach().cpu().numpy().squeeze(-1)
+        semantic_info=cam.data.info["semantic_segmentation"]["idToLabels"]
+        screen_ids=[]; tab_ids=[]
+        for semantic_id, labels in semantic_info.items():
+            label=labels.get("class") if isinstance(labels,dict) else None
+            if label == "screen": screen_ids.append(int(semantic_id))
+            elif label in ("screen_tab_-1","screen_tab_+1"): tab_ids.append(int(semantic_id))
+        screen_semantic_pixels.append(int(np.count_nonzero(np.isin(semantic,screen_ids))))
+        tab_semantic_pixels.append(int(np.count_nonzero(np.isin(semantic,tab_ids))))
+        frames.append(rgb)
+        if not screenshot_written:
+            args.screenshot.parent.mkdir(parents=True,exist_ok=True); imageio.imwrite(args.screenshot,rgb); screenshot_written=True
+        trace.append({"control_sample":n,"time_s":t,"left_phase":ll,"right_phase":rl,
+          "screen_state_pos_quat_linvel_angvel":s.tolist(),"tip_screen_normal_force_N":forces,
+          "tip_screen_force_vector_w_N":[v.tolist() for v in force_vectors],
+          "raw_tab_contacts":raw_tab_contacts,"raw_force_vector_reconciliation":force_reconciliations,
+          "per_arm_tab_signs":[sorted(x) for x in arm_tab_signs],
+          "per_arm_force_opposition_cosine":opposition,
+          "bilateral_opposing_tab_contact":both})
+    final=state()
+    # N observations at 20 Hz span N-1 completed intervals.  The first true
+    # observation contributes zero dwell, matching the frozen dwell semantics.
+    def observed_dwell(samples):
+        longest_run=max((len(list(g)) for v,g in itertools.groupby(samples) if v),default=0)
+        return max(0,longest_run-1)/CONTROL_HZ
+    longest=observed_dwell(hold_good)
+    bilateral_s=observed_dwell(bilateral)
+    args.video.parent.mkdir(parents=True,exist_ok=True); imageio.mimwrite(args.video,frames,fps=CONTROL_HZ,codec="libx264",quality=8)
+    # Decode what was actually written.  This catches an encoder/container
+    # failure that an in-memory frame count cannot detect.
+    decoded=[]
+    reader=imageio.get_reader(args.video)
+    try:
+        for frame in reader: decoded.append(np.asarray(frame))
+    finally:
+        reader.close()
+    decoded_valid=sum(int(f.ndim==3 and f.shape[2]>=3 and f.size>0 and np.isfinite(f).all()) for f in decoded)
+    decoded_nonblank=sum(int(float(np.std(f.astype(np.float32)))>=2.0) for f in decoded)
+    shot=np.asarray(imageio.imread(args.screenshot))
+    screenshot_valid=int(shot.ndim==3 and shot.shape[2]>=3 and shot.size>0 and np.isfinite(shot).all()
+                         and float(np.std(shot.astype(np.float32)))>=2.0)
+    visible_screen_frames=sum(v >= 100 for v in screen_semantic_pixels)
+    visible_tab_frames=sum(v >= 10 for v in tab_semantic_pixels)
+    trace_path=args.report.with_name(args.report.stem+"-trace.json"); trace_path.write_text(json.dumps(trace,separators=(",",":")))
+    workspace=Path(__file__).resolve().parents[1]
+    artifacts=[p.resolve().relative_to(workspace).as_posix() for p in (args.video,args.screenshot,trace_path)]
+    expected_inertia=np.array(expected["inertia"])
+    report={"scope":"empty full-screen bimanual YAM component only; not media-separation qualification",
+      "physics_hz":PHYSICS_HZ,"control_hz":CONTROL_HZ,"geometry_audit":audit,
+      "native_mass_kg":native_mass,"expected_mass_kg":expected["mass"],
+      "native_principal_inertia_kg_m2":native_principal.tolist(),"expected_inertia_kg_m2":expected_inertia.tolist(),
+      "tip_collision_bounding_radius_m":tip_radii,"tip_collision_prim_paths":tip_collider_paths,
+      "checks":[
+       {"name":"complete_square_aperture_count","measured":audit["hole_count"],"operator":"==","threshold":261,"unit":"holes"},
+       {"name":"authored_floor_symmetric_difference_area","measured":audit["symmetric_difference_area_m2"],"operator":"<=","threshold":1e-9,"unit":"m^2"},
+       {"name":"authored_solid_connected_components","measured":audit["solid_connected_components"],"operator":"==","threshold":1,"unit":"components"},
+       {"name":"native_mass_relative_error","measured":abs(native_mass-expected["mass"])/expected["mass"],"operator":"<=","threshold":1e-4,"unit":"fraction"},
+       {"name":"native_inertia_max_relative_error","measured":float(np.max(np.abs(np.sort(native_principal)-np.sort(expected_inertia))/np.sort(expected_inertia))),"operator":"<=","threshold":1e-3,"unit":"fraction"},
+       {"name":"nonzero_signed_raw_tab_reaction_points","measured":raw_nonzero_tab_reactions,"operator":">","threshold":0,"unit":"points"},
+       {"name":"positive_native_pair_samples_with_verified_raw_vector_reconciliation","measured":reconciled_positive_pair_samples,"operator":"==","threshold":positive_pair_samples,"unit":"control_samples"},
+       {"name":"measured_bilateral_opposing_tab_contact_duration","measured":bilateral_s,"operator":">=","threshold":0.5,"unit":"s"},
+       {"name":"observed_screen_lift_height","measured":max_z-initial_z,"operator":">=","threshold":0.03,"unit":"m"},
+       {"name":"contact_supported_stationary_lifted_hold_duration","measured":longest,"operator":">=","threshold":3.0,"unit":"s"},
+       {"name":"released_fingertip_collider_to_screen_conservative_clearance","measured":0 if not math.isfinite(min_release_clear) else min_release_clear,"operator":">=","threshold":0.06,"unit":"m"},
+       {"name":"native_rgb_minimum_finite_pixel_fraction","measured":min(finite_rgb_fractions,default=0.0),"operator":"==","threshold":1.0,"unit":"fraction"},
+       {"name":"native_rgb_minimum_pixel_standard_deviation","measured":min(nonblank_rgb,default=0.0),"operator":">=","threshold":2.0,"unit":"uint8_level"},
+       {"name":"native_semantic_screen_visible_frame_fraction","measured":visible_screen_frames/max(len(frames),1),"operator":">=","threshold":0.8,"unit":"fraction"},
+       {"name":"native_semantic_tabs_visible_frame_fraction","measured":visible_tab_frames/max(len(frames),1),"operator":">=","threshold":0.8,"unit":"fraction"},
+       {"name":"screenshot_frame_native_semantic_screen_pixels","measured":screen_semantic_pixels[0] if screen_semantic_pixels else 0,"operator":">=","threshold":100,"unit":"pixels"},
+       {"name":"screenshot_frame_native_semantic_tab_pixels","measured":tab_semantic_pixels[0] if tab_semantic_pixels else 0,"operator":">=","threshold":10,"unit":"pixels"},
+       {"name":"decoded_h264_valid_frame_count","measured":decoded_valid,"operator":"==","threshold":len(frames),"unit":"frames"},
+       {"name":"decoded_h264_nonblank_frame_count","measured":decoded_nonblank,"operator":"==","threshold":len(frames),"unit":"frames"},
+       {"name":"decoded_initial_screenshot_valid_nonblank","measured":screenshot_valid,"operator":"==","threshold":1,"unit":"boolean"}],
+      "artifacts":artifacts}
+    args.report.parent.mkdir(parents=True,exist_ok=True); args.report.write_text(json.dumps(report,indent=2))
+    env.close(); simulation_app.close()
+
+
+if __name__ == "__main__": main()

@@ -1,14 +1,19 @@
 {
   "verdict": "repair",
   "findings": [
-    "The two prior failures are repaired: bridge qualification now uses the maximum aperture-local X/Y span, and `no_support` now requires the settling-speed bound (`task/run_moving_aperture_crossing_probe.py:564-615`).",
-    "The aggregate can nevertheless report all 37 cases as complete and data-integrity-passing when required outcome fields are absent or invalid. Completion checks only the two poses, while integrity does not require `initial_support_outcome`, `physical_outcome`, bridge/crossing booleans, or the declared child artifacts (`task/run_aperture_release_grid.py:145-188`). This permits an incomplete 37-case result table to pass; require these fields, validate outcome enums/types, and verify each trace artifact exists.",
-    "The aggregate does not bind each child report to its commanded case parameters. It copies the planned specification into each row but never checks the child's reported physics rate, aperture, orientation, clearance, amplitude, or frequency (`task/run_aperture_release_grid.py:106-174`). Add those child fields where missing and require exact/toleranced agreement before counting a case complete or integrity-valid."
+    "The signed raw-contact repair correctly reconstructs scalar×normal vectors, requires finite nonzero tab-mapped reactions, reconciles each complete fingertip–screen pair slice with the native filtered tensor, and bases opposition on mapped tab reactions.",
+    "The 3-second hold can still qualify below the required 30 mm lift: `hold_good` accepts `initial_z + 0.028`, while the separate 30 mm check uses the maximum height at any time. A transient 30 mm peak followed by a stationary 28 mm hold can therefore pass both checks. Require the hold samples themselves to remain at least 0.030 m above the initial height, or explicitly document and freeze a justified tolerance consistently in the qualification contract."
   ],
   "evidence_paths": [
-    "artifacts/component-source-plan.json",
-    "input/last-failure.json",
-    "task/run_aperture_release_grid.py",
-    "task/run_moving_aperture_crossing_probe.py"
+    "task/run_full_screen_yam_preflight.py:89",
+    "task/run_full_screen_yam_preflight.py:117",
+    "task/run_full_screen_yam_preflight.py:124",
+    "task/run_full_screen_yam_preflight.py:220",
+    "task/run_full_screen_yam_preflight.py:233",
+    "task/run_full_screen_yam_preflight.py:238",
+    "task/run_full_screen_yam_preflight.py:240",
+    "task/run_full_screen_yam_preflight.py:300",
+    "input/revision-request.txt:13",
+    "artifacts/contract.json:149"
   ]
 }
