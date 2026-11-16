@@ -1,14 +1,14 @@
 {
   "verdict": "repair",
   "findings": [
-    "The auxiliary-mass sweep is not verified from native per-link state: the script reads `get_masses()` but retains only the summed moving mass, while `auxiliary_mass_kg` is copied from the authored `VARIANTS` value. Because rotor mass is adjusted to keep every variant at 0.009 kg, the aggregate check can pass without proving that PhysX realized the intended support/rotor mass partition—the independent variable this probe claims to test. Record the native mass vector keyed by `link_names`, check each support and rotor mass against its authored value, and label authored values explicitly; include native inertia readbacks if the variants are claimed identical apart from auxiliary mass. The plan is otherwise bounded, nonempty, hash-consistent, qualification=false, and uses actual native DOF samples without state writes."
+    "Work qualification is incomplete: task/run_factory_sdf_thread_preflight.py:672-680 clips every negative work increment with max(0, ...), reports only accumulated positive contributions, and applies each post-step effort sample to the following displacement interval. The checks at lines 757-758 therefore can pass despite net back-driving, excessive losses, or output exceeding contemporaneous input. Record correctly aligned signed actuator/load work, preserve positive/negative components separately if useful, and add an energy-plausibility check over the same loaded window before native execution."
   ],
   "evidence_paths": [
+    "task/run_factory_sdf_thread_preflight.py",
     "artifacts/component-source-plan.json",
-    "task/run_mimic_chain_conditioning_probe.py:198",
-    "task/run_mimic_chain_conditioning_probe.py:246",
-    "task/run_mimic_chain_conditioning_probe.py:265",
     "input/last-failure.json",
-    "input/runtime-api-preflight.json"
+    "input/runtime-api-preflight.json",
+    "input/operator-source-notes.json",
+    "input/nvidia-factory-reference/sdf-reproduction-notes.md"
   ]
 }

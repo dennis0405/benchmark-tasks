@@ -1,24 +1,43 @@
 {
   "phase": "preflight",
-  "summary": "The exact reordered source was subsequently executed as native trial 1d78d6a9-0ecf-4122-b160-b6d21a5113d9 and failed: both contact reactions were only about 1.328 N versus 31.416 N expected, the rotor saturated near ±25.133 rad, and helix residual reached 25.003 rad. The material binding and torque pathway worked, so they are not repeated. This bounded probe compares the supported two-DOF control against identical three-DOF chains across a 100× auxiliary-mass sweep, preserving the frozen 0.02 rad control bar to distinguish topology-level constraint inactivity from conditioning sensitivity. It is qualification=false and makes no fixture or task-success claim. Static parsing passed; source SHA256 is ded077dccbac42fc79f0700c380649c5a183f516d3a8c72cdc88431ec6ebd0eb.",
+  "summary": "Repaired the stock M8 SDF-contact probe after trial 54555865 failed. It now restores Factory’s -90° nut phase, verifies that native phase after reset, runs each screw direction from an independent fresh state, applies opposing axial preload, and lowers the torque/speed command. Qualification remains false pending trusted native execution; the frozen DRG80 contract is unchanged.",
   "scripts": [
     {
-      "id": "mimic-chain-conditioning-preflight",
-      "script": "task/run_mimic_chain_conditioning_probe.py",
+      "id": "factory_sdf_positive",
+      "script": "task/run_factory_sdf_thread_preflight.py",
       "args": [
+        "--direction",
+        "positive",
+        "--output",
+        "../measurements/factory-sdf-positive-preflight.json",
+        "--trace",
+        "../measurements/factory-sdf-positive-preflight-trace.json",
         "--device",
         "cuda:0",
         "--visualizer",
-        "none",
-        "--output",
-        "../measurements/mimic-chain-conditioning-preflight.json",
-        "--trace",
-        "../measurements/mimic-chain-conditioning-preflight-trace.json"
+        "none"
       ],
-      "report": "measurements/mimic-chain-conditioning-preflight.json"
+      "report": "measurements/factory-sdf-positive-preflight.json"
+    },
+    {
+      "id": "factory_sdf_negative",
+      "script": "task/run_factory_sdf_thread_preflight.py",
+      "args": [
+        "--direction",
+        "negative",
+        "--output",
+        "../measurements/factory-sdf-negative-preflight.json",
+        "--trace",
+        "../measurements/factory-sdf-negative-preflight-trace.json",
+        "--device",
+        "cuda:0",
+        "--visualizer",
+        "none"
+      ],
+      "report": "measurements/factory-sdf-negative-preflight.json"
     }
   ],
   "files": [
-    "task/run_mimic_chain_conditioning_probe.py"
+    "task/run_factory_sdf_thread_preflight.py"
   ]
 }

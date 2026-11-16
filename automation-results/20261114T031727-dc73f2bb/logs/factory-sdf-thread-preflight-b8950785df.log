@@ -1,0 +1,26 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1794854999.987956    9899 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto
+W0000 00:00:1794854999.989040    9899 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto
+[ISAACLAB] AppLauncher initialization complete
+[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl
+[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl
+[ISAACLAB] Kit hash:    00c488ae
+Loading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'
+2026-11-16T18:50:00Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.
+2026-11-16T18:50:00Z [49ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX
+2026-11-16T18:50:13Z [12,837ms] [Warning] [omni.physx.cooking.plugin] PhysX warning: SDF creation: Mesh is not suitable for SDF (non-manifold, not watertight, duplicated triangles, ...) and automatic repair failed. The computed SDF might not work as expected. If collisions are not good, try to improve the mesh structure e.g., by applying remeshing., FILE /builds/omniverse/physics/physx/source/geomutils/src/GuSDF.cpp, LINE 1019
+2026-11-16T18:50:14Z [13,662ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?
+2026-11-16T18:50:14Z [13,723ms] [Warning] [omni.physx.tensors.plugin] Failed to find contact report API at '/World/NutAssembly/nut'
+2026-11-16T18:50:14Z [13,723ms] [Error] [omni.physx.tensors.plugin] Pattern '/World/NutAssembly/nut' did not match any rigid contact for filters
+
+2026-11-16T18:50:14Z [13,723ms] [Error] [omni.physx.tensors.plugin] /World/Bolt
+2026-11-16T18:50:14Z [13,723ms] [Error] [omni.physx.tensors.plugin] Provided patterns for sensor and filters did not match any rigid contact entries
+
+Warp 1.16.0 initialized:
+   CUDA Toolkit 12.9, Driver 12.7
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA L40S" (44 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /home/ubuntu/.cache/warp/1.16.0
+{"qualification": false, "native_trial_id": "064d0bc2-0726-4cf8-a135-664d34179194", "source_sha256": "47d386b17f9ff26127ea12931e76669572d5d4f2dc13d6a765e5e9dc65cde4d8", "checks": [{"name": "native_program_completed", "measured": 0.0, "operator": "==", "threshold": 1, "unit": "boolean", "passed": false}, {"name": "samples_preserved_on_failure", "measured": 0.0, "operator": ">=", "threshold": 1, "unit": "samples", "passed": false}], "overall_pass": false, "error": "TypeError: create_sdf_shape_view(): incompatible function arguments. The following argument types are supported:\n    1. (self: omni.physics.tensors.bindings._physicsTensors.SimulationView, pattern: str, sample_point_counts: int = []) -> omni.physics.tensors.bindings._physicsTensors.SdfShapeView\n\nInvoked with: <omni.physics.tensors.bindings._physicsTensors.SimulationView object at 0x7f81c7b59e30>, ['/World/Bolt/Collision', '/World/NutAssembly/nut/Collision'], 8", "artifacts": ["measurements/factory-sdf-thread-preflight-trace.json"]}
