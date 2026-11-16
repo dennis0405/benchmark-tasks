@@ -246,3 +246,34 @@ tests show discovery progressing to full qualification, repeated discovery faili
 without a completed environment, unfinished assets not blocking isolated API probes, and
 source rejection preventing any native launch. Selftest remains explicitly synthetic and
 ineligible for Dream, approval or submission.
+
+### Actual pinned-runtime failures and the first passing probe
+
+In run `20261114T031727-dc73f2bb`, the installed IsaacLab17 launcher rejected
+`--headless` before physics initialization. Its pinned `AppLauncher` supports
+headless constructor configuration and `--visualizer none`; inspect that installed
+source rather than copying CLI flags from a different SDK version.
+
+`get_contact_data(dt)` then failed without filter patterns. The sensor/filter
+layout must match the installed ContactSensor implementation. A collision-only
+static floor also produced an explicit unsupported GPU-filter warning and no
+samples in this probe. Giving this diagnostic support an immobile kinematic
+rigid-body identity, enabling contact reporting and using nested sensor/filter
+lists produced actual samples. This is a diagnostic setup choice, not permission
+to make production task parts kinematic.
+
+The real240Hz,180-step GPU probe subsequently reported18 passing checks,140
+contacting post-step samples, no callback exceptions, exact pre/post ordering,
+and zero post-callback versus external pose/velocity error. Its measured peak
+normal force was421.656799N and corresponding normal impulse1.75690341N*s;
+force-times-dt disagreement was7.95e-8N*s. These falling-cube readings are API
+evidence only, not gripper force limits, preload, environment qualification or
+YAM success. Raw observations are retained in `native-api-preflight-trace.json`.
+
+The executor initially rejected this valid probe report because discovery has no
+full frozen production requirements. It now validates every nonempty discovery
+check under the explicit `native-discovery` scope. A report without a declared
+preflight phase still needs its normal requirements; failed probe values still
+stop execution. Final qualification continues to compare every unchanged frozen
+requirement. Regression tests reproduce the original rejection and cover the
+passing, failing and unscoped discovery cases.
