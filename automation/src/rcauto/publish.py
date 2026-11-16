@@ -8,6 +8,7 @@ import shutil
 import subprocess
 
 from .engine import approval_valid, read
+from .evidence_archive import archive_evidence
 from .gates import GateError, file_hash, manifest, validate_spec, verify_manifest
 from .runtime import capture
 from .store import StateError, write_json
@@ -215,6 +216,7 @@ class Publisher:
         )
         if not any(destination.iterdir()):
             write_json(destination / "status.json", self.store.get(rid))
+        archive_evidence(destination)
         m = manifest(destination)
         total_bytes = sum(x["bytes"] for x in m["files"].values())
         if (release / "tasks").exists():

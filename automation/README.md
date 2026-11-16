@@ -119,6 +119,11 @@ stop을 검증하지만 모델·Dream·대회 제출을 호출하지 않는다. 
 확인했지만 범용 Isaac Sim 배포 이미지를 완성했다고 주장하지 않는다. 태스크마다 깨끗한 환경
 이식 검사를 실행하고 실제 검증 범위를 적는다. 50MB 초과 파일 또는 100MB 초과 공개 checkpoint는
 업로드 전에 보관 방식 검토로 보낸다. 산업 매뉴얼 전체·인증 cache는 공개 보존하지 않는다.
+공개 checkpoint의 1MiB 이상 원시 JSON·JSONL·텍스트 로그는 gzip으로 손실 없이 압축한다.
+실험 작업 공간의 원본은 그대로 유지한다. 다운로드한 checkpoint에서
+`python3 restore-evidence.py`를 실행하면 `evidence-archive.json`의 크기·SHA-256을 검증하고
+기존 경로로 복원한다. 압축 후에도 기존 용량 제한을 적용하며, 데모 영상·작은 채점 보고서와
+제출할 task 파일은 압축하지 않는다.
 
 수집원은 GitHub 전체 PR이다. 모든 PR의 제목·본문을 남기고 open·merged 및 등록 제출자의
 명세를 SHA별로 확보한다. 모든 open을 보수적으로 비교하며 pending으로 단정하지 않는다.

@@ -84,6 +84,10 @@ def test_fork_checkpoint_pushes_exact_task_and_verifies_remote_sha(tmp_path):
     prototype.write_text("# unfinished native prototype, not a certified task\n")
     research = {"evidence": [{"source_id": "source-1", "quote": quotation, "locator": "p2"}]}
     write_json(root / "workspace/artifacts/candidates.json", research)
+    trace = root / "workspace/measurements/raw-trace.json"
+    trace.parent.mkdir(parents=True)
+    raw_trace = b'{"position":[0.1,0.2,0.3]}\n' * 50000
+    trace.write_bytes(raw_trace)
 
     class LocalPublisher(Publisher):
         def checkout(self, *args):
@@ -102,6 +106,14 @@ def test_fork_checkpoint_pushes_exact_task_and_verifies_remote_sha(tmp_path):
     assert "quote" not in public and public["quote_sha256"]
     assert quotation not in published.read_text()
     assert json.loads((root / "workspace/artifacts/candidates.json").read_text()) == research
+    assert trace.read_bytes() == raw_trace
+    evidence = work / "automation-results" / r["id"]
+    archived = json.loads((evidence / "evidence-archive.json").read_text())["files"]
+    assert archived[0]["original"] == "measurements/raw-trace.json"
+    assert not (evidence / "measurements/raw-trace.json").exists()
+    import gzip
+
+    assert gzip.decompress((evidence / archived[0]["compressed"]).read_bytes()) == raw_trace
     assert publisher.checkpoint(r["id"])["sha"] == first["sha"]
     s.update(r["id"], preservation_error="previous checkpoint failed")
     publisher.checkpoint(r["id"])
