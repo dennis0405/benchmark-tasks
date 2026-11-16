@@ -27,9 +27,14 @@ import uuid
 from isaaclab.app import AppLauncher
 
 
+SCRIPT_DIR = Path(__file__).resolve().parent
+WORKSPACE_DIR = SCRIPT_DIR.parent
+DEFAULT_REPORT = WORKSPACE_DIR / "measurements/component-preflight.json"
+DEFAULT_TRACE = WORKSPACE_DIR / "measurements/component-preflight-trace.json"
+
 parser = argparse.ArgumentParser(description=__doc__)
-parser.add_argument("--output", default="../measurements/component-preflight.json")
-parser.add_argument("--trace", default="../measurements/component-preflight-trace.json")
+parser.add_argument("--output", default=str(DEFAULT_REPORT))
+parser.add_argument("--trace", default=str(DEFAULT_TRACE))
 AppLauncher.add_app_launcher_args(parser)
 args_cli = parser.parse_args()
 
@@ -51,7 +56,7 @@ import isaaclab.sim as sim_utils
 from isaaclab_physx.physics import IsaacEvents, PhysxManager
 
 
-ROOT = Path(__file__).resolve().parent
+ROOT = SCRIPT_DIR
 PHYSICS_DT = 1.0 / 240.0
 FIXTURE_TRANSLATION = (0.36, 0.0, 0.75)
 BODY_NAMES = (

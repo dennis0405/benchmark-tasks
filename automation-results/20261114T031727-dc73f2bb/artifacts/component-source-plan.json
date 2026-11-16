@@ -1,19 +1,24 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the bounded native GPU constraint-isolation probe. It now requires at least 5 degrees of opposite lever motion and measures piston/jaw isolation across both torque phases against one settled baseline, preventing cumulative drift from being hidden. This probe does not qualify the production mechanism.",
+  "summary": "Added a complete bounded native reaction probe. It tests whether the previously validated GPU mimic coupling transmits signed rotor torque into reciprocal axial projected force under finite native restraint. Static compilation passed; trusted-controller execution is required. No fixture, contact, preload, YAM, or qualification claim is made.",
   "scripts": [
     {
-      "id": "drg80_gpu_constraint_isolation",
-      "script": "task/run_component_preflight.py",
+      "id": "mimic-reaction-preflight",
+      "script": "task/run_mimic_reaction_probe.py",
       "args": [
-        "--headless",
         "--device",
-        "cuda:0"
+        "cuda:0",
+        "--visualizer",
+        "none",
+        "--output",
+        "../measurements/mimic-reaction-preflight.json",
+        "--trace",
+        "../measurements/mimic-reaction-preflight-trace.json"
       ],
-      "report": "measurements/component-preflight.json"
+      "report": "measurements/mimic-reaction-preflight.json"
     }
   ],
   "files": [
-    "task/run_component_preflight.py"
+    "task/run_mimic_reaction_probe.py"
   ]
 }

@@ -1,0 +1,191 @@
+[
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Repaired the failed bounded mimic probe. The prior native run showed that live USD drive mutation is illegal under PhysX direct-GPU mode. The script now resolves the native axial DOF and commands it through the installed articulation tensor velocity-target API while recording DOF states and body poses. Static syntax validation passed. Native mimic motion remains unverified pending trusted-controller execution; no qualification is claimed.",
+      "scripts": [
+        {
+          "id": "mimic-api-preflight",
+          "script": "task/run_mimic_api_probe.py",
+          "args": [
+            "--device",
+            "cuda:0",
+            "--visualizer",
+            "none",
+            "--output",
+            "../measurements/mimic-api-preflight.json",
+            "--trace",
+            "../measurements/mimic-api-preflight-trace.json"
+          ],
+          "report": "measurements/mimic-api-preflight.json"
+        }
+      ],
+      "files": [
+        "task/run_mimic_api_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The repaired preflight is a bounded discovery probe, not a qualification claim. It commands the native articulation velocity target API, records fresh native DOF states and rigid-body poses at every 240 Hz step, verifies bidirectional angular/axial coupling and lead from measured motion, and exits nonzero if any check fails.",
+        "The source explicitly reports qualification=false and makes no torque, contact, preload, friction, gripper, environment, or YAM-success claim. Those frozen-contract measurements remain for later native qualification.",
+        "The planned paths are consistent with the executor contract: arguments resolve from workspace/task into workspace/measurements, while the declared report path is workspace-relative. The planned source exists and parses successfully.",
+        "The repair addresses the recorded failure mode by replacing illegal live USD drive mutation with the pinned tensor velocity-target setter while preserving all DOF targets. The pinned API confirms this setter changes desired targets rather than instantaneous state.",
+        "No material unresolved generated-source issue was found. Native parser support, mimic sign/units, motion, and tolerances are correctly left for the post-review execution rather than asserted from source inspection."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_mimic_api_probe.py",
+        "input/last-failure.json",
+        "input/runtime-api-preflight.json",
+        "input/pinned-runtime-sources/1ba654210857a63b98236512e5f225723c3eb1dee64e867eaa4fade0578ccb7b-tensors-api.py",
+        "input/pinned-runtime-sources/4a7638c3890522bbe7c25600c0090e6cb7f403550ccb8be7641bf84034213b83-generatedSchema.usda",
+        "input/request.json",
+        "input/repository-AGENTS.md",
+        "input/review-prompt.txt"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb/workspace/task/run_mimic_api_probe.py",
+          "--device",
+          "cuda:0",
+          "--visualizer",
+          "none",
+          "--output",
+          "../measurements/mimic-api-preflight.json",
+          "--trace",
+          "../measurements/mimic-api-preflight-trace.json"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb/logs/mimic-api-preflight-f6e8480f3a.log",
+        "finished_at": "2026-11-16T13:26:38.668294+00:00",
+        "id": "mimic-api-preflight",
+        "report": "measurements/mimic-api-preflight.json",
+        "report_sha256": "ebd35abecbc73e8d8c81ebda17577dc7c1af8a289d664ba7d4859eef4f629a6c",
+        "source_digest": "71a9fb13b72141e69f020e7ff2b7378acd9dde6726b961bdb5eb730c3b4422fc",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "native_trial_id": "38efb0ce-5ac1-43ff-80ff-1bff4ffb3ca8",
+          "source_sha256": "384ff268d6f1071a81210e069ec95b582ef1c8b6007da792e7115e71641028a0",
+          "qualification": false,
+          "checks": [
+            {
+              "name": "native_link_count",
+              "measured": 3.0,
+              "operator": "==",
+              "threshold": 3,
+              "unit": "links",
+              "passed": true
+            },
+            {
+              "name": "native_articulation_count",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "articulations",
+              "passed": true
+            },
+            {
+              "name": "native_dof_count",
+              "measured": 2.0,
+              "operator": "==",
+              "threshold": 2,
+              "unit": "dofs",
+              "passed": true
+            },
+            {
+              "name": "finite_pose_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "actual_physics_dt",
+              "measured": 0.004166666666666667,
+              "operator": "==",
+              "threshold": 0.004166666666666667,
+              "unit": "s",
+              "passed": true
+            },
+            {
+              "name": "all_sample_helical_residual",
+              "measured": 0.0009450324918525155,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "rad",
+              "passed": true
+            },
+            {
+              "name": "forward_rotation",
+              "measured": 6.975624819146533,
+              "operator": ">=",
+              "threshold": 6.283185307179586,
+              "unit": "rad",
+              "passed": true
+            },
+            {
+              "name": "reverse_rotation",
+              "measured": -6.595523305554914,
+              "operator": "<=",
+              "threshold": -6.283185307179586,
+              "unit": "rad",
+              "passed": true
+            },
+            {
+              "name": "forward_axial_travel",
+              "measured": 0.0011101365089416504,
+              "operator": ">=",
+              "threshold": 0.001,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "reverse_axial_travel",
+              "measured": -0.0010496973991394043,
+              "operator": "<=",
+              "threshold": -0.001,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "measured_lead_error",
+              "measured": 6.184638823053708e-08,
+              "operator": "<=",
+              "threshold": 5e-05,
+              "unit": "m/revolution",
+              "passed": true
+            },
+            {
+              "name": "carrier_rotor_axial_gap",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "off_axis_quaternion_component",
+              "measured": 1.4950838078675588e-07,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "dimensionless",
+              "passed": true
+            }
+          ],
+          "overall_pass": true,
+          "artifacts": [
+            "measurements/mimic-api-preflight-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-16T13:26:38.997465+00:00"
+  }
+]
