@@ -1,0 +1,215 @@
+#usda 1.0
+(
+    defaultPrim = "Bench"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "Bench"
+{
+    def Xform "frame" (
+        prepend references = @parts/frame.usda@
+    )
+    {
+        bool physics:kinematicEnabled = 1
+        double3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Xform "left_jaw" (
+        prepend references = @parts/left_jaw.usda@
+    )
+    {
+        double3 xformOp:translate = (-0.03, 0.022, 0.095)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Xform "right_jaw" (
+        prepend references = @parts/right_jaw.usda@
+    )
+    {
+        double3 xformOp:translate = (0.03, 0.022, 0.095)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Xform "piston" (
+        prepend references = @parts/piston.usda@
+    )
+    {
+        double3 xformOp:translate = (0, -0.018, 0.072)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Xform "adjustment_screw" (
+        prepend references = @../assets/socket_adjuster.usda@
+    )
+    {
+        double3 xformOp:translate = (0, -0.018, 0.1017)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Xform "nut73" (
+        prepend references = @../assets/thin_nut.usda@
+    )
+    {
+        double3 xformOp:translate = (0, -0.018, 0.0925)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Xform "nut74" (
+        prepend references = @../assets/thin_nut.usda@
+    )
+    {
+        double3 xformOp:translate = (0, -0.018, 0.0997)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def PhysicsJoint "screw_guide" (
+        prepend apiSchemas = ["PhysicsLimitAPI:transX", "PhysicsLimitAPI:transY", "PhysicsLimitAPI:rotX", "PhysicsLimitAPI:rotY", "PhysicsLimitAPI:transZ", "PhysicsDriveAPI:transZ", "PhysicsDriveAPI:rotZ"]
+    )
+    {
+        float drive:rotZ:physics:damping = 0.001
+        float drive:rotZ:physics:maxForce = 0.001
+        float drive:rotZ:physics:stiffness = 1
+        float drive:rotZ:physics:targetPosition = 0
+        float drive:rotZ:physics:targetVelocity = 0
+        uniform token drive:rotZ:physics:type = "force"
+        float drive:transZ:physics:damping = 20
+        float drive:transZ:physics:maxForce = 25
+        float drive:transZ:physics:stiffness = 20000
+        float drive:transZ:physics:targetPosition = 0
+        float drive:transZ:physics:targetVelocity = 0
+        uniform token drive:transZ:physics:type = "force"
+        float limit:rotX:physics:high = -1
+        float limit:rotX:physics:low = 1
+        float limit:rotY:physics:high = -1
+        float limit:rotY:physics:low = 1
+        float limit:transX:physics:high = -1
+        float limit:transX:physics:low = 1
+        float limit:transY:physics:high = -1
+        float limit:transY:physics:low = 1
+        float limit:transZ:physics:high = 0.005
+        float limit:transZ:physics:low = -0.005
+        rel physics:body0 = </Bench/frame>
+        rel physics:body1 = </Bench/adjustment_screw>
+        bool physics:collisionEnabled = 0
+        uniform bool physics:excludeFromArticulation = 1
+        point3f physics:localPos0 = (0, -0.018, 0.1017)
+        point3f physics:localPos1 = (0, 0, 0)
+    }
+
+    def PhysicsJoint "nut_guide" (
+        prepend apiSchemas = ["PhysicsLimitAPI:transX", "PhysicsLimitAPI:transY", "PhysicsLimitAPI:rotX", "PhysicsLimitAPI:rotY", "PhysicsLimitAPI:transZ", "PhysicsDriveAPI:transZ", "PhysicsDriveAPI:rotZ"]
+    )
+    {
+        float drive:rotZ:physics:damping = 0.001
+        float drive:rotZ:physics:maxForce = 0.004
+        float drive:rotZ:physics:stiffness = 1
+        float drive:rotZ:physics:targetPosition = 0
+        float drive:rotZ:physics:targetVelocity = 0
+        uniform token drive:rotZ:physics:type = "force"
+        float drive:transZ:physics:damping = 20
+        float drive:transZ:physics:maxForce = 25
+        float drive:transZ:physics:stiffness = 20000
+        float drive:transZ:physics:targetPosition = 0
+        float drive:transZ:physics:targetVelocity = 0
+        uniform token drive:transZ:physics:type = "force"
+        float limit:rotX:physics:high = -1
+        float limit:rotX:physics:low = 1
+        float limit:rotY:physics:high = -1
+        float limit:rotY:physics:low = 1
+        float limit:transX:physics:high = -1
+        float limit:transX:physics:low = 1
+        float limit:transY:physics:high = -1
+        float limit:transY:physics:low = 1
+        float limit:transZ:physics:high = 0.005
+        float limit:transZ:physics:low = -0.005
+        rel physics:body0 = </Bench/adjustment_screw>
+        rel physics:body1 = </Bench/nut73>
+        bool physics:collisionEnabled = 0
+        uniform bool physics:excludeFromArticulation = 1
+        point3f physics:localPos0 = (0, 0, -0.0092)
+        point3f physics:localPos1 = (0, 0, 0)
+    }
+
+    def PhysicsFixedJoint "nut74_retained"
+    {
+        rel physics:body0 = </Bench/adjustment_screw>
+        rel physics:body1 = </Bench/nut74>
+        bool physics:collisionEnabled = 0
+        uniform bool physics:excludeFromArticulation = 1
+        point3f physics:localPos0 = (0, 0, -0.002)
+        point3f physics:localPos1 = (0, 0, 0)
+    }
+
+    def PhysicsRevoluteJoint "left_jaw_hinge"
+    {
+        uniform token physics:axis = "Y"
+        rel physics:body0 = </Bench/frame>
+        rel physics:body1 = </Bench/left_jaw>
+        bool physics:collisionEnabled = 0
+        uniform bool physics:excludeFromArticulation = 1
+        point3f physics:localPos0 = (-0.03, 0.022, 0.095)
+        point3f physics:localPos1 = (0, 0, 0)
+        float physics:lowerLimit = -90
+        float physics:upperLimit = 0
+    }
+
+    def PhysicsRevoluteJoint "right_jaw_hinge"
+    {
+        uniform token physics:axis = "Y"
+        rel physics:body0 = </Bench/frame>
+        rel physics:body1 = </Bench/right_jaw>
+        bool physics:collisionEnabled = 0
+        uniform bool physics:excludeFromArticulation = 1
+        point3f physics:localPos0 = (0.03, 0.022, 0.095)
+        point3f physics:localPos1 = (0, 0, 0)
+        float physics:lowerLimit = 0
+        float physics:upperLimit = 90
+    }
+
+    def PhysicsPrismaticJoint "piston_slide" (
+        prepend apiSchemas = ["PhysicsDriveAPI:linear"]
+    )
+    {
+        float drive:linear:physics:damping = 5
+        float drive:linear:physics:maxForce = 0
+        float drive:linear:physics:stiffness = 0
+        float drive:linear:physics:targetPosition = 0
+        float drive:linear:physics:targetVelocity = 0
+        uniform token drive:linear:physics:type = "force"
+        uniform token physics:axis = "Z"
+        rel physics:body0 = </Bench/frame>
+        rel physics:body1 = </Bench/piston>
+        bool physics:collisionEnabled = 0
+        uniform bool physics:excludeFromArticulation = 1
+        point3f physics:localPos0 = (0, -0.018, 0.072)
+        point3f physics:localPos1 = (0, 0, 0)
+        float physics:lowerLimit = 0
+        float physics:upperLimit = 0.01
+    }
+
+    def PhysxPhysicsGearJoint "jaw_pair"
+    {
+        custom rel physics:body0 = </Bench/left_jaw>
+        custom rel physics:body1 = </Bench/right_jaw>
+        custom bool physics:excludeFromArticulation = 1
+        custom float physics:gearRatio = 1
+        custom rel physics:hinge0 = </Bench/left_jaw_hinge>
+        custom rel physics:hinge1 = </Bench/right_jaw_hinge>
+        custom quatf physics:localRot0 = (0.70710677, 0, 0, 0.70710677)
+        custom quatf physics:localRot1 = (0.70710677, 0, 0, 0.70710677)
+    }
+
+    def PhysxPhysicsRackAndPinionJoint "piston_to_jaw"
+    {
+        custom rel physics:body0 = </Bench/left_jaw>
+        custom rel physics:body1 = </Bench/piston>
+        custom bool physics:excludeFromArticulation = 1
+        custom rel physics:hinge = </Bench/left_jaw_hinge>
+        custom quatf physics:localRot0 = (0.70710677, 0, 0, 0.70710677)
+        custom quatf physics:localRot1 = (0.70710677, 0, -0.70710677, 0)
+        custom rel physics:prismatic = </Bench/piston_slide>
+        custom float physics:ratio = -150
+    }
+}

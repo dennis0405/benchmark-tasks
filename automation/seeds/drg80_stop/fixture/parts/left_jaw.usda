@@ -1,0 +1,84 @@
+#usda 1.0
+(
+    defaultPrim = "Asset"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+def Xform "Asset" (
+    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+) {
+    bool physics:rigidBodyEnabled = true
+    float physics:mass = 0.06
+    point3f physics:centerOfMass = (0.012, 0, 0.025)
+    float3 physics:diagonalInertia = (4e-05, 4e-05, 1.2e-05)
+    def Scope "Looks" {
+        def Material "Steel" {
+            token outputs:surface.connect = </Asset/Looks/Steel/PBR.outputs:surface>
+            def Shader "PBR" {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.44, 0.47, 0.5)
+                float inputs:metallic = 0.85
+                float inputs:roughness = 0.35
+                token outputs:surface
+            }
+        }
+        def Material "Grip" {
+            token outputs:surface.connect = </Asset/Looks/Grip/PBR.outputs:surface>
+            def Shader "PBR" {
+                uniform token info:id = "UsdPreviewSurface"
+                color3f inputs:diffuseColor = (0.9, 0.25, 0.04)
+                float inputs:metallic = 0.0
+                float inputs:roughness = 0.35
+                token outputs:surface
+            }
+        }
+    }
+    def Cube "PivotBlock" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    ) {
+        bool physics:collisionEnabled = true
+        float physxCollision:contactOffset = 2.5e-05
+        float physxCollision:restOffset = 0
+        rel material:binding = </Asset/Looks/Steel>
+        double3 xformOp:translate = (0, 0, 0)
+        double size = 1
+        double3 xformOp:scale = (0.018, 0.024, 0.012)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+    def Cube "Shoulder" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    ) {
+        bool physics:collisionEnabled = true
+        float physxCollision:contactOffset = 2.5e-05
+        float physxCollision:restOffset = 0
+        rel material:binding = </Asset/Looks/Steel>
+        double3 xformOp:translate = (0.011, 0, 0.006)
+        double size = 1
+        double3 xformOp:scale = (0.022, 0.012, 0.012)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+    def Cube "Finger" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    ) {
+        bool physics:collisionEnabled = true
+        float physxCollision:contactOffset = 2.5e-05
+        float physxCollision:restOffset = 0
+        rel material:binding = </Asset/Looks/Steel>
+        double3 xformOp:translate = (0.015, 0, 0.025)
+        double size = 1
+        double3 xformOp:scale = (0.008, 0.012, 0.05)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+    def Cube "Pad" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    ) {
+        bool physics:collisionEnabled = true
+        float physxCollision:contactOffset = 2.5e-05
+        float physxCollision:restOffset = 0
+        rel material:binding = </Asset/Looks/Steel>
+        double3 xformOp:translate = (0.023, 0, 0.054)
+        double size = 1
+        double3 xformOp:scale = (0.012, 0.012, 0.012)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+}

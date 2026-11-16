@@ -41,3 +41,26 @@ the actual OpenUSD version and asset hashes, and remains separate from native
 physics evidence.
 
 License: MIT for this first-party code and geometry; see `LICENSE`.
+
+## Optional articulated fixture proposal
+
+`fixture_seed.py` authors a separate `fixture/bench.usda`, four body-part USDs,
+layout/geometry metadata and CPU composition/topology/anchor checks. It includes
+a hollow frame, two jaws, a piston, the tool seed's adjustment screw and two nuts.
+The internal mechanism uses proposed cylindrical D6 guides, jaw hinges, a gear
+relation and a piston/rack relation. Referenced body roots and six joint anchors
+resolve in CPU OpenUSD. PhysX-specific coupling frames and ratio sign require
+native verification; no simulator has run this proposal.
+
+Generate with `uv run --no-project --with usd-core python fixture_seed.py`.
+The valve, thread/helix dynamics, friction updates, scorer and robot controller
+are intentionally missing. The scene is not a working environment. In
+particular, its draft drive targets must not be mistaken for a completed
+passive thread model. `native-component-plan.md` explains the component probes.
+
+This is an independently authored representative cold-bench fixture. The
+housing dimensions, exposed internal transmission, nut 74 placement and all
+parameters are assumptions. It is not a manufacturer's CAD model. For Arena
+integration use explicit body/root frames from `fixture-proposal.json` or a
+verified custom scene factory; a single ordinary library `Asset` does not
+automatically expose all seven native rigid bodies to task state/recording.
