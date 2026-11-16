@@ -28,3 +28,20 @@ regrouping must neither invent results nor invalidate equivalent evidence.
 
 Regression checks cover all-record identity/coverage, intact oversized Unicode
 definitions, a late overlap, invalid limits and cache reuse after regrouping.
+
+## Cache-aware follow-up
+
+Observed during the live trial: unchanged, cached large definitions still used
+the byte budget of a batch, even though the model was asked only about the few
+changed records left in it. This fragmented fresh work across small calls.
+
+Resolve all exact per-record cache evidence before grouping the remaining work.
+The same context, record, note and schema validation still apply. A cached
+overlap blocks immediately; it cannot be resampled through an unrelated review.
+Only genuinely missing/changed definitions consume a new dispatch's budget.
+
+A fixed regression fixture with 20 unchanged large definitions and 20 changed
+short definitions previously made 20 fresh calls; it now makes one, retaining
+all 40 full comparisons. This is a measured request-count result with a test
+reviewer, not a production-model wall-time result. Existing partial-coverage
+repairs, changed-note invalidation and overlap guards remain covered.
