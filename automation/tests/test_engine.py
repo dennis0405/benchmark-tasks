@@ -227,11 +227,12 @@ def test_reader_failure_is_retried_without_rejecting_or_caching_the_candidate(tm
         ({"state": "closed", "status": "closed", "own_team": False, "board_required": True}, True),
         ({"state": "closed", "status": "merged", "own_team": False}, True),
         ({"state": "open", "status": "open-unclassified", "own_team": False}, True),
-        ({"state": "closed", "status": "closed", "own_team": True}, True),
+        ({"state": "closed", "status": "closed", "own_team": True, "merged_at": None, "board_required": False}, True),
         ({}, True),
     ],
 )
-def test_unavailable_inactive_history_is_not_an_active_novelty_claim(tmp_path, record, blocks):
+@pytest.mark.parametrize("verdict", ["uncertain", "overlap"])
+def test_unavailable_inactive_history_is_not_an_active_novelty_claim(tmp_path, record, blocks, verdict):
     class UncertainAgent:
         def run(self, *args, **kwargs):
             return {
@@ -241,7 +242,7 @@ def test_unavailable_inactive_history_is_not_an_active_novelty_claim(tmp_path, r
                         "objective": "Unknown",
                         "physical_skill": "Unknown",
                         "success_condition": "Unknown",
-                        "verdict": "uncertain",
+                        "verdict": verdict,
                         "reason": "Empty test PR has no task specification",
                     }
                 ]
@@ -256,9 +257,11 @@ def test_unavailable_inactive_history_is_not_an_active_novelty_claim(tmp_path, r
     else:
         report = compare_catalog(UncertainAgent(), tmp_path, {}, catalog)
         assert report["compared"] == 1
-        assert report["comparisons"][0]["verdict"] == "uncertain"
-        assert report["inactive_uncertainty"][0]["id"] == "pr-1"
-        evidence = report["inactive_uncertainty"][0]["scope_evidence"]
+        assert report["comparisons"][0]["verdict"] == verdict
+        assert report["inactive_history"][0]["id"] == "pr-1"
+        assert report["inactive_history"][0]["verdict"] == verdict
+        assert bool(report["inactive_uncertainty"]) is (verdict == "uncertain")
+        evidence = report["inactive_history"][0]["scope_evidence"]
         assert evidence["merged_at"] is None and evidence["board_required"] is False
         assert evidence["own_team"] is False and evidence["state"] == "closed"
 
