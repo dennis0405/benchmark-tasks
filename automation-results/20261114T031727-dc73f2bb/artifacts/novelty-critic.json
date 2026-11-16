@@ -1,0 +1,27 @@
+{
+  "verdict": "repair",
+  "findings": [
+    "The novelty review is otherwise complete: catalog_total=2397, required_total=required_compared=687, with no missing required IDs or duplicate comparison IDs. The only overlap/uncertain records—PR 545 (https://github.com/robocurve/benchmark-tasks/pull/545), PR 963, PR 1361, PR 1742, and PR 1801 (https://github.com/robocurve/benchmark-tasks/pull/1801)—are verified closed, unmerged, other-team, non-board-required archival history and remain correctly labeled rather than being relabeled distinct.",
+    "Material repair required: artifacts/selected.json says any “motion outside the modeled 20°–180° range scores 0.” SCHUNK’s catalog describes 20°–180° as the adjustable maximum-opening range, while the DRG 80 technical data gives a 1.5° closed angle per jaw. The current request explicitly permits closing below 20° during functional cycles. Rewrite this failure condition to apply only to the configured maximum-opening setting or true mechanical-limit violations, not ordinary closing motion; propagate the corrected candidate digest into both novelty artifacts.",
+    "Industrial grounding is sufficient: SCHUNK manual 389041 v5.00 §5.4.1 specifies installing nuts 73 and 74, setting the opening with the adjusting screw, tightening via nut 73, and testing by actuating the gripper (https://media.distributordatasolutions.com/web_schunk/2023q1/documents/ea9d09a544db3115509a083c4761f6a0e4de75cd.pdf). The DRG 80 catalog supports the adjustable opening, materials, and reference dimensions (https://d16vz4puxlsxm1.cloudfront.net/asset/076200133045-Prod/document_kc3stq0h2h21d7vft0jis2fq30/DRG%2080%20Catalog%20section.pdf).",
+    "The six original-suite comparisons are substantively distinct and hash-verified: LIBERO “turn_on_the_stove,” RoboCasa “LowerHeat,” SimplerEnv “OpenDrawerInSceneEnv,” BEHAVIOR “attach_a_camera_to_a_tripod” and “assembling_furniture,” DataCenterBench “DC-knob — Turn the knob to the mark,” and RoboDojo “fasten_screws.” None tests preserving a calibrated screw setting against concentric jam-nut reaction followed by released cyclic retention.",
+    "Close active records including PR 1540 sensor-cable counterholding, PR 2018 lever-set installation, PR 2145 cable-gland retention, PR 2167 brake adjustment, PR 1865 hinge adjustment, PR 2203 belt-tension locking, and PR 2229 feeler-gap cam locking have concrete mechanism and outcome comparisons. Their shared adjustment, fastening, or verification primitives do not subsume the candidate’s coupled screw/jam-nut countertorque, provided that causality is physically implemented at the later physics gate."
+  ],
+  "evidence_paths": [
+    "input/request.json",
+    "input/last-failure.json",
+    "artifacts/selected.json",
+    "artifacts/novelty.json",
+    "artifacts/benchmark-novelty-selection.json",
+    "input/catalog.json",
+    "input/benchmark-sources.json",
+    "input/sources/s-0b3ec636c6201fe9.json",
+    "input/sources/s-604022b1979c380c.json",
+    "input/benchmark-corpora/LIBERO/manifest.json",
+    "input/benchmark-corpora/RoboCasa/manifest.json",
+    "input/benchmark-corpora/SimplerEnv/manifest.json",
+    "input/benchmark-corpora/BEHAVIOR/manifest.json",
+    "input/benchmark-corpora/DataCenterBench/manifest.json",
+    "input/benchmark-corpora/RoboDojo/manifest.json"
+  ]
+}
