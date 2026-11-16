@@ -1,9 +1,9 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the full-screen YAM component diagnostic after the contact-validation review. Bilateral grasp now requires finite, nonzero tab-mapped raw reactions; signed scalar×normal vectors must reconcile with each fingertip’s native filtered force tensor; opposition uses mapped tab reactions rather than whole-screen aggregate forces. Raw signed values and reconciliation diagnostics are retained in the trace. Static AST validation passed. No GPU rollout or qualification claim was made.",
+  "summary": "Repaired the bounded full-screen/YAM component preflight after the native raw-contact buffer failure. The script now streams H.264 frames before contact parsing, preserves trace/video/report evidence on exceptions, records native contact-count maxima, and requires the maximum count to remain strictly below the configured capacity of 256. CPU geometry regression passed; native GPU execution remains required and no qualification is claimed.",
   "scripts": [
     {
-      "id": "full_screen_yam_component",
+      "id": "full-screen-yam-component-preflight",
       "script": "task/run_full_screen_yam_preflight.py",
       "args": [
         "--headless",
@@ -20,6 +20,8 @@
     }
   ],
   "files": [
-    "task/run_full_screen_yam_preflight.py"
+    "task/run_full_screen_yam_preflight.py",
+    "task/full_screen_scene.py",
+    "task/verify_full_screen_geometry_cpu.py"
   ]
 }

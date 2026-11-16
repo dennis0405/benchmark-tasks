@@ -1,19 +1,11 @@
 {
   "verdict": "repair",
   "findings": [
-    "The signed raw-contact repair correctly reconstructs scalar×normal vectors, requires finite nonzero tab-mapped reactions, reconciles each complete fingertip–screen pair slice with the native filtered tensor, and bases opposition on mapped tab reactions.",
-    "The 3-second hold can still qualify below the required 30 mm lift: `hold_good` accepts `initial_z + 0.028`, while the separate 30 mm check uses the maximum height at any time. A transient 30 mm peak followed by a stationary 28 mm hold can therefore pass both checks. Require the hold samples themselves to remain at least 0.030 m above the initial height, or explicitly document and freeze a justified tolerance consistently in the qualification contract."
+    "Failure preservation still does not cover post-motion qualification: `final=state()`, H.264 decoding, screenshot reading, check construction/evaluation, and success-report writing occur outside the guarded block. Any exception there leaves no failure report or explicit failure metadata, contrary to the required failure receipt. Extend the guarded/finalization path through all native-data checks, preserve the existing video/trace, write a failure report, and re-raise the original exception."
   ],
   "evidence_paths": [
-    "task/run_full_screen_yam_preflight.py:89",
-    "task/run_full_screen_yam_preflight.py:117",
-    "task/run_full_screen_yam_preflight.py:124",
-    "task/run_full_screen_yam_preflight.py:220",
-    "task/run_full_screen_yam_preflight.py:233",
-    "task/run_full_screen_yam_preflight.py:238",
-    "task/run_full_screen_yam_preflight.py:240",
-    "task/run_full_screen_yam_preflight.py:300",
-    "input/revision-request.txt:13",
-    "artifacts/contract.json:149"
+    "input/last-failure.json",
+    "artifacts/component-source-plan.json",
+    "task/run_full_screen_yam_preflight.py"
   ]
 }

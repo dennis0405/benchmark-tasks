@@ -22,17 +22,33 @@ import imageio.v2 as imageio
 import numpy as np
 import torch
 import isaaclab.sim as sim_utils
-from isaaclab.sensors import ContactSensor, ContactSensorCfg
 from pxr import Usd, UsdGeom, UsdPhysics
 from shapely.geometry import Point
 from yam_arena import demo
 from yam_arena.constants import FINGER_CLOSED, FINGER_OPEN, LEFT_BASE_POS, READY, RIGHT_BASE_POS
 from yam_arena.robot import asset_link_paths
 
-from full_screen_scene import (CONTROL_HZ, DEPTH, FLOOR_T, INNER_R, OUTER_R, SCREEN_ROOT_Z,
+from full_screen_scene import (CONTROL_HZ, DEPTH, FLOOR_T, INNER_R, OUTER_R, RAW_CONTACT_CAPACITY_PER_PRIM, SCREEN_ROOT_Z,
     SCREEN_X, TAB_SIZE, TAB_Y, TAB_Z, build_environment, geometry_audit, mass_properties)
 
-PHYSICS_HZ, DT = 240, 1/240
+EXPECTED_PHYSICS_HZ = 240
+EXPECTED_DT = 1 / EXPECTED_PHYSICS_HZ
+
+
+def evaluate_check(check):
+    """Evaluate one numerical check; malformed/non-finite values always fail."""
+    measured=check.get("measured")
+    threshold=check.get("threshold")
+    if (isinstance(measured,bool) or isinstance(threshold,bool)
+            or not isinstance(measured,(int,float)) or not isinstance(threshold,(int,float))
+            or not math.isfinite(float(measured)) or not math.isfinite(float(threshold))):
+        return False
+    comparisons={
+        "==":lambda a,b:a == b, "<=":lambda a,b:a <= b,
+        ">=":lambda a,b:a >= b, "<":lambda a,b:a < b, ">":lambda a,b:a > b,
+    }
+    compare=comparisons.get(check.get("operator"))
+    return bool(compare and compare(float(measured),float(threshold)))
 
 
 def make_env():
@@ -86,7 +102,7 @@ def world_to_screen(point, screen_state):
     return (2*w*w-1)*p+2*np.dot(q,p)*q-2*w*np.cross(q,p)
 
 
-def raw_tip_contact(sensor, screen_state, native_pair_force):
+def raw_tip_contact(sensor, screen_state, native_pair_force, physics_dt):
     """Return tab contacts and signed-raw/native force reconciliation.
 
     Raw PhysX contact force entries are signed scalars.  Their vector form is
@@ -94,7 +110,7 @@ def raw_tip_contact(sensor, screen_state, native_pair_force):
     usable only when that reconstruction is finite and nonzero *and* the sum
     over the complete raw pair slice agrees with the native filtered tensor.
     """
-    raw_force,raw_points,raw_normals,raw_sep,counts,starts=sensor.contact_view.get_contact_data(DT)
+    raw_force,raw_points,raw_normals,raw_sep,counts,starts=sensor.contact_view.get_contact_data(physics_dt)
     points=raw_points.numpy(); normals=raw_normals.numpy(); forces=raw_force.numpy()
     counts_np=counts.numpy(); starts_np=starts.numpy(); count=int(counts_np[0,0]); start=int(starts_np[0,0])
     if start < 0 or count < 0 or start+count > int(points.shape[0]):
@@ -133,7 +149,8 @@ def raw_tip_contact(sensor, screen_state, native_pair_force):
     return mapped,{"signed_scalar_times_normal_sum_N":raw_sum.tolist(),
       "native_pair_force_vector_N":native.tolist(),"residual_norm_N":residual,
       "relative_residual":relative,"direction_cosine":cosine,"tolerance_N":tolerance,
-      "all_fields_finite":all_finite,"verified":verified}
+      "all_fields_finite":all_finite,"verified":verified,
+      "native_contact_count":count,"native_contact_capacity":int(points.shape[0])}
 
 
 def point_to_screen_clearance(world, screen_state):
@@ -144,29 +161,28 @@ def point_to_screen_clearance(world, screen_state):
         dz=max(za-p[2],0.0,p[2]-zb)
         return math.hypot(dxy,dz)
     from full_screen_scene import mass_properties
-    props=mass_properties(); floor=props["floor"]
-    wall=Point(0,0).buffer(OUTER_R,resolution=96).difference(Point(0,0).buffer(INNER_R,resolution=96))
-    from shapely.geometry import box
-    tabs=[box(-TAB_SIZE[0]/2,s*TAB_Y-TAB_SIZE[1]/2,TAB_SIZE[0]/2,s*TAB_Y+TAB_SIZE[1]/2) for s in (-1,1)]
-    return min(slab(floor,-FLOOR_T,0),slab(wall,0,DEPTH),
-               *(slab(t,TAB_Z-TAB_SIZE[2]/2,TAB_Z+TAB_SIZE[2]/2) for t in tabs))
+    # Use the actual disjoint solid layers, including the rim/floor junction.
+    return min(slab(shape, za, zb) for shape, za, zb in mass_properties()["layers"])
 
 
 def main():
     np.random.seed(args.seed); torch.manual_seed(args.seed)
     audit=geometry_audit(); expected=mass_properties(); env=make_env()
     base=env.unwrapped; screen=base.scene.rigid_objects["screen"]
+    native_dt=float(base.sim.get_physics_dt())
+    native_physics_hz=1.0/native_dt
     tip_names,_=tip_paths_and_positions()
-    screen_expr="/World/envs/env_0/screen"
-    sensors=[]
-    for path in tip_names:
-        sensors.append(ContactSensor(ContactSensorCfg(prim_path=path, update_period=0.0,
-          history_length=0, track_air_time=False, filter_prim_paths_expr=[screen_expr],
-          max_contact_data_count_per_prim=32)))
     env.reset(seed=args.seed)
+    sensor_names=[f"{arm}_{tip}_screen_contact" for arm in ("left","right")
+                  for tip in ("tip_left","tip_right")]
+    sensors=[base.scene.sensors[name] for name in sensor_names]
+    uninitialized=[name for name,sensor in zip(sensor_names,sensors,strict=True)
+                   if not sensor.is_initialized]
+    if uninitialized:
+        raise RuntimeError(f"scene-configured contact sensors failed to initialize: {uninitialized}")
     tip_radii,tip_collider_paths=tip_collision_bounding_radii(tip_names)
     def state():
-        screen.update(DT)
+        screen.update(native_dt)
         return np.r_[screen.data.root_pos_w.torch[0].detach().cpu().numpy(),
           screen.data.root_quat_w.torch[0].detach().cpu().numpy(),
           screen.data.root_lin_vel_w.torch[0].detach().cpu().numpy(),
@@ -183,10 +199,10 @@ def main():
         return [demo.Waypoint(2,(x,y,z+0.10),FINGER_OPEN,"approach"),
           demo.Waypoint(2,(x,y,z),FINGER_OPEN,"descend"),
           demo.Waypoint(1,(x,y,z),FINGER_CLOSED,"close"),
-          demo.Waypoint(2,(x,y,z+0.030),FINGER_CLOSED,"lift"),
+          demo.Waypoint(2,(x,y,z+0.040),FINGER_CLOSED,"lift"),
           # Command longer than the frozen 3.0 s qualification threshold: at
           # 20 Hz, 66 observations span 65 completed intervals (3.25 s).
-          demo.Waypoint(3.25,(x,y,z+0.030),FINGER_CLOSED,"hold"),
+          demo.Waypoint(3.25,(x,y,z+0.040),FINGER_CLOSED,"hold"),
           demo.Waypoint(2,(x,y,z),FINGER_CLOSED,"return"),
           demo.Waypoint(1,(x,y,z),FINGER_OPEN,"release"),
           demo.Waypoint(1,(x,y,z+0.10),FINGER_OPEN,"clear")]
@@ -194,20 +210,45 @@ def main():
     rp=demo.ArmPlan(waypoints(right_pick),RIGHT_BASE_POS,q_start=READY)
     samples=math.ceil(max(lp.duration,rp.duration)*CONTROL_HZ)
     initial_z=float(initial[2]); frames=[]; trace=[]; hold_good=[]; bilateral=[]
-    finite_rgb_fractions=[]; nonblank_rgb=[]; screen_semantic_pixels=[]; tab_semantic_pixels=[]
+    finite_rgb_fractions=[]; nonblank_rgb=[]
     raw_nonzero_tab_reactions=0; reconciled_positive_pair_samples=0; positive_pair_samples=0
     max_z=initial_z; min_release_clear=math.inf; screenshot_written=False
-    for n in range(samples):
+    max_native_contact_count=0; min_native_contact_capacity=math.inf
+    args.video.parent.mkdir(parents=True,exist_ok=True)
+    args.report.parent.mkdir(parents=True,exist_ok=True)
+    trace_path=args.report.with_name(args.report.stem+"-trace.json")
+    video_writer=imageio.get_writer(args.video,fps=CONTROL_HZ,codec="libx264",quality=8)
+    failure=None; failure_step=None; failure_phase=None
+    try:
+      for n in range(samples):
         t=n/CONTROL_HZ; la,ll=lp.action7(t); ra,rl=rp.action7(t)
         action=torch.tensor(np.r_[la,ra],dtype=torch.float32,device=args.device).unsqueeze(0)
         env.step(action); s=state(); names,tips=tip_paths_and_positions(); max_z=max(max_z,float(s[2]))
+        # Preserve the achieved native frame before any contact-data assertion
+        # can fail.  The H.264 writer is closed in finally, yielding a playable
+        # prefix for unsuccessful native attempts.
+        cam=base.scene.sensors.get("overview_cam",base.scene.sensors.get("top_cam"))
+        rgb_raw=cam.data.output["rgb"].torch[0].detach().cpu().numpy()[...,:3]
+        finite_rgb_fractions.append(float(np.isfinite(rgb_raw).mean()))
+        rgb=np.nan_to_num(rgb_raw,nan=0.0,posinf=255.0,neginf=0.0).clip(0,255).astype(np.uint8)
+        nonblank_rgb.append(float(np.std(rgb.astype(np.float32))))
+        frames.append(rgb); video_writer.append_data(rgb)
+        if not screenshot_written:
+            args.screenshot.parent.mkdir(parents=True,exist_ok=True); imageio.imwrite(args.screenshot,rgb); screenshot_written=True
+        arm_joint_pos={}; arm_joint_vel={}
+        for arm_key in ("left_robot","right_robot"):
+            arm=base.scene.articulations[arm_key]
+            arm_joint_pos[arm_key]=arm.data.joint_pos.torch[0].detach().cpu().numpy().tolist()
+            arm_joint_vel[arm_key]=arm.data.joint_vel.torch[0].detach().cpu().numpy().tolist()
         forces=[]; force_vectors=[]; raw_tab_contacts=[]; force_reconciliations=[]
         for sensor in sensors:
             sensor.update(1/CONTROL_HZ,force_recompute=True)
             f=sensor.data.normal_force_matrix_w.torch
             vec=f[0,0,0].detach().cpu().numpy() if f is not None else np.zeros(3)
             force_vectors.append(vec); forces.append(float(np.linalg.norm(vec)))
-            contacts,reconciliation=raw_tip_contact(sensor,s,vec)
+            contacts,reconciliation=raw_tip_contact(sensor,s,vec,native_dt)
+            max_native_contact_count=max(max_native_contact_count,reconciliation["native_contact_count"])
+            min_native_contact_capacity=min(min_native_contact_capacity,reconciliation["native_contact_capacity"])
             raw_tab_contacts.append(contacts); force_reconciliations.append(reconciliation)
             raw_nonzero_tab_reactions += sum(int(c["nonzero_reaction"]) for c in contacts)
             if forces[-1] > 1e-9:
@@ -235,36 +276,52 @@ def main():
                                and mapped_i_norm>1e-4 and mapped_j_norm>1e-4 and cosine<=-0.25))
         both=all(arm_ok) and arm_tab_signs[0] in ({-1},{1}) and arm_tab_signs[1]=={-next(iter(arm_tab_signs[0]))}
         bilateral.append(both)
-        lifted=float(s[2])>=initial_z+0.028
+        lifted=float(s[2])>=initial_z+0.030
         stationary=np.linalg.norm(s[7:10])<=0.01 and np.linalg.norm(s[10:13])<=0.10
         if ll=="hold" and rl=="hold": hold_good.append(bool(both and lifted and stationary))
         if ll=="clear" and rl=="clear":
             min_release_clear=min(min_release_clear,*
               (point_to_screen_clearance(p,s)-r for p,r in zip(tips,tip_radii,strict=True)))
-        cam=base.scene.sensors.get("overview_cam",base.scene.sensors.get("top_cam"))
-        rgb_raw=cam.data.output["rgb"][0].detach().cpu().numpy()[...,:3]
-        finite_rgb_fractions.append(float(np.isfinite(rgb_raw).mean()))
-        rgb=np.nan_to_num(rgb_raw,nan=0.0,posinf=255.0,neginf=0.0).clip(0,255).astype(np.uint8)
-        nonblank_rgb.append(float(np.std(rgb.astype(np.float32))))
-        semantic=cam.data.output["semantic_segmentation"][0].detach().cpu().numpy().squeeze(-1)
-        semantic_info=cam.data.info["semantic_segmentation"]["idToLabels"]
-        screen_ids=[]; tab_ids=[]
-        for semantic_id, labels in semantic_info.items():
-            label=labels.get("class") if isinstance(labels,dict) else None
-            if label == "screen": screen_ids.append(int(semantic_id))
-            elif label in ("screen_tab_-1","screen_tab_+1"): tab_ids.append(int(semantic_id))
-        screen_semantic_pixels.append(int(np.count_nonzero(np.isin(semantic,screen_ids))))
-        tab_semantic_pixels.append(int(np.count_nonzero(np.isin(semantic,tab_ids))))
-        frames.append(rgb)
-        if not screenshot_written:
-            args.screenshot.parent.mkdir(parents=True,exist_ok=True); imageio.imwrite(args.screenshot,rgb); screenshot_written=True
+        # Identity-grounded scene visibility is not claimed in this RGB-only preflight.
         trace.append({"control_sample":n,"time_s":t,"left_phase":ll,"right_phase":rl,
+          "action_14d":action[0].detach().cpu().numpy().tolist(),
+          "measured_arm_joint_positions_rad":arm_joint_pos,
+          "measured_arm_joint_velocities_rad_s":arm_joint_vel,
+          "measured_fingertip_paths":names,
+          "measured_fingertip_positions_w_m":[p.tolist() for p in tips],
           "screen_state_pos_quat_linvel_angvel":s.tolist(),"tip_screen_normal_force_N":forces,
           "tip_screen_force_vector_w_N":[v.tolist() for v in force_vectors],
           "raw_tab_contacts":raw_tab_contacts,"raw_force_vector_reconciliation":force_reconciliations,
           "per_arm_tab_signs":[sorted(x) for x in arm_tab_signs],
           "per_arm_force_opposition_cosine":opposition,
-          "bilateral_opposing_tab_contact":both})
+          "bilateral_opposing_tab_contact":both,
+          "maximum_native_contact_count_so_far":max_native_contact_count,
+          "configured_raw_contact_capacity_per_prim":RAW_CONTACT_CAPACITY_PER_PRIM})
+    except BaseException as exc:
+      failure=exc; failure_step=n if "n" in locals() else -1
+      failure_phase=(ll if "ll" in locals() else "setup")
+      trace.append({"failure":True,"failure_step":failure_step,"failure_phase":failure_phase,
+        "exception_type":type(exc).__name__,"exception_message":str(exc),
+        "completed_control_samples":len(frames)})
+    finally:
+      video_writer.close()
+      trace_path.write_text(json.dumps(trace,separators=(",",":")))
+    if failure is not None:
+      workspace=Path(__file__).resolve().parents[1]
+      preserved=[p.resolve().relative_to(workspace).as_posix() for p in
+                 (args.video,args.screenshot,trace_path) if p.exists()]
+      failure_report={"scope":"failed empty full-screen bimanual YAM component attempt",
+        "component_preflight_passed":False,"failure_step":failure_step,
+        "failure_phase":failure_phase,"exception_type":type(failure).__name__,
+        "exception_message":str(failure),"completed_native_video_frames":len(frames),
+        "maximum_native_contact_count_observed":max_native_contact_count,
+        "configured_raw_contact_capacity_per_prim":RAW_CONTACT_CAPACITY_PER_PRIM,
+        "checks":[{"name":"native_attempt_completed_without_exception","measured":0,
+          "operator":"==","threshold":1,"unit":"boolean","passed":False}],
+        "artifacts":preserved}
+      args.report.write_text(json.dumps(failure_report,indent=2))
+      env.close(); simulation_app.close()
+      raise failure.with_traceback(failure.__traceback__)
     final=state()
     # N observations at 20 Hz span N-1 completed intervals.  The first true
     # observation contributes zero dwell, matching the frozen dwell semantics.
@@ -273,7 +330,6 @@ def main():
         return max(0,longest_run-1)/CONTROL_HZ
     longest=observed_dwell(hold_good)
     bilateral_s=observed_dwell(bilateral)
-    args.video.parent.mkdir(parents=True,exist_ok=True); imageio.mimwrite(args.video,frames,fps=CONTROL_HZ,codec="libx264",quality=8)
     # Decode what was actually written.  This catches an encoder/container
     # failure that an in-memory frame count cannot detect.
     decoded=[]
@@ -287,18 +343,12 @@ def main():
     shot=np.asarray(imageio.imread(args.screenshot))
     screenshot_valid=int(shot.ndim==3 and shot.shape[2]>=3 and shot.size>0 and np.isfinite(shot).all()
                          and float(np.std(shot.astype(np.float32)))>=2.0)
-    visible_screen_frames=sum(v >= 100 for v in screen_semantic_pixels)
-    visible_tab_frames=sum(v >= 10 for v in tab_semantic_pixels)
-    trace_path=args.report.with_name(args.report.stem+"-trace.json"); trace_path.write_text(json.dumps(trace,separators=(",",":")))
     workspace=Path(__file__).resolve().parents[1]
     artifacts=[p.resolve().relative_to(workspace).as_posix() for p in (args.video,args.screenshot,trace_path)]
     expected_inertia=np.array(expected["inertia"])
-    report={"scope":"empty full-screen bimanual YAM component only; not media-separation qualification",
-      "physics_hz":PHYSICS_HZ,"control_hz":CONTROL_HZ,"geometry_audit":audit,
-      "native_mass_kg":native_mass,"expected_mass_kg":expected["mass"],
-      "native_principal_inertia_kg_m2":native_principal.tolist(),"expected_inertia_kg_m2":expected_inertia.tolist(),
-      "tip_collision_bounding_radius_m":tip_radii,"tip_collision_prim_paths":tip_collider_paths,
-      "checks":[
+    checks=[
+       {"name":"scene_configured_contact_sensors_initialized","measured":sum(int(s.is_initialized) for s in sensors),"operator":"==","threshold":4,"unit":"sensors"},
+       {"name":"native_physics_timestep_matches_240_hz_plan","measured":abs(native_dt-EXPECTED_DT),"operator":"<=","threshold":1e-12,"unit":"s"},
        {"name":"complete_square_aperture_count","measured":audit["hole_count"],"operator":"==","threshold":261,"unit":"holes"},
        {"name":"authored_floor_symmetric_difference_area","measured":audit["symmetric_difference_area_m2"],"operator":"<=","threshold":1e-9,"unit":"m^2"},
        {"name":"authored_solid_connected_components","measured":audit["solid_connected_components"],"operator":"==","threshold":1,"unit":"components"},
@@ -306,19 +356,28 @@ def main():
        {"name":"native_inertia_max_relative_error","measured":float(np.max(np.abs(np.sort(native_principal)-np.sort(expected_inertia))/np.sort(expected_inertia))),"operator":"<=","threshold":1e-3,"unit":"fraction"},
        {"name":"nonzero_signed_raw_tab_reaction_points","measured":raw_nonzero_tab_reactions,"operator":">","threshold":0,"unit":"points"},
        {"name":"positive_native_pair_samples_with_verified_raw_vector_reconciliation","measured":reconciled_positive_pair_samples,"operator":"==","threshold":positive_pair_samples,"unit":"control_samples"},
+       {"name":"maximum_native_contact_count_below_configured_capacity","measured":max_native_contact_count,"operator":"<","threshold":RAW_CONTACT_CAPACITY_PER_PRIM,"unit":"contacts_per_prim"},
+       {"name":"native_reported_contact_capacity_matches_configuration","measured":0 if not math.isfinite(min_native_contact_capacity) else min_native_contact_capacity,"operator":"==","threshold":RAW_CONTACT_CAPACITY_PER_PRIM,"unit":"contacts_per_prim"},
        {"name":"measured_bilateral_opposing_tab_contact_duration","measured":bilateral_s,"operator":">=","threshold":0.5,"unit":"s"},
        {"name":"observed_screen_lift_height","measured":max_z-initial_z,"operator":">=","threshold":0.03,"unit":"m"},
        {"name":"contact_supported_stationary_lifted_hold_duration","measured":longest,"operator":">=","threshold":3.0,"unit":"s"},
        {"name":"released_fingertip_collider_to_screen_conservative_clearance","measured":0 if not math.isfinite(min_release_clear) else min_release_clear,"operator":">=","threshold":0.06,"unit":"m"},
        {"name":"native_rgb_minimum_finite_pixel_fraction","measured":min(finite_rgb_fractions,default=0.0),"operator":"==","threshold":1.0,"unit":"fraction"},
        {"name":"native_rgb_minimum_pixel_standard_deviation","measured":min(nonblank_rgb,default=0.0),"operator":">=","threshold":2.0,"unit":"uint8_level"},
-       {"name":"native_semantic_screen_visible_frame_fraction","measured":visible_screen_frames/max(len(frames),1),"operator":">=","threshold":0.8,"unit":"fraction"},
-       {"name":"native_semantic_tabs_visible_frame_fraction","measured":visible_tab_frames/max(len(frames),1),"operator":">=","threshold":0.8,"unit":"fraction"},
-       {"name":"screenshot_frame_native_semantic_screen_pixels","measured":screen_semantic_pixels[0] if screen_semantic_pixels else 0,"operator":">=","threshold":100,"unit":"pixels"},
-       {"name":"screenshot_frame_native_semantic_tab_pixels","measured":tab_semantic_pixels[0] if tab_semantic_pixels else 0,"operator":">=","threshold":10,"unit":"pixels"},
        {"name":"decoded_h264_valid_frame_count","measured":decoded_valid,"operator":"==","threshold":len(frames),"unit":"frames"},
        {"name":"decoded_h264_nonblank_frame_count","measured":decoded_nonblank,"operator":"==","threshold":len(frames),"unit":"frames"},
-       {"name":"decoded_initial_screenshot_valid_nonblank","measured":screenshot_valid,"operator":"==","threshold":1,"unit":"boolean"}],
+       {"name":"decoded_initial_screenshot_valid_nonblank","measured":screenshot_valid,"operator":"==","threshold":1,"unit":"boolean"}]
+    for check in checks:
+        check["passed"]=evaluate_check(check)
+    report={"scope":"empty full-screen bimanual YAM component only; not media-separation qualification",
+      "unqualified_observables":["object-identity camera visibility", "full frozen physics coverage", "media separation"],
+      "component_preflight_passed":all(check["passed"] for check in checks),
+      "native_physics_dt_s":native_dt,"native_physics_hz":native_physics_hz,
+      "expected_physics_hz":EXPECTED_PHYSICS_HZ,"control_hz":CONTROL_HZ,"geometry_audit":audit,
+      "native_mass_kg":native_mass,"expected_mass_kg":expected["mass"],
+      "native_principal_inertia_kg_m2":native_principal.tolist(),"expected_inertia_kg_m2":expected_inertia.tolist(),
+      "tip_collision_bounding_radius_m":tip_radii,"tip_collision_prim_paths":tip_collider_paths,
+      "checks":checks,
       "artifacts":artifacts}
     args.report.parent.mkdir(parents=True,exist_ok=True); args.report.write_text(json.dumps(report,indent=2))
     env.close(); simulation_app.close()
