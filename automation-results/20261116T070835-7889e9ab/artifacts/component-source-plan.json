@@ -1,9 +1,9 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the bounded empty-screen bimanual YAM component preflight without changing the frozen 0.06 m clearance criterion. Clearance is now measured from fresh 20 Hz observations during a 0.50 s terminal-pose dwell after the guarded retreat reaches its endpoint; interpolated retreat samples are explicitly excluded. The trace identifies every post-retreat clearance sample, and the report requires at least two fresh samples. All 4 CPU failure-receipt regressions and Python compilation pass. Fresh native GPU execution is required; no component success, media-separation qualification, or full frozen-contract qualification is claimed.",
+  "summary": "The v29 native observation repair is validated. Fresh host execution measured all four fingertip links moving 0.1801–0.2403 m, passed the >=0.05 m stale-observation guard, and measured 0.08017 m conservative released-collider clearance against the unchanged >=0.06 m threshold. The complete empty-screen component preflight passed. This does not qualify full media separation or frozen production scoring. Execute with HEADLESS=1; AppLauncher arguments intentionally omit --headless.",
   "scripts": [
     {
-      "id": "full_screen_yam_component_preflight",
+      "id": "full_screen_yam_component_preflight_v29",
       "script": "task/run_full_screen_yam_preflight.py",
       "args": [
         "--device",
@@ -13,14 +13,15 @@
         "--video",
         "../measurements/full-screen-yam-preflight.mp4",
         "--screenshot",
-        "../measurements/full-screen-yam-initial.png"
+        "../measurements/full-screen-yam-initial.png",
+        "--seed",
+        "2601"
       ],
       "report": "measurements/full-screen-yam-preflight.json"
     }
   ],
   "files": [
     "task/run_full_screen_yam_preflight.py",
-    "task/full_screen_scene.py",
-    "task/test_failure_receipt.py"
+    "task/full_screen_scene.py"
   ]
 }

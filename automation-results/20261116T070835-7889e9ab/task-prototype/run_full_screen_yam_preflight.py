@@ -163,14 +163,23 @@ def make_env():
         num_envs=1, solve_relations=False, device=args.device)).make_registered()
 
 
-def tip_paths_and_positions():
-    paths=asset_link_paths(); stage=sim_utils.get_current_stage(); cache=UsdGeom.XformCache()
-    names=[]; positions=[]
-    for arm in ("LeftArm","RightArm"):
-        for tip in ("tip_left","tip_right"):
-            path=f"/World/envs/env_0/{arm}"+paths[tip]; names.append(path)
-            m=cache.GetLocalToWorldTransform(stage.GetPrimAtPath(path))
-            positions.append(np.array([float(m[3][i]) for i in range(3)]))
+def tip_paths_and_positions(base):
+    """Actual current physics link origins; USD Xforms are static under Fabric."""
+    paths = asset_link_paths()
+    names, positions = [], []
+    for robot_key, arm in (("left_robot", "LeftArm"), ("right_robot", "RightArm")):
+        robot = base.scene.articulations[robot_key]
+        for tip in ("tip_left", "tip_right"):
+            indices = [i for i, name in enumerate(robot.body_names)
+                       if name.rsplit("/", 1)[-1] == tip]
+            if len(indices) != 1:
+                raise RuntimeError(f"expected one native body for {robot_key}/{tip}: {indices}")
+            value = robot.data.body_link_pos_w.torch[0, indices[0]]
+            position = value.detach().cpu().numpy().astype(np.float64, copy=True)
+            if position.shape != (3,) or not np.isfinite(position).all():
+                raise RuntimeError(f"invalid native body-link position for {robot_key}/{tip}")
+            names.append(f"/World/envs/env_0/{arm}" + paths[tip])
+            positions.append(position)
     return names, positions
 
 
@@ -281,7 +290,7 @@ def main():
     base=env.unwrapped; screen=base.scene.rigid_objects["screen"]
     native_dt=float(base.sim.get_physics_dt())
     native_physics_hz=1.0/native_dt
-    tip_names,_=tip_paths_and_positions()
+    tip_names,_=tip_paths_and_positions(base)
     env.reset(seed=args.seed)
     sensor_names=[f"{arm}_{tip}_screen_contact" for arm in ("left","right")
                   for tip in ("tip_left","tip_right")]
@@ -342,7 +351,7 @@ def main():
       for n in range(samples):
         t=n/CONTROL_HZ; la,ll=lp.action7(t); ra,rl=rp.action7(t)
         action=torch.tensor(np.r_[la,ra],dtype=torch.float32,device=args.device).unsqueeze(0)
-        env.step(action); s=state(); names,tips=tip_paths_and_positions(); max_z=max(max_z,float(s[2]))
+        env.step(action); s=state(); names,tips=tip_paths_and_positions(base); max_z=max(max_z,float(s[2]))
         # Preserve the achieved native frame before any contact-data assertion
         # can fail.  The H.264 writer is closed in finally, yielding a playable
         # prefix for unsuccessful native attempts.
@@ -490,7 +499,17 @@ def main():
     workspace=Path(__file__).resolve().parents[1]
     artifacts=[p.resolve().relative_to(workspace).as_posix() for p in (args.video,args.screenshot,trace_path)]
     expected_inertia=np.array(expected["inertia"])
+    # Regression guard for the stale-USD observation defect: all four real
+    # link origins must move during this planned approach/lift/retreat trial.
+    pose_rows = [row["measured_fingertip_positions_w_m"] for row in trace
+                 if "measured_fingertip_positions_w_m" in row]
+    tip_motion_maxima = []
+    for tip_index in range(4):
+        values = [np.asarray(row[tip_index], dtype=float) for row in pose_rows]
+        tip_motion_maxima.append(max((float(np.linalg.norm(v-values[0])) for v in values),
+                                    default=0.0))
     checks=[
+       {"name":"minimum_native_fingertip_motion_across_four_links","measured":min(tip_motion_maxima),"operator":">=","threshold":0.05,"unit":"m"},
        {"name":"scene_configured_contact_sensors_initialized","measured":sum(int(s.is_initialized) for s in sensors),"operator":"==","threshold":4,"unit":"sensors"},
        {"name":"native_physics_timestep_matches_240_hz_plan","measured":abs(native_dt-EXPECTED_DT),"operator":"<=","threshold":1e-12,"unit":"s"},
        {"name":"complete_square_aperture_count","measured":audit["hole_count"],"operator":"==","threshold":261,"unit":"holes"},
@@ -517,6 +536,8 @@ def main():
     report={"scope":"empty full-screen bimanual YAM component only; not media-separation qualification",
       "unqualified_observables":["object-identity camera visibility", "full frozen physics coverage", "media separation"],
       "component_preflight_passed":all(check["passed"] for check in checks),
+      "fingertip_pose_source":"native Articulation.data.body_link_pos_w",
+      "native_fingertip_max_motion_m":tip_motion_maxima,
       "native_physics_dt_s":native_dt,"native_physics_hz":native_physics_hz,
       "expected_physics_hz":EXPECTED_PHYSICS_HZ,"control_hz":CONTROL_HZ,"geometry_audit":audit,
       "native_mass_kg":native_mass,"expected_mass_kg":expected["mass"],

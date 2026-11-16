@@ -5,7 +5,14 @@
     "full frozen physics coverage",
     "media separation"
   ],
-  "component_preflight_passed": false,
+  "component_preflight_passed": true,
+  "fingertip_pose_source": "native Articulation.data.body_link_pos_w",
+  "native_fingertip_max_motion_m": [
+    0.2402620009056881,
+    0.18007887736085468,
+    0.21886322909975683,
+    0.1946004685668112
+  ],
   "native_physics_dt_s": 0.004166666666666667,
   "native_physics_hz": 240.0,
   "expected_physics_hz": 240,
@@ -231,6 +238,14 @@
   ],
   "checks": [
     {
+      "name": "minimum_native_fingertip_motion_across_four_links",
+      "measured": 0.18007887736085468,
+      "operator": ">=",
+      "threshold": 0.05,
+      "unit": "m",
+      "passed": true
+    },
+    {
       "name": "scene_configured_contact_sensors_initialized",
       "measured": 4,
       "operator": "==",
@@ -352,11 +367,11 @@
     },
     {
       "name": "released_fingertip_collider_to_screen_conservative_clearance",
-      "measured": 0.029137018563402298,
+      "measured": 0.08017443794344913,
       "operator": ">=",
       "threshold": 0.06,
       "unit": "m",
-      "passed": false
+      "passed": true
     },
     {
       "name": "native_rgb_minimum_finite_pixel_fraction",

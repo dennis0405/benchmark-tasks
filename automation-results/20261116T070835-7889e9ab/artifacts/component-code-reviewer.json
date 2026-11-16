@@ -1,17 +1,21 @@
 {
   "verdict": "pass",
   "findings": [
-    "The prior clearance defect is resolved: interpolated retreat samples are excluded, and the frozen 0.06 m criterion is evaluated only from fresh 20 Hz observations labeled `clear_dwell` after the guarded retreat reaches its terminal target.",
-    "Qualification requires at least two terminal-dwell observations and conservatively subtracts authored fingertip-collider bounding radii from distance to the complete current screen solid.",
-    "The component aggregation remains scoped honestly and requires all native geometry, mass/inertia, contact reconciliation, grasp/lift/hold, release-clearance, and decoded-media checks to pass; it does not claim full-task or media-separation qualification.",
-    "No object-state writes, teleportation, fake grasp welds, constant success readings, or substituted observables were found in the planned source."
+    "The planned v29 source correctly replaces stale USD fingertip observations with live `Articulation.data.body_link_pos_w.torch` values, uniquely indexed through native body names, and updates both call sites.",
+    "The regression check derives each of four fingertip motions from recorded native pose samples and requires the minimum motion to be at least 0.05 m; it is neither constant nor inferred from commanded actions.",
+    "Released clearance uses fresh terminal-dwell observations, the complete modeled screen solid, and CAD-derived fingertip collider bounding radii while preserving the frozen 0.06 m criterion.",
+    "The program retains native 240 Hz physics checks, guarded 14D robot actions, actual joint/body/contact traces, sustained contact/lift/hold logic, decoded media validation, and failure receipts. No object-state writes, fake welds, disabled collisions, or constant qualification readings were found.",
+    "The planned arguments omit unsupported `--headless` and use workspace-relative report paths. Claims in the generated report remain explicitly limited to the empty-screen component; full media-separation qualification is deferred.",
+    "The source-plan summary mentions an earlier host result, but this verdict certifies only the generated source paths and observables. The executor must still produce and hash-bind the fresh native report after this review."
   ],
   "evidence_paths": [
     "artifacts/component-source-plan.json",
     "input/last-failure.json",
+    "input/operator-source-notes.json",
+    "input/runtime-api-preflight.json",
+    "input/pinned-runtime-sources/6e03c85172da8712bdebc6e19c89cea7868afb02f9e96259c82a281cca4270b4-rigid_object_data.py",
+    "input/pinned-runtime-sources/841ca674429d5bd405d212f93494c42ff32ae162e4add373474193adbec746f7-base_rigid_object_data.py",
     "task/run_full_screen_yam_preflight.py",
-    "task/full_screen_scene.py",
-    "task/test_failure_receipt.py",
-    "input/runtime-api-preflight.json"
+    "task/full_screen_scene.py"
   ]
 }
