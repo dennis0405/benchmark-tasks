@@ -96,9 +96,25 @@ class CoverageError(StateError):
     """Reviewer transport/coverage failure, never evidence a candidate is a duplicate."""
 
 
-def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
+def novelty_batches(records, max_count, max_bytes):
+    """Schedule complete records by serialized size; never truncate a definition."""
+    batch, size = [], 0
+    for record in records:
+        record_size = len(json.dumps(record, ensure_ascii=False).encode("utf-8"))
+        if batch and (len(batch) >= max_count or size + record_size > max_bytes):
+            yield batch
+            batch, size = [], 0
+        batch.append(record)
+        size += record_size
+    if batch:
+        yield batch
+
+
+def compare_catalog(agent, workspace, candidate, catalog, batch_size=100, batch_bytes=400_000):
     if not catalog.get("complete") or not catalog.get("records"):
         raise GateError("catalog incomplete/empty; novelty cannot pass")
+    if batch_size <= 0 or batch_bytes <= 0:
+        raise ValueError("Novelty batch limits must be positive")
     notes_path = Path(workspace) / "input/novelty-review-notes.json"
     review_notes = read(notes_path) if notes_path.exists() else {}
     if not isinstance(review_notes, dict):
@@ -232,10 +248,10 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=25):
             )
         )
 
-    for i in range(0, len(records), batch_size):
+    for batch in novelty_batches(records, batch_size, batch_bytes):
+        i = len(comparisons)
         if (Path(workspace).parent / "cancel.json").exists():
             raise StateError("novelty cancelled at batch boundary; partial evidence preserved")
-        batch = records[i : i + batch_size]
         accepted = {}
         for record in batch:
             path = cache_path(record)
