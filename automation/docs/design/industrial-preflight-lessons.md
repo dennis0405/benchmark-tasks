@@ -178,3 +178,24 @@ checkpoint9212c23 preserves the findings. Research now moves beyond alignment/in
 fastening and calibration families. Controlled demagnetization is a primary-source research
 lead only, with industrial relevance, manipulation difficulty and actual material-state
 physics still to establish; no native prototype, demo or Dream success is claimed.
+
+
+## 2026-11-16: restore the agreed active-claim scope
+
+PR545 was judged overlapping, but its other-team PR was closed, unmerged and finally
+rejected on2026-11-12. Treating every archival overlap as an active claim exceeded the
+agreed Accepted/Pending/reserved plus own-history/public-benchmark scope. The collector
+still reads every historical original. After a complete fresh board snapshot, the gate
+now retains both overlap and uncertain verdicts as nonblocking `inactive_history` only
+when state/status are closed, merged_at is explicitly null, own_team is explicitly false,
+and board_required is explicitly false. Unknown fields, current board claims, merged/open
+records, all own history and required benchmark ambiguity/overlap continue to block.
+This supersedes the earlier archival rule above; no physical judgment is rewritten.
+The critic receives the same scope and record-digest evidence. A subsequent reopening or
+board reservation changes the record digest, invalidates its comparison and restores the
+required scope. Final review and submission refresh the current catalog again.
+
+Regression tests exercise both retained verdicts, missing merge/board scope, merged/open
+records, own-team history and active board requirements. Full comparison coverage remains
+mandatory. The confirmed author of our two accepted references, eainx, is also registered
+as own-team so their closed history cannot be exempted as another team's.

@@ -152,7 +152,8 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=100, batch_
         inactive = [
             {
                 "id": row["id"],
-                "reason": "closed unmerged other-team history; uncertainty retained",
+                "verdict": row["verdict"],
+                "reason": "inactive closed unmerged other-team history; original verdict retained",
                 "catalog_record_digest": digest(by_id[row["id"]]),
                 "scope_evidence": {
                     key: by_id[row["id"]].get(key)
@@ -168,7 +169,7 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=100, batch_
                 },
             }
             for row in comparisons
-            if row["verdict"] == "uncertain"
+            if row["verdict"] in {"uncertain", "overlap"}
             and by_id[row["id"]].get("state") == "closed"
             and by_id[row["id"]].get("status") == "closed"
             and by_id[row["id"]].get("own_team") is False
@@ -186,7 +187,8 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=100, batch_
             "complete": len(comparisons) == len(records),
             "compared": len(comparisons),
             "comparisons": comparisons,
-            "inactive_uncertainty": inactive,
+            "inactive_history": inactive,
+            "inactive_uncertainty": [row for row in inactive if row["verdict"] == "uncertain"],
             "at": now(),
         }
         write_json(Path(workspace) / "artifacts" / "novelty.json", report)
@@ -329,7 +331,7 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=100, batch_
             partial = [accepted[r["id"]] for r in batch if r["id"] in accepted]
             base = len(comparisons)
             comparisons.extend(partial)
-            checkpoint()  # Known overlaps reject immediately, even if other rows are missing.
+            checkpoint()  # Required-scope overlaps reject immediately, even if other rows are missing.
             del comparisons[base:]
             remaining = [r["id"] for r in batch if r["id"] not in accepted]
             if remaining:
