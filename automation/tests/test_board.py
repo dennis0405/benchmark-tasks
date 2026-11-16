@@ -185,3 +185,75 @@ def test_archival_recovery_requires_trusted_receipt_and_uses_receipt_time_commit
     api.trusted = False
     with pytest.raises(CatalogError, match="trusted"):
         recover_own_history(metadata, api, "upstream/repo", 1, ["official"])
+
+
+def test_board_retries_a_changed_snapshot_without_omitting_new_pending_tasks():
+    calls = {"logins": 0, "summaries": 0}
+
+    def transport(request):
+        if request.url.path == "/api/login":
+            calls["logins"] += 1
+            return httpx.Response(200, json={})
+        if request.url.path == "/api/board/summary":
+            calls["summaries"] += 1
+            pending = 1 if calls["summaries"] == 1 else 2
+            return httpx.Response(200, json={"accepted": 0, "pending": pending, "yours": {}})
+        if request.url.path == "/api/team/tasks":
+            return httpx.Response(200, json={"tasks": []})
+        rows = []
+        if request.url.params.get("view") == "pending":
+            rows = [task("TK-A", "pending")]
+            if calls["logins"] > 1:
+                rows.append(task("TK-NEW", "pending"))
+        return httpx.Response(200, json={"tasks": rows})
+
+    with httpx.Client(transport=httpx.MockTransport(transport)) as client:
+        snapshot = collect_board("team", "secret", client=client)
+    assert snapshot["complete"] and calls["logins"] == 2
+    assert {r["board_task_id"] for r in snapshot["records"]} == {"TK-A", "TK-NEW"}
+
+
+def test_persistently_unstable_board_still_fails_after_three_snapshots():
+    summaries = []
+
+    def transport(request):
+        if request.url.path == "/api/login":
+            return httpx.Response(200, json={})
+        if request.url.path == "/api/board/summary":
+            summaries.append(request.url.path)
+            return httpx.Response(
+                200, json={"accepted": 0, "pending": 1 if len(summaries) % 2 else 2, "yours": {}}
+            )
+        rows = [task("TK-A", "pending")] if request.url.params.get("view") == "pending" else []
+        return httpx.Response(200, json={"tasks": rows})
+
+    with (
+        httpx.Client(transport=httpx.MockTransport(transport)) as client,
+        pytest.raises(CatalogError, match="counts changed"),
+    ):
+        collect_board("team", "secret", client=client)
+    assert len(summaries) == 6
+
+
+def test_board_requests_supported_large_pages_and_retains_all_definitions():
+    offsets = []
+    rows = [task(f"TK-{i}", "accepted") for i in range(1001)]
+
+    def transport(request):
+        if request.url.path == "/api/login":
+            return httpx.Response(200, json={})
+        if request.url.path == "/api/board/summary":
+            return httpx.Response(200, json={"accepted": 1001, "pending": 0, "yours": {}})
+        if request.url.path == "/api/team/tasks":
+            return httpx.Response(200, json={"tasks": []})
+        if request.url.params.get("view") == "accepted":
+            assert request.url.params["limit"] == "1000"
+            offset = int(request.url.params["offset"])
+            offsets.append(offset)
+            return httpx.Response(200, json={"tasks": rows[offset : offset + 1000]})
+        return httpx.Response(200, json={"tasks": []})
+
+    with httpx.Client(transport=httpx.MockTransport(transport)) as client:
+        snapshot = collect_board("team", "secret", client=client)
+    assert offsets == [0, 1000]
+    assert snapshot["complete"] and len(snapshot["records"]) == 1001

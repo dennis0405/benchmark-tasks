@@ -14,10 +14,23 @@ from .gates import digest
 from .store import now
 
 
+class BoardSnapshotChanged(CatalogError):
+    """A concurrent update invalidated this read-only snapshot."""
+
+
 def collect_board(team, token, client=None, own_detail=None):
     if client is None:
         with httpx.Client(timeout=45) as owned:
             return collect_board(team, token, client=owned, own_detail=own_detail)
+    for attempt in range(3):
+        try:
+            return _collect_board_attempt(team, token, client, own_detail)
+        except BoardSnapshotChanged:
+            if attempt == 2:
+                raise
+
+
+def _collect_board_attempt(team, token, client, own_detail):
     base = "https://tasks.robocurve.org"
     response = client.post(base + "/api/login", json={"code": team, "token": token})
     if response.status_code != 200:
@@ -35,11 +48,13 @@ def collect_board(team, token, client=None, own_detail=None):
     for view in ("accepted", "pending", "revision"):
         seen = set()
         statuses = Counter()
-        for offset in range(0, 10000, 100):
-            page = get("/api/tasks", view=view, limit=100, offset=offset)["tasks"]
+        # The live API supports 1,000 rows. Fewer requests shorten the window
+        # for concurrent changes; completeness guards below remain mandatory.
+        for offset in range(0, 10000, 1000):
+            page = get("/api/tasks", view=view, limit=1000, offset=offset)["tasks"]
             for task in page:
                 if task["id"] in seen:
-                    raise CatalogError("board pagination changed/repeated; snapshot incomplete")
+                    raise BoardSnapshotChanged("board pagination changed/repeated; snapshot incomplete")
                 seen.add(task["id"])
                 statuses[task["status"]] += 1
                 # The revision view may also return archive/pilot entries. Only
@@ -62,7 +77,7 @@ def collect_board(team, token, client=None, own_detail=None):
                 else:
                     normalize_board(task)
                 tasks[task["id"]] = task
-            if len(page) < 100:
+            if len(page) < 1000:
                 break
         else:
             raise CatalogError("board pagination limit reached")
@@ -83,9 +98,9 @@ def collect_board(team, token, client=None, own_detail=None):
     after = get("/api/board/summary")
     for key in ("accepted", "pending"):
         if before[key] != after[key] or counts[key].get(key, 0) != after[key]:
-            raise CatalogError("board counts changed/incomplete: " + key)
+            raise BoardSnapshotChanged("board counts changed/incomplete: " + key)
     if before.get("yours") != after.get("yours"):
-        raise CatalogError("team history changed during board snapshot")
+        raise BoardSnapshotChanged("team history changed during board snapshot")
     fields = (
         "title",
         "category",
