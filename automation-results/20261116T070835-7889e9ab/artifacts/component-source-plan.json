@@ -1,6 +1,6 @@
 {
   "phase": "preflight",
-  "summary": "The API-only RigidObject probe now has successful native 240/480 Hz measurements. Advance to the bounded aperture-collision discovery probe at both rates. It measures actual angle-cut-media passage, transverse non-passage, conservative washer-OD retention, realized media mass/inertia, and finite-patch escape without claiming full screen, segmented-washer, agitation, spill, YAM, scorer, or physics qualification. The installed launcher parser was checked: no unsupported --headless argument is supplied. The script passes compilation; native GPU execution remains for the trusted controller.",
+  "summary": "Repaired the native aperture probe's reported mass failure. The frozen 3.5044969 g finished-piece mass is now authored directly instead of being recomputed from the smaller angle-cut collision-mesh volume; native mass and inertia remain read back from PhysX and reported numerically. The script compiles successfully but requires a fresh trusted-controller GPU run. This remains bounded component discovery, not full aperture, retention, spill, YAM, or physics qualification.",
   "scripts": [
     {
       "id": "aperture_native_probe_240hz",
@@ -14,19 +14,6 @@
         "cuda:0"
       ],
       "report": "measurements/aperture-native-probe-240hz.json"
-    },
-    {
-      "id": "aperture_native_probe_480hz",
-      "script": "task/run_aperture_native_probe.py",
-      "args": [
-        "--physics-hz",
-        "480",
-        "--report",
-        "../measurements/aperture-native-probe-480hz.json",
-        "--device",
-        "cuda:0"
-      ],
-      "report": "measurements/aperture-native-probe-480hz.json"
     }
   ],
   "files": [

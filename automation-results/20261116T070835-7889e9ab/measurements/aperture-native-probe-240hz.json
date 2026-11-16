@@ -1,0 +1,79 @@
+{
+  "checks": [
+    {
+      "name": "physics_dt_error_max",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-09,
+      "unit": "s"
+    },
+    {
+      "name": "nominal_20hz_interval_physics_step_ratio",
+      "measured": 12.0,
+      "operator": "==",
+      "threshold": 12.0,
+      "unit": "ratio_not_action_measurement"
+    },
+    {
+      "name": "realized_media_mass",
+      "measured": 0.0032575814984738827,
+      "operator": ">",
+      "threshold": 0.0,
+      "unit": "kg"
+    },
+    {
+      "name": "realized_media_mass_relative_error",
+      "measured": 0.07045673275559677,
+      "operator": "<=",
+      "threshold": 0.02,
+      "unit": "ratio"
+    },
+    {
+      "name": "realized_media_min_principal_inertia",
+      "measured": 3.414170279825157e-08,
+      "operator": ">",
+      "threshold": 0.0,
+      "unit": "kg_m2"
+    },
+    {
+      "name": "end_first_genuine_passage_fraction",
+      "measured": 1.0,
+      "operator": "==",
+      "threshold": 1.0,
+      "unit": "fraction_component_threshold"
+    },
+    {
+      "name": "outside_patch_escape_fraction",
+      "measured": 0.0625,
+      "operator": "==",
+      "threshold": 0.0,
+      "unit": "fraction_validity"
+    },
+    {
+      "name": "deterministic_trial_count",
+      "measured": 80,
+      "operator": "==",
+      "threshold": 80,
+      "unit": "trials"
+    }
+  ],
+  "artifacts": [
+    "measurements/aperture-native-probe-240hz-trace.json"
+  ],
+  "observations_not_checks": {
+    "transverse_no_certified_passage_observed_fraction": 1.0,
+    "washer_od_proxy_no_certified_passage_observed_fraction": 1.0,
+    "transverse_ever_fully_below_floor_fraction": 0.0,
+    "washer_od_proxy_ever_fully_below_floor_fraction": 0.0,
+    "transverse_final_full_collider_above_floor_fraction": 0.0,
+    "washer_od_proxy_final_full_collider_above_floor_fraction": 0.15
+  },
+  "limitations": [
+    "The media collider is the frozen 15-degree parallel-angle-cut geometry; its native realized mass and inertia are reported. Solid washer-OD cylinders are discovery observations only, not the frozen four-segment washer assemblies and not retention evidence.",
+    "This probe does not test agitation release, washer-bore lodging, breakable joints, the full screen, spill scorer, YAM actions, or grading.",
+    "The nominal 20 Hz ratio is timestep arithmetic; no action loop is measured here.",
+    "Genuine passage uses a conservative continuous swept-cylinder bound for every physics interval overlapping the floor slab; uncertified/tunneling crossings are not counted.",
+    "For transverse media and washer proxies, no_certified_passage_observed is only the complement of the positive passage certificate. It does not certify retention and may include rib penetration, tunneling, below-floor escape, or partial seating.",
+    "The trace separately records complete below-floor escape, finite-patch escape, rib-clearance evidence, and final full-collider-above-floor state; none is aggregated into a retention check in this bounded discovery."
+  ]
+}

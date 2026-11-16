@@ -1,0 +1,49 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1794842112.371822    4218 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto
+W0000 00:00:1794842112.372679    4218 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto
+[ISAACLAB] AppLauncher initialization complete
+[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl
+[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl
+[ISAACLAB] Kit hash:    00c488ae
+Warp 1.16.0 initialized:
+   CUDA Toolkit 12.9, Driver 12.7
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA L40S" (44 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /home/ubuntu/.cache/warp/1.16.0
+[INFO]: Registered backend 'physx' for factory RigidObject.
+Loading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'
+2026-11-16T15:15:12Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.
+2026-11-16T15:15:12Z [29ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX
+Traceback (most recent call last):
+  File "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_aperture_native_probe.py", line 354, in <module>
+    main()
+  File "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_aperture_native_probe.py", line 224, in main
+    body = rigid_body(
+           ^^^^^^^^^^^
+  File "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_aperture_native_probe.py", line 143, in rigid_body
+    return RigidObject(cfg)
+           ^^^^^^^^^^^^^^^^
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/assets/rigid_object/rigid_object.py", line 30, in __new__
+    return super().__new__(cls, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/utils/backend_utils.py", line 154, in __new__
+    return impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab_physx/isaaclab_physx/assets/rigid_object/rigid_object.py", line 68, in __init__
+    super().__init__(cfg)
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/assets/rigid_object/base_rigid_object.py", line 59, in __init__
+    super().__init__(cfg)
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/assets/asset_base.py", line 127, in __init__
+    self.cfg.spawn.func(
+  File "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_aperture_native_probe.py", line 99, in spawn_parallel_angle_cut_mesh
+    mesh = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/trimesh/base.py", line 191, in __init__
+    self.faces = faces
+    ^^^^^^^^^^
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/trimesh/base.py", line 374, in faces
+    values = np.asanyarray(values, dtype=int64)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: setting an array element with a sequence. The requested array has an inhomogeneous shape after 1 dimensions. The detected shape was (34,) + inhomogeneous part.

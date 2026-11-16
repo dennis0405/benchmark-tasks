@@ -1,14 +1,15 @@
 {
   "verdict": "repair",
   "findings": [
-    "The transverse and washer checks do not establish physical non-passage or retention. `genuine_non_passage` is defined only as the negation of a certified passage, so a body that penetrates or tunnels through a rib is counted as successful non-passage because its negative rib clearance makes `genuine_full_body_aperture_passage` false. Although `ever_fully_below_floor` and `final_full_collider_above_floor` are recorded, neither is included in the aggregate checks. Require retained bodies to remain physically above the floor (and reject penetration/tunneling or below-floor outcomes) before reporting the transverse/washer fractions as passing.",
-    "The plan summary claims conservative washer-OD retention, but the current qualification logic can pass all washer trials even when every proxy falls through solid rib geometry. Rename the measurement as uncertified-passage rejection or, preferably, implement an explicit retention predicate using the native pose trace and collision/penetration evidence. Keep this discovery proxy distinct from segmented-washer qualification."
+    "The mass repair removes the required constitutive coupling. The frozen media geometry uses a 22.225 mm maximum axial envelope with parallel 15° cuts, so its centerline length and mesh volume are smaller than those of a 22.225 mm cylinder. `MassPropertiesCfg(mass=MEDIA_MASS)` forces the target mass while ignoring the contract’s frozen 2500 kg/m³ density; consequently the `realized_media_mass_relative_error` check is guaranteed by authored input rather than validating geometry × density. Reconcile the frozen geometry, density, and mass explicitly, then measure native mass and inertia without a criterion-forcing override.",
+    "`MEDIA_DENSITY` is now unused, while the report does not expose mesh volume, effective density, or inertia agreement with a geometry-derived reference. The only inertia criterion is positivity, which cannot detect incorrect mass-property coupling. Add checks tracing volume, density, mass, and inertia to the same physical body and units.",
+    "The prior 7.05% mass failure is therefore concealed rather than physically resolved. Generated-source preflight cannot pass while the revised program changes the material interpretation solely to satisfy the failed threshold."
   ],
   "evidence_paths": [
-    "artifacts/component-source-plan.json",
     "task/run_aperture_native_probe.py",
+    "artifacts/component-source-plan.json",
+    "input/last-failure.json",
     "artifacts/contract.json",
-    "input/revision-request.txt",
-    "input/last-failure.json"
+    "../logs/aperture_native_probe_240hz-bf7b3c944d.log"
   ]
 }
