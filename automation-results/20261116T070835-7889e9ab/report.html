@@ -55,54 +55,59 @@
 7. 모든 제작 게이트 후에만 trusted coordinator의 Dream 최종 episode1회와 누적20USD ledger. 실패/결과불명에도 자동 새 episode 금지. 키를 역할 에이전트에 넘기지 않는다.
 8. 별도 run origin branch에 코드·에셋·재현 명령·라이선스·최종 영상·주요 측정을 보존하고 실제 compute 상태를 보고. 50MB/file 또는100MB checkpoint 초과는 업로드 전 설명한다.
 9. review report.html, release-manifest digest와 실제 영상으로 사용자 검토. 구체적 검토 버전의 별도 승인 전 공식 미디어 업로드/대회 PR/최종 제출은 하지 않는다.
-</p><p>worker paused at stage boundary</p><p>Release digest: none</p><h2>selected</h2><pre>{
-  &quot;id&quot;: &quot;dry-angle-cut-media-recovery&quot;,
-  &quot;title&quot;: &quot;Screen ceramic finishing media from finished metal washers&quot;,
-  &quot;objective&quot;: &quot;Pour a dry mixture of full-scale metal washers and ceramic angle-cut cylinders into a supported manual separating screen, use the screen to recover the media in the receiver while retaining every washer, then release the screen onto its supports.&quot;,
+</p><p>novelty cancelled at batch boundary; partial evidence preserved</p><p>Release digest: none</p><h2>selected</h2><pre>{
+  &quot;id&quot;: &quot;bimanual-tab-sieve-separation&quot;,
+  &quot;title&quot;: &quot;Bimanually separate ceramic finishing media from retained steel washers&quot;,
+  &quot;objective&quot;: &quot;Starting with eight free rigid ceramic media bodies and two free rigid steel washers physically settled together inside a supported manual screen, grasp both screen tabs, lift and gently tilt or agitate the screen so the ceramic media passes through real apertures into the receiver while both washers remain in the screen; reseat the screen on both supports, fully release it, and preserve the completed state for 3 seconds.&quot;,
   &quot;skills&quot;: [
-    &quot;Bimanual rim grasping and load sharing&quot;,
-    &quot;Controlled pouring into a supported screen&quot;,
-    &quot;Orientation-dependent granular-flow control&quot;,
-    &quot;Bridge-clearing through bounded tilt and agitation&quot;,
-    &quot;Stable tool placement and collision-free release&quot;
+    &quot;Bimanual tab grasping and load sharing&quot;,
+    &quot;Controlled lifting and orientation-sensitive sifting&quot;,
+    &quot;Force-limited tilting and agitation&quot;,
+    &quot;Simultaneous media recovery and washer retention&quot;,
+    &quot;Accurate support replacement and collision-free bimanual release&quot;
   ],
-  &quot;success_conditions&quot;: &quot;Let F be the fraction of starting mixture mass that has physically entered the screen, and r the current receiver-contained media mass divided by starting media mass. Before a permanent failure, score = 0.20F + 0.70 min(max(r/0.98,0),1) + 0.10D. D becomes 1 only after F=1, r&gt;=0.98, every washer remains in the screen, the screen rests on its supports, both grippers are at least 60 mm clear, and fresh observations continuously satisfy those conditions for 3.0 seconds; any broken prerequisite resets the dwell. Thus 98–100% recovery earns all 70 recovery points. A washer leaving the screen, deliberate workpiece removal, or receiver contamination permanently sets the score to zero. Media crossing the rim, contacting the floor, or escaping the receiver is immutable loss and cannot earn recovery credit; any such event also prevents D. Washer fracture or permanent deformation caps the score at 0.40. Full score requires F=1, r&gt;=0.98, all washers retained, no spill, loss, contamination, or damage, and the released dwell. Continuous video and before/after weighing can check the outcome; motion style, shake count, hand identity, and action order are not graded.&quot;,
-  &quot;industrial_value&quot;: &quot;Raytech identifies manual screens as equipment for separating manufactured parts from finishing media, while its guidance warns that excessive separation motion can damage uncushioned parts. The objective represents a real post-finishing recovery operation affecting production workers, inspectors, and material handlers rather than appearance-based sorting.&quot;,
-  &quot;dexterity&quot;: &quot;The source fixes a nominal 1/2-inch screen class and 9.525 × 22.225 mm angle-cut media. In the representative model, the clear apertures are explicitly assumed to be 12.7 mm squares: the media diameter can fit, but its length exceeds the approximately 17.96 mm aperture diagonal. Native controls must demonstrate end-first passage, transverse bridging, and bridge release. The robot must pour into the supported screen, establish a coordinated two-arm grasp, mobilize bridged media without throwing it over the rim, retain annular steel workpieces, and reseat and release the loaded screen.&quot;,
+  &quot;success_conditions&quot;: &quot;Score starts at 0. Let r be receiver-contained target-media mass divided by valid initial target-media mass. Award 0.90×clamp(r/0.98,0,1), plus 0.10 only when r≥0.98, every initial washer remains intact and wholly inside the screen, the screen is physically supported by both support assemblies, both grippers are at least 60 mm clear, and fresh observations confirm all prerequisites continuously for 3 seconds. Reset dwell immediately when a prerequisite fails. Permanently score 0 for washer loss or receiver entry, media spill outside the receiver, invalid or tunneled passage, true JOINT_BREAK, forbidden post-reset object-state writes, fake welds, collision disabling, or an invalid reset. Recovery, retention, support, release, spill, and damage are independently checkable from video and rigid-body/joint traces. Hand identity, action count, shake count, motion order, and arbitrary impulse windows are not graded.&quot;,
+  &quot;industrial_value&quot;: &quot;This represents manual post-finishing separation of production workpieces from abrasive media. Raytech identifies screens for manually separating parts from media and warns that excessive motion can damage exposed parts after their cushioning media has separated.&quot;,
+  &quot;dexterity&quot;: &quot;The robot must establish two physical tab grasps, share a changing loose-body load, reorient 9.525×22.225 mm media for aperture passage, retain larger ring-shaped steel workpieces, limit agitation to prevent ejection or damage, align the loaded screen with two supports, and withdraw both hands. The tested ability is selective many-body separation through physical openings, not color sorting or ordinary receptacle placement.&quot;,
   &quot;evidence&quot;: [
     {
       &quot;source_id&quot;: &quot;s-b442a7fa63fcb80c&quot;,
-      &quot;locator&quot;: &quot;PDF p.21, ceramic media product list&quot;,
+      &quot;locator&quot;: &quot;PDF p.21, Ceramic Finishing Media product list&quot;,
       &quot;quote_sha256&quot;: &quot;faf9880f10b845926989ee6732ee781ad0de991fc0e6aa571c2a33c6e4b0cd74&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-b442a7fa63fcb80c&quot;,
-      &quot;locator&quot;: &quot;PDF p.21, “MANUAL SIFTING SCREENS”&quot;,
+      &quot;locator&quot;: &quot;PDF p.21, MANUAL SIFTING SCREENS&quot;,
       &quot;quote_sha256&quot;: &quot;262696612fa539e94bd2ee00d376a83b9f5a6113543f896a3edb1b2cdea654d2&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-b442a7fa63fcb80c&quot;,
-      &quot;locator&quot;: &quot;PDF p.21, “MANUAL SIFTING SCREENS”&quot;,
+      &quot;locator&quot;: &quot;PDF p.21, MANUAL SIFTING SCREENS&quot;,
       &quot;quote_sha256&quot;: &quot;66f74c45a46c362558cfe6e373415abb93cc80e78846f0d3da668df893a36a7e&quot;
     },
     {
+      &quot;source_id&quot;: &quot;s-b442a7fa63fcb80c&quot;,
+      &quot;locator&quot;: &quot;PDF p.21, MANUAL SIFTING SCREENS&quot;,
+      &quot;quote_sha256&quot;: &quot;dbe5d96624cd61868f7ca1a5f604625fdfc57c64724d2624f3660366bb4af73d&quot;
+    },
+    {
       &quot;source_id&quot;: &quot;s-a3efcebbecba0048&quot;,
-      &quot;locator&quot;: &quot;“Sifting Screens” product section&quot;,
+      &quot;locator&quot;: &quot;Sifting Screens product section&quot;,
       &quot;quote_sha256&quot;: &quot;aea147bd37db406251a63aa521cde3166a44b133cd36a482172ef994b83682da&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-855e796b5a3f8ecc&quot;,
-      &quot;locator&quot;: &quot;FAQ, “What is the best way to separate the parts from the media?”&quot;,
+      &quot;locator&quot;: &quot;Separating Screens section&quot;,
       &quot;quote_sha256&quot;: &quot;cb857665dd1eb63e71b37cd081667c7aa195503cb72424be339f0dfaf66e3f6b&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-855e796b5a3f8ecc&quot;,
-      &quot;locator&quot;: &quot;FAQ, “Separating Screens”&quot;,
+      &quot;locator&quot;: &quot;Separating Screens section&quot;,
       &quot;quote_sha256&quot;: &quot;4a7d0f25e5a463f5948a246cc275401fd5b5b35ec580c57b776cb99d4a9c7429&quot;
     }
   ],
-  &quot;asset_plan&quot;: &quot;Build an independently authored, representative full-scale screen using the sourced 368.3 mm outer diameter and 63.5 mm depth. Treat the following as frozen, testable modeling assumptions rather than manufacturer CAD: 12.7 mm clear square apertures, 3 mm ribs and rib thickness, 15.7 mm pitch, 150 mm flat perforated-floor radius, 3 mm sloped wall, and 0.40 kg screen mass. Preserve true openings with finite compound bars or supported non-convex collision; never use a convex hull that fills the holes. Model 24 free ceramic bodies at the sourced 9.525 × 22.225 mm envelope, with assumed parallel 15-degree angle cuts and 2500 kg/m³ density; compute and record each realized closed-mesh mass and inertia, with about 3.50 g as the analytic reference. Model four disclosed representative plain carbon-steel washers, not a claimed commercial SKU: 30 mm OD, 8 mm bore, 4 mm thickness, 7850 kg/m³, approximately 20.62 g each. Use initial uncalibrated contact assumptions of ceramic/polymer static/dynamic friction 0.50/0.35, steel/polymer 0.45/0.35, media/media 0.40/0.30, restitution 0.05, 0.15 mm contact offset, zero rest offset, and 32/8 solver position/velocity iterations. Provide a rigid receiver, two physical supports, and a 78 mm OD gripper-accessible feed cup. Before robot integration, verify at physics-substep resolution: end-first media passage; transverse bridging and motion-driven release; washer retention in every relevant orientation; whether angle-cut noses can enter or lodge in the washer’s 8 mm bore despite the 9.525 mm body diameter; no boundary aperture larger than specified; no-op, gravity, spill, and aggressive-motion controls. Then verify actual YAM contacts and joint/body traces for cup pouring, bimanual lift and sifting, support placement, 60 mm release clearance, and fresh 3-second dwell. Keep component physics metrics separate from task scoring.&quot;,
-  &quot;risk&quot;: &quot;The 368.3 mm screen is large relative to the pinned 0.8 × 1.2 m tabletop, so bimanual rim reach, feed-cup access, support clearance, and loaded grasp stability remain construction risks. Slender media may tunnel or self-lock unrealistically, and angle-cut tips may lodge in washer bores. These are explicit native component gates: failure blocks full-scene development but does not leave the mechanism undefined. Material and contact values are disclosed uncalibrated assumptions and must not be tuned with hidden forces, collision removal, particle freezing, or velocity caps that suppress genuine spills.&quot;,
+  &quot;asset_plan&quot;: &quot;Reuse the independently authored full-scale rigid screen with sourced 368.3 mm outer diameter and 63.5 mm depth. Model 261 circular apertures with 12.7 mm clear diameter, 3 mm ribs, 15.7 mm pitch, a solid annular support region, and two connected grasp tabs; aperture layout, rib width, pitch, tabs, mass, and hole count are disclosed representative assumptions rather than manufacturer CAD. Use eight free 9.525×22.225 mm ceramic angle-cut-cylinder bodies. The catalog sources only the nominal envelope and product form: 15-degree end cuts and 2500 kg/m³ ceramic density are explicit testable modeling assumptions. Restore two representative steel washers rather than machining blanks: each is a single rigid compound ring with 30 mm outer diameter, 8 mm bore, 4 mm thickness, and assumed 7850 kg/m³ density. Retention must be qualified against the final circular-aperture CAD in every sampled washer orientation, including attempted edge and bore-hook configurations; readiness permits construction, but any observed escape blocks demo development. Initialize all ten objects above the screen floor, allow unrestricted reset-only settling, and reject any reset where media already passed through. Use a 50 mm-high receiver and two pairs of posts contacting only the solid annulus. Preserve the existing native empty-screen lift/hold/release result only as prototype evidence. Before a full demo, require no-op, actual aperture-passage, washer-retention, loaded-grasp, spill, reseating, release-clearance, and matched 240/480 Hz tests.&quot;,
+  &quot;risk&quot;: &quot;The ring topology makes washer retention a critical native qualification despite nominal aperture and washer dimensions; any edge passage or bore-hook escape blocks the task rather than permitting a weaker scorer. Loaded media dynamics also remain unqualified: transverse media may self-clear during preroll, resist guarded agitation, or cause grasp slip. These are falsifiable environment gates, not claims of demonstrated success.&quot;,
   &quot;feasibility_status&quot;: &quot;ready&quot;,
   &quot;missing_evidence&quot;: []
 }</pre><h2>selection_history</h2><pre>{

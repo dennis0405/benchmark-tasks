@@ -5,7 +5,7 @@
     "instance": "robocurve-conveyor",
     "created_at": "2026-11-16T07:08:35.696140+00:00",
     "status": "blocked",
-    "stage": "contract",
+    "stage": null,
     "mode": "production",
     "config": {
       "instance": "robocurve-conveyor",
@@ -51,7 +51,7 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 54350,
+    "supervisor_pid": 57503,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log",
     "compute": "running",
     "migration": {
@@ -85,15 +85,16 @@
       "tool_write_verified": true,
       "production_task_validated": false
     },
-    "revision": 30,
-    "revision_request": "진행방향 확정: 체로 세라믹 finishing media와 steel washer를 분리하는 현재 과제를 완성한다. 직군적 중요도는 심사자 판단이므로 재조사/주제선정 루프로 돌아가지 않는다. 같은 run/branch 유지. 빈 체 YAM component는 revision29에서 실제240Hz/20Hz native통과했고,35.06mm lift/3.2s pose-stationary/80.17mmterminal fingertip clearance 영상과immutable receipt를 보존했다. 동일빈체시험이나74case/API grid를 반복하지 않는다.\n먼저 input/operator-source-notes.json의 operator_production_amendment_v30 제안을 독립 검토하여 실제 생산배치/프레임/피드컵/수거함/받침/관측정의를 contract에 반영한다. 제안은 아직IK/native검증된설계가아니므로 실제설치URDF의full-rotation IK와CAD여유를검증하고필요하면같은체분리방향안에서조정한다. 구계약의receiver높이/가로받침이체와겹치거나구멍을막는문제,순간속도vs20Hzpose정지관측,destruction의비영점cap문제를명시적으로해결한다. 실제nativeJOINT_BREAK는latchedhardzero. 물성은가정값으로공개하며constraintresidual을실제소성으로주장하지않는다. 3초최종정지/손완전해제와전체물리/손실/유출/invalidpassage guards는유지한다.\n그다음실제전체장면(cup+24media+4washers+receiver+supports)과YAM pour/sieve/reset/release를구현하고실제native실험으로분리/유지/채점까지이어간다. 단일완결장면을우선하고장식이나물체pose/velocity쓰기/weld/숨은힘으로성공을만들지않는다. 성공한nativebody_link_pos_w.torch관측/guide-colliderCADradius/센서pre-PHYSICS_READY설치/rawcontact반응검증/RGBProxyArray.torch/guardedbootstrap/H264 streaming을보존한다. AppLauncherargv에--headless넣지말고HEADLESS=1env. 실패도fresh영상/rawtrace로보존한다.\nfullscorer는초기0,유효컵투입,실제기하및이력기반구멍통과/회수,와셔보존,내용물유출/낙하/shortcut/파손hardzero,실제3초finaldwell을검증한다. 독립대조군/동일action240/480replay와두번freshfullscore영상/최종신규성검사까지진행한다. 진단수치가실제full-screen메커니즘과모순되면측정과독립contractamendment를남기고해결하며,상수측정/임계값묵살/불리한시행삭제는금지한다. Dream및공식제출은기존단일시도/누적20USDledger/검토digest승인게이트유지. 공개checkpoint는기존선별evidence정책으로필요자료를보존하고원본은private/server에남긴다.",
+    "revision": 31,
+    "revision_request": "현재 candidate/selected.json에는 이전의컵붓기및파손cap0.40안이남아있어 새contract와모순이다. 따라서이번에는 candidates단계에서정확히현재체분리MVP의명세수정부터진행한다. 기존체분리아이디어는확정. CLI가3candidate를요구하면같은screen-separation작업안의배치/파지/초기혼합배치변형3개만간단히비교하고,무관한새직무/중요도/연구로돌아가지않는다. selected/candidates/novelty/contract에남은cupfeed/0.40damagecap/obsoleteframe을동시에일관되게수정한다. 기존research원문/CAD/native성공증거는재사용하고최종objective변화의실제noveltycoverage는검증한다. 구버전selected와새계약모순을무시해서통과시키지않는다.\n\n동일run/branch에서선택한체분리과제의완결된MVP를만든다. 최신사용자요청은체분리로진행,직군중요도는심사자판단이라는것이다. 중요도/주제선정/무관한후보루프를하지않는다.\n이번수정의핵심: 사용자가요구하지않은컵붓기단계를제외한다. 실제혼합물(세라믹media와steelwashers)이체안에놓인초기상태에서시작하고,YAM양팔tab파지->lift->체를기울이고흔들어media만실제구멍을통해수거함에회수->와셔는체안보존->양받침에복귀->양손완전해제3초유지까지완성한다. 컵/125도pourIK/피드보너스는이완결된MVP의필수요건이아니다. 이전컵포즈제안2개는CPU IK실패가있고성공증거가없다. 다시컵구현에막히지않는다. 초기혼합물은자유강체이며episode중추가spawn/posevelocity쓰기/weld/숨은힘금지. beforeepisode preroll/settle은명시하고media이미아래로샌reset은초기공짜점수로인정하지말고invalidreset으로처리한다.\ninput/operator-source-notes.json 최상단의priority_complete_sieve_mvp_without_unrequested_feed_cup와 operator_production_amendment_v30.latest_scope_simplification_proposal을반드시먼저읽는다. 초기Mtransversebridge배치/움직임제안도operatornotes에있다. 제안은측정아니며실제CAD/IK/native정착및무조작대조군으로검증한다. 현재261hole12.7mmaperture/3mmrib/fullbowl과성공한nativeYAMhelper를재사용하고receiver50mm높이/구멍안막는2pairpost supports로공간겹침을해결한다. 각프레임/물성과필요amendment를독립contractreview로정리한다. 추가장면확장보다한개의명확한실제분리시연을완성한다.\nscorer는초기0, 실회수질량r기반 .90clamp(r/.98)+.10D를검토하며D는목표회수/모든와셔보존/실제양받침/손전부60mmclearance/3초pose정지후에만허용한다. 실제구멍통과이력,손실/유출/shortcut/물리변조/trueJOINT_BREAK등hardzero유지. 초기membership를명시하고fictitiousFCfeed이력을넣지않는다. destruction비영점cap제거,관절수치오차를realplasticity로호칭금지. reset/구멍통과/와셔유지/noop/일부회수/급격한dump/유출/손미해제/파손대조군및독립재채점으로확인한다. 공정이바뀌었으니최종noveltyfresh재검토는필요하나importance논의로돌아가지않는다.\nrevision29빈체component실제성공(35mm lift,3.2s20Hz posehold,80mmterminalclearance)은immutable증거로보존했고동일빈체/74casegrid/기본APIprobe반복금지. 이성공은full내용물qualification이아니다. nativebody_link_pos_w.torch/guidecollider메시radius/센서PHYSICS_READY이전설치/RGB.torch/전체rawcontactreaction/streamingH264/guardedbootstrap를유지. --headlessflag금지,HEADLESS=1env만. 실제내용물포함native분리와fullscorer/최종3초dwell을실행하고실패영상도보존,성공하면동일action240/480검사와두번freshfullscore데모/영상까지이어간다. 기존진단이fullmechanism과모순이면실측과독립contractamendment로해결하고숫자상수나불리한시행삭제로맞추지않는다. Dream단일episode/누적20USD와공식검토digest승인게이트유지. 원본private/server+선별GitHub보관정책유지.\n",
     "approval": null,
-    "resume_from_stage": "contract",
-    "error": "worker paused at stage boundary",
+    "resume_from_stage": "candidates",
+    "error": "novelty cancelled at batch boundary; partial evidence preserved",
     "remote_status": {
-      "status": "paused",
-      "stage": "contract",
-      "at": "2026-11-16T22:18:47.602345+00:00"
+      "status": "blocked",
+      "error": "novelty cancelled at batch boundary; partial evidence preserved",
+      "type": "StateError",
+      "at": "2026-11-16T23:22:28.715978+00:00"
     },
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab",
     "stop_error": "command failed: brev: you're logged out — run `brev login` to authenticate\n",
@@ -12951,6 +12952,1410 @@
       "run": "20261116T070835-7889e9ab",
       "at": "2026-11-16T22:19:54.155120+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"worker paused at stage boundary\"}"
+    },
+    {
+      "seq": 8117,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:20:28.834115+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 8118,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:20:46.755196+00:00",
+      "data": "{\"revision\": 31, \"revision_request\": \"\\ud604\\uc7ac candidate/selected.json\\uc5d0\\ub294 \\uc774\\uc804\\uc758\\ucef5\\ubd93\\uae30\\ubc0f\\ud30c\\uc190cap0.40\\uc548\\uc774\\ub0a8\\uc544\\uc788\\uc5b4 \\uc0c8contract\\uc640\\ubaa8\\uc21c\\uc774\\ub2e4. \\ub530\\ub77c\\uc11c\\uc774\\ubc88\\uc5d0\\ub294 candidates\\ub2e8\\uacc4\\uc5d0\\uc11c\\uc815\\ud655\\ud788\\ud604\\uc7ac\\uccb4\\ubd84\\ub9acMVP\\uc758\\uba85\\uc138\\uc218\\uc815\\ubd80\\ud130\\uc9c4\\ud589\\ud55c\\ub2e4. \\uae30\\uc874\\uccb4\\ubd84\\ub9ac\\uc544\\uc774\\ub514\\uc5b4\\ub294\\ud655\\uc815. CLI\\uac003candidate\\ub97c\\uc694\\uad6c\\ud558\\uba74\\uac19\\uc740screen-separation\\uc791\\uc5c5\\uc548\\uc758\\ubc30\\uce58/\\ud30c\\uc9c0/\\ucd08\\uae30\\ud63c\\ud569\\ubc30\\uce58\\ubcc0\\ud6153\\uac1c\\ub9cc\\uac04\\ub2e8\\ud788\\ube44\\uad50\\ud558\\uace0,\\ubb34\\uad00\\ud55c\\uc0c8\\uc9c1\\ubb34/\\uc911\\uc694\\ub3c4/\\uc5f0\\uad6c\\ub85c\\ub3cc\\uc544\\uac00\\uc9c0\\uc54a\\ub294\\ub2e4. selected/candidates/novelty/contract\\uc5d0\\ub0a8\\uc740cupfeed/0.40damagecap/obsoleteframe\\uc744\\ub3d9\\uc2dc\\uc5d0\\uc77c\\uad00\\ub418\\uac8c\\uc218\\uc815\\ud55c\\ub2e4. \\uae30\\uc874research\\uc6d0\\ubb38/CAD/native\\uc131\\uacf5\\uc99d\\uac70\\ub294\\uc7ac\\uc0ac\\uc6a9\\ud558\\uace0\\ucd5c\\uc885objective\\ubcc0\\ud654\\uc758\\uc2e4\\uc81cnoveltycoverage\\ub294\\uac80\\uc99d\\ud55c\\ub2e4. \\uad6c\\ubc84\\uc804selected\\uc640\\uc0c8\\uacc4\\uc57d\\ubaa8\\uc21c\\uc744\\ubb34\\uc2dc\\ud574\\uc11c\\ud1b5\\uacfc\\uc2dc\\ud0a4\\uc9c0\\uc54a\\ub294\\ub2e4.\\n\\n\\ub3d9\\uc77crun/branch\\uc5d0\\uc11c\\uc120\\ud0dd\\ud55c\\uccb4\\ubd84\\ub9ac\\uacfc\\uc81c\\uc758\\uc644\\uacb0\\ub41cMVP\\ub97c\\ub9cc\\ub4e0\\ub2e4. \\ucd5c\\uc2e0\\uc0ac\\uc6a9\\uc790\\uc694\\uccad\\uc740\\uccb4\\ubd84\\ub9ac\\ub85c\\uc9c4\\ud589,\\uc9c1\\uad70\\uc911\\uc694\\ub3c4\\ub294\\uc2ec\\uc0ac\\uc790\\ud310\\ub2e8\\uc774\\ub77c\\ub294\\uac83\\uc774\\ub2e4. \\uc911\\uc694\\ub3c4/\\uc8fc\\uc81c\\uc120\\uc815/\\ubb34\\uad00\\ud55c\\ud6c4\\ubcf4\\ub8e8\\ud504\\ub97c\\ud558\\uc9c0\\uc54a\\ub294\\ub2e4.\\n\\uc774\\ubc88\\uc218\\uc815\\uc758\\ud575\\uc2ec: \\uc0ac\\uc6a9\\uc790\\uac00\\uc694\\uad6c\\ud558\\uc9c0\\uc54a\\uc740\\ucef5\\ubd93\\uae30\\ub2e8\\uacc4\\ub97c\\uc81c\\uc678\\ud55c\\ub2e4. \\uc2e4\\uc81c\\ud63c\\ud569\\ubb3c(\\uc138\\ub77c\\ubbf9media\\uc640steelwashers)\\uc774\\uccb4\\uc548\\uc5d0\\ub193\\uc778\\ucd08\\uae30\\uc0c1\\ud0dc\\uc5d0\\uc11c\\uc2dc\\uc791\\ud558\\uace0,YAM\\uc591\\ud314tab\\ud30c\\uc9c0->lift->\\uccb4\\ub97c\\uae30\\uc6b8\\uc774\\uace0\\ud754\\ub4e4\\uc5b4media\\ub9cc\\uc2e4\\uc81c\\uad6c\\uba4d\\uc744\\ud1b5\\ud574\\uc218\\uac70\\ud568\\uc5d0\\ud68c\\uc218->\\uc640\\uc154\\ub294\\uccb4\\uc548\\ubcf4\\uc874->\\uc591\\ubc1b\\uce68\\uc5d0\\ubcf5\\uadc0->\\uc591\\uc190\\uc644\\uc804\\ud574\\uc81c3\\ucd08\\uc720\\uc9c0\\uae4c\\uc9c0\\uc644\\uc131\\ud55c\\ub2e4. \\ucef5/125\\ub3c4pourIK/\\ud53c\\ub4dc\\ubcf4\\ub108\\uc2a4\\ub294\\uc774\\uc644\\uacb0\\ub41cMVP\\uc758\\ud544\\uc218\\uc694\\uac74\\uc774\\uc544\\ub2c8\\ub2e4. \\uc774\\uc804\\ucef5\\ud3ec\\uc988\\uc81c\\uc5482\\uac1c\\ub294CPU IK\\uc2e4\\ud328\\uac00\\uc788\\uace0\\uc131\\uacf5\\uc99d\\uac70\\uac00\\uc5c6\\ub2e4. \\ub2e4\\uc2dc\\ucef5\\uad6c\\ud604\\uc5d0\\ub9c9\\ud788\\uc9c0\\uc54a\\ub294\\ub2e4. \\ucd08\\uae30\\ud63c\\ud569\\ubb3c\\uc740\\uc790\\uc720\\uac15\\uccb4\\uc774\\uba70episode\\uc911\\ucd94\\uac00spawn/posevelocity\\uc4f0\\uae30/weld/\\uc228\\uc740\\ud798\\uae08\\uc9c0. beforeepisode preroll/settle\\uc740\\uba85\\uc2dc\\ud558\\uace0media\\uc774\\ubbf8\\uc544\\ub798\\ub85c\\uc0ccreset\\uc740\\ucd08\\uae30\\uacf5\\uc9dc\\uc810\\uc218\\ub85c\\uc778\\uc815\\ud558\\uc9c0\\ub9d0\\uace0invalidreset\\uc73c\\ub85c\\ucc98\\ub9ac\\ud55c\\ub2e4.\\ninput/operator-source-notes.json \\ucd5c\\uc0c1\\ub2e8\\uc758priority_complete_sieve_mvp_without_unrequested_feed_cup\\uc640 operator_production_amendment_v30.latest_scope_simplification_proposal\\uc744\\ubc18\\ub4dc\\uc2dc\\uba3c\\uc800\\uc77d\\ub294\\ub2e4. \\ucd08\\uae30Mtransversebridge\\ubc30\\uce58/\\uc6c0\\uc9c1\\uc784\\uc81c\\uc548\\ub3c4operatornotes\\uc5d0\\uc788\\ub2e4. \\uc81c\\uc548\\uc740\\uce21\\uc815\\uc544\\ub2c8\\uba70\\uc2e4\\uc81cCAD/IK/native\\uc815\\ucc29\\ubc0f\\ubb34\\uc870\\uc791\\ub300\\uc870\\uad70\\uc73c\\ub85c\\uac80\\uc99d\\ud55c\\ub2e4. \\ud604\\uc7ac261hole12.7mmaperture/3mmrib/fullbowl\\uacfc\\uc131\\uacf5\\ud55cnativeYAMhelper\\ub97c\\uc7ac\\uc0ac\\uc6a9\\ud558\\uace0receiver50mm\\ub192\\uc774/\\uad6c\\uba4d\\uc548\\ub9c9\\ub2942pairpost supports\\ub85c\\uacf5\\uac04\\uacb9\\uce68\\uc744\\ud574\\uacb0\\ud55c\\ub2e4. \\uac01\\ud504\\ub808\\uc784/\\ubb3c\\uc131\\uacfc\\ud544\\uc694amendment\\ub97c\\ub3c5\\ub9bdcontractreview\\ub85c\\uc815\\ub9ac\\ud55c\\ub2e4. \\ucd94\\uac00\\uc7a5\\uba74\\ud655\\uc7a5\\ubcf4\\ub2e4\\ud55c\\uac1c\\uc758\\uba85\\ud655\\ud55c\\uc2e4\\uc81c\\ubd84\\ub9ac\\uc2dc\\uc5f0\\uc744\\uc644\\uc131\\ud55c\\ub2e4.\\nscorer\\ub294\\ucd08\\uae300, \\uc2e4\\ud68c\\uc218\\uc9c8\\ub7c9r\\uae30\\ubc18 .90clamp(r/.98)+.10D\\ub97c\\uac80\\ud1a0\\ud558\\uba70D\\ub294\\ubaa9\\ud45c\\ud68c\\uc218/\\ubaa8\\ub4e0\\uc640\\uc154\\ubcf4\\uc874/\\uc2e4\\uc81c\\uc591\\ubc1b\\uce68/\\uc190\\uc804\\ubd8060mmclearance/3\\ucd08pose\\uc815\\uc9c0\\ud6c4\\uc5d0\\ub9cc\\ud5c8\\uc6a9\\ud55c\\ub2e4. \\uc2e4\\uc81c\\uad6c\\uba4d\\ud1b5\\uacfc\\uc774\\ub825,\\uc190\\uc2e4/\\uc720\\ucd9c/shortcut/\\ubb3c\\ub9ac\\ubcc0\\uc870/trueJOINT_BREAK\\ub4f1hardzero\\uc720\\uc9c0. \\ucd08\\uae30membership\\ub97c\\uba85\\uc2dc\\ud558\\uace0fictitiousFCfeed\\uc774\\ub825\\uc744\\ub123\\uc9c0\\uc54a\\ub294\\ub2e4. destruction\\ube44\\uc601\\uc810cap\\uc81c\\uac70,\\uad00\\uc808\\uc218\\uce58\\uc624\\ucc28\\ub97crealplasticity\\ub85c\\ud638\\uce6d\\uae08\\uc9c0. reset/\\uad6c\\uba4d\\ud1b5\\uacfc/\\uc640\\uc154\\uc720\\uc9c0/noop/\\uc77c\\ubd80\\ud68c\\uc218/\\uae09\\uaca9\\ud55cdump/\\uc720\\ucd9c/\\uc190\\ubbf8\\ud574\\uc81c/\\ud30c\\uc190\\ub300\\uc870\\uad70\\ubc0f\\ub3c5\\ub9bd\\uc7ac\\ucc44\\uc810\\uc73c\\ub85c\\ud655\\uc778\\ud55c\\ub2e4. \\uacf5\\uc815\\uc774\\ubc14\\ub00c\\uc5c8\\uc73c\\ub2c8\\ucd5c\\uc885noveltyfresh\\uc7ac\\uac80\\ud1a0\\ub294\\ud544\\uc694\\ud558\\ub098importance\\ub17c\\uc758\\ub85c\\ub3cc\\uc544\\uac00\\uc9c0\\uc54a\\ub294\\ub2e4.\\nrevision29\\ube48\\uccb4component\\uc2e4\\uc81c\\uc131\\uacf5(35mm lift,3.2s20Hz posehold,80mmterminalclearance)\\uc740immutable\\uc99d\\uac70\\ub85c\\ubcf4\\uc874\\ud588\\uace0\\ub3d9\\uc77c\\ube48\\uccb4/74casegrid/\\uae30\\ubcf8APIprobe\\ubc18\\ubcf5\\uae08\\uc9c0. \\uc774\\uc131\\uacf5\\uc740full\\ub0b4\\uc6a9\\ubb3cqualification\\uc774\\uc544\\ub2c8\\ub2e4. nativebody_link_pos_w.torch/guidecollider\\uba54\\uc2dcradius/\\uc13c\\uc11cPHYSICS_READY\\uc774\\uc804\\uc124\\uce58/RGB.torch/\\uc804\\uccb4rawcontactreaction/streamingH264/guardedbootstrap\\ub97c\\uc720\\uc9c0. --headlessflag\\uae08\\uc9c0,HEADLESS=1env\\ub9cc. \\uc2e4\\uc81c\\ub0b4\\uc6a9\\ubb3c\\ud3ec\\ud568native\\ubd84\\ub9ac\\uc640fullscorer/\\ucd5c\\uc8853\\ucd08dwell\\uc744\\uc2e4\\ud589\\ud558\\uace0\\uc2e4\\ud328\\uc601\\uc0c1\\ub3c4\\ubcf4\\uc874,\\uc131\\uacf5\\ud558\\uba74\\ub3d9\\uc77caction240/480\\uac80\\uc0ac\\uc640\\ub450\\ubc88freshfullscore\\ub370\\ubaa8/\\uc601\\uc0c1\\uae4c\\uc9c0\\uc774\\uc5b4\\uac04\\ub2e4. \\uae30\\uc874\\uc9c4\\ub2e8\\uc774fullmechanism\\uacfc\\ubaa8\\uc21c\\uc774\\uba74\\uc2e4\\uce21\\uacfc\\ub3c5\\ub9bdcontractamendment\\ub85c\\ud574\\uacb0\\ud558\\uace0\\uc22b\\uc790\\uc0c1\\uc218\\ub098\\ubd88\\ub9ac\\ud55c\\uc2dc\\ud589\\uc0ad\\uc81c\\ub85c\\ub9de\\ucd94\\uc9c0\\uc54a\\ub294\\ub2e4. Dream\\ub2e8\\uc77cepisode/\\ub204\\uc80120USD\\uc640\\uacf5\\uc2dd\\uac80\\ud1a0digest\\uc2b9\\uc778\\uac8c\\uc774\\ud2b8\\uc720\\uc9c0. \\uc6d0\\ubcf8private/server+\\uc120\\ubcc4GitHub\\ubcf4\\uad00\\uc815\\ucc45\\uc720\\uc9c0.\\n\", \"approval\": null}"
+    },
+    {
+      "seq": 8119,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:20:46.755688+00:00",
+      "data": "{\"resume_from_stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8120,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:20:46.758588+00:00",
+      "data": "{\"supervisor_pid\": 57503, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log\"}"
+    },
+    {
+      "seq": 8121,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:20:46.835924+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 8122,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:22:11.696574+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 8123,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:23:10.933140+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 8124,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:24:44.405429+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab\"}"
+    },
+    {
+      "seq": 8125,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:24:44.897508+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8126,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:25:00.363845+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8127,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:25:15.820394+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8128,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:25:31.294980+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8129,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:25:46.720783+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8130,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:26:02.128482+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8131,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:26:17.679242+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8132,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:26:33.112045+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8133,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:26:48.607874+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8134,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:27:04.062810+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8135,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:27:19.491687+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8136,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:27:34.986739+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8137,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:27:50.448347+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8138,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:28:05.918986+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8139,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:28:21.380143+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8140,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:28:36.845704+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8141,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:28:52.299106+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8142,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:29:07.760015+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8143,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:29:23.227022+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8144,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:29:38.688947+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8145,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:29:54.154867+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8146,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:30:09.575605+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8147,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:30:25.002865+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8148,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:30:40.437070+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8149,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:30:55.868772+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8150,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:31:11.291740+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8151,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:31:26.722987+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8152,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:31:42.186994+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8153,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:31:57.647150+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8154,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:32:13.076945+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8155,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:32:28.500805+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8156,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:32:44.029657+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8157,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:32:59.443026+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8158,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:33:14.864155+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8159,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:33:30.328039+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8160,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:33:45.788361+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8161,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:34:01.354956+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8162,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:34:16.817882+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8163,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:34:32.280485+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8164,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:34:47.844528+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8165,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:35:03.297339+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8166,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:35:18.719301+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8167,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:35:34.134076+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8168,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:35:49.564367+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8169,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:36:05.047247+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8170,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:36:20.513954+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8171,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:36:35.980948+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8172,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:36:51.544978+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8173,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:37:07.111399+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8174,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:37:22.572033+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8175,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:37:38.026450+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8176,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:37:53.492921+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8177,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:38:08.916775+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8178,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:38:24.523742+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8179,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:38:39.946069+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8180,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:38:55.368613+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8181,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:39:10.902550+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-16T22:24:44.706115+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 8182,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:39:26.478126+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8183,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:39:41.940703+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8184,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:39:57.404494+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8185,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:40:12.861032+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8186,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:40:28.431204+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8187,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:40:43.996798+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8188,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:40:59.419831+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8189,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:41:14.925197+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8190,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:41:30.389064+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8191,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:41:45.935387+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8192,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:42:01.353769+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8193,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:42:16.775619+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8194,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:42:32.237525+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8195,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:42:47.700413+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8196,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:43:03.162687+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8197,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:43:18.586575+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8198,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:43:34.190047+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8199,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:43:49.619731+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8200,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:44:05.109618+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8201,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:44:20.679290+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8202,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:44:36.244472+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8203,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:44:51.810645+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8204,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:45:07.375651+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8205,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:45:22.836403+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8206,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:45:38.292939+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8207,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:45:53.755527+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8208,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:46:09.331712+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8209,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:46:24.794805+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8210,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:46:40.229918+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8211,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:46:55.656703+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8212,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:47:11.080195+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8213,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:47:26.640012+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8214,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:47:42.097862+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8215,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:47:57.555477+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8216,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:48:13.021671+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8217,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:48:28.492283+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8218,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:48:43.955186+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8219,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:48:59.418222+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8220,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:49:14.848639+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8221,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:49:30.289334+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8222,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:49:45.805310+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8223,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:50:01.370247+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8224,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:50:16.835369+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8225,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:50:32.296134+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8226,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:50:47.748235+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8227,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:51:03.220724+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8228,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:51:18.785064+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8229,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:51:34.241557+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8230,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:51:49.672423+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8231,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:52:05.165127+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8232,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:52:20.731424+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8233,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:52:36.301065+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8234,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:52:51.761253+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8235,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:53:07.181572+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8236,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:53:22.791531+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8237,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:53:38.257276+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8238,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:53:53.821386+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8239,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:54:09.386362+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8240,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:54:24.845672+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8241,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:54:40.308267+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8242,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:54:55.877267+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8243,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:55:11.441335+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8244,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:55:27.006679+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8245,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:55:42.435467+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8246,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:55:57.927338+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8247,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:56:13.390222+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8248,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:56:28.853512+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8249,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:56:44.315374+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8250,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:56:59.780734+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8251,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:57:15.241859+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8252,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:57:30.703267+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8253,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:57:46.154390+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8254,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:58:01.629663+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8255,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:58:17.058107+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8256,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:58:32.659952+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8257,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:58:48.228867+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8258,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:59:03.687614+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8259,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:59:19.250822+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8260,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:59:34.699686+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8261,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:59:50.134536+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8262,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:00:05.638743+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8263,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:00:21.203268+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8264,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:00:36.660264+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8265,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:00:52.334149+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8266,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:01:07.899533+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8267,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:01:23.463192+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8268,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:01:39.031115+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8269,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:01:54.594021+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8270,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:02:10.034303+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8271,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:02:25.466964+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8272,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:02:40.982390+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8273,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:02:56.548393+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8274,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:03:12.009376+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8275,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:03:27.502850+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8276,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:03:43.038341+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8277,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:03:58.502009+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8278,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:04:14.064139+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8279,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:04:29.523357+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8280,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:04:44.989346+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8281,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:05:00.427088+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8282,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:05:15.914866+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8283,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:05:31.380722+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8284,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:05:46.843229+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8285,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:06:02.304616+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8286,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:06:17.867521+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8287,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:06:33.434092+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8288,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:06:48.999604+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8289,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:07:04.458874+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8290,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:07:19.921973+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8291,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:07:35.489629+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8292,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:07:51.060227+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8293,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:08:06.516059+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8294,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:08:21.981131+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8295,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:08:37.437493+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8296,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:08:53.008553+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8297,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:09:08.471544+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8298,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:09:23.906715+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8299,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:09:39.497910+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8300,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:09:54.956779+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8301,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:10:10.524225+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8302,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:10:26.089698+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8303,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:10:41.522071+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8304,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:10:57.117470+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8305,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:11:12.579115+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8306,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:11:28.046727+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8307,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:11:43.605084+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8308,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:11:59.173216+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8309,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:12:14.738072+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8310,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:12:30.200084+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8311,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:12:45.658917+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8312,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:13:01.094751+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8313,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:13:16.688619+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8314,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:13:32.148288+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8315,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:13:47.616588+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8316,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:14:03.181024+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8317,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:14:18.615823+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8318,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:14:34.105990+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8319,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:14:49.547200+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8320,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:15:05.133928+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8321,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:15:20.698599+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8322,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:15:36.161952+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8323,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:15:51.726381+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8324,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:16:07.161435+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8325,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:16:22.593152+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8326,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:16:38.224374+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8327,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:16:53.781823+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8328,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:17:09.245172+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8329,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:17:24.809200+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8330,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:17:40.270451+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8331,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:17:55.739135+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8332,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:18:11.198463+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8333,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:18:26.760441+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8334,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:18:42.224328+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8335,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:18:57.789344+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8336,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:19:13.253976+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8337,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:19:28.709330+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8338,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:19:44.128526+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8339,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:19:59.557770+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8340,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:20:14.979415+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8341,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:20:30.393611+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8342,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:20:45.817001+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8343,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:21:01.246709+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8344,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:21:16.661364+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8345,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:21:32.083337+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8346,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:21:47.502613+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8347,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:22:03.340198+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8348,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:22:19.162021+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-16T22:39:23.611890+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 8349,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:22:35.004831+00:00",
+      "data": "{\"remote_status\": {\"status\": \"blocked\", \"error\": \"novelty cancelled at batch boundary; partial evidence preserved\", \"type\": \"StateError\", \"at\": \"2026-11-16T23:22:28.715978+00:00\"}, \"stage\": null}"
+    },
+    {
+      "seq": 8350,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T23:23:44.202572+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"novelty cancelled at batch boundary; partial evidence preserved\"}"
     }
   ],
   "effects": {

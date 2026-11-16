@@ -1,0 +1,22 @@
+{
+  "verdict": "repair",
+  "findings": [
+    "The selected candidate’s primary industrial facts are supported: the catalog page visibly confirms 14.5 in × 2.5 in manual screens, a 1/2 in screen, and 3/8 in × 7/8 in angle-cut ceramic cylinders. The metric conversions in selected.json—368.3 mm, 63.5 mm, 12.7 mm, 9.525 mm, and 22.225 mm—are correct, and the independently authored aperture layout is explicitly disclosed rather than presented as manufacturer CAD.",
+    "Selected readiness is overstated. artifacts/selected.json declares feasibility_status=\"ready\" and missing_evidence=[], while its own risk and asset plan identify unresolved mandatory gates: loaded-screen grasp stability and reach, actual media passage, washer retention in relevant orientations, support clearance, bridge release, and matched 240/480 Hz behavior. The available native receipt only validates an empty-screen lift/hold/release prototype. Mark readiness provisional/research-needed or populate missing_evidence with these loaded-mechanism gates.",
+    "Washer retention is not yet established by the stated dimensions. A representative washer with 30 mm OD but only 4 mm thickness can potentially traverse a 12.7 mm square aperture edge-first; OD alone does not guarantee retention. The build plan correctly requests orientation testing, but selected.json must not imply that the larger annular workpieces are inherently retained before this gate passes or the geometry is revised to make escape physically impossible.",
+    "artifacts/contract.json is stale and materially contradicts the selected MVP. It still requires a feed cup, FEED→EXITED_FEED→ENTERED_SCREEN admission, a 0.20 loading term, and cup assets, whereas selected.json and the current operator amendment start with the free mixture already inside the screen and specify 0.90 recovery plus 0.10 dwell. This must be reconciled before construction proceeds.",
+    "The contract also retains the previous arbitrary 12-physics-interval gripper/contact hard-zero rule and a residual-based washer damage hard failure. selected.json correctly says incidental contact is not itself failure and constraint residuals are diagnostic only. Update the contract to grade observable harmful removal, loss, damage, or shortcut outcomes, while reserving hard zero for actual JOINT_BREAK and other physically meaningful failures."
+  ],
+  "evidence_paths": [
+    "artifacts/selected.json",
+    "artifacts/candidates.json",
+    "artifacts/contract.json",
+    "artifacts/contract-critic.json",
+    "input/last-failure.json",
+    "input/operator-source-notes.json",
+    "input/sources/s-b442a7fa63fcb80c.json",
+    "input/media-separation-source-visuals/s-b442a7fa63fcb80c-page-21.png",
+    "measurements/full-screen-yam-preflight-trace.json",
+    "artifacts/component-source-plan.json"
+  ]
+}
