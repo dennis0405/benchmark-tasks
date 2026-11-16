@@ -199,3 +199,24 @@ Regression tests exercise both retained verdicts, missing merge/board scope, mer
 records, own-team history and active board requirements. Full comparison coverage remains
 mandatory. The confirmed author of our two accepted references, eainx, is also registered
 as own-team so their closed history cannot be exempted as another team's.
+
+
+### Required coverage is not all historical archives
+
+The2026-11-16 live snapshot contained2,391 records:681 required current/own claims and
+1,710 explicitly closed, unmerged, other-team, non-board-required archives. Of1,040 actual
+comparisons,591 covered required claims and449 were archival references. Requiring a new
+semantic verdict for every remaining archive added work outside the user's agreed scope.
+
+The gate now dispatches all unreviewed required records, retaining the complete catalog
+and exact scope evidence for every excluded archive. It also loads valid original cached
+archival verdicts, including overlap, without relabeling them. `complete` means every
+required ID has a valid comparison; `required_total` and `required_compared` expose that
+coverage, `compared` counts only actual judgments, and `catalog_total` includes archives.
+No missing/unknown merge, team or board field qualifies for exclusion. Reopening, merging,
+own-team attribution or a current board claim restores mandatory comparison and invalidates
+the old record cache. Benchmark requirements and final current-catalog refresh are unchanged.
+The independent critic receives these same scope/count rules. Regression tests verify that
+a newly reserved archive becomes mandatory and its overlapping verdict blocks production.
+This supersedes the earlier assertion that all historical records require fresh comparison;
+it changes scope accounting, not the physical novelty test for required claims.

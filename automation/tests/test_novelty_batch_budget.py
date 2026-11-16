@@ -125,3 +125,41 @@ def test_invalid_operational_limits_fail_closed(tmp_path, limits):
         compare_catalog(
             RecordingReviewer(tmp_path), tmp_path, {}, setup_catalog(tmp_path, [{"id": "a"}]), **limits
         )
+
+
+def test_only_required_claims_are_dispatched_and_original_archival_verdicts_remain(tmp_path):
+    from rcauto.gates import digest
+
+    archived = {
+        "id": "old-other-team", "state": "closed", "status": "closed",
+        "merged_at": None, "own_team": False, "board_required": False,
+        "body": "Retained historical original",
+    }
+    active = {"id": "active", "state": "open", "board_required": True}
+    catalog = setup_catalog(tmp_path, [archived, active])
+    reviewer = RecordingReviewer(tmp_path)
+    report = compare_catalog(reviewer, tmp_path, {}, catalog)
+    assert [[r["id"] for r in batch] for batch in reviewer.batches] == [["active"]]
+    assert report["complete"] and report["catalog_total"] == 2
+    assert report["required_total"] == report["required_compared"] == 1
+    assert report["compared"] == 1 and report["archival_records"][0]["id"] == archived["id"]
+
+    # Import an exact, original legacy cache row; do not relabel its overlap.
+    cache = tmp_path / "artifacts/novelty-cache"
+    saved = json.loads(next(cache.glob("*.json")).read_text())
+    row = {**saved["comparison"], "id": archived["id"], "verdict": "overlap"}
+    key = digest({"context": saved["context"], "record": archived})
+    write_json(cache / (key + ".json"), {
+        "context": saved["context"], "record_digest": digest(archived), "comparison": row,
+    })
+    reviewer.batches.clear()
+    report = compare_catalog(reviewer, tmp_path, {}, catalog)
+    assert not reviewer.batches and report["complete"]
+    assert report["compared"] == 2 and report["required_compared"] == 1
+    assert report["inactive_history"][0]["verdict"] == "overlap"
+    assert next(r for r in report["comparisons"] if r["id"] == archived["id"])["verdict"] == "overlap"
+
+    # A new reservation makes the SAME archived original mandatory again.
+    archived["board_required"] = True
+    with pytest.raises(GateError, match="overlap"):
+        compare_catalog(RecordingReviewer(tmp_path, overlap=archived["id"]), tmp_path, {}, catalog)

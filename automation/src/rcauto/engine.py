@@ -145,9 +145,38 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=100, batch_
         text = set(re.findall(r"[a-z][a-z0-9]+", json.dumps(record).lower()))
         return (record["id"] in review_notes, 3 * len(terms & title) + len(terms & text))
 
-    # Retrieval changes order only. Passing still requires every catalog record.
+    # Retrieval changes order only. Every required current claim must be compared.
     records = sorted(catalog["records"], key=priority, reverse=True)
     by_id = {record["id"]: record for record in records}
+
+    def archival(record):
+        # All fields must explicitly establish that there is no current claim.
+        return (
+            record.get("state") == "closed"
+            and record.get("status") == "closed"
+            and record.get("own_team") is False
+            and record.get("merged_at", "unknown") is None
+            and record.get("board_required") is False
+        )
+
+    def scope_evidence(record):
+        return {
+            key: record.get(key)
+            for key in (
+                "state", "status", "merged_at", "own_team", "board_required", "url", "head_sha"
+            )
+        }
+
+    required_ids = {record["id"] for record in records if not archival(record)}
+    archival_records = [
+        {
+            "id": record["id"],
+            "catalog_record_digest": digest(record),
+            "scope_evidence": scope_evidence(record),
+            "reason": "not a current claim; retained as history, not certified distinct",
+        }
+        for record in records if archival(record)
+    ]
 
     def checkpoint():
         inactive = [
@@ -156,26 +185,11 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=100, batch_
                 "verdict": row["verdict"],
                 "reason": "inactive closed unmerged other-team history; original verdict retained",
                 "catalog_record_digest": digest(by_id[row["id"]]),
-                "scope_evidence": {
-                    key: by_id[row["id"]].get(key)
-                    for key in (
-                        "state",
-                        "status",
-                        "merged_at",
-                        "own_team",
-                        "board_required",
-                        "url",
-                        "head_sha",
-                    )
-                },
+                "scope_evidence": scope_evidence(by_id[row["id"]]),
             }
             for row in comparisons
             if row["verdict"] in {"uncertain", "overlap"}
-            and by_id[row["id"]].get("state") == "closed"
-            and by_id[row["id"]].get("status") == "closed"
-            and by_id[row["id"]].get("own_team") is False
-            and by_id[row["id"]].get("merged_at", "unknown") is None
-            and by_id[row["id"]].get("board_required") is False
+            and archival(by_id[row["id"]])
         ]
         exempt = {row["id"] for row in inactive}
         blockers = [
@@ -185,7 +199,10 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=100, batch_
             "catalog_digest": catalog["digest"],
             "candidate_digest": digest(candidate),
             "catalog_total": len(records),
-            "complete": len(comparisons) == len(records),
+            "complete": required_ids <= {row["id"] for row in comparisons},
+            "required_total": len(required_ids),
+            "required_compared": sum(row["id"] in required_ids for row in comparisons),
+            "archival_records": archival_records,
             "compared": len(comparisons),
             "comparisons": comparisons,
             "inactive_history": inactive,
@@ -266,7 +283,7 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=100, batch_
                 pass  # Recompute damaged cache entries; never turn them into a pass.
     comparisons.extend(accepted[r["id"]] for r in records if r["id"] in accepted)
     report = checkpoint()  # Exact known overlaps block before any unrelated model call.
-    pending = [r for r in records if r["id"] not in accepted]
+    pending = [r for r in records if r["id"] in required_ids and r["id"] not in accepted]
     for batch in novelty_batches(pending, batch_size, batch_bytes):
         i = len(comparisons)
         if (Path(workspace).parent / "cancel.json").exists():

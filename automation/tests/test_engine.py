@@ -256,12 +256,11 @@ def test_unavailable_inactive_history_is_not_an_active_novelty_claim(tmp_path, r
             compare_catalog(UncertainAgent(), tmp_path, {}, catalog)
     else:
         report = compare_catalog(UncertainAgent(), tmp_path, {}, catalog)
-        assert report["compared"] == 1
-        assert report["comparisons"][0]["verdict"] == verdict
-        assert report["inactive_history"][0]["id"] == "pr-1"
-        assert report["inactive_history"][0]["verdict"] == verdict
-        assert bool(report["inactive_uncertainty"]) is (verdict == "uncertain")
-        evidence = report["inactive_history"][0]["scope_evidence"]
+        assert report["complete"] and report["required_total"] == 0
+        assert report["compared"] == report["required_compared"] == 0
+        assert report["comparisons"] == []  # Exclusion is scope, never a fabricated judgment.
+        assert report["archival_records"][0]["id"] == "pr-1"
+        evidence = report["archival_records"][0]["scope_evidence"]
         assert evidence["merged_at"] is None and evidence["board_required"] is False
         assert evidence["own_team"] is False and evidence["state"] == "closed"
 

@@ -81,11 +81,14 @@ BENCHMARK_NOVELTY = obj(
 )
 BENCHMARK_QUOTE_REPAIR = obj(replacements=array(obj(suite=S, name=S, source_path=S, quote=S)))
 NOVELTY_SCOPE = """
-Respect the catalog scope encoded in artifacts/novelty.json.inactive_history
+Respect the catalog scope encoded in artifacts/novelty.json.archival_records and inactive_history
 (and the legacy inactive_uncertainty subset). Verify exemptions against input/catalog.json:
 only closed AND unmerged, explicitly other-team, non-board-required historical records
 are nonblocking references. Keep every comparison and its actual overlap/uncertain verdict;
-never relabel archival overlap as distinct or uncertainty as proven novelty. For required
+never relabel archival overlap as distinct or uncertainty as proven novelty. Archival records
+without an existing valid comparison are outside the active-claim scope, not silently passed.
+Verify required_total/required_compared cover EVERY nonarchival catalog ID. catalog_total
+also includes retained history; compared counts only actual comparisons. For required
 active claims, our-team history and known benchmarks, known overlaps still block.
 Overlap or uncertainty for accepted/merged, pending/open, board-required/reserved,
 our-team history, unknown-scope records or required benchmark definitions still blocks.
