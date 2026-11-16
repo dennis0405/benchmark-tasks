@@ -1,32 +1,30 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the discovery-only native probe after the prior review failure. Genuine passage now requires a conservative continuous swept-cylinder certificate for every physics interval overlapping the floor slab; crossings with possible rib intersection or tunneling are not counted. The script compiles successfully. Native GPU execution remains pending, and no qualification, segmented-washer, agitation, bore-lodging, spill-scorer, or YAM-manipulation claims are made.",
+  "summary": "Repaired the bounded native aperture probe launch plan after reading the actual failure log: the installed AppLauncher parser does not accept --headless, so that argument is removed. The probe uses source-verified XYZW quaternions and ProxyArray .torch conversion, records fresh native poses from reset through integrated gravity steps, and writes nonempty numerical checks plus traces. Python compilation passed. GPU execution remains for the trusted controller; this preflight does not claim frozen-contract qualification.",
   "scripts": [
     {
-      "id": "aperture_attitude_discovery_240hz",
-      "script": "run_aperture_native_probe.py",
+      "id": "aperture_native_probe_240hz",
+      "script": "task/run_aperture_native_probe.py",
       "args": [
         "--physics-hz",
         "240",
-        "--device",
-        "cuda:0",
-        "--headless",
         "--report",
-        "../measurements/aperture-native-240hz.json"
+        "../measurements/aperture-native-240hz.json",
+        "--device",
+        "cuda:0"
       ],
       "report": "measurements/aperture-native-240hz.json"
     },
     {
-      "id": "aperture_attitude_discovery_480hz",
-      "script": "run_aperture_native_probe.py",
+      "id": "aperture_native_probe_480hz",
+      "script": "task/run_aperture_native_probe.py",
       "args": [
         "--physics-hz",
         "480",
-        "--device",
-        "cuda:0",
-        "--headless",
         "--report",
-        "../measurements/aperture-native-480hz.json"
+        "../measurements/aperture-native-480hz.json",
+        "--device",
+        "cuda:0"
       ],
       "report": "measurements/aperture-native-480hz.json"
     }
