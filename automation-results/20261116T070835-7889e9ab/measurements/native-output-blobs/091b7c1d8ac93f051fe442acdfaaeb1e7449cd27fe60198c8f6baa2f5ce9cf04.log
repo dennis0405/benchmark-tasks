@@ -1,0 +1,45 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1794851963.423222   23165 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto
+W0000 00:00:1794851963.423265   23165 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto
+[ISAACLAB] AppLauncher initialization complete
+[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl
+[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl
+[ISAACLAB] Kit hash:    00c488ae
+Warp 1.16.0 initialized:
+   CUDA Toolkit 12.9, Driver 12.7
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA L40S" (44 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /home/ubuntu/.cache/warp/1.16.0
+[INFO]: Registered backend 'physx' for factory RigidObject.
+[INFO]: Registered backend 'physx' for factory ContactSensor.
+Loading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'
+2026-11-16T17:59:23Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX
+2026-11-16T17:59:23Z [4ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.
+2026-11-16T17:59:26Z [3,242ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.
+2026-11-16T17:59:27Z [3,818ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?
+Traceback (most recent call last):
+  File "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_moving_aperture_crossing_probe.py", line 357, in <module>
+    if __name__ == "__main__": main()
+                               ^^^^^^
+  File "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_moving_aperture_crossing_probe.py", line 211, in main
+    sim.reset(); body.reset(); aperture.reset(); native_dt = float(sim.get_physics_dt())
+    ^^^^^^^^^^^
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/sim/simulation_context.py", line 769, in reset
+    self.physics_manager.reset(soft)
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab_physx/isaaclab_physx/physics/physx_manager.py", line 487, in reset
+    cls.raise_callback_exception_if_any()
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab_physx/isaaclab_physx/physics/physx_manager.py", line 640, in raise_callback_exception_if_any
+    raise exc
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/physics/physics_manager.py", line 603, in safe_callback_invoke
+    fn(*args)
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/sensors/sensor_base.py", line 317, in _invoke
+    getattr(obj_ref, callback_name)(event)
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/sensors/sensor_base.py", line 356, in _initialize_callback
+    self._initialize_impl()
+  File "/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab_physx/isaaclab_physx/sensors/contact_sensor/contact_sensor.py", line 347, in _initialize_impl
+    raise RuntimeError(
+RuntimeError: Sensor at path '/World/Medium' could not find any bodies with contact reporter API.
+HINT: Make sure to enable 'activate_contact_sensors' in the corresponding asset spawn configuration.
+2026-11-16T17:59:27Z [4,113ms] [Warning] [omni.usd] Unexpected reference count of 2 for UsdStage 'anon:0x11868b00:World0.usd' while being closed in UsdContext (this may indicate it is still resident in memory).

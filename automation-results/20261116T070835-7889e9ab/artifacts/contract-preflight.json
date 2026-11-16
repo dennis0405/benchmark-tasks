@@ -1,25 +1,14 @@
 {
-  "contract_digest": "843380327e806da0b7c30c7fdfea7072d8b8b0e50fd31123f64d923996eb3b06",
+  "contract_digest": "16d4eb130059488b0e3ec893ed69fb678a36b68e737f42f6ce592919461523ff",
   "review": {
     "verdict": "pass",
-    "findings": [
-      "The current contract resolves the prior failure: washer-escape trials now freeze the screen-frame pose, extrinsic rotation order Rz(beta)Rx(alpha), tilt axis, center placement, clearance, and 40-trial reset/logging rules; bore-lodging trials now freeze carrier/support geometry, contact exclusions, washer transform, revolute axis, motion profile, collision state, and 20-trial resets.",
-      "All 26 required scoring controls recompute consistently: untouched 0; complete loading 0.20; 12/24 equal-mass recovery 0.5571428571; threshold recovery without dwell 0.90; full released dwell 1.00; retained fracture capped at 0.40; and every specified hard failure 0.",
-      "Timing is internally consistent: 4,800 actions at 20 Hz give 240 seconds, production physics runs at 240 Hz with 12 intervals per action, and O_57600 is processed before timeout. The dwell bonus first becomes available after 720 completed intervals: O_56880 through O_57600 earns 1.00, whereas O_56881 through O_57600 leaves 0.90.",
-      "The contract separates 20 Hz control/report/render cadence, 240 Hz completed post-solve scoring/contact samples, and prospective 480 Hz paired refinement. Contact freshness, impulse-to-force conversion, aggregation, and per-trial resets are explicit.",
-      "The loading amendment is computable and consistent: per-medium causal passage may occur before final batch admission, eligibility is recomputed and revocable, and complete loading accepts admitted media either retained in the screen or validly passed into the receiver.",
-      "Spill, washer loss, contamination, invalid provenance, and forbidden state mutation are unconditional immutable failures rather than being suppressed by desired-action predicates. Fracture is independently latched and capped, while force alone does not constitute damage.",
-      "Scoring preserves physically valid alternatives by grading admission, genuine aperture passage, recovery, retention, support, clearance, and damage without prescribing hand identity, action count, shake count, or action order.",
-      "The contract explicitly supersedes the historical selected candidate’s unsupported permanent-deformation clause with authored-joint fracture-only scoring while preserving the selected aperture-mediated separation ability. Industrial evidence is used only to establish a real parts/media screening operation; occupational scale remains transparently provisional rather than invented."
-    ],
+    "findings": [],
     "evidence_paths": [
       "artifacts/contract.json",
       "artifacts/selected.json",
       "input/request.json",
       "input/revision-request.txt",
       "input/last-failure.json",
-      "artifacts/contract-critic.json",
-      "artifacts/contract-preflight.json",
       "input/runtime-api-preflight.json",
       "input/pinned-runtime-sources/7c4081aa811b2839f908d533e12885dac7a0aaed62ff8da59e36995b50b87809-scene.py",
       "input/pinned-runtime-sources/33783dab0ab4c2f2857455bb90d4d58217b14356f06772cca4e3b76a6883e22e-simulation_cfg.py",

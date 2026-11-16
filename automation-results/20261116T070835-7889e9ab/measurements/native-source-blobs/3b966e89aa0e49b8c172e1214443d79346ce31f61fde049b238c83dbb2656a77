@@ -1,0 +1,286 @@
+"""Bounded native probe for crossing classification in a moving screen frame.
+
+This preflight asks one question only: can a finite transverse ceramic medium
+that is initially retained by one 12.7 mm aperture be released by a physically
+driven revolute aperture, with a physics-sample geometric crossing classified
+in the observed aperture frame?  Endpoint displacement and PhysX CCD state are
+reported only as sampled diagnostics; they do not establish inter-sample or
+exact rotational continuous collision coverage.  It is not the frozen 20-seed
+bridge qualification, the full screen, a scorer, or a robot demonstration.
+"""
+from __future__ import annotations
+
+import argparse, gzip, json, math
+from pathlib import Path
+from isaaclab.app import AppLauncher
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--physics-hz", type=int, choices=(240, 480), required=True)
+parser.add_argument("--report", type=Path, required=True)
+AppLauncher.add_app_launcher_args(parser)
+args = parser.parse_args()
+launcher = AppLauncher(args)
+simulation_app = launcher.app
+
+import numpy as np
+import trimesh
+from pxr import Gf, PhysxSchema, Sdf, UsdGeom, UsdPhysics
+import isaaclab.sim as sim_utils
+from isaaclab.assets import RigidObject, RigidObjectCfg
+from isaaclab.sim.spawners.meshes.meshes import _spawn_mesh_geom_from_mesh
+from isaaclab.sim.utils import get_current_stage
+
+APERTURE, PATCH, FLOOR_T = 0.0127, 0.050, 0.003
+MEDIA_D, MEDIA_L, DENSITY = 0.009525, 0.022225, 2500.0
+ROOT_Z, ROOT_MASS = 0.25, 0.40
+
+
+def material():
+    return sim_utils.RigidBodyMaterialCfg(static_friction=0.50, dynamic_friction=0.35, restitution=0.05)
+
+
+def collision():
+    return sim_utils.CollisionPropertiesCfg(contact_offset=0.00015, rest_offset=0.0)
+
+
+def media_mesh():
+    r, slope, n = MEDIA_D / 2, math.tan(math.radians(15)), 32
+    length = MEDIA_L - 2 * r * slope
+    vertices, faces = [], []
+    for sign in (-1, 1):
+        for i in range(n):
+            a = 2 * math.pi * i / n
+            x, y = r * math.cos(a), r * math.sin(a)
+            vertices.append((x, y, slope * x + sign * length / 2))
+    for i in range(1, n - 1):
+        faces.extend(((0, i + 1, i), (n, n + i, n + i + 1)))
+    for i in range(n):
+        j = (i + 1) % n
+        faces.extend(((i, j, n + j), (i, n + j, n + i)))
+    return trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
+
+
+def spawn_mesh(mesh):
+    def fn(path, cfg, translation=None, orientation=None, **kwargs):
+        stage = get_current_stage()
+        _spawn_mesh_geom_from_mesh(path, cfg, mesh, translation, orientation, stage=stage)
+        prim = stage.GetPrimAtPath(path)
+        # RigidBodyPropertiesCfg in the pinned Isaac Lab has no enable_ccd
+        # constructor field. Author the native PhysX attribute explicitly,
+        # as is already done for the moving aperture below.
+        PhysxSchema.PhysxRigidBodyAPI.Apply(prim).CreateEnableCCDAttr(True)
+        api = UsdPhysics.MassAPI.Apply(prim)
+        api.CreateMassAttr(float(mesh.volume * DENSITY))
+        api.CreateCenterOfMassAttr(Gf.Vec3f(*map(float, mesh.center_mass)))
+        inertia = mesh.moment_inertia * DENSITY
+        vals, axes = np.linalg.eigh(inertia)
+        if np.linalg.det(axes) < 0: axes[:, 0] *= -1
+        tf = np.eye(4); tf[:3, :3] = axes
+        qw, qx, qy, qz = trimesh.transformations.quaternion_from_matrix(tf)
+        api.CreateDiagonalInertiaAttr(Gf.Vec3f(*map(float, vals)))
+        api.CreatePrincipalAxesAttr(Gf.Quatf(float(qw), Gf.Vec3f(float(qx), float(qy), float(qz))))
+        return stage.GetPrimAtPath(path)
+    return sim_utils.MeshCfg(func=fn,
+        rigid_props=sim_utils.RigidBodyPropertiesCfg(solver_position_iteration_count=32,
+            solver_velocity_iteration_count=8, max_depenetration_velocity=2.0),
+        mass_props=None, collision_props=collision(), physics_material=material(),
+        visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.75, 0.55, 0.20)))
+
+
+def spawn_moving_aperture():
+    stage = get_current_stage()
+    root = UsdGeom.Xform.Define(stage, "/World/MovingAperture")
+    root.AddTranslateOp().Set(Gf.Vec3d(0, 0, ROOT_Z))
+    UsdPhysics.RigidBodyAPI.Apply(root.GetPrim())
+    PhysxSchema.PhysxRigidBodyAPI.Apply(root.GetPrim()).CreateEnableCCDAttr(True)
+    UsdPhysics.MassAPI.Apply(root.GetPrim()).CreateMassAttr(ROOT_MASS)
+    side = (PATCH - APERTURE) / 2
+    specs = (((side, PATCH, FLOOR_T), (-(APERTURE+side)/2, 0, -FLOOR_T/2)),
+             ((side, PATCH, FLOOR_T), ((APERTURE+side)/2, 0, -FLOOR_T/2)),
+             ((APERTURE, side, FLOOR_T), (0, -(APERTURE+side)/2, -FLOOR_T/2)),
+             ((APERTURE, side, FLOOR_T), (0, (APERTURE+side)/2, -FLOOR_T/2)))
+    for i, (size, pos) in enumerate(specs):
+        cfg = sim_utils.CuboidCfg(size=size, collision_props=collision(), physics_material=material(),
+            visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.30, 0.38, 0.45)))
+        cfg.func(f"/World/MovingAperture/Rib_{i}", cfg, translation=pos)
+    joint = UsdPhysics.RevoluteJoint.Define(stage, "/World/MovingApertureHinge")
+    joint.CreateAxisAttr("X")
+    joint.CreateBody1Rel().SetTargets([Sdf.Path("/World/MovingAperture")])
+    joint.CreateLocalPos0Attr(Gf.Vec3f(0, 0, ROOT_Z))
+    joint.CreateLocalPos1Attr(Gf.Vec3f(0, 0, 0))
+    joint.CreateLowerLimitAttr(-6.0); joint.CreateUpperLimitAttr(6.0)
+    drive = UsdPhysics.DriveAPI.Apply(joint.GetPrim(), "angular")
+    drive.CreateTypeAttr("force"); drive.CreateStiffnessAttr(500.0)
+    drive.CreateDampingAttr(20.0); drive.CreateMaxForceAttr(50.0)
+    drive.CreateTargetPositionAttr(0.0)
+    return root, drive
+
+
+def pose(body):
+    p = body.data.root_pos_w.torch[0].detach().cpu().numpy().astype(float)
+    q = body.data.root_quat_w.torch[0].detach().cpu().numpy().astype(float)
+    v = body.data.root_vel_w.torch[0].detach().cpu().numpy().astype(float)
+    return p, q, v
+
+
+def world_vertices(body, mesh):
+    p, q, _ = pose(body); x, y, z, w = q
+    rot = trimesh.transformations.quaternion_matrix((w, x, y, z))[:3, :3]
+    return mesh.vertices @ rot.T + p
+
+
+def to_local_pose(position, quaternion_xyzw, points):
+    x, y, z, w = quaternion_xyzw
+    rotation = trimesh.transformations.quaternion_matrix((w, x, y, z))[:3, :3]
+    return (np.asarray(points) - np.asarray(position)) @ rotation
+
+
+def derived_hinge_state(position, quaternion_xyzw):
+    """Derive world-to-body hinge state from native pose and authored frames."""
+    x, y, z, w = map(float, quaternion_xyzw)
+    rotation = trimesh.transformations.quaternion_matrix((w, x, y, z))[:3, :3]
+    angle = math.degrees(math.atan2(float(rotation[2, 1]), float(rotation[2, 2])))
+    axis_residual = math.degrees(math.acos(float(np.clip(rotation[0, 0], -1.0, 1.0))))
+    # Body0 anchor is (0,0,ROOT_Z); Body1's authored anchor is its local origin.
+    anchor_world = np.asarray(position, dtype=float) + rotation @ np.zeros(3)
+    translation_residual = float(np.linalg.norm(anchor_world - np.array((0.0, 0.0, ROOT_Z))))
+    return angle, translation_residual, axis_residual
+
+
+class Crossing:
+    def __init__(self, vertices, faces):
+        self.previous, self.faces, self.xy = np.asarray(vertices), np.asarray(faces), []
+        self.maximum_step_motion = 0.0
+        self.started_above = bool(np.all(self.previous[:, 2] > 0))
+    def update(self, current):
+        current = np.asarray(current)
+        self.maximum_step_motion = max(self.maximum_step_motion,
+                                       float(np.max(np.linalg.norm(current-self.previous, axis=1))))
+        for a, b in zip(self.previous, current, strict=True):
+            if a[2] >= 0 > b[2]: self.xy.append(a[:2] + a[2] / (a[2]-b[2]) * (b[:2]-a[:2]))
+        for vertices in (self.previous, current):
+            for face in self.faces:
+                for i, j in ((0,1),(1,2),(2,0)):
+                    a, b = vertices[face[i]], vertices[face[j]]
+                    if (a[2] >= 0) != (b[2] >= 0):
+                        self.xy.append(a[:2] + a[2] / (a[2]-b[2]) * (b[:2]-a[:2]))
+        self.previous = current
+        if not self.started_above or not np.all(current[:, 2] < 0): return None
+        if not self.xy:
+            return {"completed": True, "sampled_clear": False, "sampled_clearance_m": -1.0,
+                    "maximum_observed_endpoint_vertex_displacement_m": self.maximum_step_motion,
+                    "sampled_clearance_minus_endpoint_displacement_m": -1.0}
+        clearance = APERTURE/2 - np.max(np.abs(np.asarray(self.xy)), axis=1)
+        # Endpoint displacement is not a bound on a rotating edge's swept path.
+        sampled_resolution_margin = float(clearance.min()) - self.maximum_step_motion
+        return {"completed": True, "sampled_clear": bool(np.all(clearance > 0)),
+                "sampled_clearance_m": float(clearance.min()),
+                "maximum_observed_endpoint_vertex_displacement_m": self.maximum_step_motion,
+                "sampled_clearance_minus_endpoint_displacement_m": sampled_resolution_margin}
+
+
+def main():
+    dt = 1 / args.physics_hz
+    sim = sim_utils.SimulationContext(sim_utils.SimulationCfg(dt=dt, device=args.device,
+        render_interval=max(1, args.physics_hz // 20)))
+    root, drive = spawn_moving_aperture(); mesh = media_mesh()
+    # Rz(45)Ry(90), transverse to the aperture normal.
+    a, b = math.radians(45)/2, math.pi/4
+    quat = (-math.sin(a)*math.sin(b), math.cos(a)*math.sin(b), math.sin(a)*math.cos(b), math.cos(a)*math.cos(b))
+    rot = trimesh.transformations.quaternion_matrix((quat[3], *quat[:3]))[:3, :3]
+    hz = float(np.max(np.abs((mesh.vertices @ rot.T)[:, 2])))
+    body = RigidObject(RigidObjectCfg(prim_path="/World/Medium", spawn=spawn_mesh(mesh),
+        init_state=RigidObjectCfg.InitialStateCfg(pos=(0, 0, ROOT_Z + hz + 1e-5), rot=quat)))
+    aperture = RigidObject(RigidObjectCfg(prim_path="/World/MovingAperture", spawn=None))
+    sim.reset(); body.reset(); aperture.reset(); native_dt = float(sim.get_physics_dt())
+    stage = get_current_stage()
+    medium_ccd_attr = PhysxSchema.PhysxRigidBodyAPI(
+        stage.GetPrimAtPath("/World/Medium")
+    ).GetEnableCCDAttr()
+    aperture_ccd_attr = PhysxSchema.PhysxRigidBodyAPI(
+        stage.GetPrimAtPath("/World/MovingAperture")
+    ).GetEnableCCDAttr()
+    medium_ccd_enabled = bool(medium_ccd_attr.Get())
+    aperture_ccd_enabled = bool(aperture_ccd_attr.Get())
+    trace, gravity_speeds = [], []
+    for step in range(3 * args.physics_hz):
+        sim.step(render=False); body.update(dt); aperture.update(dt)
+        p, q, v = pose(body); gravity_speeds.append(float(np.linalg.norm(v[:3])))
+        ap, aq, av = pose(aperture)
+        hinge_angle, hinge_translation_residual, hinge_axis_residual = derived_hinge_state(ap, aq)
+        trace.append({"phase":"settle", "step":step+1, "position_m":p.tolist(),
+                      "quaternion_xyzw":q.tolist(), "velocity_mps_radps":v.tolist(),
+                      "aperture_position_m":ap.tolist(), "aperture_quaternion_xyzw":aq.tolist(),
+                      "aperture_velocity_mps_radps":av.tolist(),
+                      "derived_native_relative_hinge_angle_deg":hinge_angle,
+                      "hinge_frame_translation_residual_m":hinge_translation_residual,
+                      "hinge_axis_rotation_residual_deg":hinge_axis_residual,
+                      "joint_drive_target_deg":0.0})
+    initial = to_local_pose(ap, aq, world_vertices(body, mesh))
+    retained_window_s = 0.25
+    retained_window_samples = int(round(retained_window_s * args.physics_hz))
+    bridged = bool(np.min(initial[:,2]) <= 0.001 and np.max(initial[:,2]) > 0 and
+                   max(gravity_speeds[-retained_window_samples:]) < 0.005 and
+                   np.ptp(initial[:,0]) > APERTURE)
+    tracker, crossing, rolls = Crossing(initial, mesh.faces), None, []
+    for step in range(3 * args.physics_hz):
+        t = step * dt
+        target = 5 * math.sin(4 * math.pi * t) if t < 2 else 0.0
+        drive.GetTargetPositionAttr().Set(target)
+        sim.step(render=False); body.update(dt); aperture.update(dt)
+        ap, aq, av = pose(aperture)
+        roll, hinge_translation_residual, hinge_axis_residual = derived_hinge_state(ap, aq)
+        rolls.append(roll)
+        p, q, v = pose(body); local = to_local_pose(ap, aq, world_vertices(body, mesh))
+        if crossing is None: crossing = tracker.update(local)
+        trace.append({"phase":"drive", "step":step+1, "observed_roll_deg":roll,
+                      "position_m":p.tolist(), "quaternion_xyzw":q.tolist(),
+                      "velocity_mps_radps":v.tolist(), "aperture_position_m":ap.tolist(),
+                      "aperture_quaternion_xyzw":aq.tolist(),
+                      "aperture_velocity_mps_radps":av.tolist(),
+                      "derived_native_relative_hinge_angle_deg":roll,
+                      "hinge_frame_translation_residual_m":hinge_translation_residual,
+                      "hinge_axis_rotation_residual_deg":hinge_axis_residual,
+                      "joint_drive_target_deg":target})
+    numeric_trace = [x["position_m"] + x["quaternion_xyzw"] + x["velocity_mps_radps"] +
+                     x["aperture_position_m"] + x["aperture_quaternion_xyzw"] +
+                     x["aperture_velocity_mps_radps"] +
+                     [x["derived_native_relative_hinge_angle_deg"],
+                      x["hinge_frame_translation_residual_m"],
+                      x["hinge_axis_rotation_residual_deg"], x["joint_drive_target_deg"]]
+                     for x in trace]
+    finite = bool(np.isfinite(np.asarray(numeric_trace)).all())
+    report_path = args.report if args.report.is_absolute() else (Path.cwd()/args.report).resolve()
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    trace_path = report_path.with_name(report_path.stem + "-trace.json.gz")
+    with gzip.open(trace_path, "wt", encoding="utf-8") as f:
+        json.dump({"scope":"single-seed sampled moving-frame crossing discovery only",
+                   "retained_window_s":retained_window_s,
+                   "native_physx_ccd_readback":{
+                       "/World/Medium":medium_ccd_enabled,
+                       "/World/MovingAperture":aperture_ccd_enabled,
+                   },
+                   "coverage":"completed-physics-sample endpoints only; no continuous swept-geometry claim",
+                   "samples":trace, "crossing":crossing, "bridged":bridged}, f, separators=(",", ":"))
+    workspace = Path(__file__).resolve().parent.parent
+    checks = [
+        {"name":"physics_dt_absolute_error","measured":abs(native_dt-dt),"operator":"<=","threshold":1e-9,"unit":"s"},
+        {"name":"finite_native_samples","measured":int(finite),"operator":"==","threshold":1,"unit":"bool"},
+        {"name":"medium_native_physx_ccd_enabled","measured":int(medium_ccd_enabled),"operator":"==","threshold":1,"unit":"bool"},
+        {"name":"moving_aperture_native_physx_ccd_enabled","measured":int(aperture_ccd_enabled),"operator":"==","threshold":1,"unit":"bool"},
+        {"name":"fresh_physics_sample_count","measured":len(trace),"operator":"==","threshold":6*args.physics_hz,"unit":"completed_physics_samples"},
+        {"name":"gravity_retained_transverse_seed","measured":int(bridged),"operator":"==","threshold":1,"unit":"bool"},
+        {"name":"observed_roll_range","measured":max(rolls)-min(rolls),"operator":">=","threshold":8.0,"unit":"deg"},
+        {"name":"sampled_clear_aperture_crossing","measured":int(bool(crossing and crossing["sampled_clear"])),"operator":"==","threshold":1,"unit":"bool"},
+        {"name":"minimum_sampled_rib_clearance","measured":float(crossing["sampled_clearance_m"] if crossing else -1),"operator":">","threshold":0.0,"unit":"m"},
+        {"name":"maximum_observed_endpoint_vertex_displacement","measured":float(crossing["maximum_observed_endpoint_vertex_displacement_m"] if crossing else -1),"operator":"<=","threshold":0.00025,"unit":"m_per_completed_physics_interval"},
+        {"name":"maximum_hinge_frame_translation_residual","measured":max(x["hinge_frame_translation_residual_m"] for x in trace),"operator":"<=","threshold":0.0005,"unit":"m"},
+        {"name":"maximum_hinge_axis_rotation_residual","measured":max(x["hinge_axis_rotation_residual_deg"] for x in trace),"operator":"<=","threshold":0.5,"unit":"deg"},
+        {"name":"native_aperture_state_samples","measured":len(trace),"operator":"==","threshold":6*args.physics_hz,"unit":"completed_physics_samples"},
+    ]
+    with report_path.open("w", encoding="utf-8") as f:
+        json.dump({"checks":checks,"artifacts":[trace_path.relative_to(workspace).as_posix()]}, f, indent=2)
+    simulation_app.close()
+
+
+if __name__ == "__main__": main()

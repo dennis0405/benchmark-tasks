@@ -1,6 +1,6 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the bounded moving-frame aperture probe. It now uses an equal 0.25-second retained-speed window at 240/480 Hz, records native aperture pose/quaternion/linear and angular velocity plus observed joint angle and drive target at every physics sample, enables PhysX CCD, and limits its claim to sampled geometric crossing with a conservative inter-sample motion-margin tunneling control. Syntax validation passed; trusted-controller native GPU execution is still required. This does not claim exact rotational continuous collision detection, frozen bridge qualification, or full environment readiness.",
+  "summary": "Repaired the bounded moving-aperture probe after code review. Pre-release bridge intersections are now discarded; classification arms only after measured loss of two-rib support and whole-collider entry into the unchanged aperture tolerance while descending in the native moving frame. Contact activation remains repaired. Static AST validation passed. Native GPU execution is pending; no continuous-sweep, full-environment, or qualification claim is made.",
   "scripts": [
     {
       "id": "moving_aperture_crossing_probe_240hz",
@@ -9,9 +9,7 @@
         "--physics-hz",
         "240",
         "--report",
-        "../measurements/moving-aperture-crossing-probe-240hz.json",
-        "--device",
-        "cuda:0"
+        "../measurements/moving-aperture-crossing-probe-240hz.json"
       ],
       "report": "measurements/moving-aperture-crossing-probe-240hz.json"
     },
@@ -22,9 +20,7 @@
         "--physics-hz",
         "480",
         "--report",
-        "../measurements/moving-aperture-crossing-probe-480hz.json",
-        "--device",
-        "cuda:0"
+        "../measurements/moving-aperture-crossing-probe-480hz.json"
       ],
       "report": "measurements/moving-aperture-crossing-probe-480hz.json"
     }
