@@ -14,6 +14,7 @@ import functools
 import json
 import math
 from pathlib import Path
+import traceback
 from typing import Callable
 
 from isaaclab.app import AppLauncher
@@ -36,6 +37,9 @@ from isaaclab_physx.physics import IsaacEvents, PhysxManager
 PHYSICS_DT = 1.0 / 240.0
 DRIVEN_STEPS = 180
 POST_DEREGISTER_STEPS = 8
+OUTPUT_DIR = Path(__file__).resolve().parent.parent / "measurements"
+REPORT_PATH = OUTPUT_DIR / "native-api-preflight.json"
+TRACE_PATH = OUTPUT_DIR / "native-api-preflight-trace.json"
 
 
 def _torch(array) -> torch.Tensor:
@@ -81,7 +85,16 @@ def _check(name: str, measured: float, operator: str, threshold: float, unit: st
 def _spawn_coupon() -> None:
     floor = sim_utils.CuboidCfg(
         size=(1.0, 1.0, 0.04),
+        # A collision-only static prim was rejected as a GPU contact filter by
+        # the pinned PhysX tensor backend.  Keep the support immobile while
+        # giving the filter a real rigid-body/contact-reporter identity.
+        rigid_props=sim_utils.RigidBodyPropertiesCfg(
+            kinematic_enabled=True,
+            disable_gravity=True,
+        ),
+        mass_props=sim_utils.MassPropertiesCfg(mass=100.0),
         collision_props=sim_utils.CollisionPropertiesCfg(collision_enabled=True),
+        activate_contact_sensors=True,
         visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.25, 0.25, 0.25)),
     )
     floor.func("/World/Floor", floor, translation=(0.0, 0.0, -0.02))
@@ -98,10 +111,6 @@ def _spawn_coupon() -> None:
 
 
 def main() -> None:
-    output_dir = Path(__file__).resolve().parent.parent / "measurements"
-    report_path = output_dir / "native-api-preflight.json"
-    trace_path = output_dir / "native-api-preflight-trace.json"
-
     sim_cfg = sim_utils.SimulationCfg(dt=PHYSICS_DT, device=args_cli.device)
     sim = sim_utils.SimulationContext(sim_cfg)
     _spawn_coupon()
@@ -111,13 +120,25 @@ def main() -> None:
     if simulation_view is None:
         raise RuntimeError("PhysxManager did not expose a simulation view after reset")
     simulation_view.set_subspace_roots("/")
-    body_view = simulation_view.create_rigid_body_view("/World/Coupon")
+    # The pinned ContactSensor implementation supplies one sensor glob per
+    # body and one nested filter list per sensor glob.  Preserve that exact
+    # shape even for this one-body probe; a flat filter list is interpreted as
+    # no valid GPU filter by this backend.
+    body_view = simulation_view.create_rigid_body_view(["/World/Coupon"])
     contact_view = simulation_view.create_rigid_contact_view(
-        "/World/Coupon", max_contact_data_count=64
+        ["/World/Coupon"],
+        filter_patterns=[["/World/Floor"]],
+        max_contact_data_count=64,
     )
-    if body_view.count != 1 or contact_view.sensor_count != 1:
+    if (
+        body_view.count != 1
+        or contact_view.sensor_count != 1
+        or contact_view.filter_count != 1
+    ):
         raise RuntimeError(
-            f"unexpected coupon views: bodies={body_view.count}, sensors={contact_view.sensor_count}"
+            "unexpected coupon views: "
+            f"bodies={body_view.count}, sensors={contact_view.sensor_count}, "
+            f"filters={contact_view.filter_count}"
         )
 
     sequence: list[tuple[str, int, float]] = []
@@ -350,7 +371,7 @@ def main() -> None:
             "start_index",
         ],
     }
-    _write_json(trace_path, trace)
+    _write_json(TRACE_PATH, trace)
 
     checks = [
         _check("native_physics_dt", float(sim.get_physics_dt()), "==", PHYSICS_DT, "s"),
@@ -410,10 +431,10 @@ def main() -> None:
     ]
     overall_pass = all(check["passed"] for check in checks)
     _write_json(
-        report_path,
+        REPORT_PATH,
         {
             "checks": checks,
-            "artifacts": [str(trace_path.relative_to(output_dir.parent))],
+            "artifacts": [str(TRACE_PATH.relative_to(OUTPUT_DIR.parent))],
             "overall_pass": overall_pass,
         },
     )
@@ -425,5 +446,32 @@ def main() -> None:
 if __name__ == "__main__":
     try:
         main()
+    except Exception as exc:
+        # Always replace any stale report with an honest, nonempty failure
+        # receipt.  Missing native observables remain missing and never receive
+        # proxy values; this check records only the observed execution failure.
+        _write_json(
+            REPORT_PATH,
+            {
+                "checks": [
+                    {
+                        "name": "native_preflight_execution_completed",
+                        "measured": 0.0,
+                        "operator": "==",
+                        "threshold": 1.0,
+                        "unit": "boolean",
+                        "passed": False,
+                    }
+                ],
+                "artifacts": [],
+                "overall_pass": False,
+                "error": {
+                    "type": type(exc).__name__,
+                    "message": str(exc),
+                    "traceback": traceback.format_exc(),
+                },
+            },
+        )
+        raise
     finally:
         simulation_app.close()

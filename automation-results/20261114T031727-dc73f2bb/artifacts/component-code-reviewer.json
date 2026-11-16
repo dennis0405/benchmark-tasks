@@ -1,19 +1,20 @@
 {
   "verdict": "pass",
   "findings": [
-    "The prior callback-exception propagation failure is repaired: both PRE and POST callbacks are wrapped, every exception is recorded in a local failure latch, stored through PhysxManager.store_callback_exception(), re-raised, and callback_failure_count is included in overall_pass.",
-    "The probe uses the pinned native PRE_PHYSICS_STEP and POST_PHYSICS_STEP APIs, requires exact per-step PRE/POST ordering and cardinality, checks callback state freshness against immediate external reads, and verifies deregistration across reset.",
-    "Contact measurements use native PhysX tensor data with copied buffers, explicit scalar normal-force/impulse-magnitude semantics, finite thresholds, correct N and N*s units, and a force-to-impulse timestep consistency check.",
-    "The source parses successfully and the inspected pinned PhysxManager and contact-sensor snapshots match their indexed SHA-256 hashes.",
-    "The plan truthfully limits this program to API/component discovery and does not claim frozen-contract qualification or physical success before native execution."
+    "The repaired source is a bounded discovery probe for callback ordering, deregistration/reset behavior, rigid-body state freshness, and filtered contact-tensor semantics; it does not claim component qualification or task success.",
+    "The nested per-sensor filter structure matches the hash-verified pinned ContactSensor implementation, and the kinematic contact-reporting floor directly addresses the recorded no-filter native failure.",
+    "Measurements derive from POST_PHYSICS_STEP native tensors with explicit units, copied buffers, complete raw samples, callback exception propagation, and fail-closed report replacement; no constant success values, object-state writes, fake welds, or collision bypasses are present.",
+    "The planned invocation matches the pinned AppLauncher interface. A fresh native run is appropriately deferred until after this generated-source review and will be required before treating the probe as passed or proceeding to frozen component qualification."
   ],
   "evidence_paths": [
     "artifacts/component-source-plan.json",
     "task/run_native_api_preflight.py",
-    "input/last-failure.json",
+    "task/README.md",
     "input/runtime-api-preflight.json",
+    "input/last-failure.json",
     "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py",
     "input/pinned-runtime-sources/000dde649a8b270af0f7102fff67a51abc1a2ff359fa3179f52830d5b83fde80-contact_sensor.py",
-    "artifacts/contract.json"
+    "input/pinned-runtime-sources/af8a09c87a05221f309892e24788a59c9776e7e9097b3cde0b57e607d4eb3675-app_launcher.py",
+    "../logs/native-api-preflight-ecca35497d.log"
   ]
 }

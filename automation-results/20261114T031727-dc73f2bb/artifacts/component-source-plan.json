@@ -1,12 +1,11 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the focused native PhysX probe so both PRE and POST callback exceptions are locally latched, stored for reliable propagation, re-raised, and included in overall_pass. Static compilation and callback-registration inspection passed. Native GPU execution remains for the trusted controller; no environment qualification is claimed.",
+  "summary": "Repaired the bounded native PhysX probe after the host GPU log showed that a static collision-only floor was rejected as a detailed-contact filter. The probe now uses the pinned API’s nested per-sensor filter structure and a contact-reporting kinematic rigid floor. Qualification remains blocked pending a fresh passing host execution; no production physics or demo success is claimed.",
   "scripts": [
     {
       "id": "native-api-preflight",
       "script": "task/run_native_api_preflight.py",
       "args": [
-        "--headless",
         "--device",
         "cuda:0"
       ],
