@@ -1,0 +1,24 @@
+{
+  "context": "ed099192d7d16ace4691cc5004f16e234c32d3c7f64f519200d80895659862e5",
+  "record_digest": "30c0eba726816a6c7ee7778e4fde95abc4c9930049e966f6de83835f5f52253a",
+  "comparison": {
+    "id": "pr-236",
+    "objective": "Candidate adjusts a gripper stop screw, locks its concentric jam nut without shifting the setting, then cycles the gripper; PR-236 supports a gravity-loaded inspection arm at an angle and engages a separate indexed clamp knob.",
+    "physical_skill": "Candidate requires simultaneous hex-driver and thin-wrench seating with countertorque against screw rotation caused by tightening its concentric nut; PR-236 instead supports an arm against gravity while turning a spatially separate knob whose reduced-order model supplies no lock reaction to the knob.",
+    "success_condition": "Candidate requires a locked 90° setting retained within 3°, ≤2° drift over three released cycles, retained nuts, and 30 mm tool clearance; PR-236 requires the +15° arm aim, indexed lock engagement, and a two-second released hold within 3°/2° drift.",
+    "verdict": "distinct",
+    "reason": "The essential tested causality differs: preserving a threaded adjustment against concentric locknut reaction is not subsumed by holding a payload against gravity while actuating a separate indexed lock, although both share generic set-lock-release primitives."
+  },
+  "review_notes": {
+    "purpose": "ONE bounded source-enhanced review. Prior comparison used only PR body; catalog had no task specs. Preserve original overlap and do not repeatedly resample this record. If overlap remains, reject this candidate.",
+    "original_source": "input/pr-236-original-implementation.txt",
+    "pinned_head": "7fe1bb3457011aafb486ef0338ed25e0db0edeec",
+    "urls": [
+      "https://github.com/EmiliyanGospodinov/benchmark-tasks/blob/7fe1bb3457011aafb486ef0338ed25e0db0edeec/tasks/inspection-mount/README.md",
+      "https://github.com/EmiliyanGospodinov/benchmark-tasks/blob/7fe1bb3457011aafb486ef0338ed25e0db0edeec/tasks/inspection-mount/mount_aim/embodiment.py"
+    ],
+    "source_facts": "Original README Indexed lock gives an eccentric vertical knob driving an axial pushrod/rosette on a horizontal arm hinge. The held arm opposes a pre-existing gravity torque; knob tightens a toothed lock at nearest5deg tooth. The source explicitly notes no tooth/spring reaction fed into knob; retain its intended physical force path rather than dismissing it for a reduced-order solver. It does NOT have two concentric threaded adjustment elements whose fastening rotates the adjusted screw.",
+    "question": "Determine whether that difference in essential physical causality constitutes a meaningfully different ability: current candidate proposes maintaining screw angular phase against reaction torque from turning its concentric nut, with two genuinely seated tools and real coupling. Generic set-angle/hold/tighten/release alone is not proof either way. Do not accept hardware names, a different target, cycles, tool count alone, or increased difficulty as novelty. If current gripper later lacks the proposed coupling, final novelty must fail. Retain overlap/uncertain if original ability still subsumes it.",
+    "status_context": "Live GitHub2026-11-16: closed unmerged, label Not accepted: final, latest bot rejected for importance2026-11-14T05:41:22Z; author requested human review07:46:21Z. This is context, NOT a reason to force distinction or remove its comparison."
+  }
+}
