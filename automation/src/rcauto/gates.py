@@ -9,7 +9,6 @@ from pathlib import Path
 
 from .store import StateError
 
-
 PRODUCTION_CATEGORIES = ("Impact on AI timelines", "Impact on jobs")
 
 
