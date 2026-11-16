@@ -1,128 +1,137 @@
 {
   "candidates": [
     {
-      "id": "sidewall-pinch-static-first",
-      "title": "Open-carton rejection by sidewall body pinch",
-      "objective": "On a friction-driven running belt, remove physically open cartons to a reject tray while avoiding their collision-enabled flaps and retaining all free contents; initially closed cartons remain untouched and continue across the downstream line.",
+      "id": "ball-lock-pin-load-transfer",
+      "title": "Seat a machined part with a self-locking lifting pin, then unlock and recover the pin",
+      "objective": "Insert and mechanically lock a self-locking ball lifting pin in a machined workpiece, lift the workpiece through the movable shackle, seat it on a three-pad fixture, transfer its weight to the fixture, and withdraw the unloaded pin without displacing or dropping the part.",
       "skills": [
-        "state-conditioned intervention",
-        "moving-target tracking",
-        "finite-thickness flap avoidance",
-        "opposed sidewall grasping",
-        "level transport",
-        "guarded release"
+        "close-clearance pin alignment and insertion",
+        "spring-button actuation",
+        "mechanical ball-lock engagement",
+        "shackle grasping and force-controlled lifting",
+        "suspended-part alignment and seating",
+        "support verification before pin extraction",
+        "coordinated button hold and axial withdrawal"
       ],
-      "success_conditions": "Score each carton and average. Open carton: 0.25 when controlled without spill; 0.50 when the complete body clears the belt by at least 20 mm with every content retained; 0.75 when body and contents lie inside the reject-tray footprint; 1.00 after complete release, at least 60 mm robot clearance, and 3.0 s stable dwell from fresh 10 Hz observations. Closed carton: 1.00 only after crossing the downstream line on its original belt path without robot contact; otherwise 0. Content crossing the carton rim and touching an exterior surface permanently caps that carton at 0.50; a dropped carton scores 0. Closing and passing an initially open carton is not rejection. Full score requires every open carton rejected and every closed carton passed. Equivalent physically safe body-support strategies remain valid. Separately labeled 240 Hz traces validate physics but do not grade performance.",
-      "industrial_value": "Industrial cartoners detect open flaps and reject affected cartons. Careful robotic removal is a representative alternative for spill-prone rejects, not a claimed manufacturer-prescribed sequence.",
-      "dexterity": "High: synchronize with a translating carton, enter a 25 mm-high sidewall contact band beneath articulated flaps, establish opposed support, lift nearly level, preserve loose contents, and release without disturbing the deposit.",
+      "success_conditions": "Score begins at 0. Award 0.20 after the released button has returned to its initial position and the inserted pin resists a 10 mm guarded upward pull for 3.0 s; 0.45 after the locked pin alone supports a lift of at least 30 mm for 2.0 s; and 0.70 after the workpiece contacts all three fixture pads with every measured support gap at or below 2 mm. Award 1.00 only after the pin is completely outside the bore, the workpiece remains on all three pads, both grippers are at least 60 mm clear, and fresh 10 Hz observations confirm a 3.0 s dwell. Dropping either object, releasing the load outside the fixture boundary, losing a locking ball, or withdrawing the pin before fixture support permanently prevents full credit and caps the score at the highest safely completed stage. Loss of retention revokes the 0.20 and 0.45 stages. Any grasp, hand assignment, or action order is valid when the same physical prerequisites and outcomes hold. Physics validation separately records rigid-body, native-joint, and contact traces at 240 Hz; those diagnostics are not grading rules.",
+      "industrial_value": "Halder describes EH 22350 as a heavy-duty temporary lifting element that needs only an H11 receiving bore and documents insertion, locking, removal, a movable shackle, and rated load directions. The task represents temporary lifting-hardware installation, workpiece transfer, fixture seating, unloading, and hardware recovery in manufacturing material handling rather than generic pick-and-place.",
+      "dexterity": "High: the robot must align a nominal 10 mm pin with sub-millimetre diametral clearance, actuate a spring-return button, verify a real mechanical lock, grasp a freely moving shackle, control a suspended rigid load onto three supports, and hold the button while extracting the unloaded pin.",
       "evidence": [
         {
-          "source_id": "s-058bb7939e386179",
-          "locator": "CMK Continuous Motion Cartoner Operator’s Manual, Figure 5.16, physical PDF page 81 / printed page 5-13",
-          "quote_sha256": "a50cb44e84c6ffc190fa5d0600712bc2680563195b34ea02d784c287bdfe1512"
+          "source_id": "s-cdfde9d8db9d29dd",
+          "locator": "EH 22350 data sheet, Product Description, page 1",
+          "quote_sha256": "c49c9d8d06eddc3026924351445779aeeb0eefd56c4feacc4ac6924066fd9a27"
         },
         {
-          "source_id": "s-058bb7939e386179",
-          "locator": "CMK Continuous Motion Cartoner Operator’s Manual, Product Rejection, physical PDF page 131 / printed page 6-9",
-          "quote_sha256": "13602b7e93bc42085020c94f2f6ce71d1fd321b16c3f502174394d9c4fa12aa7"
+          "source_id": "s-cdfde9d8db9d29dd",
+          "locator": "EH 22350 data sheet, Assembly, page 1",
+          "quote_sha256": "ae2cc55ad4b8cab49b26bd798375d6defed054b2891498f0b1df19f14ea34cbb"
         },
         {
-          "source_id": "s-2cfb4c8d748cc938",
-          "locator": "What Reject Method Is Right for My Application?, Air Blast section",
-          "quote_sha256": "1ec62b195660efddecf5005c3aa78e7ff3ae72a0f24a82f6e3deee9e79684238"
+          "source_id": "s-cdfde9d8db9d29dd",
+          "locator": "EH 22350 data sheet, Mounting, page 1",
+          "quote_sha256": "45bd6f9b090f9c97c43b286a7b32f4f8f87a49117a5f47321b971f134fbed942"
         },
         {
-          "source_id": "s-613c0ffc934264ac",
-          "locator": "FEFCO Code Booklet, Slotted Boxes, printed page 7; physical page 8 shows form 0201",
-          "quote_sha256": "862eed9bf7944b32649a2458a4c42fa78115beca610b30e136b00afbff0d4d5b"
+          "source_id": "s-cdfde9d8db9d29dd",
+          "locator": "EH 22350 data sheet, Dismantling, page 1",
+          "quote_sha256": "634f13921eab18be724468fc585ca6aa247bab566bbdbe40be8338048aa0f9b2"
+        },
+        {
+          "source_id": "s-cdfde9d8db9d29dd",
+          "locator": "EH 22350 data sheet, Drawing/order table, aligned row for article 22350.0621, page 2",
+          "quote_sha256": "81ee3f0b5e196547e6a5d29c50d964123a0c1d05ef7dd0fc0e95a32b1333b6d3"
         }
       ],
-      "asset_plan": "Build an independently authored representative FEFCO-0201-style rigid compound carton with 120×70×70 mm external body, 2 mm walls, a z=15–40 mm sidewall contact band, and three free 18 mm rigid contents. Initial test assumptions: two 116×35×2 mm long flaps at 10 g each and two 66×60×2 mm short flaps at 12 g each; native revolute joints with closed=0°, initial open=95°, limits 0–110°, damping 0.02 N·m·s/rad, zero drive stiffness, static/dynamic friction 0.6/0.5, and restitution 0.05. These are explicit modeling assumptions, not manufacturer calibration, and must be tuned only through documented contact tests. Use fixed closed flaps for normal cartons. The pinned YAM source states a nominal 94 mm open pad separation, leaving a nominal 24 mm width difference but not proving collider clearance or grasp success. Convey through surface friction only. Gate work through stationary grasp/lift, stationary tray transfer and release, moving open-carton removal, untouched closed-carton passage, then a mixed stream. Never write task-object state, weld grasps, or disable essential collisions.",
-      "risk": "Ready means sufficient evidence and consistent assumptions to attempt construction, not demonstrated task success. Native trials must still verify finger and palm clearance, flap swept-volume contacts, hinge behavior, frictional transport, no-spill transfer, release clearance, score revocation, and two fresh-process full-score demonstrations. Novelty remains contingent on corpus comparison and counterfactuals proving that articulated flaps and free contents materially change the tested ability. Required controls include no action, flap-only handling, rough tilt, all-remove, all-ignore, closed-carton contact, and off-belt staging.",
+      "asset_plan": "Build an independently authored, full-scale rigid representative of EH 22350.0621 using the manufacturer diagrams: nominal d1 10.0 mm, l1 15 mm, mass 277 g, movable shackle, spring-return button, and collision-enabled radial locking balls. For buildable collision geometry, use a 9.94 mm shaft diameter, representing the published d1 tolerance band of 9.92–9.96 mm, and a 10.06 mm cylindrical workpiece bore, an explicitly chosen value within a nominal 10 mm H11-representative band; this gives 0.12 mm simulated diametral clearance. The representative 140×90×20 mm, 0.6 kg steel workpiece has a 2.0 mm lower retaining shoulder around the through-bore and sits on three 20×20 mm fixture pads. Model the button as a native prismatic joint with 3.0 mm test travel and a return spring; its internal cam drives three native radial ball sliders. Use 3.0 mm balls, 0.9 mm radial projection when locked, at least 0.15 mm retraction inside the 9.94 mm shaft envelope when fully pressed, and 0.10 mm collider clearance at each ball guide. Button travel, spring constant, ball size, cam profile, retaining-shoulder thickness, fixture dimensions, and selected H11 bore value are disclosed representative modeling assumptions, not manufacturer specifications. The acquired EH 22350 sheet establishes insertion/removal operation and the external retention concept but does not establish an under-load button prohibition; therefore the benchmark does not claim product-specific safety logic. It instead physically tests that support is present before extraction. Validate the mechanism first with no-op retention, unlocked pull-out, locked axial-load hold, pressed-button release, and unloaded extraction controls; then validate YAM access, one lift, fixture seating, and the complete guarded 14D demo. Preserve all essential colliders and use no object-state writes, fake grasp welds, or pose overrides.",
+      "risk": "The closest known task places a hoisted motor on studs, whereas this objective additionally requires installing, mechanically locking, unloading, unlocking, and recovering temporary lifting hardware. Novelty still requires current corpus review. The internal cam and calibration are representative assumptions requiring native controls, and YAM access to the full-scale button and shackle remains a build-stage risk. No GN 1130 statement is used as EH 22350 evidence, and no EH 22350-specific under-load prohibition is asserted.",
       "feasibility_status": "ready",
       "missing_evidence": []
     },
     {
-      "id": "bimanual-endwall-cradle",
-      "title": "Bimanual end-wall cradle rejection",
-      "objective": "Track each open carton and support its two short body walls with separate grippers below the flap hinges, then coordinate a level lift and reject-tray placement without losing free contents; leave closed cartons untouched.",
+      "id": "dual-pin-balanced-load-transfer",
+      "title": "Install two self-locking lifting pins for balanced two-point placement",
+      "objective": "Install and lock two self-locking lifting pins in opposite workpiece bores, lift the workpiece through both movable shackles while controlling its attitude, seat it on a fixture, and recover both unloaded pins.",
       "skills": [
-        "bimanual synchronization",
-        "moving-target interception",
-        "opposed end-wall support",
-        "load sharing",
-        "level transport",
-        "coordinated release"
+        "independent close-clearance insertions",
+        "two mechanical lock verifications",
+        "bimanual shackle acquisition",
+        "balanced load sharing",
+        "suspended-load attitude control",
+        "fixture seating",
+        "two unloaded pin extractions"
       ],
-      "success_conditions": "Use the same outcome-based carton score, permanent spill cap, drop loss, untouched closed-carton passage rule, 60 mm release clearance, and 3.0 s fresh-observation dwell as the sidewall candidate. Hand assignment, approach order, and equivalent safe support strategies are unrestricted.",
-      "industrial_value": "This represents careful removal following a documented open-flap reject decision where forceful rejection could spill contents; bimanual cradling is a proposed handling design rather than an asserted factory procedure.",
-      "dexterity": "Very high: both arms must match belt motion, avoid articulated flaps and each other, share load without yawing the carton, and release without destabilization.",
+      "success_conditions": "Award 0.20 when both released-button pins independently withstand a 10 mm guarded pull for 3.0 s, 0.45 when both pins support a 30 mm lift with workpiece roll and pitch each within 5 degrees for 2.0 s, and 0.70 when all three fixture gaps are at most 2 mm. Full score requires complete withdrawal and release of both pins, both grippers 60 mm clear, and a fresh 3.0 s stable dwell. A dropped load, loss of either lock, permanent ball escape, or either extraction before fixture support prevents full credit. Hand assignment and extraction order are unrestricted.",
+      "industrial_value": "The documented lifting element is designed to lift workpieces through a movable shackle and a simple receiving bore. Two independent temporary attachments make lock verification and load sharing consequential during placement of a rigid part.",
+      "dexterity": "Very high: two close-clearance locks must be installed and verified before the arms coordinate a freely suspended two-point load, constrain roll and pitch during seating, and subsequently recover both pins.",
       "evidence": [
         {
-          "source_id": "s-e0cf7b56f172bc65",
-          "locator": "Tetra Pak Cardboard Packer 34, Secure every unit section",
-          "quote_sha256": "e1ff4b292b36f1f27ef5f7be4be5637abb7d2247b6a3a13047f1381267dce102"
+          "source_id": "s-cdfde9d8db9d29dd",
+          "locator": "EH 22350 data sheet, Product Description, page 1",
+          "quote_sha256": "c49c9d8d06eddc3026924351445779aeeb0eefd56c4feacc4ac6924066fd9a27"
         },
         {
-          "source_id": "s-058bb7939e386179",
-          "locator": "CMK Continuous Motion Cartoner Operator’s Manual, Product Rejection, physical PDF page 131 / printed page 6-9",
-          "quote_sha256": "13602b7e93bc42085020c94f2f6ce71d1fd321b16c3f502174394d9c4fa12aa7"
+          "source_id": "s-cdfde9d8db9d29dd",
+          "locator": "EH 22350 data sheet, Assembly, page 1",
+          "quote_sha256": "ae2cc55ad4b8cab49b26bd798375d6defed054b2891498f0b1df19f14ea34cbb"
         },
         {
-          "source_id": "s-2cfb4c8d748cc938",
-          "locator": "What Reject Method Is Right for My Application?, introduction",
-          "quote_sha256": "9a1c17dbb3b879ad8c4973c4e3971e1eedccd1df3f8a0b3359a99f71ecbd2767"
+          "source_id": "s-cdfde9d8db9d29dd",
+          "locator": "EH 22350 data sheet, Mounting, page 1",
+          "quote_sha256": "b936a6e867ae7ef0ad11509e1043cb883e252393f54591613f5519f5f6cf1ddf"
         }
       ],
-      "asset_plan": "Reuse the representative carton, numerical flap assumptions, fixed closed-carton controls, and free contents, but expose both short-wall approaches. Before adding belt motion, test simultaneous reach, arm-arm clearance, palm-flap clearance, native contact load sharing, lift attitude, and coordinated release.",
-      "risk": "Simultaneous end-wall access may be unreachable or collision-prone in the pinned YAM scene, and no acquired industrial procedure establishes bimanual cradling as the normal removal method.",
+      "asset_plan": "Use two independently articulated full-scale representative pins with the explicit 9.94 mm shaft and 10.06 mm bore collision dimensions defined for the selected candidate. The rigid plate, two bore locations, attachment geometry, and any intermediate support are representative fixture assumptions. Each shackle and gripper contact must transmit native forces; no virtual sling, fixed load distribution, weld, or task-object state write is permitted. Mechanism tests must precede any balancing demo.",
+      "risk": "The source establishes each pin but does not specify this particular two-point rigging arrangement. With only two YAM grippers, installing two pins and then acquiring both shackles may require unsupported staging or an additional real tool, and the objective may collapse into an existing suspended-load placement ability.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
-        "Native YAM evidence that both grippers can simultaneously reach opposing end walls without arm, palm, flap, or belt collision",
-        "Physical contact and release traces demonstrating stable load sharing without grasp welding"
+        "A source-grounded, physically reproducible two-point attachment arrangement for this workpiece",
+        "A feasible YAM regrasp or staging procedure that preserves both mechanical locks without artificial support",
+        "Current novelty evidence distinguishing balanced placement from existing suspended-load alignment tasks"
       ]
     },
     {
-      "id": "flap-stabilize-body-extract",
-      "title": "Flap stabilization with independent body extraction",
-      "objective": "When an articulated open flap obstructs body access, control the flap with one gripper while the other acquires body support and transfers the carton and its free contents to the reject tray; closed cartons continue untouched.",
+      "id": "locking-pin-removal-with-bore-protection",
+      "title": "Withdraw and cradle an unloaded self-locking lifting pin without disturbing the seated workpiece",
+      "objective": "Stabilize a fixture-seated machined workpiece, fully depress and hold the lifting-pin button, extract the pin along the receiving-bore axis without scraping or shifting the workpiece, and place the recovered pin in a storage cradle.",
       "skills": [
-        "bimanual role coordination",
-        "articulated-flap control",
-        "moving-target tracking",
-        "guarded regrasping",
-        "body support",
-        "spill-minimizing transport"
+        "workpiece stabilization",
+        "localized spring-button actuation",
+        "simultaneous button hold and axial pull",
+        "close-clearance extraction",
+        "awkward shackle-equipped tool handling",
+        "controlled cradle placement"
       ],
-      "success_conditions": "Use the same final outcome score as the sidewall candidate. Flap control alone earns no more than 0.25; at least 0.50 requires the complete body to clear the belt by 20 mm with every content retained. Full credit requires tray containment, complete release, 60 mm clearance, and 3.0 s stable dwell. Do not require a particular hand, contact order, or flap-control technique.",
-      "industrial_value": "This design makes the documented open-flap defect a genuine collision constraint during careful reject removal rather than a visual label; stabilization is explicitly a representative robotic method, not a manufacturer procedure.",
-      "dexterity": "Extreme: coordinate contact with a translating articulated obstacle while establishing independent body support, then withdraw and transport without spill or flap damage.",
+      "success_conditions": "Award 0.25 while the button remains fully depressed for 1.0 s, 0.50 after the locking balls retract and the pin is withdrawn at least 10 mm, and 0.75 after complete extraction with workpiece translation at most 2 mm and rotation at most 2 degrees. Full score requires the pin released in its cradle, the workpiece still within those displacement limits, both grippers at least 60 mm clear, and a fresh 3.0 s dwell. Pulling while locked, dropping or ejecting the pin, exceeding 5 mm workpiece translation, or losing a ball prevents full credit. Equivalent stabilizing grasps and either hand assignment are valid.",
+      "industrial_value": "The manufacturer explicitly specifies holding the button during removal of this temporary lifting element. Controlled axial recovery protects the receiving interface and leaves the seated workpiece undisturbed for subsequent manufacturing operations.",
+      "dexterity": "Moderate to high: one arm must stabilize the workpiece while the other maintains a small spring-loaded control and pulls a shackle-equipped pin along a close-clearance axis before reorienting it into a cradle.",
       "evidence": [
         {
-          "source_id": "s-613c0ffc934264ac",
-          "locator": "FEFCO Code Booklet, Slotted Boxes, printed page 7",
-          "quote_sha256": "862eed9bf7944b32649a2458a4c42fa78115beca610b30e136b00afbff0d4d5b"
+          "source_id": "s-cdfde9d8db9d29dd",
+          "locator": "EH 22350 data sheet, Dismantling, page 1",
+          "quote_sha256": "634f13921eab18be724468fc585ca6aa247bab566bbdbe40be8338048aa0f9b2"
         },
         {
-          "source_id": "s-e0cf7b56f172bc65",
-          "locator": "Tetra Pak Cardboard Packer 34, Secure every unit section",
-          "quote_sha256": "02fc468596d2218e71519ba23669e7872802abb2247ca1ac21bcc233b04bc673"
+          "source_id": "s-cdfde9d8db9d29dd",
+          "locator": "EH 22350 data sheet, Assembly, page 1",
+          "quote_sha256": "ae2cc55ad4b8cab49b26bd798375d6defed054b2891498f0b1df19f14ea34cbb"
         },
         {
-          "source_id": "s-058bb7939e386179",
-          "locator": "CMK Continuous Motion Cartoner Operator’s Manual, Figure 5.16, physical PDF page 81 / printed page 5-13",
-          "quote_sha256": "cdf451617a1fe28ef0329fdfa2da93b583233bad2c6af94945dc3c52958a722d"
+          "source_id": "s-cdfde9d8db9d29dd",
+          "locator": "EH 22350 data sheet, Material, page 1",
+          "quote_sha256": "ff57304c043055ee292661b5fa35a561e86e6b3cf1ecf29b41ca758fcface84e"
         }
       ],
-      "asset_plan": "Use the representative carton and numerical flap/contact assumptions, positioning one finite-thickness flap to obstruct part of an otherwise valid body approach. Validate free hinge motion, stationary guarded flap contact, simultaneous body support, safe withdrawal, and scorer behavior before introducing belt motion.",
-      "risk": "The task could become an artificial prescribed-strategy test unless native counterfactuals show genuine flap obstruction while still crediting alternative physically safe removal methods.",
+      "asset_plan": "Use the same explicit 9.94 mm shaft and 10.06 mm bore collision diameters as the selected candidate, with the workpiece already supported on a rigid fixture. The cradle is a passive collision-enabled support and provides no artificial capture. Test locked-pull retention, full-button ball retraction, axial extraction, button-release relocking, and YAM reach before attempting the full sequence. Button travel, internal cam, ball geometry, and friction remain disclosed representative assumptions.",
+      "risk": "Although source-grounded and easier to stage, removal alone may be judged generic locking-pin extraction rather than a sufficiently novel industrial ability. Native YAM simultaneous button actuation and axial pulling remain unverified.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
-        "Validated hinge/contact parameters producing realistic obstruction without forcing an arbitrary strategy",
-        "Native YAM trace showing simultaneous flap control and body support with essential collisions enabled"
+        "Current corpus evidence that button-held ball retraction and bore-preserving extraction are not a variant of generic pin removal",
+        "Native YAM reach and contact evidence for maintaining full button travel throughout axial extraction",
+        "A source or validated fixture rationale for the chosen disturbance and bore-protection limits"
       ]
     }
   ],
-  "selected_id": "sidewall-pinch-static-first",
-  "selection_reason": "This preserves the fixed objective and is the only construction-ready alternative. It replaces the prior disputed corrected quotation with exact acquired-text excerpts, supplies reproducible numerical starting assumptions for every critical flap and contact parameter, keeps the 120×70×70 mm geometry internally consistent with the z=15–40 mm grasp band, and treats the nominal 94 mm YAM opening as model evidence rather than proof of clearance. All empirical physics, novelty, scorer, and demonstration claims remain explicit downstream gates."
+  "selected_id": "ball-lock-pin-load-transfer",
+  "selection_reason": "This is the only ready candidate that exercises the product sheet’s documented attachment, mechanical retention, lifting, fixture load transfer, removal, and hardware recovery in one coherent manufacturing cycle. It now avoids cross-manufacturer safety claims and specifies buildable shaft, bore, ball, shoulder, and guide collision geometry while clearly labeling every unpublished internal dimension as a testable representative assumption."
 }

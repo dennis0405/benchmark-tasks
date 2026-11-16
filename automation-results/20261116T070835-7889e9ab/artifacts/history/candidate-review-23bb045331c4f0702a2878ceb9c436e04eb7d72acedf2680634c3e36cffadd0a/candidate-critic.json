@@ -1,0 +1,18 @@
+{
+  "verdict": "repair",
+  "findings": [
+    "The selected EH 22350.0621 candidate improperly treats a different manufacturer/model’s GN 1130 operating instructions as proof of EH 22350 safety behavior. In particular, the under-load button prohibition and the claim that the exact safe operating logic is source-grounded are unsupported for the selected product. Acquire the EH 22350 operating instructions or clearly label this behavior as a testable representative assumption; `missing_evidence` cannot remain empty.",
+    "The pinned build plan does not define physically usable collision dimensions for the close-fit insertion. It specifies a 10.0 mm pin and a “10 mm H11-representative” bore without stating the simulated bore diameter/clearance, while the manufacturer table shows the pin’s d1 tolerance as −0.04/−0.08 mm and the location hole as H11. Record explicit collision diameters and tolerances so the native-joint insertion is buildable rather than a nominal zero-clearance fit.",
+    "The manufacturer page images do verify EH 22350.0621’s aligned table row: d1=10.0 mm, l1=15 mm, F1/F2/F3=2.7/2.4/2.1 kN, x=1.5–10 mm, H11 location hole=10.0 mm, and mass=277 g. The mounting/removal sequence, movable shackle, visible radial balls, materials, and stated H11 requirement are also supported. The representative workpiece, fixture, internal cam travel, spring, ball size, and clearances are appropriately disclosed as modeling assumptions, so completed physics or robot trials are not required at this gate."
+  ],
+  "evidence_paths": [
+    "artifacts/selected.json",
+    "artifacts/candidates.json",
+    "input/operator-source-notes.json",
+    "input/sources.json",
+    "input/sources/s-cdfde9d8db9d29dd.json",
+    "input/sources/s-ab760bcb50a1e076.json",
+    "input/replacement-source-visuals/s-cdfde9d8db9d29dd-page-1.png",
+    "input/replacement-source-visuals/s-cdfde9d8db9d29dd-page-2.png"
+  ]
+}

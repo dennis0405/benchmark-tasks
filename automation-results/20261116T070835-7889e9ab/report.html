@@ -56,197 +56,163 @@
 8. 별도 run origin branch에 코드·에셋·재현 명령·라이선스·최종 영상·주요 측정을 보존하고 실제 compute 상태를 보고. 50MB/file 또는100MB checkpoint 초과는 업로드 전 설명한다.
 9. review report.html, release-manifest digest와 실제 영상으로 사용자 검토. 구체적 검토 버전의 별도 승인 전 공식 미디어 업로드/대회 PR/최종 제출은 하지 않는다.
 </p><p>no candidate passed the ideation gates; inspect selection-history.json</p><p>Release digest: none</p><h2>last_candidate</h2><pre>{
-  &quot;id&quot;: &quot;sidewall-pinch-static-first&quot;,
-  &quot;title&quot;: &quot;Open-carton rejection by sidewall body pinch&quot;,
-  &quot;objective&quot;: &quot;On a friction-driven running belt, remove physically open cartons to a reject tray while avoiding their collision-enabled flaps and retaining all free contents; initially closed cartons remain untouched and continue across the downstream line.&quot;,
+  &quot;id&quot;: &quot;ball-lock-pin-load-transfer&quot;,
+  &quot;title&quot;: &quot;Seat a machined part with a self-locking lifting pin, then unlock and recover the pin&quot;,
+  &quot;objective&quot;: &quot;Insert and mechanically lock a self-locking ball lifting pin in a machined workpiece, lift the workpiece through the movable shackle, seat it on a three-pad fixture, transfer its weight to the fixture, and withdraw the unloaded pin without displacing or dropping the part.&quot;,
   &quot;skills&quot;: [
-    &quot;state-conditioned intervention&quot;,
-    &quot;moving-target tracking&quot;,
-    &quot;finite-thickness flap avoidance&quot;,
-    &quot;opposed sidewall grasping&quot;,
-    &quot;level transport&quot;,
-    &quot;guarded release&quot;
+    &quot;close-clearance pin alignment and insertion&quot;,
+    &quot;spring-button actuation&quot;,
+    &quot;mechanical ball-lock engagement&quot;,
+    &quot;shackle grasping and force-controlled lifting&quot;,
+    &quot;suspended-part alignment and seating&quot;,
+    &quot;support verification before pin extraction&quot;,
+    &quot;coordinated button hold and axial withdrawal&quot;
   ],
-  &quot;success_conditions&quot;: &quot;Score each carton and average. Open carton: 0.25 when controlled without spill; 0.50 when the complete body clears the belt by at least 20 mm with every content retained; 0.75 when body and contents lie inside the reject-tray footprint; 1.00 after complete release, at least 60 mm robot clearance, and 3.0 s stable dwell from fresh 10 Hz observations. Closed carton: 1.00 only after crossing the downstream line on its original belt path without robot contact; otherwise 0. Content crossing the carton rim and touching an exterior surface permanently caps that carton at 0.50; a dropped carton scores 0. Closing and passing an initially open carton is not rejection. Full score requires every open carton rejected and every closed carton passed. Equivalent physically safe body-support strategies remain valid. Separately labeled 240 Hz traces validate physics but do not grade performance.&quot;,
-  &quot;industrial_value&quot;: &quot;Industrial cartoners detect open flaps and reject affected cartons. Careful robotic removal is a representative alternative for spill-prone rejects, not a claimed manufacturer-prescribed sequence.&quot;,
-  &quot;dexterity&quot;: &quot;High: synchronize with a translating carton, enter a 25 mm-high sidewall contact band beneath articulated flaps, establish opposed support, lift nearly level, preserve loose contents, and release without disturbing the deposit.&quot;,
+  &quot;success_conditions&quot;: &quot;Score begins at 0. Award 0.20 after the released button has returned to its initial position and the inserted pin resists a 10 mm guarded upward pull for 3.0 s; 0.45 after the locked pin alone supports a lift of at least 30 mm for 2.0 s; and 0.70 after the workpiece contacts all three fixture pads with every measured support gap at or below 2 mm. Award 1.00 only after the pin is completely outside the bore, the workpiece remains on all three pads, both grippers are at least 60 mm clear, and fresh 10 Hz observations confirm a 3.0 s dwell. Dropping either object, releasing the load outside the fixture boundary, losing a locking ball, or withdrawing the pin before fixture support permanently prevents full credit and caps the score at the highest safely completed stage. Loss of retention revokes the 0.20 and 0.45 stages. Any grasp, hand assignment, or action order is valid when the same physical prerequisites and outcomes hold. Physics validation separately records rigid-body, native-joint, and contact traces at 240 Hz; those diagnostics are not grading rules.&quot;,
+  &quot;industrial_value&quot;: &quot;Halder describes EH 22350 as a heavy-duty temporary lifting element that needs only an H11 receiving bore and documents insertion, locking, removal, a movable shackle, and rated load directions. The task represents temporary lifting-hardware installation, workpiece transfer, fixture seating, unloading, and hardware recovery in manufacturing material handling rather than generic pick-and-place.&quot;,
+  &quot;dexterity&quot;: &quot;High: the robot must align a nominal 10 mm pin with sub-millimetre diametral clearance, actuate a spring-return button, verify a real mechanical lock, grasp a freely moving shackle, control a suspended rigid load onto three supports, and hold the button while extracting the unloaded pin.&quot;,
   &quot;evidence&quot;: [
     {
-      &quot;source_id&quot;: &quot;s-058bb7939e386179&quot;,
-      &quot;locator&quot;: &quot;CMK Continuous Motion Cartoner Operator’s Manual, Figure 5.16, physical PDF page 81 / printed page 5-13&quot;,
-      &quot;quote_sha256&quot;: &quot;a50cb44e84c6ffc190fa5d0600712bc2680563195b34ea02d784c287bdfe1512&quot;
+      &quot;source_id&quot;: &quot;s-cdfde9d8db9d29dd&quot;,
+      &quot;locator&quot;: &quot;EH 22350 data sheet, Product Description, page 1&quot;,
+      &quot;quote_sha256&quot;: &quot;c49c9d8d06eddc3026924351445779aeeb0eefd56c4feacc4ac6924066fd9a27&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-058bb7939e386179&quot;,
-      &quot;locator&quot;: &quot;CMK Continuous Motion Cartoner Operator’s Manual, Product Rejection, physical PDF page 131 / printed page 6-9&quot;,
-      &quot;quote_sha256&quot;: &quot;13602b7e93bc42085020c94f2f6ce71d1fd321b16c3f502174394d9c4fa12aa7&quot;
+      &quot;source_id&quot;: &quot;s-cdfde9d8db9d29dd&quot;,
+      &quot;locator&quot;: &quot;EH 22350 data sheet, Assembly, page 1&quot;,
+      &quot;quote_sha256&quot;: &quot;ae2cc55ad4b8cab49b26bd798375d6defed054b2891498f0b1df19f14ea34cbb&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-2cfb4c8d748cc938&quot;,
-      &quot;locator&quot;: &quot;What Reject Method Is Right for My Application?, Air Blast section&quot;,
-      &quot;quote_sha256&quot;: &quot;1ec62b195660efddecf5005c3aa78e7ff3ae72a0f24a82f6e3deee9e79684238&quot;
+      &quot;source_id&quot;: &quot;s-cdfde9d8db9d29dd&quot;,
+      &quot;locator&quot;: &quot;EH 22350 data sheet, Mounting, page 1&quot;,
+      &quot;quote_sha256&quot;: &quot;45bd6f9b090f9c97c43b286a7b32f4f8f87a49117a5f47321b971f134fbed942&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-613c0ffc934264ac&quot;,
-      &quot;locator&quot;: &quot;FEFCO Code Booklet, Slotted Boxes, printed page 7; physical page 8 shows form 0201&quot;,
-      &quot;quote_sha256&quot;: &quot;862eed9bf7944b32649a2458a4c42fa78115beca610b30e136b00afbff0d4d5b&quot;
+      &quot;source_id&quot;: &quot;s-cdfde9d8db9d29dd&quot;,
+      &quot;locator&quot;: &quot;EH 22350 data sheet, Dismantling, page 1&quot;,
+      &quot;quote_sha256&quot;: &quot;634f13921eab18be724468fc585ca6aa247bab566bbdbe40be8338048aa0f9b2&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;s-cdfde9d8db9d29dd&quot;,
+      &quot;locator&quot;: &quot;EH 22350 data sheet, Drawing/order table, aligned row for article 22350.0621, page 2&quot;,
+      &quot;quote_sha256&quot;: &quot;81ee3f0b5e196547e6a5d29c50d964123a0c1d05ef7dd0fc0e95a32b1333b6d3&quot;
     }
   ],
-  &quot;asset_plan&quot;: &quot;Build an independently authored representative FEFCO-0201-style rigid compound carton with 120×70×70 mm external body, 2 mm walls, a z=15–40 mm sidewall contact band, and three free 18 mm rigid contents. Initial test assumptions: two 116×35×2 mm long flaps at 10 g each and two 66×60×2 mm short flaps at 12 g each; native revolute joints with closed=0°, initial open=95°, limits 0–110°, damping 0.02 N·m·s/rad, zero drive stiffness, static/dynamic friction 0.6/0.5, and restitution 0.05. These are explicit modeling assumptions, not manufacturer calibration, and must be tuned only through documented contact tests. Use fixed closed flaps for normal cartons. The pinned YAM source states a nominal 94 mm open pad separation, leaving a nominal 24 mm width difference but not proving collider clearance or grasp success. Convey through surface friction only. Gate work through stationary grasp/lift, stationary tray transfer and release, moving open-carton removal, untouched closed-carton passage, then a mixed stream. Never write task-object state, weld grasps, or disable essential collisions.&quot;,
-  &quot;risk&quot;: &quot;Ready means sufficient evidence and consistent assumptions to attempt construction, not demonstrated task success. Native trials must still verify finger and palm clearance, flap swept-volume contacts, hinge behavior, frictional transport, no-spill transfer, release clearance, score revocation, and two fresh-process full-score demonstrations. Novelty remains contingent on corpus comparison and counterfactuals proving that articulated flaps and free contents materially change the tested ability. Required controls include no action, flap-only handling, rough tilt, all-remove, all-ignore, closed-carton contact, and off-belt staging.&quot;,
+  &quot;asset_plan&quot;: &quot;Build an independently authored, full-scale rigid representative of EH 22350.0621 using the manufacturer diagrams: nominal d1 10.0 mm, l1 15 mm, mass 277 g, movable shackle, spring-return button, and collision-enabled radial locking balls. For buildable collision geometry, use a 9.94 mm shaft diameter, representing the published d1 tolerance band of 9.92–9.96 mm, and a 10.06 mm cylindrical workpiece bore, an explicitly chosen value within a nominal 10 mm H11-representative band; this gives 0.12 mm simulated diametral clearance. The representative 140×90×20 mm, 0.6 kg steel workpiece has a 2.0 mm lower retaining shoulder around the through-bore and sits on three 20×20 mm fixture pads. Model the button as a native prismatic joint with 3.0 mm test travel and a return spring; its internal cam drives three native radial ball sliders. Use 3.0 mm balls, 0.9 mm radial projection when locked, at least 0.15 mm retraction inside the 9.94 mm shaft envelope when fully pressed, and 0.10 mm collider clearance at each ball guide. Button travel, spring constant, ball size, cam profile, retaining-shoulder thickness, fixture dimensions, and selected H11 bore value are disclosed representative modeling assumptions, not manufacturer specifications. The acquired EH 22350 sheet establishes insertion/removal operation and the external retention concept but does not establish an under-load button prohibition; therefore the benchmark does not claim product-specific safety logic. It instead physically tests that support is present before extraction. Validate the mechanism first with no-op retention, unlocked pull-out, locked axial-load hold, pressed-button release, and unloaded extraction controls; then validate YAM access, one lift, fixture seating, and the complete guarded 14D demo. Preserve all essential colliders and use no object-state writes, fake grasp welds, or pose overrides.&quot;,
+  &quot;risk&quot;: &quot;The closest known task places a hoisted motor on studs, whereas this objective additionally requires installing, mechanically locking, unloading, unlocking, and recovering temporary lifting hardware. Novelty still requires current corpus review. The internal cam and calibration are representative assumptions requiring native controls, and YAM access to the full-scale button and shackle remains a build-stage risk. No GN 1130 statement is used as EH 22350 evidence, and no EH 22350-specific under-load prohibition is asserted.&quot;,
   &quot;feasibility_status&quot;: &quot;ready&quot;,
   &quot;missing_evidence&quot;: []
 }</pre><h2>selection_history</h2><pre>{
   &quot;rejected&quot;: [
     {
-      &quot;candidate&quot;: &quot;sidewall-pinch-static-first&quot;,
+      &quot;candidate&quot;: &quot;ball-lock-pin-load-transfer&quot;,
       &quot;reason&quot;: &quot;novelty overlap/uncertainty: 1 records; inspect novelty.json&quot;
     }
   ],
   &quot;skipped&quot;: [
     {
-      &quot;candidate&quot;: &quot;bimanual-endwall-cradle&quot;,
+      &quot;candidate&quot;: &quot;dual-pin-balanced-load-transfer&quot;,
       &quot;reason&quot;: &quot;not build-ready&quot;,
       &quot;missing_evidence&quot;: [
-        &quot;Native YAM evidence that both grippers can simultaneously reach opposing end walls without arm, palm, flap, or belt collision&quot;,
-        &quot;Physical contact and release traces demonstrating stable load sharing without grasp welding&quot;
+        &quot;A source-grounded, physically reproducible two-point attachment arrangement for this workpiece&quot;,
+        &quot;A feasible YAM regrasp or staging procedure that preserves both mechanical locks without artificial support&quot;,
+        &quot;Current novelty evidence distinguishing balanced placement from existing suspended-load alignment tasks&quot;
       ]
     },
     {
-      &quot;candidate&quot;: &quot;flap-stabilize-body-extract&quot;,
+      &quot;candidate&quot;: &quot;locking-pin-removal-with-bore-protection&quot;,
       &quot;reason&quot;: &quot;not build-ready&quot;,
       &quot;missing_evidence&quot;: [
-        &quot;Validated hinge/contact parameters producing realistic obstruction without forcing an arbitrary strategy&quot;,
-        &quot;Native YAM trace showing simultaneous flap control and body support with essential collisions enabled&quot;
+        &quot;Current corpus evidence that button-held ball retraction and bore-preserving extraction are not a variant of generic pin removal&quot;,
+        &quot;Native YAM reach and contact evidence for maintaining full button travel throughout axial extraction&quot;,
+        &quot;A source or validated fixture rationale for the chosen disturbance and bore-protection limits&quot;
       ]
     }
   ],
   &quot;selected&quot;: null
 }</pre><h2>sources</h2><pre>[
   {
-    &quot;id&quot;: &quot;s-058bb7939e386179&quot;,
-    &quot;title&quot;: &quot;CMK Continuous Motion Cartoner Operator’s Manual&quot;,
-    &quot;publisher&quot;: &quot;Rovema North America&quot;,
-    &quot;url&quot;: &quot;https://www.rovema-na.com/hubfs/CMK%20Cartoner-Generic%20Manual.pdf&quot;,
-    &quot;sha256&quot;: &quot;f993902f08aab9495316a3020624e56263f3c0fe115ca216cb281a4a015861d0&quot;
+    &quot;id&quot;: &quot;s-cdfde9d8db9d29dd&quot;,
+    &quot;title&quot;: &quot;EH 22350 Self-locking Lifting Pins — Datasheet&quot;,
+    &quot;publisher&quot;: &quot;Erwin Halder KG&quot;,
+    &quot;url&quot;: &quot;https://halder.si/storage/app/media/Products/Halder/document/Datenblatt_ArtGrp/en/EH22350_1__pg287__en.pdf&quot;,
+    &quot;sha256&quot;: &quot;334ec64ebd144d42606ad4ef3153b23d74920d4b3acb6e4dddbb244e5e157c20&quot;
   },
   {
-    &quot;id&quot;: &quot;s-e0cf7b56f172bc65&quot;,
-    &quot;title&quot;: &quot;Tetra Pak Cardboard Packer 34 — Open Flap Detection and Reject Unit&quot;,
-    &quot;publisher&quot;: &quot;Tetra Pak&quot;,
-    &quot;url&quot;: &quot;https://www.tetrapak.com/en-nl/solutions/integrated-solutions-equipment/downstream-equipment/cardboard-packers/tetra-pak-cardboard-packer-34&quot;,
-    &quot;sha256&quot;: &quot;7b910032ea88242463218f56f8cb159d1755e1212f03c7d6c5280c42becb54ea&quot;
+    &quot;id&quot;: &quot;s-ab760bcb50a1e076&quot;,
+    &quot;title&quot;: &quot;Operating Instructions: Lifting Pins GN 1130&quot;,
+    &quot;publisher&quot;: &quot;Otto Ganter GmbH &amp; Co. KG&quot;,
+    &quot;url&quot;: &quot;https://www.elesa-ganter.com/static/instructionmanuals/files/Operating_Instruction_GN_1130.pdf&quot;,
+    &quot;sha256&quot;: &quot;c24714809adcbe8ad39ab1a39273edd9254451f45fcd9174a030ab7fcae9b3c7&quot;
   },
   {
-    &quot;id&quot;: &quot;s-2cfb4c8d748cc938&quot;,
-    &quot;title&quot;: &quot;What Reject Method Is Right for My Application?&quot;,
-    &quot;publisher&quot;: &quot;Loma Systems&quot;,
-    &quot;url&quot;: &quot;https://www.loma.com/en-ca/about-us/news-press-releases/what-reject-system-is-right-for-my-application&quot;,
-    &quot;sha256&quot;: &quot;f384b3b4e79cd681023daf5e39d8c671c2c5e479f004f4b35e3f97472f9d8b18&quot;
+    &quot;id&quot;: &quot;s-2a282113a7fc03df&quot;,
+    &quot;title&quot;: &quot;Self-locking Lifting Pins — Product and Technical Data&quot;,
+    &quot;publisher&quot;: &quot;KIPP USA&quot;,
+    &quot;url&quot;: &quot;https://www.kippusa.com/en-us/products/METRIC/Transport-technology/Lifting-rings/Lifting-pins-self-locking/p/agid.27307&quot;,
+    &quot;sha256&quot;: &quot;a1359bf955ad2cfeb1ada79fa360de79a5cb8e32758e8ceb027b4b8cabe6e6de&quot;
   },
   {
-    &quot;id&quot;: &quot;s-613c0ffc934264ac&quot;,
-    &quot;title&quot;: &quot;FEFCO Code Booklet&quot;,
-    &quot;publisher&quot;: &quot;FEFCO&quot;,
-    &quot;url&quot;: &quot;https://www.fefco.org/sites/default/files/documents/2022-10-17_FEFCO%20Code_BOOKLET_single_A5_HR.pdf&quot;,
-    &quot;sha256&quot;: &quot;9e09bf779eb26aa268fe4cef8108116ebbc13da3f5ee612fe707f5c85cb75af2&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-b91b0ac7741b9227&quot;,
-    &quot;title&quot;: &quot;European Database for Corrugated Board Life Cycle Studies&quot;,
-    &quot;publisher&quot;: &quot;FEFCO&quot;,
-    &quot;url&quot;: &quot;https://www.fefco.org/download/file/fid/2136&quot;,
-    &quot;sha256&quot;: &quot;ecfe8404f9eb17c715c1c5c95354e3228bcb1ab3e041dfb8d9c2bc5718ee3ae0&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-b9a45b21bef7b590&quot;,
-    &quot;title&quot;: &quot;Isaac Sim Assets&quot;,
+    &quot;id&quot;: &quot;s-95de2c9b2df8ab97&quot;,
+    &quot;title&quot;: &quot;Isaac Lab Documentation and Licensing&quot;,
     &quot;publisher&quot;: &quot;NVIDIA&quot;,
-    &quot;url&quot;: &quot;https://docs.isaacsim.omniverse.nvidia.com/6.0.0/assets/usd_assets_overview.html&quot;,
-    &quot;sha256&quot;: &quot;6828678853ec25108278c3b9cb69cd629e370f54c778e4aa5f865af327f052a7&quot;
+    &quot;url&quot;: &quot;https://docs.nvidia.com/isaaclab/isaac-lab&quot;,
+    &quot;sha256&quot;: &quot;55d4c202abc3d0064241ccaaf0113bed65ba9701dc297447c276dd93f4539959&quot;
   },
   {
-    &quot;id&quot;: &quot;s-a2cfc0ab6bbb4819&quot;,
-    &quot;title&quot;: &quot;NVIDIA Isaac Sim Additional Software and Materials License&quot;,
-    &quot;publisher&quot;: &quot;NVIDIA&quot;,
-    &quot;url&quot;: &quot;https://www.nvidia.com/en-us/agreements/enterprise-software/isaac-sim-additional-software-and-materials-license/&quot;,
-    &quot;sha256&quot;: &quot;badda84728c1d206f26cf32f6475bce8f01c4218d82bb7e033dc68c5ab520b03&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-2b79d8a9bb1a2c26&quot;,
-    &quot;title&quot;: &quot;Space out touching parcels on a running belt before they reach the scanner&quot;,
-    &quot;publisher&quot;: &quot;RoboCurve benchmark-tasks&quot;,
-    &quot;url&quot;: &quot;https://github.com/robocurve/benchmark-tasks/pull/1214&quot;,
-    &quot;sha256&quot;: &quot;c1ecdc70b22b64339842f436a6ae1ad168b40b4427b9cc12da557a0da101dd23&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-591fb2e08d261bc8&quot;,
-    &quot;title&quot;: &quot;Add conveyor block sorting task&quot;,
-    &quot;publisher&quot;: &quot;RoboCurve benchmark-tasks&quot;,
-    &quot;url&quot;: &quot;https://github.com/robocurve/benchmark-tasks/pull/83&quot;,
-    &quot;sha256&quot;: &quot;f4478e19847e29e5e9b799be7e3b8df83997f53554ab5b15b53cfd822222da86&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-3bffc6912ea0b92e&quot;,
-    &quot;title&quot;: &quot;Pack six biscuit packs off a moving belt into two cases&quot;,
-    &quot;publisher&quot;: &quot;RoboCurve benchmark-tasks&quot;,
-    &quot;url&quot;: &quot;https://github.com/robocurve/benchmark-tasks/pull/313&quot;,
-    &quot;sha256&quot;: &quot;02484550baa833e53a365779763f36cb07912e68ab102abd5e04b7a94e578bf0&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-c4287b6a9a1ba870&quot;,
-    &quot;title&quot;: &quot;Build the model in a photo from parts riding past on a conveyor&quot;,
-    &quot;publisher&quot;: &quot;RoboCurve benchmark-tasks&quot;,
-    &quot;url&quot;: &quot;https://github.com/robocurve/benchmark-tasks/pull/910&quot;,
-    &quot;sha256&quot;: &quot;f5e2385b2860d2206c048ea1eecbd70134ca7eb7cdc185962ae8e566071858c9&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-e121ef95cfc23be9&quot;,
-    &quot;title&quot;: &quot;LIBERO cream-cheese-box pick-and-place task definition&quot;,
+    &quot;id&quot;: &quot;s-c729686fcfd42e9d&quot;,
+    &quot;title&quot;: &quot;LIBERO Original BDDL Task Definition: Pick Up the Cream Cheese and Put It in the Tray&quot;,
     &quot;publisher&quot;: &quot;Lifelong Robot Learning&quot;,
-    &quot;url&quot;: &quot;https://raw.githubusercontent.com/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_90/LIVING_ROOM_SCENE1_pick_up_the_cream_cheese_box_and_put_it_in_the_basket.bddl&quot;,
-    &quot;sha256&quot;: &quot;750d8ec117142214ab2910df68290258be0b516adadc753a02297267028ea9dd&quot;
+    &quot;url&quot;: &quot;https://raw.githubusercontent.com/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_90/LIVING_ROOM_SCENE3_pick_up_the_cream_cheese_and_put_it_in_the_tray.bddl&quot;,
+    &quot;sha256&quot;: &quot;394de660979995c9dd1131bdbfa5fb25eb824828e60dee25a5b80c3cbfd5155a&quot;
   },
   {
-    &quot;id&quot;: &quot;s-a86884ac438c3c39&quot;,
-    &quot;title&quot;: &quot;RoboCasa kitchen pick-and-place task definitions&quot;,
+    &quot;id&quot;: &quot;s-6b21b3c9ada3f8e8&quot;,
+    &quot;title&quot;: &quot;RoboCasa Original Task Definition: CoolBakedCookies&quot;,
     &quot;publisher&quot;: &quot;RoboCasa&quot;,
-    &quot;url&quot;: &quot;https://raw.githubusercontent.com/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/atomic/kitchen_pick_place.py&quot;,
-    &quot;sha256&quot;: &quot;f7157fb5809e73d4ee954974d8c8e199f18d9a0f48ce41f84c2b5d7b74eaf676&quot;
+    &quot;url&quot;: &quot;https://raw.githubusercontent.com/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/composite/baking/cool_baked_cookies.py&quot;,
+    &quot;sha256&quot;: &quot;65d9d6b1ce09c07778b0a928a183b9a0cbd513e8a863c23768dd695b5974ff54&quot;
   },
   {
-    &quot;id&quot;: &quot;s-396760d996a2e1d5&quot;,
-    &quot;title&quot;: &quot;SimplerEnv registered task environments&quot;,
+    &quot;id&quot;: &quot;s-6ba90a014be04570&quot;,
+    &quot;title&quot;: &quot;SimplerEnv Original Task Definition: GraspSingleInSceneEnv&quot;,
     &quot;publisher&quot;: &quot;SimplerEnv&quot;,
-    &quot;url&quot;: &quot;https://raw.githubusercontent.com/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/__init__.py&quot;,
-    &quot;sha256&quot;: &quot;ed5079f2aa8d9c85938f86440195ecdf90c4ee3afebb96b778375aad7cccac25&quot;
+    &quot;url&quot;: &quot;https://raw.githubusercontent.com/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/grasp_single_in_scene.py&quot;,
+    &quot;sha256&quot;: &quot;c067aa46582a2ad9ced5a360b583221a9be635fab578368a0441685dced1965d&quot;
   },
   {
-    &quot;id&quot;: &quot;s-56e69b4bf63bb0c3&quot;,
-    &quot;title&quot;: &quot;BEHAVIOR-1K boxing food after dinner definition&quot;,
+    &quot;id&quot;: &quot;s-0f095c2cde5c9374&quot;,
+    &quot;title&quot;: &quot;BEHAVIOR-1K Original BDDL Task Definition: Assembling Furniture&quot;,
     &quot;publisher&quot;: &quot;Stanford Vision and Learning Lab&quot;,
-    &quot;url&quot;: &quot;https://raw.githubusercontent.com/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/boxing_food_after_dinner/problem0.bddl&quot;,
-    &quot;sha256&quot;: &quot;807ff776b31242fd2a478d884217e16c350062ae531a93fb77406237c5753c3a&quot;
+    &quot;url&quot;: &quot;https://raw.githubusercontent.com/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/assembling_furniture/problem0.bddl&quot;,
+    &quot;sha256&quot;: &quot;071a46305e84fac1a3bbc63e2f95c238e34ba637a78965a6cc778d052ec46d39&quot;
   },
   {
     &quot;id&quot;: &quot;s-55ff01f3c436948c&quot;,
-    &quot;title&quot;: &quot;DataCenterBench official setup and task records&quot;,
+    &quot;title&quot;: &quot;DataCenterBench Tier-1 Original Task Setups and Rubrics&quot;,
     &quot;publisher&quot;: &quot;RoboCurve&quot;,
     &quot;url&quot;: &quot;https://robocurve.org/datacenterbench/data/setups.json&quot;,
     &quot;sha256&quot;: &quot;029aa7c517f5dab487818f04d2dbcba7ea43053ec9f395c0330ee2400f4cb0fc&quot;
   },
   {
-    &quot;id&quot;: &quot;s-b4e2cfbea7c3e647&quot;,
-    &quot;title&quot;: &quot;RoboDojo Match and Pick from Conveyor definition&quot;,
+    &quot;id&quot;: &quot;s-3948aa6220bdcb04&quot;,
+    &quot;title&quot;: &quot;RoboDojo Original Task Definition: Align Blocks&quot;,
     &quot;publisher&quot;: &quot;RoboDojo Benchmark&quot;,
-    &quot;url&quot;: &quot;https://raw.githubusercontent.com/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/config/match_and_pick_from_conveyor.yml&quot;,
-    &quot;sha256&quot;: &quot;0ae1c2537d9b1880748316928cfd7ba4c6421ecccfedb85c4c5395a7a86c5361&quot;
+    &quot;url&quot;: &quot;https://raw.githubusercontent.com/robodojo-benchmark/RoboDojo/fbfbbcb3801397fa00dcffaef3ca64d97c3fe76f/task/RoboDojo/tasks/align_blocks.py&quot;,
+    &quot;sha256&quot;: &quot;cf3d46878b33d450031e6217eb0417b5ce8e4623bb05c153413230a360fbb0b7&quot;
   },
   {
-    &quot;id&quot;: &quot;s-974fd5b91836f731&quot;,
-    &quot;title&quot;: &quot;RoboDojo Pick from Conveyor by Image definition&quot;,
-    &quot;publisher&quot;: &quot;RoboDojo Benchmark&quot;,
-    &quot;url&quot;: &quot;https://raw.githubusercontent.com/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/config/pick_from_conveyor_by_image.yml&quot;,
-    &quot;sha256&quot;: &quot;6b310b70a0ead9d09e7c221c6bbc952140a44b1d43034613bf02e954eebcf9dd&quot;
+    &quot;id&quot;: &quot;s-9569f7015bc651ee&quot;,
+    &quot;title&quot;: &quot;Land a Hoisted Motor on Its Base’s Four Studs&quot;,
+    &quot;publisher&quot;: &quot;RoboCurve Benchmark Tasks&quot;,
+    &quot;url&quot;: &quot;https://github.com/robocurve/benchmark-tasks/pull/1924&quot;,
+    &quot;sha256&quot;: &quot;7c94692e3b1b248c8fa20b9c387d78a9aff913e95bb80f2014b9066eed7c97d4&quot;
+  },
+  {
+    &quot;id&quot;: &quot;s-0ba2371cc544f5a3&quot;,
+    &quot;title&quot;: &quot;Squeeze Both Release Buttons and Slide the Battery Off the Drill&quot;,
+    &quot;publisher&quot;: &quot;RoboCurve Benchmark Tasks&quot;,
+    &quot;url&quot;: &quot;https://github.com/robocurve/benchmark-tasks/pull/622&quot;,
+    &quot;sha256&quot;: &quot;b1699297956fc98994ab3c92f9f7890bb2ab0065be95b407dab546645fefb69a&quot;
   }
 ]</pre><p>Approval and submission require separate CLI commands.</p>

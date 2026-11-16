@@ -2,36 +2,36 @@
   "comparisons": [
     {
       "suite": "LIBERO",
-      "coverage_method": "Verified the manifest's complete 135-file inventory against the recorded selectors `libero/libero/bddl_files/*.bddl`, `libero/libero/benchmark/*.py`, and `libero/libero/envs/predicates/*.py` at commit 8f1084e3132a39270c3a13ebe37270a43ece2a01. The suite map registers LIBERO-90/LIBERO-10, and the closest task was selected by reviewing all inventoried language goals for boxes, trays, containers, picking, and placement, then reading its complete original BDDL definition.",
-      "objective": "Candidate conditionally removes initially open, loaded cartons from a running belt while allowing closed cartons to pass untouched. The closest LIBERO task transfers one cream-cheese package from a static table into a tray.",
-      "physical_skill": "Candidate requires moving-target synchronization, collision-aware access beneath articulated flaps, opposed body support, level transport of free internal payloads, and selective non-intervention. LIBERO requires ordinary static pick-and-place of one rigid package.",
-      "success_condition": "Candidate requires belt clearance, retention of every free content, placement in a reject tray, complete release and clearance, stable dwell, and untouched downstream passage for closed cartons. LIBERO requires only the cream-cheese object to satisfy an `In` predicate for the wooden tray.",
+      "coverage_method": "Verified all 135 manifest entries against selectors `libero/libero/bddl_files/*.bddl`, `libero/libero/benchmark/*.py`, and `libero/libero/envs/predicates/*.py` at commit 8f1084e3132a39270c3a13ebe37270a43ece2a01. Reviewed the complete BDDL inventory and suite-map definitions for insertion, mounting, rack placement, lifting, and attachment goals, then read the closest original definition in full.",
+      "objective": "The candidate installs and mechanically locks temporary lifting hardware, lifts a workpiece through its movable shackle, seats the suspended workpiece on three fixture pads, unloads the hardware, and extracts it. LIBERO's closest task merely moves a wine bottle onto a rack.",
+      "physical_skill": "The candidate couples close-clearance axial insertion, button actuation, load-bearing lock verification, shackle manipulation, suspended-load seating, support transfer, and coordinated unlocking/extraction. LIBERO tests ordinary rigid-object pickup and placement on a static support.",
+      "success_condition": "The candidate requires demonstrated pin retention, a supported lift, simultaneous contact with three fixture pads, unloaded pin removal, gripper clearance, and stable dwell, with retention loss revoking earlier stages. LIBERO requires only an `On` predicate between the bottle and rack region.",
       "evidence_paths": [
         "input/benchmark-corpora/LIBERO/manifest.json",
         "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/benchmark/libero_suite_task_map.py",
-        "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_90/LIVING_ROOM_SCENE3_pick_up_the_cream_cheese_and_put_it_in_the_tray.bddl"
+        "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_90/KITCHEN_SCENE4_put_the_wine_bottle_on_the_wine_rack.bddl"
       ],
       "closest_tasks": [
         {
-          "name": "LIVING_ROOM_SCENE3_pick_up_the_cream_cheese_and_put_it_in_the_tray",
-          "source_path": "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_90/LIVING_ROOM_SCENE3_pick_up_the_cream_cheese_and_put_it_in_the_tray.bddl",
-          "quote": "(:language pick up the cream cheese and put it in the tray)",
-          "objective": "Move a cream-cheese package from a table into a wooden tray.",
-          "physical_skill": "Static single-object pick-and-place into a receptacle.",
-          "success_condition": "The cream-cheese object is in the tray's contain region.",
-          "reason": "It is LIBERO's closest box-like-object-to-tray transfer, but has no conveyor, carton-state decision, articulated flap interference, loose payload retention, or untouched pass-through class.",
+          "name": "KITCHEN_SCENE4_put_the_wine_bottle_on_the_wine_rack",
+          "source_path": "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_90/KITCHEN_SCENE4_put_the_wine_bottle_on_the_wine_rack.bddl",
+          "quote": "(:goal\n    (And (On wine_bottle_1 wine_rack_1_top_region))\n  )",
+          "objective": "Place a wine bottle on the top region of a wine rack.",
+          "physical_skill": "Static rigid-object pickup and supported placement.",
+          "success_condition": "The wine bottle satisfies `On wine_bottle_1 wine_rack_1_top_region`.",
+          "reason": "It is the nearest rack-supported placement goal, but it has no installed lifting interface, mechanical retention, suspended load, support transfer, unlocking, or hardware recovery.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "The shared rigid-object-to-tray primitive is ubiquitous, while the candidate's central tested ability is safe selective removal of a moving articulated container without losing its independent contents."
+      "reason": "LIBERO contains placement and articulation primitives, but no task tests a temporary mechanical lifting pin across installation, load-bearing transfer, unloading, and extraction."
     },
     {
       "suite": "RoboCasa",
-      "coverage_method": "Verified the manifest's complete 381-file inventory against `robocasa/environments/kitchen/*.py`, `robocasa/environments/__init__.py`, and `robocasa/utils/dataset_registry.py` at commit 425684d332f135f5b30a40b321f52d15a0fe9250. Reviewed all inventoried class names/docstrings involving containers, trays, packing, sorting, and transport; then read the complete closest implementation, including its object setup and `_check_success`.",
-      "objective": "Candidate rejects defective open cartons from a moving line while preserving their contents and leaving closed cartons alone. RoboCasa's closest task removes a cookie-loaded tray from an oven and sets it on a counter for cooling.",
-      "physical_skill": "Both require transporting a carrier while keeping multiple free objects on it. Candidate additionally demands moving-target tracking, a narrow sidewall grasp under collision-enabled flaps, state-conditioned intervention, belt separation, and guarded reject placement.",
-      "success_condition": "Candidate grades each carton, permanently records spills, requires release/clearance/dwell in a reject tray, and requires closed cartons to pass untouched. RoboCasa succeeds when both cookies remain in the oven tray, the tray contacts any counter, and the gripper is far from it.",
+      "coverage_method": "Verified all 381 manifest entries against selectors `robocasa/environments/kitchen/*.py`, `robocasa/environments/__init__.py`, and `robocasa/utils/dataset_registry.py` at commit 425684d332f135f5b30a40b321f52d15a0fe9250. Reviewed the complete inventoried class/docstring set for loaded-carrier transport, rack manipulation, insertion, pressing, and placement, then read the closest task's setup and `_check_success` implementation in full.",
+      "objective": "The candidate uses a removable self-locking pin and movable shackle to transfer and precisely seat a machined workpiece before recovering the pin. RoboCasa's closest task carries a cookie-loaded oven tray to a counter.",
+      "physical_skill": "Both involve controlled transport of a supported load and placement onto a support. The candidate additionally requires sub-millimetre pin alignment, spring-button and ball-lock operation, lifting through an articulated shackle, three-pad seating, unloading verification, and axial extraction.",
+      "success_condition": "The candidate grades verified mechanical retention, load-bearing lift, all-three-pad seating, then complete pin withdrawal with the workpiece undisturbed. RoboCasa succeeds when both cookies remain on the tray, the tray contacts a counter, and the gripper is away.",
       "evidence_paths": [
         "input/benchmark-corpora/RoboCasa/manifest.json",
         "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/composite/baking/cool_baked_cookies.py"
@@ -40,75 +40,76 @@
         {
           "name": "CoolBakedCookies",
           "source_path": "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/composite/baking/cool_baked_cookies.py",
-          "quote": "Take the tray with baked cookies out of the oven and place it on the counter for cooling",
-          "objective": "Remove a tray holding two cookies from an oven and place it on a counter.",
-          "physical_skill": "Transport a loaded tray while retaining its contents, after opening the oven and extending its rack.",
-          "success_condition": "`return cookies_on_tray and tray_on_counter and gripper_away`",
-          "reason": "This is the strongest payload-preservation neighbor, but the grasped object is an unobstructed static tray and there is no state-conditioned conveyor rejection or untouched pass-through requirement.",
+          "quote": "return cookies_on_tray and tray_on_counter and gripper_away",
+          "objective": "Remove a tray carrying two cookies from an oven and place it on a counter.",
+          "physical_skill": "Loaded-tray retrieval, transport, supported placement, and release.",
+          "success_condition": "Both cookies remain in the oven tray, the tray contacts a counter, and the gripper is far from the tray.",
+          "reason": "It is the strongest load-transfer neighbor, but the tray itself is directly grasped and no removable locking interface must be installed, load-tested, unloaded, or recovered.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "Loaded-carrier transport overlaps materially, but the candidate tests access around articulated carton flaps and selective interception of a moving stream rather than oven-tray retrieval."
+      "reason": "Loaded-carrier transport overlaps, but RoboCasa does not test temporary lifting-hardware installation and lock-dependent force transmission followed by unloaded removal."
     },
     {
       "suite": "SimplerEnv",
-      "coverage_method": "Verified all 11 manifest files against the two recorded registries/components: SimplerEnv's `simpler_env/__init__.py` and `env_builder.py`, plus every `mani_skill2_real2sim/envs/*.py` file at commits eddb5690749a1e34267807c0f7b5eede323918d7 and ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682. Reviewed every registered environment implementation and read the complete closest grasp environment, including its actual evaluation logic.",
-      "objective": "Candidate conditionally removes open loaded cartons to a reject tray from a running belt. SimplerEnv's closest task grasps and lifts one target object in a static scene.",
-      "physical_skill": "Candidate includes opposed grasping and lifting but also moving-target tracking, flap avoidance, payload-preserving level transport, release, and non-intervention on normal cartons. The SimplerEnv task measures grasp/lift of one rigid actor.",
-      "success_condition": "Candidate requires a completed released deposit with retained contents and correct closed-carton passage. SimplerEnv marks success on a lift event or accumulated significant-lift observations and may remain successful even if the object is later put down.",
+      "coverage_method": "Verified all 11 manifest entries against `simpler_env/__init__.py`, `simpler_env/utils/env/env_builder.py`, and every `mani_skill2_real2sim/envs/*.py` definition at commits eddb5690749a1e34267807c0f7b5eede323918d7 and ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682. Reviewed every registered environment implementation and read the complete closest placement environment, including its contact-based evaluation.",
+      "objective": "The candidate installs a lockable lifting pin, transfers a workpiece onto a fixture, and removes the pin after support transfer. SimplerEnv's closest environment places one source object on one target object.",
+      "physical_skill": "The shared component is grasp-transport-placement. SimplerEnv lacks pin/bore alignment, button-controlled locking, load-bearing retention, articulated-shackle grasping, multi-pad seating, support verification, and coordinated extraction.",
+      "success_condition": "The candidate requires sequential physical prerequisites and revokes retention credit after lock loss. SimplerEnv succeeds when the source lies geometrically above the target and has no disallowed contact.",
       "evidence_paths": [
         "input/benchmark-corpora/SimplerEnv/manifest.json",
         "input/benchmark-corpora/SimplerEnv/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/__init__.py",
         "input/benchmark-corpora/SimplerEnv/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/utils/env/env_builder.py",
-        "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/grasp_single_in_scene.py"
+        "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/put_on_in_scene.py"
       ],
       "closest_tasks": [
         {
-          "name": "GraspSingleInSceneEnv",
-          "source_path": "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/grasp_single_in_scene.py",
-          "quote": "success = self.lifted_obj",
-          "objective": "Grasp and lift a selected rigid object in a static scene.",
-          "physical_skill": "Single-object grasp acquisition and vertical lifting.",
-          "success_condition": "A lift event, or at least five recorded significant-lift observations when episode-stat success is enabled.",
-          "reason": "It covers the candidate's basic grasp/lift primitive but none of the container, articulated-obstacle, free-payload, conveyor, placement, or conditional-pass requirements.",
+          "name": "PutOnInSceneEnv",
+          "source_path": "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/put_on_in_scene.py",
+          "quote": "success = src_on_target",
+          "objective": "Put a selected source object on a selected target object.",
+          "physical_skill": "Rigid-object grasping, transport, alignment over a target, and placement.",
+          "success_condition": "The source is above and within the target's footprint and has no significant contact with actors other than the target or robot.",
+          "reason": "It covers only the final supported-placement primitive; the load is directly grasped and no physical lock or recoverable lifting interface exists.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "The nearest registered ability is only a constituent primitive and does not test the candidate's central coupled manipulation."
+      "reason": "SimplerEnv's complete registered set contains constituent grasp and placement skills but not the candidate's lock-mediated lifting and unload-before-extraction ability."
     },
     {
       "suite": "BEHAVIOR",
-      "coverage_method": "Verified the complete 1,122-file manifest against all BDDL activity definitions from BEHAVIOR-1K and the legacy bddl repository, plus the recorded task, predicate-mapping, and state-backend files at commits b544acbbb76b461349bcba21f93b870b11da6608 and 06bec10ca54c7f375a1f71da8b94f7e1896ff77a. Searched the full activity inventory for cartons, boxes, packages, containers, sorting, moving, and storage, then read the complete closest BDDL goal.",
-      "objective": "Candidate sorts cartons by actual flap state on a moving conveyor, rejecting open loaded cartons without spilling. BEHAVIOR's closest activity moves two storage containers from a living-room floor to a garage and stacks them.",
-      "physical_skill": "Candidate requires dynamic interception, collision-aware sidewall grasping around articulated flaps, and maintaining independent contents inside the carrier. BEHAVIOR requires transporting and stacking closed storage containers.",
-      "success_condition": "Candidate demands reject-tray deposition and stable release for defective cartons plus untouched downstream passage for normal cartons. BEHAVIOR accepts either stacking order so long as both containers end on the garage floor as a two-container stack.",
+      "coverage_method": "Verified the complete 1,122-file manifest against both repositories' entire activity-definition selectors and the recorded BEHAVIOR task, BDDL mapping, and `AttachedTo` backend files at commits b544acbbb76b461349bcba21f93b870b11da6608 and 06bec10ca54c7f375a1f71da8b94f7e1896ff77a. Searched all activity definitions for attachment, insertion, mounting, lifting, loading, and assembly, then read both the closest BDDL file and its actual attachment-state implementation.",
+      "objective": "The candidate mechanically installs a lifting pin, proves that it carries a workpiece, seats the workpiece, and removes the pin. BEHAVIOR's closest activity attaches a camera to a tripod.",
+      "physical_skill": "Both require aligning two components to create a load-capable connection. The candidate requires explicit button-controlled ball retraction/extension, guarded retention testing, shackle lifting, suspended-part seating, unloading, and deliberate disconnection; BEHAVIOR's generic attachment backend detects contacting aligned meta-links and creates a joint.",
+      "success_condition": "The candidate requires observable retention, lift, three-pad seating, then complete pin extraction without moving the part. BEHAVIOR requires only the abstract final `attached` relation and does not require a carried-load test or later detachment.",
       "evidence_paths": [
         "input/benchmark-corpora/BEHAVIOR/manifest.json",
-        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/moving_boxes_to_storage/problem0.bddl"
+        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/attach_a_camera_to_a_tripod/problem0.bddl",
+        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/object_states/attached_to.py"
       ],
       "closest_tasks": [
         {
-          "name": "moving_boxes_to_storage-0",
-          "source_path": "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/moving_boxes_to_storage/problem0.bddl",
-          "quote": "(ontop ?storage_container.n.01_2 ?storage_container.n.01_1)",
-          "objective": "Move two storage containers from the living room to the garage and stack them.",
-          "physical_skill": "Rigid-container transport and stacking.",
-          "success_condition": "Either container may be on the garage floor, with the other on top of it.",
-          "reason": "It is the closest container-transport activity, but its abstract predicates and goal contain no open/closed mechanism, articulated flap, internal free payload, conveyor, spill history, or selective untouched class.",
+          "name": "attach_a_camera_to_a_tripod-0",
+          "source_path": "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/attach_a_camera_to_a_tripod/problem0.bddl",
+          "quote": "(attached ?digital_camera.n.01_1 ?camera_tripod.n.01_1)",
+          "objective": "Attach a digital camera to a camera tripod.",
+          "physical_skill": "Align two attachment interfaces and establish a connection.",
+          "success_condition": "The camera satisfies the abstract `attached` relation to the tripod.",
+          "reason": "This is the closest connection task, but the backend snaps aligned contacting meta-links into a fixed or spherical joint; it does not encode a button-operated ball lock, retention pull, suspended transfer, fixture seating, or subsequent hardware removal.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "Container transport alone does not establish overlap with selective moving-line rejection under articulated-obstacle and payload-retention constraints."
+      "reason": "Even after resolving the abstract predicate through its backend, BEHAVIOR tests only establishment of an attachment, not the candidate's reversible, load-tested lifting-hardware cycle."
     },
     {
       "suite": "DataCenterBench",
-      "coverage_method": "Verified the manifest's two exact source files and its authoritative Tier-1 catalog of 10 task IDs. Read every setup/instruction/reset/rubric record in `official-setups.json` and checked the linked procedure inventory in `official-procedures.json`; no selector gap was found because the catalog explicitly enumerates all ten published tasks.",
-      "objective": "Candidate performs packaging-line defect rejection. The nearest DataCenterBench task inserts a loose charger into a fixed power-strip outlet.",
-      "physical_skill": "Candidate requires dynamic container tracking, obstacle-avoiding body grasp, loaded level transport, and selective release. DC-plug requires alignment and force-controlled insertion of electrical prongs.",
-      "success_condition": "Candidate requires correct per-carton disposition, retained contents, release clearance, dwell, and untouched normal passage. DC-plug scores full insertion when the charger is flush with no prong metal visible, partial insertion for a retained but gapped or tilted charger, and zero otherwise.",
+      "coverage_method": "Verified the manifest's two exact local files and authoritative ten-task catalog. Read every setup, instruction, reset, and rubric in `official-setups.json` and checked the linked records in `official-procedures.json`; the catalog explicitly enumerates all published tasks, so no selector or registry gap remains.",
+      "objective": "The candidate inserts and locks a lifting pin, uses it to transfer a heavy workpiece, then unlocks and removes it after fixture seating. The closest DataCenterBench tasks insert connectors until seated or latched.",
+      "physical_skill": "Both require precision alignment and axial insertion. The candidate adds spring-button actuation, a mechanically verified load path, shackle manipulation, suspended-load alignment, support transfer, and coordinated button-held withdrawal.",
+      "success_condition": "The candidate requires retention under pull, a 30 mm supported lift, three-pad seating, and complete unloaded extraction. DC-join requires only a fully inserted no-gap Ethernet connection, while DC-plug requires a flush charger insertion.",
       "evidence_paths": [
         "input/benchmark-corpora/DataCenterBench/manifest.json",
         "input/benchmark-corpora/DataCenterBench/official-setups.json",
@@ -116,67 +117,77 @@
       ],
       "closest_tasks": [
         {
-          "name": "DC-plug — Plug the charger into the power strip",
+          "name": "DC-join — Join the Ethernet plug and coupler",
           "source_path": "input/benchmark-corpora/DataCenterBench/official-setups.json",
-          "quote": "The charger is fully plugged into an outlet: flush against the strip, no prong metal visible.",
-          "objective": "Pick up a phone charger and fully insert it into a power-strip outlet.",
-          "physical_skill": "Rigid-object pickup, precise alignment, and force-controlled insertion.",
-          "success_condition": "Full score for flush full insertion, half score for a stable partial insertion, zero when not inserted.",
-          "reason": "It is the closest catalog entry involving guarded manipulation and an unambiguous released end state, but its insertion mechanism and success goal are unrelated to loaded-carton rejection.",
-          "verdict": "distinct"
-        }
-      ],
-      "verdict": "distinct",
-      "reason": "None of the ten authoritative DataCenterBench tasks contains a conveyor, carton, payload-retention requirement, or state-conditioned reject/pass decision."
-    },
-    {
-      "suite": "RoboDojo",
-      "coverage_method": "Verified the complete 110-file inventory against all `task/RoboDojo/tasks/*.py`, `task/RoboDojo/config/*.yml`, and `task/RoboDojo/task_registry.py` files at commit f57e1633ffed59761bc8e568cfe7530c4b33381c. The dynamic loader resolves task names directly to same-named modules/configs. Reviewed all inventoried task names and read both conveyor tasks' complete Python definitions and YAML object mappings.",
-      "objective": "Candidate identifies physically open cartons and removes them to a reject tray while closed cartons continue. RoboDojo's two closest tasks select one target among moving conveyor objects, either by matching an earlier object or by matching an image, then lift or basket it.",
-      "physical_skill": "All require perception-guided interception of a moving target and selective picking. Candidate additionally requires access beneath collision-enabled flaps, opposed sidewall support of an open container, retention of multiple free contents during level transport, a released reject deposit, and deliberate non-contact passage of closed cartons.",
-      "success_condition": "Candidate requires every open carton rejected with all contents retained and every closed carton passed untouched. MatchAndPick succeeds by lifting `target1` above 0.1 m. PickFromConveyorByImage requires lifting the target above 0.08 m and placing it on the basket bottom.",
-      "evidence_paths": [
-        "input/benchmark-corpora/RoboDojo/manifest.json",
-        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/task_registry.py",
-        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/match_and_pick_from_conveyor.py",
-        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/config/match_and_pick_from_conveyor.yml",
-        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/pick_from_conveyor_by_image.py",
-        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/config/pick_from_conveyor_by_image.yml"
-      ],
-      "closest_tasks": [
-        {
-          "name": "match_and_pick_from_conveyor",
-          "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/match_and_pick_from_conveyor.py",
-          "quote": "Remember the first object on the conveyor, then pick the matching object when it appears again.",
-          "objective": "Remember a reference object, identify its later match among conveyor objects, and pick it.",
-          "physical_skill": "Moving-target visual matching, interception, grasping, and lifting.",
-          "success_condition": "`is_lift(label=\"target1\", z_threshold=0.1)`",
-          "reason": "It strongly overlaps in moving-conveyor selection and interception, but its tested manipulation ends at lifting an ordinary rigid object and does not exercise articulated-flap avoidance or preservation of independent contents.",
+          "quote": "Use one hand to hold the Ethernet coupler and the other to insert the Ethernet plug into it until it clicks into place.",
+          "objective": "Hold an Ethernet coupler and insert an Ethernet plug until it clicks.",
+          "physical_skill": "Bimanual stabilization, connector alignment, axial insertion, and latch engagement.",
+          "success_condition": "The Ethernet plug is fully inserted into the coupler with no gap.",
+          "reason": "It overlaps most closely in bimanual insertion and latch engagement, but the connection is never used as a lifting interface, unloaded on a fixture, or deliberately recovered.",
           "verdict": "distinct"
         },
         {
-          "name": "pick_from_conveyor_by_image",
-          "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/pick_from_conveyor_by_image.py",
-          "quote": "identify the target object on the conveyor according to the image on the board, pick it up, and place it into the basket.",
-          "objective": "Use a displayed image to choose one of four conveyor objects and place it in a basket.",
-          "physical_skill": "Image-conditioned moving-target selection, pickup, and receptacle placement.",
-          "success_condition": "The target is lifted more than 0.08 m and lies on the basket bottom.",
-          "reason": "It shares selective conveyor pick-and-place, but the distinguishing decision is non-robotic image matching and the manipulated objects lack the candidate's articulated access constraint and spillable internal bodies.",
+          "name": "DC-plug — Plug the charger into the power strip",
+          "source_path": "input/benchmark-corpora/DataCenterBench/official-setups.json",
+          "quote": "The charger is fully plugged into an outlet: flush against the strip, no prong metal visible.",
+          "objective": "Pick up a charger and fully insert it into a power-strip outlet.",
+          "physical_skill": "Rigid-object pickup, precise alignment, and force-controlled insertion.",
+          "success_condition": "Full score requires flush insertion with no visible prong metal.",
+          "reason": "It shares close alignment and full seating but has no actuated lock, retention test, suspended load, support transfer, or extraction stage.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "RoboDojo contains the closest high-level conveyor-selection pattern, but the candidate is meaningfully different only if native counterfactuals confirm that flap collisions and free-content retention materially constrain grasp and transport; this source comparison alone does not establish simulator feasibility."
+      "reason": "DataCenterBench contains insertion and latching tasks, but none uses an installed connector as temporary lifting hardware through a complete load-transfer and recovery cycle."
+    },
+    {
+      "suite": "RoboDojo",
+      "coverage_method": "Verified all 110 manifest entries against every `task/RoboDojo/tasks/*.py`, `task/RoboDojo/config/*.yml`, and `task/RoboDojo/task_registry.py` file at commit fbfbbcb3801397fa00dcffaef3ca64d97c3fe76f. Reviewed the complete task/config inventory for insertion, locking, lifting, placement, and assembly, then read the complete Python and YAML originals for the two closest insertion tasks.",
+      "objective": "The candidate inserts a lifting pin, engages a mechanical ball lock, lifts and fixtures a workpiece through the pin's shackle, then unlocks and withdraws the pin. RoboDojo's closest tasks insert and turn a key or seat three tubes in a rack.",
+      "physical_skill": "InsertKey shares close alignment, insertion, and post-insertion actuation; InsertTubes shares repeated axial seating and support by a rack. Neither transmits a suspended workpiece load through the inserted item, verifies retention under pull, transfers support to a fixture, or extracts the hardware while preserving workpiece pose.",
+      "success_condition": "The candidate's staged outcome depends on lock retention, supported lifting, all-three-pad seating, and complete extraction after unloading. InsertKey ends with the key inserted and turned; InsertTubes ends with upright tubes seated in the rack and released.",
+      "evidence_paths": [
+        "input/benchmark-corpora/RoboDojo/manifest.json",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/fbfbbcb3801397fa00dcffaef3ca64d97c3fe76f/task/RoboDojo/task_registry.py",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/fbfbbcb3801397fa00dcffaef3ca64d97c3fe76f/task/RoboDojo/tasks/insert_key.py",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/fbfbbcb3801397fa00dcffaef3ca64d97c3fe76f/task/RoboDojo/config/insert_key.yml",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/fbfbbcb3801397fa00dcffaef3ca64d97c3fe76f/task/RoboDojo/tasks/insert_tubes.py",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/fbfbbcb3801397fa00dcffaef3ca64d97c3fe76f/task/RoboDojo/config/insert_tubes.yml"
+      ],
+      "closest_tasks": [
+        {
+          "name": "insert_key",
+          "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/fbfbbcb3801397fa00dcffaef3ca64d97c3fe76f/task/RoboDojo/tasks/insert_key.py",
+          "quote": "Insert the key into the lock and turn it clockwise after confirming that it is fully seated.",
+          "objective": "Lift a key, insert it into a lock, and turn it clockwise.",
+          "physical_skill": "Precision key/keyhole alignment, axial insertion, and rotation while inserted.",
+          "success_condition": "The key is sufficiently deep, within 7 mm in x/y, upright, and aligned to the turned orientation; it remains inserted.",
+          "reason": "This is the strongest mechanism-level neighbor because insertion is followed by actuation, but it neither proves load-bearing retention nor lifts and seats another body, and it explicitly does not withdraw the key.",
+          "verdict": "distinct"
+        },
+        {
+          "name": "insert_tubes",
+          "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/fbfbbcb3801397fa00dcffaef3ca64d97c3fe76f/task/RoboDojo/tasks/insert_tubes.py",
+          "quote": "Insert the three tubes into the rack one by one.",
+          "objective": "Insert three test tubes into openings in a rack.",
+          "physical_skill": "Axial alignment, insertion to depth, upright seating, release, and stability checking.",
+          "success_condition": "Each credited tube is inside the rack, inserted at least 45 mm, upright within 30 degrees, and released; full score also returns the robot to origin.",
+          "reason": "It overlaps in axial insertion and supported seating, but the tubes are terminal payloads rather than removable locking hardware used to carry and fixture another object.",
+          "verdict": "distinct"
+        }
+      ],
+      "verdict": "distinct",
+      "reason": "RoboDojo covers insertion-plus-actuation and rack seating separately, but no definition tests the candidate's central reversible load-path mechanism from pin locking through suspended transfer to unloaded extraction."
     }
   ],
-  "candidate_digest": "a475f37bc2f1d09c4cf908ff8832b0a005df5c26585104cd4a3be122cd2f0950",
-  "at": "2026-11-16T10:02:08.273946+00:00",
+  "candidate_digest": "24d189b664266b5dd474b05fa92856365e815d5a01aa30ca6a688502e1561d4e",
+  "at": "2026-11-16T11:49:49.694705+00:00",
   "definition_manifests": {
-    "LIBERO": "b29051a5be4a2a6daad061ea5e8aa6371ce2160d05fa99d27b2cf09841a03ed2",
-    "RoboCasa": "cfe246c75157e694864159c485fe3be85f9b2bb35aa1eb76e66c6d461a1ea716",
-    "SimplerEnv": "b883644dc69bf9678714002207662594e9bf1d514728490ca75452ccd8351aae",
-    "BEHAVIOR": "4283767e27d218498c16855227c12312a582e0a47c06c9fbb35ed9b5418f381f",
-    "DataCenterBench": "207839f59d7440731cdffa0f51404f403615284ff77184fa1e655046f9df0cbe",
-    "RoboDojo": "9a1775c5aac222030d27b0ef26dda12c91ec8a8943c4c6f34736314161ba872a"
+    "LIBERO": "3e52e1a5a7426ee7fccf9332c80dde723dfad63609aba64f6e13f528cfa93bbc",
+    "RoboCasa": "3bdbc525dbc008922e034bb4c2119437ee67080c7a49328aa9e48d3f5f16b75c",
+    "SimplerEnv": "b03ff68d02e66777f763a57fc13c0032f4d146e00d66fd4adf26f44d80e72283",
+    "BEHAVIOR": "835b91e9bc40b83c7a07a12aada755ceed064c477a934ce792a9a5963842afff",
+    "DataCenterBench": "b311aa20808f1bd593b101aeca78477a5dd60ccf5496c39546f20d06e9a1f746",
+    "RoboDojo": "dc3c2f4e217c6832dd07eeee28d7f4db63c1b095114b8abea56d34681a132776"
   }
 }
