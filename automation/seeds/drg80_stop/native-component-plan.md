@@ -119,3 +119,20 @@ This is an implementation lead, not an adopted mechanism or native pass. Test
 the smallest coupon first; use the simplest route that actually preserves the
 measured reaction, seating and retained outcome. Avoid adding an unsupported
 new dependency or changing the official policy/robot action interface.
+
+## Observed direct-GPU incompatibility, 2026-11-16
+
+The actual `drg80-component-preflight-38c712934d.log` in production run
+`20261114T031727-dc73f2bb` reports that the prototype's three gear/rack coupling
+constraints cannot be added to a scene configured for direct GPU access, and
+requests a D6 joint instead. That invocation produced no valid component report.
+Therefore the existing composed gear/rack proposal is **not a validated GPU
+mechanism**. Do not reuse its authoring/schema validity as runtime evidence.
+
+An isolated diagnostic may deactivate these unsupported constraints to identify
+which ordinary joints/bodies load correctly, but cannot thereby establish
+lever-to-piston/jaw coupling or qualify the task. A replacement must restore the
+physical transmission and load reaction before the frozen component checks,
+YAM demo or Dream evaluation. D6/articulation-mimic alternatives described above
+remain leads to test, not confirmed replacements. The GPU contact/callback cube
+probe passed independently; it does not resolve this mechanism incompatibility.
