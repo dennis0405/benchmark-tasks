@@ -1,17 +1,13 @@
 {
-  "verdict": "pass",
-  "findings": [],
+  "verdict": "repair",
+  "findings": [
+    "Support classification violates the required positive-force rule: `verified_reaction` accepts any nonzero signed scalar, and lines 275-277 consequently count uniquely mapped negative-force contacts as rib support. Require `signed_normal_force > 0` in the support predicate so bridge retention, support loss, and crossing arming use only uniquely mapped positive-force contacts."
+  ],
   "evidence_paths": [
     "artifacts/component-source-plan.json",
-    "task/run_compound_aperture_contact_probe.py:133",
-    "task/run_compound_aperture_contact_probe.py:178",
-    "task/run_compound_aperture_contact_probe.py:207",
-    "task/run_compound_aperture_contact_probe.py:219",
-    "task/run_compound_aperture_contact_probe.py:252",
-    "task/run_compound_aperture_contact_probe.py:272",
-    "task/run_compound_aperture_contact_probe.py:308",
-    "task/run_compound_aperture_contact_probe.py:338",
-    "input/last-failure.json",
-    "input/pinned-runtime-sources/1ba654210857a63b98236512e5f225723c3eb1dee64e867eaa4fade0578ccb7b-physics-tensors-api.py:4990"
+    "task/run_moving_aperture_crossing_probe.py:264",
+    "task/run_moving_aperture_crossing_probe.py:275",
+    "input/request.json",
+    "input/last-failure.json"
   ]
 }

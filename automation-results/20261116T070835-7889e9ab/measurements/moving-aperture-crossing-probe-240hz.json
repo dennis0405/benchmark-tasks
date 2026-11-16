@@ -1,7 +1,7 @@
 {
   "scope": "single-seed sampled moving-frame crossing discovery only",
   "coverage": "completed-physics-sample endpoints only; no continuous swept-geometry claim",
-  "rib_contact_observable": "native current-step PhysX contact report decoded by collider path; summed impulse magnitude divided by dt is diagnostic force",
+  "rib_contact_observable": "native Warp raw contact points transformed by each completed sample's observed aperture pose; support requires unique finite 3-D rib-face mapping and a nonzero signed-scalar-times-normal reaction whose sample sum reconciles with the native body-filter force vector",
   "crossing_classifier": "ideal fixed aperture polygon at sampled endpoints; not actual-rib signed distance, physical clearance, genuine passage, or continuous swept coverage",
   "qualification_claimed": false,
   "native_contact_processing_setting": {
@@ -10,37 +10,520 @@
     "disabled_after_explicit_enable_readback": false,
     "settings_manager_omniverse_mode": true
   },
-  "resolved_contact_paths": {
-    "medium_actor_path": "/World/Medium",
-    "aperture_actor_path": "/World/MovingAperture",
-    "medium_collision_prim_paths": [
-      "/World/Medium/geometry/mesh"
-    ],
-    "rib_collision_prim_paths": {
-      "/World/MovingAperture/Rib_0": [
-        "/World/MovingAperture/Rib_0/geometry/mesh"
-      ],
-      "/World/MovingAperture/Rib_1": [
-        "/World/MovingAperture/Rib_1/geometry/mesh"
-      ],
-      "/World/MovingAperture/Rib_2": [
-        "/World/MovingAperture/Rib_2/geometry/mesh"
-      ],
-      "/World/MovingAperture/Rib_3": [
-        "/World/MovingAperture/Rib_3/geometry/mesh"
-      ]
-    },
-    "observed_contact_actor_paths": [],
-    "observed_contact_collider_paths": []
+  "raw_contact_device": "cuda:0",
+  "raw_contact_capacity": 32,
+  "raw_contact_accounting": {
+    "total": 8221,
+    "unique": 6773,
+    "ambiguous": 1448,
+    "unmapped": 0,
+    "nonzero_signed_scalar": 4270,
+    "verified_reaction_point": 4270,
+    "positive_signed_force": 0,
+    "negative_signed_force": 4270,
+    "zero_force": 3951,
+    "invalid_contacts": 0,
+    "invalid_fields": 0,
+    "saturated": 0
+  },
+  "raw_force_vector_reconciliation_summary": {
+    "positive_pair_force_samples": 1436,
+    "verified_positive_pair_force_samples": 1436,
+    "maximum_relative_residual": 1.3292892486686937e-07,
+    "minimum_direction_cosine": 0.9999999999999976
   },
   "qualifying_two_rib_contact_window": {
     "required_consecutive_samples": 120,
-    "observed_consecutive_samples_at_settle_end": 0,
-    "window_start_settle_step": -1,
-    "window_end_settle_step": -1,
-    "distinct_rib_ids_across_window": [],
-    "contacted_rib_ids_per_sample": [],
-    "positive_decoded_contact_fixture_every_sample": false
+    "observed_consecutive_samples_at_settle_end": 705,
+    "window_start_settle_step": 601,
+    "window_end_settle_step": 720,
+    "distinct_rib_ids_across_window": [
+      "/World/MovingAperture/Rib_2",
+      "/World/MovingAperture/Rib_3"
+    ],
+    "contacted_rib_ids_per_sample": [
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ],
+      [
+        "/World/MovingAperture/Rib_2",
+        "/World/MovingAperture/Rib_3"
+      ]
+    ],
+    "positive_raw_contact_fixture_every_sample": true
   },
   "arming_support_loss_window": [],
   "checks": [
@@ -94,43 +577,120 @@
       "unit": "completed_physics_samples"
     },
     {
-      "name": "spawned_medium_collision_prim_count",
+      "name": "cuda_backed_raw_contact_points",
       "measured": 1,
-      "operator": ">=",
+      "operator": "==",
       "threshold": 1,
-      "unit": "collision_prims"
+      "unit": "bool"
     },
     {
-      "name": "spawned_rib_collision_prim_count",
-      "measured": 4,
-      "operator": ">=",
-      "threshold": 4,
-      "unit": "collision_prims"
-    },
-    {
-      "name": "positive_decoded_medium_rib_contact_header_count",
-      "measured": 0,
+      "name": "populated_raw_contact_points",
+      "measured": 8221,
       "operator": ">",
       "threshold": 0,
-      "unit": "headers"
+      "unit": "points"
     },
     {
-      "name": "positive_decoded_contact_fixture_for_support_loss_interpretation",
+      "name": "uniquely_mapped_raw_contact_points",
+      "measured": 6773,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "points"
+    },
+    {
+      "name": "nonzero_signed_scalar_raw_contact_points",
+      "measured": 4270,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "points"
+    },
+    {
+      "name": "verified_signed_scalar_times_normal_reaction_points",
+      "measured": 4270,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "points"
+    },
+    {
+      "name": "negative_signed_scalar_raw_contact_points",
+      "measured": 4270,
+      "operator": ">=",
+      "threshold": 0,
+      "unit": "points"
+    },
+    {
+      "name": "positive_pair_force_samples_with_verified_vector_reconciliation",
+      "measured": 1436,
+      "operator": "==",
+      "threshold": 1436,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "maximum_signed_scalar_vector_sum_relative_residual",
+      "measured": 1.3292892486686937e-07,
+      "operator": "<=",
+      "threshold": 0.05,
+      "unit": "ratio"
+    },
+    {
+      "name": "minimum_signed_scalar_vector_sum_direction_cosine",
+      "measured": 0.9999999999999976,
+      "operator": ">=",
+      "threshold": 0.99,
+      "unit": "cosine"
+    },
+    {
+      "name": "raw_contact_classification_sum_difference",
       "measured": 0,
+      "operator": "==",
+      "threshold": 0,
+      "unit": "points"
+    },
+    {
+      "name": "invalid_populated_raw_contact_fields",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 0,
+      "unit": "fields"
+    },
+    {
+      "name": "invalid_populated_raw_contacts",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 0,
+      "unit": "contacts"
+    },
+    {
+      "name": "raw_contact_buffer_saturated_samples",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 0,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "maximum_raw_contacts_strictly_below_capacity",
+      "measured": 8,
+      "operator": "<",
+      "threshold": 32,
+      "unit": "points"
+    },
+    {
+      "name": "positive_raw_contact_fixture_for_support_loss_interpretation",
+      "measured": 1,
       "operator": "==",
       "threshold": 1,
       "unit": "bool"
     },
     {
       "name": "gravity_retained_oblique_seed_with_fresh_two_distinct_rib_support",
-      "measured": 0,
+      "measured": 1,
       "operator": "==",
       "threshold": 1,
       "unit": "bool"
     },
     {
       "name": "maximum_consecutive_two_distinct_rib_contact_samples",
-      "measured": 0,
+      "measured": 705,
       "operator": ">=",
       "threshold": 120,
       "unit": "completed_physics_samples"
