@@ -1,17 +1,14 @@
 {
   "verdict": "repair",
   "findings": [
-    "task/run_aperture_native_probe.py does not instantiate the frozen media geometry. It uses a flat-ended CylinderCfg of height 0.022225 m, while artifacts/contract.json requires 15-degree parallel angle cuts within that axial envelope and realized mesh mass/inertia. The report nevertheless names the resulting fractions as media passage/non-passage and does not disclose this media proxy limitation. This cannot answer the stated aperture-separation question for the contracted body, especially transverse bridging.",
-    "spawn_aperture centers its 0.003 m ribs at z=0, producing floor geometry from z=-0.0015 to +0.0015 m. The frozen contract specifies the screen floor at -0.003<=z<=0 with aperture crossings through z=0. This shifts the collision surface and makes the probe geometry inconsistent with its claimed contract-relative crossing measurements.",
-    "The discovery outcome checks use thresholds such as passage_fraction >= 0 and non_passage_fraction >= 0, so every finite result passes regardless of whether the aperture exhibits the intended behavior. The probe may remain explicitly exploratory, but its checks must not present vacuous success receipts; either report these values as unqualified measurements or apply the relevant frozen component thresholds while clearly marking the incomplete tests as unmeasured rather than passed."
+    "The transverse and washer checks do not establish physical non-passage or retention. `genuine_non_passage` is defined only as the negation of a certified passage, so a body that penetrates or tunnels through a rib is counted as successful non-passage because its negative rib clearance makes `genuine_full_body_aperture_passage` false. Although `ever_fully_below_floor` and `final_full_collider_above_floor` are recorded, neither is included in the aggregate checks. Require retained bodies to remain physically above the floor (and reject penetration/tunneling or below-floor outcomes) before reporting the transverse/washer fractions as passing.",
+    "The plan summary claims conservative washer-OD retention, but the current qualification logic can pass all washer trials even when every proxy falls through solid rib geometry. Rename the measurement as uncertified-passage rejection or, preferably, implement an explicit retention predicate using the native pose trace and collision/penetration evidence. Keep this discovery proxy distinct from segmented-washer qualification."
   ],
   "evidence_paths": [
-    "task/run_aperture_native_probe.py",
     "artifacts/component-source-plan.json",
+    "task/run_aperture_native_probe.py",
     "artifacts/contract.json",
-    "artifacts/selected.json",
-    "input/operator-source-notes.json",
-    "input/last-failure.json",
-    "input/runtime-api-preflight.json"
+    "input/revision-request.txt",
+    "input/last-failure.json"
   ]
 }

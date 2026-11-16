@@ -1,6 +1,6 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the bounded native aperture probe launch plan after reading the actual failure log: the installed AppLauncher parser does not accept --headless, so that argument is removed. The probe uses source-verified XYZW quaternions and ProxyArray .torch conversion, records fresh native poses from reset through integrated gravity steps, and writes nonempty numerical checks plus traces. Python compilation passed. GPU execution remains for the trusted controller; this preflight does not claim frozen-contract qualification.",
+  "summary": "The API-only RigidObject probe now has successful native 240/480 Hz measurements. Advance to the bounded aperture-collision discovery probe at both rates. It measures actual angle-cut-media passage, transverse non-passage, conservative washer-OD retention, realized media mass/inertia, and finite-patch escape without claiming full screen, segmented-washer, agitation, spill, YAM, scorer, or physics qualification. The installed launcher parser was checked: no unsupported --headless argument is supplied. The script passes compilation; native GPU execution remains for the trusted controller.",
   "scripts": [
     {
       "id": "aperture_native_probe_240hz",
@@ -9,11 +9,11 @@
         "--physics-hz",
         "240",
         "--report",
-        "../measurements/aperture-native-240hz.json",
+        "../measurements/aperture-native-probe-240hz.json",
         "--device",
         "cuda:0"
       ],
-      "report": "measurements/aperture-native-240hz.json"
+      "report": "measurements/aperture-native-probe-240hz.json"
     },
     {
       "id": "aperture_native_probe_480hz",
@@ -22,11 +22,11 @@
         "--physics-hz",
         "480",
         "--report",
-        "../measurements/aperture-native-480hz.json",
+        "../measurements/aperture-native-probe-480hz.json",
         "--device",
         "cuda:0"
       ],
-      "report": "measurements/aperture-native-480hz.json"
+      "report": "measurements/aperture-native-probe-480hz.json"
     }
   ],
   "files": [

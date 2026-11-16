@@ -1,8 +1,8 @@
 """Native discovery probe for screen-aperture collision at 240 or 480 Hz.
 
 This is not a qualification script.  It measures one bounded component question:
-whether the proposed square aperture separates the sourced media envelope from a
-washer-OD conservative proxy across deterministic attitudes.  It deliberately
+whether the proposed square aperture separates the frozen parallel-angle-cut
+media mesh from a washer-OD conservative proxy across deterministic attitudes.  It deliberately
 does not stand in for the segmented washer, joints, agitation, bore lodging,
 full screen, robot, provenance scorer, or production task.
 """
@@ -26,6 +26,9 @@ simulation_app = launcher.app
 
 import isaaclab.sim as sim_utils
 from isaaclab.assets import RigidObject, RigidObjectCfg
+from isaaclab.sim.spawners.meshes.meshes import _spawn_mesh_geom_from_mesh
+import trimesh
+import torch
 
 APERTURE = 0.0127
 PATCH = 0.050
@@ -35,6 +38,7 @@ MEDIA_L = 0.022225
 WASHER_D = 0.030
 WASHER_T = 0.004
 MEDIA_MASS = 0.0035044969
+MEDIA_DENSITY = 2500.0
 WASHER_MASS = 0.0206170159
 END_TRIALS = 20
 TRANSVERSE_TRIALS = 20
@@ -57,20 +61,62 @@ def spawn_aperture(cx: float, cy: float, name: str) -> None:
     )
     side = (PATCH - APERTURE) / 2
     specs = (
-        ((side, PATCH, FLOOR_THICKNESS), (cx - (APERTURE + side) / 2, cy, 0.0)),
-        ((side, PATCH, FLOOR_THICKNESS), (cx + (APERTURE + side) / 2, cy, 0.0)),
-        ((APERTURE, side, FLOOR_THICKNESS), (cx, cy - (APERTURE + side) / 2, 0.0)),
-        ((APERTURE, side, FLOOR_THICKNESS), (cx, cy + (APERTURE + side) / 2, 0.0)),
+        ((side, PATCH, FLOOR_THICKNESS), (cx - (APERTURE + side) / 2, cy, -FLOOR_THICKNESS / 2)),
+        ((side, PATCH, FLOOR_THICKNESS), (cx + (APERTURE + side) / 2, cy, -FLOOR_THICKNESS / 2)),
+        ((APERTURE, side, FLOOR_THICKNESS), (cx, cy - (APERTURE + side) / 2, -FLOOR_THICKNESS / 2)),
+        ((APERTURE, side, FLOOR_THICKNESS), (cx, cy + (APERTURE + side) / 2, -FLOOR_THICKNESS / 2)),
     )
     for j, (size, pos) in enumerate(specs):
         cfg = sim_utils.CuboidCfg(size=size, **common)
         cfg.func(f"/World/{name}/Rib_{j}", cfg, translation=pos)
 
 
-def cylinder(path: str, radius: float, height: float, mass: float, pos, quat) -> RigidObject:
-    cfg = RigidObjectCfg(
-        prim_path=path,
-        spawn=sim_utils.CylinderCfg(
+def spawn_parallel_angle_cut_mesh(prim_path, cfg, translation=None, orientation=None, **kwargs):
+    """Spawn the frozen 15-degree parallel-cut, 9.525 mm OD media body.
+
+    The two end planes are parallel.  Their centerline separation is selected
+    so the maximum axial envelope, including the plane slope across the OD, is
+    exactly MEDIA_L.  A 32-sided convex mesh is used for native collision.
+    """
+    radius = MEDIA_D / 2
+    slope = math.tan(math.radians(15.0))
+    centerline_length = MEDIA_L - 2 * radius * slope
+    vertices = []
+    sections = 32
+    for end_sign in (-1.0, 1.0):
+        for i in range(sections):
+            angle = 2 * math.pi * i / sections
+            x, y = radius * math.cos(angle), radius * math.sin(angle)
+            vertices.append((x, y, slope * x + end_sign * centerline_length / 2))
+    faces = []
+    faces.append(tuple(reversed(range(sections))))
+    faces.append(tuple(range(sections, 2 * sections)))
+    for i in range(sections):
+        j = (i + 1) % sections
+        faces.append((i, j, sections + j, sections + i))
+    mesh = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
+    from isaaclab.sim.utils import get_current_stage
+    stage = get_current_stage()
+    _spawn_mesh_geom_from_mesh(prim_path, cfg, mesh, translation, orientation, stage=stage)
+    return stage.GetPrimAtPath(prim_path)
+
+
+def rigid_body(path: str, radius: float, height: float, mass: float, pos, quat, media=False) -> RigidObject:
+    spawn_cfg = (
+        sim_utils.MeshCfg(
+            func=spawn_parallel_angle_cut_mesh,
+            rigid_props=sim_utils.RigidBodyPropertiesCfg(
+                solver_position_iteration_count=32,
+                solver_velocity_iteration_count=8,
+                max_depenetration_velocity=2.0,
+            ),
+            mass_props=sim_utils.MassPropertiesCfg(density=MEDIA_DENSITY),
+            collision_props=sim_utils.CollisionPropertiesCfg(contact_offset=0.00015, rest_offset=0.0),
+            physics_material=sim_utils.RigidBodyMaterialCfg(
+                static_friction=0.50, dynamic_friction=0.35, restitution=0.05
+            ),
+            visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.75, 0.55, 0.20)),
+        ) if media else sim_utils.CylinderCfg(
             radius=radius,
             height=height,
             axis="Z",
@@ -85,7 +131,11 @@ def cylinder(path: str, radius: float, height: float, mass: float, pos, quat) ->
                 static_friction=0.50, dynamic_friction=0.35, restitution=0.05
             ),
             visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.75, 0.55, 0.20)),
-        ),
+        )
+    )
+    cfg = RigidObjectCfg(
+        prim_path=path,
+        spawn=spawn_cfg,
         init_state=RigidObjectCfg.InitialStateCfg(pos=pos, rot=quat),
     )
     return RigidObject(cfg)
@@ -169,14 +219,20 @@ def main() -> None:
             quat = quat_y_then_z_xyzw(tilt, az)
             hz = half_extents(quat, radius, height)[2]
             spawn_aperture(cx, cy, f"Patch_{index:03d}")
-            body = cylinder(
+            body = rigid_body(
                 f"/World/Body_{index:03d}", radius, height, mass,
-                (cx, cy, 0.010 + hz), quat,
+                (cx, cy, 0.010 + hz), quat, media=kind != "washer_od_proxy",
             )
             definitions.append((kind, i, cx, cy, radius, height, body))
     sim.reset()
     for *_, body in definitions:
         body.reset()
+
+    realized_media_mass = float(definitions[0][-1].data.body_mass.torch[0, 0].detach().cpu())
+    native_inertia_tensor = definitions[0][-1].data.body_inertia.torch[0, 0].detach().reshape(3, 3)
+    realized_media_principal_inertia = [
+        float(v) for v in torch.linalg.eigvalsh(native_inertia_tensor).cpu().tolist()
+    ]
 
     samples = 2 * args.physics_hz
     trace = [[] for _ in definitions]
@@ -198,7 +254,7 @@ def main() -> None:
         below_floor = False
         final_full_collider_above_floor = False
         _, _, _, initial_z, *initial_q = row[0]
-        started_fully_above = initial_z - half_extents(initial_q, radius, height)[2] > FLOOR_THICKNESS / 2
+        started_fully_above = initial_z - half_extents(initial_q, radius, height)[2] > 0.0
         crossing_active = False
         crossing_certified = True
         crossing_interval_count = 0
@@ -210,12 +266,12 @@ def main() -> None:
             minimum_rib_clearance = min(minimum_rib_clearance, clearance)
             outside_patch |= abs(x - cx) + ex > PATCH / 2 or abs(y - cy) + ey > PATCH / 2
             below_floor |= z + ez < -0.005
-            final_full_collider_above_floor = z - ez > FLOOR_THICKNESS / 2
+            final_full_collider_above_floor = z - ez > 0.0
         for previous, current in zip(row, row[1:]):
             swept = swept_interval_certificate(previous, current, cx, cy, radius, height)
             overlaps_floor_slab = (
-                swept["z_min_m"] <= FLOOR_THICKNESS / 2
-                and swept["z_max_m"] >= -FLOOR_THICKNESS / 2
+                swept["z_min_m"] <= 0.0
+                and swept["z_max_m"] >= -FLOOR_THICKNESS
             )
             if started_fully_above and overlaps_floor_slab:
                 crossing_active = True
@@ -263,17 +319,18 @@ def main() -> None:
         "checks": [
             {"name": "physics_dt_error_max", "measured": abs(measured_dt - dt), "operator": "<=", "threshold": 1e-9, "unit": "s"},
             {"name": "nominal_20hz_interval_physics_step_ratio", "measured": 0.05 / measured_dt, "operator": "==", "threshold": args.physics_hz / 20, "unit": "ratio_not_action_measurement"},
-            {"name": "end_first_genuine_passage_fraction", "measured": fraction(ends, "genuine_full_body_aperture_passage"), "operator": ">=", "threshold": 0.0, "unit": "fraction_discovery"},
-            {"name": "transverse_genuine_non_passage_fraction", "measured": fraction(transverse, "genuine_non_passage"), "operator": ">=", "threshold": 0.0, "unit": "fraction_discovery"},
-            {"name": "transverse_final_full_collider_above_floor_fraction", "measured": fraction(transverse, "final_full_collider_above_floor"), "operator": ">=", "threshold": 0.0, "unit": "fraction_discovery"},
-            {"name": "washer_od_proxy_genuine_non_passage_fraction", "measured": fraction(washers, "genuine_non_passage"), "operator": ">=", "threshold": 0.0, "unit": "fraction_discovery"},
-            {"name": "washer_od_proxy_final_full_collider_above_floor_fraction", "measured": fraction(washers, "final_full_collider_above_floor"), "operator": ">=", "threshold": 0.0, "unit": "fraction_discovery"},
-            {"name": "outside_patch_escape_fraction", "measured": fraction(trials, "outside_finite_patch_escape"), "operator": "<=", "threshold": 1.0, "unit": "fraction_discovery"},
+            {"name": "realized_media_mass", "measured": realized_media_mass, "operator": ">", "threshold": 0.0, "unit": "kg"},
+            {"name": "realized_media_mass_relative_error", "measured": abs(realized_media_mass - MEDIA_MASS) / MEDIA_MASS, "operator": "<=", "threshold": 0.02, "unit": "ratio"},
+            {"name": "realized_media_min_principal_inertia", "measured": min(realized_media_principal_inertia), "operator": ">", "threshold": 0.0, "unit": "kg_m2"},
+            {"name": "end_first_genuine_passage_fraction", "measured": fraction(ends, "genuine_full_body_aperture_passage"), "operator": "==", "threshold": 1.0, "unit": "fraction_component_threshold"},
+            {"name": "transverse_genuine_non_passage_fraction", "measured": fraction(transverse, "genuine_non_passage"), "operator": "==", "threshold": 1.0, "unit": "fraction_component_threshold"},
+            {"name": "washer_od_proxy_genuine_non_passage_fraction", "measured": fraction(washers, "genuine_non_passage"), "operator": "==", "threshold": 1.0, "unit": "fraction_discovery_proxy"},
+            {"name": "outside_patch_escape_fraction", "measured": fraction(trials, "outside_finite_patch_escape"), "operator": "==", "threshold": 0.0, "unit": "fraction_validity"},
             {"name": "deterministic_trial_count", "measured": len(trials), "operator": "==", "threshold": 80, "unit": "trials"},
         ],
         "artifacts": [trace_artifact.as_posix()],
         "limitations": [
-            "Solid washer-OD cylinders are conservative collision-discovery proxies, not the frozen four-segment washer assemblies.",
+            "The media collider is the frozen 15-degree parallel-angle-cut geometry; its native realized mass and inertia are reported. Solid washer-OD cylinders remain conservative discovery proxies, not the frozen four-segment washer assemblies.",
             "This probe does not test agitation release, washer-bore lodging, breakable joints, the full screen, spill scorer, YAM actions, or grading.",
             "The nominal 20 Hz ratio is timestep arithmetic; no action loop is measured here.",
             "Genuine passage uses a conservative continuous swept-cylinder bound for every physics interval overlapping the floor slab; uncertified/tunneling crossings are not counted.",

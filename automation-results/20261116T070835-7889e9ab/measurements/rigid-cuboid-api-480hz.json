@@ -1,0 +1,102 @@
+{
+  "scope": "API-only RigidObject cuboid preflight; no aperture, retention, spill, YAM, or 20 Hz claim",
+  "physics_hz": 480,
+  "steps": 24,
+  "state": {
+    "reset_proxy_type": "isaaclab.utils.warp.proxy_array.ProxyArray",
+    "final_proxy_type": "isaaclab.utils.warp.proxy_array.ProxyArray",
+    "tensor_type": "torch.Tensor",
+    "tensor_device": "cuda:0",
+    "tensor_device_index": 0,
+    "tensor_shape": [
+      1,
+      7
+    ],
+    "quaternion_order": "XYZW",
+    "authored_quaternion_xyzw": [
+      0.0916432938695913,
+      0.1832865877391826,
+      0.2749298816087739,
+      0.9393727128473789
+    ],
+    "reset_pose_xyzw": [
+      0.0,
+      0.0,
+      0.9999122023582458,
+      0.09164328873157501,
+      0.18328657746315002,
+      0.27492988109588623,
+      0.939372718334198
+    ],
+    "final_pose_xyzw": [
+      0.0,
+      0.0,
+      0.985573947429657,
+      0.09164328873157501,
+      0.18328657746315002,
+      0.27492988109588623,
+      0.939372718334198
+    ]
+  },
+  "checks": [
+    {
+      "name": "sim_dt_absolute_error",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-09,
+      "unit": "s"
+    },
+    {
+      "name": "native_cuda_state",
+      "measured": 1.0,
+      "operator": "==",
+      "threshold": 1.0,
+      "unit": "bool"
+    },
+    {
+      "name": "finite_pose_fraction",
+      "measured": 1.0,
+      "operator": "==",
+      "threshold": 1.0,
+      "unit": "fraction"
+    },
+    {
+      "name": "reset_quaternion_norm_error",
+      "measured": 2.65883626227037e-09,
+      "operator": "<=",
+      "threshold": 1e-05,
+      "unit": "1"
+    },
+    {
+      "name": "final_quaternion_norm_error",
+      "measured": 2.65883626227037e-09,
+      "operator": "<=",
+      "threshold": 1e-05,
+      "unit": "1"
+    },
+    {
+      "name": "authored_xyzw_readback_linf_error",
+      "measured": 1.0276032580414096e-08,
+      "operator": "<=",
+      "threshold": 1e-05,
+      "unit": "1"
+    },
+    {
+      "name": "gravity_delta_z",
+      "measured": -0.014338254928588867,
+      "operator": "<",
+      "threshold": -0.0001,
+      "unit": "m"
+    },
+    {
+      "name": "fresh_pose_sample_count",
+      "measured": 25.0,
+      "operator": ">=",
+      "threshold": 25.0,
+      "unit": "samples"
+    }
+  ],
+  "artifacts": [
+    "measurements/rigid-cuboid-api-480hz-trace.json"
+  ]
+}
