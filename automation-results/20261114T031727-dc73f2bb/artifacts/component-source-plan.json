@@ -1,24 +1,24 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the latest native failure without changing physical thresholds. Material binding remains correctly validated by resolved USD identity and native zero-friction readbacks. The hard helical mimic pair now precedes the passive elastic coordinate, preventing the observed ±1440° limit run that produced only 0.667 N reaction. All momentum, K/D, contact, common-frame, reduced-inertia, freshness, release, helix, force, and work checks remain. Static AST validation passed; trusted native GPU execution is required and no qualification is claimed.",
+  "summary": "The exact reordered source was subsequently executed as native trial 1d78d6a9-0ecf-4122-b160-b6d21a5113d9 and failed: both contact reactions were only about 1.328 N versus 31.416 N expected, the rotor saturated near ±25.133 rad, and helix residual reached 25.003 rad. The material binding and torque pathway worked, so they are not repeated. This bounded probe compares the supported two-DOF control against identical three-DOF chains across a 100× auxiliary-mass sweep, preserving the frozen 0.02 rad control bar to distinguish topology-level constraint inactivity from conditioning sensitivity. It is qualification=false and makes no fixture or task-success claim. Static parsing passed; source SHA256 is ded077dccbac42fc79f0700c380649c5a183f516d3a8c72cdc88431ec6ebd0eb.",
   "scripts": [
     {
-      "id": "series-elastic-helix-preflight",
-      "script": "task/run_series_elastic_helix_preflight.py",
+      "id": "mimic-chain-conditioning-preflight",
+      "script": "task/run_mimic_chain_conditioning_probe.py",
       "args": [
         "--device",
         "cuda:0",
         "--visualizer",
         "none",
         "--output",
-        "../measurements/series-elastic-helix-preflight.json",
+        "../measurements/mimic-chain-conditioning-preflight.json",
         "--trace",
-        "../measurements/series-elastic-helix-preflight-trace.json"
+        "../measurements/mimic-chain-conditioning-preflight-trace.json"
       ],
-      "report": "measurements/series-elastic-helix-preflight.json"
+      "report": "measurements/mimic-chain-conditioning-preflight.json"
     }
   ],
   "files": [
-    "task/run_series_elastic_helix_preflight.py"
+    "task/run_mimic_chain_conditioning_probe.py"
   ]
 }

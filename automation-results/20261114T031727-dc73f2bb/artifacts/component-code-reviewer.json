@@ -1,22 +1,14 @@
 {
-  "verdict": "pass",
+  "verdict": "repair",
   "findings": [
-    "The planned program is an honest component-discovery preflight: it reports qualification=false, requires every native check to pass, and makes no fixture or task qualification claim.",
-    "The recorded material-binding failure is correctly repaired: bind_physics_material is no longer treated as Boolean, while resolved USD material identity and native static/dynamic friction readbacks remain fail-closed checks after reset.",
-    "The probe uses fresh PRE/POST PhysX callbacks and native articulation/contact tensors to measure momentum balance, inferred K/D, bidirectional force transfer, contact-buffer freshness, helix error, release, work, common-frame properties, and reduced inertia without runtime state writes or changing the passive drive target.",
-    "The reordered articulation retains the frozen lead, stiffness, damping, torque, mass, inertia, force, work, and tolerance criteria; auxiliary-link approximation is explicitly disclosed and independently gated rather than asserted exact.",
-    "Planned source and report paths match the executor working-directory contract, the source parses successfully, and the relevant pinned runtime source hashes match their index entries."
+    "The auxiliary-mass sweep is not verified from native per-link state: the script reads `get_masses()` but retains only the summed moving mass, while `auxiliary_mass_kg` is copied from the authored `VARIANTS` value. Because rotor mass is adjusted to keep every variant at 0.009 kg, the aggregate check can pass without proving that PhysX realized the intended support/rotor mass partition—the independent variable this probe claims to test. Record the native mass vector keyed by `link_names`, check each support and rotor mass against its authored value, and label authored values explicitly; include native inertia readbacks if the variants are claimed identical apart from auxiliary mass. The plan is otherwise bounded, nonempty, hash-consistent, qualification=false, and uses actual native DOF samples without state writes."
   ],
   "evidence_paths": [
     "artifacts/component-source-plan.json",
-    "task/run_series_elastic_helix_preflight.py",
-    "input/request.json",
+    "task/run_mimic_chain_conditioning_probe.py:198",
+    "task/run_mimic_chain_conditioning_probe.py:246",
+    "task/run_mimic_chain_conditioning_probe.py:265",
     "input/last-failure.json",
-    "input/operator-source-notes.json",
-    "input/runtime-api-preflight.json",
-    "input/pinned-runtime-sources/42480bef35dd55856d1d7135929cfcf4e5a24d85bfdc9ed1c2a2a89bde529ad8-prims.py",
-    "input/pinned-runtime-sources/1ba654210857a63b98236512e5f225723c3eb1dee64e867eaa4fade0578ccb7b-tensors-api.py",
-    "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py",
-    "artifacts/contract.json"
+    "input/runtime-api-preflight.json"
   ]
 }
