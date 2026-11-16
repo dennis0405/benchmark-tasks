@@ -23,7 +23,10 @@ def test_missing_team_auth_cannot_claim_complete_required_board_coverage(tmp_pat
         c.sync()
 
 
-def test_source_review_queue_survives_replaced_worker_input_without_overwriting_authority(tmp_path):
+@pytest.mark.parametrize("note_name", ["novelty-review-notes.json", "operator-source-notes.json"])
+def test_source_review_queue_survives_replaced_worker_input_without_overwriting_authority(
+    tmp_path, note_name
+):
     import json
 
     s = Store(tmp_path / "state")
@@ -31,13 +34,13 @@ def test_source_review_queue_survives_replaced_worker_input_without_overwriting_
     root = s.run_dir(r["id"])
     queue = root / "pending-source-review"
     queue.mkdir()
-    (queue / "novelty-review-notes.json").write_text('{"pr-1":{"source":"original"}}')
+    (queue / note_name).write_text('{"pr-1":{"source":"original"}}')
     c = Coordinator(s, {"instance": "vm", "instance_id": "id", "runtime": {}}, tmp_path)
     for _ in range(2):
         (root / "workspace/input").mkdir(parents=True, exist_ok=True)
-        (root / "workspace/input/novelty-review-notes.json").write_text("{}")
+        (root / "workspace/input" / note_name).write_text("{}")
         c.prepare_input(r["id"], {"complete": True})
-        assert json.loads((root / "workspace/input/novelty-review-notes.json").read_text()) == {
+        assert json.loads((root / "workspace/input" / note_name).read_text()) == {
             "pr-1": {"source": "original"},
         }
     (queue / "request.json").write_text('{"prompt":"different objective"}')

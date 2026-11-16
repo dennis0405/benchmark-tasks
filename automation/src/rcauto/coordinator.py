@@ -132,7 +132,9 @@ class Coordinator:
                     or attachment.is_symlink()
                     or attachment.stat().st_size > 25 * 1024 * 1024
                     or not re.fullmatch(
-                        r"novelty-review-notes\.json|pr-\d+-[a-zA-Z0-9._-]+\.txt", attachment.name
+                        r"(?:novelty-review-notes|operator-source-notes)\.json"
+                        r"|pr-\d+-[a-zA-Z0-9._-]+\.txt",
+                        attachment.name,
                     )
                 ):
                     raise GateError("invalid source-review attachment: " + attachment.name)
