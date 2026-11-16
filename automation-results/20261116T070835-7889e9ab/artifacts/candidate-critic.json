@@ -1,24 +1,21 @@
 {
-  "verdict": "repair",
+  "verdict": "pass",
   "findings": [
-    "The selected candidate is unambiguous and the primary catalog image verifies the key product rows: 14.5 in diameter × 2.5 in deep high-impact-polymer screens, #23209R 1/2 in screen, and #41316R 3/8 × 7/8 in angle-cut ceramic cylinders. The conversions to 368.3 × 63.5 mm, 12.7 mm, and 9.525 × 22.225 mm are correct.",
-    "The essential mechanism is credible but incompletely grounded: the source labels a “1/2 in Screen” and visually shows coarse square grids, but does not establish that #23209R has exactly 12.7 mm clear square apertures. The candidate must label aperture shape, clear width, bar thickness, and floor profile as testable modeling assumptions rather than “actual” dimensions.",
-    "Required physics assumptions remain unspecified despite the operator note identifying them: ceramic density/mass, angle-cut geometry, screen mass, bar thickness, friction/contact parameters, and the washer’s material/density or per-body mass. These materially control passage, bridging, agitation, damage, and YAM load feasibility and must be fixed or explicitly bounded before readiness is claimed.",
-    "The representative 30 mm OD × 8 mm bore × 4 mm washer is properly disclosed as an assumption and is retained by a 12.7 mm aperture, but its bore is smaller than the 9.525 mm media diameter by only 1.525 mm. The plan should explicitly validate that collision tolerances and the angle-cut ends cannot lodge in the bore, as required by the operator inspection.",
-    "The scoring contract is numerically inconsistent: a linear 0–70 recovery term gives 68.6 points at 98% recovery, so the stated full-score condition of “at least 98%” cannot yield 100 points without a defined threshold or normalization rule. Specify the exact formula and whether 98–100% maps to all 70 recovery points.",
-    "The source-backed industrial operation and sequence are sufficient to attempt construction: Raytech explicitly describes manual/powered screens configured for parts or media to pass, warns that excessive motion can damage uncushioned parts, and identifies washers as mass-finishing candidates. No completed physics or robot demo is required at this gate.",
-    "The pinned YAM constants support a 94 mm gripper opening, 240 Hz physics, and 10 Hz control, but the 368.3 mm screen’s bimanual rim grasp, support clearance, feed-cup access, and load remain construction risks rather than blockers once the missing masses and geometry assumptions are specified.",
-    "The prior “candidate selection ambiguous” failure is addressed by artifacts/selected.json selecting exactly one ready candidate; the additional entries in candidates.json are explicitly research-needed alternatives rather than competing selections."
+    "Exactly one candidate is marked ready and selected; the two alternatives remain explicitly research-needed.",
+    "Primary Raytech catalog imagery verifies the 14.5 × 2.5 inch screen envelope, nominal 1/2-inch screen listing, and 3/8 × 7/8-inch angle-cut ceramic media listing. Unit conversions are correct.",
+    "Unknown aperture, rib, cut-angle, mass, material, contact, and fixture parameters are clearly disclosed as testable representative-model assumptions rather than manufacturer specifications.",
+    "The washer and media reference masses recompute consistently from the declared dimensions and densities. Lodging, passage, retention, boundary-aperture, reach, load, spill, and refinement checks remain correctly identified as future native gates, not claimed successes.",
+    "The score formula is internally consistent: initial 0.00, loaded 0.20, 49% recovery 0.55, threshold recovery 0.90, and valid released dwell 1.00. Loss and prerequisite revocation conditions are explicit.",
+    "Manufacturer procedure evidence supports manual separation of parts and media and the risk of excessive unlubricated motion. The plan is sufficiently grounded to attempt construction without requiring completed physics or novelty certification at this stage."
   ],
   "evidence_paths": [
     "artifacts/selected.json",
     "artifacts/candidates.json",
-    "input/last-failure.json",
     "input/operator-source-notes.json",
+    "input/sources.json",
+    "input/sources/s-b442a7fa63fcb80c.raw",
     "input/media-separation-source-visuals/s-b442a7fa63fcb80c-page-21.png",
-    "input/sources/s-b442a7fa63fcb80c.json",
-    "input/sources/s-a3efcebbecba0048.json",
-    "input/sources/s-855e796b5a3f8ecc.json",
-    "input/request.json"
+    "input/source-visuals/yam-test-constants.py",
+    "input/last-failure.json"
   ]
 }

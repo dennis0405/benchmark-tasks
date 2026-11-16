@@ -3,17 +3,17 @@
     {
       "id": "dry-angle-cut-media-recovery",
       "title": "Screen ceramic finishing media from finished metal washers",
-      "objective": "Pour a dry mixture of full-scale metal washers and ceramic angle-cut cylinders into a supported manual separating screen, manipulate the screen so the media passes into the collection tray, retain every washer, then release the screen onto its supports.",
+      "objective": "Pour a dry mixture of full-scale metal washers and ceramic angle-cut cylinders into a supported manual separating screen, use the screen to recover the media in the receiver while retaining every washer, then release the screen onto its supports.",
       "skills": [
         "Bimanual rim grasping and load sharing",
-        "Controlled pouring into a supported tool",
-        "Tool orientation and oscillation driven by granular flow",
-        "Managing orientation-dependent aperture bridging",
-        "Stable placement and release without spilling"
+        "Controlled pouring into a supported screen",
+        "Orientation-dependent granular-flow control",
+        "Bridge-clearing through bounded tilt and agitation",
+        "Stable tool placement and collision-free release"
       ],
-      "success_conditions": "Primary score: percentage of starting media mass physically recovered beneath the screen (0–70 points), plus 20 points if every washer remains in the screen and 10 points if the released screen rests on all supports for 3 seconds. Any washer leaving the screen permanently loses the 20 retention points; media crossing the rim, floor contact, or tray escape is immutable loss and cannot earn recovery credit. Washer fracture or permanent deformation is damage and caps the total at 40. Full score requires at least 98% media recovery, 100% washer retention, no recorded rim spill or floor contact, and the released 3-second supported dwell. These outcomes are reproducible with a scale and continuous video; shake count, hand identity, action order, and motion style are not graded.",
-      "industrial_value": "Raytech identifies screens as equipment for manually separating parts from finishing media and describes hand separation as tedious and labor intensive. The task therefore represents post-finishing material recovery performed by inspectors, testers and sorters, hand laborers/material movers, and production workers rather than color-based conveyor sorting.",
-      "dexterity": "The 9.525 mm diameter media can enter a 12.7 mm opening end-first, but its 22.225 mm length exceeds the approximately 17.96 mm diagonal of a square opening, creating real orientation-dependent bridging. The robot must coordinate a two-arm grasp, tilt, and bounded agitation while keeping larger annular workpieces inside. A no-motion or simple dump policy should leave bridged media, while excessive motion can cause rim loss or part damage.",
+      "success_conditions": "Let F be the fraction of starting mixture mass that has physically entered the screen, and r the current receiver-contained media mass divided by starting media mass. Before a permanent failure, score = 0.20F + 0.70 min(max(r/0.98,0),1) + 0.10D. D becomes 1 only after F=1, r>=0.98, every washer remains in the screen, the screen rests on its supports, both grippers are at least 60 mm clear, and fresh observations continuously satisfy those conditions for 3.0 seconds; any broken prerequisite resets the dwell. Thus 98–100% recovery earns all 70 recovery points. A washer leaving the screen, deliberate workpiece removal, or receiver contamination permanently sets the score to zero. Media crossing the rim, contacting the floor, or escaping the receiver is immutable loss and cannot earn recovery credit; any such event also prevents D. Washer fracture or permanent deformation caps the score at 0.40. Full score requires F=1, r>=0.98, all washers retained, no spill, loss, contamination, or damage, and the released dwell. Continuous video and before/after weighing can check the outcome; motion style, shake count, hand identity, and action order are not graded.",
+      "industrial_value": "Raytech identifies manual screens as equipment for separating manufactured parts from finishing media, while its guidance warns that excessive separation motion can damage uncushioned parts. The objective represents a real post-finishing recovery operation affecting production workers, inspectors, and material handlers rather than appearance-based sorting.",
+      "dexterity": "The source fixes a nominal 1/2-inch screen class and 9.525 × 22.225 mm angle-cut media. In the representative model, the clear apertures are explicitly assumed to be 12.7 mm squares: the media diameter can fit, but its length exceeds the approximately 17.96 mm aperture diagonal. Native controls must demonstrate end-first passage, transverse bridging, and bridge release. The robot must pour into the supported screen, establish a coordinated two-arm grasp, mobilize bridged media without throwing it over the rim, retain annular steel workpieces, and reseat and release the loaded screen.",
       "evidence": [
         {
           "source_id": "s-b442a7fa63fcb80c",
@@ -37,34 +37,34 @@
         },
         {
           "source_id": "s-855e796b5a3f8ecc",
-          "locator": "FAQ section, “What is the best way to separate the parts from the media?”",
+          "locator": "FAQ, “What is the best way to separate the parts from the media?”",
           "quote_sha256": "cb857665dd1eb63e71b37cd081667c7aa195503cb72424be339f0dfaf66e3f6b"
         },
         {
           "source_id": "s-855e796b5a3f8ecc",
-          "locator": "FAQ section, “Separating Screens”",
+          "locator": "FAQ, “Separating Screens”",
           "quote_sha256": "4a7d0f25e5a463f5948a246cc275401fd5b5b35ec580c57b776cb99d4a9c7429"
         }
       ],
-      "asset_plan": "Author a representative full-scale 368.3 mm diameter by 63.5 mm deep polymer screen with finite-thickness walls, a graspable rounded rim, and actual 12.7 mm square apertures; use compound bars or supported triangle-mesh collision so holes remain physically open. Model free rigid 9.525 by 22.225 mm angle-cut ceramic cylinders at the manufacturer’s nominal envelope. Use recognizable annular metal workpieces with a disclosed representative geometry—30 mm outside diameter, 8 mm bore, 4 mm thickness—and measured simulation mass; this is a testable modeling assumption, not an exact product replica. Provide a rigid receiver, two stable screen supports, and a gripper-accessible feed cup. Validate one-media end-first passage, transverse bridging, washer retention in every orientation, multi-body no-op and spill controls, then YAM grasp/lift, pour, sift, support placement, release, and fresh-observation dwell at the pinned 240 Hz physics/10 Hz control runtime. Preserve per-body trajectories, contacts, mass accounting, and 240 Hz collision-check labels separately from grading.",
-      "risk": "The full-size screen is large relative to the YAM tabletop and requires a verified two-arm reachable rim layout. Dense collections of slender rigid media may exhibit tunneling, unstable contacts, or unrealistic self-locking; aperture passage, bridge release, spill behavior, and screen/support grasp clearance must pass component tests before a full demo. The representative washer geometry must be disclosed clearly so it is not presented as a verified commercial SKU.",
+      "asset_plan": "Build an independently authored, representative full-scale screen using the sourced 368.3 mm outer diameter and 63.5 mm depth. Treat the following as frozen, testable modeling assumptions rather than manufacturer CAD: 12.7 mm clear square apertures, 3 mm ribs and rib thickness, 15.7 mm pitch, 150 mm flat perforated-floor radius, 3 mm sloped wall, and 0.40 kg screen mass. Preserve true openings with finite compound bars or supported non-convex collision; never use a convex hull that fills the holes. Model 24 free ceramic bodies at the sourced 9.525 × 22.225 mm envelope, with assumed parallel 15-degree angle cuts and 2500 kg/m³ density; compute and record each realized closed-mesh mass and inertia, with about 3.50 g as the analytic reference. Model four disclosed representative plain carbon-steel washers, not a claimed commercial SKU: 30 mm OD, 8 mm bore, 4 mm thickness, 7850 kg/m³, approximately 20.62 g each. Use initial uncalibrated contact assumptions of ceramic/polymer static/dynamic friction 0.50/0.35, steel/polymer 0.45/0.35, media/media 0.40/0.30, restitution 0.05, 0.15 mm contact offset, zero rest offset, and 32/8 solver position/velocity iterations. Provide a rigid receiver, two physical supports, and a 78 mm OD gripper-accessible feed cup. Before robot integration, verify at physics-substep resolution: end-first media passage; transverse bridging and motion-driven release; washer retention in every relevant orientation; whether angle-cut noses can enter or lodge in the washer’s 8 mm bore despite the 9.525 mm body diameter; no boundary aperture larger than specified; no-op, gravity, spill, and aggressive-motion controls. Then verify actual YAM contacts and joint/body traces for cup pouring, bimanual lift and sifting, support placement, 60 mm release clearance, and fresh 3-second dwell. Keep component physics metrics separate from task scoring.",
+      "risk": "The 368.3 mm screen is large relative to the pinned 0.8 × 1.2 m tabletop, so bimanual rim reach, feed-cup access, support clearance, and loaded grasp stability remain construction risks. Slender media may tunnel or self-lock unrealistically, and angle-cut tips may lodge in washer bores. These are explicit native component gates: failure blocks full-scene development but does not leave the mechanism undefined. Material and contact values are disclosed uncalibrated assumptions and must not be tuned with hidden forces, collision removal, particle freezing, or velocity caps that suppress genuine spills.",
       "feasibility_status": "ready",
       "missing_evidence": []
     },
     {
       "id": "undersize-media-grading",
-      "title": "Classify worn finishing media through a manual screen",
-      "objective": "Use a manual screen to remove undersized worn finishing media from a reusable production-media batch while retaining serviceable media.",
+      "title": "Grade worn finishing media with a manual screen",
+      "objective": "Use a manual separating screen to remove undersized worn finishing media from a reusable production-media batch while retaining serviceable media.",
       "skills": [
         "Bimanual screen manipulation",
-        "Granular classification",
-        "Controlled agitation",
+        "Granular size classification",
+        "Controlled bridge-clearing agitation",
         "Loss prevention",
-        "Stable tool placement"
+        "Stable tool placement and release"
       ],
-      "success_conditions": "Score recovered undersized-media mass in the lower tray, retained serviceable-media mass in the screen, immutable off-apparatus loss, and a released 3-second supported dwell. Full score would require at least 98% correct mass classification in both fractions with no spill or media damage.",
-      "industrial_value": "Raytech explicitly describes its manual screens as useful for separating undersized media, and its process guidance says media is continuously worn during finishing. This is a real consumable-maintenance operation rather than object sorting by appearance.",
-      "dexterity": "A valid setup would require worn pieces that pass only after reorientation while serviceable pieces remain above the aperture; controlled agitation must improve separation without launching retained pieces.",
+      "success_conditions": "Score the receiver-contained undersized-media mass fraction, the retained serviceable-media mass fraction, immutable off-apparatus loss, contamination between fractions, and a released 3-second supported dwell. Full score would require at least 98% correct recovery in each fraction, no spill or damage, and continuous satisfaction of the released-dwell prerequisites.",
+      "industrial_value": "The manufacturer describes manual screens as useful for separating undersized media and notes that finishing media wears during processing, grounding this as consumable maintenance rather than arbitrary visual sorting.",
+      "dexterity": "A valid implementation would require realistic worn pieces that need reorientation to pass while serviceable pieces remain above the aperture; the robot would have to improve separation without ejecting either population.",
       "evidence": [
         {
           "source_id": "s-b442a7fa63fcb80c",
@@ -73,47 +73,48 @@
         },
         {
           "source_id": "s-855e796b5a3f8ecc",
-          "locator": "FAQ section, “External powder driven separators”",
+          "locator": "FAQ, “External powder driven separators”",
           "quote_sha256": "df7bef824192e321eea75d028487792f6b2af78d580bca780e1765da0eb16397"
         },
         {
           "source_id": "s-855e796b5a3f8ecc",
-          "locator": "FAQ section, “How do I prevent media from lodging in my parts?”",
+          "locator": "FAQ, “How do I prevent media from lodging in my parts?”",
           "quote_sha256": "4927134872e62883b4cad0fce1cd37df43024b9c096fa7a2e0bbe88bd06da525"
         }
       ],
-      "asset_plan": "Use the same full-scale screen family, receiver, supports, and native rigid-body construction, but acquire manufacturer- or process-grounded worn and serviceable dimensions that fall on opposite sides of one listed aperture. Validate both populations individually and mixed before YAM manipulation.",
-      "risk": "Without grounded discard limits and worn-media dimensions, arbitrary scaling could turn a maintenance operation into a synthetic size-sorting puzzle. Near-aperture fragments may also jam unrealistically unless shape and wear distributions are documented.",
+      "asset_plan": "Use a full-scale finite-thickness screen and free rigid media, but first acquire a manufacturer- or process-grounded discard threshold and realistic worn-shape distribution. Select a listed screen whose true assumed aperture model separates those populations, then validate both populations independently and mixed before YAM manipulation.",
+      "risk": "Without grounded discard limits and wear geometry, the populations and aperture relationship would be arbitrary. Immediate gravity separation could also erase the intended manipulation skill.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
         "A manufacturer or process specification defining the discard threshold for one media family",
-        "Source-grounded worn and serviceable dimensions on opposite sides of a listed screen opening",
-        "Evidence that the chosen mixture requires manipulation rather than immediate gravity separation"
+        "Source-grounded worn and serviceable dimensions and shape distributions",
+        "A compatible listed screen class and explicit aperture-geometry assumptions",
+        "Evidence that the selected mixture requires manipulation rather than immediate gravity separation"
       ]
     },
     {
       "id": "reverse-screen-small-part-recovery",
       "title": "Recover small finished parts while retaining larger finishing media",
-      "objective": "Configure a separating screen so small finished metal parts pass into the receiver while larger finishing media remains in the screen.",
+      "objective": "Configure a manual separating screen so small finished metal parts pass into a receiver while larger finishing media remains in the screen.",
       "skills": [
-        "Loaded-tool manipulation",
-        "Fine granular flow control",
+        "Bimanual loaded-tool control",
+        "Fine granular-flow management",
         "Part recovery without impact damage",
         "Media retention",
-        "Bimanual placement and release"
+        "Stable placement and release"
       ],
-      "success_conditions": "Score the percentage of starting part mass recovered in the receiver, retained-media mass, immutable spill or cross-contamination, part damage, and a released 3-second supported dwell. Full score would require at least 98% part recovery, 100% media retention, no spill, no damaged part, and stable screen placement.",
-      "industrial_value": "Raytech states that separating screens may be configured for either parts or media to pass and emphasizes accountability of all parts during external separation. A properly grounded version would test recovery of small production workpieces after mass finishing.",
-      "dexterity": "The robot would need to mobilize small parts through apertures without forcing larger media through, losing parts over the rim, or damaging unlubricated workpieces through excessive motion.",
+      "success_conditions": "Score the receiver-contained starting-part mass fraction, retained-media mass fraction, immutable spill and cross-contamination, part damage, and released 3-second supported dwell. Full score would require at least 98% part recovery, 100% media retention, no spill, contamination, or damaged part, and continuous released dwell.",
+      "industrial_value": "Raytech states that screens may be configured so either parts or media pass and emphasizes accountability for parts during external separation. A properly grounded implementation would represent recovery of small production workpieces after mass finishing.",
+      "dexterity": "The robot would need to mobilize small workpieces through real apertures without forcing larger media through, losing workpieces over the rim, or damaging unlubricated parts through excessive motion.",
       "evidence": [
         {
           "source_id": "s-855e796b5a3f8ecc",
-          "locator": "FAQ section, “Separating Screens”",
+          "locator": "FAQ, “Separating Screens”",
           "quote_sha256": "cb857665dd1eb63e71b37cd081667c7aa195503cb72424be339f0dfaf66e3f6b"
         },
         {
           "source_id": "s-855e796b5a3f8ecc",
-          "locator": "FAQ section, “Large machines”",
+          "locator": "FAQ, “Large machines”",
           "quote_sha256": "b9550b24028e8602ec98a4486f827f457d820112785ea94abe8a912e00d29af2"
         },
         {
@@ -122,17 +123,17 @@
           "quote_sha256": "aea147bd37db406251a63aa521cde3166a44b133cd36a482172ef994b83682da"
         }
       ],
-      "asset_plan": "After acquiring a compatible real workpiece/media pair, author their full-scale rigid geometry and choose one manufacturer-listed screen opening. Use a padded receiver only if its real counterpart is sourced. Validate part passage, media retention, impact behavior, and mixed-flow controls before robot integration.",
-      "risk": "No acquired source currently identifies a compatible small workpiece, larger media, and aperture combination. Inventing those dimensions would leave the essential separation mechanism and damage risk ungrounded.",
+      "asset_plan": "Acquire a compatible real small-workpiece, larger-media, and listed-screen combination. Author their full-scale free rigid geometry, disclose all unsourced aperture and material parameters as test assumptions, and validate part passage, media retention, mixed-flow behavior, receiver impacts, and damage controls before robot integration.",
+      "risk": "No acquired source currently identifies a compatible workpiece, media, and aperture combination or establishes safe receiver impacts. Inventing this relationship would leave the essential mechanism ungrounded.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
-        "A source-grounded small-workpiece geometry and mass",
+        "A source-grounded small-workpiece geometry, material, and mass",
         "A source-grounded larger-media geometry used with that workpiece",
-        "A listed aperture that passes the workpiece while retaining the media",
-        "Evidence that receiver impacts do not damage the selected finished parts"
+        "A listed screen class whose modeled aperture passes the workpiece while retaining the media",
+        "Evidence or a justified physical test plan for receiver-impact damage"
       ]
     }
   ],
   "selected_id": "dry-angle-cut-media-recovery",
-  "selection_reason": "This is the only ready candidate: acquired manufacturer evidence fixes the screen scale, true aperture, media geometry, and industrial parts/media separation mechanism, while a disclosed representative annular workpiece makes retention directly testable without claiming an unverified product replica. It also addresses the prior ambiguous selection by choosing one buildable objective; the two alternatives remain research-needed because their essential size relationships are not yet sourced."
+  "selection_reason": "This is the only ready candidate. Primary manufacturer evidence establishes the industrial separation operation, full-scale screen envelope, nominal screen class, and media envelope; all otherwise unknown aperture, floor, rib, mass, cut-angle, washer, and contact parameters are now explicitly frozen as testable representative-model assumptions. The score correctly awards all recovery points at the 98% threshold, and bore lodging, true aperture passage, load, reach, and spill behavior are mandatory component gates rather than unsupported success claims. The other two industrial alternatives remain research-needed because their essential size relationships are not yet grounded."
 }
