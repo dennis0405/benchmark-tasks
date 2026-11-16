@@ -1,0 +1,27 @@
+{
+  "verdict": "repair",
+  "findings": [
+    "The 14 required controls recompute to 0, 0.25, 0.5, 0.75, 1.0, 0, 0, 0, 0.25, 0, 0, 0, 0, and 1.0. The original 27 physics thresholds are unchanged, and the new released/vented preload threshold is exactly 2 N for 0.25 s.",
+    "The normative material specification is contradictory. artifacts/contract.json and input/fixture-geometry-contract.json require an anodized-aluminum fixture frame and cover, consistent with the catalog, but every frame and cover piece in input/first-party-seeds/drg80_stop/fixture/fixture-proposal.json is labeled Steel. The contract simultaneously incorporates that manifest as normative, so implementation material and contact behavior are ambiguous.",
+    "The claimed complete object specification is still false: input/fixture-geometry-contract.json gives the bench dimensions but no bench material, and does not specify the camera/mast material. The contract lists both as scene objects and claims all material choices are normative. These omissions violate the explicit setup and reproducibility requirement.",
+    "The physical locking model remains underspecified despite the improved 2 N observable. input/fixture-geometry-contract.json leaves the thread coefficient to be disclosed later, while artifacts/contract.json claims torque and friction are explicit benchmark assumptions and does not freeze clamp compliance, thread friction, or an unambiguous N73-to-screw helical constraint. Without those specifications, an implementation could retain preload through guide friction or axial interference rather than the intended threaded jam-nut reaction, and independent reproduction would not be deterministic.",
+    "The repaired clearance, gripper-opening, signed piston-motion, centric-coupling, stop-contact, release, endpoint, revocation, finite-mount, force/work-unit, reset, and fresh-dwell predicates are otherwise numerically computable. The prospective contract correctly reserves native callback, contact, force, and refinement validation for later gates rather than claiming existing proof."
+  ],
+  "evidence_paths": [
+    "artifacts/contract.json",
+    "artifacts/selected.json",
+    "input/contract-repair-baseline/contract.json",
+    "input/contract-repair-baseline-v2/contract.json",
+    "input/contract-repair-baseline-v2/contract-critic-repaired.json",
+    "input/fixture-geometry-contract.json",
+    "input/first-party-seeds/drg80_stop/assets/geometry.json",
+    "input/first-party-seeds/drg80_stop/fixture/fixture-proposal.json",
+    "input/sources/s-0b3ec636c6201fe9.json",
+    "input/sources/s-604022b1979c380c.json",
+    "input/runtime-api-preflight.json",
+    "input/pinned-runtime-sources/8c44cc2e96ac491255211f2e0b807dda4c1f7547db5a6c62b809764ef69ca2c2-constants.py",
+    "input/pinned-runtime-sources/7c4081aa811b2839f908d533e12885dac7a0aaed62ff8da59e36995b50b87809-scene.py",
+    "input/pinned-runtime-sources/58b2f7cdff95a6a0116340a1cbb8d00d69b710c97969358e12a6992e7a85b5ce-trusted-evaluation.py",
+    "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py"
+  ]
+}
