@@ -53,8 +53,12 @@ loaded behavior. No pose writes after initialization and no hidden tool welds.
   friction; the CPU-only asset checks do not establish any of these.
 - Apply controlled diagnostic nut torque with a free screw, then with a real
   restraint. Record native screw/nut angles, gap, forces and release behavior.
-- Seat and release the nut, measure retention, then loosen it and confirm that
-  retention changes. Check timestep sensitivity at the declared sample rate.
+- Seat and release the nut, measure retention, then loosen it and measure the
+  resulting behavior. An unlocked thread need not backdrive under axial load;
+  do not force an angle failure solely to make a negative control look decisive.
+  Missing nut seating can fail the required secured outcome even if the screw
+  temporarily retains its setting through thread friction. Check timestep
+  sensitivity at the declared sample rate.
 - Test the real hex and wrench interfaces; off-axis or unseated tools must not
   transmit an invented rotation merely because a hand is nearby.
 - Once adopted, connect the same component model to both scripted and Dream
@@ -66,3 +70,18 @@ safe precompensation. Grade the actual retained outcome and declared industrial
 requirements, not mandatory hand identity or a preferred counterholding plan.
 If a simpler valid strategy works, document it and reassess the actual tested
 ability in final novelty review.
+
+## Axial self-locking is distinct from fastening reaction
+
+[igus](https://toolbox.igus.com/motion-plastics-blog/self-locking-what-is-it/)
+explains that self-locking depends on lead/thread geometry, friction and
+operating conditions. [Thomson](https://www.thomsonlinear.com/en/support/tips/is-it-possible-to-backdrive-an-actuator)
+also distinguishes self-locking screw designs from backdrivable systems.
+These are general engineering references, not measurements of the SCHUNK unit
+or a license to copy another product's friction coefficients.
+
+Therefore measure fastening-induced screw rotation separately from response
+to axial piston load. Validate the assumed friction regime and report what the
+unrestrained control actually does. If real countertorque/setpoint coupling is
+absent, revise the ability claim and final novelty assessment; do not invent
+an unstable screw merely to require a particular two-handed strategy.
