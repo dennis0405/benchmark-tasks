@@ -82,6 +82,18 @@ def fixture_parts():
     return parts
 
 
+def fixture_layout():
+    return {
+        "frame": ("parts/frame.usda", (0, 0, 0)),
+        "left_jaw": ("parts/left_jaw.usda", (-0.030, 0.022, 0.095)),
+        "right_jaw": ("parts/right_jaw.usda", (0.030, 0.022, 0.095)),
+        "piston": ("parts/piston.usda", (0, -0.018, 0.072)),
+        "adjustment_screw": ("../assets/socket_adjuster.usda", (0, -0.018, 0.1017)),
+        "nut73": ("../assets/thin_nut.usda", (0, -0.018, 0.0930)),
+        "nut74": ("../assets/thin_nut.usda", (0, -0.018, 0.0997)),
+    }
+
+
 def body(stage, name, reference, pos, kinematic=False):
     from pxr import Gf, UsdGeom, UsdPhysics
 
@@ -214,19 +226,12 @@ def export(root):
     stage.SetMetadata("upAxis", "Z")
     top = stage.DefinePrim("/Bench", "Xform")
     stage.SetDefaultPrim(top)
-    layout = {
-        "frame": ("parts/frame.usda", (0, 0, 0)),
-        "left_jaw": ("parts/left_jaw.usda", (-0.030, 0.022, 0.095)),
-        "right_jaw": ("parts/right_jaw.usda", (0.030, 0.022, 0.095)),
-        "piston": ("parts/piston.usda", (0, -0.018, 0.072)),
-        "adjustment_screw": ("../assets/socket_adjuster.usda", (0, -0.018, 0.1017)),
-        "nut73": ("../assets/thin_nut.usda", (0, -0.018, 0.0925)),
-        "nut74": ("../assets/thin_nut.usda", (0, -0.018, 0.0997)),
-    }
+    layout = fixture_layout()
     for name, (reference, pos) in layout.items():
         body(stage, name, reference, pos, kinematic=name == "frame")
     cylindrical(stage, "screw_guide", "frame", "adjustment_screw", layout["adjustment_screw"][1])
-    cylindrical(stage, "nut_guide", "adjustment_screw", "nut73", (0, 0, -0.0092))
+    nut_anchor = tuple(n - s for n, s in zip(layout["nut73"][1], layout["adjustment_screw"][1]))
+    cylindrical(stage, "nut_guide", "adjustment_screw", "nut73", nut_anchor)
     retained = UsdPhysics.FixedJoint.Define(stage, "/Bench/nut74_retained")
     connect(retained, "adjustment_screw", "nut74", (0, 0, -0.0020))
     for name, low, high in (("left_jaw", -90, 0), ("right_jaw", 0, 90)):

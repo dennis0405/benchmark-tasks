@@ -52,6 +52,12 @@ relation and a piston/rack relation. Referenced body roots and six joint anchors
 resolve in CPU OpenUSD. PhysX-specific coupling frames and ratio sign require
 native verification; no simulator has run this proposal.
 
+The loose nut begins 1 mm above the cover. Under the proposed piston/jaw ratio,
+setting the stop from its initial opening to 90 degrees advances the screw by
+about 0.464 mm. Even if the loose nut co-rotates and follows that travel, about
+0.536 mm remains before seating. A CPU geometry regression checks this margin;
+native load, clearance and target-angle measurements are still required.
+
 Generate with `uv run --no-project --with usd-core python fixture_seed.py`.
 The valve, thread/helix dynamics, friction updates, scorer and robot controller
 are intentionally missing. The scene is not a working environment. In

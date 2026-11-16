@@ -2,7 +2,7 @@
 
 import math
 
-from fixture_seed import fixture_parts
+from fixture_seed import fixture_layout, fixture_parts
 from geometry_seed import CONTACT_OFFSET
 
 
@@ -41,3 +41,17 @@ def test_cover_and_barrel_leave_clearance_for_the_actual_mating_bodies():
                 / length
             )
             assert distance - moving_radius > 2 * CONTACT_OFFSET
+
+
+def test_loose_nut_does_not_seat_before_the_proposed_90_degree_setting():
+    layout = fixture_layout()
+    screw_z = layout["adjustment_screw"][1][2]
+    piston_z = layout["piston"][1][2]
+    # Worst case: the loose nut co-rotates with the adjusting screw. It then
+    # follows its axial travel, rather than staying at its original world Z.
+    initial_stop_gap = screw_z - 0.024 - piston_z
+    stroke_at_target = math.radians(90 / 2) / 150
+    screw_advance = initial_stop_gap - stroke_at_target
+    assert screw_advance > 0
+    nut_bottom_after_adjustment = layout["nut73"][1][2] - 0.002 - screw_advance
+    assert nut_bottom_after_adjustment - 0.090 > 2 * CONTACT_OFFSET + 0.0001
