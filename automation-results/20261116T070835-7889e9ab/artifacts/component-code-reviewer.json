@@ -1,15 +1,19 @@
 {
-  "verdict": "repair",
+  "verdict": "pass",
   "findings": [
-    "The mass repair removes the required constitutive coupling. The frozen media geometry uses a 22.225 mm maximum axial envelope with parallel 15° cuts, so its centerline length and mesh volume are smaller than those of a 22.225 mm cylinder. `MassPropertiesCfg(mass=MEDIA_MASS)` forces the target mass while ignoring the contract’s frozen 2500 kg/m³ density; consequently the `realized_media_mass_relative_error` check is guaranteed by authored input rather than validating geometry × density. Reconcile the frozen geometry, density, and mass explicitly, then measure native mass and inertia without a criterion-forcing override.",
-    "`MEDIA_DENSITY` is now unused, while the report does not expose mesh volume, effective density, or inertia agreement with a geometry-derived reference. The only inertia criterion is positivity, which cannot detect incorrect mass-property coupling. Add checks tracing volume, density, mass, and inertia to the same physical body and units.",
-    "The prior 7.05% mass failure is therefore concealed rather than physically resolved. Generated-source preflight cannot pass while the revised program changes the material interpretation solely to satisfy the failed threshold."
+    "The prior failure is resolved: the plan uses prospective language, identifies only the probe script as reviewed source, and clearly labels reports and traces as future execution outputs.",
+    "The two task-cwd-compatible invocations schedule bounded native runs at 240 Hz and 480 Hz and resolve their reports under workspace/measurements.",
+    "The script reads the actual RigidObject root_pose_w ProxyArray through its pinned torch accessor after scene updates, synchronizes CUDA reads, and records fresh 7D pose samples.",
+    "Qualification checks trace to measured simulator state: actual dt error, CUDA device backing, finite pose values, normalized XYZW quaternions, authored quaternion readback, downward gravity displacement, and sample count. None are constant success readings.",
+    "The probe is correctly scoped to API discovery and makes no unsupported aperture, retention, spill, YAM, 20 Hz control-loop, or full-task qualification claim."
   ],
   "evidence_paths": [
-    "task/run_aperture_native_probe.py",
     "artifacts/component-source-plan.json",
+    "task/run_rigid_cuboid_api_probe.py",
     "input/last-failure.json",
-    "artifacts/contract.json",
-    "../logs/aperture_native_probe_240hz-bf7b3c944d.log"
+    "input/runtime-api-preflight.json",
+    "input/pinned-runtime-sources/589e4ddab2af8f7b1ea788aba5f0bc4f13fa1c5e199ee75589c4b7ec41914157-asset_base_cfg.py",
+    "input/pinned-runtime-sources/841ca674429d5bd405d212f93494c42ff32ae162e4add373474193adbec746f7-base_rigid_object_data.py",
+    "input/pinned-runtime-sources/6e03c85172da8712bdebc6e19c89cea7868afb02f9e96259c82a281cca4270b4-rigid_object_data.py"
   ]
 }

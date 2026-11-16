@@ -5,7 +5,7 @@
     "instance": "robocurve-conveyor",
     "created_at": "2026-11-16T07:08:35.696140+00:00",
     "status": "blocked",
-    "stage": null,
+    "stage": "environment",
     "mode": "production",
     "config": {
       "instance": "robocurve-conveyor",
@@ -51,7 +51,7 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 25044,
+    "supervisor_pid": 30290,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log",
     "compute": "running",
     "migration": {
@@ -85,16 +85,15 @@
       "tool_write_verified": true,
       "production_task_validated": false
     },
-    "revision": 14,
+    "revision": 15,
     "revision_request": "사용자의 최신 명시적 지시 (이전 작업 방향 및 내부 중요성 사전 심사보다 우선):\n\n체로 분리하는 거로 일단 진행해보자.\n해당 업무가 직군적으로 중요한건 채점자의 판단이고 일단 우리는 그럴싸한 작업이 나오면 그거로 진행하자.\n\n이번 revision의 확정 범위:\n- 현재 선택된 dry-angle-cut-media-recovery 태스크를 그대로 구현한다. 컵의 세라믹 연마재와 금속 와셔 혼합물을 실제 구멍이 있는 체에 붓고, 양팔 YAM으로 체를 다루어 연마재를 수거함으로 통과시키며 모든 와셔를 보존한 뒤 체를 받침에 내려놓고 손을 뗀다. 다른 주제 탐색, 품질검사 업무로의 목적 변경, 과거 상자·lifting-pin·snack-film 재개는 하지 않는다.\n- 사용자는 중요성/직군 규모를 채점자의 판단으로 남기고 실제 구현을 진행하라고 명시했다. 따라서 50만 명 직군 연결의 불확실성은 보고서의 한계이며 제작을 막는 내부 gate가 아니다. Impact on jobs를 잠정 카테고리로 쓰되, 602,000명 전체가 이 작업을 한다거나 공식 중요성 기준을 충족했다고 주장하지 않는다. 제조사 근거로 실제 작업임을 설명하고, 구체적 직무 연결과 채택 여부는 미검증이라고 기록한다. 이 예외는 중요성 사전 판단에 한정되며 물리·채점·신규성·비밀정보·제출 승인 조건을 해제하지 않는다.\n- 같은 run 20261116T070835-7889e9ab, 같은 전용 Brev 인스턴스, 같은 결과 브랜치를 유지한다. 다른 인스턴스와 run은 변경하지 않는다. CLI가 실행과 보존·종료를 관리한다.\n\n이미 있는 근거와 현재 수정 범위:\n- artifacts/selected.json, artifacts/candidate-preflight.json, artifacts/novelty.json, artifacts/novelty-critic.json, 최신 artifacts/contract.json 및 contract-critic.json을 읽는다. 현재 후보의 sourced 치수와 선언된 가정은 유지한다. 후보 ready는 구성 시도 준비이지 native-qualified 또는 submission-ready라는 뜻이 아니다.\n- 필수 제출물 703건 및 6개 suite의 완료된 신규성 검토 결과를 정확히 기록한다. PR684와 기본 체질 능력이 실제로 겹친다는 점은 그대로 남긴다. 그 기록은 검증된 closed/unmerged/other-team/non-board-required 역사 자료이며 현행 scope에서 nonblocking이다. active/accepted/pending/own-team/benchmark 중복을 무시하지 않으며 제출 전 최신 검사는 별도로 유지한다. 과거 카탈로그 검토가 아직 시작되지 않았다는 낡은 placeholder를 새 계약에 복사하지 않는다.\n- input/operator-source-notes.json의 initial_test_configuration.contract_source_review와 input/runtime-api-preflight.json 및 input/pinned-runtime-sources를 실제로 읽는다. 이 source index는 설치 소스의 해시와 버전을 확인한 자료이며 새 태스크의 native 성공 결과가 아니다. 명시적 20Hz 제어, 240Hz 생산 물리와 480Hz refinement는 실제 probe에서 확인한다.\n- 계약은 앞으로 구현할 물리/관측/채점을 정확히 정하는 문서다. 아직 없는 native 결과를 계약 작성 전에 요구하지 않는다. 이후 환경/물리/데모 gate는 실제 실행과 수치로 검증한다.\n\n정상 동작과 채점에 필요한 사항:\n- 입자는 컵 입구를 나와 여러 physics step 동안 자유 낙하한 후 체에 진입할 수 있다. 바로 인접한 두 샘플 사이에 컵에서 체로 순간 이동해야 하는 조건을 만들지 않는다. 컵이 빈 뒤 체를 흔들어 통과한 입자도 정상 회수로 인정한다. 개별 입자/와셔를 따로 골라 다른 표면에 적치하는 우회는 실제 provenance/접촉으로 구분한다.\n- 초기 점수 0, 유용한 부분 회수, 현재 회수량, 모든 와셔 잔류, 수거함 오염/실제 쏟아짐, 받침 접촉, 양손 이격 후 새로 측정한 연속 3초를 명확히 한다. 완전 유실 후 과거 loading만으로 점수가 남는 모순은 없앤다. 실제 24개 동일 질량 입자의 절반은 r=0.5이며 예전 r=0.49 예시는 synthetic 계산에만 해당한다.\n- composite washer를 쓰면 segment 집합, 조립체 기준점과 질량, segment 이탈/파손 때의 상태를 구분한다. 실제 구현하지 않은 소성 변형을 주장하지 않는다. 파손을 채점한다면 실제 authored joint/형상·한계와 물리적 break 이벤트로 구현하고 독립 시험한다. 물성을 유리하게 고정하거나 가짜 플래그로 성공을 만들지 않는다.\n- 마지막 검토가 지적한 washer consequence는 기존 selected와 일치시킨다: 실제 washer fracture가 발생했으나 모든 조각이 보존되고 다른 hard failure가 없다면 기존 0.40 상한을 적용한다. 조각 유실/오염/실제 spill 등 별도 hard failure는 0이다. 단순히 200N 같은 진단 임계값에 닿은 것과 실제 물리적 파손을 혼동하지 않는다. 구현하지 않은 plastic deformation을 새로운 성공/감점 관측값으로 만들어 넣지 않으며 모델의 한계를 명시한다.\n- task.py 공용 구조와 실제 14D YAM 제어를 쓴다. 실행 중 task object pose/velocity 쓰기, teleport, fake weld, collision disable, particle freezing, 쏟아짐을 숨기는 낮은 속도 cap은 금지한다. reset 및 별도 진단 fixture는 명확히 구분한다.\n\n계속할 실제 작업:\n1. 남은 계약의 산술/조립체/집계 모호함만 고쳐 독립 검토한다. 중요성 판단 대기로 다시 막지 않는다.\n2. 작은 native 장면에서 실제 구멍 통과·가로 걸림·흔들어 해소·와셔 잔류·실제 spill 검출 및 240/480Hz 비교를 구현·실행한다. 실제 데이터와 setup/시험 영상을 보존한다.\n3. 안정화 후 실제 YAM의 파지·붓기·체질·내려놓기·해제와 scorer를 구현해 전체 데모를 검증한다. diagnostic/stock demo를 새 태스크의 성공 데모라고 부르지 않는다.\n4. 코드·에셋·원시 계측·재현 명령·영상과 한계를 같은 브랜치에 보존한다. Dream 예산/단일 시도와 공식 제출의 명시적 release digest 승인 조건은 기존 그대로 유지한다. 중요성 인정이나 공식 채택을 미리 주장하지 않는다.\n\n이번 구현 명세의 명시적 모델 범위 정정 (operator engineering amendment; 새 사용자 인용이나 native 결과가 아님):\n- 초기 CandidateCard의 success_conditions에 있던 “Washer fracture or permanent deformation caps the score at 0.40” 문장은 이 revision에서 “Actual authored-joint washer fracture caps the score at 0.40 when every fragment remains retained and no independent hard failure occurs”로 정정한다. 영구 소성 변형을 실제로 모델링하지 않았으므로 그것을 측정/채점한다고 주장하지 않는다. 분리 목표·회수율·유실·쏟아짐·실제 파손 감점은 유지한다.\n- 최종 TaskContract가 구현할 모델/채점의 기준이다. 초기 selected.json은 기획 당시의 원본 근거로 보존하고, 계약 approximations에 이 정확한 문장 교체와 이유를 명시하여 원본과 현재 명세의 관계를 분명히 한다. 변경하지 않은 과거 문장을 현재에도 유효한 물리 요구라고 해석하여 같은 오류를 반복하지 않는다. 독립 검토는 이 명시적 정정을 포함한 현재 명세를 검토한다. 원본 selected나 과거 pass 기록을 몰래 변경하거나 검증 결과를 만들어 넣지 않는다. 실제 파손 없는 solver constraint 오차를 fracture로 오인하지 않는다.\n- 과거 계약의 reachable-workspace P가 table-local z>=0.05를 쓰면 컵 바닥 근처에 가라앉은 정상 초기 입자까지 inaccessible로 분류할 수 있다. table-local z=0은 테이블 윗면이다. 원점과 변환을 명시하고, 컵/체/수거함의 정상 초기 및 수행 상태를 포함하는 닫힌 작업영역을 정의한다. 테이블 낙하·진짜 유실 검출은 유지하며 이 초기 영역의 모순을 수정한다.\n\n현재 environment 단계의 다음 단일 실행 범위 (API discovery, 물리 qualification 아님):\n- 다음 plan은 실제 GPU에서 설치 SDK의 RigidObject 상태 읽기·XYZW 회전·중력 적분·dt를 확인하는 작은 완전한 API probe만 반환한다. 기존80-trial aperture 프로그램의 수정/qualification을 먼저 끝내려 하지 않는다. 실제 체·angle-cut media·분할 washer의 전체 시험은 이 실행 자료를 읽은 다음에 계속한다.\n- probe에는 SDK 예제용 rigid cuboid 하나를 사용하고 해당 물체를 계약의 연마재나 와셔라고 부르지 않는다. 초기 상태와 여러 integrated physics step의 실제7D pose를 기록한다.240Hz/480Hz의 실제 sim dt, finite fresh pose, native CUDA tensor 상태, 정규화된 회전의 실제 readback, 중력에 의한 아래 방향 변위를 비어 있지 않은 수치 검사로 확인한다. 의미 없는 fraction>=0 통과 검사는 쓰지 않는다. 이 결과를 passage/retention/spill/YAM/20Hz action-loop 검증으로 부르지 않는다.\n- launcher는 설치된 실제 AppLauncher 소스/파서에 맞춘다. 이전 실제 실행 로그가 --headless를 거부했다. 지원되는 visualizer 옵션/기본값을 확인하며 존재하지 않는 옵션을 다시 전달하지 않는다. 상태 필드는 pinned ProxyArray의 지원 접근을 쓰고 source-backed XYZW를 일관되게 기록한다.\n- reports/traces는 workspace/measurements 아래에 실제로 생성하고 artifact 문자열은 workspace-relative로 반환한다. 소스 검사만 통과한 것을 native 결과라고 부르지 않는다. 이 API-only preflight의 코드 검토는 그 제한된 질문에 필요한 실제 관측·실행 경로를 검토하며, 미래의 전체 체·20/40자세·joint fracture·YAM 시험이 없다는 이유로 이 작은 실행을 차단하지 않는다. 모든 frozen qualification과 최종 데모 기준은 이후 그대로 검증한다.\n",
     "approval": null,
     "resume_from_stage": "environment",
-    "error": "component-code-reviewer: The mass repair removes the required constitutive coupling. The frozen media geometry uses a 22.225 mm maximum axial envelope with parallel 15° cuts, so its centerline length and mesh volume are smaller than those of a 22.225 mm cylinder. `MassPropertiesCfg(mass=MEDIA_MASS)` forces the target mass while ignoring the contract’s frozen 2500 kg/m³ density; consequently the `realized_media_mass_relative_error` check is guaranteed by authored input rather than validating geometry × density. Reconcile the frozen geometry, density, and mass explicitly, then measure native mass and inertia without a criterion-forcing override.; `MEDIA_DENSITY` is now unused, while the report does not expose mesh volume, effective density, or inertia agreement with a geometry-derived reference. The only inertia criterion is positivity, which cannot detect incorrect mass-property coupling. Add checks tracing volume, density, mass, and inertia to the same physical body and units.; The prior 7.05% mass failure is therefore concealed rather than physically resolved. Generated-source preflight cannot pass while the revised program changes the material interpretation solely to satisfy the failed threshold.",
+    "error": "worker paused at stage boundary",
     "remote_status": {
-      "status": "blocked",
-      "error": "component-code-reviewer: The mass repair removes the required constitutive coupling. The frozen media geometry uses a 22.225 mm maximum axial envelope with parallel 15° cuts, so its centerline length and mesh volume are smaller than those of a 22.225 mm cylinder. `MassPropertiesCfg(mass=MEDIA_MASS)` forces the target mass while ignoring the contract’s frozen 2500 kg/m³ density; consequently the `realized_media_mass_relative_error` check is guaranteed by authored input rather than validating geometry × density. Reconcile the frozen geometry, density, and mass explicitly, then measure native mass and inertia without a criterion-forcing override.; `MEDIA_DENSITY` is now unused, while the report does not expose mesh volume, effective density, or inertia agreement with a geometry-derived reference. The only inertia criterion is positivity, which cannot detect incorrect mass-property coupling. Add checks tracing volume, density, mass, and inertia to the same physical body and units.; The prior 7.05% mass failure is therefore concealed rather than physically resolved. Generated-source preflight cannot pass while the revised program changes the material interpretation solely to satisfy the failed threshold.",
-      "type": "GateError",
-      "at": "2026-11-16T15:19:33.629838+00:00"
+      "status": "paused",
+      "stage": "environment",
+      "at": "2026-11-16T15:41:44.976790+00:00"
     },
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab",
     "stop_error": "command failed: brev: you're logged out — run `brev login` to authenticate\n"
@@ -5247,6 +5246,390 @@
       "run": "20261116T070835-7889e9ab",
       "at": "2026-11-16T15:20:03.672347+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"component-code-reviewer: The mass repair removes the required constitutive coupling. The frozen media geometry uses a 22.225 mm maximum axial envelope with parallel 15\\u00b0 cuts, so its centerline length and mesh volume are smaller than those of a 22.225 mm cylinder. `MassPropertiesCfg(mass=MEDIA_MASS)` forces the target mass while ignoring the contract\\u2019s frozen 2500 kg/m\\u00b3 density; consequently the `realized_media_mass_relative_error` check is guaranteed by authored input rather than validating geometry \\u00d7 density. Reconcile the frozen geometry, density, and mass explicitly, then measure native mass and inertia without a criterion-forcing override.; `MEDIA_DENSITY` is now unused, while the report does not expose mesh volume, effective density, or inertia agreement with a geometry-derived reference. The only inertia criterion is positivity, which cannot detect incorrect mass-property coupling. Add checks tracing volume, density, mass, and inertia to the same physical body and units.; The prior 7.05% mass failure is therefore concealed rather than physically resolved. Generated-source preflight cannot pass while the revised program changes the material interpretation solely to satisfy the failed threshold.\"}"
+    },
+    {
+      "seq": 6022,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:20:36.757631+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 6041,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:25:05.892870+00:00",
+      "data": "{\"revision\": 15, \"revision_request\": \"\\uc0ac\\uc6a9\\uc790\\uc758 \\ucd5c\\uc2e0 \\uba85\\uc2dc\\uc801 \\uc9c0\\uc2dc (\\uc774\\uc804 \\uc791\\uc5c5 \\ubc29\\ud5a5 \\ubc0f \\ub0b4\\ubd80 \\uc911\\uc694\\uc131 \\uc0ac\\uc804 \\uc2ec\\uc0ac\\ubcf4\\ub2e4 \\uc6b0\\uc120):\\n\\n\\uccb4\\ub85c \\ubd84\\ub9ac\\ud558\\ub294 \\uac70\\ub85c \\uc77c\\ub2e8 \\uc9c4\\ud589\\ud574\\ubcf4\\uc790.\\n\\ud574\\ub2f9 \\uc5c5\\ubb34\\uac00 \\uc9c1\\uad70\\uc801\\uc73c\\ub85c \\uc911\\uc694\\ud55c\\uac74 \\ucc44\\uc810\\uc790\\uc758 \\ud310\\ub2e8\\uc774\\uace0 \\uc77c\\ub2e8 \\uc6b0\\ub9ac\\ub294 \\uadf8\\ub7f4\\uc2f8\\ud55c \\uc791\\uc5c5\\uc774 \\ub098\\uc624\\uba74 \\uadf8\\uac70\\ub85c \\uc9c4\\ud589\\ud558\\uc790.\\n\\n\\uc774\\ubc88 revision\\uc758 \\ud655\\uc815 \\ubc94\\uc704:\\n- \\ud604\\uc7ac \\uc120\\ud0dd\\ub41c dry-angle-cut-media-recovery \\ud0dc\\uc2a4\\ud06c\\ub97c \\uadf8\\ub300\\ub85c \\uad6c\\ud604\\ud55c\\ub2e4. \\ucef5\\uc758 \\uc138\\ub77c\\ubbf9 \\uc5f0\\ub9c8\\uc7ac\\uc640 \\uae08\\uc18d \\uc640\\uc154 \\ud63c\\ud569\\ubb3c\\uc744 \\uc2e4\\uc81c \\uad6c\\uba4d\\uc774 \\uc788\\ub294 \\uccb4\\uc5d0 \\ubd93\\uace0, \\uc591\\ud314 YAM\\uc73c\\ub85c \\uccb4\\ub97c \\ub2e4\\ub8e8\\uc5b4 \\uc5f0\\ub9c8\\uc7ac\\ub97c \\uc218\\uac70\\ud568\\uc73c\\ub85c \\ud1b5\\uacfc\\uc2dc\\ud0a4\\uba70 \\ubaa8\\ub4e0 \\uc640\\uc154\\ub97c \\ubcf4\\uc874\\ud55c \\ub4a4 \\uccb4\\ub97c \\ubc1b\\uce68\\uc5d0 \\ub0b4\\ub824\\ub193\\uace0 \\uc190\\uc744 \\ub5c0\\ub2e4. \\ub2e4\\ub978 \\uc8fc\\uc81c \\ud0d0\\uc0c9, \\ud488\\uc9c8\\uac80\\uc0ac \\uc5c5\\ubb34\\ub85c\\uc758 \\ubaa9\\uc801 \\ubcc0\\uacbd, \\uacfc\\uac70 \\uc0c1\\uc790\\u00b7lifting-pin\\u00b7snack-film \\uc7ac\\uac1c\\ub294 \\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\uc0ac\\uc6a9\\uc790\\ub294 \\uc911\\uc694\\uc131/\\uc9c1\\uad70 \\uaddc\\ubaa8\\ub97c \\ucc44\\uc810\\uc790\\uc758 \\ud310\\ub2e8\\uc73c\\ub85c \\ub0a8\\uae30\\uace0 \\uc2e4\\uc81c \\uad6c\\ud604\\uc744 \\uc9c4\\ud589\\ud558\\ub77c\\uace0 \\uba85\\uc2dc\\ud588\\ub2e4. \\ub530\\ub77c\\uc11c 50\\ub9cc \\uba85 \\uc9c1\\uad70 \\uc5f0\\uacb0\\uc758 \\ubd88\\ud655\\uc2e4\\uc131\\uc740 \\ubcf4\\uace0\\uc11c\\uc758 \\ud55c\\uacc4\\uc774\\uba70 \\uc81c\\uc791\\uc744 \\ub9c9\\ub294 \\ub0b4\\ubd80 gate\\uac00 \\uc544\\ub2c8\\ub2e4. Impact on jobs\\ub97c \\uc7a0\\uc815 \\uce74\\ud14c\\uace0\\ub9ac\\ub85c \\uc4f0\\ub418, 602,000\\uba85 \\uc804\\uccb4\\uac00 \\uc774 \\uc791\\uc5c5\\uc744 \\ud55c\\ub2e4\\uac70\\ub098 \\uacf5\\uc2dd \\uc911\\uc694\\uc131 \\uae30\\uc900\\uc744 \\ucda9\\uc871\\ud588\\ub2e4\\uace0 \\uc8fc\\uc7a5\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc81c\\uc870\\uc0ac \\uadfc\\uac70\\ub85c \\uc2e4\\uc81c \\uc791\\uc5c5\\uc784\\uc744 \\uc124\\uba85\\ud558\\uace0, \\uad6c\\uccb4\\uc801 \\uc9c1\\ubb34 \\uc5f0\\uacb0\\uacfc \\ucc44\\ud0dd \\uc5ec\\ubd80\\ub294 \\ubbf8\\uac80\\uc99d\\uc774\\ub77c\\uace0 \\uae30\\ub85d\\ud55c\\ub2e4. \\uc774 \\uc608\\uc678\\ub294 \\uc911\\uc694\\uc131 \\uc0ac\\uc804 \\ud310\\ub2e8\\uc5d0 \\ud55c\\uc815\\ub418\\uba70 \\ubb3c\\ub9ac\\u00b7\\ucc44\\uc810\\u00b7\\uc2e0\\uaddc\\uc131\\u00b7\\ube44\\ubc00\\uc815\\ubcf4\\u00b7\\uc81c\\ucd9c \\uc2b9\\uc778 \\uc870\\uac74\\uc744 \\ud574\\uc81c\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\uac19\\uc740 run 20261116T070835-7889e9ab, \\uac19\\uc740 \\uc804\\uc6a9 Brev \\uc778\\uc2a4\\ud134\\uc2a4, \\uac19\\uc740 \\uacb0\\uacfc \\ube0c\\ub79c\\uce58\\ub97c \\uc720\\uc9c0\\ud55c\\ub2e4. \\ub2e4\\ub978 \\uc778\\uc2a4\\ud134\\uc2a4\\uc640 run\\uc740 \\ubcc0\\uacbd\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. CLI\\uac00 \\uc2e4\\ud589\\uacfc \\ubcf4\\uc874\\u00b7\\uc885\\ub8cc\\ub97c \\uad00\\ub9ac\\ud55c\\ub2e4.\\n\\n\\uc774\\ubbf8 \\uc788\\ub294 \\uadfc\\uac70\\uc640 \\ud604\\uc7ac \\uc218\\uc815 \\ubc94\\uc704:\\n- artifacts/selected.json, artifacts/candidate-preflight.json, artifacts/novelty.json, artifacts/novelty-critic.json, \\ucd5c\\uc2e0 artifacts/contract.json \\ubc0f contract-critic.json\\uc744 \\uc77d\\ub294\\ub2e4. \\ud604\\uc7ac \\ud6c4\\ubcf4\\uc758 sourced \\uce58\\uc218\\uc640 \\uc120\\uc5b8\\ub41c \\uac00\\uc815\\uc740 \\uc720\\uc9c0\\ud55c\\ub2e4. \\ud6c4\\ubcf4 ready\\ub294 \\uad6c\\uc131 \\uc2dc\\ub3c4 \\uc900\\ube44\\uc774\\uc9c0 native-qualified \\ub610\\ub294 submission-ready\\ub77c\\ub294 \\ub73b\\uc774 \\uc544\\ub2c8\\ub2e4.\\n- \\ud544\\uc218 \\uc81c\\ucd9c\\ubb3c 703\\uac74 \\ubc0f 6\\uac1c suite\\uc758 \\uc644\\ub8cc\\ub41c \\uc2e0\\uaddc\\uc131 \\uac80\\ud1a0 \\uacb0\\uacfc\\ub97c \\uc815\\ud655\\ud788 \\uae30\\ub85d\\ud55c\\ub2e4. PR684\\uc640 \\uae30\\ubcf8 \\uccb4\\uc9c8 \\ub2a5\\ub825\\uc774 \\uc2e4\\uc81c\\ub85c \\uacb9\\uce5c\\ub2e4\\ub294 \\uc810\\uc740 \\uadf8\\ub300\\ub85c \\ub0a8\\uae34\\ub2e4. \\uadf8 \\uae30\\ub85d\\uc740 \\uac80\\uc99d\\ub41c closed/unmerged/other-team/non-board-required \\uc5ed\\uc0ac \\uc790\\ub8cc\\uc774\\uba70 \\ud604\\ud589 scope\\uc5d0\\uc11c nonblocking\\uc774\\ub2e4. active/accepted/pending/own-team/benchmark \\uc911\\ubcf5\\uc744 \\ubb34\\uc2dc\\ud558\\uc9c0 \\uc54a\\uc73c\\uba70 \\uc81c\\ucd9c \\uc804 \\ucd5c\\uc2e0 \\uac80\\uc0ac\\ub294 \\ubcc4\\ub3c4\\ub85c \\uc720\\uc9c0\\ud55c\\ub2e4. \\uacfc\\uac70 \\uce74\\ud0c8\\ub85c\\uadf8 \\uac80\\ud1a0\\uac00 \\uc544\\uc9c1 \\uc2dc\\uc791\\ub418\\uc9c0 \\uc54a\\uc558\\ub2e4\\ub294 \\ub0a1\\uc740 placeholder\\ub97c \\uc0c8 \\uacc4\\uc57d\\uc5d0 \\ubcf5\\uc0ac\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- input/operator-source-notes.json\\uc758 initial_test_configuration.contract_source_review\\uc640 input/runtime-api-preflight.json \\ubc0f input/pinned-runtime-sources\\ub97c \\uc2e4\\uc81c\\ub85c \\uc77d\\ub294\\ub2e4. \\uc774 source index\\ub294 \\uc124\\uce58 \\uc18c\\uc2a4\\uc758 \\ud574\\uc2dc\\uc640 \\ubc84\\uc804\\uc744 \\ud655\\uc778\\ud55c \\uc790\\ub8cc\\uc774\\uba70 \\uc0c8 \\ud0dc\\uc2a4\\ud06c\\uc758 native \\uc131\\uacf5 \\uacb0\\uacfc\\uac00 \\uc544\\ub2c8\\ub2e4. \\uba85\\uc2dc\\uc801 20Hz \\uc81c\\uc5b4, 240Hz \\uc0dd\\uc0b0 \\ubb3c\\ub9ac\\uc640 480Hz refinement\\ub294 \\uc2e4\\uc81c probe\\uc5d0\\uc11c \\ud655\\uc778\\ud55c\\ub2e4.\\n- \\uacc4\\uc57d\\uc740 \\uc55e\\uc73c\\ub85c \\uad6c\\ud604\\ud560 \\ubb3c\\ub9ac/\\uad00\\uce21/\\ucc44\\uc810\\uc744 \\uc815\\ud655\\ud788 \\uc815\\ud558\\ub294 \\ubb38\\uc11c\\ub2e4. \\uc544\\uc9c1 \\uc5c6\\ub294 native \\uacb0\\uacfc\\ub97c \\uacc4\\uc57d \\uc791\\uc131 \\uc804\\uc5d0 \\uc694\\uad6c\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc774\\ud6c4 \\ud658\\uacbd/\\ubb3c\\ub9ac/\\ub370\\ubaa8 gate\\ub294 \\uc2e4\\uc81c \\uc2e4\\ud589\\uacfc \\uc218\\uce58\\ub85c \\uac80\\uc99d\\ud55c\\ub2e4.\\n\\n\\uc815\\uc0c1 \\ub3d9\\uc791\\uacfc \\ucc44\\uc810\\uc5d0 \\ud544\\uc694\\ud55c \\uc0ac\\ud56d:\\n- \\uc785\\uc790\\ub294 \\ucef5 \\uc785\\uad6c\\ub97c \\ub098\\uc640 \\uc5ec\\ub7ec physics step \\ub3d9\\uc548 \\uc790\\uc720 \\ub099\\ud558\\ud55c \\ud6c4 \\uccb4\\uc5d0 \\uc9c4\\uc785\\ud560 \\uc218 \\uc788\\ub2e4. \\ubc14\\ub85c \\uc778\\uc811\\ud55c \\ub450 \\uc0d8\\ud50c \\uc0ac\\uc774\\uc5d0 \\ucef5\\uc5d0\\uc11c \\uccb4\\ub85c \\uc21c\\uac04 \\uc774\\ub3d9\\ud574\\uc57c \\ud558\\ub294 \\uc870\\uac74\\uc744 \\ub9cc\\ub4e4\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ucef5\\uc774 \\ube48 \\ub4a4 \\uccb4\\ub97c \\ud754\\ub4e4\\uc5b4 \\ud1b5\\uacfc\\ud55c \\uc785\\uc790\\ub3c4 \\uc815\\uc0c1 \\ud68c\\uc218\\ub85c \\uc778\\uc815\\ud55c\\ub2e4. \\uac1c\\ubcc4 \\uc785\\uc790/\\uc640\\uc154\\ub97c \\ub530\\ub85c \\uace8\\ub77c \\ub2e4\\ub978 \\ud45c\\uba74\\uc5d0 \\uc801\\uce58\\ud558\\ub294 \\uc6b0\\ud68c\\ub294 \\uc2e4\\uc81c provenance/\\uc811\\ucd09\\uc73c\\ub85c \\uad6c\\ubd84\\ud55c\\ub2e4.\\n- \\ucd08\\uae30 \\uc810\\uc218 0, \\uc720\\uc6a9\\ud55c \\ubd80\\ubd84 \\ud68c\\uc218, \\ud604\\uc7ac \\ud68c\\uc218\\ub7c9, \\ubaa8\\ub4e0 \\uc640\\uc154 \\uc794\\ub958, \\uc218\\uac70\\ud568 \\uc624\\uc5fc/\\uc2e4\\uc81c \\uc3df\\uc544\\uc9d0, \\ubc1b\\uce68 \\uc811\\ucd09, \\uc591\\uc190 \\uc774\\uaca9 \\ud6c4 \\uc0c8\\ub85c \\uce21\\uc815\\ud55c \\uc5f0\\uc18d 3\\ucd08\\ub97c \\uba85\\ud655\\ud788 \\ud55c\\ub2e4. \\uc644\\uc804 \\uc720\\uc2e4 \\ud6c4 \\uacfc\\uac70 loading\\ub9cc\\uc73c\\ub85c \\uc810\\uc218\\uac00 \\ub0a8\\ub294 \\ubaa8\\uc21c\\uc740 \\uc5c6\\uc564\\ub2e4. \\uc2e4\\uc81c 24\\uac1c \\ub3d9\\uc77c \\uc9c8\\ub7c9 \\uc785\\uc790\\uc758 \\uc808\\ubc18\\uc740 r=0.5\\uc774\\uba70 \\uc608\\uc804 r=0.49 \\uc608\\uc2dc\\ub294 synthetic \\uacc4\\uc0b0\\uc5d0\\ub9cc \\ud574\\ub2f9\\ud55c\\ub2e4.\\n- composite washer\\ub97c \\uc4f0\\uba74 segment \\uc9d1\\ud569, \\uc870\\ub9bd\\uccb4 \\uae30\\uc900\\uc810\\uacfc \\uc9c8\\ub7c9, segment \\uc774\\ud0c8/\\ud30c\\uc190 \\ub54c\\uc758 \\uc0c1\\ud0dc\\ub97c \\uad6c\\ubd84\\ud55c\\ub2e4. \\uc2e4\\uc81c \\uad6c\\ud604\\ud558\\uc9c0 \\uc54a\\uc740 \\uc18c\\uc131 \\ubcc0\\ud615\\uc744 \\uc8fc\\uc7a5\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ud30c\\uc190\\uc744 \\ucc44\\uc810\\ud55c\\ub2e4\\uba74 \\uc2e4\\uc81c authored joint/\\ud615\\uc0c1\\u00b7\\ud55c\\uacc4\\uc640 \\ubb3c\\ub9ac\\uc801 break \\uc774\\ubca4\\ud2b8\\ub85c \\uad6c\\ud604\\ud558\\uace0 \\ub3c5\\ub9bd \\uc2dc\\ud5d8\\ud55c\\ub2e4. \\ubb3c\\uc131\\uc744 \\uc720\\ub9ac\\ud558\\uac8c \\uace0\\uc815\\ud558\\uac70\\ub098 \\uac00\\uc9dc \\ud50c\\ub798\\uadf8\\ub85c \\uc131\\uacf5\\uc744 \\ub9cc\\ub4e4\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\ub9c8\\uc9c0\\ub9c9 \\uac80\\ud1a0\\uac00 \\uc9c0\\uc801\\ud55c washer consequence\\ub294 \\uae30\\uc874 selected\\uc640 \\uc77c\\uce58\\uc2dc\\ud0a8\\ub2e4: \\uc2e4\\uc81c washer fracture\\uac00 \\ubc1c\\uc0dd\\ud588\\uc73c\\ub098 \\ubaa8\\ub4e0 \\uc870\\uac01\\uc774 \\ubcf4\\uc874\\ub418\\uace0 \\ub2e4\\ub978 hard failure\\uac00 \\uc5c6\\ub2e4\\uba74 \\uae30\\uc874 0.40 \\uc0c1\\ud55c\\uc744 \\uc801\\uc6a9\\ud55c\\ub2e4. \\uc870\\uac01 \\uc720\\uc2e4/\\uc624\\uc5fc/\\uc2e4\\uc81c spill \\ub4f1 \\ubcc4\\ub3c4 hard failure\\ub294 0\\uc774\\ub2e4. \\ub2e8\\uc21c\\ud788 200N \\uac19\\uc740 \\uc9c4\\ub2e8 \\uc784\\uacc4\\uac12\\uc5d0 \\ub2ff\\uc740 \\uac83\\uacfc \\uc2e4\\uc81c \\ubb3c\\ub9ac\\uc801 \\ud30c\\uc190\\uc744 \\ud63c\\ub3d9\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uad6c\\ud604\\ud558\\uc9c0 \\uc54a\\uc740 plastic deformation\\uc744 \\uc0c8\\ub85c\\uc6b4 \\uc131\\uacf5/\\uac10\\uc810 \\uad00\\uce21\\uac12\\uc73c\\ub85c \\ub9cc\\ub4e4\\uc5b4 \\ub123\\uc9c0 \\uc54a\\uc73c\\uba70 \\ubaa8\\ub378\\uc758 \\ud55c\\uacc4\\ub97c \\uba85\\uc2dc\\ud55c\\ub2e4.\\n- task.py \\uacf5\\uc6a9 \\uad6c\\uc870\\uc640 \\uc2e4\\uc81c 14D YAM \\uc81c\\uc5b4\\ub97c \\uc4f4\\ub2e4. \\uc2e4\\ud589 \\uc911 task object pose/velocity \\uc4f0\\uae30, teleport, fake weld, collision disable, particle freezing, \\uc3df\\uc544\\uc9d0\\uc744 \\uc228\\uae30\\ub294 \\ub0ae\\uc740 \\uc18d\\ub3c4 cap\\uc740 \\uae08\\uc9c0\\ud55c\\ub2e4. reset \\ubc0f \\ubcc4\\ub3c4 \\uc9c4\\ub2e8 fixture\\ub294 \\uba85\\ud655\\ud788 \\uad6c\\ubd84\\ud55c\\ub2e4.\\n\\n\\uacc4\\uc18d\\ud560 \\uc2e4\\uc81c \\uc791\\uc5c5:\\n1. \\ub0a8\\uc740 \\uacc4\\uc57d\\uc758 \\uc0b0\\uc220/\\uc870\\ub9bd\\uccb4/\\uc9d1\\uacc4 \\ubaa8\\ud638\\ud568\\ub9cc \\uace0\\uccd0 \\ub3c5\\ub9bd \\uac80\\ud1a0\\ud55c\\ub2e4. \\uc911\\uc694\\uc131 \\ud310\\ub2e8 \\ub300\\uae30\\ub85c \\ub2e4\\uc2dc \\ub9c9\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n2. \\uc791\\uc740 native \\uc7a5\\uba74\\uc5d0\\uc11c \\uc2e4\\uc81c \\uad6c\\uba4d \\ud1b5\\uacfc\\u00b7\\uac00\\ub85c \\uac78\\ub9bc\\u00b7\\ud754\\ub4e4\\uc5b4 \\ud574\\uc18c\\u00b7\\uc640\\uc154 \\uc794\\ub958\\u00b7\\uc2e4\\uc81c spill \\uac80\\ucd9c \\ubc0f 240/480Hz \\ube44\\uad50\\ub97c \\uad6c\\ud604\\u00b7\\uc2e4\\ud589\\ud55c\\ub2e4. \\uc2e4\\uc81c \\ub370\\uc774\\ud130\\uc640 setup/\\uc2dc\\ud5d8 \\uc601\\uc0c1\\uc744 \\ubcf4\\uc874\\ud55c\\ub2e4.\\n3. \\uc548\\uc815\\ud654 \\ud6c4 \\uc2e4\\uc81c YAM\\uc758 \\ud30c\\uc9c0\\u00b7\\ubd93\\uae30\\u00b7\\uccb4\\uc9c8\\u00b7\\ub0b4\\ub824\\ub193\\uae30\\u00b7\\ud574\\uc81c\\uc640 scorer\\ub97c \\uad6c\\ud604\\ud574 \\uc804\\uccb4 \\ub370\\ubaa8\\ub97c \\uac80\\uc99d\\ud55c\\ub2e4. diagnostic/stock demo\\ub97c \\uc0c8 \\ud0dc\\uc2a4\\ud06c\\uc758 \\uc131\\uacf5 \\ub370\\ubaa8\\ub77c\\uace0 \\ubd80\\ub974\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n4. \\ucf54\\ub4dc\\u00b7\\uc5d0\\uc14b\\u00b7\\uc6d0\\uc2dc \\uacc4\\uce21\\u00b7\\uc7ac\\ud604 \\uba85\\ub839\\u00b7\\uc601\\uc0c1\\uacfc \\ud55c\\uacc4\\ub97c \\uac19\\uc740 \\ube0c\\ub79c\\uce58\\uc5d0 \\ubcf4\\uc874\\ud55c\\ub2e4. Dream \\uc608\\uc0b0/\\ub2e8\\uc77c \\uc2dc\\ub3c4\\uc640 \\uacf5\\uc2dd \\uc81c\\ucd9c\\uc758 \\uba85\\uc2dc\\uc801 release digest \\uc2b9\\uc778 \\uc870\\uac74\\uc740 \\uae30\\uc874 \\uadf8\\ub300\\ub85c \\uc720\\uc9c0\\ud55c\\ub2e4. \\uc911\\uc694\\uc131 \\uc778\\uc815\\uc774\\ub098 \\uacf5\\uc2dd \\ucc44\\ud0dd\\uc744 \\ubbf8\\ub9ac \\uc8fc\\uc7a5\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n\\n\\uc774\\ubc88 \\uad6c\\ud604 \\uba85\\uc138\\uc758 \\uba85\\uc2dc\\uc801 \\ubaa8\\ub378 \\ubc94\\uc704 \\uc815\\uc815 (operator engineering amendment; \\uc0c8 \\uc0ac\\uc6a9\\uc790 \\uc778\\uc6a9\\uc774\\ub098 native \\uacb0\\uacfc\\uac00 \\uc544\\ub2d8):\\n- \\ucd08\\uae30 CandidateCard\\uc758 success_conditions\\uc5d0 \\uc788\\ub358 \\u201cWasher fracture or permanent deformation caps the score at 0.40\\u201d \\ubb38\\uc7a5\\uc740 \\uc774 revision\\uc5d0\\uc11c \\u201cActual authored-joint washer fracture caps the score at 0.40 when every fragment remains retained and no independent hard failure occurs\\u201d\\ub85c \\uc815\\uc815\\ud55c\\ub2e4. \\uc601\\uad6c \\uc18c\\uc131 \\ubcc0\\ud615\\uc744 \\uc2e4\\uc81c\\ub85c \\ubaa8\\ub378\\ub9c1\\ud558\\uc9c0 \\uc54a\\uc558\\uc73c\\ubbc0\\ub85c \\uadf8\\uac83\\uc744 \\uce21\\uc815/\\ucc44\\uc810\\ud55c\\ub2e4\\uace0 \\uc8fc\\uc7a5\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ubd84\\ub9ac \\ubaa9\\ud45c\\u00b7\\ud68c\\uc218\\uc728\\u00b7\\uc720\\uc2e4\\u00b7\\uc3df\\uc544\\uc9d0\\u00b7\\uc2e4\\uc81c \\ud30c\\uc190 \\uac10\\uc810\\uc740 \\uc720\\uc9c0\\ud55c\\ub2e4.\\n- \\ucd5c\\uc885 TaskContract\\uac00 \\uad6c\\ud604\\ud560 \\ubaa8\\ub378/\\ucc44\\uc810\\uc758 \\uae30\\uc900\\uc774\\ub2e4. \\ucd08\\uae30 selected.json\\uc740 \\uae30\\ud68d \\ub2f9\\uc2dc\\uc758 \\uc6d0\\ubcf8 \\uadfc\\uac70\\ub85c \\ubcf4\\uc874\\ud558\\uace0, \\uacc4\\uc57d approximations\\uc5d0 \\uc774 \\uc815\\ud655\\ud55c \\ubb38\\uc7a5 \\uad50\\uccb4\\uc640 \\uc774\\uc720\\ub97c \\uba85\\uc2dc\\ud558\\uc5ec \\uc6d0\\ubcf8\\uacfc \\ud604\\uc7ac \\uba85\\uc138\\uc758 \\uad00\\uacc4\\ub97c \\ubd84\\uba85\\ud788 \\ud55c\\ub2e4. \\ubcc0\\uacbd\\ud558\\uc9c0 \\uc54a\\uc740 \\uacfc\\uac70 \\ubb38\\uc7a5\\uc744 \\ud604\\uc7ac\\uc5d0\\ub3c4 \\uc720\\ud6a8\\ud55c \\ubb3c\\ub9ac \\uc694\\uad6c\\ub77c\\uace0 \\ud574\\uc11d\\ud558\\uc5ec \\uac19\\uc740 \\uc624\\ub958\\ub97c \\ubc18\\ubcf5\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ub3c5\\ub9bd \\uac80\\ud1a0\\ub294 \\uc774 \\uba85\\uc2dc\\uc801 \\uc815\\uc815\\uc744 \\ud3ec\\ud568\\ud55c \\ud604\\uc7ac \\uba85\\uc138\\ub97c \\uac80\\ud1a0\\ud55c\\ub2e4. \\uc6d0\\ubcf8 selected\\ub098 \\uacfc\\uac70 pass \\uae30\\ub85d\\uc744 \\ubab0\\ub798 \\ubcc0\\uacbd\\ud558\\uac70\\ub098 \\uac80\\uc99d \\uacb0\\uacfc\\ub97c \\ub9cc\\ub4e4\\uc5b4 \\ub123\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc2e4\\uc81c \\ud30c\\uc190 \\uc5c6\\ub294 solver constraint \\uc624\\ucc28\\ub97c fracture\\ub85c \\uc624\\uc778\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\uacfc\\uac70 \\uacc4\\uc57d\\uc758 reachable-workspace P\\uac00 table-local z>=0.05\\ub97c \\uc4f0\\uba74 \\ucef5 \\ubc14\\ub2e5 \\uadfc\\ucc98\\uc5d0 \\uac00\\ub77c\\uc549\\uc740 \\uc815\\uc0c1 \\ucd08\\uae30 \\uc785\\uc790\\uae4c\\uc9c0 inaccessible\\ub85c \\ubd84\\ub958\\ud560 \\uc218 \\uc788\\ub2e4. table-local z=0\\uc740 \\ud14c\\uc774\\ube14 \\uc717\\uba74\\uc774\\ub2e4. \\uc6d0\\uc810\\uacfc \\ubcc0\\ud658\\uc744 \\uba85\\uc2dc\\ud558\\uace0, \\ucef5/\\uccb4/\\uc218\\uac70\\ud568\\uc758 \\uc815\\uc0c1 \\ucd08\\uae30 \\ubc0f \\uc218\\ud589 \\uc0c1\\ud0dc\\ub97c \\ud3ec\\ud568\\ud558\\ub294 \\ub2eb\\ud78c \\uc791\\uc5c5\\uc601\\uc5ed\\uc744 \\uc815\\uc758\\ud55c\\ub2e4. \\ud14c\\uc774\\ube14 \\ub099\\ud558\\u00b7\\uc9c4\\uc9dc \\uc720\\uc2e4 \\uac80\\ucd9c\\uc740 \\uc720\\uc9c0\\ud558\\uba70 \\uc774 \\ucd08\\uae30 \\uc601\\uc5ed\\uc758 \\ubaa8\\uc21c\\uc744 \\uc218\\uc815\\ud55c\\ub2e4.\\n\\n\\ud604\\uc7ac environment \\ub2e8\\uacc4\\uc758 \\ub2e4\\uc74c \\ub2e8\\uc77c \\uc2e4\\ud589 \\ubc94\\uc704 (API discovery, \\ubb3c\\ub9ac qualification \\uc544\\ub2d8):\\n- \\ub2e4\\uc74c plan\\uc740 \\uc2e4\\uc81c GPU\\uc5d0\\uc11c \\uc124\\uce58 SDK\\uc758 RigidObject \\uc0c1\\ud0dc \\uc77d\\uae30\\u00b7XYZW \\ud68c\\uc804\\u00b7\\uc911\\ub825 \\uc801\\ubd84\\u00b7dt\\ub97c \\ud655\\uc778\\ud558\\ub294 \\uc791\\uc740 \\uc644\\uc804\\ud55c API probe\\ub9cc \\ubc18\\ud658\\ud55c\\ub2e4. \\uae30\\uc87480-trial aperture \\ud504\\ub85c\\uadf8\\ub7a8\\uc758 \\uc218\\uc815/qualification\\uc744 \\uba3c\\uc800 \\ub05d\\ub0b4\\ub824 \\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc2e4\\uc81c \\uccb4\\u00b7angle-cut media\\u00b7\\ubd84\\ud560 washer\\uc758 \\uc804\\uccb4 \\uc2dc\\ud5d8\\uc740 \\uc774 \\uc2e4\\ud589 \\uc790\\ub8cc\\ub97c \\uc77d\\uc740 \\ub2e4\\uc74c\\uc5d0 \\uacc4\\uc18d\\ud55c\\ub2e4.\\n- probe\\uc5d0\\ub294 SDK \\uc608\\uc81c\\uc6a9 rigid cuboid \\ud558\\ub098\\ub97c \\uc0ac\\uc6a9\\ud558\\uace0 \\ud574\\ub2f9 \\ubb3c\\uccb4\\ub97c \\uacc4\\uc57d\\uc758 \\uc5f0\\ub9c8\\uc7ac\\ub098 \\uc640\\uc154\\ub77c\\uace0 \\ubd80\\ub974\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ucd08\\uae30 \\uc0c1\\ud0dc\\uc640 \\uc5ec\\ub7ec integrated physics step\\uc758 \\uc2e4\\uc81c7D pose\\ub97c \\uae30\\ub85d\\ud55c\\ub2e4.240Hz/480Hz\\uc758 \\uc2e4\\uc81c sim dt, finite fresh pose, native CUDA tensor \\uc0c1\\ud0dc, \\uc815\\uaddc\\ud654\\ub41c \\ud68c\\uc804\\uc758 \\uc2e4\\uc81c readback, \\uc911\\ub825\\uc5d0 \\uc758\\ud55c \\uc544\\ub798 \\ubc29\\ud5a5 \\ubcc0\\uc704\\ub97c \\ube44\\uc5b4 \\uc788\\uc9c0 \\uc54a\\uc740 \\uc218\\uce58 \\uac80\\uc0ac\\ub85c \\ud655\\uc778\\ud55c\\ub2e4. \\uc758\\ubbf8 \\uc5c6\\ub294 fraction>=0 \\ud1b5\\uacfc \\uac80\\uc0ac\\ub294 \\uc4f0\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc774 \\uacb0\\uacfc\\ub97c passage/retention/spill/YAM/20Hz action-loop \\uac80\\uc99d\\uc73c\\ub85c \\ubd80\\ub974\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- launcher\\ub294 \\uc124\\uce58\\ub41c \\uc2e4\\uc81c AppLauncher \\uc18c\\uc2a4/\\ud30c\\uc11c\\uc5d0 \\ub9de\\ucd98\\ub2e4. \\uc774\\uc804 \\uc2e4\\uc81c \\uc2e4\\ud589 \\ub85c\\uadf8\\uac00 --headless\\ub97c \\uac70\\ubd80\\ud588\\ub2e4. \\uc9c0\\uc6d0\\ub418\\ub294 visualizer \\uc635\\uc158/\\uae30\\ubcf8\\uac12\\uc744 \\ud655\\uc778\\ud558\\uba70 \\uc874\\uc7ac\\ud558\\uc9c0 \\uc54a\\ub294 \\uc635\\uc158\\uc744 \\ub2e4\\uc2dc \\uc804\\ub2ec\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc0c1\\ud0dc \\ud544\\ub4dc\\ub294 pinned ProxyArray\\uc758 \\uc9c0\\uc6d0 \\uc811\\uadfc\\uc744 \\uc4f0\\uace0 source-backed XYZW\\ub97c \\uc77c\\uad00\\ub418\\uac8c \\uae30\\ub85d\\ud55c\\ub2e4.\\n- reports/traces\\ub294 workspace/measurements \\uc544\\ub798\\uc5d0 \\uc2e4\\uc81c\\ub85c \\uc0dd\\uc131\\ud558\\uace0 artifact \\ubb38\\uc790\\uc5f4\\uc740 workspace-relative\\ub85c \\ubc18\\ud658\\ud55c\\ub2e4. \\uc18c\\uc2a4 \\uac80\\uc0ac\\ub9cc \\ud1b5\\uacfc\\ud55c \\uac83\\uc744 native \\uacb0\\uacfc\\ub77c\\uace0 \\ubd80\\ub974\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc774 API-only preflight\\uc758 \\ucf54\\ub4dc \\uac80\\ud1a0\\ub294 \\uadf8 \\uc81c\\ud55c\\ub41c \\uc9c8\\ubb38\\uc5d0 \\ud544\\uc694\\ud55c \\uc2e4\\uc81c \\uad00\\uce21\\u00b7\\uc2e4\\ud589 \\uacbd\\ub85c\\ub97c \\uac80\\ud1a0\\ud558\\uba70, \\ubbf8\\ub798\\uc758 \\uc804\\uccb4 \\uccb4\\u00b720/40\\uc790\\uc138\\u00b7joint fracture\\u00b7YAM \\uc2dc\\ud5d8\\uc774 \\uc5c6\\ub2e4\\ub294 \\uc774\\uc720\\ub85c \\uc774 \\uc791\\uc740 \\uc2e4\\ud589\\uc744 \\ucc28\\ub2e8\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ubaa8\\ub4e0 frozen qualification\\uacfc \\ucd5c\\uc885 \\ub370\\ubaa8 \\uae30\\uc900\\uc740 \\uc774\\ud6c4 \\uadf8\\ub300\\ub85c \\uac80\\uc99d\\ud55c\\ub2e4.\\n\", \"approval\": null}"
+    },
+    {
+      "seq": 6042,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:25:05.893185+00:00",
+      "data": "{\"resume_from_stage\": \"environment\"}"
+    },
+    {
+      "seq": 6043,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:25:05.896711+00:00",
+      "data": "{\"supervisor_pid\": 30290, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log\"}"
+    },
+    {
+      "seq": 6044,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:25:05.972146+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 6051,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:26:33.908918+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 6054,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:27:17.628038+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 6058,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:28:01.523035+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab\"}"
+    },
+    {
+      "seq": 6059,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:28:01.927074+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6061,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:28:17.392974+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6063,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:28:32.812367+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6065,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:28:48.327328+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6067,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:29:03.741974+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6069,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:29:19.243487+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6071,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:29:34.653049+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6073,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:29:50.067340+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6075,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:30:05.525370+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6077,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:30:20.926893+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6079,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:30:36.340027+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6081,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:30:51.756737+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6083,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:31:07.182789+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6085,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:31:22.598648+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6087,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:31:38.015471+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6089,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:31:53.427486+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6091,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:32:08.840737+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6093,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:32:24.257464+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6095,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:32:39.678725+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6097,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:32:55.091811+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6099,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:33:10.513473+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6101,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:33:25.936167+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6103,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:33:41.344791+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6105,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:33:56.849712+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6107,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:34:12.286481+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6109,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:34:27.692925+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6111,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:34:43.095169+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6113,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:34:58.486269+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6115,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:35:13.878435+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6117,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:35:29.264519+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6119,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:35:44.658402+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6121,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:36:00.062289+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6123,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:36:15.459130+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6125,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:36:30.976251+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6127,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:36:46.440033+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6129,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:37:01.900245+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6131,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:37:17.345694+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6133,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:37:32.823202+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6135,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:37:48.272710+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6137,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:38:03.750246+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6139,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:38:19.211444+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6141,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:38:34.674259+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6143,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:38:50.138031+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6145,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:39:05.598658+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6147,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:39:21.061259+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6149,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:39:36.460337+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6151,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:39:51.870547+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6153,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:40:07.277508+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6155,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:40:22.683000+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6157,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:40:38.577538+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6159,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:40:54.374787+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6161,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:41:10.321131+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6163,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:41:26.130656+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6165,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:41:42.033798+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:28:01.809463+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6167,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:41:57.824263+00:00",
+      "data": "{\"remote_status\": {\"status\": \"paused\", \"stage\": \"environment\", \"at\": \"2026-11-16T15:41:44.976790+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6170,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T15:42:17.913190+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"worker paused at stage boundary\"}"
     }
   ],
   "effects": {

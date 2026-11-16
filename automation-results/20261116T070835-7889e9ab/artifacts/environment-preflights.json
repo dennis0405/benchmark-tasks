@@ -309,5 +309,944 @@
       }
     ],
     "at": "2026-11-16T15:03:43.857032+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Completed the bounded native RigidObject API discovery at 240 Hz and 480 Hz. Both runs produced CUDA-backed finite 7D pose traces, exact requested simulation dt, normalized XYZW quaternion readback, and measured downward gravity displacement. This does not qualify aperture passage, retention, spill detection, YAM control, or frozen task physics. The prior aperture mass/density/inertia failure remains unresolved and preserved for the next component iteration.",
+      "scripts": [
+        {
+          "id": "rigid-cuboid-api-240hz",
+          "script": "task/run_rigid_cuboid_api_probe.py",
+          "args": [
+            "--physics-hz",
+            "240",
+            "--steps",
+            "24",
+            "--report",
+            "../measurements/rigid-cuboid-api-240hz.json"
+          ],
+          "report": "measurements/rigid-cuboid-api-240hz.json"
+        },
+        {
+          "id": "rigid-cuboid-api-480hz",
+          "script": "task/run_rigid_cuboid_api_probe.py",
+          "args": [
+            "--physics-hz",
+            "480",
+            "--steps",
+            "24",
+            "--report",
+            "../measurements/rigid-cuboid-api-480hz.json"
+          ],
+          "report": "measurements/rigid-cuboid-api-480hz.json"
+        }
+      ],
+      "files": [
+        "task/run_rigid_cuboid_api_probe.py",
+        "measurements/rigid-cuboid-api-240hz.json",
+        "measurements/rigid-cuboid-api-240hz-trace.json",
+        "measurements/rigid-cuboid-api-480hz.json",
+        "measurements/rigid-cuboid-api-480hz-trace.json"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_rigid_cuboid_api_probe.py",
+        "input/request.json",
+        "input/last-failure.json",
+        "input/runtime-api-preflight.json",
+        "input/pinned-runtime-sources/589e4ddab2af8f7b1ea788aba5f0bc4f13fa1c5e199ee75589c4b7ec41914157-asset_base_cfg.py",
+        "input/pinned-runtime-sources/841ca674429d5bd405d212f93494c42ff32ae162e4add373474193adbec746f7-base_rigid_object_data.py"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_rigid_cuboid_api_probe.py",
+          "--physics-hz",
+          "240",
+          "--steps",
+          "24",
+          "--report",
+          "../measurements/rigid-cuboid-api-240hz.json"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/rigid-cuboid-api-240hz-b673723505.log",
+        "finished_at": "2026-11-16T15:29:41.771429+00:00",
+        "id": "rigid-cuboid-api-240hz",
+        "report": "measurements/rigid-cuboid-api-240hz.json",
+        "report_sha256": "b3f4f0cdedb14b3e810ff59e6d00e71188d31cc2e8b9bfdcf3f378dbefa9b193",
+        "source_digest": "22e39add8e65e03c66cb999e12807342e21c8495940d04e0b8d6687c3e0d026b",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_rigid_cuboid_api_probe.cpython-312.pyc",
+          "__pycache__/run_aperture_native_probe.cpython-312.pyc"
+        ],
+        "measurements": {
+          "scope": "API-only RigidObject cuboid preflight; no aperture, retention, spill, YAM, or 20 Hz claim",
+          "physics_hz": 240,
+          "steps": 24,
+          "state": {
+            "reset_proxy_type": "isaaclab.utils.warp.proxy_array.ProxyArray",
+            "final_proxy_type": "isaaclab.utils.warp.proxy_array.ProxyArray",
+            "tensor_type": "torch.Tensor",
+            "tensor_device": "cuda:0",
+            "tensor_device_index": 0,
+            "tensor_shape": [
+              1,
+              7
+            ],
+            "quaternion_order": "XYZW",
+            "authored_quaternion_xyzw": [
+              0.0916432938695913,
+              0.1832865877391826,
+              0.2749298816087739,
+              0.9393727128473789
+            ],
+            "reset_pose_xyzw": [
+              0.0,
+              0.0,
+              0.9996487498283386,
+              0.09164328873157501,
+              0.18328657746315002,
+              0.27492988109588623,
+              0.939372718334198
+            ],
+            "final_pose_xyzw": [
+              0.0,
+              0.0,
+              0.9422958493232727,
+              0.09164328873157501,
+              0.18328657746315002,
+              0.27492988109588623,
+              0.939372718334198
+            ]
+          },
+          "checks": [
+            {
+              "name": "sim_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "native_cuda_state",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "bool"
+            },
+            {
+              "name": "finite_pose_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction"
+            },
+            {
+              "name": "reset_quaternion_norm_error",
+              "measured": 2.65883626227037e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "final_quaternion_norm_error",
+              "measured": 2.65883626227037e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "authored_xyzw_readback_linf_error",
+              "measured": 1.0276032580414096e-08,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "gravity_delta_z",
+              "measured": -0.05735290050506592,
+              "operator": "<",
+              "threshold": -0.0001,
+              "unit": "m"
+            },
+            {
+              "name": "fresh_pose_sample_count",
+              "measured": 25.0,
+              "operator": ">=",
+              "threshold": 25.0,
+              "unit": "samples"
+            }
+          ],
+          "artifacts": [
+            "measurements/rigid-cuboid-api-240hz-trace.json"
+          ]
+        }
+      },
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_rigid_cuboid_api_probe.py",
+          "--physics-hz",
+          "480",
+          "--steps",
+          "24",
+          "--report",
+          "../measurements/rigid-cuboid-api-480hz.json"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/rigid-cuboid-api-480hz-74a6fb1da4.log",
+        "finished_at": "2026-11-16T15:29:47.073974+00:00",
+        "id": "rigid-cuboid-api-480hz",
+        "report": "measurements/rigid-cuboid-api-480hz.json",
+        "report_sha256": "bb1bd87df480af4867203e72dcef89ec44b95befe356ef738930686d3fae5300",
+        "source_digest": "22e39add8e65e03c66cb999e12807342e21c8495940d04e0b8d6687c3e0d026b",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "scope": "API-only RigidObject cuboid preflight; no aperture, retention, spill, YAM, or 20 Hz claim",
+          "physics_hz": 480,
+          "steps": 24,
+          "state": {
+            "reset_proxy_type": "isaaclab.utils.warp.proxy_array.ProxyArray",
+            "final_proxy_type": "isaaclab.utils.warp.proxy_array.ProxyArray",
+            "tensor_type": "torch.Tensor",
+            "tensor_device": "cuda:0",
+            "tensor_device_index": 0,
+            "tensor_shape": [
+              1,
+              7
+            ],
+            "quaternion_order": "XYZW",
+            "authored_quaternion_xyzw": [
+              0.0916432938695913,
+              0.1832865877391826,
+              0.2749298816087739,
+              0.9393727128473789
+            ],
+            "reset_pose_xyzw": [
+              0.0,
+              0.0,
+              0.9999122023582458,
+              0.09164328873157501,
+              0.18328657746315002,
+              0.27492988109588623,
+              0.939372718334198
+            ],
+            "final_pose_xyzw": [
+              0.0,
+              0.0,
+              0.985573947429657,
+              0.09164328873157501,
+              0.18328657746315002,
+              0.27492988109588623,
+              0.939372718334198
+            ]
+          },
+          "checks": [
+            {
+              "name": "sim_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "native_cuda_state",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "bool"
+            },
+            {
+              "name": "finite_pose_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction"
+            },
+            {
+              "name": "reset_quaternion_norm_error",
+              "measured": 2.65883626227037e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "final_quaternion_norm_error",
+              "measured": 2.65883626227037e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "authored_xyzw_readback_linf_error",
+              "measured": 1.0276032580414096e-08,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "gravity_delta_z",
+              "measured": -0.014338254928588867,
+              "operator": "<",
+              "threshold": -0.0001,
+              "unit": "m"
+            },
+            {
+              "name": "fresh_pose_sample_count",
+              "measured": 25.0,
+              "operator": ">=",
+              "threshold": 25.0,
+              "unit": "samples"
+            }
+          ],
+          "artifacts": [
+            "measurements/rigid-cuboid-api-480hz-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-16T15:29:47.195144+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "The next execution is limited to fresh bounded RigidObject cuboid API probes at 240 Hz and 480 Hz. They will measure native CUDA backing, finite fresh 7D pose samples, requested simulator dt, normalized XYZW quaternion readback, and gravity-driven downward displacement. This does not qualify aperture passage, retention, spill detection, density cooking, YAM control, the 20 Hz action loop, or frozen task physics. The earlier aperture mass/density discrepancy remains unresolved. Existing measurement files are not treated as source inputs or current digest-bound receipts.",
+      "scripts": [
+        {
+          "id": "rigid_cuboid_api_probe_240hz",
+          "script": "task/run_rigid_cuboid_api_probe.py",
+          "args": [
+            "--physics-hz",
+            "240",
+            "--steps",
+            "24",
+            "--report",
+            "../measurements/rigid-cuboid-api-240hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/rigid-cuboid-api-240hz.json"
+        },
+        {
+          "id": "rigid_cuboid_api_probe_480hz",
+          "script": "task/run_rigid_cuboid_api_probe.py",
+          "args": [
+            "--physics-hz",
+            "480",
+            "--steps",
+            "24",
+            "--report",
+            "../measurements/rigid-cuboid-api-480hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/rigid-cuboid-api-480hz.json"
+        }
+      ],
+      "files": [
+        "task/run_rigid_cuboid_api_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The prior source-plan failure is resolved: the summary is prospective, explicitly preserves the unresolved aperture mass/density issue, limits claims to API discovery, and lists only the planned source file rather than future reports or traces.",
+        "Both planned executions use the same bounded native RigidObject cuboid probe at 240 Hz and 480 Hz, with workspace-relative report declarations and task-cwd-compatible ../measurements output arguments.",
+        "The probe reads actual root_pose_w ProxyArray state through its torch accessor after scene updates and synchronization. It records per-step 7D native pose samples and derives dt error, CUDA backing, finite-value coverage, quaternion norms/readback error, and gravity displacement from those samples.",
+        "The checks are non-vacuous and scoped correctly. The probe does not claim aperture passage, retention, spill detection, density cooking, YAM control, the 20 Hz action loop, or frozen-task qualification. Native results remain appropriately deferred until after this generated-source review."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_rigid_cuboid_api_probe.py",
+        "input/last-failure.json",
+        "input/revision-request.txt",
+        "input/runtime-api-preflight.json",
+        "input/pinned-runtime-sources/589e4ddab2af8f7b1ea788aba5f0bc4f13fa1c5e199ee75589c4b7ec41914157-asset_base_cfg.py",
+        "input/pinned-runtime-sources/841ca674429d5bd405d212f93494c42ff32ae162e4add373474193adbec746f7-base_rigid_object_data.py",
+        "input/pinned-runtime-sources/6e03c85172da8712bdebc6e19c89cea7868afb02f9e96259c82a281cca4270b4-rigid_object_data.py"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_rigid_cuboid_api_probe.py",
+          "--physics-hz",
+          "240",
+          "--steps",
+          "24",
+          "--report",
+          "../measurements/rigid-cuboid-api-240hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/rigid_cuboid_api_probe_240hz-acc91e18ce.log",
+        "finished_at": "2026-11-16T15:38:27.594284+00:00",
+        "id": "rigid_cuboid_api_probe_240hz",
+        "report": "measurements/rigid-cuboid-api-240hz.json",
+        "report_sha256": "b3f4f0cdedb14b3e810ff59e6d00e71188d31cc2e8b9bfdcf3f378dbefa9b193",
+        "source_digest": "7c31c227d9a03cfc6241236629a20e0a435e8af3cacdc692b43284ccefc0be36",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_rigid_cuboid_api_probe.cpython-312.pyc",
+          "__pycache__/run_aperture_native_probe.cpython-312.pyc"
+        ],
+        "measurements": {
+          "scope": "API-only RigidObject cuboid preflight; no aperture, retention, spill, YAM, or 20 Hz claim",
+          "physics_hz": 240,
+          "steps": 24,
+          "state": {
+            "reset_proxy_type": "isaaclab.utils.warp.proxy_array.ProxyArray",
+            "final_proxy_type": "isaaclab.utils.warp.proxy_array.ProxyArray",
+            "tensor_type": "torch.Tensor",
+            "tensor_device": "cuda:0",
+            "tensor_device_index": 0,
+            "tensor_shape": [
+              1,
+              7
+            ],
+            "quaternion_order": "XYZW",
+            "authored_quaternion_xyzw": [
+              0.0916432938695913,
+              0.1832865877391826,
+              0.2749298816087739,
+              0.9393727128473789
+            ],
+            "reset_pose_xyzw": [
+              0.0,
+              0.0,
+              0.9996487498283386,
+              0.09164328873157501,
+              0.18328657746315002,
+              0.27492988109588623,
+              0.939372718334198
+            ],
+            "final_pose_xyzw": [
+              0.0,
+              0.0,
+              0.9422958493232727,
+              0.09164328873157501,
+              0.18328657746315002,
+              0.27492988109588623,
+              0.939372718334198
+            ]
+          },
+          "checks": [
+            {
+              "name": "sim_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "native_cuda_state",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "bool"
+            },
+            {
+              "name": "finite_pose_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction"
+            },
+            {
+              "name": "reset_quaternion_norm_error",
+              "measured": 2.65883626227037e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "final_quaternion_norm_error",
+              "measured": 2.65883626227037e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "authored_xyzw_readback_linf_error",
+              "measured": 1.0276032580414096e-08,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "gravity_delta_z",
+              "measured": -0.05735290050506592,
+              "operator": "<",
+              "threshold": -0.0001,
+              "unit": "m"
+            },
+            {
+              "name": "fresh_pose_sample_count",
+              "measured": 25.0,
+              "operator": ">=",
+              "threshold": 25.0,
+              "unit": "samples"
+            }
+          ],
+          "artifacts": [
+            "measurements/rigid-cuboid-api-240hz-trace.json"
+          ]
+        }
+      },
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_rigid_cuboid_api_probe.py",
+          "--physics-hz",
+          "480",
+          "--steps",
+          "24",
+          "--report",
+          "../measurements/rigid-cuboid-api-480hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/rigid_cuboid_api_probe_480hz-929f480565.log",
+        "finished_at": "2026-11-16T15:38:32.748079+00:00",
+        "id": "rigid_cuboid_api_probe_480hz",
+        "report": "measurements/rigid-cuboid-api-480hz.json",
+        "report_sha256": "bb1bd87df480af4867203e72dcef89ec44b95befe356ef738930686d3fae5300",
+        "source_digest": "7c31c227d9a03cfc6241236629a20e0a435e8af3cacdc692b43284ccefc0be36",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "scope": "API-only RigidObject cuboid preflight; no aperture, retention, spill, YAM, or 20 Hz claim",
+          "physics_hz": 480,
+          "steps": 24,
+          "state": {
+            "reset_proxy_type": "isaaclab.utils.warp.proxy_array.ProxyArray",
+            "final_proxy_type": "isaaclab.utils.warp.proxy_array.ProxyArray",
+            "tensor_type": "torch.Tensor",
+            "tensor_device": "cuda:0",
+            "tensor_device_index": 0,
+            "tensor_shape": [
+              1,
+              7
+            ],
+            "quaternion_order": "XYZW",
+            "authored_quaternion_xyzw": [
+              0.0916432938695913,
+              0.1832865877391826,
+              0.2749298816087739,
+              0.9393727128473789
+            ],
+            "reset_pose_xyzw": [
+              0.0,
+              0.0,
+              0.9999122023582458,
+              0.09164328873157501,
+              0.18328657746315002,
+              0.27492988109588623,
+              0.939372718334198
+            ],
+            "final_pose_xyzw": [
+              0.0,
+              0.0,
+              0.985573947429657,
+              0.09164328873157501,
+              0.18328657746315002,
+              0.27492988109588623,
+              0.939372718334198
+            ]
+          },
+          "checks": [
+            {
+              "name": "sim_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "native_cuda_state",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "bool"
+            },
+            {
+              "name": "finite_pose_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction"
+            },
+            {
+              "name": "reset_quaternion_norm_error",
+              "measured": 2.65883626227037e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "final_quaternion_norm_error",
+              "measured": 2.65883626227037e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "authored_xyzw_readback_linf_error",
+              "measured": 1.0276032580414096e-08,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "gravity_delta_z",
+              "measured": -0.014338254928588867,
+              "operator": "<",
+              "threshold": -0.0001,
+              "unit": "m"
+            },
+            {
+              "name": "fresh_pose_sample_count",
+              "measured": 25.0,
+              "operator": ">=",
+              "threshold": 25.0,
+              "unit": "samples"
+            }
+          ],
+          "artifacts": [
+            "measurements/rigid-cuboid-api-480hz-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-16T15:38:32.867850+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "The next execution is limited to fresh bounded RigidObject cuboid API probes at 240 Hz and 480 Hz. They will measure native CUDA backing, finite fresh 7D pose samples, requested simulator dt, normalized XYZW quaternion readback, and gravity-driven downward displacement. This does not qualify aperture passage, retention, spill detection, density cooking, YAM control, the 20 Hz action loop, or frozen task physics. The earlier aperture mass/density discrepancy remains unresolved. Existing measurement files are not treated as source inputs or current digest-bound receipts.",
+      "scripts": [
+        {
+          "id": "rigid_cuboid_api_probe_240hz",
+          "script": "task/run_rigid_cuboid_api_probe.py",
+          "args": [
+            "--physics-hz",
+            "240",
+            "--steps",
+            "24",
+            "--report",
+            "../measurements/rigid-cuboid-api-240hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/rigid-cuboid-api-240hz.json"
+        },
+        {
+          "id": "rigid_cuboid_api_probe_480hz",
+          "script": "task/run_rigid_cuboid_api_probe.py",
+          "args": [
+            "--physics-hz",
+            "480",
+            "--steps",
+            "24",
+            "--report",
+            "../measurements/rigid-cuboid-api-480hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/rigid-cuboid-api-480hz.json"
+        }
+      ],
+      "files": [
+        "task/run_rigid_cuboid_api_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The prior failure is resolved: the plan uses prospective language, lists only the reviewed source file, and treats measurement reports and traces as future outputs.",
+        "Both bounded runs invoke the same native RigidObject probe at 240 Hz and 480 Hz with task-cwd-compatible arguments and workspace-relative report paths.",
+        "The probe samples actual root_pose_w ProxyArray data through its torch accessor after each scene update and CUDA synchronization, recording finite 7D poses, simulator dt error, CUDA backing, XYZW quaternion normalization/readback, gravity displacement, and sample count.",
+        "The checks are non-constant and appropriately limited to API discovery; the source makes no unsupported claim about aperture physics, retention, spill detection, density cooking, YAM control, 20 Hz execution, or full task qualification."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_rigid_cuboid_api_probe.py",
+        "input/last-failure.json",
+        "input/runtime-api-preflight.json",
+        "input/pinned-runtime-sources/589e4ddab2af8f7b1ea788aba5f0bc4f13fa1c5e199ee75589c4b7ec41914157-asset_base_cfg.py",
+        "input/pinned-runtime-sources/841ca674429d5bd405d212f93494c42ff32ae162e4add373474193adbec746f7-base_rigid_object_data.py",
+        "input/pinned-runtime-sources/6e03c85172da8712bdebc6e19c89cea7868afb02f9e96259c82a281cca4270b4-rigid_object_data.py"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_rigid_cuboid_api_probe.py",
+          "--physics-hz",
+          "240",
+          "--steps",
+          "24",
+          "--report",
+          "../measurements/rigid-cuboid-api-240hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/rigid_cuboid_api_probe_240hz-fd3e3cef60.log",
+        "finished_at": "2026-11-16T15:40:17.569984+00:00",
+        "id": "rigid_cuboid_api_probe_240hz",
+        "report": "measurements/rigid-cuboid-api-240hz.json",
+        "report_sha256": "b3f4f0cdedb14b3e810ff59e6d00e71188d31cc2e8b9bfdcf3f378dbefa9b193",
+        "source_digest": "7c31c227d9a03cfc6241236629a20e0a435e8af3cacdc692b43284ccefc0be36",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_rigid_cuboid_api_probe.cpython-312.pyc"
+        ],
+        "measurements": {
+          "scope": "API-only RigidObject cuboid preflight; no aperture, retention, spill, YAM, or 20 Hz claim",
+          "physics_hz": 240,
+          "steps": 24,
+          "state": {
+            "reset_proxy_type": "isaaclab.utils.warp.proxy_array.ProxyArray",
+            "final_proxy_type": "isaaclab.utils.warp.proxy_array.ProxyArray",
+            "tensor_type": "torch.Tensor",
+            "tensor_device": "cuda:0",
+            "tensor_device_index": 0,
+            "tensor_shape": [
+              1,
+              7
+            ],
+            "quaternion_order": "XYZW",
+            "authored_quaternion_xyzw": [
+              0.0916432938695913,
+              0.1832865877391826,
+              0.2749298816087739,
+              0.9393727128473789
+            ],
+            "reset_pose_xyzw": [
+              0.0,
+              0.0,
+              0.9996487498283386,
+              0.09164328873157501,
+              0.18328657746315002,
+              0.27492988109588623,
+              0.939372718334198
+            ],
+            "final_pose_xyzw": [
+              0.0,
+              0.0,
+              0.9422958493232727,
+              0.09164328873157501,
+              0.18328657746315002,
+              0.27492988109588623,
+              0.939372718334198
+            ]
+          },
+          "checks": [
+            {
+              "name": "sim_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "native_cuda_state",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "bool"
+            },
+            {
+              "name": "finite_pose_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction"
+            },
+            {
+              "name": "reset_quaternion_norm_error",
+              "measured": 2.65883626227037e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "final_quaternion_norm_error",
+              "measured": 2.65883626227037e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "authored_xyzw_readback_linf_error",
+              "measured": 1.0276032580414096e-08,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "gravity_delta_z",
+              "measured": -0.05735290050506592,
+              "operator": "<",
+              "threshold": -0.0001,
+              "unit": "m"
+            },
+            {
+              "name": "fresh_pose_sample_count",
+              "measured": 25.0,
+              "operator": ">=",
+              "threshold": 25.0,
+              "unit": "samples"
+            }
+          ],
+          "artifacts": [
+            "measurements/rigid-cuboid-api-240hz-trace.json"
+          ]
+        }
+      },
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_rigid_cuboid_api_probe.py",
+          "--physics-hz",
+          "480",
+          "--steps",
+          "24",
+          "--report",
+          "../measurements/rigid-cuboid-api-480hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/rigid_cuboid_api_probe_480hz-b8c8da09fb.log",
+        "finished_at": "2026-11-16T15:40:22.822399+00:00",
+        "id": "rigid_cuboid_api_probe_480hz",
+        "report": "measurements/rigid-cuboid-api-480hz.json",
+        "report_sha256": "bb1bd87df480af4867203e72dcef89ec44b95befe356ef738930686d3fae5300",
+        "source_digest": "7c31c227d9a03cfc6241236629a20e0a435e8af3cacdc692b43284ccefc0be36",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "scope": "API-only RigidObject cuboid preflight; no aperture, retention, spill, YAM, or 20 Hz claim",
+          "physics_hz": 480,
+          "steps": 24,
+          "state": {
+            "reset_proxy_type": "isaaclab.utils.warp.proxy_array.ProxyArray",
+            "final_proxy_type": "isaaclab.utils.warp.proxy_array.ProxyArray",
+            "tensor_type": "torch.Tensor",
+            "tensor_device": "cuda:0",
+            "tensor_device_index": 0,
+            "tensor_shape": [
+              1,
+              7
+            ],
+            "quaternion_order": "XYZW",
+            "authored_quaternion_xyzw": [
+              0.0916432938695913,
+              0.1832865877391826,
+              0.2749298816087739,
+              0.9393727128473789
+            ],
+            "reset_pose_xyzw": [
+              0.0,
+              0.0,
+              0.9999122023582458,
+              0.09164328873157501,
+              0.18328657746315002,
+              0.27492988109588623,
+              0.939372718334198
+            ],
+            "final_pose_xyzw": [
+              0.0,
+              0.0,
+              0.985573947429657,
+              0.09164328873157501,
+              0.18328657746315002,
+              0.27492988109588623,
+              0.939372718334198
+            ]
+          },
+          "checks": [
+            {
+              "name": "sim_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "native_cuda_state",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "bool"
+            },
+            {
+              "name": "finite_pose_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction"
+            },
+            {
+              "name": "reset_quaternion_norm_error",
+              "measured": 2.65883626227037e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "final_quaternion_norm_error",
+              "measured": 2.65883626227037e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "authored_xyzw_readback_linf_error",
+              "measured": 1.0276032580414096e-08,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "1"
+            },
+            {
+              "name": "gravity_delta_z",
+              "measured": -0.014338254928588867,
+              "operator": "<",
+              "threshold": -0.0001,
+              "unit": "m"
+            },
+            {
+              "name": "fresh_pose_sample_count",
+              "measured": 25.0,
+              "operator": ">=",
+              "threshold": 25.0,
+              "unit": "samples"
+            }
+          ],
+          "artifacts": [
+            "measurements/rigid-cuboid-api-480hz-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-16T15:40:22.941663+00:00"
   }
 ]

@@ -31,10 +31,13 @@ from isaaclab.assets import RigidObject, RigidObjectCfg
 from isaaclab.sim.spawners.meshes.meshes import _spawn_mesh_geom_from_mesh
 import trimesh
 import torch
+from pxr import Gf, UsdPhysics
 
 APERTURE = 0.0127
 PATCH = 0.050
 FLOOR_THICKNESS = 0.003
+CELL_WALL_THICKNESS = 0.002
+CELL_WALL_HEIGHT = 0.050
 MEDIA_D = 0.009525
 MEDIA_L = 0.022225
 WASHER_D = 0.030
@@ -45,6 +48,29 @@ WASHER_MASS = 0.0206170159
 END_TRIALS = 20
 TRANSVERSE_TRIALS = 20
 WASHER_TRIALS = 40
+
+
+def parallel_angle_cut_mesh() -> trimesh.Trimesh:
+    """Build the closed frozen-envelope media mesh used for both physics and references."""
+    radius = MEDIA_D / 2
+    slope = math.tan(math.radians(15.0))
+    centerline_length = MEDIA_L - 2 * radius * slope
+    vertices = []
+    sections = 32
+    for end_sign in (-1.0, 1.0):
+        for i in range(sections):
+            angle = 2 * math.pi * i / sections
+            x, y = radius * math.cos(angle), radius * math.sin(angle)
+            vertices.append((x, y, slope * x + end_sign * centerline_length / 2))
+    faces = []
+    for i in range(1, sections - 1):
+        faces.append((0, i + 1, i))
+        faces.append((sections, sections + i, sections + i + 1))
+    for i in range(sections):
+        j = (i + 1) % sections
+        faces.append((i, j, sections + j))
+        faces.append((i, sections + j, sections + i))
+    return trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
 
 
 def quat_y_then_z_xyzw(tilt: float, azimuth: float) -> tuple[float, float, float, float]:
@@ -71,6 +97,22 @@ def spawn_aperture(cx: float, cy: float, name: str) -> None:
     for j, (size, pos) in enumerate(specs):
         cfg = sim_utils.CuboidCfg(size=size, **common)
         cfg.func(f"/World/{name}/Rib_{j}", cfg, translation=pos)
+    # This is a bounded diagnostic cell, not the full screen.  Finite walls
+    # stop rejected bodies from rolling off the artificial 50 mm patch while
+    # leaving the aperture and the space below it unobstructed.
+    wall_specs = (
+        ((CELL_WALL_THICKNESS, PATCH + 2 * CELL_WALL_THICKNESS, CELL_WALL_HEIGHT),
+         (cx - PATCH / 2 - CELL_WALL_THICKNESS / 2, cy, CELL_WALL_HEIGHT / 2)),
+        ((CELL_WALL_THICKNESS, PATCH + 2 * CELL_WALL_THICKNESS, CELL_WALL_HEIGHT),
+         (cx + PATCH / 2 + CELL_WALL_THICKNESS / 2, cy, CELL_WALL_HEIGHT / 2)),
+        ((PATCH, CELL_WALL_THICKNESS, CELL_WALL_HEIGHT),
+         (cx, cy - PATCH / 2 - CELL_WALL_THICKNESS / 2, CELL_WALL_HEIGHT / 2)),
+        ((PATCH, CELL_WALL_THICKNESS, CELL_WALL_HEIGHT),
+         (cx, cy + PATCH / 2 + CELL_WALL_THICKNESS / 2, CELL_WALL_HEIGHT / 2)),
+    )
+    for j, (size, pos) in enumerate(wall_specs):
+        cfg = sim_utils.CuboidCfg(size=size, **common)
+        cfg.func(f"/World/{name}/Wall_{j}", cfg, translation=pos)
 
 
 def spawn_parallel_angle_cut_mesh(prim_path, cfg, translation=None, orientation=None, **kwargs):
@@ -80,32 +122,31 @@ def spawn_parallel_angle_cut_mesh(prim_path, cfg, translation=None, orientation=
     so the maximum axial envelope, including the plane slope across the OD, is
     exactly MEDIA_L.  A 32-sided convex mesh is used for native collision.
     """
-    radius = MEDIA_D / 2
-    slope = math.tan(math.radians(15.0))
-    centerline_length = MEDIA_L - 2 * radius * slope
-    vertices = []
-    sections = 32
-    for end_sign in (-1.0, 1.0):
-        for i in range(sections):
-            angle = 2 * math.pi * i / sections
-            x, y = radius * math.cos(angle), radius * math.sin(angle)
-            vertices.append((x, y, slope * x + end_sign * centerline_length / 2))
-    # Trimesh requires a rectangular face array.  The previous version mixed
-    # 32-gon end caps with quad side faces, which NumPy 2 rejects before the
-    # native scene is created.  Triangulate both convex caps using existing
-    # rim vertices so every face has exactly three indices.
-    faces = []
-    for i in range(1, sections - 1):
-        faces.append((0, i + 1, i))
-        faces.append((sections, sections + i, sections + i + 1))
-    for i in range(sections):
-        j = (i + 1) % sections
-        faces.append((i, j, sections + j))
-        faces.append((i, sections + j, sections + i))
-    mesh = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
+    mesh = parallel_angle_cut_mesh()
     from isaaclab.sim.utils import get_current_stage
     stage = get_current_stage()
     _spawn_mesh_geom_from_mesh(prim_path, cfg, mesh, translation, orientation, stage=stage)
+
+    # The first native run established that density-based PhysX cooking uses
+    # a collision approximation whose volume differs from this source mesh.
+    # Derive both mass and inertia from the same watertight geometry and
+    # declared density, author them through USD MassAPI, and read them back.
+    inertia = mesh.moment_inertia * MEDIA_DENSITY
+    principal, axes = torch.linalg.eigh(torch.tensor(inertia, dtype=torch.float64))
+    axes_np = axes.numpy()
+    if float(torch.linalg.det(axes)) < 0.0:
+        axes_np[:, 0] *= -1.0
+    transform = torch.eye(4, dtype=torch.float64).numpy()
+    transform[:3, :3] = axes_np
+    quat_wxyz = trimesh.transformations.quaternion_from_matrix(transform)
+    mass_api = UsdPhysics.MassAPI.Apply(stage.GetPrimAtPath(prim_path))
+    mass_api.CreateMassAttr(float(mesh.volume * MEDIA_DENSITY))
+    mass_api.CreateDensityAttr(0.0)
+    mass_api.CreateCenterOfMassAttr(Gf.Vec3f(*map(float, mesh.center_mass)))
+    mass_api.CreateDiagonalInertiaAttr(Gf.Vec3f(*map(float, principal.tolist())))
+    mass_api.CreatePrincipalAxesAttr(
+        Gf.Quatf(float(quat_wxyz[0]), Gf.Vec3f(*map(float, quat_wxyz[1:])))
+    )
     return stage.GetPrimAtPath(prim_path)
 
 
@@ -118,13 +159,9 @@ def rigid_body(path: str, radius: float, height: float, mass: float, pos, quat, 
                 solver_velocity_iteration_count=8,
                 max_depenetration_velocity=2.0,
             ),
-            # The contract freezes the finished piece mass independently of
-            # the collision mesh tessellation.  Supplying density made PhysX
-            # recompute mass from the angle-cut mesh's smaller volume (about
-            # 7% low), even though MEDIA_MASS is the frozen component value.
-            # Author the physical mass and continue reading back native mass
-            # and inertia below; this is not a substituted measurement.
-            mass_props=sim_utils.MassPropertiesCfg(mass=MEDIA_MASS),
+            # The custom spawner authors geometry-derived mass and inertia;
+            # leave this unset so the generic spawner cannot overwrite them.
+            mass_props=None,
             collision_props=sim_utils.CollisionPropertiesCfg(contact_offset=0.00015, rest_offset=0.0),
             physics_material=sim_utils.RigidBodyMaterialCfg(
                 static_friction=0.50, dynamic_friction=0.35, restitution=0.05
@@ -242,10 +279,23 @@ def main() -> None:
     for *_, body in definitions:
         body.reset()
 
+    reference_mesh = parallel_angle_cut_mesh()
+    mesh_volume = float(reference_mesh.volume)
+    geometry_density_mass = mesh_volume * MEDIA_DENSITY
+    unit_density_inertia = torch.tensor(reference_mesh.moment_inertia, dtype=torch.float64)
+    geometry_density_principal_inertia = [
+        float(v) for v in torch.linalg.eigvalsh(unit_density_inertia * MEDIA_DENSITY).tolist()
+    ]
     realized_media_mass = float(definitions[0][-1].data.body_mass.torch[0, 0].detach().cpu())
     native_inertia_tensor = definitions[0][-1].data.body_inertia.torch[0, 0].detach().reshape(3, 3)
     realized_media_principal_inertia = [
         float(v) for v in torch.linalg.eigvalsh(native_inertia_tensor).cpu().tolist()
+    ]
+    inertia_relative_errors = [
+        abs(native - expected) / expected
+        for native, expected in zip(
+            realized_media_principal_inertia, geometry_density_principal_inertia, strict=True
+        )
     ]
 
     samples = 2 * args.physics_hz
@@ -333,15 +383,26 @@ def main() -> None:
         "checks": [
             {"name": "physics_dt_error_max", "measured": abs(measured_dt - dt), "operator": "<=", "threshold": 1e-9, "unit": "s"},
             {"name": "nominal_20hz_interval_physics_step_ratio", "measured": 0.05 / measured_dt, "operator": "==", "threshold": args.physics_hz / 20, "unit": "ratio_not_action_measurement"},
-            {"name": "realized_media_mass", "measured": realized_media_mass, "operator": ">", "threshold": 0.0, "unit": "kg"},
-            {"name": "realized_media_mass_relative_error", "measured": abs(realized_media_mass - MEDIA_MASS) / MEDIA_MASS, "operator": "<=", "threshold": 0.02, "unit": "ratio"},
-            {"name": "realized_media_min_principal_inertia", "measured": min(realized_media_principal_inertia), "operator": ">", "threshold": 0.0, "unit": "kg_m2"},
+            {"name": "closed_media_mesh_volume", "measured": mesh_volume, "operator": ">", "threshold": 0.0, "unit": "m3"},
+            {"name": "native_effective_density_relative_error", "measured": abs(realized_media_mass / mesh_volume - MEDIA_DENSITY) / MEDIA_DENSITY, "operator": "<=", "threshold": 0.02, "unit": "ratio"},
+            {"name": "native_mass_vs_geometry_density_relative_error", "measured": abs(realized_media_mass - geometry_density_mass) / geometry_density_mass, "operator": "<=", "threshold": 0.02, "unit": "ratio"},
+            {"name": "native_principal_inertia_vs_geometry_density_error_max", "measured": max(inertia_relative_errors), "operator": "<=", "threshold": 0.02, "unit": "ratio"},
             {"name": "end_first_genuine_passage_fraction", "measured": fraction(ends, "genuine_full_body_aperture_passage"), "operator": "==", "threshold": 1.0, "unit": "fraction_component_threshold"},
             {"name": "outside_patch_escape_fraction", "measured": fraction(trials, "outside_finite_patch_escape"), "operator": "==", "threshold": 0.0, "unit": "fraction_validity"},
             {"name": "deterministic_trial_count", "measured": len(trials), "operator": "==", "threshold": 80, "unit": "trials"},
         ],
         "artifacts": [trace_artifact.as_posix()],
         "observations_not_checks": {
+            "frozen_axial_envelope_m": MEDIA_L,
+            "mesh_centerline_length_m": MEDIA_L - MEDIA_D * math.tan(math.radians(15.0)),
+            "closed_mesh_volume_m3": mesh_volume,
+            "authored_density_kg_per_m3": MEDIA_DENSITY,
+            "geometry_density_reference_mass_kg": geometry_density_mass,
+            "native_realized_mass_kg": realized_media_mass,
+            "contract_analytic_mass_reference_kg": MEDIA_MASS,
+            "contract_reference_vs_geometry_density_relative_difference": abs(MEDIA_MASS - geometry_density_mass) / MEDIA_MASS,
+            "geometry_density_principal_inertia_kg_m2": geometry_density_principal_inertia,
+            "native_principal_inertia_kg_m2": realized_media_principal_inertia,
             "transverse_no_certified_passage_observed_fraction": fraction(transverse, "no_certified_passage_observed"),
             "washer_od_proxy_no_certified_passage_observed_fraction": fraction(washers, "no_certified_passage_observed"),
             "transverse_ever_fully_below_floor_fraction": fraction(transverse, "ever_fully_below_floor"),
@@ -350,6 +411,7 @@ def main() -> None:
             "washer_od_proxy_final_full_collider_above_floor_fraction": fraction(washers, "final_full_collider_above_floor"),
         },
         "limitations": [
+            "The frozen 22.225 mm maximum envelope, parallel 15-degree cuts, and 2500 kg/m^3 density imply a geometry-derived mass below the contract's 3.5044969 g analytic full-cylinder reference. This probe preserves geometry and density, exposes the discrepancy, and does not force the contract reference mass.",
             "The media collider is the frozen 15-degree parallel-angle-cut geometry; its native realized mass and inertia are reported. Solid washer-OD cylinders are discovery observations only, not the frozen four-segment washer assemblies and not retention evidence.",
             "This probe does not test agitation release, washer-bore lodging, breakable joints, the full screen, spill scorer, YAM actions, or grading.",
             "The nominal 20 Hz ratio is timestep arithmetic; no action loop is measured here.",

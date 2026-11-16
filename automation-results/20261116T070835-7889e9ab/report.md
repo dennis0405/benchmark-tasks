@@ -61,7 +61,7 @@ Status: **blocked**
 9. review report.html, release-manifest digest와 실제 영상으로 사용자 검토. 구체적 검토 버전의 별도 승인 전 공식 미디어 업로드/대회 PR/최종 제출은 하지 않는다.
 
 
-component-code-reviewer: The mass repair removes the required constitutive coupling. The frozen media geometry uses a 22.225 mm maximum axial envelope with parallel 15° cuts, so its centerline length and mesh volume are smaller than those of a 22.225 mm cylinder. `MassPropertiesCfg(mass=MEDIA_MASS)` forces the target mass while ignoring the contract’s frozen 2500 kg/m³ density; consequently the `realized_media_mass_relative_error` check is guaranteed by authored input rather than validating geometry × density. Reconcile the frozen geometry, density, and mass explicitly, then measure native mass and inertia without a criterion-forcing override.; `MEDIA_DENSITY` is now unused, while the report does not expose mesh volume, effective density, or inertia agreement with a geometry-derived reference. The only inertia criterion is positivity, which cannot detect incorrect mass-property coupling. Add checks tracing volume, density, mass, and inertia to the same physical body and units.; The prior 7.05% mass failure is therefore concealed rather than physically resolved. Generated-source preflight cannot pass while the revised program changes the material interpretation solely to satisfy the failed threshold.
+worker paused at stage boundary
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`
