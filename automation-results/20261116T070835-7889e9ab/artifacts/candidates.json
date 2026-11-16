@@ -1,30 +1,29 @@
 {
   "candidates": [
     {
-      "id": "sidewall-pinch-continuous",
-      "title": "Continuous-belt open-carton rejection by body pinch",
-      "objective": "On a continuously running friction-driven belt, identify physically open cartons, avoid their articulated top flaps, grasp the rigid body below the hinges, and transfer the carton nearly level into a reject tray without spilling its free contents. Initially closed cartons must remain untouched and continue past the downstream line. Body-pinching is a proposed robotic handling method, not a manufacturer-prescribed reject sequence.",
+      "id": "sidewall-pinch-static-first",
+      "title": "Open-carton rejection by sidewall body pinch",
+      "objective": "On a running friction-driven belt, detect an open carton, avoid its collision-enabled flaps, pinch the body below the hinges, and place the carton and all free contents in a reject tray; leave initially closed cartons untouched to cross the downstream line.",
       "skills": [
         "state-conditioned intervention",
         "moving-target tracking",
-        "finite-thickness flap avoidance",
+        "flap avoidance",
         "opposed sidewall grasping",
-        "force-controlled lifting",
-        "orientation-preserving transport",
-        "guarded release and clearance verification"
+        "level transport",
+        "guarded release"
       ],
-      "success_conditions": "Score each carton and average. Open carton: 0.25 after opposed gripper-pad contacts are established on body walls below the hinges; 0.50 after the complete body clears the belt by at least 20 mm while every content item remains inside; 0.75 after the body and all contents are within the reject-tray footprint; 1.00 after release, gripper clearance of at least 60 mm, and uninterrupted 3.0 s stability in the tray. Closed carton: 1.00 only after crossing the downstream line on its original belt path without robot contact; otherwise 0. A content item that crosses the rim and contacts the belt, tray exterior, table, or floor permanently caps that carton at 0.50. A dropped carton scores 0. Closing an open carton and allowing it through is not rejection. Full aggregate score requires every open carton rejected and every closed carton passed. Score history is sampled at the 10 Hz control rate; separate 240 Hz traces validate contacts, collision behavior, and belt physics without becoming grading requirements.",
-      "industrial_value": "Open-flap detection followed by automatic rejection or machine stoppage is documented packaging-line practice. An acquired cartoner manual uses an air-cylinder push rod, while another industrial source lists air blast and warns that it is unsuitable for open packages that could spill. The benchmark therefore models a representative careful robotic alternative for spill-prone rejects, relevant to inspectors/testers/sorters and hand packers, without claiming that sidewall lifting is the documented manufacturer procedure.",
-      "dexterity": "High: a gripper must synchronize with a translating carton, enter a narrow body-access band beneath collision-enabled flaps, establish bilateral frictional contact, lift without rim strikes, preserve loose contents during transfer, and release without disturbing the carton.",
+      "success_conditions": "Per open carton: 0.25 for opposed pad contacts within the z=15–40 mm body band; 0.50 after the complete carton clears the belt by at least 20 mm with every content item retained; 0.75 when carton and contents are inside the tray; 1.00 after complete release, at least 60 mm robot clearance, and 3.0 s stable dwell from fresh 10 Hz observations. A content item leaving the carton and touching anything outside its interior permanently caps that carton at 0.50; a dropped carton scores 0. Initially closed cartons score 1.00 only after untouched passage along the original belt path. Full score requires every reject removed and every closed carton passed. Physics validation uses separately labeled 240 Hz traces and is not a grading condition.",
+      "industrial_value": "Cartoners detect and reject open-flap cartons, while spill-prone open packages can be unsuitable for forceful rejection. The proposed robotic pinch is a representative careful-removal method, not a claimed manufacturer procedure.",
+      "dexterity": "High: synchronize with a translating carton, approach a 25 mm-high body contact band beneath moving finite-thickness flaps, establish bilateral contact, lift nearly level, preserve loose contents, and release cleanly.",
       "evidence": [
         {
           "source_id": "s-058bb7939e386179",
-          "locator": "CMK Continuous Motion Cartoner Operator’s Manual, Figure 5.16, page 82",
+          "locator": "CMK Continuous Motion Cartoner Operator’s Manual, Figure 5.16, PDF page 82",
           "quote_sha256": "313ca108bc3fc0984b199a4a74c6b262455ff9fbdd4c0fa79ef91eaaf8d02af6"
         },
         {
           "source_id": "s-058bb7939e386179",
-          "locator": "CMK Continuous Motion Cartoner Operator’s Manual, Product Rejection, page 6-9",
+          "locator": "CMK Continuous Motion Cartoner Operator’s Manual, Product Rejection, section 6-9",
           "quote_sha256": "2e19a78e78c4a81da03b8a19218116e97a51c01981fb95c4ce84330167bd2e3a"
         },
         {
@@ -34,41 +33,34 @@
         },
         {
           "source_id": "s-613c0ffc934264ac",
-          "locator": "FEFCO Code Booklet, Slotted Boxes, page 8",
+          "locator": "FEFCO Code Booklet, Slotted Boxes, PDF page 7",
           "quote_sha256": "dee8aa46d3c03f32761cd5383b88c6c2c6918179e868e4e65f3b146cc346b421"
-        },
-        {
-          "source_id": "s-591fb2e08d261bc8",
-          "locator": "PR #83 official final review comment",
-          "quote_sha256": "bb16cfd563f6f99f72cc0a5e54442759cece4a2a1da8ca1795f209c832b6231e"
-        },
-        {
-          "source_id": "s-2b79d8a9bb1a2c26",
-          "locator": "PR #1214 review, construct-validity correction",
-          "quote_sha256": "570e0ac57d39563c4b432e646a3d16463a64695635b1a3dcd45b46586e74e2c7"
         }
       ],
-      "asset_plan": "Use pinned Isaac Sim 6.1.0.0 and YAM commit 0059d02a1a91bc6834c1d0846022891df0c78730. First-build assumptions: representative FEFCO 0201-style carton with 120 x 70 x 70 mm external body, 2 mm rigid walls, four 2 mm collision-enabled hinge flaps, 0–105 degree hinge travel, and three free 18 mm, 8 g rigid contents. The 70 mm grasp width leaves 24 mm nominal clearance within the pinned YAM model’s documented 94 mm pad opening. Use a 500 x 180 mm belt at an initial 40 mm/s, a 180 x 160 x 50 mm reject tray beside the belt, and at least 90 mm of exposed body height/access below flap edges. Model the closed state with an explicit break-free magnetic-detent approximation whose threshold is measured and disclosed; this is a testable modeling assumption, not a product replica. Build from primitives and author the carton fixture independently. Gate development in order: stationary grasp/lift; stationary tray transfer and release; moving open carton; untouched closed-carton passage; mixed stream. Use surface motion and friction for conveyance, never forced carton velocity, state writes, grasp welds, or disabled essential collisions.",
-      "risk": "Readiness means sufficient geometry and mechanism assumptions exist to build the first rigid-PhysX test, not that feasibility is already certified. Full development must stop if physical traces do not show stable opposed contact, flap clearance, retained contents, and release clearance. Novelty fails if flap interference or spill preservation does not change outcomes relative to generic conveyor picking. Rigid walls approximate corrugated compliance and must be disclosed. Required counterfactuals are no action, flap-only grasp, rough tilt, all-remove, all-ignore, closed-carton contact, and off-belt staging.",
-      "feasibility_status": "ready",
-      "missing_evidence": []
+      "asset_plan": "Use pinned Isaac Sim 6.1.0.0 and YAM commit 0059d02a1a91bc6834c1d0846022891df0c78730. Start with a representative 120×70×70 mm external carton, 2 mm rigid compound walls, four 2 mm collision-enabled hinged flaps, a proposed z=15–40 mm contact band, and three free 18 mm rigid contents. The pinned constants describe a nominal 94 mm open pad separation; the 24 mm difference from carton width is not measured clearance. Validate finger, palm, belt, and flap swept-volume clearance natively. Use frictional surface motion only. Gate work through stationary grasp/lift, stationary transfer and release, moving open carton, untouched closed-carton passage, then mixed stream. Model closed-flap retention explicitly and disclose its calibrated break-free threshold as a testable assumption.",
+      "risk": "The corrected geometry is internally consistent, but no native physical grasp trace exists. Novelty fails if flap interference and spill preservation do not measurably distinguish the task from generic conveyor selection and pick-and-place. Corrugated compliance is simplified as rigid walls.",
+      "feasibility_status": "research-needed",
+      "missing_evidence": [
+        "Independent visual verification of the relevant FEFCO and Rovema diagrams; acquired PDFs exist, but this read-only run could not render their pages for inspection",
+        "Pinned-YAM physical trace confirming pad and palm clearance around the 70 mm carton and z=15–40 mm contact band",
+        "Validated closed-flap retention threshold and hinge/contact parameters"
+      ]
     },
     {
       "id": "bimanual-endwall-cradle",
-      "title": "Bimanual level-cradle rejection of an open carton",
-      "objective": "Track an open carton on the running belt, place one gripper against each short body wall below the flap hinges, coordinate a level bimanual lift, and transfer it into the reject tray while retaining all loose contents; allow closed cartons to pass untouched.",
+      "title": "Bimanual end-wall cradle rejection",
+      "objective": "Track an open carton and support its two short body walls with separate grippers below the flap hinges, then coordinate a level lift and tray placement without losing free contents; leave closed cartons untouched.",
       "skills": [
         "bimanual synchronization",
         "moving-object interception",
         "opposed end-wall support",
         "load sharing",
         "level transport",
-        "flap avoidance",
         "coordinated release"
       ],
-      "success_conditions": "Open carton: 0.25 for simultaneous supported contacts on opposite short body walls below the hinges; 0.50 for at least 20 mm complete belt clearance with all contents retained; 0.75 for body and contents inside the tray; 1.00 after both grippers release, remain at least 60 mm clear, and the result stays stable for 3.0 s. Apply the same spill, drop, closed-carton-contact, and pass-through conditions as the selected candidate. Hand assignment and contact order are irrelevant when the same safe physical outcome is achieved.",
-      "industrial_value": "This uses the documented open-flap reject decision but proposes coordinated robotic handling for a spill-prone package that may be unsuitable for air-blast rejection. It is not presented as an existing manufacturer procedure.",
-      "dexterity": "Very high: both arms must match belt motion, avoid four articulated flaps, share load without yawing or squeezing the carton, and clear the tray during coordinated release.",
+      "success_conditions": "Per open carton: 0.25 for simultaneous support on opposite short body walls below the hinges; 0.50 for at least 20 mm complete belt clearance with all contents retained; 0.75 for carton and contents inside the tray; 1.00 after both grippers release, remain at least 60 mm clear, and the result stays stable for 3.0 s. Apply the same permanent spill cap, drop loss, closed-carton no-contact condition, and downstream passage rule as the sidewall candidate. Hand assignment and contact order are irrelevant.",
+      "industrial_value": "This evaluates careful removal after a documented open-flap reject decision where a forceful reject could spill contents. Bimanual cradling is proposed test geometry, not an asserted factory procedure.",
+      "dexterity": "Very high: both arms must match belt motion, avoid four articulated flaps, share load without yawing or crushing the carton, and clear one another during release.",
       "evidence": [
         {
           "source_id": "s-e0cf7b56f172bc65",
@@ -77,28 +69,28 @@
         },
         {
           "source_id": "s-058bb7939e386179",
-          "locator": "CMK Continuous Motion Cartoner Operator’s Manual, Product Rejection, page 6-9",
+          "locator": "CMK Continuous Motion Cartoner Operator’s Manual, Product Rejection, section 6-9",
           "quote_sha256": "1475d82f0217c3202b6023d5908695bf98e602fa4510a101c643f6b40ddd8d0e"
         },
         {
           "source_id": "s-2cfb4c8d748cc938",
-          "locator": "What reject method is right for my application?, introductory section",
+          "locator": "What reject method is right for my application?, introduction",
           "quote_sha256": "9a1c17dbb3b879ad8c4973c4e3971e1eedccd1df3f8a0b3359a99f71ecbd2767"
         }
       ],
-      "asset_plan": "Use the same numerically specified rigid carton, contents, belt, tray, and closed-state detent as the selected candidate, but expose both 120 x 70 mm end approaches. Validate stationary simultaneous contact, load sharing, lift attitude, inter-arm clearance, moving interception, and coordinated release from 240 Hz physical traces before adding mixed cartons.",
-      "risk": "No acquired industrial procedure establishes bimanual cradling as the real removal method, and no pinned-YAM physical trace yet proves collision-free simultaneous access, stable load sharing, or release clearance.",
+      "asset_plan": "Reuse the corrected 120×70×70 mm rigid carton and free contents, but expose both short-wall approaches. Validate stationary simultaneous access, arm-arm clearance, opposing support, load sharing, lift attitude, and coordinated release before enabling belt motion.",
+      "risk": "No acquired procedure establishes bimanual cradling, and simultaneous access is substantially more demanding than the single-gripper option.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
-        "Pinned-YAM physical trace demonstrating collision-free simultaneous access to opposite end walls",
-        "Contact/load trace demonstrating a level lift without a grasp weld",
-        "Release-clearance trace showing both arms avoid the flaps, carton, and tray"
+        "Pinned-YAM trace demonstrating collision-free simultaneous end-wall access",
+        "Contact and body traces demonstrating a level lift without grasp welding",
+        "Release-clearance trace covering both arms, flaps, carton, and tray"
       ]
     },
     {
-      "id": "flap-stabilize-body-extract",
-      "title": "Flap stabilization followed by body extraction",
-      "objective": "For an open carton whose near flap physically obstructs the body grasp band, control that flap with one arm while the other arm establishes a body-wall grasp and transfers the carton into the reject tray without spilling; leave closed cartons untouched.",
+      "id": "flap-stabilize-then-extract",
+      "title": "Flap stabilization with body extraction",
+      "objective": "When an open flap obstructs the body approach, control that articulated flap with one gripper while the other acquires a body-wall grasp and transfers the carton to the reject tray without spilling; leave closed cartons untouched.",
       "skills": [
         "bimanual role coordination",
         "articulated-flap control",
@@ -107,13 +99,13 @@
         "body-wall force control",
         "spill-minimizing transport"
       ],
-      "success_conditions": "Open carton: 0.25 when the obstructing flap is physically controlled without damage or converting the carton to the closed state; 0.50 when a valid body grasp lifts the complete carton at least 20 mm with all contents retained; 0.75 when body and contents are inside the tray; 1.00 after complete release, 60 mm arm clearance, and 3.0 s stability. Flap-only lifting cannot exceed 0.25. Spill permanently caps the carton at 0.50; a dropped carton or contacted/removed closed carton scores 0. Equivalent safe flap-control strategies are accepted regardless of hand identity or action order.",
-      "industrial_value": "The objective turns an open flap into an active collision constraint within a documented reject operation, but flap stabilization during removal is not established by the acquired industrial procedures and must not be described as standard practice.",
-      "dexterity": "Extreme: one arm must control a translating articulated obstacle without closing the defect while the other acquires a stable body grasp and both arms exchange clearance safely.",
+      "success_conditions": "Per open carton: 0.25 when the obstructing flap is controlled without damage or conversion to a closed state; 0.50 when a valid body grasp lifts the whole carton at least 20 mm with every content item retained; 0.75 when carton and contents are inside the tray; 1.00 after complete release, 60 mm robot clearance, and 3.0 s stability. Flap-only lifting cannot exceed 0.25. Spill permanently caps the carton at 0.50; a drop or any robot contact with a closed carton scores that carton 0. Equivalent safe flap-control methods are accepted regardless of hand identity or order.",
+      "industrial_value": "The task makes an actual open flap an active collision constraint during documented defect rejection, rather than a visual label. The stabilization strategy itself is not claimed as standard industrial practice.",
+      "dexterity": "Extreme: one arm controls a translating articulated obstacle while the other establishes a body grasp, followed by coordinated lift and collision-free withdrawal.",
       "evidence": [
         {
           "source_id": "s-613c0ffc934264ac",
-          "locator": "FEFCO Code Booklet, Slotted Boxes, page 8",
+          "locator": "FEFCO Code Booklet, Slotted Boxes, PDF page 7",
           "quote_sha256": "862eed9bf7944b32649a2458a4c42fa78115beca610b30e136b00afbff0d4d5b"
         },
         {
@@ -123,20 +115,20 @@
         },
         {
           "source_id": "s-058bb7939e386179",
-          "locator": "CMK Continuous Motion Cartoner Operator’s Manual, Figure 5.16, page 82",
+          "locator": "CMK Continuous Motion Cartoner Operator’s Manual, Figure 5.16, PDF page 82",
           "quote_sha256": "43dee321594394b0fcc6e452de9c2957e39af483ecac1179c104ed7a0806b28b"
         }
       ],
-      "asset_plan": "Use the selected candidate’s rigid geometry, but configure one collision-enabled flap to overlap the reachable grasp band. Explicitly author hinge limits, damping, mass, and contact thickness. Validate free hinge behavior, stationary flap control, simultaneous physical body grasp, moving execution, and release using hinge/body/gripper/content traces.",
-      "risk": "The essential strategy is not source-grounded, realistic hinge/contact parameters are unvalidated, and intentionally blocking every alternative body approach could force an artificial strategy rather than measure a real handling need.",
+      "asset_plan": "Use the corrected 120×70×70 mm carton but configure one finite-thickness flap to obstruct part of an otherwise reachable body approach. Author explicit hinge limits, damping, mass, and collision thickness. Validate free hinge behavior, stationary flap control, simultaneous body grasp, and safe release before adding belt motion.",
+      "risk": "This variant risks forcing an artificial strategy. The flap must physically impede generic grasping without making stabilization the only arbitrarily prescribed solution.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
-        "Industrial procedure or video showing flap stabilization during removal of an open defective carton",
-        "Validated hinge/contact parameters producing realistic obstruction",
-        "Pinned-YAM physical trace of simultaneous flap control and body grasp"
+        "Industrial procedure or video supporting flap stabilization during removal, or evidence that this representative mechanism preserves the real skill without claiming standard practice",
+        "Validated hinge and contact parameters producing realistic obstruction",
+        "Pinned-YAM trace of simultaneous flap control and body grasp"
       ]
     }
   ],
-  "selected_id": "sidewall-pinch-continuous",
-  "selection_reason": "This is the only candidate with a source-grounded reject decision, explicit representative geometry within the pinned YAM’s documented 94 mm opening, a defined closed-state retention assumption, and a rigid-PhysX build path with no critical evidence gap. The prior absent quotation has been removed; every cited excerpt is present verbatim in the acquired sources. Selection remains conditional on staged physics gates, and novelty may be claimed only if flap-interference and spill counterfactuals demonstrate an ability beyond generic conveyor selection and pick-and-place."
+  "selected_id": "",
+  "selection_reason": "No candidate can be selected under the requirement that selection is limited to ready candidates with no critical missing evidence. The sidewall-pinch candidate is the preferred first build and corrects the prior 110 mm-height, 80 mm-band, and alleged measured-clearance errors, but independent diagram inspection and native YAM clearance/contact validation remain unavailable. Marking it ready would repeat the prior failure by asserting construction readiness without the required evidence."
 }

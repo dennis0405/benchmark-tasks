@@ -1,0 +1,19 @@
+{
+  "verdict": "repair",
+  "findings": [
+    "The prior false-quotation failure is addressed: the replacement excerpt, “A reject system using an air cylinder and push rod is located on the cartoner discharge coveyor,” appears verbatim in the acquired Rovema manual.",
+    "The selected build geometry is internally impossible: it specifies a 70 mm-high carton body while requiring “at least 90 mm of exposed body height/access below flap edges.” Correct the dimensions or access requirement before marking the candidate ready.",
+    "The claimed pinned-YAM “documented 94 mm pad opening” has no cited or acquired runtime/equipment source. Consequently, the asserted 24 mm clearance and actual grasp feasibility are not independently verifiable. Cite an indexed pinned-runtime snapshot or label the value as an unverified modeling assumption and retain the access check as unresolved.",
+    "The essential industrial mechanism is otherwise supported: the Rovema manual documents open-flap detection and pneumatic push-rod rejection; Loma warns that air-blast rejection is unsuitable for open packages that could spill; and the candidate clearly labels body-pinching as a proposed robotic alternative rather than a manufacturer-prescribed sequence.",
+    "The selected candidate's `feasibility_status: \"ready\"` and empty `missing_evidence` overstate readiness while the grasp-envelope provenance and contradictory access geometry remain unresolved."
+  ],
+  "evidence_paths": [
+    "artifacts/selected.json",
+    "artifacts/candidates.json",
+    "input/last-failure.json",
+    "input/sources/s-058bb7939e386179.json",
+    "input/sources/s-058bb7939e386179.raw",
+    "input/sources/s-2cfb4c8d748cc938.json",
+    "input/sources/s-613c0ffc934264ac.raw"
+  ]
+}

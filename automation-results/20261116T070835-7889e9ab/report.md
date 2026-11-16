@@ -61,7 +61,7 @@ Status: **blocked**
 9. review report.html, release-manifest digest와 실제 영상으로 사용자 검토. 구체적 검토 버전의 별도 승인 전 공식 미디어 업로드/대회 PR/최종 제출은 하지 않는다.
 
 
-candidate-critic: The prior false-quotation failure is addressed: the replacement excerpt, “A reject system using an air cylinder and push rod is located on the cartoner discharge coveyor,” appears verbatim in the acquired Rovema manual.; The selected build geometry is internally impossible: it specifies a 70 mm-high carton body while requiring “at least 90 mm of exposed body height/access below flap edges.” Correct the dimensions or access requirement before marking the candidate ready.; The claimed pinned-YAM “documented 94 mm pad opening” has no cited or acquired runtime/equipment source. Consequently, the asserted 24 mm clearance and actual grasp feasibility are not independently verifiable. Cite an indexed pinned-runtime snapshot or label the value as an unverified modeling assumption and retain the access check as unresolved.; The essential industrial mechanism is otherwise supported: the Rovema manual documents open-flap detection and pneumatic push-rod rejection; Loma warns that air-blast rejection is unsuitable for open packages that could spill; and the candidate clearly labels body-pinching as a proposed robotic alternative rather than a manufacturer-prescribed sequence.; The selected candidate's `feasibility_status: "ready"` and empty `missing_evidence` overstate readiness while the grasp-envelope provenance and contradictory access geometry remain unresolved.
+candidate selection ambiguous
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`
