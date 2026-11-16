@@ -1,57 +1,62 @@
 {
-  "id": "lm-rail-parallel-jig",
-  "title": "Align a subsidiary LM rail with a travelling spacing jig",
-  "objective": "Adjust the free planar pose of an unfastened subsidiary LM rail relative to a fixed master rail, seat a rigid third-body spacing jig across both rails at six marked longitudinal stations, then return the jig to its parking mark while leaving the rails aligned and at rest.",
+  "id": "drg80-opening-stop-lock",
+  "title": "Set and lock a robot gripper opening stop, then verify retained motion",
+  "objective": "On an unpressurized, already-assembled representative SCHUNK DRG 80 bench fixture, adjust the opening-stop screw to a declared 90° total opening, lock it without changing the setting, withdraw both tools, and operate a cold test lever to verify retained opening over repeated cycles.",
   "skills": [
-    "bimanual rail repositioning",
-    "planar translation and yaw correction",
-    "simultaneous gauge contact with two reference surfaces",
-    "guarded sliding, lifting, and reseating",
-    "regrasping without disturbing alignment",
-    "tool parking and collision-free release"
+    "coaxial hex-driver seating",
+    "open-ended wrench seating on a thin jam nut",
+    "coupled screw adjustment and nut locking",
+    "bimanual counterholding against tightening reaction",
+    "tool regrasping and withdrawal",
+    "functional verification through articulated motion"
   ],
-  "success_conditions": "Score 0.15 when the subsidiary rail is flat and its full-length datum-gap error is at most 2 mm. Add 0.10 for each of six marked stations physically verified by simultaneous jig seating across both rails, for a maximum partial score of 0.75; revoke all station credit whenever alignment is lost. Award 1.0 only after all six stations are verified, the jig is flat and within 15 mm of its parking target, rail and jig satisfy declared linear and angular settling limits for 4 seconds of fresh observations, and both grippers are open and clear. A dropped or inaccessible rail or jig, non-finite state, or lost final alignment scores 0. Arm choice, station order, action count, and arbitrary impulse windows are not graded.",
-  "industrial_value": "THK documents establishing master/subsidiary LM-rail parallelism with a jig and checking successively along the rail before fastening. Yamaha’s Cartesian Robot XY-X manual independently requires setting parallelism between the X-axis and adjustable support guide rail during gantry-support installation. Thus rail alignment is grounded in robot assembly, while the particular cross-rail jig is grounded separately by THK Fig. 17(b). The task is an independently authored coarse subassembly proxy, not an exact Yamaha or THK product, and does not claim bolt tightening, rolling-element behavior, preload adjustment, or micron metrology.",
-  "dexterity": "The robot must correct coupled translation and yaw of a long free rail, then manipulate a bridge-shaped gauge whose two inner faces engage separate rails simultaneously. Sliding, lifting, or reseating the gauge can undo alignment, demanding guarded contact, stabilization, regrasping, repeated verification, and clean release rather than simple placement.",
+  "success_conditions": "Initial score is 0. Award 0.25 for a released opening within 6° of the declared 90° target; 0.5 when within 3° with nut 73 seated against the cover and nut 74 retained in its modeled installed position; 0.75 when both tools are removed and one close-open cycle returns within 3°; 1.0 after three cycles each return within 3°, stop drift is at most 2°, both nuts remain retained, and tools and robot grippers remain at least 30 mm clear for one second. Revoke angle and cycle credit whenever locking, retention, or clearance prerequisites fail. A missing screw or nut, a dropped or inaccessible tool, fixture displacement, non-finite state, or motion outside the modeled 20°–180° range scores 0. Equivalent safe strategies earn the same outcome score; arm identity, order, path, action count, and impulse windows are not graded. The target, tolerances, cycle count, and clearance are explicit benchmark assumptions checkable by protractor, witness marks, nut-gap inspection, and video.",
+  "industrial_value": "SCHUNK specifies opening-angle adjustment, locking, and pneumatic functional testing for its DRG 44–80 industrial grippers, making this direct robot-end-effector setup work within Impact on AI timelines. Its tested ability differs from generic tightening and the accepted hose-clamp task: the robot must preserve an adjustable stop against locknut reaction and then demonstrate hands-off functional retention. It also differs from PR 1540 because two concentric tools act on a coupled screw-and-nut setting rather than stabilizing a sensor body during connector assembly, and from PR 2229 because no third-body feeler gauge or cam clamp establishes the target.",
+  "dexterity": "One gripper must keep a driver seated in the adjustment screw while the other seats and turns a wrench on nut 73. Tightening must physically tend to disturb an unrestrained screw, requiring coordinated countertorque, angular regulation, possible wrench regrasping, clean tool withdrawal, and subsequent operation of the articulated test fixture.",
   "evidence": [
     {
-      "source_id": "s-5fe1603e9dcf87a9",
-      "locator": "THK Mounting Procedure, “Mounting the Subsidiary LM Rail”",
-      "quote_sha256": "96ee6faea8aa80efa569e3d44830c9a78ad6da0ccfe18ed4219f006d1a64d7a5"
+      "source_id": "s-0b3ec636c6201fe9",
+      "locator": "SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 3, printed page 28",
+      "quote_sha256": "ddfaa95db0b248715bdd5689773bae1381ddb9fcbac323311485fef914f7c4af"
     },
     {
-      "source_id": "s-5fe1603e9dcf87a9",
-      "locator": "THK Mounting Procedure, “Using a Jig,” Fig. 17",
-      "quote_sha256": "53ae508eb06dcce277e6fb9091313ca8b5a8324763b3a87cc8cd4b2a71cdc6ca"
+      "source_id": "s-0b3ec636c6201fe9",
+      "locator": "SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 4, printed page 28",
+      "quote_sha256": "bce5082c3575ebe98d6deeb6988ffa928ee9e937fe18000f45effcccfcee3c5b"
     },
     {
-      "source_id": "s-5fe1603e9dcf87a9",
-      "locator": "THK Mounting Procedure, “Using a Jig,” Fig. 17",
-      "quote_sha256": "62984ae8efb6aaa854f560a487dc8ce1c090053caff2729d6a98c99776535478"
+      "source_id": "s-0b3ec636c6201fe9",
+      "locator": "SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 6, printed page 28",
+      "quote_sha256": "a67751d180a0ac0ac773716337f87b81dd5d5eea6509558933d0875954766bc3"
     },
     {
-      "source_id": "s-5b841f695edcea19",
-      "locator": "THK, “Selecting a Radial Clearance (Preload)”",
-      "quote_sha256": "18afeaba4e0ad6130830505d83c08d4511a74fc10e4bafaf24bca55a80b40579"
+      "source_id": "s-0b3ec636c6201fe9",
+      "locator": "SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 7, printed page 28",
+      "quote_sha256": "bfbe1345287d1ab7656a4757b8b1698629a2f57ed37cd53deb4cefec31c7e4a4"
     },
     {
-      "source_id": "s-b233d4ba6542e4f5",
-      "locator": "THK Online Services Terms of Use, section 7.1",
-      "quote_sha256": "fd82089d80092b3e4bb1a7c25a9642ee1a448052f24c230cd375561c7c89f298"
+      "source_id": "s-604022b1979c380c",
+      "locator": "SCHUNK DRG 80 product data sheet, page 2, Advantages – Your benefits",
+      "quote_sha256": "8a65163526bb1ac1dd5909a4e724ca0b7594151f4950537237f49fd94cb6196f"
     },
     {
-      "source_id": "s-43e5b0fba5202d92",
-      "locator": "Yamaha Cartesian Robot XY-X User Manual E25-Ver.1.10, Chapter 9 MXYX section 1-5, printed page 9-4/PDF page 158; repeated in Chapter 10 HXYX section 1-3",
-      "quote_sha256": "0cb309711182fe9678602a6c8da7ab578a44ba901274bf6765313214026825e3"
+      "source_id": "s-604022b1979c380c",
+      "locator": "SCHUNK DRG 80 product data sheet, page 4, General notes about the series",
+      "quote_sha256": "78f2448bdfc688a3cb1c4f1a76b22323315fc68d01c07f0dbb8607df3f6542fb"
     },
     {
-      "source_id": "s-cd887334c751eacb",
-      "locator": "THK “Determining the Accuracy,” accuracy-grade guidelines table, machine type row paired with “Cartesian coordinate”",
-      "quote_sha256": "ffa710db39281674dd2a997236ecacd5f79846ec84427ae12cbbb512ad135e11"
+      "source_id": "s-604022b1979c380c",
+      "locator": "SCHUNK DRG 80 product data sheet, page 4, General notes about the series",
+      "quote_sha256": "289420e37b9a5beb18ef165bba7f5de013f603cf7f0a55ddb4e9a0c096cdd661"
+    },
+    {
+      "source_id": "s-604022b1979c380c",
+      "locator": "SCHUNK DRG 80 product data sheet, page 6, Technical data",
+      "quote_sha256": "42aefa762721f795f4df3520e379e507f1b18724cd3dc194af71731e0d9a7799"
     }
   ],
-  "asset_plan": "Use independently authored rigid PhysX geometry: two representative 320 × 28 × 16 mm steel rail proxies and a travelling bridge jig with chamfered inner contact faces. Independent inspection of source s-e0c2d90a34baaa51, THK Fig. 17(b), confirms a cross-rail jig spanning two rails and travelling lengthwise; source s-b87581f510c6e535, page B1-94, independently contains the associated procedure. Add six flush paint ticks at x=0.200, 0.236, 0.272, 0.308, 0.344, and 0.380 m and a flush parking rectangle. Treat dimensions, masses, friction, and millimetre tolerances as disclosed representative modeling assumptions. Do not redistribute THK imagery or claim an exact product replica. Preserve the demonstrated custom USDA geometry and validate reset, gravity, settling, contact, release, loss cases, and timestep sensitivity in the pinned runtime.",
-  "risk": "The 2 mm threshold represents coarse assembly alignment rather than manufacturing metrology. Two independent native feasibility trials reached 1.0 with the same source digest using 1,035 guarded 14D actions at 20 Hz; measured overlap and final release evidence support feasibility but are control-rate observations, not physics-substep certification. THK and Yamaha establish related alignment operations but do not establish that Yamaha uses this particular jig. Full current-catalog and six-suite novelty clearance remains a separate required phase; historical unmerged PR 325 is a specific risk because its incomplete record concerns a long DIN rail and cradle.",
+  "asset_plan": "Build independently authored, full-scale representative rigid geometry, not a redistributed SCHUNK CAD model. Preserve the catalog drawing’s dimensional semantics: 100 × 71.6 × 135.5 mm are catalog X/Y/Z reference dimensions, not a claimed bounding envelope, and the page-7 drawing separately shows a 183.35 mm extent to point P. Represent the anodized-aluminum housing, steel angular jaws, native revolute jaw joints, common centric coupling, accessible adjustment screw, nut 73 as the locking nut, and retained nut 74 as the second manufacturer-specified nut; its precise spacing and role beyond installation are disclosed fixture assumptions because the manual does not explain them. Provide real hex and wrench contact geometry and a native or conservative task-local torque/friction mechanism in which tightening disturbs an unrestrained screw. The cold lever replaces pneumatic actuation only for bench verification. Target angle, hardware dimensions absent from the manual, friction, preload, and tolerances remain declared assumptions. Before demo development, validate reset, tool seating, restrained-versus-unrestrained causality, joint traces, loss cases, release clearance, and timestep sensitivity in the pinned Isaac Sim 6.1/YAM runtime.",
+  "risk": "Closest ability-level neighbors include PR 1540, PR 1799, PR 1865, PR 2018, PR 2167, and PR 2229. Novelty depends on retaining genuine concentric two-tool screw/nut countertorque and functional-cycle verification; an implementation with zero driver reaction or a scripted phase flag would collapse into existing stabilization or adjustment tasks. No current native gripper trial exists, so implementation feasibility and physics validation remain future gates rather than claimed evidence.",
   "feasibility_status": "ready",
   "missing_evidence": []
 }

@@ -14,60 +14,65 @@
 - 결과는 이 run의 새로운 origin 브랜치에 보존한다. 원본 매뉴얼 전체/인증 정보는 공개하지 않는다. 50MB/file 또는 100MB checkpoint 초과는 먼저 보고한다.
 - 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
-</p><p>no candidate passed the ideation gates; inspect selection-history.json</p><p>Release digest: none</p><h2>last_candidate</h2><pre>{
-  &quot;id&quot;: &quot;lm-rail-parallel-jig&quot;,
-  &quot;title&quot;: &quot;Align a subsidiary LM rail with a travelling spacing jig&quot;,
-  &quot;objective&quot;: &quot;Adjust the free planar pose of an unfastened subsidiary LM rail relative to a fixed master rail, seat a rigid third-body spacing jig across both rails at six marked longitudinal stations, then return the jig to its parking mark while leaving the rails aligned and at rest.&quot;,
+</p><p>worker paused at stage boundary</p><p>Release digest: none</p><h2>last_candidate</h2><pre>{
+  &quot;id&quot;: &quot;drg80-opening-stop-lock&quot;,
+  &quot;title&quot;: &quot;Set and lock a robot gripper opening stop, then verify retained motion&quot;,
+  &quot;objective&quot;: &quot;On an unpressurized, already-assembled representative SCHUNK DRG 80 bench fixture, adjust the opening-stop screw to a declared 90° total opening, lock it without changing the setting, withdraw both tools, and operate a cold test lever to verify retained opening over repeated cycles.&quot;,
   &quot;skills&quot;: [
-    &quot;bimanual rail repositioning&quot;,
-    &quot;planar translation and yaw correction&quot;,
-    &quot;simultaneous gauge contact with two reference surfaces&quot;,
-    &quot;guarded sliding, lifting, and reseating&quot;,
-    &quot;regrasping without disturbing alignment&quot;,
-    &quot;tool parking and collision-free release&quot;
+    &quot;coaxial hex-driver seating&quot;,
+    &quot;open-ended wrench seating on a thin jam nut&quot;,
+    &quot;coupled screw adjustment and nut locking&quot;,
+    &quot;bimanual counterholding against tightening reaction&quot;,
+    &quot;tool regrasping and withdrawal&quot;,
+    &quot;functional verification through articulated motion&quot;
   ],
-  &quot;success_conditions&quot;: &quot;Score 0.15 when the subsidiary rail is flat and its full-length datum-gap error is at most 2 mm. Add 0.10 for each of six marked stations physically verified by simultaneous jig seating across both rails, for a maximum partial score of 0.75; revoke all station credit whenever alignment is lost. Award 1.0 only after all six stations are verified, the jig is flat and within 15 mm of its parking target, rail and jig satisfy declared linear and angular settling limits for 4 seconds of fresh observations, and both grippers are open and clear. A dropped or inaccessible rail or jig, non-finite state, or lost final alignment scores 0. Arm choice, station order, action count, and arbitrary impulse windows are not graded.&quot;,
-  &quot;industrial_value&quot;: &quot;THK documents establishing master/subsidiary LM-rail parallelism with a jig and checking successively along the rail before fastening. Yamaha’s Cartesian Robot XY-X manual independently requires setting parallelism between the X-axis and adjustable support guide rail during gantry-support installation. Thus rail alignment is grounded in robot assembly, while the particular cross-rail jig is grounded separately by THK Fig. 17(b). The task is an independently authored coarse subassembly proxy, not an exact Yamaha or THK product, and does not claim bolt tightening, rolling-element behavior, preload adjustment, or micron metrology.&quot;,
-  &quot;dexterity&quot;: &quot;The robot must correct coupled translation and yaw of a long free rail, then manipulate a bridge-shaped gauge whose two inner faces engage separate rails simultaneously. Sliding, lifting, or reseating the gauge can undo alignment, demanding guarded contact, stabilization, regrasping, repeated verification, and clean release rather than simple placement.&quot;,
+  &quot;success_conditions&quot;: &quot;Initial score is 0. Award 0.25 for a released opening within 6° of the declared 90° target; 0.5 when within 3° with nut 73 seated against the cover and nut 74 retained in its modeled installed position; 0.75 when both tools are removed and one close-open cycle returns within 3°; 1.0 after three cycles each return within 3°, stop drift is at most 2°, both nuts remain retained, and tools and robot grippers remain at least 30 mm clear for one second. Revoke angle and cycle credit whenever locking, retention, or clearance prerequisites fail. A missing screw or nut, a dropped or inaccessible tool, fixture displacement, non-finite state, or motion outside the modeled 20°–180° range scores 0. Equivalent safe strategies earn the same outcome score; arm identity, order, path, action count, and impulse windows are not graded. The target, tolerances, cycle count, and clearance are explicit benchmark assumptions checkable by protractor, witness marks, nut-gap inspection, and video.&quot;,
+  &quot;industrial_value&quot;: &quot;SCHUNK specifies opening-angle adjustment, locking, and pneumatic functional testing for its DRG 44–80 industrial grippers, making this direct robot-end-effector setup work within Impact on AI timelines. Its tested ability differs from generic tightening and the accepted hose-clamp task: the robot must preserve an adjustable stop against locknut reaction and then demonstrate hands-off functional retention. It also differs from PR 1540 because two concentric tools act on a coupled screw-and-nut setting rather than stabilizing a sensor body during connector assembly, and from PR 2229 because no third-body feeler gauge or cam clamp establishes the target.&quot;,
+  &quot;dexterity&quot;: &quot;One gripper must keep a driver seated in the adjustment screw while the other seats and turns a wrench on nut 73. Tightening must physically tend to disturb an unrestrained screw, requiring coordinated countertorque, angular regulation, possible wrench regrasping, clean tool withdrawal, and subsequent operation of the articulated test fixture.&quot;,
   &quot;evidence&quot;: [
     {
-      &quot;source_id&quot;: &quot;s-5fe1603e9dcf87a9&quot;,
-      &quot;locator&quot;: &quot;THK Mounting Procedure, “Mounting the Subsidiary LM Rail”&quot;,
-      &quot;quote_sha256&quot;: &quot;96ee6faea8aa80efa569e3d44830c9a78ad6da0ccfe18ed4219f006d1a64d7a5&quot;
+      &quot;source_id&quot;: &quot;s-0b3ec636c6201fe9&quot;,
+      &quot;locator&quot;: &quot;SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 3, printed page 28&quot;,
+      &quot;quote_sha256&quot;: &quot;ddfaa95db0b248715bdd5689773bae1381ddb9fcbac323311485fef914f7c4af&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-5fe1603e9dcf87a9&quot;,
-      &quot;locator&quot;: &quot;THK Mounting Procedure, “Using a Jig,” Fig. 17&quot;,
-      &quot;quote_sha256&quot;: &quot;53ae508eb06dcce277e6fb9091313ca8b5a8324763b3a87cc8cd4b2a71cdc6ca&quot;
+      &quot;source_id&quot;: &quot;s-0b3ec636c6201fe9&quot;,
+      &quot;locator&quot;: &quot;SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 4, printed page 28&quot;,
+      &quot;quote_sha256&quot;: &quot;bce5082c3575ebe98d6deeb6988ffa928ee9e937fe18000f45effcccfcee3c5b&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-5fe1603e9dcf87a9&quot;,
-      &quot;locator&quot;: &quot;THK Mounting Procedure, “Using a Jig,” Fig. 17&quot;,
-      &quot;quote_sha256&quot;: &quot;62984ae8efb6aaa854f560a487dc8ce1c090053caff2729d6a98c99776535478&quot;
+      &quot;source_id&quot;: &quot;s-0b3ec636c6201fe9&quot;,
+      &quot;locator&quot;: &quot;SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 6, printed page 28&quot;,
+      &quot;quote_sha256&quot;: &quot;a67751d180a0ac0ac773716337f87b81dd5d5eea6509558933d0875954766bc3&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-5b841f695edcea19&quot;,
-      &quot;locator&quot;: &quot;THK, “Selecting a Radial Clearance (Preload)”&quot;,
-      &quot;quote_sha256&quot;: &quot;18afeaba4e0ad6130830505d83c08d4511a74fc10e4bafaf24bca55a80b40579&quot;
+      &quot;source_id&quot;: &quot;s-0b3ec636c6201fe9&quot;,
+      &quot;locator&quot;: &quot;SCHUNK DRG Assembly and Operation Manual 389041 v5.00, §5.4.1 step 7, printed page 28&quot;,
+      &quot;quote_sha256&quot;: &quot;bfbe1345287d1ab7656a4757b8b1698629a2f57ed37cd53deb4cefec31c7e4a4&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-b233d4ba6542e4f5&quot;,
-      &quot;locator&quot;: &quot;THK Online Services Terms of Use, section 7.1&quot;,
-      &quot;quote_sha256&quot;: &quot;fd82089d80092b3e4bb1a7c25a9642ee1a448052f24c230cd375561c7c89f298&quot;
+      &quot;source_id&quot;: &quot;s-604022b1979c380c&quot;,
+      &quot;locator&quot;: &quot;SCHUNK DRG 80 product data sheet, page 2, Advantages – Your benefits&quot;,
+      &quot;quote_sha256&quot;: &quot;8a65163526bb1ac1dd5909a4e724ca0b7594151f4950537237f49fd94cb6196f&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-43e5b0fba5202d92&quot;,
-      &quot;locator&quot;: &quot;Yamaha Cartesian Robot XY-X User Manual E25-Ver.1.10, Chapter 9 MXYX section 1-5, printed page 9-4/PDF page 158; repeated in Chapter 10 HXYX section 1-3&quot;,
-      &quot;quote_sha256&quot;: &quot;0cb309711182fe9678602a6c8da7ab578a44ba901274bf6765313214026825e3&quot;
+      &quot;source_id&quot;: &quot;s-604022b1979c380c&quot;,
+      &quot;locator&quot;: &quot;SCHUNK DRG 80 product data sheet, page 4, General notes about the series&quot;,
+      &quot;quote_sha256&quot;: &quot;78f2448bdfc688a3cb1c4f1a76b22323315fc68d01c07f0dbb8607df3f6542fb&quot;
     },
     {
-      &quot;source_id&quot;: &quot;s-cd887334c751eacb&quot;,
-      &quot;locator&quot;: &quot;THK “Determining the Accuracy,” accuracy-grade guidelines table, machine type row paired with “Cartesian coordinate”&quot;,
-      &quot;quote_sha256&quot;: &quot;ffa710db39281674dd2a997236ecacd5f79846ec84427ae12cbbb512ad135e11&quot;
+      &quot;source_id&quot;: &quot;s-604022b1979c380c&quot;,
+      &quot;locator&quot;: &quot;SCHUNK DRG 80 product data sheet, page 4, General notes about the series&quot;,
+      &quot;quote_sha256&quot;: &quot;289420e37b9a5beb18ef165bba7f5de013f603cf7f0a55ddb4e9a0c096cdd661&quot;
+    },
+    {
+      &quot;source_id&quot;: &quot;s-604022b1979c380c&quot;,
+      &quot;locator&quot;: &quot;SCHUNK DRG 80 product data sheet, page 6, Technical data&quot;,
+      &quot;quote_sha256&quot;: &quot;42aefa762721f795f4df3520e379e507f1b18724cd3dc194af71731e0d9a7799&quot;
     }
   ],
-  &quot;asset_plan&quot;: &quot;Use independently authored rigid PhysX geometry: two representative 320 × 28 × 16 mm steel rail proxies and a travelling bridge jig with chamfered inner contact faces. Independent inspection of source s-e0c2d90a34baaa51, THK Fig. 17(b), confirms a cross-rail jig spanning two rails and travelling lengthwise; source s-b87581f510c6e535, page B1-94, independently contains the associated procedure. Add six flush paint ticks at x=0.200, 0.236, 0.272, 0.308, 0.344, and 0.380 m and a flush parking rectangle. Treat dimensions, masses, friction, and millimetre tolerances as disclosed representative modeling assumptions. Do not redistribute THK imagery or claim an exact product replica. Preserve the demonstrated custom USDA geometry and validate reset, gravity, settling, contact, release, loss cases, and timestep sensitivity in the pinned runtime.&quot;,
-  &quot;risk&quot;: &quot;The 2 mm threshold represents coarse assembly alignment rather than manufacturing metrology. Two independent native feasibility trials reached 1.0 with the same source digest using 1,035 guarded 14D actions at 20 Hz; measured overlap and final release evidence support feasibility but are control-rate observations, not physics-substep certification. THK and Yamaha establish related alignment operations but do not establish that Yamaha uses this particular jig. Full current-catalog and six-suite novelty clearance remains a separate required phase; historical unmerged PR 325 is a specific risk because its incomplete record concerns a long DIN rail and cradle.&quot;,
+  &quot;asset_plan&quot;: &quot;Build independently authored, full-scale representative rigid geometry, not a redistributed SCHUNK CAD model. Preserve the catalog drawing’s dimensional semantics: 100 × 71.6 × 135.5 mm are catalog X/Y/Z reference dimensions, not a claimed bounding envelope, and the page-7 drawing separately shows a 183.35 mm extent to point P. Represent the anodized-aluminum housing, steel angular jaws, native revolute jaw joints, common centric coupling, accessible adjustment screw, nut 73 as the locking nut, and retained nut 74 as the second manufacturer-specified nut; its precise spacing and role beyond installation are disclosed fixture assumptions because the manual does not explain them. Provide real hex and wrench contact geometry and a native or conservative task-local torque/friction mechanism in which tightening disturbs an unrestrained screw. The cold lever replaces pneumatic actuation only for bench verification. Target angle, hardware dimensions absent from the manual, friction, preload, and tolerances remain declared assumptions. Before demo development, validate reset, tool seating, restrained-versus-unrestrained causality, joint traces, loss cases, release clearance, and timestep sensitivity in the pinned Isaac Sim 6.1/YAM runtime.&quot;,
+  &quot;risk&quot;: &quot;Closest ability-level neighbors include PR 1540, PR 1799, PR 1865, PR 2018, PR 2167, and PR 2229. Novelty depends on retaining genuine concentric two-tool screw/nut countertorque and functional-cycle verification; an implementation with zero driver reaction or a scripted phase flag would collapse into existing stabilization or adjustment tasks. No current native gripper trial exists, so implementation feasibility and physics validation remain future gates rather than claimed evidence.&quot;,
   &quot;feasibility_status&quot;: &quot;ready&quot;,
   &quot;missing_evidence&quot;: []
 }</pre><h2>selection_history</h2><pre>{
@@ -105,122 +110,73 @@
   &quot;selected&quot;: null
 }</pre><h2>sources</h2><pre>[
   {
-    &quot;id&quot;: &quot;s-5fe1603e9dcf87a9&quot;,
-    &quot;title&quot;: &quot;LM Guide Mounting Procedure — Using a Jig, Fig. 17&quot;,
-    &quot;publisher&quot;: &quot;THK&quot;,
-    &quot;url&quot;: &quot;https://www.thk.com/in/en/products/lm_guide/maintenance/0002/&quot;,
-    &quot;sha256&quot;: &quot;92e4d88b99128ebb4c50dd015df46c253fbb1b2f5509f94cedb9c5bab205dba2&quot;
+    &quot;id&quot;: &quot;s-0b3ec636c6201fe9&quot;,
+    &quot;title&quot;: &quot;DRG Assembly and Operation Manual 389041, Version 05.00&quot;,
+    &quot;publisher&quot;: &quot;SCHUNK&quot;,
+    &quot;url&quot;: &quot;https://media.distributordatasolutions.com/web_schunk/2023q1/documents/ea9d09a544db3115509a083c4761f6a0e4de75cd.pdf&quot;,
+    &quot;sha256&quot;: &quot;7993f7d86680ed74be39b65c9d8f9b3bb9c5eab0f63303fb2e54db27c612bbef&quot;
   },
   {
-    &quot;id&quot;: &quot;s-e0c2d90a34baaa51&quot;,
-    &quot;title&quot;: &quot;LM Guide mounting jig illustration, Fig. 17&quot;,
-    &quot;publisher&quot;: &quot;THK&quot;,
-    &quot;url&quot;: &quot;https://www.thk.com/in/assets/images/products/lm_guide_en_maintenance_img_17.png&quot;,
-    &quot;sha256&quot;: &quot;f44c6db7fc5d223a2f1a4677e4b129211c59b46da76e2e58d7454f92fe63da8b&quot;
+    &quot;id&quot;: &quot;s-604022b1979c380c&quot;,
+    &quot;title&quot;: &quot;DRG 80 Radial Gripper Product Data Sheet and Dimension Drawing&quot;,
+    &quot;publisher&quot;: &quot;SCHUNK&quot;,
+    &quot;url&quot;: &quot;https://d16vz4puxlsxm1.cloudfront.net/asset/076200133045-Prod/document_kc3stq0h2h21d7vft0jis2fq30/DRG%2080%20Catalog%20section.pdf&quot;,
+    &quot;sha256&quot;: &quot;e285de38b20d64217445f90c5eb96eabfe480439b75e75f7e87e27c3e0226f5f&quot;
   },
   {
-    &quot;id&quot;: &quot;s-4d99336d94e3c1ea&quot;,
-    &quot;title&quot;: &quot;LM Guide catalog 515-3E: dimensional drawings, rail dimensions and mounting guidance&quot;,
-    &quot;publisher&quot;: &quot;THK&quot;,
-    &quot;url&quot;: &quot;https://tech.thk.com/en/products/pdf_download.php?file=E_01_LMGuide.pdf&quot;,
-    &quot;sha256&quot;: &quot;b72fd87d0c6102dd0975d3fed40b9bf6a2cb3110b23c4522abf5a1fb20074a77&quot;
+    &quot;id&quot;: &quot;s-05bd33d83c104be6&quot;,
+    &quot;title&quot;: &quot;DRG Radial Gripper Product Family&quot;,
+    &quot;publisher&quot;: &quot;SCHUNK&quot;,
+    &quot;url&quot;: &quot;https://schunk.com/us/en/gripping-systems/angular/radial-gripper/drg/c/PGR_515&quot;,
+    &quot;sha256&quot;: &quot;0fef75af6efcf432c651cc37cda00f44c2e687fbb69d00489450add231ed3ff6&quot;
   },
   {
-    &quot;id&quot;: &quot;s-5b841f695edcea19&quot;,
-    &quot;title&quot;: &quot;LM Guide selection, preload and industrial-robot applications&quot;,
-    &quot;publisher&quot;: &quot;THK&quot;,
-    &quot;url&quot;: &quot;https://www.thk.com/eu/en/products/lm_guide/selection/0008/&quot;,
-    &quot;sha256&quot;: &quot;484746b8330d78e74f4c8681b6fc78f2b91a7f966fce06d8aede14716134d7b2&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-b233d4ba6542e4f5&quot;,
-    &quot;title&quot;: &quot;THK Online Services Terms of Use&quot;,
-    &quot;publisher&quot;: &quot;THK&quot;,
-    &quot;url&quot;: &quot;https://www.thk.com/us/en/terms-of-use/&quot;,
-    &quot;sha256&quot;: &quot;b790c91785868a8f515ee0ac9c8d48993fa89ddd95db25b2e5754e2199e8ad51&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-00204ffe01e0db3d&quot;,
-    &quot;title&quot;: &quot;Isaac Lab repository and asset/dependency licensing notice&quot;,
-    &quot;publisher&quot;: &quot;Isaac Lab Project&quot;,
-    &quot;url&quot;: &quot;https://github.com/isaac-sim/IsaacLab&quot;,
-    &quot;sha256&quot;: &quot;e358267bfd7d493ffcccf93357d884be1bf7829741a5e7d410ddf133ea46c434&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-36bce776de75b342&quot;,
-    &quot;title&quot;: &quot;Precision GO/NO-GO Thread Plug Gauges&quot;,
-    &quot;publisher&quot;: &quot;VÖLKEL&quot;,
-    &quot;url&quot;: &quot;https://voelkel.com/en/products/thread-gauges/precision-thread-plug-gauges&quot;,
-    &quot;sha256&quot;: &quot;62ae4eb4190315b20dd09302c9d7b85ce1543ab6126a33b9f88894418fa06042&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-177ba6de7901f9b4&quot;,
-    &quot;title&quot;: &quot;Mounting and dismounting — measuring bearing clearance reduction&quot;,
-    &quot;publisher&quot;: &quot;SKF&quot;,
-    &quot;url&quot;: &quot;https://cdn.skfmediahub.skf.com/api/public/0901d196802809de/pdf_preview_medium/0901d196802809de_pdf_preview_medium.pdf&quot;,
-    &quot;sha256&quot;: &quot;65e0919bee24975b9563ca0d9adf721a9e7efcf6d0fa32c18b8d119d37b190b2&quot;
+    &quot;id&quot;: &quot;s-c227c80d8bae9883&quot;,
+    &quot;title&quot;: &quot;SCHUNK CAD/ECAD Data and PARTcommunity Access Terms&quot;,
+    &quot;publisher&quot;: &quot;SCHUNK&quot;,
+    &quot;url&quot;: &quot;https://schunk.com/gb/en/services/downloads/cad/ecad-data&quot;,
+    &quot;sha256&quot;: &quot;8eef008131f8ee9ddc3d811bfa5333bbdccc1df10037d127899575f94c046d69&quot;
   },
   {
     &quot;id&quot;: &quot;s-ec315a3d0f0be293&quot;,
-    &quot;title&quot;: &quot;LIBERO original BDDL task definitions&quot;,
+    &quot;title&quot;: &quot;LIBERO Original BDDL Task Definitions&quot;,
     &quot;publisher&quot;: &quot;Lifelong-Robot-Learning&quot;,
     &quot;url&quot;: &quot;https://github.com/Lifelong-Robot-Learning/LIBERO/tree/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files&quot;,
-    &quot;sha256&quot;: &quot;42ef15e627cd156fec79b061715449c5c79b66379054ff03d3b68912b074c149&quot;
+    &quot;sha256&quot;: &quot;204008878e8f78986178aa3f09045aac8c55930d1be0237d702d23f62fd14ec0&quot;
   },
   {
     &quot;id&quot;: &quot;s-b9e8a93277da132a&quot;,
-    &quot;title&quot;: &quot;RoboCasa original kitchen task definitions&quot;,
+    &quot;title&quot;: &quot;RoboCasa Original Kitchen Task Definitions&quot;,
     &quot;publisher&quot;: &quot;RoboCasa&quot;,
     &quot;url&quot;: &quot;https://github.com/robocasa/robocasa/tree/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen&quot;,
-    &quot;sha256&quot;: &quot;a96c12d80b8d42c06ef43ca62ef31e03d9f0ce30a6802bf5dff25f387336c3b3&quot;
+    &quot;sha256&quot;: &quot;e56f9433b1583d4468e0f56233ca1b71c37caa14bf702a3274587cd0efc991a2&quot;
   },
   {
     &quot;id&quot;: &quot;s-316e4e7057a70cb8&quot;,
-    &quot;title&quot;: &quot;SimplerEnv ManiSkill2-real2sim original environment definitions&quot;,
+    &quot;title&quot;: &quot;SimplerEnv ManiSkill2-real2sim Original Environment Definitions&quot;,
     &quot;publisher&quot;: &quot;SimplerEnv&quot;,
     &quot;url&quot;: &quot;https://github.com/simpler-env/ManiSkill2_real2sim/tree/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs&quot;,
-    &quot;sha256&quot;: &quot;45b789a2442244c2b307b280cd9403d127fa03bd9b440b4c9aad84531797c14e&quot;
+    &quot;sha256&quot;: &quot;3d34f9ae0deb145f35f83552102698595e0cbf198c5ed067e8dc1baaece5cb8c&quot;
   },
   {
     &quot;id&quot;: &quot;s-aee9c856aec99b93&quot;,
-    &quot;title&quot;: &quot;BEHAVIOR-1K original BDDL activity definitions&quot;,
+    &quot;title&quot;: &quot;BEHAVIOR-1K Original BDDL Activity Definitions&quot;,
     &quot;publisher&quot;: &quot;Stanford Vision and Learning Lab&quot;,
     &quot;url&quot;: &quot;https://github.com/StanfordVL/BEHAVIOR-1K/tree/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions&quot;,
-    &quot;sha256&quot;: &quot;024041b87f3c2c87b219f4d86707a060ae0d9a6de693f9dbaaece6c6112b8d33&quot;
+    &quot;sha256&quot;: &quot;b2a7ea7be189ded6d80e9315f63ea6431eb8c57f0e3450d0fc06d1e3f41abcc3&quot;
   },
   {
     &quot;id&quot;: &quot;s-46ed257e6f29003f&quot;,
-    &quot;title&quot;: &quot;DataCenterBench official task procedures and grading rubrics&quot;,
+    &quot;title&quot;: &quot;DataCenterBench Official Task Procedures and Grading Rubrics&quot;,
     &quot;publisher&quot;: &quot;RoboCurve&quot;,
     &quot;url&quot;: &quot;https://robocurve.org/datacenterbench/data/tasks.json&quot;,
     &quot;sha256&quot;: &quot;88a2339f720ff977b7201890af172a3518ce5692ec35d679baaf4a5fb21ad448&quot;
   },
   {
     &quot;id&quot;: &quot;s-2f3188056fcdd2f8&quot;,
-    &quot;title&quot;: &quot;RoboDojo original task definitions&quot;,
+    &quot;title&quot;: &quot;RoboDojo Original Task Definitions&quot;,
     &quot;publisher&quot;: &quot;RoboDojo Benchmark&quot;,
     &quot;url&quot;: &quot;https://github.com/robodojo-benchmark/RoboDojo/tree/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks&quot;,
-    &quot;sha256&quot;: &quot;f9615a4e37c71cd637a51fb0a96840297013321e9a9ad094220eaeede920e5b9&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-b87581f510c6e535&quot;,
-    &quot;title&quot;: &quot;THK LM Guide Mounting Procedure — public original PDF&quot;,
-    &quot;publisher&quot;: &quot;THK&quot;,
-    &quot;url&quot;: &quot;https://tech.thk.com/en/products/pdf/en_b01_089.pdf&quot;,
-    &quot;sha256&quot;: &quot;fe4471d851753cae20c5e3e1a621111c974e8acde158cb4d8baa5d1fafb29561&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-43e5b0fba5202d92&quot;,
-    &quot;title&quot;: &quot;Yamaha Cartesian Robot XY-X user manual, gantry support rail installation&quot;,
-    &quot;publisher&quot;: &quot;Yamaha Motor Co., Ltd. (manufacturer manual hosted by YRG)&quot;,
-    &quot;url&quot;: &quot;https://www.yrginc.com/Catalog/PDF/xy-x_e.pdf&quot;,
-    &quot;sha256&quot;: &quot;676569e8564f3678a8c4db8bd64fe6e12dfe35431e601e65e9bd04eceffdfa5c&quot;
-  },
-  {
-    &quot;id&quot;: &quot;s-cd887334c751eacb&quot;,
-    &quot;title&quot;: &quot;THK accuracy grade guidelines: Industrial robot / Cartesian coordinate&quot;,
-    &quot;publisher&quot;: &quot;THK&quot;,
-    &quot;url&quot;: &quot;https://www.thk.com/eu/en/products/lm_guide/selection/0009/&quot;,
-    &quot;sha256&quot;: &quot;0b716cf3352f5a7be7bb6edd1279d8fbe139763e28bbd873bc63f73e617be5e4&quot;
+    &quot;sha256&quot;: &quot;cb98d288e32f9d16bf9d65d305d5a9febcb3ff3eb525535704dc52e221f7cc58&quot;
   }
 ]</pre><p>Approval and submission require separate CLI commands.</p>
