@@ -85,3 +85,37 @@ to axial piston load. Validate the assumed friction regime and report what the
 unrestrained control actually does. If real countertorque/setpoint coupling is
 absent, revise the ability claim and final novelty assessment; do not invent
 an unstable screw merely to require a particular two-handed strategy.
+
+
+## Alternative implicit helical coupon to test first
+
+The pinned `generatedSchema.usda` contains `class "PhysxMimicJointAPI"`
+(the class name is quoted). Its presence is not a successful runtime test.
+NVIDIA's [107.3 articulation guide](https://docs.omniverse.nvidia.com/kit/docs/omni_physics/107.3/dev_guide/rigid_bodies_articulations/articulations.html#articulation-mimic-joints)
+describes prismatic/revolute coupling within one articulation, with the equation
+`q_A + G*q_B + offset = 0` and optional implicit compliance. This offers a
+possible route that avoids explicit high-gain force updates at the policy rate.
+
+For an isolated coupon, a fixed frame can connect through a shape-free axial
+carrier (prismatic) and then a screw rotor (revolute). Couple the rotor to the
+carrier using a rotational mimic follower. For the nut, a second carrier and
+rotor relative to the screw give relative axial/rotational thread coordinates.
+Both pairs must belong to the SAME articulation. Their coordinates are
+mechanical freedoms, not tool attachments. Keep the driver/wrench free dynamic
+bodies and the cover/nut-bearing collision active. Nut-to-cover contact needs
+self-collision configured for the articulation; do not disable that essential
+contact to make parsing or the demo succeed.
+
+Verify native one-turn axial travel and both applied-torque/load reactions
+before selecting the gear sign or interpreting USD degree/radian conversions.
+Check angular wrap behavior and enough real guide travel for the required
+turns; a wrapped coordinate must not generate a false thread jump. Do not
+assume a smooth bore alone implements a helical thread. Load-dependent thread
+friction is separate from the ideal helix and bearing contact: without a
+justified friction approximation, an ideal screw can backdrive unrealistically.
+Any coefficients remain benchmark assumptions pending measurement.
+
+This is an implementation lead, not an adopted mechanism or native pass. Test
+the smallest coupon first; use the simplest route that actually preserves the
+measured reaction, seating and retained outcome. Avoid adding an unsupported
+new dependency or changing the official policy/robot action interface.
