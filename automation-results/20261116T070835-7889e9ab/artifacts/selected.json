@@ -1,0 +1,53 @@
+{
+  "id": "sidewall-pinch-continuous",
+  "title": "Continuous-belt open-carton rejection by body pinch",
+  "objective": "On a continuously running friction-driven belt, identify physically open cartons, avoid their articulated top flaps, grasp the rigid body below the hinges, and transfer the carton nearly level into a reject tray without spilling its free contents. Initially closed cartons must remain untouched and continue past the downstream line. Body-pinching is a proposed robotic handling method, not a manufacturer-prescribed reject sequence.",
+  "skills": [
+    "state-conditioned intervention",
+    "moving-target tracking",
+    "finite-thickness flap avoidance",
+    "opposed sidewall grasping",
+    "force-controlled lifting",
+    "orientation-preserving transport",
+    "guarded release and clearance verification"
+  ],
+  "success_conditions": "Score each carton and average. Open carton: 0.25 after opposed gripper-pad contacts are established on body walls below the hinges; 0.50 after the complete body clears the belt by at least 20 mm while every content item remains inside; 0.75 after the body and all contents are within the reject-tray footprint; 1.00 after release, gripper clearance of at least 60 mm, and uninterrupted 3.0 s stability in the tray. Closed carton: 1.00 only after crossing the downstream line on its original belt path without robot contact; otherwise 0. A content item that crosses the rim and contacts the belt, tray exterior, table, or floor permanently caps that carton at 0.50. A dropped carton scores 0. Closing an open carton and allowing it through is not rejection. Full aggregate score requires every open carton rejected and every closed carton passed. Score history is sampled at the 10 Hz control rate; separate 240 Hz traces validate contacts, collision behavior, and belt physics without becoming grading requirements.",
+  "industrial_value": "Open-flap detection followed by automatic rejection or machine stoppage is documented packaging-line practice. An acquired cartoner manual uses an air-cylinder push rod, while another industrial source lists air blast and warns that it is unsuitable for open packages that could spill. The benchmark therefore models a representative careful robotic alternative for spill-prone rejects, relevant to inspectors/testers/sorters and hand packers, without claiming that sidewall lifting is the documented manufacturer procedure.",
+  "dexterity": "High: a gripper must synchronize with a translating carton, enter a narrow body-access band beneath collision-enabled flaps, establish bilateral frictional contact, lift without rim strikes, preserve loose contents during transfer, and release without disturbing the carton.",
+  "evidence": [
+    {
+      "source_id": "s-058bb7939e386179",
+      "locator": "CMK Continuous Motion Cartoner Operator’s Manual, Figure 5.16, page 82",
+      "quote_sha256": "313ca108bc3fc0984b199a4a74c6b262455ff9fbdd4c0fa79ef91eaaf8d02af6"
+    },
+    {
+      "source_id": "s-058bb7939e386179",
+      "locator": "CMK Continuous Motion Cartoner Operator’s Manual, Product Rejection, page 6-9",
+      "quote_sha256": "2e19a78e78c4a81da03b8a19218116e97a51c01981fb95c4ce84330167bd2e3a"
+    },
+    {
+      "source_id": "s-2cfb4c8d748cc938",
+      "locator": "What reject method is right for my application?, Air Blast section",
+      "quote_sha256": "1ec62b195660efddecf5005c3aa78e7ff3ae72a0f24a82f6e3deee9e79684238"
+    },
+    {
+      "source_id": "s-613c0ffc934264ac",
+      "locator": "FEFCO Code Booklet, Slotted Boxes, page 8",
+      "quote_sha256": "dee8aa46d3c03f32761cd5383b88c6c2c6918179e868e4e65f3b146cc346b421"
+    },
+    {
+      "source_id": "s-591fb2e08d261bc8",
+      "locator": "PR #83 official final review comment",
+      "quote_sha256": "bb16cfd563f6f99f72cc0a5e54442759cece4a2a1da8ca1795f209c832b6231e"
+    },
+    {
+      "source_id": "s-2b79d8a9bb1a2c26",
+      "locator": "PR #1214 review, construct-validity correction",
+      "quote_sha256": "570e0ac57d39563c4b432e646a3d16463a64695635b1a3dcd45b46586e74e2c7"
+    }
+  ],
+  "asset_plan": "Use pinned Isaac Sim 6.1.0.0 and YAM commit 0059d02a1a91bc6834c1d0846022891df0c78730. First-build assumptions: representative FEFCO 0201-style carton with 120 x 70 x 70 mm external body, 2 mm rigid walls, four 2 mm collision-enabled hinge flaps, 0–105 degree hinge travel, and three free 18 mm, 8 g rigid contents. The 70 mm grasp width leaves 24 mm nominal clearance within the pinned YAM model’s documented 94 mm pad opening. Use a 500 x 180 mm belt at an initial 40 mm/s, a 180 x 160 x 50 mm reject tray beside the belt, and at least 90 mm of exposed body height/access below flap edges. Model the closed state with an explicit break-free magnetic-detent approximation whose threshold is measured and disclosed; this is a testable modeling assumption, not a product replica. Build from primitives and author the carton fixture independently. Gate development in order: stationary grasp/lift; stationary tray transfer and release; moving open carton; untouched closed-carton passage; mixed stream. Use surface motion and friction for conveyance, never forced carton velocity, state writes, grasp welds, or disabled essential collisions.",
+  "risk": "Readiness means sufficient geometry and mechanism assumptions exist to build the first rigid-PhysX test, not that feasibility is already certified. Full development must stop if physical traces do not show stable opposed contact, flap clearance, retained contents, and release clearance. Novelty fails if flap interference or spill preservation does not change outcomes relative to generic conveyor picking. Rigid walls approximate corrugated compliance and must be disclosed. Required counterfactuals are no action, flap-only grasp, rough tilt, all-remove, all-ignore, closed-carton contact, and off-belt staging.",
+  "feasibility_status": "ready",
+  "missing_evidence": []
+}
