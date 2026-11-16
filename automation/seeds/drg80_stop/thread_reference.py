@@ -46,7 +46,11 @@ def response(parameters, relative_z, relative_angle, relative_z_rate, relative_a
     """Return an internal wrench pair in a shared measured coaxial frame.
 
     Angles are UNWRAPPED radians. Positive rotation advances the moving nut
-    along negative Z for a positive lead. Translation is nut minus screw;
+    along negative Z for a positive lead. With Z pointing upward and positive
+    angles counterclockwise from above, an ordinary right-handed thread thus
+    uses a NEGATIVE lead here (clockwise rotation advances downward). This is
+    a signed coordinate convention, not a claim about a manufacturer's thread.
+    Translation is nut minus screw;
     velocities are also relative. In a native adapter, transform both wrenches
     correctly, apply them at the common thread axis and account for moments
     about each body's COM. Bearing/cover friction is native contact, not here.

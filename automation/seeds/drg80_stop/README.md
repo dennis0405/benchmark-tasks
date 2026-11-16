@@ -83,6 +83,14 @@ correct COM/frame transforms. It must check integration stability with the
 actual masses, inertias, physics timestep and chosen solver. An implicit joint
 implementation may replace this reference.
 
+The reference's sign convention is `extension = z + lead*angle - offset`,
+where `lead` in that equation is metres per radian. With Z upward and angle
+counterclockwise as viewed from above, use a **negative** `lead_m_per_turn` for
+an ordinary right-handed thread: clockwise turning must advance downward.
+The positive coefficients in invariant tests illustrate the opposite handedness;
+they are not parameters for an industrial replica. Verify the native direction
+against the instruction instead of silently reversing tool or scorer angles.
+
 Version-specific schema caution: the actual pinned Isaac runtime's
 `generatedSchema.usda` SHA256
 `4a7638c3890522bbe7c25600c0090e6cb7f403550ccb8be7641bf84034213b83`
