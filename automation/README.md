@@ -126,6 +126,10 @@ stop을 검증하지만 모델·Dream·대회 제출을 호출하지 않는다. 
 제출할 task 파일은 압축하지 않는다.
 실험 중인 native prototype의 형상·물성 기준은 `frozen-inputs/`에도 원본 바이트 그대로
 보존한다. `frozen-inputs-manifest.json`에 복구 위치와 SHA-256이 기록된다.
+네이티브 진단 실행 전에는 코드·에셋 원본을 `measurements/native-source-blobs/`에
+해시별로 중복 없이 저장한다. `native-source-snapshots/`의 매핑으로 당시 파일 경로와
+바이트를 복구할 수 있으며, 이후 수정·삭제되거나 검사가 실패해도 원본이 남는다.
+이 스냅샷 자체는 실행 성공이나 물리 검증 통과를 뜻하지 않는다.
 
 기본 도형 DSL로 표현할 수 없는 다관절 기구에는
 [task 전용 네이티브 YAM 어댑터](docs/design/native-runtime-adapter.md)를 명시적으로 사용한다.

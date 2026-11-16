@@ -70,6 +70,12 @@ def test_failed_auxiliary_probe_stops_before_full_physics_launch(tmp_path):
     with pytest.raises(GateError, match="failed check api_probe"):
         p.execute_scripts(plan, req)
     assert not (p.workspace / "measurements/result_1.json").exists()
+    snapshots = list((p.workspace / "measurements/native-source-snapshots").glob("*.json"))
+    assert len(snapshots) == 1
+    saved = json.loads(snapshots[0].read_text())
+    original = (p.workspace / "task/probe_0.py").read_bytes()
+    (p.workspace / "task/probe_0.py").unlink()
+    assert (p.workspace / saved["blobs"]["probe_0.py"]).read_bytes() == original
 
 
 def test_discovery_only_plan_validates_its_measured_checks_without_qualification(tmp_path):

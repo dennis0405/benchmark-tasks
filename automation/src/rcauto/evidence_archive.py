@@ -4,8 +4,10 @@ import gzip
 import hashlib
 import os
 import shutil
+import tempfile
+from pathlib import Path
 
-from .gates import GateError, file_hash
+from .gates import GateError, file_hash, inside
 from .store import write_json
 
 RESTORE_SOURCE = '''"""Run in a downloaded checkpoint to restore exact original evidence paths."""
@@ -104,3 +106,35 @@ def archive_evidence(root, *, min_bytes=1024 * 1024):
         })
         (root / "restore-evidence.py").write_text(RESTORE_SOURCE)
     return entries
+
+
+def snapshot_native_sources(workspace, source_manifest):
+    """Keep exact code/assets before launch, including attempts that later fail."""
+    blob_root = workspace / "measurements/native-source-blobs"
+    blob_root.mkdir(parents=True, exist_ok=True)
+    blobs = {}
+    for relative, info in source_manifest["files"].items():
+        source = inside(workspace / "task", relative)
+        blob = blob_root / info["sha256"]
+        if not blob.exists():
+            temporary = None
+            try:
+                with tempfile.NamedTemporaryFile(dir=blob_root, delete=False) as output:
+                    temporary = Path(output.name)
+                    with source.open("rb") as stream:
+                        shutil.copyfileobj(stream, output)
+                if file_hash(temporary) != info["sha256"]:
+                    raise GateError("native source changed before snapshot")
+                os.replace(temporary, blob)
+            finally:
+                if temporary is not None:
+                    temporary.unlink(missing_ok=True)
+        if blob.stat().st_size != info["bytes"] or file_hash(blob) != info["sha256"]:
+            raise GateError("native source snapshot is corrupt")
+        blobs[relative] = str(blob.relative_to(workspace))
+    target = workspace / "measurements/native-source-snapshots" / (source_manifest["digest"] + ".json")
+    write_json(target, {
+        "qualification": False, "scope": "Exact source bytes; not an execution or physics pass",
+        "source_manifest": source_manifest, "blobs": blobs,
+    })
+    return str(target.relative_to(workspace))

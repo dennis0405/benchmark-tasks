@@ -1031,6 +1031,9 @@ class Production:
             )
             discarded = discard_generated_bytecode(self.workspace / "task")
             source_before = manifest(self.workspace / "task")
+            from .evidence_archive import snapshot_native_sources
+
+            source_snapshot = snapshot_native_sources(self.workspace, source_before)
             protected = {
                 str(p): file_hash(p)
                 for base in ["input", "artifacts"]
@@ -1087,6 +1090,7 @@ class Production:
                     report=script["report"],
                     report_sha256=file_hash(report_path),
                     source_digest=source_before["digest"],
+                    source_snapshot=source_snapshot,
                     validation_scope=validation_scope,
                     discarded_bytecode=discarded,
                     measurements=report,
