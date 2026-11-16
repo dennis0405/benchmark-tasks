@@ -248,24 +248,27 @@ def compare_catalog(agent, workspace, candidate, catalog, batch_size=100, batch_
             )
         )
 
-    for batch in novelty_batches(records, batch_size, batch_bytes):
+    accepted = {}
+    for record in records:
+        path = cache_path(record)
+        if path.exists():
+            try:
+                saved = read(path)
+                if (
+                    saved["context"] == context_key
+                    and saved["record_digest"] == digest(record)
+                    and valid(saved["comparison"], record["id"])
+                ):
+                    accepted[record["id"]] = saved["comparison"]
+            except (OSError, ValueError, KeyError, TypeError):
+                pass  # Recompute damaged cache entries; never turn them into a pass.
+    comparisons.extend(accepted[r["id"]] for r in records if r["id"] in accepted)
+    report = checkpoint()  # Exact known overlaps block before any unrelated model call.
+    pending = [r for r in records if r["id"] not in accepted]
+    for batch in novelty_batches(pending, batch_size, batch_bytes):
         i = len(comparisons)
         if (Path(workspace).parent / "cancel.json").exists():
             raise StateError("novelty cancelled at batch boundary; partial evidence preserved")
-        accepted = {}
-        for record in batch:
-            path = cache_path(record)
-            if path.exists():
-                try:
-                    saved = read(path)
-                    if (
-                        saved["context"] == context_key
-                        and saved["record_digest"] == digest(record)
-                        and valid(saved["comparison"], record["id"])
-                    ):
-                        accepted[record["id"]] = saved["comparison"]
-                except (OSError, ValueError, KeyError, TypeError):
-                    pass  # Recompute damaged cache entries; never turn them into a pass.
         for attempt in range(3):
             missing = [r for r in batch if r["id"] not in accepted]
             if not missing:
