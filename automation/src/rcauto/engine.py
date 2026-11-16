@@ -18,6 +18,7 @@ from .agents import clean_environment, command
 from .benchmarks import validate_benchmarks
 from .catalog import get_source
 from .gates import (
+    PRODUCTION_CATEGORIES,
     GateError,
     digest,
     discard_generated_bytecode,
@@ -1145,7 +1146,8 @@ class Production:
             "Replay includes score_error <= 1e-6. "
             "Provide H264 MP4 video, initial setup screenshot, raw action/state trace and episode logs. "
             "Do not use diagnostic fixtures as robot success. Keep script criteria in contract. "
-            "task/task.json must contain official required fields, category Impact on AI timelines, "
+            "task/task.json must contain official required fields, category matching the actual "
+            f"industrial context from {json.dumps(PRODUCTION_CATEGORIES)}, "
             "scores describing actual scripted demo and Dream not run. Add README/license/runtime "
             "pins. Implement a task-local evaluate.py wrapper for final inspect-robots Dream run, "
             "but NEVER execute it. It must honor --output and use the same scorer and run limit.",

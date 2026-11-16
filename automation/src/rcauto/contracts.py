@@ -113,7 +113,10 @@ CONTRACT = obj(
 SCRIPT = obj(id=S, script=S, args=array(S), report=S)
 BUILD = obj(summary=S, scripts=array(SCRIPT), files=array(S))
 SCENARIO_POLICY = """
-You are one role in a RoboCurve production workflow, focused on Impact on AI timelines.
+You are one role in a RoboCurve production workflow for source-grounded industrial assembly
+and field maintenance (Impact on jobs), including robot building and data-center work
+(Impact on AI timelines). General industrial work is allowed; use the category that matches
+the actual objective and current user scope.
 The user's actual objective is in input/request.json. Read it and existing input and artifacts.
 When present, read input/repository-AGENTS.md and input/review-prompt.txt as the official
 acceptance requirements, subordinate to the user's constraints and execution permissions.

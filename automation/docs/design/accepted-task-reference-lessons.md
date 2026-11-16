@@ -9,7 +9,7 @@
 | TK-TGHDCE 호스·바브·클램프 | [PR1892](https://github.com/robocurve/benchmark-tasks/pull/1892), `501851adca10137772bdc2cee39b5ab1a02a446f` | `task.json`: demo1/795steps, Dream0/129steps, DreamSessionExpired |
 | TK-HYQRVJ 상자 테이핑 | [PR1893](https://github.com/robocurve/benchmark-tasks/pull/1893), `d12739e5c923856d3be0cc904fd4decfdb99ef15` | `task.json`: demo1/574steps, Dream0/129steps, DreamSessionExpired |
 
-두 과제의 실제 category는 Impact on jobs다. 우리 자동화의 기존 Impact on AI timelines 범위와 구분한다. 이번 그리퍼 후보는 로봇 부품의 설정 작업으로 기존 범위에 포함된다.
+두 과제의 실제 category는 Impact on jobs다. 2026-11-16 사용자가 현장 조립·정비 전반으로 탐색을 확대했다. 자동화는 Impact on jobs와 Impact on AI timelines 중 실제 작업에 맞는 분류를 사용한다. 현재 그리퍼 후보는 유지한다.
 
 ## 모델링과 구현
 

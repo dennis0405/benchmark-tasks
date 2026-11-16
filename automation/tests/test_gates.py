@@ -98,3 +98,18 @@ def test_real_credential_patterns_still_block_release(tmp_path, value):
     (tmp_path / "diagnostic.py").write_text("credential = " + repr(value) + "\n")
     with pytest.raises(GateError, match="possible secret"):
         manifest(tmp_path)
+
+
+@pytest.mark.parametrize("category", ["Impact on AI timelines", "Impact on jobs"])
+def test_user_approved_industrial_categories_can_reach_export(category):
+    from rcauto.gates import validate_spec
+
+    spec = {
+        name: "provided"
+        for name in ("title", "instruction", "setup", "scoring", "run_limit", "fidelity", "scores")
+    }
+    spec["category"] = category
+    validate_spec(spec)
+    spec["category"] = "Safety and alignment"
+    with pytest.raises(GateError, match="outside the agreed category"):
+        validate_spec(spec)

@@ -10,6 +10,9 @@ from pathlib import Path
 from .store import StateError
 
 
+PRODUCTION_CATEGORIES = ("Impact on AI timelines", "Impact on jobs")
+
+
 class GateError(StateError):
     pass
 
@@ -205,7 +208,7 @@ def validate_spec(spec, require_media=False):
         ["title", "category", "instruction", "setup", "scoring", "run_limit", "fidelity", "scores"]
         + (["media"] if require_media else []),
     )
-    if spec["category"] != "Impact on AI timelines":
+    if spec["category"] not in PRODUCTION_CATEGORIES:
         raise GateError("task outside the agreed category")
 
 

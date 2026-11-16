@@ -161,7 +161,8 @@ stop을 검증하지만 모델·Dream·대회 제출을 호출하지 않는다. 
 - [전용 Brev 환경 준비 점검 기록](docs/design/environment-bootstrap-status.md)
 - [실제 환경 설정·의존성·검증 자료](environment/README.md)
 
-범위는 실제 산업 근거에 기반한 AI timelines 태스크의 후보 다수 검토·단일
+2026-11-16 사용자 확정 범위는 현장 조립·정비(Impact on jobs)와 로봇 제작·데이터센터
+(Impact on AI timelines)다. 실제 산업 근거에 기반한 후보 다수 검토·단일
 태스크 제작·승인 후 제출이다. 강체를 기본으로 하되 검증 가능한 기존 연성
 에셋을 허용한다. [실행 명령 근거](https://learn.chatgpt.com/docs/developer-commands#codex-exec),
 [권한 profile](https://learn.chatgpt.com/docs/permissions),
