@@ -169,3 +169,9 @@ stop을 검증하지만 모델·Dream·대회 제출을 호출하지 않는다. 
 에셋을 허용한다. [실행 명령 근거](https://learn.chatgpt.com/docs/developer-commands#codex-exec),
 [권한 profile](https://learn.chatgpt.com/docs/permissions),
 [대회 규칙](https://github.com/robocurve/benchmark-tasks/blob/main/AGENTS.md)을 참고한다.
+
+
+환경 제작은 작은 native `preflight`와 전체 `qualification`을 구분한다. 사전 시험 결과는
+다음 구현에 반영되며 환경 통과로 계산하지 않는다. 실행 전 소스 검토는 상수·대용 수치를
+실제 측정으로 오인하지 않게 확인한다. 전체 통과에는 동결된 물리 기준과 에셋 검증,
+실행 후 물리 검토가 모두 필요하다.

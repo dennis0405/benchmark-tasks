@@ -446,7 +446,9 @@ class Production:
             writable=writable,
         )
 
-    def review(self, name, instruction, *, specification_only=False):
+    def review(self, name, instruction, *, specification_only=False, implementation_only=False):
+        if specification_only and implementation_only:
+            raise ValueError("review scopes are mutually exclusive")
         index_path = self.workspace / "input/runtime-api-preflight.json"
         if index_path.is_file():
             index = read(index_path)
@@ -456,6 +458,14 @@ class Production:
             ):
                 if source:
                     self.evidence_file(source)
+        implementation_scope = (
+            "\nThis is GENERATED-SOURCE review BEFORE native execution. Inspect planned scripts "
+            "and their imports/geometry, not nonexistent final measurements. Require actual native "
+            "data paths, correct observables and complete claimed qualification logic. Discovery "
+            "probes may honestly test only their stated API/component questions; they never prove "
+            "the whole frozen environment. Missing API knowledge calls for a small real probe, "
+            "not invented measurements. Do not require future GPU results at this source gate. "
+        )
         scope = (
             "\nThis is a PROSPECTIVE specification review. Existing task/ code and native "
             "diagnostics may be an explicitly unfinished historical scaffold; their lack of "
@@ -469,6 +479,8 @@ class Production:
             else "\nInspect actual code and evidence files. Read images with image tools and "
             "verify logs; do not infer a pass from another role's assertion. "
         )
+        if implementation_only:
+            scope = implementation_scope
         result = self.ask(
             name,
             instruction + scope + "Cite actual files relative to the workspace. Permitted "
@@ -1129,35 +1141,81 @@ class Production:
         preflight = self.artifact("contract-preflight")
         if not preflight.exists() or read(preflight).get("contract_digest") != digest(contract):
             raise GateError("missing/stale contract review; resume from contract stage")
-        plan = self.ask(
-            "environment-builder",
-            "Implement task/scene, actual equipment assets, reset and "
-            "component physics checks for artifacts/contract.json. Read pinned runtime source and "
-            "examples using paths in input/runtime.json; use public task.py YAM interface. "
-            "No complete demo yet. Return Python diagnostic scripts relative to task/ "
-            "(e.g. run_component_diagnostics.py) and workspace-relative report paths "
-            "(e.g. measurements/physics.json). "
-            "This Codex role is sandboxed for source inspection and code generation. Return "
-            "COMPLETE native GPU diagnostic scripts for the trusted controller to execute outside "
-            "that role sandbox. A CUDA error from a command inside this role is not evidence "
-            "that the host lacks a GPU. Do not run GPU rollouts inside the role, substitute static "
-            "facts/null values for native measurements, or return only a blocked stub. On host "
-            "execution failure read the actual ../logs/ runtime error and repair the script. "
-            "Create task/asset-manifest.json with assets [{path,sha256,source_url,license,license_reference,"
-            "units:'m',dimensions_m:[x,y,z],geometry_kind}]. Include license text and actual geometry files, "
-            "or procedural geometry source. Asset hashes must match. "
-            "Each script must write JSON {checks:[{name,measured,operator,threshold,unit}],artifacts:[...]} "
-            "with actual numerical readings. Use all frozen contract checks in one aggregate report, "
-            "which must be the FINAL script in the plan. Earlier scripts may be auxiliary API "
-            "preflights with their own nonempty numerical checks; those never replace any frozen "
-            "check in the final aggregate. "
-            "not fabricated constants. Reports and render images go under ../measurements/. "
-            "On repair read input/last-failure.json; retain criteria and fix the mechanism.",
-            C.BUILD,
-            True,
-        )
-        validate_assets(self.workspace / "task", read(self.workspace / "task/asset-manifest.json"))
-        receipts = self.execute_scripts(plan, contract["physics_checks"])
+        preflight_path = self.artifact("environment-preflights")
+        preflights = read(preflight_path) if preflight_path.exists() else []
+        max_preflights = self.config.get("environment_preflight_rounds", 3)
+        for discovery in range(max_preflights + 1):
+            plan = self.ask(
+                "environment-builder",
+                "Return phase=preflight for small complete native API/component discovery programs "
+                "when native behavior is not yet known. Read artifacts/environment-preflights.json "
+                "and actual logs before the next iteration. A preflight may cover only its stated "
+                "questions and must not claim full frozen physics coverage. Return phase=qualification "
+                "ONLY when the complete environment and all frozen measurement implementations exist. "
+                "Never fill missing data with constants/proxies: rotation ratio is not torque ratio; "
+                "a peak contact is not sustained vented preload; nonzero segmentation is not fixture "
+                "segmentation; a constant zero is not a sampled scorer result. "
+                "Implement task/scene, actual equipment assets, reset and "
+                "component physics checks for artifacts/contract.json. Read pinned runtime source and "
+                "examples using paths in input/runtime.json; use public task.py YAM interface. "
+                "No complete demo yet. Return Python diagnostic scripts relative to task/ "
+                "(e.g. run_component_diagnostics.py) and workspace-relative report paths "
+                "(e.g. measurements/physics.json). "
+                "This Codex role is sandboxed for source inspection and code generation. Return "
+                "COMPLETE native GPU diagnostic scripts for the trusted controller to execute outside "
+                "that role sandbox. A CUDA error from a command inside this role is not evidence "
+                "that the host lacks a GPU. Do not run GPU rollouts inside the role, substitute static "
+                "facts/null values for native measurements, or return only a blocked stub. On host "
+                "execution failure read the actual ../logs/ runtime error and repair the script. "
+                "Create task/asset-manifest.json with assets [{path,sha256,source_url,license,license_reference,"
+                "units:'m',dimensions_m:[x,y,z],geometry_kind}]. Include license text and actual geometry files, "
+                "or procedural geometry source. Asset hashes must match. "
+                "Each script must write JSON {checks:[{name,measured,operator,threshold,unit}],artifacts:[...]} "
+                "with actual numerical readings. For phase=preflight, return ONLY the small native "
+                "probe programs and their own nonempty measured checks; no production manifest "
+                "or full aggregate is required and no qualification is claimed. For "
+                "phase=qualification, use all frozen contract checks in one aggregate report, "
+                "which must be the FINAL script in the plan. Earlier scripts may be auxiliary API "
+                "preflights with their own nonempty numerical checks; those never replace any frozen "
+                "check in the final aggregate. "
+                "not fabricated constants. Reports and render images go under ../measurements/. "
+                "On repair read input/last-failure.json; retain criteria and fix the mechanism.",
+                C.ENV_BUILD,
+                True,
+            )
+            phase = plan.get("phase")
+            if phase not in {"preflight", "qualification"}:
+                raise GateError("environment plan must declare preflight or qualification")
+            if phase == "preflight" and discovery == max_preflights:
+                raise GateError("native discovery did not produce full qualification; inspect preflights")
+            if phase == "qualification":
+                validate_assets(self.workspace / "task", read(self.workspace / "task/asset-manifest.json"))
+            write_json(self.artifact("component-source-plan"), plan)
+            source_review = self.review(
+                "component-code-reviewer",
+                "Read artifacts/component-source-plan.json and its exact planned scripts/imports. "
+                "Review phase=" + phase + ". Preflight programs may only measure actual stated "
+                "API/component facts; unfinished unexecuted aggregate code is not a preflight pass. "
+                "Qualification requires all frozen contract measurements from real native states. "
+                "Reject constant score/success readings, rotation ratios substituted for torque, "
+                "peak contact substituted for sustained vented N73/cover preload, raster nonzero "
+                "counts substituted for fixture segmentation, fake terminal controls, invalid "
+                "sampling windows, missing constitutive coupling or altered frozen criteria. "
+                "Trace every claimed metric to actual samples and correct bodies/windows/units. "
+                "Native results are gathered AFTER this review; do not demand them now. "
+                "Read-only source review, not a physical-success certification.",
+                implementation_only=True,
+            )
+            receipts = self.execute_scripts(
+                plan, contract["physics_checks"] if phase == "qualification" else None
+            )
+            if phase == "qualification":
+                break
+            preflights.append({
+                "qualification": False, "plan": plan, "source_review": source_review,
+                "receipts": receipts, "at": now(),
+            })
+            write_json(preflight_path, preflights)
         write_json(self.artifact("environment-plan"), plan)
         write_json(self.artifact("environment"), receipts)
         self.review(

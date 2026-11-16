@@ -117,6 +117,7 @@ CONTRACT = obj(
 )
 SCRIPT = obj(id=S, script=S, args=array(S), report=S)
 BUILD = obj(summary=S, scripts=array(SCRIPT), files=array(S))
+ENV_BUILD = obj(phase={"type": "string", "enum": ["preflight", "qualification"]}, **BUILD["properties"])
 SCENARIO_POLICY = """
 You are one role in a RoboCurve production workflow for source-grounded industrial assembly
 and field maintenance (Impact on jobs), including robot building and data-center work

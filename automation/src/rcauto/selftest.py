@@ -86,6 +86,7 @@ class FixtureAgent:
                     "physics_checks"
                 ]
                 plan = self.scripts(workspace, {"environment": requirements})
+                plan["phase"] = "qualification"
                 from .gates import file_hash
 
                 (workspace / "task/LICENSE").write_text("Synthetic test fixture only.\n")
