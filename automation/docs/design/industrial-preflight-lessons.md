@@ -290,3 +290,11 @@ registered in `board_history_receipts`. The existing recovery still checks
 the bot receipt, original commit preceding receipt, and matching board title.
 No withdrawn own-team task is silently exempted or replaced with an invented
 description. This read-only recovery does not modify or resubmit PR2303.
+
+For future own-history IDs without a registered mapping, the collector now
+searches only the configured repository, requires a complete result set and
+exactly one PR containing the exact task ID in a trusted official receipt,
+then invokes the same original-commit/title verification. Untrusted comments,
+ambiguous receipts, partial search, unexpected repositories and transport/rate
+errors still block collection. Seven regression cases cover this discovery
+boundary; no missing record becomes a synthetic task or an archival exemption.

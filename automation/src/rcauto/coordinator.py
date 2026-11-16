@@ -13,7 +13,7 @@ import httpx
 
 from .agents import Agent
 from .benchmarks import sync_benchmarks
-from .board import collect_board, merge_board_catalog, recover_own_history
+from .board import collect_board, discover_own_history, merge_board_catalog, recover_own_history
 from .catalog import GitHub, get_source
 from .contracts import NOVELTY_SCOPE
 from .engine import Production, compare_catalog, read
@@ -53,8 +53,9 @@ class Coordinator:
                 def archival_detail(metadata):
                     number = self.config.get("board_history_receipts", {}).get(metadata["id"])
                     if not number:
-                        raise GateError(
-                            "own board history requires a verified receipt: " + metadata["id"]
+                        return discover_own_history(
+                            metadata, api, self.config["upstream"],
+                            self.config.get("receipt_authors", []),
                         )
                     return recover_own_history(
                         metadata,

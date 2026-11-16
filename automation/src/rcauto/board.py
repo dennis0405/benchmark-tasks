@@ -5,7 +5,7 @@ import json
 import re
 from collections import Counter
 from datetime import datetime, timedelta, timezone
-from urllib.parse import quote
+from urllib.parse import quote, urlencode
 
 import httpx
 
@@ -54,7 +54,9 @@ def _collect_board_attempt(team, token, client, own_detail):
             page = get("/api/tasks", view=view, limit=1000, offset=offset)["tasks"]
             for task in page:
                 if task["id"] in seen:
-                    raise BoardSnapshotChanged("board pagination changed/repeated; snapshot incomplete")
+                    raise BoardSnapshotChanged(
+                        "board pagination changed/repeated; snapshot incomplete"
+                    )
                 seen.add(task["id"])
                 statuses[task["status"]] += 1
                 # The revision view may also return archive/pilot entries. Only
@@ -187,6 +189,51 @@ def merge_board_catalog(snapshot, board):
     snapshot["scope"] += "; authenticated board accepted/pending/revision and complete own history"
     snapshot["digest"] = digest(snapshot["records"])
     return snapshot
+
+
+def discover_own_history(metadata, api, repo, trusted_authors):
+    """Find a unique official receipt, then verify and recover its original commit."""
+    task_id = metadata["id"]
+    if not re.fullmatch(r"TK-[A-Z0-9]{6}", task_id):
+        raise CatalogError("invalid task ID for receipt discovery")
+    result = api.get(
+        "search/issues?"
+        + urlencode(
+            {
+                "q": f'repo:{repo} is:pr "{task_id}" in:comments',
+                "per_page": 20,
+            }
+        )
+    )
+    items = result.get("items")
+    if (
+        not isinstance(items, list)
+        or result.get("incomplete_results") is not False
+        or result.get("total_count") != len(items)
+    ):
+        raise CatalogError("incomplete official receipt search: " + task_id)
+    matches = set()
+    for item in items:
+        number = item.get("number")
+        if (
+            not isinstance(number, int)
+            or number <= 0
+            or not item.get("pull_request")
+            or item.get("html_url") != f"https://github.com/{repo}/pull/{number}"
+        ):
+            raise CatalogError("unexpected repository in official receipt search")
+        comments = api.pages(f"repos/{repo}/issues/{number}/comments")
+        if any(
+            c.get("user", {}).get("login") in trusted_authors
+            and re.search(r"Received as\s+\*\*" + re.escape(task_id) + r"\*\*", c.get("body", ""))
+            for c in comments
+        ):
+            matches.add(number)
+    if len(matches) > 1:
+        raise CatalogError("ambiguous official receipts for own history: " + task_id)
+    if not matches:
+        raise CatalogError("no verified official receipt for own history: " + task_id)
+    return recover_own_history(metadata, api, repo, matches.pop(), trusted_authors)
 
 
 def recover_own_history(metadata, api, repo, number, trusted_authors):
