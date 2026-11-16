@@ -81,8 +81,11 @@ def main():
     mimic = PhysxSchema.PhysxMimicJointAPI.Apply(hinge.GetPrim(), "rotZ")
     mimic.CreateReferenceJointRel().SetTargets([prism.GetPath()])
     mimic.CreateReferenceJointAxisAttr("rotX")  # one-DOF prismatic reference
-    # Hypothesis to measure, not an assertion of parser units or native support.
-    mimic.CreateGearingAttr(-2 * math.pi / LEAD)
+    # PhysxMimicJointAPI evaluates the USD revolute coordinate in degrees while
+    # the prismatic coordinate is in metres.  With q_rot + G*q_linear = 0,
+    # negative 360 deg/lead produces positive one-turn rotation per +LEAD.
+    # Native parser/solver support and the sign remain outcomes of this probe.
+    mimic.CreateGearingAttr(-360.0 / LEAD)
     mimic.CreateOffsetAttr(0.0)
     mimic.CreateNaturalFrequencyAttr(0.0)  # ideal constraint discovery only
     mimic.CreateDampingRatioAttr(0.0)
@@ -94,17 +97,46 @@ def main():
     sim.reset()
     physics = PhysxManager.get_physics_sim_view()
     physics.set_subspace_roots("/")
+    articulation = physics.create_articulation_view("/World/Helix")
+    if articulation.count != 1:
+        raise RuntimeError(f"expected one native articulation, got {articulation.count}")
+    metatype = articulation.get_metatype(0)
+    dof_names = list(metatype.dof_names)
+    try:
+        axial_dof = dof_names.index("axial")
+    except ValueError as exc:
+        raise RuntimeError(f"native axial DOF missing; observed DOFs: {dof_names}") from exc
+    all_indices = wp.array([0], dtype=wp.uint32, device=args.device)
     views = [physics.create_rigid_body_view([str(path)]) for path in (frame, carrier, rotor)]
     samples = []
     for phase, velocity in [("forward", LEAD / (2 * math.pi)), ("reverse", -LEAD / (2 * math.pi))]:
-        drive.GetTargetVelocityAttr().Set(velocity)
+        # Direct live USD drive mutation is illegal with eENABLE_DIRECT_GPU_API.
+        # Use the installed native tensor target setter and preserve every other
+        # DOF target.  This is a diagnostic actuator command, not a state write.
+        targets = wp.to_torch(articulation.get_dof_velocity_targets()).clone()
+        targets[0, axial_dof] = velocity
+        articulation.set_dof_velocity_targets(wp.from_torch(targets), all_indices)
         for step in range(STEPS):
             sim.step(render=False)
             PhysxManager.raise_callback_exception_if_any()
             poses = [
                 wp.to_torch(v.get_transforms()).detach().cpu().clone().tolist()[0] for v in views
             ]
-            samples.append({"phase": phase, "step": step, "poses_xyzw": poses})
+            dof_positions = (
+                wp.to_torch(articulation.get_dof_positions()).detach().cpu().clone().tolist()[0]
+            )
+            dof_velocities = (
+                wp.to_torch(articulation.get_dof_velocities()).detach().cpu().clone().tolist()[0]
+            )
+            samples.append(
+                {
+                    "phase": phase,
+                    "step": step,
+                    "poses_xyzw": poses,
+                    "dof_positions": dof_positions,
+                    "dof_velocities": dof_velocities,
+                }
+            )
     a = np.asarray([s["poses_xyzw"] for s in samples], dtype=np.float64)
     # Joint axes are world Z in this isolated fixed-frame coupon.
     q = a[:, 2, 3:7]
@@ -120,6 +152,8 @@ def main():
             "native_trial_id": trial,
             "source_sha256": source_hash,
             "scope": "isolated ideal mimic API discovery only",
+            "dof_names": dof_names,
+            "axial_dof_index": axial_dof,
             "samples": samples,
         },
     )
@@ -129,6 +163,8 @@ def main():
     helical_residual = (angle - angle[0]) - 2 * math.pi / LEAD * (axial - axial[0])
     readings = [
         ("native_link_count", sum(v.count for v in views), "==", 3, "links"),
+        ("native_articulation_count", articulation.count, "==", 1, "articulations"),
+        ("native_dof_count", articulation.max_dofs, "==", 2, "dofs"),
         ("finite_pose_fraction", np.isfinite(a).mean(), "==", 1.0, "fraction"),
         ("actual_physics_dt", sim.get_physics_dt(), "==", DT, "s"),
         ("all_sample_helical_residual", np.max(np.abs(helical_residual)), "<=", 0.02, "rad"),
@@ -165,6 +201,8 @@ def main():
             "native_trial_id": trial,
             "source_sha256": source_hash,
             "scope": "isolated ideal mimic API discovery only",
+            "dof_names": dof_names,
+            "axial_dof_index": axial_dof,
             "samples": samples,
             "measured_lead_m_per_revolution": actual_lead,
         },

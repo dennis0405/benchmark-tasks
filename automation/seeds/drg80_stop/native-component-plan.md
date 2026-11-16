@@ -137,12 +137,30 @@ YAM demo or Dream evaluation. D6/articulation-mimic alternatives described above
 remain leads to test, not confirmed replacements. The GPU contact/callback cube
 probe passed independently; it does not resolve this mechanism incompatibility.
 
-`mimic_api_probe.py` is an unexecuted starting point for a smaller isolated
-native articulation test. Its explicit `--output` and `--trace` arguments and
-installed launcher parser avoid copying old unsupported CLI flags. It measures
-native link poses, a complete forward/reverse revolution, and the resulting
-linear/angular lead. The proposed mixed-unit gearing remains a hypothesis to
-measure. This ideal, gravity-free, noncontact coupon does not establish thread
-friction, the frozen compliant constitutive law, preload, gripper function or
-robot success. The trusted controller must obtain source review and real native
-execution before any runtime claim; import/compilation is not a physics test.
+`mimic_api_probe.py` now preserves the exact source of a successful isolated
+GPU articulation test, SHA256
+`384ff268d6f1071a81210e069ec95b582ef1c8b6007da792e7115e71641028a0`.
+The trusted controller recorded13 passing checks in trial
+`38efb0ce-5ac1-43ff-80ff-1bff4ffb3ca8`, under
+`artifacts/environment-preflights.json` with `qualification:false`. Its banner
+and scope remain deliberately limited to discovery, never full task validation.
+
+The actual forward motion was6.97562482rad and1.11013651mm; reverse motion was
+-6.59552331rad and-1.04969740mm. Measured lead error relative to1mm/revolution
+was6.18464e-8m/revolution; maximum all-sample helix residual was0.000945033rad.
+There were three native links and two DOFs in one articulation at240Hz.
+The authored gearing was-360000 degrees/metre, with observed body rotations
+converted to radians in analysis. These are isolated native observations, not
+measurements or calibration of the actual SCHUNK equipment.
+
+The first motor-command attempt remained stationary because updating USD drive
+targets after reset invokes a CPU-side setter that direct-GPU mode prohibits.
+The passing source instead reads the native articulation DOF names and calls
+`set_dof_velocity_targets` with an explicit Warp uint32 articulation index.
+Its explicit output paths and `--visualizer none` avoid the earlier CLI/path
+failures. The real source and report hashes were compared before preserving it.
+
+This ideal, gravity-free, noncontact coupon does not establish thread friction,
+the frozen compliant constitutive law, preload, full gripper transmission or
+robot success. Reusing it in a changed runtime still requires source review
+and actual execution; import/compilation is not a physics test.
