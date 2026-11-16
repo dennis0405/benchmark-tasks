@@ -1,0 +1,13 @@
+{
+  "context": "ed099192d7d16ace4691cc5004f16e234c32d3c7f64f519200d80895659862e5",
+  "record_digest": "bb054a9a01d872cbd1149d4d0be4a36bbfeaa63081ba8c2cdfd79512e01a1124",
+  "comparison": {
+    "id": "pr-1026",
+    "objective": "Tighten a tourniquet windlass against rollback until a gauge is green, snap the rod into its clip, and release it; candidate sets and jam-nut-locks a gripper opening stop before cycling it.",
+    "physical_skill": "Both involve loaded rotary adjustment and locking, but PR-1026 requires windlass regrasping and rod snap-in while preserving band tension; candidate requires simultaneous coaxial driver counterholding and thin-nut wrench tightening without shifting a precision screw setting.",
+    "success_condition": "PR-1026 succeeds when pressure is at least 250 mmHg, the rod is clipped, and the robot clears it for one second; candidate requires a 90° retained stop, at most 2° drift across three cycles, both nuts retained, and one-second 30 mm clearance.",
+    "verdict": "distinct",
+    "reason": "Shared adjust-lock-release primitives do not erase the meaningful difference between regrasping and clipping a rollback-loaded windlass versus two-tool screw/jam-nut countertorque followed by repeated functional retention testing; the record supplies complete thresholds and failure tiers."
+  },
+  "review_notes": null
+}
