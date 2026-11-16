@@ -1,18 +1,20 @@
 {
   "verdict": "pass",
   "findings": [
-    "The repaired preflight resolves the prior contact-freshness issue by copying known-pair contact buffers at both PRE_PHYSICS_STEP and POST_PHYSICS_STEP, requiring a nonzero same-substep transition, and checking every POST buffer against the next PRE buffer.",
-    "External rotor torque and input work are now explicitly labeled as commanded quantities; delivered behavior is independently constrained through native contact reaction, PRE/POST generalized-momentum balance, motion, contact work, and energy consistency checks.",
-    "The probe preserves the frozen 1 mm/revolution lead, K=1e6 N/m, D=4000 N·s/m, 9 g moving mass, and normative inertia without the rejected tenfold rotor inertia or added support mass. Its disclosed 1 mg auxiliary-link partition is checked using native mass properties, common-frame COM/inertia, and every entry of the reduced generalized mass matrix.",
-    "The program is appropriately scoped as qualification=false component discovery under real known-pair bilateral contact. It uses native callbacks and tensor states, performs no post-reset pose, velocity, joint-state, contact-state, or drive-target writes, and fails closed on incomplete execution or any failed check.",
-    "No material generated-source issue remains. Native execution must still determine whether the component passes; this source-gate verdict is not physical qualification of the fixture or the frozen 28 task-level criteria."
+    "The planned program is an honest component-discovery preflight: it reports qualification=false, requires every native check to pass, and makes no fixture or task qualification claim.",
+    "The recorded material-binding failure is correctly repaired: bind_physics_material is no longer treated as Boolean, while resolved USD material identity and native static/dynamic friction readbacks remain fail-closed checks after reset.",
+    "The probe uses fresh PRE/POST PhysX callbacks and native articulation/contact tensors to measure momentum balance, inferred K/D, bidirectional force transfer, contact-buffer freshness, helix error, release, work, common-frame properties, and reduced inertia without runtime state writes or changing the passive drive target.",
+    "The reordered articulation retains the frozen lead, stiffness, damping, torque, mass, inertia, force, work, and tolerance criteria; auxiliary-link approximation is explicitly disclosed and independently gated rather than asserted exact.",
+    "Planned source and report paths match the executor working-directory contract, the source parses successfully, and the relevant pinned runtime source hashes match their index entries."
   ],
   "evidence_paths": [
     "artifacts/component-source-plan.json",
     "task/run_series_elastic_helix_preflight.py",
+    "input/request.json",
     "input/last-failure.json",
     "input/operator-source-notes.json",
     "input/runtime-api-preflight.json",
+    "input/pinned-runtime-sources/42480bef35dd55856d1d7135929cfcf4e5a24d85bfdc9ed1c2a2a89bde529ad8-prims.py",
     "input/pinned-runtime-sources/1ba654210857a63b98236512e5f225723c3eb1dee64e867eaa4fade0578ccb7b-tensors-api.py",
     "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py",
     "artifacts/contract.json"

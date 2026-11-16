@@ -8,6 +8,15 @@ the already-observed hard 1 mm/revolution helical constraint, so the physical
 output coordinate is z=e+p*theta.  The drive target is never changed and no
 pose, velocity, joint state, or contact state is written after reset.
 
+The hard helical pair is rooted first in the articulation and the passive
+elastic coordinate follows it.  This ordering is intentional: native trial
+2b5bbaf3-d61e-45af-9898-00c0a7527d7e showed that this runtime's deprecated
+mimic constraint was inactive when an unrelated elastic DOF preceded the
+helical pair; the rotor then ran to its angular limit and generated only a
+0.667 N limit reaction.  The revised tree keeps the same physical series
+coordinates while placing the already-validated hard mimic pair first:
+frame --h--> carrier --theta--> support --e--> physical rotor.
+
 The two auxiliary coordinate links receive only 1 mg each and have no
 collision geometry; the physical screw rotor receives the remaining normative
 socket-adjuster mass, principal inertia, and known-pair collision geometry.
@@ -295,33 +304,22 @@ def main() -> None:
     lower_plate = create_plate(stage, "KnownLowerPlate", 0.5 - contact_offset)
     upper_plate = create_plate(stage, "KnownUpperPlate", 0.5 + contact_offset)
     for collision_path in (rotor, lower_plate, upper_plate):
-        if not sim_utils.bind_physics_material(
+        # This installed helper is decorated with @apply_nested.  The wrapper
+        # intentionally returns None even when the inner binding operation
+        # succeeds, so its return value is not a success flag.  Resolve and
+        # gate the authored physics binding after reset instead.
+        sim_utils.bind_physics_material(
             collision_path, frictionless_material, stage=stage
-        ):
-            raise RuntimeError(f"failed to bind frictionless material to {collision_path}")
+        )
 
     mount = UsdPhysics.FixedJoint.Define(stage, "/World/SeriesHelix/mount")
     mount.CreateBody1Rel().SetTargets([frame])
     mount.CreateLocalPos0Attr(Gf.Vec3f(0.0, 0.0, 0.5))
 
-    elastic = UsdPhysics.PrismaticJoint.Define(stage, "/World/SeriesHelix/elastic")
-    elastic.CreateBody0Rel().SetTargets([frame])
-    elastic.CreateBody1Rel().SetTargets([support])
-    elastic.CreateAxisAttr("Z")
-    elastic.CreateLowerLimitAttr(-0.001)
-    elastic.CreateUpperLimitAttr(0.001)
-    drive = UsdPhysics.DriveAPI.Apply(elastic.GetPrim(), "linear")
-    drive.CreateTypeAttr("force")
-    drive.CreateStiffnessAttr(K_N_PER_M)
-    drive.CreateDampingAttr(D_NS_PER_M)
-    drive.CreateMaxForceAttr(1000.0)
-    drive.CreateTargetPositionAttr(0.0)
-    drive.CreateTargetVelocityAttr(0.0)
-
     helical_translation = UsdPhysics.PrismaticJoint.Define(
         stage, "/World/SeriesHelix/helical_translation"
     )
-    helical_translation.CreateBody0Rel().SetTargets([support])
+    helical_translation.CreateBody0Rel().SetTargets([frame])
     helical_translation.CreateBody1Rel().SetTargets([carrier])
     helical_translation.CreateAxisAttr("Z")
     helical_translation.CreateLowerLimitAttr(-0.005)
@@ -329,7 +327,7 @@ def main() -> None:
 
     rotation = UsdPhysics.RevoluteJoint.Define(stage, "/World/SeriesHelix/rotation")
     rotation.CreateBody0Rel().SetTargets([carrier])
-    rotation.CreateBody1Rel().SetTargets([rotor])
+    rotation.CreateBody1Rel().SetTargets([support])
     rotation.CreateAxisAttr("Z")
     rotation.CreateLowerLimitAttr(-1440.0)
     rotation.CreateUpperLimitAttr(1440.0)
@@ -343,7 +341,40 @@ def main() -> None:
     mimic.CreateNaturalFrequencyAttr(0.0)
     mimic.CreateDampingRatioAttr(0.0)
 
+    # Put the passive fixed-neutral elastic coordinate after the hard helical
+    # pair.  The physical rotor remains the terminal link, so its world axial
+    # coordinate is still z=h+e and it inherits theta from its parent.  This
+    # changes only articulation ordering, not the constitutive law, masses,
+    # inertias, collision geometry, material, load, or any acceptance bar.
+    elastic = UsdPhysics.PrismaticJoint.Define(stage, "/World/SeriesHelix/elastic")
+    elastic.CreateBody0Rel().SetTargets([support])
+    elastic.CreateBody1Rel().SetTargets([rotor])
+    elastic.CreateAxisAttr("Z")
+    elastic.CreateLowerLimitAttr(-0.001)
+    elastic.CreateUpperLimitAttr(0.001)
+    drive = UsdPhysics.DriveAPI.Apply(elastic.GetPrim(), "linear")
+    drive.CreateTypeAttr("force")
+    drive.CreateStiffnessAttr(K_N_PER_M)
+    drive.CreateDampingAttr(D_NS_PER_M)
+    drive.CreateMaxForceAttr(1000.0)
+    drive.CreateTargetPositionAttr(0.0)
+    drive.CreateTargetVelocityAttr(0.0)
+
     sim.reset()
+    resolved_physics_material_paths = {}
+    for collision_path in (rotor, lower_plate, upper_plate):
+        bound_material, _binding_relationship = UsdShade.MaterialBindingAPI(
+            stage.GetPrimAtPath(collision_path)
+        ).ComputeBoundMaterial(materialPurpose="physics")
+        resolved_physics_material_paths[str(collision_path)] = (
+            str(bound_material.GetPath())
+            if bound_material and bound_material.GetPrim().IsValid()
+            else ""
+        )
+    resolved_physics_material_identity_count = sum(
+        path == str(frictionless_material)
+        for path in resolved_physics_material_paths.values()
+    )
     physics = PhysxManager.get_physics_sim_view()
     if physics is None:
         raise RuntimeError("native PhysX simulation view unavailable after reset")
@@ -370,10 +401,16 @@ def main() -> None:
             f"unexpected contact view {contact_view.sensor_count}x{contact_view.filter_count}"
         )
 
-    # Apply the test load as a physical world-frame torque on the screw core,
-    # not as a target and not as a generalized-force shortcut on the mimic
-    # coordinate.  This is the pinned public articulation link-force API; its
-    # explicit articulation indices are required by this runtime.
+    # Apply the test load as an ordinary force-mode actuator effort at the
+    # screw revolute joint.  The terminal physical rotor inherits this
+    # rotation through the intervening axial prismatic DOF.  The failed native trial
+    # 5e8d9bef-54ac-4573-bcef-56cdc10af06e established that the external-link
+    # wrench path does not participate in this deprecated mixed-unit mimic
+    # constraint: the rotor ran to its +/-1440 degree limit while the helical
+    # translation stayed near zero.  The articulation effort path is the
+    # already-native-verified load path for this exact mimic primitive and has
+    # a native applied-effort readback.  It is a force command, not a position,
+    # velocity, target, state write, or fake coupling.
     rotor_link_index = link_names.index("screw_rotor")
 
     native_masses = as_numpy(articulation.get_masses()).reshape(1, articulation.max_links)[0]
@@ -610,8 +647,8 @@ def main() -> None:
     )
 
     def run_phase(name: str, steps: int, start_torque: float, end_torque: float) -> None:
-        link_torques = torch.zeros(
-            (1, articulation.max_links, 3), dtype=torch.float32, device=args.device
+        dof_efforts = torch.zeros(
+            (1, articulation.max_dofs), dtype=torch.float32, device=args.device
         )
         for phase_step in range(steps):
             fraction = (phase_step + 1) / steps
@@ -619,14 +656,11 @@ def main() -> None:
             callback_state["phase"] = name
             callback_state["phase_step"] = phase_step
             callback_state["commanded_torque_nm"] = float(command)
-            link_torques.zero_()
-            link_torques[0, rotor_link_index, 2] = command
-            articulation.apply_forces_and_torques_at_position(
-                None,
-                wp.from_torch(link_torques.contiguous(), dtype=wp.float32),
-                None,
+            dof_efforts.zero_()
+            dof_efforts[0, rotation_index] = command
+            articulation.set_dof_actuation_forces(
+                wp.from_torch(dof_efforts.contiguous(), dtype=wp.float32),
                 all_indices,
-                True,
             )
             before = callback_state["count"]
             before_pre = callback_state["pre_count"]
@@ -796,9 +830,10 @@ def main() -> None:
     kinetic_energy = 0.5 * np.einsum("bi,bij,bj->b", qd, matrices, qd)
 
     # Map reduced physical rates [e_dot, theta_dot] into the actual native DOF
-    # order [elastic, helical_translation, rotation].  This is the contract's
-    # T=[[1,0],[0,p],[0,1]], with rows placed by resolved DOF name rather than
-    # assumed tensor order.  Every entry of T.T @ M_native @ T is then checked.
+    # coordinates by resolved name.  The native articulation order is not
+    # assumed: e_dot maps to the elastic row, while theta_dot maps to p on the
+    # helical row and 1 on the rotational row.  Every entry of
+    # T.T @ M_native @ T is then checked.
     reduced_coordinate_map = np.zeros((3, 2), dtype=np.float64)
     reduced_coordinate_map[elastic_index, 0] = 1.0
     reduced_coordinate_map[helical_index, 1] = P_M_PER_RAD
@@ -887,10 +922,10 @@ def main() -> None:
     def segment_work(segment: slice) -> dict:
         indices = np.arange(*segment.indices(len(samples)))
         dtheta = q[indices, rotation_index] - pre_q[indices, rotation_index]
-        # The public external-link torque setter has no native delivered-force
-        # readback.  This is therefore explicitly commanded work, not a claim
-        # that the command array is an independent torque measurement.  Native
-        # contact reaction, momentum and displacement remain separate outcomes.
+        # The native articulation getter verifies the applied effort schedule
+        # separately below.  Work still uses the commanded force-mode effort
+        # times measured native joint displacement; native contact reaction,
+        # momentum and displacement remain separate outcomes.
         commanded_input_work = float(
             np.sum(commanded_torque[indices] * dtheta)
         )
@@ -971,7 +1006,15 @@ def main() -> None:
         float(np.max(np.abs(commanded_torque[positive_slice] - TEST_TORQUE_NM))),
         float(np.max(np.abs(commanded_torque[negative_slice] + TEST_TORQUE_NM))),
     )
-    unintended_actuation_force_max = float(np.max(np.abs(efforts)))
+    applied_rotor_torque_error_max = float(
+        np.max(np.abs(efforts[:, rotation_index] - commanded_torque))
+    )
+    non_rotor_indices = [
+        index for index in range(articulation.max_dofs) if index != rotation_index
+    ]
+    unintended_actuation_force_max = float(
+        np.max(np.abs(efforts[:, non_rotor_indices]))
+    )
     finite_arrays = np.concatenate(
         (
             q.ravel(),
@@ -1009,6 +1052,15 @@ def main() -> None:
         check("native_contact_sensor_count", contact_view.sensor_count, "==", 1, "bodies"),
         check("native_contact_filter_count", contact_view.filter_count, "==", 2, "bodies"),
         check("native_plate_body_count", plate_view.count, "==", 2, "bodies"),
+        check("native_rotor_shape_count", articulation.max_shapes, "==", 1, "shapes"),
+        check("native_plate_shape_count", plate_view.max_shapes, "==", 1, "shapes/body"),
+        check(
+            "resolved_physics_material_identity_count",
+            resolved_physics_material_identity_count,
+            "==",
+            3,
+            "prims",
+        ),
         check("native_rotor_static_friction_max", np.max(np.abs(articulation_materials[:, 0])), "<=", 1e-9, "coefficient"),
         check("native_rotor_dynamic_friction_max", np.max(np.abs(articulation_materials[:, 1])), "<=", 1e-9, "coefficient"),
         check("native_plate_static_friction_max", np.max(np.abs(plate_materials[:, :, 0])), "<=", 1e-9, "coefficient"),
@@ -1044,6 +1096,7 @@ def main() -> None:
         check("reduced_inertia_theta_e_error_max", np.max(np.abs(reduced_native_matrices[:, 1, 0] - reduced_target_matrix[1, 0])), "<=", reduced_entry_scales[1, 0] * REDUCED_MASS_RELATIVE_TOLERANCE, "kg*m/rad"),
         check("reduced_inertia_theta_theta_error_max", np.max(np.abs(reduced_native_matrices[:, 1, 1] - reduced_target_matrix[1, 1])), "<=", reduced_entry_scales[1, 1] * REDUCED_MASS_RELATIVE_TOLERANCE, "kg*m^2/rad^2"),
         check("commanded_rotor_torque_hold_schedule_error_max", commanded_torque_schedule_error, "<=", 5e-6, "N*m commanded"),
+        check("native_applied_rotor_torque_error_max", applied_rotor_torque_error_max, "<=", 5e-6, "N*m"),
         check("unintended_articulation_actuation_force_max", unintended_actuation_force_max, "<=", 1e-9, "N or N*m"),
         check("positive_contact_reaction_magnitude_min", abs(positive_force), ">=", 1.0, "N"),
         check("negative_contact_reaction_magnitude_min", abs(negative_force), ">=", 1.0, "N"),
@@ -1100,16 +1153,18 @@ def main() -> None:
             "scope": "series-elastic coordinate plus hard native helix under known-pair contact",
             "qualification": False,
             "fidelity_review_required": True,
-            "representation": "z=e+p*theta; passive fixed-zero force drive in series with hard helix",
-            "forbidden_runtime_edits": "no pose/velocity/joint/contact writes after reset; no drive-target updates; physical rotor torque only",
+            "representation": "hard helix rooted first, followed by passive fixed-zero elastic coordinate; physical rotor z=e+p*theta",
+            "forbidden_runtime_edits": "no pose/velocity/joint/contact writes after reset; no drive-target updates; force-mode rotor-joint torque only",
             "known_pair_geometry": "coaxial 10 mm diameter cylinder between two fixed horizontal bearing plates; geometry is invariant under rotor angle",
             "known_pair_material": "USD physics material bound before reset with zero static friction, zero dynamic friction and zero restitution; actual native tensor readbacks are recorded and gated",
+            "expected_physics_material_path": str(frictionless_material),
+            "resolved_physics_material_paths_after_reset": resolved_physics_material_paths,
             "native_rotor_material_properties": articulation_materials.tolist(),
             "native_plate_material_properties": plate_materials.tolist(),
             "dof_names": dof_names,
             "link_names": link_names,
             "partition": MOVING_PARTS,
-            "partition_interpretation": "1 mg non-colliding elastic support plus 1 mg non-colliding output-coordinate carrier; 8.998 g physical screw rotor carries normative collision geometry and the remaining normative principal inertia; no tool/support mass or inertia is hidden in the moving part",
+            "partition_interpretation": "1 mg non-colliding helical carrier plus 1 mg non-colliding rotating elastic support; 8.998 g terminal physical screw rotor carries normative collision geometry and remaining normative principal inertia; no tool/support mass or inertia is hidden in the moving part",
             "normative_mass_kg": NORMATIVE_MASS_KG,
             "native_partition_mass_kg": measured_mass,
             "normative_com_m": NORMATIVE_COM_M.tolist(),
@@ -1159,7 +1214,7 @@ def main() -> None:
                 np.max(pre_post_contact_transition_magnitude)
             ),
             "post_to_next_pre_contact_buffer_impulse_error_max_ns": post_to_next_pre_contact_impulse_error_max,
-            "external_torque_observability": "the applied-link-torque API has no independent delivered-torque readback; torque and work arrays are labeled commanded, while native contact reaction, generalized momentum, joint motion and detailed contact work are recorded independently",
+            "torque_observability": "the force-mode revolute-joint effort is commanded through the native articulation tensor API and independently read back with get_dof_actuation_forces; native contact reaction, generalized momentum, joint motion and detailed contact work remain separate outcomes",
             "contact_work_method": "sum over detailed normal contact points of force dot (rotor COM linear velocity plus angular velocity cross point radius), integrated at every 240 Hz POST callback; native zero-friction readbacks plus unresolved-force and axial-contact-torque gates reject an omitted tangential path",
             "positive_inferred_native_drive_force_median_n": positive_drive,
             "negative_inferred_native_drive_force_median_n": negative_drive,

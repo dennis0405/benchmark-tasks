@@ -1,0 +1,1267 @@
+#!/usr/bin/env python3
+"""Bounded native series-elastic-coordinate probe for the DRG80 screw.
+
+This is a component preflight, not fixture qualification.  It tests one frozen
+constitutive question under known-pair bilateral contact: a passive, fixed-zero
+native prismatic force drive (K=1e6 N/m, D=4000 N*s/m) is placed in series with
+the already-observed hard 1 mm/revolution helical constraint, so the physical
+output coordinate is z=e+p*theta.  The drive target is never changed and no
+pose, velocity, joint state, or contact state is written after reset.
+
+The two auxiliary coordinate links receive only 1 mg each and have no
+collision geometry; the physical screw rotor receives the remaining normative
+socket-adjuster mass, principal inertia, and known-pair collision geometry.
+This avoids the rejected proposal's hidden tenfold rotor inertia and 10 g
+support while keeping the auxiliary coordinates explicit.  The complete
+common-frame and reduced-mass comparisons below quantify this disclosed
+representation approximation rather than calling it exact preservation.
+At every exercised state the probe transforms every moving link's native COM
+and inertia into one world frame, forms the aggregate spatial properties, and
+compares them with the intended single moving part.  It also reduces the full
+native 3x3 generalized mass matrix with the frozen coordinate map
+T=[[1,0],[0,p],[0,1]] (in [e,h,theta] order), reports both reduced matrices,
+and gates every mixed-unit entry on its own physical scale.
+
+The implicit drive force is never reconstructed from its authored K/D values.
+It is inferred at every fresh POST_PHYSICS_STEP sample from delta(M v) after
+subtracting measured known-pair contact impulse and commanded generalized
+impulse.  Effective K and D, and spring work, are fitted from that independent
+native inference.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import math
+from pathlib import Path
+import sys
+import traceback
+import uuid
+
+from isaaclab.app import AppLauncher
+
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--output", required=True)
+parser.add_argument("--trace", required=True)
+AppLauncher.add_app_launcher_args(parser)
+args = parser.parse_args()
+
+output_path = Path(args.output).resolve()
+trace_path = Path(args.trace).resolve()
+for product in (output_path, trace_path):
+    product.parent.mkdir(parents=True, exist_ok=True)
+    product.unlink(missing_ok=True)
+
+trial_id = str(uuid.uuid4())
+source_sha256 = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+app = AppLauncher(args).app
+
+
+import numpy as np
+import torch
+import warp as wp
+
+import isaaclab.sim as sim_utils
+from isaaclab_physx.physics import IsaacEvents, PhysxManager
+from pxr import Gf, PhysxSchema, UsdGeom, UsdPhysics, UsdShade
+
+
+DT = 1.0 / 240.0
+LEAD_M_PER_REV = 0.001
+P_M_PER_RAD = LEAD_M_PER_REV / (2.0 * math.pi)
+K_N_PER_M = 1.0e6
+D_NS_PER_M = 4000.0
+TEST_TORQUE_NM = 0.005
+EXPECTED_FORCE_N = TEST_TORQUE_NM / P_M_PER_RAD
+POSITION_ITERATIONS = 128
+VELOCITY_ITERATIONS = 4
+SETTLE_STEPS = 240
+RAMP_STEPS = 480
+HOLD_STEPS = 480
+RELEASE_STEPS = 480
+
+# Near-massless coordinate carriers keep the physical mass/inertia on the link
+# that undergoes both output translation and rotor rotation.  All COMs share
+# the frozen socket-adjuster local COM.  Common-frame aggregate spatial deltas
+# and reduced generalized-inertia deltas are measured over the rollout below.
+MOVING_PARTS = {
+    "elastic_support": {
+        "mass": 1.0e-6,
+        "inertia": (1.0e-12, 1.0e-12, 1.0e-12),
+    },
+    "output_carrier": {
+        "mass": 1.0e-6,
+        "inertia": (1.0e-12, 1.0e-12, 1.0e-12),
+    },
+    "screw_rotor": {
+        "mass": 0.008998,
+        "inertia": (4.99998e-7, 4.99998e-7, 6.9998e-8),
+    },
+}
+NORMATIVE_MASS_KG = 0.009
+NORMATIVE_INERTIA = np.asarray((5.0e-7, 5.0e-7, 7.0e-8), dtype=np.float64)
+NORMATIVE_COM_M = np.asarray((0.0, 0.0, -0.014), dtype=np.float64)
+# Representation-only discovery tolerances.  These do not alter any frozen
+# task-level criterion; a native failure rejects this physical partition.
+REDUCED_MASS_RELATIVE_TOLERANCE = 5.0e-4
+SPATIAL_COM_ABSOLUTE_TOLERANCE_M = 1.0e-6
+SPATIAL_INERTIA_RELATIVE_TOLERANCE = 5.0e-4
+
+
+def write_json(path: Path, payload: dict) -> None:
+    path.write_text(
+        json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n",
+        encoding="utf-8",
+    )
+
+
+def check(name: str, measured: float, operator: str, threshold: float, unit: str) -> dict:
+    value = float(measured)
+    comparisons = {
+        "==": lambda a, b: a == b,
+        ">=": lambda a, b: a >= b,
+        "<=": lambda a, b: a <= b,
+        ">": lambda a, b: a > b,
+        "<": lambda a, b: a < b,
+    }
+    passed = math.isfinite(value) and comparisons[operator](value, float(threshold))
+    return {
+        "name": name,
+        "measured": value,
+        "operator": operator,
+        "threshold": threshold,
+        "unit": unit,
+        "passed": bool(passed),
+    }
+
+
+def as_numpy(value) -> np.ndarray:
+    return wp.to_torch(value).detach().cpu().numpy().copy()
+
+
+def quaternion_xyzw_to_matrix(quaternion: np.ndarray) -> np.ndarray:
+    """Return a world-from-local rotation for a native xyzw quaternion."""
+    x, y, z, w = np.asarray(quaternion, dtype=np.float64)
+    norm = math.sqrt(x * x + y * y + z * z + w * w)
+    if not math.isfinite(norm) or norm <= 0.0:
+        raise RuntimeError(f"invalid native link quaternion {quaternion!r}")
+    x, y, z, w = x / norm, y / norm, z / norm, w / norm
+    return np.asarray(
+        [
+            [1.0 - 2.0 * (y * y + z * z), 2.0 * (x * y - z * w), 2.0 * (x * z + y * w)],
+            [2.0 * (x * y + z * w), 1.0 - 2.0 * (x * x + z * z), 2.0 * (y * z - x * w)],
+            [2.0 * (x * z - y * w), 2.0 * (y * z + x * w), 1.0 - 2.0 * (x * x + y * y)],
+        ],
+        dtype=np.float64,
+    )
+
+
+def common_frame_spatial_properties(
+    link_transforms: np.ndarray,
+    link_indices: list[int],
+    link_masses: np.ndarray,
+    link_coms: np.ndarray,
+    link_inertias: np.ndarray,
+    target_link_index: int,
+) -> dict:
+    """Aggregate moving-link mass properties in the native world frame."""
+    world_coms = []
+    world_inertias_at_com = []
+    for link_index in link_indices:
+        transform = link_transforms[link_index]
+        rotation = quaternion_xyzw_to_matrix(transform[3:7])
+        world_coms.append(transform[:3] + rotation @ link_coms[link_index, :3])
+        # The pinned tensor API returns column-major inertia entries expressed
+        # in the rigid-body prim frame and located at that link's COM.
+        inertia_local = np.reshape(link_inertias[link_index], (3, 3), order="F")
+        world_inertias_at_com.append(rotation @ inertia_local @ rotation.T)
+    masses = link_masses[link_indices]
+    world_coms_array = np.asarray(world_coms, dtype=np.float64)
+    total_mass = float(np.sum(masses))
+    aggregate_com = np.sum(masses[:, None] * world_coms_array, axis=0) / total_mass
+    aggregate_inertia = np.zeros((3, 3), dtype=np.float64)
+    for mass, world_com, inertia_at_com in zip(
+        masses, world_coms_array, world_inertias_at_com, strict=True
+    ):
+        offset = world_com - aggregate_com
+        aggregate_inertia += inertia_at_com + mass * (
+            float(offset @ offset) * np.eye(3) - np.outer(offset, offset)
+        )
+
+    target_transform = link_transforms[target_link_index]
+    target_rotation = quaternion_xyzw_to_matrix(target_transform[3:7])
+    target_com = (
+        target_transform[:3] + target_rotation @ NORMATIVE_COM_M
+    )
+    target_inertia = target_rotation @ np.diag(NORMATIVE_INERTIA) @ target_rotation.T
+    return {
+        "aggregate_com_world_m": aggregate_com,
+        "target_com_world_m": target_com,
+        "aggregate_inertia_about_aggregate_com_world_kg_m2": aggregate_inertia,
+        "target_inertia_about_target_com_world_kg_m2": target_inertia,
+    }
+
+
+def create_link(
+    stage,
+    name: str,
+    mass_kg: float,
+    inertia_xyz: tuple[float, float, float],
+    *,
+    collision: bool = False,
+):
+    path = f"/World/SeriesHelix/{name}"
+    if collision:
+        # A coaxial cylinder is the bearing coupon.  Unlike the rejected cube,
+        # its contact geometry is invariant under screw rotation.
+        shape = UsdGeom.Cylinder.Define(stage, path)
+        shape.CreateRadiusAttr(0.005)
+        shape.CreateHeightAttr(0.01)
+        shape.CreateAxisAttr("Z")
+    else:
+        shape = UsdGeom.Cube.Define(stage, path)
+        shape.CreateSizeAttr(0.01)
+    shape.AddTranslateOp().Set(Gf.Vec3d(0.0, 0.0, 0.5))
+    UsdPhysics.RigidBodyAPI.Apply(shape.GetPrim())
+    if collision:
+        UsdPhysics.CollisionAPI.Apply(shape.GetPrim())
+        PhysxSchema.PhysxContactReportAPI.Apply(shape.GetPrim()).CreateThresholdAttr(0.0)
+    mass = UsdPhysics.MassAPI.Apply(shape.GetPrim())
+    mass.CreateMassAttr(mass_kg)
+    mass.CreateCenterOfMassAttr(Gf.Vec3f(*NORMATIVE_COM_M.tolist()))
+    mass.CreateDiagonalInertiaAttr(Gf.Vec3f(*inertia_xyz))
+    PhysxSchema.PhysxRigidBodyAPI.Apply(shape.GetPrim()).CreateDisableGravityAttr(True)
+    return shape.GetPath()
+
+
+def create_frictionless_material(stage):
+    material = UsdShade.Material.Define(stage, "/World/FrictionlessBearing")
+    api = UsdPhysics.MaterialAPI.Apply(material.GetPrim())
+    api.CreateStaticFrictionAttr(0.0)
+    api.CreateDynamicFrictionAttr(0.0)
+    api.CreateRestitutionAttr(0.0)
+    return material.GetPath()
+
+
+def create_plate(stage, name: str, z_m: float):
+    plate = UsdGeom.Cube.Define(stage, f"/World/{name}")
+    plate.CreateSizeAttr(1.0)
+    plate.AddTranslateOp().Set(Gf.Vec3d(0.0, 0.0, z_m))
+    plate.AddScaleOp().Set(Gf.Vec3f(0.05, 0.05, 0.004))
+    rigid = UsdPhysics.RigidBodyAPI.Apply(plate.GetPrim())
+    rigid.CreateKinematicEnabledAttr(True)
+    UsdPhysics.CollisionAPI.Apply(plate.GetPrim())
+    UsdPhysics.MassAPI.Apply(plate.GetPrim()).CreateMassAttr(100.0)
+    PhysxSchema.PhysxRigidBodyAPI.Apply(plate.GetPrim()).CreateDisableGravityAttr(True)
+    PhysxSchema.PhysxContactReportAPI.Apply(plate.GetPrim()).CreateThresholdAttr(0.0)
+    return plate.GetPath()
+
+
+def main() -> None:
+    sim = sim_utils.SimulationContext(sim_utils.SimulationCfg(dt=DT, device=args.device))
+    stage = sim.stage
+    frictionless_material = create_frictionless_material(stage)
+    root = UsdGeom.Xform.Define(stage, "/World/SeriesHelix")
+    UsdPhysics.ArticulationRootAPI.Apply(root.GetPrim())
+    articulation_api = PhysxSchema.PhysxArticulationAPI.Apply(root.GetPrim())
+    articulation_api.CreateSolverPositionIterationCountAttr(POSITION_ITERATIONS)
+    articulation_api.CreateSolverVelocityIterationCountAttr(VELOCITY_ITERATIONS)
+
+    frame = create_link(stage, "frame", 1.0, (1.0e-3, 1.0e-3, 1.0e-3))
+    support = create_link(
+        stage,
+        "elastic_support",
+        MOVING_PARTS["elastic_support"]["mass"],
+        MOVING_PARTS["elastic_support"]["inertia"],
+    )
+    carrier = create_link(
+        stage,
+        "output_carrier",
+        MOVING_PARTS["output_carrier"]["mass"],
+        MOVING_PARTS["output_carrier"]["inertia"],
+    )
+    rotor = create_link(
+        stage,
+        "screw_rotor",
+        MOVING_PARTS["screw_rotor"]["mass"],
+        MOVING_PARTS["screw_rotor"]["inertia"],
+        collision=True,
+    )
+
+    contact_offset = 0.005 + 0.002
+    lower_plate = create_plate(stage, "KnownLowerPlate", 0.5 - contact_offset)
+    upper_plate = create_plate(stage, "KnownUpperPlate", 0.5 + contact_offset)
+    for collision_path in (rotor, lower_plate, upper_plate):
+        # This installed helper is decorated with @apply_nested.  The wrapper
+        # intentionally returns None even when the inner binding operation
+        # succeeds, so its return value is not a success flag.  Resolve and
+        # gate the authored physics binding after reset instead.
+        sim_utils.bind_physics_material(
+            collision_path, frictionless_material, stage=stage
+        )
+
+    mount = UsdPhysics.FixedJoint.Define(stage, "/World/SeriesHelix/mount")
+    mount.CreateBody1Rel().SetTargets([frame])
+    mount.CreateLocalPos0Attr(Gf.Vec3f(0.0, 0.0, 0.5))
+
+    elastic = UsdPhysics.PrismaticJoint.Define(stage, "/World/SeriesHelix/elastic")
+    elastic.CreateBody0Rel().SetTargets([frame])
+    elastic.CreateBody1Rel().SetTargets([support])
+    elastic.CreateAxisAttr("Z")
+    elastic.CreateLowerLimitAttr(-0.001)
+    elastic.CreateUpperLimitAttr(0.001)
+    drive = UsdPhysics.DriveAPI.Apply(elastic.GetPrim(), "linear")
+    drive.CreateTypeAttr("force")
+    drive.CreateStiffnessAttr(K_N_PER_M)
+    drive.CreateDampingAttr(D_NS_PER_M)
+    drive.CreateMaxForceAttr(1000.0)
+    drive.CreateTargetPositionAttr(0.0)
+    drive.CreateTargetVelocityAttr(0.0)
+
+    helical_translation = UsdPhysics.PrismaticJoint.Define(
+        stage, "/World/SeriesHelix/helical_translation"
+    )
+    helical_translation.CreateBody0Rel().SetTargets([support])
+    helical_translation.CreateBody1Rel().SetTargets([carrier])
+    helical_translation.CreateAxisAttr("Z")
+    helical_translation.CreateLowerLimitAttr(-0.005)
+    helical_translation.CreateUpperLimitAttr(0.005)
+
+    rotation = UsdPhysics.RevoluteJoint.Define(stage, "/World/SeriesHelix/rotation")
+    rotation.CreateBody0Rel().SetTargets([carrier])
+    rotation.CreateBody1Rel().SetTargets([rotor])
+    rotation.CreateAxisAttr("Z")
+    rotation.CreateLowerLimitAttr(-1440.0)
+    rotation.CreateUpperLimitAttr(1440.0)
+
+    mimic = PhysxSchema.PhysxMimicJointAPI.Apply(rotation.GetPrim(), "rotZ")
+    mimic.CreateReferenceJointRel().SetTargets([helical_translation.GetPath()])
+    mimic.CreateReferenceJointAxisAttr("rotX")
+    # USD gearing uses degrees per metre in this pinned runtime.
+    mimic.CreateGearingAttr(-360.0 / LEAD_M_PER_REV)
+    mimic.CreateOffsetAttr(0.0)
+    mimic.CreateNaturalFrequencyAttr(0.0)
+    mimic.CreateDampingRatioAttr(0.0)
+
+    sim.reset()
+    resolved_physics_material_paths = {}
+    for collision_path in (rotor, lower_plate, upper_plate):
+        bound_material, _binding_relationship = UsdShade.MaterialBindingAPI(
+            stage.GetPrimAtPath(collision_path)
+        ).ComputeBoundMaterial(materialPurpose="physics")
+        resolved_physics_material_paths[str(collision_path)] = (
+            str(bound_material.GetPath())
+            if bound_material and bound_material.GetPrim().IsValid()
+            else ""
+        )
+    resolved_physics_material_identity_count = sum(
+        path == str(frictionless_material)
+        for path in resolved_physics_material_paths.values()
+    )
+    physics = PhysxManager.get_physics_sim_view()
+    if physics is None:
+        raise RuntimeError("native PhysX simulation view unavailable after reset")
+    physics.set_subspace_roots("/")
+    articulation = physics.create_articulation_view("/World/SeriesHelix")
+    if articulation.count != 1 or articulation.max_dofs != 3:
+        raise RuntimeError(
+            f"unexpected articulation shape {articulation.count}x{articulation.max_dofs}"
+        )
+    meta = articulation.get_metatype(0)
+    dof_names = list(meta.dof_names)
+    link_names = list(meta.link_names)
+    elastic_index = dof_names.index("elastic")
+    helical_index = dof_names.index("helical_translation")
+    rotation_index = dof_names.index("rotation")
+    contact_view = physics.create_rigid_contact_view(
+        [str(rotor)],
+        filter_patterns=[[str(lower_plate), str(upper_plate)]],
+        max_contact_data_count=32,
+    )
+    plate_view = physics.create_rigid_body_view("/World/Known*Plate")
+    if contact_view.sensor_count != 1 or contact_view.filter_count != 2:
+        raise RuntimeError(
+            f"unexpected contact view {contact_view.sensor_count}x{contact_view.filter_count}"
+        )
+
+    # Apply the test load as an ordinary force-mode actuator effort at the
+    # physical screw revolute joint.  The failed native trial
+    # 5e8d9bef-54ac-4573-bcef-56cdc10af06e established that the external-link
+    # wrench path does not participate in this deprecated mixed-unit mimic
+    # constraint: the rotor ran to its +/-1440 degree limit while the helical
+    # translation stayed near zero.  The articulation effort path is the
+    # already-native-verified load path for this exact mimic primitive and has
+    # a native applied-effort readback.  It is a force command, not a position,
+    # velocity, target, state write, or fake coupling.
+    rotor_link_index = link_names.index("screw_rotor")
+
+    native_masses = as_numpy(articulation.get_masses()).reshape(1, articulation.max_links)[0]
+    native_coms = as_numpy(articulation.get_coms()).reshape(
+        1, articulation.max_links, 7
+    )[0]
+    native_inertias = as_numpy(articulation.get_inertias()).reshape(
+        1, articulation.max_links, 9
+    )[0]
+    drive_types = as_numpy(articulation.get_drive_types()).reshape(1, 3)[0]
+    stiffnesses = as_numpy(articulation.get_dof_stiffnesses()).reshape(1, 3)[0]
+    dampings = as_numpy(articulation.get_dof_dampings()).reshape(1, 3)[0]
+    max_forces = as_numpy(articulation.get_dof_max_forces()).reshape(1, 3)[0]
+    articulation_materials = as_numpy(
+        articulation.get_material_properties()
+    ).reshape(1, articulation.max_shapes, 3)[0]
+    plate_materials = as_numpy(plate_view.get_material_properties()).reshape(
+        plate_view.count, plate_view.max_shapes, 3
+    )
+
+    moving_link_indices = [link_names.index(name) for name in MOVING_PARTS]
+    target_link_index = link_names.index("screw_rotor")
+    measured_mass = float(native_masses[moving_link_indices].sum())
+    measured_inertia = native_inertias[moving_link_indices][:, [0, 4, 8]].sum(axis=0)
+    measured_com = np.average(
+        native_coms[moving_link_indices, :3],
+        axis=0,
+        weights=native_masses[moving_link_indices],
+    )
+
+    all_indices = wp.array([0], dtype=wp.uint32, device=args.device)
+    samples: list[dict] = []
+    pre_samples: list[dict] = []
+    callback_state = {
+        "phase": "unassigned",
+        "phase_step": -1,
+        "commanded_torque_nm": 0.0,
+        "count": 0,
+        "dt_values": [],
+        "pre_count": 0,
+        "pre_dt_values": [],
+    }
+
+    def contact_buffer_snapshot() -> dict:
+        """Copy the current known-pair buffers before a later callback can mutate them."""
+        matrix = as_numpy(contact_view.get_contact_force_matrix(dt=DT)).reshape(1, 2, 3)[0]
+        impulse_matrix = as_numpy(
+            contact_view.get_contact_force_matrix(dt=1.0)
+        ).reshape(1, 2, 3)[0]
+        _forces, _points, _normals, _separations, counts, starts = (
+            contact_view.get_contact_data(dt=DT)
+        )
+        return {
+            "known_pair_force_matrix_n": matrix.tolist(),
+            "known_pair_impulse_matrix_ns": impulse_matrix.tolist(),
+            "detailed_contact_counts": as_numpy(counts)
+            .reshape(1, 2)[0]
+            .astype(np.int64)
+            .tolist(),
+            "detailed_contact_starts": as_numpy(starts)
+            .reshape(1, 2)[0]
+            .astype(np.int64)
+            .tolist(),
+        }
+
+    def pre_step_sample(dt: float) -> None:
+        try:
+            q = as_numpy(articulation.get_dof_positions()).reshape(1, 3)[0]
+            qd = as_numpy(articulation.get_dof_velocities()).reshape(1, 3)[0]
+            mass_matrix = as_numpy(
+                articulation.get_generalized_mass_matrices()
+            ).reshape(1, 3, 3)[0]
+            pre_sample = {
+                    "phase": callback_state["phase"],
+                    "phase_step": callback_state["phase_step"],
+                    "callback_dt_s": float(dt),
+                    "commanded_torque_nm": callback_state["commanded_torque_nm"],
+                    "q": q.tolist(),
+                    "qd": qd.tolist(),
+                    "generalized_momentum": (mass_matrix @ qd).tolist(),
+                }
+            pre_sample.update(contact_buffer_snapshot())
+            pre_samples.append(pre_sample)
+            callback_state["pre_count"] += 1
+            callback_state["pre_dt_values"].append(float(dt))
+        except Exception as exc:
+            PhysxManager.store_callback_exception(exc)
+
+    def post_step_sample(dt: float) -> None:
+        try:
+            q = as_numpy(articulation.get_dof_positions()).reshape(1, 3)[0]
+            qd = as_numpy(articulation.get_dof_velocities()).reshape(1, 3)[0]
+            applied = as_numpy(articulation.get_dof_actuation_forces()).reshape(1, 3)[0]
+            matrix = as_numpy(contact_view.get_contact_force_matrix(dt=DT)).reshape(1, 2, 3)[0]
+            impulse_matrix = as_numpy(
+                contact_view.get_contact_force_matrix(dt=1.0)
+            ).reshape(1, 2, 3)[0]
+            forces, points, normals, separations, counts, starts = contact_view.get_contact_data(dt=DT)
+            force_data = as_numpy(forces).reshape(-1)
+            separation_data = as_numpy(separations).reshape(-1)
+            count_data = as_numpy(counts).reshape(1, 2)[0].astype(np.int64)
+            start_data = as_numpy(starts).reshape(1, 2)[0].astype(np.int64)
+            active_forces: list[float] = []
+            active_separations: list[float] = []
+            for count, start in zip(count_data, start_data, strict=True):
+                if count > 0:
+                    active_forces.extend(force_data[start : start + count].tolist())
+                    active_separations.extend(separation_data[start : start + count].tolist())
+
+            mass_matrix = as_numpy(
+                articulation.get_generalized_mass_matrices()
+            ).reshape(1, 3, 3)[0]
+            link_transforms = as_numpy(articulation.get_link_transforms()).reshape(
+                1, articulation.max_links, 7
+            )[0]
+            link_velocities = as_numpy(articulation.get_link_velocities()).reshape(
+                1, articulation.max_links, 6
+            )[0]
+            point_data = as_numpy(points).reshape(-1, 3)
+            normal_data = as_numpy(normals).reshape(-1, 3)
+            rotor_com_world = (
+                link_transforms[rotor_link_index, :3]
+                + quaternion_xyzw_to_matrix(link_transforms[rotor_link_index, 3:7])
+                @ native_coms[rotor_link_index, :3]
+            )
+            rotor_linear_velocity = link_velocities[rotor_link_index, :3]
+            rotor_angular_velocity = link_velocities[rotor_link_index, 3:6]
+            normal_force_sum = np.zeros(3, dtype=np.float64)
+            normal_contact_power = 0.0
+            normal_contact_torque = np.zeros(3, dtype=np.float64)
+            for count, start in zip(count_data, start_data, strict=True):
+                for contact_index in range(start, start + count):
+                    force_vector = (
+                        force_data[contact_index] * normal_data[contact_index]
+                    )
+                    radius = point_data[contact_index] - rotor_com_world
+                    point_velocity = rotor_linear_velocity + np.cross(
+                        rotor_angular_velocity, radius
+                    )
+                    normal_force_sum += force_vector
+                    normal_contact_torque += np.cross(radius, force_vector)
+                    normal_contact_power += float(force_vector @ point_velocity)
+            if len(pre_samples) != len(samples) + 1:
+                raise RuntimeError("POST sample has no unique immediately preceding PRE sample")
+            paired_pre = pre_samples[-1]
+            if (
+                paired_pre["phase"] != callback_state["phase"]
+                or paired_pre["phase_step"] != callback_state["phase_step"]
+                or paired_pre["commanded_torque_nm"]
+                != callback_state["commanded_torque_nm"]
+            ):
+                raise RuntimeError("PRE/POST command metadata are not substep-aligned")
+            spatial = common_frame_spatial_properties(
+                link_transforms,
+                moving_link_indices,
+                native_masses,
+                native_coms,
+                native_inertias,
+                target_link_index,
+            )
+            generalized_momentum = mass_matrix @ qd
+            samples.append(
+                {
+                    "phase": callback_state["phase"],
+                    "phase_step": callback_state["phase_step"],
+                    "callback_dt_s": float(dt),
+                    "commanded_torque_nm": callback_state["commanded_torque_nm"],
+                    "q": q.tolist(),
+                    "qd": qd.tolist(),
+                    "applied_efforts": applied.tolist(),
+                    "generalized_momentum": generalized_momentum.tolist(),
+                    "pre_q": paired_pre["q"],
+                    "pre_qd": paired_pre["qd"],
+                    "pre_generalized_momentum": paired_pre["generalized_momentum"],
+                    "pre_known_pair_force_matrix_n": paired_pre[
+                        "known_pair_force_matrix_n"
+                    ],
+                    "pre_known_pair_impulse_matrix_ns": paired_pre[
+                        "known_pair_impulse_matrix_ns"
+                    ],
+                    "pre_detailed_contact_counts": paired_pre[
+                        "detailed_contact_counts"
+                    ],
+                    "pre_detailed_contact_starts": paired_pre[
+                        "detailed_contact_starts"
+                    ],
+                    "known_pair_force_matrix_n": matrix.tolist(),
+                    "known_pair_impulse_matrix_ns": impulse_matrix.tolist(),
+                    "detailed_contact_count": int(sum(count_data)),
+                    "detailed_normal_force_sum_n": float(sum(active_forces)),
+                    "minimum_separation_m": (
+                        float(min(active_separations)) if active_separations else 0.0
+                    ),
+                    "normal_contact_force_sum_n": normal_force_sum.tolist(),
+                    "normal_contact_torque_about_rotor_com_nm": normal_contact_torque.tolist(),
+                    "normal_contact_power_w": normal_contact_power,
+                    "rotor_com_world_m": rotor_com_world.tolist(),
+                    "rotor_linear_velocity_world_m_per_s": rotor_linear_velocity.tolist(),
+                    "rotor_angular_velocity_world_rad_per_s": rotor_angular_velocity.tolist(),
+                    "generalized_mass_matrix": mass_matrix.tolist(),
+                    "moving_link_transforms_world": link_transforms[
+                        moving_link_indices
+                    ].tolist(),
+                    "aggregate_com_world_m": spatial[
+                        "aggregate_com_world_m"
+                    ].tolist(),
+                    "target_com_world_m": spatial["target_com_world_m"].tolist(),
+                    "aggregate_inertia_about_aggregate_com_world_kg_m2": spatial[
+                        "aggregate_inertia_about_aggregate_com_world_kg_m2"
+                    ].tolist(),
+                    "target_inertia_about_target_com_world_kg_m2": spatial[
+                        "target_inertia_about_target_com_world_kg_m2"
+                    ].tolist(),
+                }
+            )
+            callback_state["count"] += 1
+            callback_state["dt_values"].append(float(dt))
+        except Exception as exc:
+            PhysxManager.store_callback_exception(exc)
+
+    pre_callback_handle = PhysxManager.register_callback(
+        pre_step_sample,
+        IsaacEvents.PRE_PHYSICS_STEP,
+        order=0,
+        name="drg80_series_elastic_native_pre_sample",
+        wrap_weak_ref=False,
+    )
+    post_callback_handle = PhysxManager.register_callback(
+        post_step_sample,
+        IsaacEvents.POST_PHYSICS_STEP,
+        order=0,
+        name="drg80_series_elastic_native_sample",
+        wrap_weak_ref=False,
+    )
+
+    def run_phase(name: str, steps: int, start_torque: float, end_torque: float) -> None:
+        dof_efforts = torch.zeros(
+            (1, articulation.max_dofs), dtype=torch.float32, device=args.device
+        )
+        for phase_step in range(steps):
+            fraction = (phase_step + 1) / steps
+            command = start_torque + fraction * (end_torque - start_torque)
+            callback_state["phase"] = name
+            callback_state["phase_step"] = phase_step
+            callback_state["commanded_torque_nm"] = float(command)
+            dof_efforts.zero_()
+            dof_efforts[0, rotation_index] = command
+            articulation.set_dof_actuation_forces(
+                wp.from_torch(dof_efforts.contiguous(), dtype=wp.float32),
+                all_indices,
+            )
+            before = callback_state["count"]
+            before_pre = callback_state["pre_count"]
+            sim.step(render=False)
+            PhysxManager.raise_callback_exception_if_any()
+            if callback_state["count"] != before + 1:
+                raise RuntimeError(
+                    "expected exactly one fresh POST_PHYSICS_STEP sample, got "
+                    f"{callback_state['count'] - before}"
+                )
+            if callback_state["pre_count"] != before_pre + 1:
+                raise RuntimeError(
+                    "expected exactly one fresh PRE_PHYSICS_STEP sample, got "
+                    f"{callback_state['pre_count'] - before_pre}"
+                )
+
+    try:
+        run_phase("settle", SETTLE_STEPS, 0.0, 0.0)
+        run_phase("positive_ramp", RAMP_STEPS, 0.0, TEST_TORQUE_NM)
+        run_phase("positive_hold", HOLD_STEPS, TEST_TORQUE_NM, TEST_TORQUE_NM)
+        run_phase("positive_release", RELEASE_STEPS, TEST_TORQUE_NM, 0.0)
+        run_phase("negative_ramp", RAMP_STEPS, 0.0, -TEST_TORQUE_NM)
+        run_phase("negative_hold", HOLD_STEPS, -TEST_TORQUE_NM, -TEST_TORQUE_NM)
+        run_phase("negative_release", RELEASE_STEPS, -TEST_TORQUE_NM, 0.0)
+    finally:
+        pre_callback_handle.deregister()
+        post_callback_handle.deregister()
+    count_after_deregister = callback_state["count"]
+    pre_count_after_deregister = callback_state["pre_count"]
+    sim.step(render=False)
+    PhysxManager.raise_callback_exception_if_any()
+    deregistered_callback_extra_count = (
+        callback_state["count"] - count_after_deregister
+    )
+    deregistered_pre_callback_extra_count = (
+        callback_state["pre_count"] - pre_count_after_deregister
+    )
+
+    q = np.asarray([sample["q"] for sample in samples], dtype=np.float64)
+    qd = np.asarray([sample["qd"] for sample in samples], dtype=np.float64)
+    efforts = np.asarray([sample["applied_efforts"] for sample in samples], dtype=np.float64)
+    commanded_torque = np.asarray(
+        [sample["commanded_torque_nm"] for sample in samples], dtype=np.float64
+    )
+    contacts = np.asarray(
+        [sample["known_pair_force_matrix_n"] for sample in samples], dtype=np.float64
+    )
+    contact_impulses = np.asarray(
+        [sample["known_pair_impulse_matrix_ns"] for sample in samples],
+        dtype=np.float64,
+    )
+    pre_contacts = np.asarray(
+        [sample["pre_known_pair_force_matrix_n"] for sample in samples],
+        dtype=np.float64,
+    )
+    pre_contact_impulses = np.asarray(
+        [sample["pre_known_pair_impulse_matrix_ns"] for sample in samples],
+        dtype=np.float64,
+    )
+    # PRE exposes the buffer left by the preceding completed substep, whereas
+    # POST must expose this substep's resolved contacts.  A nonzero same-step
+    # transition plus POST[n] == PRE[n+1] establishes actual buffer chronology;
+    # callback metadata/counts alone would not establish contact freshness.
+    pre_post_contact_impulse_delta = contact_impulses - pre_contact_impulses
+    pre_post_contact_transition_magnitude = np.max(
+        np.abs(pre_post_contact_impulse_delta), axis=(1, 2)
+    )
+    contact_buffer_transition_epsilon_ns = 1.0e-8
+    contact_buffer_transition_count = int(
+        np.count_nonzero(
+            pre_post_contact_transition_magnitude
+            > contact_buffer_transition_epsilon_ns
+        )
+    )
+    post_to_next_pre_contact_impulse_error_max = float(
+        np.max(np.abs(contact_impulses[:-1] - pre_contact_impulses[1:]))
+    )
+    matrices = np.asarray(
+        [sample["generalized_mass_matrix"] for sample in samples], dtype=np.float64
+    )
+    momenta = np.asarray(
+        [sample["generalized_momentum"] for sample in samples], dtype=np.float64
+    )
+    pre_momenta = np.asarray(
+        [sample["pre_generalized_momentum"] for sample in samples], dtype=np.float64
+    )
+    pre_q = np.asarray([sample["pre_q"] for sample in samples], dtype=np.float64)
+    pre_qd = np.asarray([sample["pre_qd"] for sample in samples], dtype=np.float64)
+    callback_dts = np.asarray(
+        [sample["callback_dt_s"] for sample in samples], dtype=np.float64
+    )
+    pre_callback_dts = np.asarray(
+        [sample["callback_dt_s"] for sample in pre_samples], dtype=np.float64
+    )
+    signed_contact_z = contacts[:, :, 2].sum(axis=1)
+    signed_contact_impulse_z = contact_impulses[:, :, 2].sum(axis=1)
+    normal_contact_forces = np.asarray(
+        [sample["normal_contact_force_sum_n"] for sample in samples],
+        dtype=np.float64,
+    )
+    normal_contact_torques = np.asarray(
+        [sample["normal_contact_torque_about_rotor_com_nm"] for sample in samples],
+        dtype=np.float64,
+    )
+    normal_contact_power = np.asarray(
+        [sample["normal_contact_power_w"] for sample in samples], dtype=np.float64
+    )
+    contact_matrix_net = contacts.sum(axis=1)
+    unresolved_contact_force = contact_matrix_net - normal_contact_forces
+    output_z = q[:, elastic_index] + q[:, helical_index]
+    helix_residual_rad = q[:, rotation_index] - q[0, rotation_index] - (
+        (2.0 * math.pi / LEAD_M_PER_REV)
+        * (q[:, helical_index] - q[0, helical_index])
+    )
+    # Native momentum-balance inference.  In this fixed, coaxial coupon gravity
+    # is disabled; the hard-helix constraint Jacobian has no elastic-coordinate
+    # component; and the two plate impulses map to e with unit z Jacobian.
+    # Therefore the residual e impulse is the implicit bearing-drive impulse.
+    inferred_drive_force = np.full(len(samples), np.nan, dtype=np.float64)
+    delta_generalized_momentum_e = np.full(len(samples), np.nan, dtype=np.float64)
+    for index in range(len(samples)):
+        # These are the PRE and POST native values for this exact substep, not
+        # adjacent control samples.  The paired callback metadata are checked
+        # below, which also catches stale or duplicated event delivery.
+        delta_p = momenta[index, elastic_index] - pre_momenta[index, elastic_index]
+        delta_generalized_momentum_e[index] = delta_p
+        commanded_impulse_e = efforts[index, elastic_index] * callback_dts[index]
+        contact_impulse_e = signed_contact_impulse_z[index]
+        inferred_drive_impulse = (
+            delta_p - contact_impulse_e - commanded_impulse_e
+        )
+        inferred_drive_force[index] = inferred_drive_impulse / callback_dts[index]
+        samples[index]["momentum_balance"] = {
+            "delta_generalized_momentum_e_ns": float(delta_p),
+            "known_contact_impulse_e_ns": float(contact_impulse_e),
+            "commanded_impulse_e_ns": float(commanded_impulse_e),
+            "inferred_native_drive_impulse_e_ns": float(inferred_drive_impulse),
+            "inferred_native_drive_force_e_n": float(inferred_drive_force[index]),
+        }
+
+    fit_indices = np.arange(len(samples))
+    fit_design = np.column_stack(
+        (
+            -0.5
+            * (q[fit_indices, elastic_index] + pre_q[fit_indices, elastic_index]),
+            -0.5
+            * (qd[fit_indices, elastic_index] + pre_qd[fit_indices, elastic_index]),
+        )
+    )
+    fit_target = inferred_drive_force[fit_indices]
+    fit_excitation = np.linalg.norm(fit_design, axis=1) > 1.0e-9
+    fit_indices = fit_indices[fit_excitation]
+    fit_design = fit_design[fit_excitation]
+    fit_target = fit_target[fit_excitation]
+    if fit_target.size < 100 or np.linalg.matrix_rank(fit_design) < 2:
+        raise RuntimeError("insufficient independent native excitation to fit K and D")
+    fitted_coefficients, _residuals, _rank, _singular = np.linalg.lstsq(
+        fit_design, fit_target, rcond=None
+    )
+    fitted_k = float(fitted_coefficients[0])
+    fitted_d = float(fitted_coefficients[1])
+    fitted_force = fit_design @ fitted_coefficients
+    fit_rmse = float(np.sqrt(np.mean(np.square(fit_target - fitted_force))))
+    fit_scale = max(float(np.sqrt(np.mean(np.square(fit_target)))), 1.0e-9)
+    fit_relative_rmse = fit_rmse / fit_scale
+    elastic_energy = 0.5 * K_N_PER_M * np.square(q[:, elastic_index])
+    kinetic_energy = 0.5 * np.einsum("bi,bij,bj->b", qd, matrices, qd)
+
+    # Map reduced physical rates [e_dot, theta_dot] into the actual native DOF
+    # order [elastic, helical_translation, rotation].  This is the contract's
+    # T=[[1,0],[0,p],[0,1]], with rows placed by resolved DOF name rather than
+    # assumed tensor order.  Every entry of T.T @ M_native @ T is then checked.
+    reduced_coordinate_map = np.zeros((3, 2), dtype=np.float64)
+    reduced_coordinate_map[elastic_index, 0] = 1.0
+    reduced_coordinate_map[helical_index, 1] = P_M_PER_RAD
+    reduced_coordinate_map[rotation_index, 1] = 1.0
+    reduced_native_matrices = np.einsum(
+        "ai,nab,bj->nij", reduced_coordinate_map, matrices, reduced_coordinate_map
+    )
+    reduced_target_matrix = np.asarray(
+        [
+            [NORMATIVE_MASS_KG, NORMATIVE_MASS_KG * P_M_PER_RAD],
+            [
+                NORMATIVE_MASS_KG * P_M_PER_RAD,
+                NORMATIVE_INERTIA[2]
+                + NORMATIVE_MASS_KG * P_M_PER_RAD * P_M_PER_RAD,
+            ],
+        ],
+        dtype=np.float64,
+    )
+    reduced_entry_scales = np.abs(reduced_target_matrix)
+    reduced_entry_relative_errors = np.abs(
+        reduced_native_matrices - reduced_target_matrix[None, :, :]
+    ) / reduced_entry_scales[None, :, :]
+    reduced_entry_relative_error_max = np.max(
+        reduced_entry_relative_errors, axis=0
+    )
+    reduced_native_median = np.median(reduced_native_matrices, axis=0)
+
+    aggregate_coms = np.asarray(
+        [sample["aggregate_com_world_m"] for sample in samples], dtype=np.float64
+    )
+    target_coms = np.asarray(
+        [sample["target_com_world_m"] for sample in samples], dtype=np.float64
+    )
+    aggregate_spatial_inertias = np.asarray(
+        [
+            sample["aggregate_inertia_about_aggregate_com_world_kg_m2"]
+            for sample in samples
+        ],
+        dtype=np.float64,
+    )
+    target_spatial_inertias = np.asarray(
+        [sample["target_inertia_about_target_com_world_kg_m2"] for sample in samples],
+        dtype=np.float64,
+    )
+    common_frame_com_delta = aggregate_coms - target_coms
+    common_frame_com_delta_norm = np.linalg.norm(common_frame_com_delta, axis=1)
+    # Each inertia entry gets a dimensionally matching scale.  Off-diagonal
+    # entries use sqrt(I_ii I_jj), not an arbitrary global matrix norm.
+    inertia_entry_scales = np.sqrt(
+        NORMATIVE_INERTIA[:, None] * NORMATIVE_INERTIA[None, :]
+    )
+    common_frame_inertia_relative_errors = np.abs(
+        aggregate_spatial_inertias - target_spatial_inertias
+    ) / inertia_entry_scales[None, :, :]
+    common_frame_inertia_relative_error_max = np.max(
+        common_frame_inertia_relative_errors, axis=0
+    )
+
+    slices = {}
+    cursor = 0
+    for name, count in (
+        ("settle", SETTLE_STEPS),
+        ("positive_ramp", RAMP_STEPS),
+        ("positive_hold", HOLD_STEPS),
+        ("positive_release", RELEASE_STEPS),
+        ("negative_ramp", RAMP_STEPS),
+        ("negative_hold", HOLD_STEPS),
+        ("negative_release", RELEASE_STEPS),
+    ):
+        slices[name] = slice(cursor, cursor + count)
+        cursor += count
+
+    positive_slice = slice(
+        slices["positive_hold"].start + HOLD_STEPS // 2,
+        slices["positive_hold"].stop,
+    )
+    negative_slice = slice(
+        slices["negative_hold"].start + HOLD_STEPS // 2,
+        slices["negative_hold"].stop,
+    )
+    loaded_indices = np.r_[
+        np.arange(*positive_slice.indices(len(samples))),
+        np.arange(*negative_slice.indices(len(samples))),
+    ]
+
+    def segment_work(segment: slice) -> dict:
+        indices = np.arange(*segment.indices(len(samples)))
+        dtheta = q[indices, rotation_index] - pre_q[indices, rotation_index]
+        # The native articulation getter verifies the applied effort schedule
+        # separately below.  Work still uses the commanded force-mode effort
+        # times measured native joint displacement; native contact reaction,
+        # momentum and displacement remain separate outcomes.
+        commanded_input_work = float(
+            np.sum(commanded_torque[indices] * dtheta)
+        )
+        # With native-readback zero friction, detailed contact normals span the
+        # complete contact wrench.  Power includes each point's translational
+        # and rotational velocity; the separate unresolved-force and axial-
+        # torque gates below reject an omitted tangential path.
+        contact_work = float(
+            np.sum(normal_contact_power[indices] * callback_dts[indices])
+        )
+        damping_heat = float(
+            np.sum(
+                D_NS_PER_M
+                * np.square(qd[indices, elastic_index])
+                * callback_dts[indices]
+            )
+        )
+        valid = indices
+        de = q[valid, elastic_index] - pre_q[valid, elastic_index]
+        inferred_spring_work = float(
+            np.sum(
+                inferred_drive_force[valid] * de
+            )
+        )
+        start_elastic_energy = 0.5 * K_N_PER_M * pre_q[indices[0], elastic_index] ** 2
+        start_kinetic_energy = 0.5 * float(
+            pre_qd[indices[0]] @ matrices[indices[0]] @ pre_qd[indices[0]]
+        )
+        delta_energy = float(
+            elastic_energy[indices[-1]]
+            + kinetic_energy[indices[-1]]
+            - start_elastic_energy
+            - start_kinetic_energy
+        )
+        residual = commanded_input_work + contact_work - damping_heat - delta_energy
+        scale = max(abs(commanded_input_work) + abs(contact_work), 1.0e-9)
+        return {
+            "commanded_input_work_j": commanded_input_work,
+            "contact_work_j": contact_work,
+            "inferred_native_spring_work_j": inferred_spring_work,
+            "damping_heat_j": damping_heat,
+            "stored_plus_kinetic_energy_change_j": delta_energy,
+            "commanded_balance_residual_j": residual,
+            "commanded_balance_relative_error": abs(residual) / scale,
+            "spring_constitutive_work_residual_j": (
+                inferred_spring_work
+                + elastic_energy[indices[-1]]
+                - start_elastic_energy
+                + damping_heat
+            ),
+            "spring_constitutive_work_relative_error": abs(
+                inferred_spring_work
+                + elastic_energy[indices[-1]]
+                - start_elastic_energy
+                + damping_heat
+            )
+            / max(abs(inferred_spring_work) + damping_heat, 1.0e-9),
+        }
+
+    positive_work = segment_work(
+        slice(slices["positive_ramp"].start, slices["positive_hold"].stop)
+    )
+    negative_work = segment_work(
+        slice(slices["negative_ramp"].start, slices["negative_hold"].stop)
+    )
+    positive_force = float(np.median(signed_contact_z[positive_slice]))
+    negative_force = float(np.median(signed_contact_z[negative_slice]))
+    positive_drive = float(np.nanmedian(inferred_drive_force[positive_slice]))
+    negative_drive = float(np.nanmedian(inferred_drive_force[negative_slice]))
+    loaded_residual = float(np.max(np.abs(helix_residual_rad[loaded_indices])))
+    released_displacement = float(
+        max(
+            np.max(np.abs(q[slices["positive_release"]][-120:, elastic_index])),
+            np.max(np.abs(q[slices["negative_release"]][-120:, elastic_index])),
+        )
+    )
+    commanded_torque_schedule_error = max(
+        float(np.max(np.abs(commanded_torque[positive_slice] - TEST_TORQUE_NM))),
+        float(np.max(np.abs(commanded_torque[negative_slice] + TEST_TORQUE_NM))),
+    )
+    applied_rotor_torque_error_max = float(
+        np.max(np.abs(efforts[:, rotation_index] - commanded_torque))
+    )
+    non_rotor_indices = [
+        index for index in range(articulation.max_dofs) if index != rotation_index
+    ]
+    unintended_actuation_force_max = float(
+        np.max(np.abs(efforts[:, non_rotor_indices]))
+    )
+    finite_arrays = np.concatenate(
+        (
+            q.ravel(),
+            qd.ravel(),
+            efforts.ravel(),
+            contacts.ravel(),
+            pre_contacts.ravel(),
+            pre_contact_impulses.ravel(),
+            matrices.ravel(),
+            inferred_drive_force,
+            momenta.ravel(),
+            pre_momenta.ravel(),
+            pre_q.ravel(),
+            pre_qd.ravel(),
+            callback_dts.ravel(),
+            pre_callback_dts.ravel(),
+            normal_contact_forces.ravel(),
+            normal_contact_torques.ravel(),
+            normal_contact_power.ravel(),
+            unresolved_contact_force.ravel(),
+            aggregate_coms.ravel(),
+            target_coms.ravel(),
+            aggregate_spatial_inertias.ravel(),
+            target_spatial_inertias.ravel(),
+            reduced_native_matrices.ravel(),
+        )
+    )
+    detailed_counts = np.asarray(
+        [sample["detailed_contact_count"] for sample in samples], dtype=np.float64
+    )
+
+    checks = [
+        check("native_articulation_count", articulation.count, "==", 1, "articulations"),
+        check("native_dof_count", articulation.max_dofs, "==", 3, "dofs"),
+        check("native_contact_sensor_count", contact_view.sensor_count, "==", 1, "bodies"),
+        check("native_contact_filter_count", contact_view.filter_count, "==", 2, "bodies"),
+        check("native_plate_body_count", plate_view.count, "==", 2, "bodies"),
+        check("native_rotor_shape_count", articulation.max_shapes, "==", 1, "shapes"),
+        check("native_plate_shape_count", plate_view.max_shapes, "==", 1, "shapes/body"),
+        check(
+            "resolved_physics_material_identity_count",
+            resolved_physics_material_identity_count,
+            "==",
+            3,
+            "prims",
+        ),
+        check("native_rotor_static_friction_max", np.max(np.abs(articulation_materials[:, 0])), "<=", 1e-9, "coefficient"),
+        check("native_rotor_dynamic_friction_max", np.max(np.abs(articulation_materials[:, 1])), "<=", 1e-9, "coefficient"),
+        check("native_plate_static_friction_max", np.max(np.abs(plate_materials[:, :, 0])), "<=", 1e-9, "coefficient"),
+        check("native_plate_dynamic_friction_max", np.max(np.abs(plate_materials[:, :, 1])), "<=", 1e-9, "coefficient"),
+        check("known_pair_force_impulse_scaling_error_max", np.max(np.abs(contacts * DT - contact_impulses)), "<=", 1e-6, "N*s"),
+        check("pre_post_contact_buffer_transition_count", contact_buffer_transition_count, ">=", 1, "substeps"),
+        check("pre_post_contact_buffer_transition_impulse_max", np.max(pre_post_contact_transition_magnitude), ">", contact_buffer_transition_epsilon_ns, "N*s"),
+        check("post_to_next_pre_contact_buffer_impulse_error_max", post_to_next_pre_contact_impulse_error_max, "<=", 1e-6, "N*s"),
+        check("actual_physics_dt_absolute_error", abs(sim.get_physics_dt() - DT), "<=", 1e-9, "s"),
+        check("post_physics_callback_count", callback_state["count"], "==", cursor, "callbacks"),
+        check("post_physics_callback_sample_count", len(samples), "==", cursor, "samples"),
+        check("post_physics_callback_dt_count", len(callback_state["dt_values"]), "==", cursor, "callbacks"),
+        check("post_physics_callback_dt_absolute_error_max", np.max(np.abs(callback_dts - DT)), "<=", 1e-9, "s"),
+        check("pre_physics_callback_count", callback_state["pre_count"], "==", cursor, "callbacks"),
+        check("pre_physics_callback_sample_count", len(pre_samples), "==", cursor, "samples"),
+        check("pre_physics_callback_dt_count", len(callback_state["pre_dt_values"]), "==", cursor, "callbacks"),
+        check("pre_physics_callback_dt_absolute_error_max", np.max(np.abs(pre_callback_dts - DT)), "<=", 1e-9, "s"),
+        check("pre_post_phase_step_alignment_error_count", sum(pre["phase"] != post["phase"] or pre["phase_step"] != post["phase_step"] or pre["commanded_torque_nm"] != post["commanded_torque_nm"] for pre, post in zip(pre_samples, samples, strict=True)), "==", 0, "substeps"),
+        check("post_physics_phase_step_sequence_error_count", sum(sample["phase"] != phase or sample["phase_step"] != expected for phase in slices for expected, sample in enumerate(samples[slices[phase]])), "==", 0, "samples"),
+        check("deregistered_callback_extra_count", deregistered_callback_extra_count, "==", 0, "callbacks"),
+        check("deregistered_pre_callback_extra_count", deregistered_pre_callback_extra_count, "==", 0, "callbacks"),
+        check("native_state_finite_fraction", np.isfinite(finite_arrays).mean(), "==", 1.0, "fraction"),
+        check("elastic_drive_type", drive_types[elastic_index], "==", 1, "force-drive enum"),
+        check("elastic_drive_stiffness_error", abs(stiffnesses[elastic_index] - K_N_PER_M), "<=", 1.0, "N/m"),
+        check("elastic_drive_damping_error", abs(dampings[elastic_index] - D_NS_PER_M), "<=", 0.01, "N*s/m"),
+        check("elastic_drive_max_force_error", abs(max_forces[elastic_index] - 1000.0), "<=", 0.01, "N"),
+        check("raw_partition_mass_sum_error", abs(measured_mass - NORMATIVE_MASS_KG), "<=", 1e-7, "kg"),
+        check("raw_partition_local_inertia_sum_error_max", np.max(np.abs(measured_inertia - NORMATIVE_INERTIA)), "<=", 1e-10, "kg*m^2"),
+        check("raw_partition_local_com_average_error_max", np.max(np.abs(measured_com - NORMATIVE_COM_M)), "<=", 1e-7, "m"),
+        check("common_frame_aggregate_com_delta_norm_max", np.max(common_frame_com_delta_norm), "<=", SPATIAL_COM_ABSOLUTE_TOLERANCE_M, "m"),
+        check("reduced_inertia_e_e_error_max", np.max(np.abs(reduced_native_matrices[:, 0, 0] - reduced_target_matrix[0, 0])), "<=", reduced_entry_scales[0, 0] * REDUCED_MASS_RELATIVE_TOLERANCE, "kg"),
+        check("reduced_inertia_e_theta_error_max", np.max(np.abs(reduced_native_matrices[:, 0, 1] - reduced_target_matrix[0, 1])), "<=", reduced_entry_scales[0, 1] * REDUCED_MASS_RELATIVE_TOLERANCE, "kg*m/rad"),
+        check("reduced_inertia_theta_e_error_max", np.max(np.abs(reduced_native_matrices[:, 1, 0] - reduced_target_matrix[1, 0])), "<=", reduced_entry_scales[1, 0] * REDUCED_MASS_RELATIVE_TOLERANCE, "kg*m/rad"),
+        check("reduced_inertia_theta_theta_error_max", np.max(np.abs(reduced_native_matrices[:, 1, 1] - reduced_target_matrix[1, 1])), "<=", reduced_entry_scales[1, 1] * REDUCED_MASS_RELATIVE_TOLERANCE, "kg*m^2/rad^2"),
+        check("commanded_rotor_torque_hold_schedule_error_max", commanded_torque_schedule_error, "<=", 5e-6, "N*m commanded"),
+        check("native_applied_rotor_torque_error_max", applied_rotor_torque_error_max, "<=", 5e-6, "N*m"),
+        check("unintended_articulation_actuation_force_max", unintended_actuation_force_max, "<=", 1e-9, "N or N*m"),
+        check("positive_contact_reaction_magnitude_min", abs(positive_force), ">=", 1.0, "N"),
+        check("negative_contact_reaction_magnitude_min", abs(negative_force), ">=", 1.0, "N"),
+        check("bidirectional_contact_reaction_sign_product", positive_force * negative_force, "<", 0.0, "N^2"),
+        check("detailed_known_pair_contact_count_loaded_min", np.min(detailed_counts[loaded_indices]), ">=", 1, "points/sample"),
+        check("loaded_unresolved_contact_force_max", np.max(np.linalg.norm(unresolved_contact_force[loaded_indices], axis=1)), "<=", EXPECTED_FORCE_N * 1e-3, "N"),
+        check("loaded_normal_contact_axial_torque_max", np.max(np.abs(normal_contact_torques[loaded_indices, 2])), "<=", TEST_TORQUE_NM * 1e-3, "N*m"),
+        check("positive_contact_to_frozen_force_relative_error", abs(abs(positive_force) - EXPECTED_FORCE_N) / EXPECTED_FORCE_N, "<=", 0.1, "fraction"),
+        check("negative_contact_to_frozen_force_relative_error", abs(abs(negative_force) - EXPECTED_FORCE_N) / EXPECTED_FORCE_N, "<=", 0.1, "fraction"),
+        check("positive_native_contact_equivalent_torque_to_command_relative_error", abs(abs(positive_force) * P_M_PER_RAD - TEST_TORQUE_NM) / TEST_TORQUE_NM, "<=", 0.1, "fraction"),
+        check("negative_native_contact_equivalent_torque_to_command_relative_error", abs(abs(negative_force) * P_M_PER_RAD - TEST_TORQUE_NM) / TEST_TORQUE_NM, "<=", 0.1, "fraction"),
+        check("positive_drive_to_contact_relative_error", abs(abs(positive_drive) - abs(positive_force)) / max(abs(positive_force), 1.0), "<=", 0.1, "fraction"),
+        check("negative_drive_to_contact_relative_error", abs(abs(negative_drive) - abs(negative_force)) / max(abs(negative_force), 1.0), "<=", 0.1, "fraction"),
+        check("native_momentum_fit_sample_count", fit_target.size, ">=", 100, "samples"),
+        check("inferred_effective_stiffness_relative_error", abs(fitted_k - K_N_PER_M) / K_N_PER_M, "<=", 0.1, "fraction"),
+        check("inferred_effective_damping_relative_error", abs(fitted_d - D_NS_PER_M) / D_NS_PER_M, "<=", 0.15, "fraction"),
+        check("inferred_constitutive_fit_relative_rmse", fit_relative_rmse, "<=", 0.15, "fraction"),
+        check("loaded_helix_residual_max", loaded_residual, "<=", 0.02, "rad"),
+        check("loaded_output_coordinate_identity_error_max", np.max(np.abs(output_z[loaded_indices] - (q[loaded_indices, elastic_index] + P_M_PER_RAD * q[loaded_indices, rotation_index]))), "<=", P_M_PER_RAD * 0.02, "m"),
+        check("positive_commanded_input_work_min", positive_work["commanded_input_work_j"], ">", 1e-7, "J commanded"),
+        check("negative_commanded_input_work_min", negative_work["commanded_input_work_j"], ">", 1e-7, "J commanded"),
+        check("positive_commanded_work_balance_relative_error", positive_work["commanded_balance_relative_error"], "<=", 0.25, "fraction"),
+        check("negative_commanded_work_balance_relative_error", negative_work["commanded_balance_relative_error"], "<=", 0.25, "fraction"),
+        check("positive_inferred_spring_work_relative_error", positive_work["spring_constitutive_work_relative_error"], "<=", 0.25, "fraction"),
+        check("negative_inferred_spring_work_relative_error", negative_work["spring_constitutive_work_relative_error"], "<=", 0.25, "fraction"),
+        check("released_elastic_displacement_max", released_displacement, "<=", 5e-6, "m"),
+    ]
+    spatial_axis_names = ("x", "y", "z")
+    for row in range(3):
+        for column in range(3):
+            checks.append(
+                check(
+                    "common_frame_spatial_inertia_"
+                    f"{spatial_axis_names[row]}_{spatial_axis_names[column]}_error_max",
+                    np.max(
+                        np.abs(
+                            aggregate_spatial_inertias[:, row, column]
+                            - target_spatial_inertias[:, row, column]
+                        )
+                    ),
+                    "<=",
+                    inertia_entry_scales[row, column]
+                    * SPATIAL_INERTIA_RELATIVE_TOLERANCE,
+                    "kg*m^2",
+                )
+            )
+
+    artifact_rel = str(trace_path.relative_to(output_path.parent.parent))
+    write_json(
+        trace_path,
+        {
+            "native_trial_id": trial_id,
+            "source_sha256": source_sha256,
+            "scope": "series-elastic coordinate plus hard native helix under known-pair contact",
+            "qualification": False,
+            "fidelity_review_required": True,
+            "representation": "z=e+p*theta; passive fixed-zero force drive in series with hard helix",
+            "forbidden_runtime_edits": "no pose/velocity/joint/contact writes after reset; no drive-target updates; force-mode rotor-joint torque only",
+            "known_pair_geometry": "coaxial 10 mm diameter cylinder between two fixed horizontal bearing plates; geometry is invariant under rotor angle",
+            "known_pair_material": "USD physics material bound before reset with zero static friction, zero dynamic friction and zero restitution; actual native tensor readbacks are recorded and gated",
+            "expected_physics_material_path": str(frictionless_material),
+            "resolved_physics_material_paths_after_reset": resolved_physics_material_paths,
+            "native_rotor_material_properties": articulation_materials.tolist(),
+            "native_plate_material_properties": plate_materials.tolist(),
+            "dof_names": dof_names,
+            "link_names": link_names,
+            "partition": MOVING_PARTS,
+            "partition_interpretation": "1 mg non-colliding elastic support plus 1 mg non-colliding output-coordinate carrier; 8.998 g physical screw rotor carries normative collision geometry and the remaining normative principal inertia; no tool/support mass or inertia is hidden in the moving part",
+            "normative_mass_kg": NORMATIVE_MASS_KG,
+            "native_partition_mass_kg": measured_mass,
+            "normative_com_m": NORMATIVE_COM_M.tolist(),
+            "raw_partition_mass_weighted_local_com_m": measured_com.tolist(),
+            "normative_diagonal_inertia_kg_m2": NORMATIVE_INERTIA.tolist(),
+            "raw_partition_local_diagonal_inertia_sum_kg_m2": measured_inertia.tolist(),
+            "spatial_property_method": "native link transforms and local COM/inertia transformed to the common world frame each POST_PHYSICS_STEP sample; parallel-axis theorem about measured aggregate COM; compared with one normative part at the native screw-rotor pose",
+            "exercised_native_coordinate_envelope": {
+                name: {
+                    "minimum": float(np.min(q[:, index])),
+                    "maximum": float(np.max(q[:, index])),
+                }
+                for index, name in enumerate(dof_names)
+            },
+            "common_frame_aggregate_com_delta_norm_max_m": float(
+                np.max(common_frame_com_delta_norm)
+            ),
+            "common_frame_aggregate_com_delta_component_max_abs_m": np.max(
+                np.abs(common_frame_com_delta), axis=0
+            ).tolist(),
+            "common_frame_spatial_inertia_relative_error_max_by_entry": common_frame_inertia_relative_error_max.tolist(),
+            "common_frame_spatial_inertia_relative_tolerance": SPATIAL_INERTIA_RELATIVE_TOLERANCE,
+            "reduced_coordinate_names": ["elastic_extension_e_m", "rotation_theta_rad"],
+            "native_coordinate_names": dof_names,
+            "reduced_coordinate_map_T": reduced_coordinate_map.tolist(),
+            "reduced_target_matrix": reduced_target_matrix.tolist(),
+            "reduced_native_median_matrix": reduced_native_median.tolist(),
+            "reduced_native_min_matrix_by_entry": np.min(
+                reduced_native_matrices, axis=0
+            ).tolist(),
+            "reduced_native_max_matrix_by_entry": np.max(
+                reduced_native_matrices, axis=0
+            ).tolist(),
+            "reduced_entry_physical_scales": reduced_entry_scales.tolist(),
+            "reduced_entry_relative_error_max": reduced_entry_relative_error_max.tolist(),
+            "reduced_entry_relative_tolerance": REDUCED_MASS_RELATIVE_TOLERANCE,
+            "lead_m_per_revolution": LEAD_M_PER_REV,
+            "stiffness_n_per_m": K_N_PER_M,
+            "damping_ns_per_m": D_NS_PER_M,
+            "expected_force_n": EXPECTED_FORCE_N,
+            "positive_contact_force_z_median_n": positive_force,
+            "negative_contact_force_z_median_n": negative_force,
+            "force_inference": "same-substep POST(Mv)_e minus PRE(Mv)_e, known-pair contact impulse and commanded e impulse, divided by callback dt",
+            "contact_buffer_freshness_method": "copy known-pair contact buffers at PRE and POST; require at least one nonzero same-substep impulse transition and require each POST buffer to match the next PRE buffer within tolerance",
+            "pre_post_contact_buffer_transition_count": contact_buffer_transition_count,
+            "pre_post_contact_buffer_transition_impulse_max_ns": float(
+                np.max(pre_post_contact_transition_magnitude)
+            ),
+            "post_to_next_pre_contact_buffer_impulse_error_max_ns": post_to_next_pre_contact_impulse_error_max,
+            "torque_observability": "the force-mode revolute-joint effort is commanded through the native articulation tensor API and independently read back with get_dof_actuation_forces; native contact reaction, generalized momentum, joint motion and detailed contact work remain separate outcomes",
+            "contact_work_method": "sum over detailed normal contact points of force dot (rotor COM linear velocity plus angular velocity cross point radius), integrated at every 240 Hz POST callback; native zero-friction readbacks plus unresolved-force and axial-contact-torque gates reject an omitted tangential path",
+            "positive_inferred_native_drive_force_median_n": positive_drive,
+            "negative_inferred_native_drive_force_median_n": negative_drive,
+            "inferred_effective_stiffness_n_per_m": fitted_k,
+            "inferred_effective_damping_ns_per_m": fitted_d,
+            "inferred_constitutive_fit_rmse_n": fit_rmse,
+            "inferred_constitutive_fit_relative_rmse": fit_relative_rmse,
+            "post_physics_callback_count": callback_state["count"],
+            "post_physics_callback_dt_values_s": sorted(set(callback_state["dt_values"])),
+            "pre_physics_callback_count": callback_state["pre_count"],
+            "pre_physics_callback_dt_values_s": sorted(set(callback_state["pre_dt_values"])),
+            "loaded_helix_residual_max_rad": loaded_residual,
+            "positive_work": positive_work,
+            "negative_work": negative_work,
+            "samples": samples,
+        },
+    )
+    write_json(
+        output_path,
+        {
+            "native_trial_id": trial_id,
+            "source_sha256": source_sha256,
+            "qualification": False,
+            "checks": checks,
+            "overall_pass": all(item["passed"] for item in checks),
+            "artifacts": [artifact_rel],
+        },
+    )
+    if not all(item["passed"] for item in checks):
+        raise RuntimeError(
+            "series-elastic helix preflight failed: "
+            + ", ".join(item["name"] for item in checks if not item["passed"])
+        )
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception:
+        detail = traceback.format_exc()
+        print(detail, file=sys.stderr, flush=True)
+        if not output_path.exists():
+            write_json(
+                output_path,
+                {
+                    "native_trial_id": trial_id,
+                    "source_sha256": source_sha256,
+                    "qualification": False,
+                    "error": detail,
+                    "checks": [
+                        {
+                            "name": "native_probe_completed",
+                            "measured": 0.0,
+                            "operator": "==",
+                            "threshold": 1.0,
+                            "unit": "boolean",
+                            "passed": False,
+                        }
+                    ],
+                    "overall_pass": False,
+                    "artifacts": [],
+                },
+            )
+        raise
+    finally:
+        app.close()
