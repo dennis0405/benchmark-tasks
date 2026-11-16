@@ -14,7 +14,7 @@
 - 결과는 이 run의 새로운 origin 브랜치에 보존한다. 원본 매뉴얼 전체/인증 정보는 공개하지 않는다. 50MB/file 또는 100MB checkpoint 초과는 먼저 보고한다.
 - 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
-</p><p>worker paused at stage boundary</p><p>Release digest: none</p><h2>last_candidate</h2><pre>{
+</p><p>no candidate passed the ideation gates; inspect selection-history.json</p><p>Release digest: none</p><h2>last_candidate</h2><pre>{
   &quot;id&quot;: &quot;drg80-opening-stop-lock&quot;,
   &quot;title&quot;: &quot;Set and lock a robot gripper opening stop, then verify retained motion&quot;,
   &quot;objective&quot;: &quot;On an unpressurized, already-assembled representative SCHUNK DRG 80 bench fixture, adjust the opening-stop screw to a declared 90° total opening, lock it without changing the setting, withdraw both tools, and operate a cold test lever to verify retained opening over repeated cycles.&quot;,
@@ -78,32 +78,28 @@
 }</pre><h2>selection_history</h2><pre>{
   &quot;rejected&quot;: [
     {
-      &quot;candidate&quot;: &quot;lm-rail-parallel-jig&quot;,
-      &quot;reason&quot;: &quot;required benchmark overlap/uncertainty; inspect explicit comparison&quot;
+      &quot;candidate&quot;: &quot;drg80-opening-stop-lock&quot;,
+      &quot;reason&quot;: &quot;novelty overlap/uncertainty: 1 records; inspect novelty.json&quot;
     }
   ],
   &quot;skipped&quot;: [
     {
-      &quot;candidate&quot;: &quot;thread-plug-go-no-go-inspection&quot;,
+      &quot;candidate&quot;: &quot;drg80-in80-endpoint-calibration&quot;,
       &quot;reason&quot;: &quot;not build-ready&quot;,
       &quot;missing_evidence&quot;: [
-        &quot;Authoritative dimensions for a selected gauge and matching thread&quot;,
-        &quot;Robot-assembly or data-center evidence establishing category relevance&quot;,
-        &quot;Native validation of physical multi-turn engagement and withdrawal&quot;,
-        &quot;Evidence that GO/NO-GO outcomes arise from contact rather than scripted state&quot;,
-        &quot;Reachable full-score YAM trial with torque and damage controls&quot;
+        &quot;A defensible ability-level novelty distinction from PR 2229&quot;,
+        &quot;Authoritative or independently measured IN 80 sensor and bracket geometry&quot;,
+        &quot;Native evidence that the small setback and fastening are stable and observable with YAM&quot;
       ]
     },
     {
-      &quot;candidate&quot;: &quot;bearing-clearance-feeler-gauge&quot;,
+      &quot;candidate&quot;: &quot;drg80-spring-piston-reassembly&quot;,
       &quot;reason&quot;: &quot;not build-ready&quot;,
       &quot;missing_evidence&quot;: [
-        &quot;Selected bearing model with authoritative geometry and clearance range&quot;,
-        &quot;Robot-assembly source establishing category relevance&quot;,
-        &quot;Full-scale YAM-reachable fixture geometry&quot;,
-        &quot;Native proof that adjacent blade thicknesses yield stable contact outcomes&quot;,
-        &quot;Justification that rigid blades preserve the real probing skill&quot;,
-        &quot;Full-score trial with force, movement, loss, and damage controls&quot;
+        &quot;Authoritative piston, spring, locating-hole, and internal housing geometry for DRG 80&quot;,
+        &quot;Spring count, preload, travel, and force data or defensible physical measurements&quot;,
+        &quot;A safe full-scale fixture arrangement reachable by both YAM arms&quot;,
+        &quot;Native validation of compression, retention, controlled release, and reset behavior&quot;
       ]
     }
   ],

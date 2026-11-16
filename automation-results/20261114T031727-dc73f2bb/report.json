@@ -2,42 +2,1649 @@
   "run": "20261114T031727-dc73f2bb",
   "status": "blocked",
   "prompt": "사용자 요청 원문:\n좋아. 이제 인스턴스를 다시 켜고 첫 태스크를 만들어보자.\n필요한 CLI 인증부터 확인하고, 로봇 조립·데이터센터 정비 분야에서 산업 근거가 있고 기존 제출과 겹치지 않는 후보를 골라 제출 전 검토 단계까지 진행해줘.\n\n확정된 제작 조건:\n- Category: Impact on AI timelines. 로봇 조립 또는 데이터센터 정비 중 실제 산업에서 자동화할 의미가 있는 물리 조작 하나를 선택한다.\n- 제조사 설치·정비 매뉴얼, 공식 조립 절차, 공개 설계, 실제 작업 영상·보고서의 원문으로 작업과 장비 형상·치수·절차를 입증한다. 추측이나 가상 산업 용도를 만들어내지 않는다.\n- 여러 후보를 비교하고 목적·물리 기술·성공 조건의 신규성과 로봇의 어려운 조작 능력을 함께 검토하여 하나만 제작한다. 조작의 어려움은 극단적일 필요는 없지만 단순 물체 옮기기를 산업 이름만 바꾼 작업은 피한다.\n- 모든 분야의 기존 accepted/pending/open 제출 및 우리 팀 기존 제출, 지정된 기존 벤치마크와 비교한다. 기하·색상·배치·시작 자세·난도만 다른 것은 새 태스크가 아니다. 선정 시점 및 완성 후 다시 전수 비교한다. 불확실한 중복을 통과시키지 않는다.\n- 가능한 강체 PhysX 작업을 선택한다. 기존의 검증된 연성 에셋이 없다면 새 연성 솔버 연구는 하지 않는다. 실제 산업 장비의 형태와 중요한 물리 제약을 재현한다. 공개 에셋은 라이선스·출처·치수를 기록하고 적합하지 않으면 직접 제작한다.\n- objective와 환경·부품 물리를 먼저 완성·진단한 뒤 YAM 전체 데모·채점기를 연결한다. 물체 순간이동/상태 덮어쓰기로 성공을 만들지 않는다. 관련 부품 파손·금지 동작·실패·부분 점수와 성공 유지 시간을 수치로 평가한다.\n- 실제 simulator 측정·두 번의 full-score YAM 데모·실패/부분 점수 대조군·영상/원시 trace 및 깨끗한 경로 재현 검사를 수행한다. 미검증 수치와 성공을 만들어 보고하지 않는다.\n- 모든 제작·검증을 마친 후에만 Dream 최종 평가 episode 1회. 실패나 불명 결과도 자동 재평가하지 않는다. 누적 $20 ledger를 준수하고 인증이 없으면 제작을 보존한 뒤 평가 대기한다.\n- 결과는 이 run의 새로운 origin 브랜치에 보존한다. 원본 매뉴얼 전체/인증 정보는 공개하지 않는다. 50MB/file 또는 100MB checkpoint 초과는 먼저 보고한다.\n- 완료 후 GPU를 stop하고 제출 전 검토 보고서·영상·채점 결과를 제공한다. 실제 미디어 업로드·대회 PR·승인은 하지 않는다.\n- 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.\n",
-  "at": "2026-11-16T02:54:13.534529+00:00",
-  "error": "worker paused at stage boundary",
+  "at": "2026-11-16T03:45:55.366984+00:00",
+  "error": "no candidate passed the ideation gates; inspect selection-history.json",
   "mode": "production",
   "dream": null,
   "release": null,
   "review_path": "workspace/artifacts",
   "note": "local report; not a contest submission",
+  "novelty": {
+    "catalog_digest": "3fc8ae965fecbeffb68c16fdc1add90fcad95f4af789cbb5865047ba92710bb3",
+    "candidate_digest": "29a2dd2e1eb3cd7af97bd32ccdc3c884fc2afeab7deb8f05fd5d976cf6c5a0f7",
+    "catalog_total": 2358,
+    "complete": false,
+    "compared": 200,
+    "comparisons": [
+      {
+        "id": "pr-2229",
+        "objective": "Sets a proximity-sensor gap with a feeler leaf and secures it with a cam clamp; the candidate sets a gripper opening stop and locks a threaded adjuster.",
+        "physical_skill": "PR-2229 requires positioning a sensor against a third-body gauge and closing a lever; the candidate requires simultaneous coaxial driver/wrench seating and countertorque so a jam nut does not rotate the screw.",
+        "success_condition": "PR-2229 checks a 1.00±0.25 mm gap, gauge removal/return, closed lever, and hands-off stability; the candidate checks a retained 90° opening after three released cycles, nut retention, drift, and clearance.",
+        "verdict": "distinct",
+        "reason": "Both set and retain an adjustment, but the candidate uniquely tests coupled screw–jam-nut counterholding and post-lock articulated cycling rather than gauge-mediated placement and cam clamping."
+      },
+      {
+        "id": "pr-2018",
+        "objective": "Assembles a door lever set and drives two mounting screws while keeping the outside lever level; the candidate adjusts and locks a gripper stop.",
+        "physical_skill": "PR-2018 combines hidden spindle/post insertion, opposing-part assembly, and stabilization of a large lever during separate screw driving; the candidate counterholds concentric threaded elements with two tools.",
+        "success_condition": "PR-2018 requires seated roses, snug screws, and lever/hub level within 1° after release; the candidate requires a locked 90° stop retained through three actuation cycles.",
+        "verdict": "distinct",
+        "reason": "The shared counterholding primitive is generic; separate-screw lockset assembly does not test preserving a threaded adjuster against its coaxial jam nut or verifying stop retention through cycles."
+      },
+      {
+        "id": "pr-216",
+        "objective": "Captures a reference angle with a passive bevel gauge, transfers it, and draws a matching line; the candidate sets and locks a gripper opening stop.",
+        "physical_skill": "PR-216 requires fitting two faces, carrying a friction-hinged gauge without angle loss, seating it, and guided marking; the candidate requires two-tool coaxial adjustment and countertorque.",
+        "success_condition": "PR-216 grades captured-angle retention and line coverage, gap, angular, and stray-mark tolerances; the candidate grades locked opening angle, drift, repeated motion, hardware retention, and released clearance.",
+        "verdict": "distinct",
+        "reason": "Angle is common only as a measured quantity; PR-216 tests passive capture, transport, and marking, not locknut reaction control or functional cycling."
+      },
+      {
+        "id": "pr-1501",
+        "objective": "Torques a busbar lug bolt with a click wrench and stops at the click; the candidate establishes and locks an angular stop setting.",
+        "physical_skill": "PR-1501 tests socket seating and response to a one-shot torque signal without overpulling; the candidate tests simultaneous driver and thin-wrench countertorque on coupled threads.",
+        "success_condition": "PR-1501 requires a seated click within 90–110% of target torque and penalizes unseated turning or overtorque; the candidate requires retained geometry and repeated gripper actuation rather than a torque endpoint.",
+        "verdict": "distinct",
+        "reason": "Applying a specified tightening torque is materially different from preserving an adjustable screw position while tightening its jam nut."
+      },
+      {
+        "id": "pr-1865",
+        "objective": "Adjusts a cabinet hinge side cam for even reveals and closes the flap for inspection; the candidate sets and locks a gripper opening stop.",
+        "physical_skill": "PR-1865 uses a slotted driver on one of several cam heads and then articulates the door; the candidate coordinates two concentric tools against locknut reaction.",
+        "success_condition": "PR-1865 checks closed reveal equality, flushness, no sag, and released stability; the candidate checks nut seating, 90° opening retention, drift, and three cycles.",
+        "verdict": "distinct",
+        "reason": "Both adjust and functionally inspect an articulated mechanism, but PR-1865 has no separate locking operation whose torque can disturb the chosen setting."
+      },
+      {
+        "id": "pr-1898",
+        "objective": "Installs a second rack into a parallel gripper at the correct tooth phase; the candidate adjusts an already assembled gripper's maximum opening stop.",
+        "physical_skill": "PR-1898 requires rack insertion, gear-tooth meshing, phase alignment, and coupled jaw motion; the candidate requires hex-driver and jam-nut wrench countertorque.",
+        "success_condition": "PR-1898 checks rack seating, jaw centering, and at least 15 mm symmetric opening; the candidate checks a locked 90° limit retained through three cycles.",
+        "verdict": "distinct",
+        "reason": "Both concern grippers and functional motion, but gear-phase assembly and threaded stop calibration test different mechanisms and manipulation abilities."
+      },
+      {
+        "id": "pr-1540",
+        "objective": "Connects an M12 sensor cable while preventing a loose sensor barrel from rotating; the candidate adjusts a stop screw and locks it with its jam nut.",
+        "physical_skill": "PR-1540 directly holds a large sensor body while turning a coupling ring; the candidate must keep a driver seated in the screw while a second tool turns a concentric thin nut against it.",
+        "success_condition": "PR-1540 succeeds when the connector is threaded tight, the cap is stored, and hands withdraw; the candidate additionally requires a retained angular setpoint and three released functional cycles.",
+        "verdict": "distinct",
+        "reason": "The close shared feature is bimanual reaction-torque control, but connector assembly against a stabilized body does not test coupled screw–nut setpoint preservation."
+      },
+      {
+        "id": "pr-1799",
+        "objective": "Squares a milling vise by sweeping an indicator, adjusting yaw, securing the swivel, and verifying it; the candidate sets and locks a gripper stop.",
+        "physical_skill": "PR-1799 requires dynamic indicator traversal, iterative alignment, and cam clamping; the candidate requires coaxial two-tool adjustment and counterholding during jam-nut tightening.",
+        "success_condition": "PR-1799 checks indicator span, sweep coverage, secured yaw, and released stability; the candidate checks opening angle, lock retention, drift, and repeated actuation.",
+        "verdict": "distinct",
+        "reason": "Both retain a setpoint after locking, but indicator-guided fixture alignment and cam securing are meaningfully different from countertorquing coupled threaded elements."
+      },
+      {
+        "id": "pr-2167",
+        "objective": "Adjusts a drum-brake star wheel through a slot until the drum has light drag; the candidate sets and locks a gripper opening stop.",
+        "physical_skill": "PR-2167 requires blind tooth engagement, levering, tool repositioning, and alternating adjustment with drum turning; the candidate requires concentric driver/wrench seating and opposing torque.",
+        "success_condition": "PR-2167 checks 22–28 clicks, light drag, no lockup, and tool release; the candidate checks a locked 90° opening retained across three cycles with limited drift.",
+        "verdict": "distinct",
+        "reason": "Functional verification is shared, but detented blind clearance adjustment lacks the candidate's separate jam-nut locking and setpoint-preserving countertorque."
+      },
+      {
+        "id": "pr-1892",
+        "objective": "Pushes a hose fully onto a barb and tightens a worm-drive clamp; the candidate adjusts and locks a gripper stop.",
+        "physical_skill": "PR-1892 requires axial hose seating, clamp placement, socket engagement, and driver regrasping; the candidate requires simultaneous counterrotation of a screw and jam nut.",
+        "success_condition": "PR-1892 checks hose depth, clamp location, snug/tight state, and released clearance; the candidate checks retained opening angle and repeated articulated operation.",
+        "verdict": "distinct",
+        "reason": "Generic screw turning is insufficient overlap; hose insertion and circumferential clamping do not test preservation of a coupled adjuster setting."
+      },
+      {
+        "id": "pr-2145",
+        "objective": "Feeds a cable through a gland, tightens its cap nut, and verifies pull retention; the candidate calibrates and locks an angular stop.",
+        "physical_skill": "PR-2145 combines deformable-cable insertion with threaded cap tightening and seal compression; the candidate uses two rigid tools to counterhold a screw during jam-nut locking.",
+        "success_condition": "PR-2145 checks sheath depth, a bounded nut-turn window, 30 N pull retention, and crushing; the candidate checks angular accuracy, drift, nut retention, cycling, and clearance.",
+        "verdict": "distinct",
+        "reason": "Both tighten threaded hardware and perform a retention test, but cable sealing/pull anchorage does not measure coupled setpoint preservation under locknut torque."
+      },
+      {
+        "id": "pr-1893",
+        "objective": "Seals a carton seam and end tabs with a tape gun; the candidate adjusts and locks robot gripper hardware.",
+        "physical_skill": "PR-1893 requires tape-gun control, flap restraint, adhesive placement, tearing, and smoothing; the candidate requires precision two-tool threaded adjustment.",
+        "success_condition": "PR-1893 checks seam coverage, alignment, torn tape, bonded tabs, flat flaps, and release; the candidate checks locked angular motion and repeated cycles.",
+        "verdict": "distinct",
+        "reason": "The objectives, mechanisms, manipulation skills, and observable outcomes are unrelated."
+      },
+      {
+        "id": "pr-1110",
+        "objective": "Calibrates a torque-limiting clutch so it carries a light proof load and slips on a heavy one; the candidate sets a gripper opening stop.",
+        "physical_skill": "PR-1110 requires preload adjustment, selector operation, crank testing, and interpreting two load responses; the candidate requires jam-nut countertorque with coaxial tools.",
+        "success_condition": "PR-1110 requires both proof tests at one unchanged preload and released stability; the candidate requires a retained 90° mechanical stop over three cycles.",
+        "verdict": "distinct",
+        "reason": "PR-1110 tests load-dependent clutch calibration, not locking an angular adjuster while resisting tightening reaction."
+      },
+      {
+        "id": "pr-1645",
+        "objective": "Calibrates gripper force using a spring reference and zero/span/verify controls; the candidate mechanically adjusts a gripper's opening limit.",
+        "physical_skill": "PR-1645 requires controlled pad compression and ordered button operation while holding a reference load; the candidate requires two-tool threaded counterholding.",
+        "success_condition": "PR-1645 checks zeroing, 8.5–10.5 mm spring compression, span capture, and unloaded verification; the candidate checks angular-stop locking and repeated motion retention.",
+        "verdict": "distinct",
+        "reason": "Shared gripper context does not create overlap: force-sensor calibration and mechanical opening-stop locking test different abilities and outcomes."
+      },
+      {
+        "id": "pr-779",
+        "objective": "Moves two backlash-affected sliders to target readings and locks each dial; the candidate sets one gripper stop and secures it mechanically.",
+        "physical_skill": "PR-779 requires reversal-aware compensation of display hysteresis and button presses; the candidate requires physical driver/wrench engagement and opposing torque on coupled threads.",
+        "success_condition": "PR-779 checks both displayed setpoints within ±2.5 mm and latched lock buttons; the candidate checks a locked 90° opening, ≤2° drift, and three actuation cycles.",
+        "verdict": "distinct",
+        "reason": "Both contain setpoints and locking, but software-display backlash compensation with pushbutton latching does not test mechanical jam-nut countertorque or functional stop retention."
+      },
+      {
+        "id": "pr-2209",
+        "objective": "Draft task packs products, closes carton flaps, peels tape from a loose roll, seals the carton, and cuts the strip; the candidate adjusts gripper hardware.",
+        "physical_skill": "PR-2209 proposes product placement, flap folding, thin-film peeling/payout, adhesion, and cutting; the candidate uses rigid coaxial tools and countertorque.",
+        "success_condition": "PR-2209 proposes containment, flap-order, connected-strip bond coverage, end wraps, parked tools, and a two-second release; the candidate checks angular locking and repeated motion.",
+        "verdict": "distinct",
+        "reason": "The draft's incomplete validation does not obscure that its tested manipulation and intended outcome are unrelated to stop adjustment."
+      },
+      {
+        "id": "pr-2208",
+        "objective": "Draft task cuts a used carton's bottom tape, opens all flaps, and collapses the intact carton; the candidate sets and locks a gripper stop.",
+        "physical_skill": "PR-2208 requires guarded cutting, flap acquisition, crease articulation, and whole-carton flattening; the candidate requires precision threaded tool use.",
+        "success_condition": "PR-2208 proposes complete cut coverage, historical four-flap opening, intact flat geometry, parked cutter, and release; the candidate checks retained angular cycling.",
+        "verdict": "distinct",
+        "reason": "Cutting and folding cardboard share no meaningful tested mechanism or outcome with coupled screw–nut adjustment."
+      },
+      {
+        "id": "pr-2207",
+        "objective": "Draft task operates a dryer and manipulates articulated hair to dry exposed and hidden surfaces; the candidate adjusts robot gripper hardware.",
+        "physical_skill": "PR-2207 proposes switch operation, dryer handling, airflow aiming, and flexible-lock separation; the candidate requires rigid two-tool countertorque.",
+        "success_condition": "PR-2207 proposes moisture, temperature, fixed-head, parked-dryer, and released-hair criteria; the candidate checks angular stop accuracy, lock retention, and cycles.",
+        "verdict": "distinct",
+        "reason": "The objectives, physical media, skills, and success outcomes are unrelated despite the draft's missing full demonstration."
+      },
+      {
+        "id": "pr-1784",
+        "objective": "Disconnects a pneumatic tube safely and inserts a retaining plug after isolation, lockout, and depressurization; the candidate adjusts a gripper stop.",
+        "physical_skill": "PR-1784 requires valve and padlock operation, collet depression, tube withdrawal, tool handling, and plug insertion; the candidate requires concentric threaded countertorque.",
+        "success_condition": "PR-1784 checks safe history, zero pressure, line removal, plug seating, and a 15 N retention pull; the candidate checks a retained opening angle through actuation cycles.",
+        "verdict": "distinct",
+        "reason": "Both end with retained hardware, but pneumatic lockout and push-fitting service test different mechanisms and manipulation abilities."
+      },
+      {
+        "id": "pr-2210",
+        "objective": "Draft task unlatches an Ethernet plug in a crowded panel and transfers it to another port; the candidate sets and locks a gripper stop.",
+        "physical_skill": "PR-2210 requires small spring-tab depression, constrained plug withdrawal/insertion, flexible-cable management, and avoiding neighboring plugs; the candidate requires two-tool threaded counterholding.",
+        "success_condition": "PR-2210 proposes source release before withdrawal, target seating and latch re-engagement, neighbor retention, and a released hold; the candidate checks angular-stop retention and cycling.",
+        "verdict": "distinct",
+        "reason": "Connector unlatching and insertion in cable clutter are mechanically and observably different from screw–jam-nut calibration."
+      },
+      {
+        "id": "pr-1405",
+        "objective": "Threads an oil filter to gasket contact and then hand-tightens it by a bounded additional turn; the candidate adjusts and locks a gripper stop.",
+        "physical_skill": "PR-1405 requires large-body grasping, multi-regrasp wrist rotation, and stopping by witnessed turns; the candidate requires coaxial tool seating and opposing torque.",
+        "success_condition": "PR-1405 checks 240–360° past contact, no removal or overcompression, hand-driven rotation, and release; the candidate checks a 90° stop retained through three cycles.",
+        "verdict": "distinct",
+        "reason": "Controlled threaded rotation is generic; oil-filter installation has neither a separately preserved adjustment nor a jam nut."
+      },
+      {
+        "id": "pr-1570",
+        "objective": "Adjusts a wrench jaw snugly, loosens a nylon nut in the safe direction, and sets the wrench down; the candidate locks a gripper stop.",
+        "physical_skill": "PR-1570 requires thumbwheel adjustment, correct fixed-jaw loading, and a loosening pull; the candidate requires simultaneous driver and wrench countertorque on coupled fasteners.",
+        "success_condition": "PR-1570 checks jaw play during pulls, no wrong-direction loading, at least 60° loosening, and tool release; the candidate checks angular setpoint retention and repeated function.",
+        "verdict": "distinct",
+        "reason": "Although both use a wrench on a nut, PR-1570 tests adjustable-wrench setup and safe loosening, not preservation of a screw setting while tightening a jam nut."
+      },
+      {
+        "id": "pr-2158",
+        "objective": "Dials a three-number padlock combination and pulls the shackle open; the candidate adjusts and locks industrial gripper hardware.",
+        "physical_skill": "PR-2158 requires precise multi-turn dial control with reversals and regrasping on a swinging body; the candidate requires coupled two-tool countertorque.",
+        "success_condition": "PR-2158 checks successive wheel-gate alignment, shackle release, remaining on the hasp, and released stillness; the candidate checks locked opening angle and repeated cycles.",
+        "verdict": "distinct",
+        "reason": "Rotary precision is the only generic commonality; the mechanisms, required coordination, and success outcomes differ materially."
+      },
+      {
+        "id": "pr-771",
+        "objective": "Closes an edge joint and builds force by pumping a one-hand bar-clamp trigger; the candidate calibrates and locks a gripper opening stop.",
+        "physical_skill": "PR-771 requires placing jaws around boards and repeated trigger strokes through a ratchet mechanism; the candidate requires precise hex-driver and thin-wrench countertorque.",
+        "success_condition": "PR-771 checks joint closure, board alignment, at least 20 N clamping force, released stillness, and clear hands; the candidate checks angular accuracy and cycle retention.",
+        "verdict": "distinct",
+        "reason": "Both retain a mechanical setting after release, but force-producing ratchet clamping does not test coupled threaded setpoint locking."
+      },
+      {
+        "id": "pr-1288",
+        "objective": "Selects and installs the matching driver bit, power-tightens a drawer knob, and returns the tool; the candidate sets and locks a gripper stop.",
+        "physical_skill": "PR-1288 requires bit-shape selection, bit insertion, powered screw engagement, workpiece stabilization, and tool parking; the candidate requires manual two-tool countertorque.",
+        "success_condition": "PR-1288 checks mounted-bit identity, powered axial screw feed, knob closure, a 5 N hold test, motor-off release, and tool return; the candidate checks retained angular opening and cycling.",
+        "verdict": "distinct",
+        "reason": "Powered fastening after bit selection is a different tested ability from adjusting a screw setpoint and preventing its rotation during jam-nut locking."
+      },
+      {
+        "id": "pr-1690",
+        "objective": "Candidate sets and locks a gripper opening stop; this record mounts a bicycle-tire bead into a rim channel without pinching the tube.",
+        "physical_skill": "Candidate requires coaxial driver/wrench countertorque; the record requires bimanual bead compression, slack management, and rolling over a flange.",
+        "success_condition": "Candidate checks retained 90° opening over three cycles; the record checks a seated, leak-free tire, straight valve, and released hands.",
+        "verdict": "distinct",
+        "reason": "The mechanisms, manipulation, and observable outcomes differ meaningfully; all available versions provide sufficient rubric detail."
+      },
+      {
+        "id": "pr-827",
+        "objective": "Candidate mechanically sets a gripper stop; this record calibrates a robot TCP by touching one reference point from multiple tool orientations.",
+        "physical_skill": "Candidate counterholds a screw while tightening its jam nut; the record pivots a mounted tool around a stationary tip with angular diversity.",
+        "success_condition": "Candidate requires a locked angle retained through actuation; the record requires several accurate contact poses with sufficient orientation spread and no tool-mount drift.",
+        "verdict": "distinct",
+        "reason": "TCP pivot calibration tests pose control around a contact point, not coupled adjustment-and-locking under reaction torque."
+      },
+      {
+        "id": "pr-890",
+        "objective": "Candidate sets a prescribed opening limit and locks it; this record seats a started bracket bolt using a ratchet in confined access.",
+        "physical_skill": "Candidate uses two concentric tools simultaneously to preserve an adjustment; the record uses repeated short ratchet drive/return strokes on one fastener.",
+        "success_condition": "Candidate verifies stop retention through three gripper cycles; the record checks bolt seating, with ratchet cycling or torque treated according to its version.",
+        "verdict": "distinct",
+        "reason": "Both involve rotary tools, but bolt advancement with a one-way ratchet does not test preserving an adjustable stop while locking a jam nut."
+      },
+      {
+        "id": "pr-2049",
+        "objective": "Candidate adjusts robot-gripper hardware; this record closes a used needle's hinged safety sheath and deposits the syringe in a sharps tray.",
+        "physical_skill": "Candidate requires bimanual coaxial tool engagement and countertorque; the record requires one-handed surface-assisted sheath latching while avoiding the exposed needle.",
+        "success_condition": "Candidate checks retained opening and lock integrity; the record checks a positively latched sheath, safe clearances, tray placement, release, and no forbidden needle contact.",
+        "verdict": "distinct",
+        "reason": "The record tests sharps-safe one-handed latching and disposal, with no adjustable setting or coupled screw/nut mechanics."
+      },
+      {
+        "id": "pr-2100",
+        "objective": "Candidate sets and locks a gripper opening stop; this record inserts and secures a drill bit in a keyed chuck.",
+        "physical_skill": "Candidate counterholds an adjustment screw with a driver while turning a thin jam nut; the record stabilizes a drill and keeps a chuck key meshed against increasing separating force.",
+        "success_condition": "Candidate requires a retained 90° stop across repeated actuation; the record requires a centered, captured bit that resists torque and pull, with the key removed.",
+        "verdict": "distinct",
+        "reason": "The shared need to maintain tool engagement under torque is generic; chuck clamping does not test preserving a calibrated setting against jam-nut reaction."
+      },
+      {
+        "id": "pr-1493",
+        "objective": "Candidate adjusts and locks an end-effector stop; this record removes, wipes, reinserts, rereads, and reports an engine-oil dipstick level.",
+        "physical_skill": "Candidate uses coupled rotary tools and countertorque; the record performs long thin-part extraction/insertion, wiping, visual level reading, and report-token placement.",
+        "success_condition": "Candidate checks mechanical retention through cycles; the record checks a valid clean reread, correct level report, reseated dipstick, and released rag/objects.",
+        "verdict": "distinct",
+        "reason": "Oil measurement and reporting exercise contamination-aware extraction and perception, not mechanical adjustment or locking."
+      },
+      {
+        "id": "pr-2094",
+        "objective": "Both establish a machine setting and secure it, but the candidate sets an angular opening stop while this record positions a cylinder slot sensor at its switching-band midpoint.",
+        "physical_skill": "Candidate requires simultaneous concentric driver and wrench action with countertorque against jam-nut reaction; the record drags and clamps one sensor through a single seated hex driver using LED feedback.",
+        "success_condition": "Candidate requires a locked 90° stop retained over three close-open cycles; the record requires sensor position within tolerance, clamp resistance, and correct LED switching when the cylinder moves.",
+        "verdict": "distinct",
+        "reason": "This is the closest record, but it does not test the candidate's defining coupled screw/jam-nut counterholding ability; its setting is translational and feedback-located through one tool."
+      },
+      {
+        "id": "pr-1814",
+        "objective": "Candidate configures a robot gripper; this record releases an air-fryer basket from its hot drawer and places it on a mat.",
+        "physical_skill": "Candidate performs precision rotary counterholding; the record holds a release button while lifting by a cool handle and avoiding hot surfaces.",
+        "success_condition": "Candidate checks angle retention and repeated motion; the record checks basket removal, safe placement, button return, release, stillness, and no hot contact, bypass, or drop.",
+        "verdict": "distinct",
+        "reason": "Button-held extraction under a thermal keep-out constraint is unrelated to screw adjustment and jam-nut locking."
+      },
+      {
+        "id": "pr-190",
+        "objective": "Candidate sets a gripper motion limit; this record releases a camera plate from a cam-clamped mount and transfers it to a pad.",
+        "physical_skill": "Candidate uses two coaxial tools to resist lock reaction; the record rotates a release cam, clears a separate rear lip, and supports a payload during removal.",
+        "success_condition": "Candidate verifies retained opening after cycles; the record checks cam release, mount clearance, supported upright pad placement, release, and stability without dropping.",
+        "verdict": "distinct",
+        "reason": "Cam release and retained-payload dismounting test disengagement and transfer rather than calibration, countertorque, or post-lock functional retention."
+      },
+      {
+        "id": "pr-1674",
+        "objective": "Candidate adjusts gripper hardware; this record stops a coasting flywheel with its brake lever before removing and placing a hub nut.",
+        "physical_skill": "Candidate counterholds two concentric threaded elements; the record holds a brake against residual motion, then unscrews a nut while respecting a rotating-part exclusion zone.",
+        "success_condition": "Candidate checks locked angle retention; the record checks zero flywheel speed, removed nut in a tray, released lever, clearance, and no premature rim approach.",
+        "verdict": "distinct",
+        "reason": "Although both include a nut, the record's tested ability is safe residual-energy dissipation before disassembly, not adjustment preservation."
+      },
+      {
+        "id": "pr-1984",
+        "objective": "Candidate sets and locks a gripper stop; this record clamps wood in a screw vise and saws a 150 mm piece.",
+        "physical_skill": "Candidate performs fine coupled screw/nut countertorque; the record tightens a vise and maintains an unguided saw cut through material.",
+        "success_condition": "Candidate checks retained angular function; the record checks prior clamping, physical separation, a 150±1 mm retained length, intact positioning, and saw clearance.",
+        "verdict": "distinct",
+        "reason": "Workholding and material removal to length test forceful cutting accuracy, not an adjustable mechanism's lock retention."
+      },
+      {
+        "id": "pr-2233",
+        "objective": "Candidate configures a robot gripper; this record installs a glass unit on two setting blocks in a window frame.",
+        "physical_skill": "Candidate uses coaxial hand tools; the record places small supports, bimanually guides fragile glazing through narrow clearance, and lowers it without sill contact.",
+        "success_condition": "Candidate checks locked opening over cycles; the record checks block positions, glass support and centering, release, stability, and permanent failure on sill contact.",
+        "verdict": "distinct",
+        "reason": "Fragile insertion and load placement on supports have no coupled threaded adjustment or functional-cycle requirement."
+      },
+      {
+        "id": "pr-622",
+        "objective": "Candidate adjusts gripper travel; this record removes a cordless-drill battery and places it in a tray.",
+        "physical_skill": "Candidate counterholds a screw during jam-nut tightening; the record simultaneously squeezes two release buttons while stabilizing the drill and sliding the pack along rails.",
+        "success_condition": "Candidate checks angle retention after locking; the record checks remembered dual-button release, pack separation, tray placement, drill displacement, release, and stillness.",
+        "verdict": "distinct",
+        "reason": "Simultaneous latch release and sliding extraction test a different bimanual mechanism and endpoint."
+      },
+      {
+        "id": "pr-1421",
+        "objective": "Candidate configures a gripper stop; this record sharpens both faces of a kitchen knife on a whetstone.",
+        "physical_skill": "Candidate applies controlled countertorque through two tools; the record maintains blade angle and edge-leading contact across heel-to-tip strokes on both faces.",
+        "success_condition": "Candidate checks retained opening cycles; the record checks measured sharpness or simulated edge coverage, safe placement, release, and stillness.",
+        "verdict": "distinct",
+        "reason": "Angle appears in both rubrics, but the record tests sustained abrasive contact orientation and edge coverage, not setting or locking an angle."
+      },
+      {
+        "id": "pr-1160",
+        "objective": "Candidate adjusts robot hardware; this record rinses highlighted teeth, evacuates water, and returns dental tools.",
+        "physical_skill": "Candidate uses concentric rotary tools; the record coordinates irrigator coverage and suction placement, including timed post-rinse clearance and tool return.",
+        "success_condition": "Candidate checks retained mechanical motion; the record checks crown wetting, water recovery, spill limits, near-dry final state, tool poses, release, and dwell.",
+        "verdict": "distinct",
+        "reason": "Coordinated liquid delivery and evacuation have different manipulation, hazards, and observable outcomes from threaded adjustment."
+      },
+      {
+        "id": "pr-1300",
+        "objective": "Candidate sets a gripper opening stop; this record positions nickel strip and spot-welds it to four battery cells.",
+        "physical_skill": "Candidate performs bimanual screw/nut counterholding; the record aligns thin strip and sequentially seats two welding probes over four terminals.",
+        "success_condition": "Candidate checks lock and angle retention through actuation; the record checks strip alignment, four weld contacts or pull-tested bonds, tool return, arm withdrawal, and pack integrity.",
+        "verdict": "distinct",
+        "reason": "Precision welding and bond formation do not exercise adjustable-stop preservation or countertorque."
+      },
+      {
+        "id": "pr-1577",
+        "objective": "Candidate adjusts and locks a gripper stop; this record bleeds air from a brake caliper through repeated pedal-and-bleeder cycles.",
+        "physical_skill": "Candidate applies simultaneous countertorque at one coaxial assembly; the record coordinates a pedal with a wrench at a separate valve, enforcing close-before-release timing.",
+        "success_condition": "Candidate checks retained opening angle after three cycles; the record scores air removed and permanently fails if pedal return draws air through an open bleeder.",
+        "verdict": "distinct",
+        "reason": "Both use repeated actuation and a wrench, but brake bleeding tests hydraulic sequencing and state reduction rather than preservation of a mechanical setting."
+      },
+      {
+        "id": "pr-1917",
+        "objective": "Candidate configures a gripper stop; this record mounts a shaft between fixed and spring-loaded bench centres.",
+        "physical_skill": "Candidate uses coaxial driver/wrench countertorque; the record holds a tailstock lever retracted while seating and pivoting a shaft onto two conical points.",
+        "success_condition": "Candidate checks locked angular travel; the record checks both centre points properly seated, lever returned, shaft still, hands clear, and no damaging ram/drop.",
+        "verdict": "distinct",
+        "reason": "Lever-held precision shaft seating tests alignment and compliant insertion, not threaded setting and lock retention."
+      },
+      {
+        "id": "pr-1054",
+        "objective": "Both concern robot end effectors, but the candidate adjusts a gripper's opening stop while this record mounts a separate suction tool on a quick-change flange.",
+        "physical_skill": "Candidate counterholds an adjustment screw while tightening a jam nut; the record aligns a tool plate to flange features while another hand turns or presses a locking-ring lever.",
+        "success_condition": "Candidate requires a retained target angle over repeated articulation; the record requires the selected tool seated and locked on the flange, hanging unsupported with hands withdrawn.",
+        "verdict": "distinct",
+        "reason": "Shared bimanual holding-while-locking is generic; flange registration and payload latching do not test preserving a screw-defined motion limit against locknut reaction."
+      },
+      {
+        "id": "pr-2053",
+        "objective": "Candidate configures gripper hardware; this record proves a voltage detector before and after testing a conductor and tags or withdraws appropriately on failure.",
+        "physical_skill": "Candidate uses two rotary hand tools; the record balances a long stick-mounted detector, presses tester controls, contacts target points, and reacts to indicator state.",
+        "success_condition": "Candidate checks retained mechanical adjustment; the record checks valid pre/post proofs, correct test behavior, safe final separation, release, and stillness.",
+        "verdict": "distinct",
+        "reason": "Electrical-test procedural verification and long-tool handling do not overlap the candidate's coupled adjustment mechanics."
+      },
+      {
+        "id": "pr-1506",
+        "objective": "Candidate sets and locks an opening limit; this record fills and assembles a moka pot for brewing.",
+        "physical_skill": "Candidate uses a driver and wrench with countertorque; the record pours to a fill level, inserts the basket, and rotates a large threaded chamber to its seat.",
+        "success_condition": "Candidate checks stop drift across cycles; the record checks water below the valve, basket presence, snug top, limited spill, safe carafe placement, and release.",
+        "verdict": "distinct",
+        "reason": "The shared threaded rotation is only a generic primitive; moka-pot assembly has no calibrated setting, jam nut, counterholding, or functional retention test."
+      },
+      {
+        "id": "pr-1870",
+        "objective": "Candidate adjusts gripper travel; this record removes a drawer from telescoping slides.",
+        "physical_skill": "Candidate uses precision coaxial tools; the record operates two opposite-sense release levers while pulling and supporting the drawer off its rails.",
+        "success_condition": "Candidate checks a locked 90° stop through cycles; the record checks both slide releases, complete drawer removal or placement, hand clearance, and stability.",
+        "verdict": "distinct",
+        "reason": "Opposed latch actuation during extraction tests coordinated release and support, not mechanical calibration or locking."
+      },
+      {
+        "id": "pr-2048",
+        "objective": "Candidate configures robot hardware; this record removes individual gnocchi from simmering water after they float and turns off the burner.",
+        "physical_skill": "Candidate performs coupled rotary adjustment; the record tracks asynchronous food-state changes and uses a slotted spoon for timed retrieval without direct contact.",
+        "success_condition": "Candidate checks retained angular motion; the record checks timely removal to a plate, burner shutdown, release/stability, and no gripper-food contact.",
+        "verdict": "distinct",
+        "reason": "State-triggered utensil retrieval and heat shutdown are unrelated to threaded adjustment and countertorque."
+      },
+      {
+        "id": "pr-1969",
+        "objective": "Candidate sets a gripper stop to a specified angle; this record fits opposed tapered shims behind a door jamb until snug without bowing it.",
+        "physical_skill": "Candidate resists jam-nut torque with a coaxial driver; the record incrementally drives two opposed wedges, senses fit, and balances contact pressure from both wall faces.",
+        "success_condition": "Candidate checks lock retention over actuation cycles; the record checks shim overlap, near-zero free gap, bounded jamb bow, rest, and hand clearance.",
+        "verdict": "distinct",
+        "reason": "Both preserve a target while securing it, but opposed-wedge fit and jamb straightness test force-balanced insertion rather than coupled threaded countertorque."
+      },
+      {
+        "id": "pr-2070",
+        "objective": "Candidate adjusts a robot gripper; this record tests two machine light curtains across their full fields and tags the failed unit.",
+        "physical_skill": "Candidate uses concentric rotary tools; the record carries test rods level and tip-first through multiple lanes while observing machine responses and placing a tag.",
+        "success_condition": "Candidate checks retained stop angle and locking; the record checks complete field sweeps, correct failure identification/tagging, rods removed, hand clearance, and a stable dwell.",
+        "verdict": "distinct",
+        "reason": "Safety-field coverage testing and conditional tagging have different physical actions and outcomes from gripper-stop adjustment."
+      },
+      {
+        "id": "pr-871",
+        "objective": "Mount the correct grinding wheel and flange/blotter stack on a bench grinder, tighten safely, then pass spin and axial-tug checks.",
+        "physical_skill": "Ordered coaxial assembly, keyed-flange alignment, nut tightening within a damage limit, and safe hands-clear testing.",
+        "success_condition": "Correct complete stack, seated nut below the over-torque limit, less than 5° slip during braked spin, under 0.3 mm axial motion under an 18 N tug, and hands clear; damaged-wheel use or cracking forces zero.",
+        "verdict": "distinct",
+        "reason": "The candidate preserves an adjustable angular stop while counterholding a concentric screw and jam nut, then verifies repeated retained articulation; this record instead assembles a wheel stack and validates frictional clamping."
+      },
+      {
+        "id": "pr-1920",
+        "objective": "Angle a full-size click-lock vinyl tile tongue into an installed row and lower it flat to lock.",
+        "physical_skill": "Long-edge insertion into a narrow groove while coordinating the unsupported near edge, followed by contact-driven lowering and locking.",
+        "success_condition": "Tile ends flat, aligned to the row and spacer, with its long click joint fully engaged and no raised/open seam; incomplete engagement earns only partial credit.",
+        "verdict": "distinct",
+        "reason": "Its tested ability is long compliant-profile edge engagement and lowering, not torque-preserving screw adjustment, jam-nut locking, or retained cycle verification."
+      },
+      {
+        "id": "pr-1936",
+        "objective": "Close a tool-chest lid while holding its ratchet-stay release and avoiding a slam or pinch zone.",
+        "physical_skill": "Bimanual sustained release actuation plus controlled lowering of a gravity-loaded hinged lid.",
+        "success_condition": "Lid reaches the rim slowly, the knob returns home, hands clear the chest, and the state remains still for one second; excessive edge speed or pinch-zone entry forces zero.",
+        "verdict": "distinct",
+        "reason": "Although both use articulated motion and bimanual coordination, this record tests guarded lid lowering under a held release rather than preserving and locking an adjustable stop against tightening reaction."
+      },
+      {
+        "id": "pr-757",
+        "objective": "Candidate adjusts a DRG 80 gripper opening-stop screw to 90°, locks the setting with a jam nut, and verifies retained opening through repeated cold-lever cycles. PR-757 inserts a cable to a controlled depth, closes a stripping station, and removes a measured length of insulation.",
+        "physical_skill": "Candidate tests coaxial driver and thin-wrench seating, coupled screw/nut countertorque, preservation of an angular setting during locking, tool regrasping, and hands-off functional cycling. PR-757 tests cable alignment and depth insertion plus holding a spring-loaded cutting lever while pulling the cable through closed blades; the shared bimanual and lever primitives do not constitute the same ability.",
+        "success_condition": "Candidate requires a locked opening within 3° of 90°, retained nuts, three return cycles within tolerance, at most 2° drift, tool withdrawal, and 30 mm clearance for one second, with explicit loss conditions. PR-757 requires 8–12 mm of insulation removed, the cut sleeve retained in the station, the lever released, and both grippers at least 40 mm clear, with partial credit for insertion or cutting. All available versions provide numeric rubric details.",
+        "verdict": "distinct",
+        "reason": "The tasks measure meaningfully different outcomes and mechanisms: preserving a mechanically adjusted stop against locknut reaction and proving retained articulation versus cutting and extracting cable insulation under sustained lever actuation."
+      },
+      {
+        "id": "pr-1572",
+        "objective": "Safely rout a curved board edge by bracing on a starting pin, pivoting onto the bearing, and feeding against cutter rotation.",
+        "physical_skill": "Two-hand free-board control against cutter forces, pivoted engagement, curved feeding, and hazard clearance.",
+        "success_condition": "Specified curved length is routed in the safe direction after a pin-braced start, the board clears the cutter, and hands remain outside the 3-inch hazard zone; an off-pin first bite irreversibly scores zero.",
+        "verdict": "distinct",
+        "reason": "This is force-controlled workpiece feeding around a guarded cutting tool, with no adjustable screw setting, jam-nut countertorque, or post-lock motion-retention test."
+      },
+      {
+        "id": "pr-1576",
+        "objective": "Install an O-ring over a hydraulic plug thread into its groove without excessive stretch or twist.",
+        "physical_skill": "Controlled elastomer stretching, axial transfer over threads, square release, and seating correction.",
+        "success_condition": "Ring is fully seated and released in the groove, remains within the 50% stretch and 90° roll limits, and has no side left on the thread; damage limits force zero.",
+        "verdict": "distinct",
+        "reason": "The record tests deformable seal handling and damage avoidance, whereas the candidate tests coupled rigid screw/nut adjustment and retained articulated function."
+      },
+      {
+        "id": "pr-1694",
+        "objective": "Roll puff pastry into an even 3 mm sheet using a spacer-ring rolling pin.",
+        "physical_skill": "Bimanual level rolling over repeated passes to control deformable-sheet thickness and length.",
+        "success_condition": "Sheet is at least 20 cm long, at least 90% lies within 2.5–3.5 mm, lateral thickness averages are even within 0.5 mm, and the pin is released level.",
+        "verdict": "distinct",
+        "reason": "It measures distributed deformable-material shaping, not coaxial tool seating, countertorque locking, or retained mechanical-stop adjustment."
+      },
+      {
+        "id": "pr-1992",
+        "objective": "Tighten fifteen pool balls into a legal rack, place the head ball on the foot spot, and lift the triangle away without disturbing them.",
+        "physical_skill": "Compacting free-rolling objects inside a frame and extracting that frame vertically without imparting lateral motion.",
+        "success_condition": "All 30 neighboring pairs are within 0.5 mm, the head ball is within 5 mm of the spot, the rack and hands are clear, and balls are still; disturbance during rack removal is latched.",
+        "verdict": "distinct",
+        "reason": "The tested ability is group compaction and disturbance-free frame removal, unrelated to preserving a threaded angular setting through jam-nut tightening and repeated actuation."
+      },
+      {
+        "id": "pr-2016",
+        "objective": "Start a handheld 3D scanner and cover a cast housing’s outer surface and top while maintaining tracking.",
+        "physical_skill": "Button actuation, sustained scanner pose/standoff/orientation control, viewpoint planning, and coordinated turntable motion.",
+        "success_condition": "At least 95% surface coverage including the top, with scanner and fingertips 3 cm clear for one second; part displacement, scanner contact, or a drop forces zero.",
+        "verdict": "distinct",
+        "reason": "This record evaluates active sensing and coverage planning rather than mechanical adjustment, counterholding, locking, and functional retention."
+      },
+      {
+        "id": "pr-1900",
+        "objective": "Raise an unpowered robot link to its zero mark and insert a calibration pin so it remains at zero after release.",
+        "physical_skill": "Bimanual gravity-load support, visual/physical hole alignment, and transverse pin insertion.",
+        "success_condition": "Pin is home, link remains within 1° of zero and still for one second, and both grippers are at least 30 mm clear; excessive link speed forces zero.",
+        "verdict": "distinct",
+        "reason": "Both concern robot setup and retained alignment, but this record aligns holes and inserts a load-bearing pin; it does not set a continuous stop with a screw, counterhold a jam nut, or verify repeated motion return."
+      },
+      {
+        "id": "pr-1912",
+        "objective": "Take a tympanic temperature by seating a covered probe, pressing Measure, holding it steady through the reading, and laying it down.",
+        "physical_skill": "Fine probe-to-canal alignment, steady unsupported holding during button actuation, and controlled withdrawal.",
+        "success_condition": "A valid three-second reading is completed without unseating or exceeding 1.5 mm/3° motion, then the thermometer is released still on the table; excessive insertion or dropping forces zero.",
+        "verdict": "distinct",
+        "reason": "It tests steady medical probe placement through a timed measurement, not threaded stop adjustment, countertorque locking, or cyclic retention."
+      },
+      {
+        "id": "pr-1013",
+        "objective": "Disinfect an IV connector for 15 seconds before seating a syringe and flushing the line.",
+        "physical_skill": "Timed frictional wiping, precise luer alignment/insertion, and controlled plunger actuation.",
+        "success_condition": "Hub receives 15 seconds of qualifying scrub before any syringe contact, syringe seats, at least 5 mL leaves the barrel and at least 4.5 mL is collected with limited loss; early contact forces zero.",
+        "verdict": "distinct",
+        "reason": "The hardest ability is ordered contamination-safe cleaning and fluid-line access, not preserving an adjustable mechanical setting while tightening a locknut."
+      },
+      {
+        "id": "pr-1561",
+        "objective": "Install a circlip in a loose shaft’s groove, rotate it to verify seating, and put down the pliers.",
+        "physical_skill": "Controlled ring spreading with dedicated pliers, shaft stabilization, groove seating, and relative rotation against friction.",
+        "success_condition": "Ring remains undamaged, seated and closed in the groove, rotates at least 15° relative to the restrained shaft, and pliers are removed and released; overspread or bending forces zero.",
+        "verdict": "distinct",
+        "reason": "This shares counterholding and a post-installation functional check, but tests elastic retaining-ring installation and relative rotation, not screw-set regulation preserved through concentric jam-nut torque and repeated gripper cycles."
+      },
+      {
+        "id": "pr-1867",
+        "objective": "Orient and insert an emergency-stop button through a keyed panel hole, then secure it with a rear locking ring.",
+        "physical_skill": "Keyed rotational alignment, through-panel insertion, bimanual front-side stabilization, and rear ring threading.",
+        "success_condition": "Button is seated with its tab aligned, locking ring turns 165–185° and lies within 0.5 mm of the panel, and both parts remain still with grippers clear for one second.",
+        "verdict": "distinct",
+        "reason": "It includes bimanual threaded locking, but the setting is a binary keyed panel insertion; it does not regulate a continuous stop angle, counterhold a coupled adjustment screw against locknut reaction, or verify retained actuation."
+      },
+      {
+        "id": "pr-1930",
+        "objective": "Replace two thin shelf-edge price tickets while preserving the third ticket and nearby cans.",
+        "physical_skill": "Opening a sprung clear strip, extracting nearly flush thin cards, inserting replacements into a narrow channel, and releasing them securely.",
+        "success_condition": "Both old tickets are in the waste tray, matching new tickets are seated under the correct cans, the untouched ticket remains seated, hands withdraw, and the assembly remains still; tipping a can forces zero.",
+        "verdict": "distinct",
+        "reason": "This is thin-card extraction and insertion under a sprung cover, with no threaded adjustment, torque preservation, or articulated retention test."
+      },
+      {
+        "id": "pr-1939",
+        "objective": "Place a phone, watch, and earbuds case on their matching positions of a three-device charger and leave all charging.",
+        "physical_skill": "Multi-object contact/alignment, magnetic placement, flexible watch-band handling, and indicator visibility management.",
+        "success_condition": "Each released device charges uninterrupted for five seconds with a visible indicator while the stand remains within 5 mm and 5° of its starting pose.",
+        "verdict": "distinct",
+        "reason": "It tests repeated device placement and charging confirmation rather than coupled screw/nut manipulation or retaining an adjusted mechanical stop."
+      },
+      {
+        "id": "pr-1941",
+        "objective": "Push an evacuated blood tube onto a holder already connected to a training-arm vein, fill it, remove it, and place it in a tray without moving the needle.",
+        "physical_skill": "Bimanual stabilization of a needle holder against insertion/extraction forces and precise tube exchange.",
+        "success_condition": "Stopper is pierced, tube fills to at least 90%, is removed and released in the tray, while the holder remains held and needle motion stays within 2 mm; loss of stabilization forces zero.",
+        "verdict": "distinct",
+        "reason": "Although it tests counterholding against axial reaction, its outcome is a filled and removed tube with needle stability, not angular setting preservation through jam-nut tightening and repeated actuation."
+      },
+      {
+        "id": "board-TK-URX77G",
+        "objective": "Break open an inert scored ampoule using a protective opener while retaining the cap and keeping the body upright.",
+        "physical_skill": "Protective-tool alignment, controlled breakaway torque, fragment/cap capture, and safe release.",
+        "success_condition": "Native neck joint breaks, cap remains fully captured, body returns upright to its holder, opener returns to its rack, and both remain released and still; neck/cap contact, excessive tilt, escape, or drop forces zero.",
+        "verdict": "distinct",
+        "reason": "This tests controlled fracture and captive retention; prototype break-force calibration is explicitly missing, but the objective and tested ability remain clearly different from threaded stop adjustment and lock verification."
+      },
+      {
+        "id": "pr-776",
+        "objective": "Clamp an aluminium bar at its punch mark, drill through it on a press, and retract the drill safely.",
+        "physical_skill": "Workpiece stabilization against clamp-pad twist, screw-clamp tightening, drill-feed actuation, and hand clearance.",
+        "success_condition": "Bar is clamped, hole is within 5 mm of the mark and through the bar, drill is retracted, and no gripper enters the 5 cm bit zone while spinning; a loose-bar catch fails.",
+        "verdict": "distinct",
+        "reason": "It shares screw tightening and counterholding, but those actions establish general workholding for drilling; there is no calibrated adjustable setting that must survive jam-nut torque and repeated articulated cycles."
+      },
+      {
+        "id": "pr-2042",
+        "objective": "Attach a detachable handle to a saucepan, prove it load-bearing, carry the pan to a trivet, and release it.",
+        "physical_skill": "Rim/jaw mechanism engagement, latch closure, load-path verification, and stable transport through the attached handle.",
+        "success_condition": "Pan is lifted solely through the locked handle for one second, then placed within 20 mm of the trivet center and released stable for two seconds; direct support, slip, or excessive penetration invalidates credit.",
+        "verdict": "distinct",
+        "reason": "Its functional verification is load-bearing transport after latch assembly, not preserving an adjustable stop while tightening a jam nut or checking return angle over repeated cycles."
+      },
+      {
+        "id": "pr-2055",
+        "objective": "Refit a rack-server air shroud by inserting both front tabs under the fan cage and lowering the rear to seat.",
+        "physical_skill": "Bimanual handling of a large rigid duct, simultaneous dual-tab insertion, constrained lowering, and release among obstacles.",
+        "success_condition": "Both tabs extend at least 3 mm into their slots, all four shroud corners lie within 2 mm of the chassis floor, grippers clear by 3 cm, and the shroud remains still for one second.",
+        "verdict": "distinct",
+        "reason": "This tests large-part dual-tab insertion and seating in a server chassis, with no threaded tool use, countertorque regulation, or retained angular-stop calibration."
+      },
+      {
+        "id": "pr-2152",
+        "objective": "Remove a cracked robot cover from keyhole posts, discard it, and install and slide-lock a replacement cover.",
+        "physical_skill": "Unlocking and locking a three-post keyhole interface, cover handling, swap sequencing, and precise planar sliding.",
+        "success_condition": "Old cover is off and in the tray, new cover is aligned and locked at the slot ends, grippers clear, and both covers stay still for one second; a cover falling off the table forces zero.",
+        "verdict": "distinct",
+        "reason": "It tests binary keyhole slide-lock cover replacement, not continuous screw adjustment preserved against locknut torque and validated by repeated articulation."
+      },
+      {
+        "id": "pr-2175",
+        "objective": "Remove a toy brick jammed on the robot’s own gripper and demonstrate restored closing and opening.",
+        "physical_skill": "Bimanual self-maintenance, obstruction extraction from a snug fit, and post-repair actuator testing.",
+        "success_condition": "Initial blocked closure is established, brick clears the affected fingers, the gripper subsequently closes below 2 mm and opens above 85 mm, with sustained clearance; a lost or damaged brick scores zero.",
+        "verdict": "distinct",
+        "reason": "Both require post-maintenance motion verification, but this record tests obstruction removal and restoration of finger travel, not setting and locking a precise opening stop with coupled screw/nut countertorque."
+      },
+      {
+        "id": "pr-1289",
+        "objective": "Reattach a detached live wrist camera through a tapered sliding shoe and spring-loaded retaining tooth, then release it.",
+        "physical_skill": "Self-referential bimanual alignment, guided insertion into a wrist channel, passive-latch engagement, and retention verification.",
+        "success_condition": "Camera reaches within 5 mm and 5° of its optical target, passes through the guide, seats with the tooth engaged, and remains aligned with the assisting TCP over 80 mm away for two seconds.",
+        "verdict": "distinct",
+        "reason": "It tests guided sensor-module insertion and passive latch retention, not an adjustable stop, jam-nut counterholding, or repeated return-angle stability."
+      },
+      {
+        "id": "pr-1766",
+        "objective": "Clamp locking pliers onto a tube past their lock point and leave them hanging securely without support.",
+        "physical_skill": "One-gripper tool transport, jaw placement, asymmetric handle squeezing through a latch point, and released retention.",
+        "success_condition": "Pliers remain self-clamped on the marked band, at least 2 cm above the table, level within 10°, untouched and still for one second; off-band or still-held states receive partial credit.",
+        "verdict": "distinct",
+        "reason": "It tests closing a hand tool through a binary latch point and proving released clamping, not continuous angular-stop adjustment, concentric driver/wrench countertorque, or multi-cycle setting retention."
+      },
+      {
+        "id": "pr-1805",
+        "objective": "PR-1805 secures a bicycle wheel to a stand with a two-part U-lock; the candidate calibrates and locks a robot-gripper opening stop.",
+        "physical_skill": "PR-1805 tests threading a rigid shackle through spokes and angled bent-foot crossbar engagement, not concentric driver-and-wrench countertorque.",
+        "success_condition": "PR-1805 requires correct wheel/stand enclosure and latched crossbar after release; the candidate requires a retained 90° setting, locked nuts, three repeatable cycles, and tool clearance.",
+        "verdict": "distinct",
+        "reason": "Linking two fixed objects with an angled lock is meaningfully different from preserving an adjustable screw setting while tightening its jam nut and function-cycling it."
+      },
+      {
+        "id": "pr-1810",
+        "objective": "PR-1810 swipes a magnetic-stripe card once and returns it to a stand; the candidate adjusts and locks a gripper stop.",
+        "physical_skill": "PR-1810 tests continuous slot tracking at bounded speed and orientation, whereas the candidate tests tool seating, countertorque, and articulated verification.",
+        "success_condition": "PR-1810 scores a valid one-direction read and released card return; the candidate scores angular tolerance, lock retention, repeated motion, and hands-off clearance.",
+        "verdict": "distinct",
+        "reason": "The complete swipe rubrics establish a velocity-controlled constrained pass, not mechanical adjustment or locknut retention."
+      },
+      {
+        "id": "pr-1882",
+        "objective": "PR-1882 joins articulated chain ends with a connecting link and side-entry keeper; the candidate sets a gripper opening limit.",
+        "physical_skill": "PR-1882 tests multi-hole alignment and lateral keeper insertion into a loose chain assembly, not coupled screw-and-nut counterholding.",
+        "success_condition": "PR-1882 requires both ends seated, keeper retained, joint cradled, chain guided, and hands released; the candidate requires a locked angle surviving three cycles.",
+        "verdict": "distinct",
+        "reason": "Although both include retention, chain-link assembly does not test preserving a calibrated setting against jam-nut tightening reaction."
+      },
+      {
+        "id": "pr-1961",
+        "objective": "PR-1961 fills and strikes three drywall holes flush; the candidate adjusts and locks robot-gripper hardware.",
+        "physical_skill": "PR-1961 tests loading, packing, and angle-controlled wiping with a putty knife, unlike coaxial driver seating and wrench countertorque.",
+        "success_condition": "PR-1961 measures filled-hole depth, proud material, surface damage, and knife set-down; the candidate measures retained opening angle, locking, and repeat cycles.",
+        "verdict": "distinct",
+        "reason": "Material deposition and surface finishing are unrelated to coupled threaded adjustment and functional retention."
+      },
+      {
+        "id": "pr-2185",
+        "objective": "PR-2185 refits a mixer beater and guard, raises the bowl, and verifies powered start-stop operation; the candidate calibrates a gripper stop and verifies retained travel.",
+        "physical_skill": "PR-2185 tests slotted-hub alignment, push-turn retention, guard seating, lift operation, and controls; the candidate tests simultaneous driver/wrench countertorque on a screw and jam nut.",
+        "success_condition": "PR-2185 requires retained assemblies, guarded five-second rotation, safe clearance, and stopped machinery; the candidate requires a 90° stop within tolerance after three cold cycles.",
+        "verdict": "distinct",
+        "reason": "Both include hands-off functional verification, but the adjusted-and-counterheld setting central to the candidate is absent from the mixer attachment task."
+      },
+      {
+        "id": "pr-1871",
+        "objective": "PR-1871 scribes a shelf profile from an out-of-flat wall; the candidate sets and locks a gripper opening stop.",
+        "physical_skill": "PR-1871 tests holding a workpiece while tracing a continuous contour with a compass, not threaded adjustment and countertorque.",
+        "success_condition": "PR-1871 scores line continuity and profile accuracy followed by tool release; the candidate scores angular setting, nut retention, drift, and repeated actuation.",
+        "verdict": "distinct",
+        "reason": "Continuous profile transfer is a different tested ability from locking a calibrated mechanical stop."
+      },
+      {
+        "id": "pr-1916",
+        "objective": "PR-1916 lays two robot cables into a carrier and snaps twelve crossbars shut; the candidate adjusts gripper hardware.",
+        "physical_skill": "PR-1916 tests cable routing, ordering, seating, and repeated snap-latching without strain-relief damage; the candidate tests rigid tool use and coupled torque control.",
+        "success_condition": "PR-1916 requires both cables correctly routed through every closed link with adequate tails and release; the candidate requires a locked 90° stop surviving cycles.",
+        "verdict": "distinct",
+        "reason": "Robot-related context is shared, but cable routing and distributed latching do not measure screw-setting preservation."
+      },
+      {
+        "id": "pr-1924",
+        "objective": "PR-1924 lands a hoisted motor over four studs while operating a pendant; the candidate adjusts a gripper stop on a bench fixture.",
+        "physical_skill": "PR-1924 tests suspended-load steering, four-hole alignment, and simultaneous hold-to-run control under pinch constraints, not two-tool countertorque.",
+        "success_condition": "PR-1924 requires all feet seated, chain slack, controls released, and no unsafe load interaction; the candidate requires locked angular retention over three cycles.",
+        "verdict": "distinct",
+        "reason": "Precision landing of a swinging heavy load is meaningfully different from threaded calibration and locknut tightening."
+      },
+      {
+        "id": "pr-2153",
+        "objective": "PR-2153 refits a refrigerator door bin onto two concealed supports; the candidate calibrates and locks a gripper opening stop.",
+        "physical_skill": "PR-2153 tests level bimanual carrying, simultaneous support engagement, and downward seating, not driver/wrench coordination.",
+        "success_condition": "PR-2153 requires both ends engaged and locked, level, still, and released; the candidate requires a specified angle, retained nuts, low drift, and repeated actuation.",
+        "verdict": "distinct",
+        "reason": "Dual-support placement and seating do not test preserving an adjustable threaded setting under tightening reaction."
+      },
+      {
+        "id": "pr-1520",
+        "objective": "PR-1520 joins two furniture panels using two cam-and-bolt locks; the candidate adjusts a gripper stop screw and locks its jam nut.",
+        "physical_skill": "PR-1520 tests cam orientation, panel-to-multiple-fastener alignment, panel seating, and separate screwdriver turns; the candidate requires concentric two-tool counterholding on one coupled adjustment.",
+        "success_condition": "PR-1520 requires both bolts captured, cams locked, joint gap closed, and tools returned; the candidate requires retained 90° motion over three cycles with bounded drift.",
+        "verdict": "distinct",
+        "reason": "Both use threaded-tool primitives, but panel assembly with eccentric cams lacks the candidate's simultaneous setting-preservation and functional-cycle test."
+      },
+      {
+        "id": "pr-1775",
+        "objective": "PR-1775 refits a loaded drawer onto roller slides and pull-tests it; the candidate adjusts and locks a gripper stop.",
+        "physical_skill": "PR-1775 tests elevated insertion past rear hooks, bilateral rail seating, closing, and controlled reopening, not tool-mediated countertorque.",
+        "success_condition": "PR-1775 requires the drawer on both slides, a prior released closure, and a final 30–80 mm opening; the candidate requires a locked target angle retained across cycles.",
+        "verdict": "distinct",
+        "reason": "The drawer's pull test verifies rail engagement, not preservation of a calibrated screw setting."
+      },
+      {
+        "id": "pr-1968",
+        "objective": "PR-1968 installs a comb busbar across three breaker terminals; the candidate sets one gripper opening stop.",
+        "physical_skill": "PR-1968 tests opening several terminals, simultaneous multi-pin insertion, and sequential screwdriver tightening; the candidate tests coaxial adjustment plus jam-nut counterholding.",
+        "success_condition": "PR-1968 requires all pins home, three screws clamped, pull resistance, and released tools; the candidate requires angular accuracy and repeatability after three articulated cycles.",
+        "verdict": "distinct",
+        "reason": "Generic screw driving is shared, but multi-terminal insertion and clamping do not test retaining an adjusted screw against locknut reaction."
+      },
+      {
+        "id": "pr-369",
+        "objective": "PR-369 extracts a fitted collar with a prepared two-jaw screw puller and recovers it; the candidate sets and locks a gripper opening stop.",
+        "physical_skill": "PR-369 tests stabilizing a loose puller while repeatedly turning its forcing screw, then transporting and unloading it; the candidate tests simultaneous screw counterholding during nut tightening.",
+        "success_condition": "PR-369 requires collar extraction, tray recovery, intact puller placement, release, and dwell; the candidate requires a retained target angle and repeatable gripper motion.",
+        "verdict": "distinct",
+        "reason": "Despite counterholding while turning a screw, the puller's tested outcome is force-driven extraction rather than preservation and locking of an adjustable setting."
+      },
+      {
+        "id": "pr-1151",
+        "objective": "PR-1151 purges air from a filled syringe while preserving liquid; the candidate adjusts mechanical gripper hardware.",
+        "physical_skill": "PR-1151 tests syringe orientation, fluid settling, gentle plunger control, and bimanual barrel stabilization, not driver/wrench torque coordination.",
+        "success_condition": "PR-1151 measures residual air, sample loss, safe return pose, release, and dwell; the candidate measures stop angle, nut retention, cycle repeatability, and clearance.",
+        "verdict": "distinct",
+        "reason": "The available versions consistently test fluid-preserving plunger control, which is unrelated to threaded stop calibration."
+      },
+      {
+        "id": "pr-1923",
+        "objective": "PR-1923 threads shock cord through a spring cord lock while depressing its button; the candidate sets a gripper opening stop.",
+        "physical_skill": "PR-1923 tests sustained button actuation coordinated with deformable threading and release to spring grip; the candidate tests rigid concentric tool seating and countertorque.",
+        "success_condition": "PR-1923 requires specified cord protrusion, spring-only retention, table rest, and released hands; the candidate requires a locked angle retained through three cycles.",
+        "verdict": "distinct",
+        "reason": "Holding open a spring passage during cord insertion does not measure calibrated screw adjustment or jam-nut locking."
+      },
+      {
+        "id": "pr-1951",
+        "objective": "PR-1951 wrings a swab in a test tube and disposes of it; the candidate adjusts and verifies a robot gripper stop.",
+        "physical_skill": "PR-1951 tests squeezing a compliant tube while rotating and withdrawing a swab, unlike rigid driver-and-wrench counterholding.",
+        "success_condition": "PR-1951 scores counted squeezed turns, squeeze-maintained withdrawal, disposal, and clearance; the candidate scores angular retention, nut security, and repeated motion.",
+        "verdict": "distinct",
+        "reason": "Coordinated squeeze-and-turn manipulation has a different mechanism and outcome from locking a threaded adjustment."
+      },
+      {
+        "id": "pr-2061",
+        "objective": "PR-2061 mixes layered liquid in two open tubes without spilling; the candidate sets and locks gripper hardware.",
+        "physical_skill": "PR-2061 tests controlled tube motion, liquid mixing, spill avoidance, and rack insertion, not threaded tool use.",
+        "success_condition": "PR-2061 requires both solutions mixed, no spill, both tubes racked, released, and still; the candidate requires a retained 90° stop over repeated cycles.",
+        "verdict": "distinct",
+        "reason": "Fluid mixing under a spill constraint is unrelated to mechanical stop calibration and countertorque."
+      },
+      {
+        "id": "pr-2103",
+        "objective": "PR-2103 opens a robot vacuum brush door by releasing two catches; the candidate adjusts a robot gripper stop.",
+        "physical_skill": "PR-2103 tests simultaneous dual-button compression followed by hinged-door lifting while stabilizing the appliance; the candidate tests two-tool screw/nut coordination.",
+        "success_condition": "PR-2103 requires the door open at least 80°, appliance in place, hands clear, and still; the candidate requires a locked target angle and repeat-cycle retention.",
+        "verdict": "distinct",
+        "reason": "Opening a dual-catch access door is not an adjustable-setting or locknut-retention task."
+      },
+      {
+        "id": "pr-360",
+        "objective": "PR-360 caps and color-sorts four pens; the candidate calibrates and locks a gripper stop.",
+        "physical_skill": "PR-360 tests repeated cap-to-pen alignment, axial insertion, matching, and placement; the candidate tests tool seating, torque coordination, and articulated verification.",
+        "success_condition": "PR-360 requires four matching retained caps and released pens in designated areas; the candidate requires accurate stop locking with low drift over cycles.",
+        "verdict": "distinct",
+        "reason": "Axial capping and sorting do not test preservation of a mechanical adjustment."
+      },
+      {
+        "id": "pr-1562",
+        "objective": "PR-1562 makes a copper-pipe compression joint; the candidate adjusts and locks a robot-gripper opening stop.",
+        "physical_skill": "PR-1562 tests ordering an olive and nut, seating pipe, finding snug, and tightening with a spanner; the candidate tests coaxial driver seating plus simultaneous jam-nut counterholding to prevent setting drift.",
+        "success_condition": "PR-1562 requires pipe home, olive captured, and nut 3/4–1 1/4 turns past calibrated snug without over-compression; the candidate requires a retained 90° angle after three actuation cycles.",
+        "verdict": "distinct",
+        "reason": "This is a close threaded-tool neighbor, but controlled compression-joint makeup neither preserves an independent screw setting nor verifies articulated travel."
+      },
+      {
+        "id": "pr-1720",
+        "objective": "PR-1720 removes a binder clip before feeding invoices into a shredder; the candidate adjusts gripper hardware.",
+        "physical_skill": "PR-1720 tests clip opening/removal, paper-stack alignment, guarded insertion, and hand clearance, not torque or angular calibration.",
+        "success_condition": "PR-1720 requires the clip safely separated and the paper shredded without a jam or fingertip entry; the candidate requires stop-angle retention through repeated motion.",
+        "verdict": "distinct",
+        "reason": "Safe preprocessing and feeding of a paper stack is unrelated to coupled screw-and-nut adjustment."
+      },
+      {
+        "id": "pr-2029",
+        "objective": "PR-2029 seats a Mini-ITX motherboard on four standoffs with rear I/O aligned; the candidate sets a gripper opening stop.",
+        "physical_skill": "PR-2029 tests delicate planar handling and simultaneous four-hole plus port alignment, not driver/wrench countertorque.",
+        "success_condition": "PR-2029 requires every mounting hole seated, ports in the opening, board still, and grippers released; fastening and operation are explicitly excluded, unlike the candidate's lock and cycle test.",
+        "verdict": "distinct",
+        "reason": "Motherboard seating ready for fastening is a multi-feature placement ability, not calibrated stop locking."
+      },
+      {
+        "id": "pr-2052",
+        "objective": "PR-2052 sets and locks a jigsaw shoe at a 45° bevel; the candidate sets and locks a gripper stop at 90° and verifies retained motion.",
+        "physical_skill": "PR-2052 requires releasing a lever, sliding off a positive stop, tilting through detents, and reclamping; the candidate requires simultaneous coaxial driver and thin-wrench countertorque on a screw/jam-nut pair.",
+        "success_condition": "PR-2052 requires a hands-off 45° shoe with its lever clamped and stable under a push; the candidate additionally requires both nuts retained and three close-open cycles returning within tolerance and drift limits.",
+        "verdict": "distinct",
+        "reason": "This is the closest objective-level match, but the locking mechanism and core tested ability differ meaningfully: detent-and-lever repositioning versus preserving a threaded adjustment against tightening reaction and proving cyclic retention."
+      },
+      {
+        "id": "pr-2077",
+        "objective": "PR-2077 transfers four instruments onto a sterile field without contamination; the candidate adjusts and locks robot hardware.",
+        "physical_skill": "PR-2077 tests collision-free carrying, placement within a sterile boundary, spacing, and contamination-aware hand use, not threaded torque control.",
+        "success_condition": "PR-2077 requires all instruments flat, separated, sterile, released, and still; the candidate requires angular accuracy, locking, retained cycles, and tool clearance.",
+        "verdict": "distinct",
+        "reason": "Sterility-preserving placement tests contact avoidance rather than mechanical calibration."
+      },
+      {
+        "id": "pr-2164",
+        "objective": "PR-2164 function-tests a seat-belt retractor by slow payout, jerk locking, sustained pull, and controlled rewind; the candidate adjusts and function-tests a gripper stop.",
+        "physical_skill": "PR-2164 tests acceleration-sensitive webbing manipulation, tension maintenance, and controlled retraction; the candidate tests two-tool threaded adjustment and countertorque followed by lever actuation.",
+        "success_condition": "PR-2164 requires ordered payout, lock within 25 mm, sustained load, gentle return, release, and dwell; the candidate requires a locked 90° stop with bounded drift across three cycles.",
+        "verdict": "distinct",
+        "reason": "Both include functional cycling, but the seat-belt task tests inertial-lock behavior and tension control, not setting and retaining an adjustable mechanical stop."
+      },
+      {
+        "id": "pr-125",
+        "objective": "Candidate sets and locks a gripper opening stop; PR-125 aligns mating flanges and inserts locating pins.",
+        "physical_skill": "Concentric driver-and-jam-nut countertorque differs from supporting a flange while performing horizontal pin insertion.",
+        "success_condition": "Candidate requires retained angle through three cycles; PR-125 requires flange alignment and two seated pins. No material rubric detail is missing.",
+        "verdict": "distinct",
+        "reason": "The tasks test setting retention under locknut reaction versus multi-part alignment and insertion."
+      },
+      {
+        "id": "pr-1302",
+        "objective": "Candidate adjusts gripper motion; PR-1302 opens an antistatic bag and transfers one oriented battery into a holder.",
+        "physical_skill": "Two-tool counterholding and locking differs from zipper manipulation, extraction, and upright placement.",
+        "success_condition": "Candidate checks locked angle retention over cycles; PR-1302 checks zipper travel, battery placement, preservation of the second cell, and released stillness.",
+        "verdict": "distinct",
+        "reason": "Their mechanisms, hardest manipulations, and graded outcomes are unrelated."
+      },
+      {
+        "id": "pr-1868",
+        "objective": "Candidate locks an adjustable gripper stop; PR-1868 mates and locks a hose quick-connect fitting.",
+        "physical_skill": "Candidate requires coaxial driver seating plus wrench countertorque; PR-1868 requires fitting alignment, insertion, and collar/pawl engagement.",
+        "success_condition": "Candidate verifies repeated angular return; PR-1868 verifies seating, collar-forward locking, release clearance, and pull retention.",
+        "verdict": "distinct",
+        "reason": "Both involve retention, but one tests preserving a screw setting during jam-nut tightening and the other tests connector insertion and latch engagement."
+      },
+      {
+        "id": "pr-1243",
+        "objective": "Candidate adjusts a gripper stop; PR-1243 greases a pivot through a nipple without leakage.",
+        "physical_skill": "Candidate uses coupled screw/nut countertorque; PR-1243 maintains a sealed coupler while pumping repeated lever strokes.",
+        "success_condition": "Candidate grades retained opening angle and cycles; PR-1243 grades sealing, four grease shots, absence of leakage, and tool return.",
+        "verdict": "distinct",
+        "reason": "Shared bimanual stabilization is generic; the tested contact, force-control, and outcome mechanisms differ."
+      },
+      {
+        "id": "pr-1276",
+        "objective": "Candidate configures a robot gripper stop; PR-1276 reloads a stapler and staples sheets.",
+        "physical_skill": "Counterholding a setting during nut tightening differs from pulling a sprung magazine, seating a staple strip, and actuating the stapler.",
+        "success_condition": "Candidate requires angle retention after cycling; PR-1276 requires a loaded stapler, joined sheets, and released arms.",
+        "verdict": "distinct",
+        "reason": "The objectives and principal manipulation abilities are materially different."
+      },
+      {
+        "id": "pr-1803",
+        "objective": "Candidate sets gripper travel; PR-1803 carries an untaped carton while preventing its bottom and contents from opening.",
+        "physical_skill": "Tool seating and countertorque differ from continuous underside support during a loaded bimanual transfer.",
+        "success_condition": "Candidate verifies a locked angular setting; PR-1803 requires every can retained throughout and the carton released on a shelf.",
+        "verdict": "distinct",
+        "reason": "No candidate-equivalent adjustment or locking operation is tested by the carton task."
+      },
+      {
+        "id": "pr-312",
+        "objective": "Candidate adjusts and locks a gripper stop; PR-312 replaces a ratchet-dispenser cartridge and restores the tool.",
+        "physical_skill": "Concentric countertorque differs from rod retraction, cartridge extraction/insertion, pawl re-engagement, and cradle placement.",
+        "success_condition": "Candidate checks retained angle over cycles; PR-312 checks used-cartridge collection, replacement seating, rod engagement, and released clearance.",
+        "verdict": "distinct",
+        "reason": "The ratchet task tests component replacement and mechanism restoration, not preservation of an adjusted setting while locking."
+      },
+      {
+        "id": "pr-685",
+        "objective": "Candidate sets an opening limit; PR-685 removes a cork with a wing corkscrew.",
+        "physical_skill": "Jam-nut counterholding differs from threading a worm, operating geared wings, and restraining a bottle against extraction force.",
+        "success_condition": "Candidate requires locked cyclic repeatability; PR-685 requires cork penetration, extraction, removal, and bottle retention in its cradle.",
+        "verdict": "distinct",
+        "reason": "Rotational tool use is only a generic primitive; the mechanisms and outcomes are different."
+      },
+      {
+        "id": "pr-709",
+        "objective": "Candidate configures a gripper; PR-709 samples a handhole atmosphere before conditionally removing cover bolts.",
+        "physical_skill": "Candidate emphasizes simultaneous driver/wrench torque control; PR-709 emphasizes hose placement, a 60-second sample, alarm-conditioned decisions, and bolt removal.",
+        "success_condition": "Candidate checks retained motion; PR-709 checks valid sampling and either preserved closure or two removed bolts based on the alarm.",
+        "verdict": "distinct",
+        "reason": "The handhole task tests safety-conditioned inspection and access, not adjustment retention."
+      },
+      {
+        "id": "pr-996",
+        "objective": "Candidate sets mechanical travel; PR-996 calibrates a colorimeter and measures a sample.",
+        "physical_skill": "Countertorque and tool regrasping differ from cuvette orientation, insertion, lid operation, button use, and sample handling.",
+        "success_condition": "Candidate grades locked angle and repeated actuation; PR-996 grades calibration, a valid absorbance record, and returned cuvettes.",
+        "verdict": "distinct",
+        "reason": "Their physical procedures and observable outcomes do not overlap meaningfully."
+      },
+      {
+        "id": "pr-1026",
+        "objective": "Candidate locks a gripper opening stop at a target angle; PR-1026 tightens a tourniquet to target pressure and locks its windlass.",
+        "physical_skill": "Candidate requires concentric driver-and-wrench countertorque; PR-1026 requires winding a tensioned strap and snapping a rod into a clip.",
+        "success_condition": "Candidate verifies angle retention through three cycles; PR-1026 verifies gauge pressure, clip engagement, and hand clearance.",
+        "verdict": "distinct",
+        "reason": "Both set and secure a target, but the force mechanisms and hardest tested manipulations are materially different."
+      },
+      {
+        "id": "pr-1087",
+        "objective": "Candidate adjusts gripper travel; PR-1087 opens a bottle through a safety loop and rocker latch.",
+        "physical_skill": "Two-tool screw/nut counterholding differs from sequential detent release, rocker actuation, and bottle stabilization.",
+        "success_condition": "Candidate requires retained opening after cycles; PR-1087 requires lid opening while maintaining bottle support and force limits.",
+        "verdict": "distinct",
+        "reason": "The bottle task tests unlatching and opening, not locking an adjustable setting."
+      },
+      {
+        "id": "pr-1135",
+        "objective": "Candidate configures a gripper stop; PR-1135 aligns and cuts a card with a guillotine cutter.",
+        "physical_skill": "Countertorque and wrench regrasping differ from planar card registration, blade operation, and strike-zone avoidance.",
+        "success_condition": "Candidate checks locked repeatability; PR-1135 checks accurate card placement, completed cut, release, and blade-area safety.",
+        "verdict": "distinct",
+        "reason": "The objectives and tested dexterity are unrelated."
+      },
+      {
+        "id": "pr-1285",
+        "objective": "Candidate sets a gripper opening limit; PR-1285 tensions and latches a tie-down strap around a crate.",
+        "physical_skill": "Candidate preserves screw angle against jam-nut torque; PR-1285 ratchets flexible webbing to target tension and closes a lever latch.",
+        "success_condition": "Candidate verifies repeated gripper motion; PR-1285 verifies strap tension, handle latching, and crate retention during a deck jolt.",
+        "verdict": "distinct",
+        "reason": "Both secure an adjusted state and function-test it, but the candidate's concentric countertorque ability is absent from the strap task."
+      },
+      {
+        "id": "pr-1444",
+        "objective": "Candidate adjusts and locks a gripper stop; PR-1444 safely sets a spring rat trap.",
+        "physical_skill": "Tool-mediated countertorque differs from restraining a spring-loaded hammer while engaging a separate lock bar outside the strike path.",
+        "success_condition": "Candidate checks retained angle through cycles; PR-1444 checks latch engagement, absence of snapping, safe gripper paths, and withdrawal.",
+        "verdict": "distinct",
+        "reason": "Shared bimanual holding while latching is generic; the force control and locking mechanisms differ."
+      },
+      {
+        "id": "pr-1825",
+        "objective": "Candidate sets and locks a gripper opening angle; PR-1825 rotates an angle-grinder guard toward an operator and reclamps it.",
+        "physical_skill": "Candidate requires simultaneous coaxial driver restraint and jam-nut tightening; PR-1825 releases an over-centre lever, rotates a guard, and reclamps it.",
+        "success_condition": "Candidate requires three retained actuation cycles and bounded stop drift; PR-1825 requires guard orientation, flat lever, grinder pose preservation, and clearance.",
+        "verdict": "distinct",
+        "reason": "This is the closest objective pattern, but the candidate tests locknut-induced setting disturbance and cyclic stop retention, abilities the lever-clamped guard does not test."
+      },
+      {
+        "id": "pr-1849",
+        "objective": "Candidate configures a gripper stop; PR-1849 gauges and sorts machined blocks.",
+        "physical_skill": "Countertorque and tool seating differ from repeated go/no-go gauge placement and classification-driven sorting.",
+        "success_condition": "Candidate checks a retained mechanical setting; PR-1849 checks valid ordered gauge trials and correct final tray assignment for seven blocks.",
+        "verdict": "distinct",
+        "reason": "The inspection-and-sorting task has no comparable adjustment or locking mechanism."
+      },
+      {
+        "id": "pr-1864",
+        "objective": "Candidate sets gripper travel; PR-1864 aligns and press-fits a servo horn onto a splined shaft.",
+        "physical_skill": "Coupled screw/nut countertorque differs from fine angular registration followed by axial spline insertion.",
+        "success_condition": "Candidate verifies locking and cyclic retention; PR-1864 verifies correct spline index, flush seating, stillness, and released clearance.",
+        "verdict": "distinct",
+        "reason": "Both use angular alignment, but one tests indexed insertion while the other tests preservation of an adjustable stop during locking."
+      },
+      {
+        "id": "pr-1872",
+        "objective": "Candidate adjusts a robot gripper; PR-1872 secures a carton to a luggage cart with a bungee.",
+        "physical_skill": "Driver/wrench countertorque differs from stretching flexible cord and engaging hooks against elastic pull.",
+        "success_condition": "Candidate requires retained angle over cycles; PR-1872 requires both hooks home and carton retention throughout a cart-motion test.",
+        "verdict": "distinct",
+        "reason": "Their mechanisms and tested manipulation abilities differ beyond shared retention testing."
+      },
+      {
+        "id": "pr-1935",
+        "objective": "Candidate locks an adjusted gripper stop; PR-1935 couples a scaffold transom to a ledger.",
+        "physical_skill": "Candidate counterholds an adjustment screw while tightening a thin jam nut; PR-1935 positions a transom, closes a cap, swings a bolt into a slot, and runs down its nut.",
+        "success_condition": "Candidate verifies angular repeatability after cycling; PR-1935 verifies placement, cap/bolt closure, nut bearing, and resistance to a pull.",
+        "verdict": "distinct",
+        "reason": "Nut tightening is shared, but PR-1935 does not test preserving a coupled precision setting against tightening reaction."
+      },
+      {
+        "id": "pr-1975",
+        "objective": "Candidate configures gripper motion; PR-1975 removes an interrupted suture.",
+        "physical_skill": "Mechanical countertorque differs from forceps lifting, flush cutting, controlled extraction toward a wound, and instrument return.",
+        "success_condition": "Candidate checks locked cyclic travel; PR-1975 checks safe cut location, complete extraction, wound protection, disposal, and tool release.",
+        "verdict": "distinct",
+        "reason": "No meaningful objective, mechanism, or success-condition overlap exists."
+      },
+      {
+        "id": "pr-2112",
+        "objective": "Candidate sets and locks a gripper opening stop; PR-2112 rotates a hose-wand dial from Jet to Shower.",
+        "physical_skill": "Two-tool counterholding under tightening reaction differs from stabilizing a wand while turning a detented selector dial.",
+        "success_condition": "Candidate requires a locked setting retained over three cycles; PR-2112 requires the Shower detent selected and the wand released still on the bench.",
+        "verdict": "distinct",
+        "reason": "Target-angle selection is shared superficially, but the hose task lacks separate locking, countertorque, and functional-cycle retention."
+      },
+      {
+        "id": "board-TK-3DAUWV",
+        "objective": "Candidate configures a robot gripper; the board task selects conveyor parts and builds a pictured model.",
+        "physical_skill": "Countertorque and tool control differ from time-constrained interception, look-alike discrimination, temporary parking, and stacking.",
+        "success_condition": "Candidate checks retained opening motion; the board task checks a four-part structure, rejected extras exiting downstream, and no conveyor jam.",
+        "verdict": "distinct",
+        "reason": "The board record contains a complete numeric rubric, and its tested ability is unrelated to mechanical adjustment."
+      },
+      {
+        "id": "pr-54",
+        "objective": "Candidate adjusts a gripper stop; PR-54 seats an access panel and installs two retainer bars.",
+        "physical_skill": "Concentric screw/nut countertorque differs from planar panel insertion and bar placement into rib slots.",
+        "success_condition": "Candidate requires locked angular repeatability; PR-54 requires a flush panel and one or two correctly seated retainer bars.",
+        "verdict": "distinct",
+        "reason": "Both secure a component, but the panel task tests geometric seating rather than force-coupled adjustment locking."
+      },
+      {
+        "id": "pr-1800",
+        "objective": "Candidate sets a gripper opening limit; PR-1800 inserts an oil-feed sleeve with its radial passage registered.",
+        "physical_skill": "Driver/wrench countertorque differs from tight coaxial insertion with rotational port alignment.",
+        "success_condition": "Candidate verifies lock retention through repeated motion; PR-1800 verifies released supported seating and an unobstructed oil-passage gauge envelope for one second.",
+        "verdict": "distinct",
+        "reason": "PR-1800 explicitly ends before locking, so it does not test preservation of a setting during locknut tightening or subsequent cycling."
+      },
+      {
+        "id": "pr-1966",
+        "objective": "Load an IV-set fitment and safety clamp into a pump; the candidate sets and locks a gripper opening stop, then tests it.",
+        "physical_skill": "Keyed seating of two parts joined by soft tubing versus concentric driver-and-wrench countertorque that preserves a screw setting.",
+        "success_condition": "Fitment and clamp seated without twist or stretch, then released; candidate requires a locked 90° opening retained through three cycles with tools clear.",
+        "verdict": "distinct",
+        "reason": "Soft-tube-guided insertion and clamp seating do not test adjustable-stop preservation under jam-nut reaction or post-lock cycling."
+      },
+      {
+        "id": "pr-2015",
+        "objective": "Rotate a suspended humanoid torso 180° and stop it; the candidate adjusts and locks a gripper stop.",
+        "physical_skill": "Momentum control and gentle arrest of a freely swiveling load versus coaxial tool seating, angular adjustment, and countertorque.",
+        "success_condition": "Torso remains within 10° and under 1°/s without a blow; candidate retains a 90° opening within 3° across three cycles with at most 2° drift.",
+        "verdict": "distinct",
+        "reason": "The record tests dynamic load arrest, not coupled screw-and-locknut adjustment or retained calibration."
+      },
+      {
+        "id": "pr-60",
+        "objective": "Stow three cases while keeping load off a fragile case; the candidate configures a gripper opening stop.",
+        "physical_skill": "Packing, stacking, and rule-aware placement versus two-tool adjustment and locknut counterholding.",
+        "success_condition": "All cases lie correctly in two bays with no forbidden stack; candidate requires a locked target angle and repeated functional return.",
+        "verdict": "distinct",
+        "reason": "The tested packing and load-path planning ability is unrelated to preserving a mechanical setting during locking."
+      },
+      {
+        "id": "pr-903",
+        "objective": "Insert and center a U-joint cross between opposed yoke bores; the candidate sets and locks an angular stop.",
+        "physical_skill": "Overtravel, swing alignment, and bilateral bore insertion versus screw adjustment with wrench/driver countertorque.",
+        "success_condition": "Both journals are centered in their holes and still; candidate requires target angle, retained nuts, three cycles, low drift, and tool clearance.",
+        "verdict": "distinct",
+        "reason": "Both involve alignment, but the record tests constrained rigid insertion rather than torque-coupled calibration and retention."
+      },
+      {
+        "id": "pr-1207",
+        "objective": "Free a fused print-in-place hinge without breaking it; the candidate adjusts and locks a gripper stop.",
+        "physical_skill": "Repeated sub-breakage rocking to overcome adhesion versus coaxial tool use and reaction-counterholding during locknut tightening.",
+        "success_condition": "Leaf reaches 120° and passes a low-force free-motion test; candidate returns to 90° through three cycles with the setting locked.",
+        "verdict": "distinct",
+        "reason": "The indexed record has no task.json/spec versions, but its complete PR body defines a break-free rocking test that is meaningfully different from setting retention."
+      },
+      {
+        "id": "pr-1495",
+        "objective": "Produce a sound TIG bead with torch and filler rod; the candidate sets and verifies a mechanical opening stop.",
+        "physical_skill": "Continuous bimanual heat-path and filler control versus discrete screw adjustment, jam-nut countertorque, and tool withdrawal.",
+        "success_condition": "All seam segments are sound without contamination or burn-through and tools are returned; candidate requires angle accuracy and cycle retention.",
+        "verdict": "distinct",
+        "reason": "Weld-process control and bead quality do not test preservation of an adjustable stop under locking torque."
+      },
+      {
+        "id": "pr-1760",
+        "objective": "Assemble a mini chopper, twist-lock its top, and pulse it; the candidate adjusts and locks a robot gripper stop.",
+        "physical_skill": "Blade placement, bayonet seating, bowl stabilization, twist locking, and button pressing versus concentric driver/wrench countertorque.",
+        "success_condition": "Blade and top remain assembled and exactly one valid pulse occurs; candidate must retain a calibrated 90° opening across three released cycles.",
+        "verdict": "distinct",
+        "reason": "Although both include locking and functional actuation, bayonet assembly does not test preserving a continuously adjustable screw setting while tightening its jam nut."
+      },
+      {
+        "id": "pr-1837",
+        "objective": "Clip a pulse oximeter onto an index finger without moving the hand; the candidate configures a gripper opening stop.",
+        "physical_skill": "Spring-clip squeeze-slide-release with hand stabilization versus coaxial adjustment and locknut counterholding.",
+        "success_condition": "Oximeter is seated, correctly oriented, released, and the hand remains near its mark; candidate requires locked angle retention through cycles.",
+        "verdict": "distinct",
+        "reason": "Spring-clip placement on a supported finger is a different physical ability from torque-coupled mechanical calibration."
+      },
+      {
+        "id": "pr-1862",
+        "objective": "Snap a sip lid fully around a filled paper cup; the candidate sets and locks a gripper stop.",
+        "physical_skill": "Progressive circumferential pressing while avoiding cup tip or wall crush versus two-tool angular adjustment and countertorque.",
+        "success_condition": "All eight lid sectors are seated with the cup intact and hands clear; candidate requires a precise retained opening over repeated actuation.",
+        "verdict": "distinct",
+        "reason": "Distributed snap-fit seating under container-damage constraints does not overlap the candidate's adjustable-stop retention ability."
+      },
+      {
+        "id": "pr-1972",
+        "objective": "Heat-shrink a sleeve uniformly over a cable lug; the candidate adjusts and locks a gripper stop.",
+        "physical_skill": "Timed noncontact heat exposure with cable rotation versus seated wrench/driver use and reaction-counterholding.",
+        "success_condition": "All sleeve stations recover without char or contact and the gun is safely stowed; candidate requires locked angular accuracy and low cycle drift.",
+        "verdict": "distinct",
+        "reason": "The record tests controlled thermal processing, not coupled mechanical adjustment and functional retention."
+      },
+      {
+        "id": "pr-2068",
+        "objective": "Stow a screwdriver while preventing a two-drawer tool chest from tipping; the candidate configures a gripper stop.",
+        "physical_skill": "Drawer sequencing, chest stability management, and object placement versus tool seating and countertorque on a screw/jam nut.",
+        "success_condition": "Screwdriver rests in the right drawer without chest tip or drag; candidate retains the target opening through three cycles.",
+        "verdict": "distinct",
+        "reason": "Tip-over avoidance during drawer use is unrelated to adjustable-stop calibration and locking."
+      },
+      {
+        "id": "pr-46",
+        "objective": "Level and pin-lock a see-saw platform before loading it; the candidate sets and locknuts a gripper opening stop.",
+        "physical_skill": "Supporting an articulated platform and inserting a transverse safety pin versus concentric screw adjustment and nut counterholding.",
+        "success_condition": "Platform is level, pin traverses both walls and lug, blocks are placed, and the hand is untouched; candidate requires retained 90° cycling.",
+        "verdict": "distinct",
+        "reason": "Both include a lock, but the record tests safety-pin alignment and load sequencing rather than preserving a calibrated setting against tightening reaction."
+      },
+      {
+        "id": "pr-1847",
+        "objective": "Replace a toilet roll and reseat a spring spindle in two sockets; the candidate adjusts and locks a gripper stop.",
+        "physical_skill": "Compressing a telescoping spindle while steering its free end into a socket versus coaxial driver/wrench countertorque.",
+        "success_condition": "New roll hangs on a released spindle with both ends seated; candidate requires a locked target opening retained across three cycles.",
+        "verdict": "distinct",
+        "reason": "Spring-spindle compression and bilateral socket insertion do not test locknut-induced setting disturbance or calibration retention."
+      },
+      {
+        "id": "pr-1851",
+        "objective": "Open a can with a handheld rotary opener; the candidate sets and locks a gripper opening stop.",
+        "physical_skill": "Maintain handle squeeze while repeatedly regrasping and turning a feed key versus hold a driver setting while tightening a concentric jam nut.",
+        "success_condition": "Lid is cut all around, opener removed, and can upright; candidate requires a precise locked angle and repeated return with low drift.",
+        "verdict": "distinct",
+        "reason": "The tasks share generic bimanual hold-and-turn primitives, but continuous cutting under clamp force is meaningfully different from preserving an adjustable setting during locknut tightening."
+      },
+      {
+        "id": "pr-1891",
+        "objective": "Seat a robot-controller add-on board onto two pin rows without bending pins; the candidate configures a robot gripper stop.",
+        "physical_skill": "Fine multi-pin leveling and even axial insertion versus screw-angle adjustment, wrench seating, and countertorque.",
+        "success_condition": "Board is fully seated, unbent, still, and released; candidate must hold a locked 90° opening through three functional cycles.",
+        "verdict": "distinct",
+        "reason": "Both concern robot assembly, but the record tests precision connector insertion rather than adjustable-stop calibration and retention."
+      },
+      {
+        "id": "pr-1956",
+        "objective": "Break a cocktail-shaker seal with a correctly placed strike and separate the tins; the candidate adjusts and locks a gripper stop.",
+        "physical_skill": "Localized impact while stabilizing a vessel versus sustained two-tool countertorque and angular regulation.",
+        "success_condition": "Seal is broken by the qualifying strike, tins are upright, and no dent or spill occurs; candidate requires precise retained opening over cycles.",
+        "verdict": "distinct",
+        "reason": "Placed-impact seal release is a different tested ability from locknut-controlled mechanical adjustment."
+      },
+      {
+        "id": "pr-2031",
+        "objective": "Spike an IV bag and prime its drip chamber to a target liquid level; the candidate sets and locks a gripper stop.",
+        "physical_skill": "Aseptic cap removal, axial spike insertion, chamber positioning, and controlled squeezing versus coaxial driver/wrench counterholding.",
+        "success_condition": "Spike is seated and liquid length is 15–27 mm without contamination or overfill; candidate requires retained angular calibration through three cycles.",
+        "verdict": "distinct",
+        "reason": "Fluid-level priming and sterile insertion do not test preservation of a screw setting against locking torque."
+      },
+      {
+        "id": "pr-2106",
+        "objective": "Plant and firm a seedling plug without damaging it; the candidate configures a gripper opening stop.",
+        "physical_skill": "Delicate plug support with granular backfilling and compaction versus tool-mediated screw adjustment and jam-nut countertorque.",
+        "success_condition": "Plug is level, surrounded by sufficient soil, firm under a side test, and undamaged; candidate requires locked angle retention across cycles.",
+        "verdict": "distinct",
+        "reason": "Granular backfill and delicate plant handling are unrelated to coupled mechanical calibration."
+      },
+      {
+        "id": "pr-2142",
+        "objective": "Release a bit from an unpowered keyless drill and place it in a tray; the candidate sets and locks a gripper stop.",
+        "physical_skill": "Counterhold a loose drill while hand-twisting its chuck sleeve, then extract the bit; candidate counterholds an adjustment screw while tightening a separate jam nut with two tools.",
+        "success_condition": "Bit is wholly outside the chuck, stowed, and all objects are released and still; candidate must preserve a target angle and prove retention through three cycles.",
+        "verdict": "distinct",
+        "reason": "The shared counterhold-and-twist primitive is generic; chuck release tests jaw opening and extraction, not preserving a continuous setting against locknut reaction and verifying drift."
+      },
+      {
+        "id": "pr-2176",
+        "objective": "Test sanitizer with a strip and conditionally add a tablet; the candidate mechanically calibrates and locks a gripper stop.",
+        "physical_skill": "Thin-strip grasping, timed dipping, visual measurement, and conditional dosing versus coaxial tool seating and countertorque.",
+        "success_condition": "A valid test precedes correct final concentration and strip disposal; candidate requires target angle, nut retention, three cycles, and clearance.",
+        "verdict": "distinct",
+        "reason": "Measurement-driven conditional dosing does not overlap mechanical adjustment retention."
+      },
+      {
+        "id": "pr-51",
+        "objective": "Transfer and seat a strut across keep-out obstacles; the candidate sets and locks a gripper opening stop.",
+        "physical_skill": "Obstacle-aware carrying, staged bimanual handoff, and tight saddle placement versus driver/wrench countertorque.",
+        "success_condition": "Strut is seated while the witness housing remains undisturbed; candidate requires a precise locked opening retained through cycling.",
+        "verdict": "distinct",
+        "reason": "Keep-out routing and handoff are different from torque-coupled calibration and functional retention."
+      },
+      {
+        "id": "pr-579",
+        "objective": "Recover a clothing-obstructed drawer and open it fully; the candidate adjusts and locks a gripper stop.",
+        "physical_skill": "Detect a jam, compress a spring-like clothing proxy, and resume drawer travel versus coaxial screw/nut adjustment with countertorque.",
+        "success_condition": "Ordered jam, compression, clearance, and full-opening milestones culminate in a still drawer; candidate requires locked angle and repeated retained motion.",
+        "verdict": "distinct",
+        "reason": "The indexed record has no task.json/spec versions, but its complete PR body establishes obstruction recovery, not adjustable-stop calibration."
+      },
+      {
+        "id": "pr-741",
+        "objective": "Insert a stripped cable into a lug and crimp it in a bench press; the candidate sets and locks a gripper stop.",
+        "physical_skill": "Hold cable depth and axial alignment while the other hand closes a press lever versus hold screw angle while tightening a concentric jam nut.",
+        "success_condition": "A depth- and angle-valid crimp passes the stated outcome checks and the cable is returned; candidate must retain 90° through three cycles with low drift.",
+        "verdict": "distinct",
+        "reason": "The tasks share generic bimanual stabilization, but crimping tests insertion maintenance during irreversible pressing, not preservation of an adjustable setting under locking torque."
+      },
+      {
+        "id": "pr-951",
+        "objective": "Open a locker while catching a box leaning on its door, then stand it on a mat; the candidate configures a gripper stop.",
+        "physical_skill": "Support-transfer through a partially opened door and upright transport versus seated tools, countertorque, and angular adjustment.",
+        "success_condition": "Box is never dropped or tipped and finishes upright on the mat; candidate requires locked target angle and repeated functional return.",
+        "verdict": "distinct",
+        "reason": "Hidden-load recovery and safe transport do not test coupled screw-and-locknut calibration."
+      },
+      {
+        "id": "pr-984",
+        "objective": "Center a gasket in a spread flange joint and insert four bolts; the candidate sets and locks a gripper opening stop.",
+        "physical_skill": "Confined planar gasket insertion and multi-hole bolt alignment versus coaxial driver/wrench seating and countertorque.",
+        "success_condition": "Gasket is centered, upper flange undisturbed, and all bolts traverse both flanges; candidate requires retained angle accuracy over three cycles.",
+        "verdict": "distinct",
+        "reason": "Flange assembly tests constrained placement and repeated bolt insertion, with no tightening torque or adjustable-setting retention."
+      },
+      {
+        "id": "pr-1209",
+        "objective": "Candidate sets and locks a gripper opening stop; PR-1209 clips a PCB lead and contains the offcut.",
+        "physical_skill": "Concentric driver-and-wrench countertorque plus retained-angle testing differs from bimanual nipper cutting and offcut capture.",
+        "success_condition": "Candidate requires a locked 90° setting retained over three cycles; PR-1209 requires a flush cut without free flight and disposal of the offcut.",
+        "verdict": "distinct",
+        "reason": "The shared bimanual tool use is generic; the manipulated mechanisms and tested outcomes are different."
+      },
+      {
+        "id": "pr-1896",
+        "objective": "Candidate adjusts and locks a gripper stop; PR-1896 measures tyre pressure and returns a pencil gauge.",
+        "physical_skill": "Candidate tests coupled screw/jam-nut counterholding; PR-1896 tests coaxial valve sealing, sustained pressing, and careful gauge replacement.",
+        "success_condition": "Candidate grades retained opening and lock integrity after cycling; PR-1896 grades a 33–37 psi reading after a sealed hold and gauge replacement.",
+        "verdict": "distinct",
+        "reason": "PR-1896 neither preserves an adjustable setting during locknut tightening nor verifies articulated motion."
+      },
+      {
+        "id": "pr-1906",
+        "objective": "Candidate sets an industrial gripper opening stop; PR-1906 performs an insulin-pen safety shot and dials a dose.",
+        "physical_skill": "Candidate requires simultaneous wrench and driver torque control; PR-1906 requires shield removal, orientation, axial injection, and dose-knob/window manipulation.",
+        "success_condition": "Candidate requires a locked 90° opening retained over cycles; PR-1906 requires a valid 2-unit priming shot followed by a final 12-unit setting.",
+        "verdict": "distinct",
+        "reason": "Rotary adjustment is only a generic primitive; medication priming and dosing test a different mechanism and outcome."
+      },
+      {
+        "id": "pr-2019",
+        "objective": "Candidate configures and verifies a gripper stop; PR-2019 scrapes griddle debris into a grease tray.",
+        "physical_skill": "Candidate tests precision coaxial tool seating and countertorque; PR-2019 tests sustained scraper angle, contact force, overlapping strokes, and debris control.",
+        "success_condition": "Candidate grades lock retention and repeatable opening; PR-2019 grades debris mass transferred, residue left, spillage, gouging, and tool release.",
+        "verdict": "distinct",
+        "reason": "The objectives, force-control regimes, and observable products of the tasks are unrelated."
+      },
+      {
+        "id": "pr-2062",
+        "objective": "Candidate adjusts robot gripper hardware; PR-2062 keeps a machine-loader nest stocked during variable autonomous cycles.",
+        "physical_skill": "Candidate requires coupled two-tool torque control; PR-2062 requires timed pick-place, precise nest seating, monitoring, and collision avoidance in shared workspace.",
+        "success_condition": "Candidate requires retained angle across test cycles; PR-2062 awards credit for five blanks successfully supplied and carried away by the loader.",
+        "verdict": "distinct",
+        "reason": "Both concern automation equipment, but they test configuration work versus reactive machine tending."
+      },
+      {
+        "id": "pr-2082",
+        "objective": "Candidate locks a gripper stop setting; PR-2082 clears a procedure tray while diverting a syringe to a sharps container.",
+        "physical_skill": "Candidate uses concentric tools and countertorque; PR-2082 requires hazard recognition, safe syringe extraction, precise disposal, and tray handling.",
+        "success_condition": "Candidate grades retained angular setting; PR-2082 grades syringe/tray/forceps destinations with latched needle-touch and ordinary-waste hazards.",
+        "verdict": "distinct",
+        "reason": "No adjustment, locknut preservation, or functional-cycle verification appears in PR-2082."
+      },
+      {
+        "id": "pr-2115",
+        "objective": "Candidate mechanically sets and locks a gripper stop; PR-2115 heats and solders a copper joint without burning flux.",
+        "physical_skill": "Candidate tests bimanual torque coupling; PR-2115 tests coordinated torch/filler placement, thermal timing, solder feeding, and safe cooling.",
+        "success_condition": "Candidate requires a locked angle retained through motion; PR-2115 requires sufficient solder, set joint, tools away, and no overheating or misdirected flame.",
+        "verdict": "distinct",
+        "reason": "The shared use of two tools does not equate mechanical counterholding with heat-process control."
+      },
+      {
+        "id": "pr-2127",
+        "objective": "Candidate adjusts industrial gripper hardware; PR-2127 extracts one cup from a gasket dispenser and stands it on a mat.",
+        "physical_skill": "Candidate requires driver/wrench seating and countertorque; PR-2127 requires a gentle pinch, straight compliant extraction, and stable placement.",
+        "success_condition": "Candidate grades locking and repeated retained motion; PR-2127 grades exactly one undamaged cup removed, released upright, and positioned on the mat.",
+        "verdict": "distinct",
+        "reason": "The compliant extraction and placement ability is meaningfully different from screw-and-locknut adjustment."
+      },
+      {
+        "id": "pr-2134",
+        "objective": "Candidate sets a gripper opening stop; PR-2134 cinches and removes a loaded flexible bin liner.",
+        "physical_skill": "Candidate tests rigid concentric tool manipulation and countertorque; PR-2134 tests deformable closure, bimanual lifting, containment, and stable release.",
+        "success_condition": "Candidate requires angular retention after cycles; PR-2134 requires a closed liner, retained contents, bin clearance, and stable released placement.",
+        "verdict": "distinct",
+        "reason": "The record is a deformable containment task with no adjustable mechanical setting or functional verification."
+      },
+      {
+        "id": "pr-2181",
+        "objective": "Candidate adjusts and locks a robot gripper stop; PR-2181 probes a burger through its side to take a central temperature reading.",
+        "physical_skill": "Candidate uses a driver and jam-nut wrench under reaction torque; PR-2181 stabilizes a patty with a turner while controlling probe entry angle and depth.",
+        "success_condition": "Candidate requires retained 90° motion over three cycles; PR-2181 requires a valid side entry, central one-second reading, limited patty motion, withdrawal, and tool replacement.",
+        "verdict": "distinct",
+        "reason": "Bimanual stabilization is generic; probe insertion and measurement do not test setting preservation under locking torque."
+      },
+      {
+        "id": "pr-793",
+        "objective": "Candidate sets and locks a gripper stop; PR-793 twists a rubber stopper onto a glass tube safely.",
+        "physical_skill": "Both involve bimanual rotational work, but the candidate counterholds an adjustment screw while tightening a concentric jam nut; PR-793 holds fragile glass near the work while twisting and pushing an interference-fit stopper.",
+        "success_condition": "Candidate requires a locked target angle retained through three cycles; PR-793 requires at least 12 mm insertion, release, and no unsafe unsupported working action.",
+        "verdict": "distinct",
+        "reason": "The closest shared primitive is counterholding, but only the candidate tests preserving a calibrated setting during independent locknut tightening and subsequent actuation."
+      },
+      {
+        "id": "pr-2107",
+        "objective": "Candidate adjusts an industrial gripper opening stop; PR-2107 extends and locks a suitcase handle at full height.",
+        "physical_skill": "Candidate requires two-tool countertorque and regrasping; PR-2107 requires holding a case while maintaining a release-button press through a long telescoping stroke.",
+        "success_condition": "Candidate grades a jam-nut-secured angle retained over cycles; PR-2107 grades both rails locked at 520 mm with the case stable and hands clear.",
+        "verdict": "distinct",
+        "reason": "Although both end in a locked mechanical setting, the underlying tested abilities—countertorque adjustment versus button-held telescoping—are different."
+      },
+      {
+        "id": "pr-2108",
+        "objective": "Candidate sets and locks a gripper opening stop; PR-2108 aligns a flaring yoke and forms a copper-tube flare.",
+        "physical_skill": "Both use rotational hand tools, but the candidate couples a driver and thin-nut wrench to preserve an adjustment; PR-2108 sets tube height/yoke alignment, clamps, advances a forming cone through clutch release, and retracts it.",
+        "success_condition": "Candidate requires retained 90° opening after repeated actuation; PR-2108 requires a geometrically good, sufficiently ironed flare with the cone retracted and hands clear.",
+        "verdict": "distinct",
+        "reason": "PR-2108 tests irreversible alignment-dependent forming, not locknut counterholding or post-lock functional retention."
+      },
+      {
+        "id": "pr-2200",
+        "objective": "Candidate configures a robot gripper stop; PR-2200 loads a newsletter stack into a spring-raised autofolder feed table.",
+        "physical_skill": "Candidate requires concentric two-tool torque control; PR-2200 requires one hand to depress a sprung table while the other aligns and slides a broad stack to a stop.",
+        "success_condition": "Candidate grades a locked angle and repeated retained motion; PR-2200 grades stack position, squareness, released clamping, machine stability, and clearance.",
+        "verdict": "distinct",
+        "reason": "The shared need to resist a mechanism's restoring force is generic and supports different abilities and outcomes."
+      },
+      {
+        "id": "pr-262",
+        "objective": "Candidate adjusts and verifies gripper hardware; PR-262 installs and closes a personal padlock through a group lockout hasp.",
+        "physical_skill": "Candidate performs coaxial screw/nut manipulation under torque; PR-262 performs articulated shackle alignment, insertion through paired holes, and snap closure without disturbing another lock.",
+        "success_condition": "Candidate requires a retained angular setting over cycles; PR-262 requires the added padlock to keep the hasp and disconnect handle secured under hold tests.",
+        "verdict": "distinct",
+        "reason": "Both involve locking, but PR-262 tests safety-lock insertion and isolation rather than preserving a calibrated adjustment."
+      },
+      {
+        "id": "pr-892",
+        "objective": "Candidate sets a gripper stop; PR-892 loads a filled syringe into a pump and advances its driver without dosing.",
+        "physical_skill": "Candidate uses two rotational tools with countertorque; PR-892 requires tight flange-slot alignment, cradle seating, and gentle linear approach to a plunger.",
+        "success_condition": "Candidate grades lock retention after articulation; PR-892 grades syringe seating and near-contact of the driver while latching any excess plunger displacement as failure.",
+        "verdict": "distinct",
+        "reason": "Precision alignment is shared only at a generic level; the mechanisms and failure-sensitive abilities differ."
+      },
+      {
+        "id": "pr-1298",
+        "objective": "Candidate adjusts industrial gripper hardware; PR-1298 prunes a dead rose stem above a bud and bins the cutting.",
+        "physical_skill": "Candidate requires driver/wrench countertorque; PR-1298 requires target discrimination, secateur placement, cutting, simultaneous offcut retention, and disposal.",
+        "success_condition": "Candidate requires a locked target angle retained across cycles; PR-1298 requires a cut 3–15 mm beyond the bud, preserved plant, contained cutting, and safe tool release.",
+        "verdict": "distinct",
+        "reason": "No coupled adjustment or retained-motion verification is present in the pruning task."
+      },
+      {
+        "id": "pr-1454",
+        "objective": "Candidate sets and locks a gripper stop; PR-1454 loads a caulking gun and lays a continuous bath-joint seal.",
+        "physical_skill": "Candidate tests precision countertorque with two tools; PR-1454 tests release-lever/rod coordination, cartridge loading, trigger metering, and continuous nozzle path control.",
+        "success_condition": "Candidate grades angle retention and cycling; PR-1454 grades loaded state, joint coverage and gaps, bead placement, and final gun release.",
+        "verdict": "distinct",
+        "reason": "The tasks share articulated tool use but measure different manipulation abilities and products."
+      },
+      {
+        "id": "pr-1530",
+        "objective": "Candidate configures a robot gripper stop; PR-1530 finishes painting a partially coated panel without excessive overlap.",
+        "physical_skill": "Candidate requires coaxial driver/wrench manipulation; PR-1530 requires visual coverage planning and controlled roller contact, orientation, and strokes.",
+        "success_condition": "Candidate requires mechanical lock retention over cycles; PR-1530 scores bare-cell coverage, repaint waste, and avoidance of table contamination.",
+        "verdict": "distinct",
+        "reason": "Surface coverage control is unrelated to calibrated screw-and-jam-nut locking."
+      },
+      {
+        "id": "pr-1554",
+        "objective": "Candidate adjusts and locks gripper hardware; PR-1554 sends a loaded tote down a roller conveyor at a safe speed.",
+        "physical_skill": "Candidate requires coupled torque control and tool withdrawal; PR-1554 requires impulse/release-speed regulation so the tote reaches a remote station without destabilizing its load.",
+        "success_condition": "Candidate grades retained opening and lock integrity; PR-1554 grades final tote position after release with no bottle tip, spill, lift, or conveyor departure.",
+        "verdict": "distinct",
+        "reason": "PR-1554 tests dynamic launch control, not mechanical adjustment or locking."
+      },
+      {
+        "id": "pr-1852",
+        "objective": "Candidate sets a gripper opening stop; PR-1852 restocks a twin-roll tissue dispenser and closes its cover.",
+        "physical_skill": "Candidate uses concentric driver-and-wrench countertorque; PR-1852 coordinates release tabs, roll extraction/insertion, spindle engagement, gate movement, and damped cover closure.",
+        "success_condition": "Candidate requires a locked 90° setting retained over cycles; PR-1852 requires the stub and new roll on specified engaged spindles with the gate clear and cover safely latched.",
+        "verdict": "distinct",
+        "reason": "Both manipulate mechanisms, but their hardest abilities and terminal states are not equivalent."
+      },
+      {
+        "id": "pr-1970",
+        "objective": "Candidate adjusts and locks a gripper stop; PR-1970 loads four connector modules into a sprung hinged frame and clicks it shut.",
+        "physical_skill": "Candidate tests two-tool countertorque; PR-1970 tests repeated narrow-pitch placement, maintaining multiple loose modules on small support edges, and closing a sprung frame around them.",
+        "success_condition": "Candidate grades retained angle after actuation; PR-1970 grades module seating/lug engagement, frame click, absence of forced closure, and hand clearance.",
+        "verdict": "distinct",
+        "reason": "The connector task tests multi-part seating through enclosure closure, not preservation of an adjustable stop."
+      },
+      {
+        "id": "pr-2013",
+        "objective": "Candidate adjusts a gripper opening stop; PR-2013 squares a racked two-rail gantry against paired end stops.",
+        "physical_skill": "Both are robot-hardware tasks with bimanual force coordination, but the candidate counterholds concentric screw/nut tools while PR-2013 advances both beam ends together to avoid rail binding.",
+        "success_condition": "Candidate requires a locked target angle retained through three cycles; PR-2013 requires both carriage gaps at most 0.05 mm, rail seating, stillness, and release.",
+        "verdict": "distinct",
+        "reason": "PR-2013 tests synchronized linear squaring; it has no adjustable fastener, locking reaction, or functional retention cycle."
+      },
+      {
+        "id": "pr-2133",
+        "objective": "Candidate sets and locks gripper hardware; PR-2133 measures tyre tread depth with a friction-held pen gauge.",
+        "physical_skill": "Candidate requires coupled rotational tools and countertorque; PR-2133 requires placing a probe on a groove floor while seating a foot across ribs, then withdrawing without changing the reading.",
+        "success_condition": "Candidate grades retained angular adjustment after cycles; PR-2133 grades a reading within 1/32 inch after valid seating and return of the gauge to its rest.",
+        "verdict": "distinct",
+        "reason": "Both preserve a setting during withdrawal in a broad sense, but only the candidate tests locknut-induced disturbance and retained articulated motion."
+      },
+      {
+        "id": "pr-2198",
+        "objective": "Candidate configures a gripper opening stop; PR-2198 divides a dough log into four portions at marked locations.",
+        "physical_skill": "Candidate tests coaxial driver/wrench torque control; PR-2198 tests vertical scraper alignment, controlled chopping through compliant material, and avoiding drag or incomplete cuts.",
+        "success_condition": "Candidate requires a locked 90° opening retained over three cycles; PR-2198 requires three complete cuts at marks, four ordered pieces, no creases or loss, tools down, and hands clear.",
+        "verdict": "distinct",
+        "reason": "The cutting and portioning outcome is unrelated to adjustable-stop locking and cycle verification."
+      },
+      {
+        "id": "pr-2203",
+        "objective": "Both set a continuous robot mechanism parameter, secure it without losing the setting, and verify the released result.",
+        "physical_skill": "Both require bimanual counterholding during tightening; the candidate uses coaxial driver-and-jam-nut countertorque, while PR-2203 holds a sliding motor plate while tightening two separate bolts.",
+        "success_condition": "Both require the target setting to remain after release, secured hardware, stability, tool withdrawal, and clearance; PR-2203 measures belt deflection, while the candidate measures stop angle and repeated-cycle drift.",
+        "verdict": "overlap",
+        "reason": "The concrete mechanisms differ, but both primarily test preserving a continuous adjustment against fastening reaction and proving the setting after release; repeated jaw cycling adds evidence rather than a clearly separate core ability."
+      },
+      {
+        "id": "board-TK-6VR4MJ",
+        "objective": "Move a hot iron to the requested area and leave it heel-standing without soleplate contact, versus adjusting and locking a gripper stop.",
+        "physical_skill": "Safe grasping, transport, and reorientation of an iron differs from coaxial tool seating, jam-nut countertorque, and articulated verification.",
+        "success_condition": "The iron task requires placement in the right-hand zone, heel stability, and no hazardous contact; it does not require a retained mechanical adjustment.",
+        "verdict": "distinct",
+        "reason": "The task tests hazard-aware reorientation and placement, not setting and locking an adjustable mechanism."
+      },
+      {
+        "id": "pr-82",
+        "objective": "Unlock a reverse-turning lock and open its lid without breaking the key, versus setting and locking an opening stop.",
+        "physical_skill": "PR-82 stabilizes a loose box while turning a key in the safe direction; the candidate counterholds an adjustment screw while tightening its jam nut with a second tool.",
+        "success_condition": "PR-82 rewards clockwise key rotation and lid travel while penalizing shear, prying, or box motion; the candidate requires retained angle and repeated gripper cycles.",
+        "verdict": "distinct",
+        "reason": "Shared rotational manipulation and steadying are generic; reverse-direction discovery and damage avoidance are meaningfully different from adjustment-preserving locknut countertorque."
+      },
+      {
+        "id": "pr-601",
+        "objective": "Measure a pin diameter accurately with a digital caliper, versus set and lock a gripper opening stop.",
+        "physical_skill": "PR-601 requires square metrology contact and low-force jaw closure while holding a pin or caliper; the candidate requires two-tool screw/nut countertorque and cycle actuation.",
+        "success_condition": "PR-601 scores dimensional accuracy, angular alignment, gentle contact, and release/rest placement; it does not test a locked adjustable stop.",
+        "verdict": "distinct",
+        "reason": "Force-controlled measurement is a different tested ability from mechanically locking and functionally verifying an adjustment."
+      },
+      {
+        "id": "pr-716",
+        "objective": "Compress and fit a spring tension rod level between cupboard walls, versus adjust and lock a gripper stop.",
+        "physical_skill": "PR-716 requires bimanual compression, spatial alignment, and controlled release under spring force; the candidate requires coaxial driver/wrench manipulation and countertorque.",
+        "success_condition": "PR-716 requires both caps pressing the walls at the marked height while the rod supports itself; the candidate requires nut retention, target angle, and repeatable cycles.",
+        "verdict": "distinct",
+        "reason": "Both retain a released configuration, but the rod task tests spring-loaded placement rather than fastening an adjustable mechanism."
+      },
+      {
+        "id": "pr-893",
+        "objective": "Assemble and mesh three gears on assigned shafts, versus set and lock an angular-gripper stop.",
+        "physical_skill": "PR-893 requires shaft insertion and tooth-phase discovery by contact; the candidate requires screw adjustment, jam-nut counterholding, and tool regrasping.",
+        "success_condition": "PR-893 requires three seated, meshed, still gears with arms clear; the candidate requires angle accuracy, locking, low drift, and repeated articulated motion.",
+        "verdict": "distinct",
+        "reason": "Gear phasing and multi-part insertion are meaningfully different from adjustment retention under locknut torque."
+      },
+      {
+        "id": "pr-1467",
+        "objective": "Reorient and stow a brad nailer without pointing it at a coworker or touching the trigger, versus adjust a gripper stop.",
+        "physical_skill": "PR-1467 tests safety-constrained transport and regrasping; the candidate tests coupled two-tool fastening and countertorque.",
+        "success_condition": "PR-1467 requires safe orientation throughout and final placement in a case; the candidate requires locked angle retention and successful motion cycles.",
+        "verdict": "distinct",
+        "reason": "The nailer task's defining ability is continuous hazard-aware orientation control, absent from the candidate."
+      },
+      {
+        "id": "pr-1663",
+        "objective": "Open a folding-table leg, lock its brace ring, and withstand a side load, versus set and jam-lock a gripper stop.",
+        "physical_skill": "PR-1663 swings a linkage and slides a discrete ring over a knee; the candidate continuously adjusts a screw and counterholds it while tightening a concentric nut.",
+        "success_condition": "Both include hands-clear functional retention, but PR-1663 checks an open leg and brace under side load while the candidate checks retained opening angle across cycles.",
+        "verdict": "distinct",
+        "reason": "The shared lock-and-test pattern is generic; sliding a brace sleeve on an articulated linkage does not test preserving a screw setting against tightening reaction."
+      },
+      {
+        "id": "pr-1739",
+        "objective": "Extract a jammed printer card intact and resume printing, versus adjust and lock a gripper opening stop.",
+        "physical_skill": "PR-1739 requires symmetric two-hand pulling to avoid skew and tearing; the candidate requires rotational tool coordination and countertorque.",
+        "success_condition": "PR-1739 scores intact extraction, placement, and an OK-button action; the candidate scores locked angular accuracy and repeated cycles.",
+        "verdict": "distinct",
+        "reason": "Balanced deformable-media extraction is unrelated to coupled screw-and-nut adjustment."
+      },
+      {
+        "id": "pr-1880",
+        "objective": "Set a telescoping gauge to a bore diameter and leave it retained on a stand, versus set a gripper opening stop and lock it.",
+        "physical_skill": "PR-1880 uses bore contact, gauge rocking, plunger locking, extraction, and placement; the candidate uses coaxial driver/wrench seating and countertorque against jam-nut reaction.",
+        "success_condition": "Both retain a calibrated setting after release, but PR-1880 requires a span within 0.10 mm and stand placement, while the candidate requires nut seating and repeated gripper actuation with limited drift.",
+        "verdict": "distinct",
+        "reason": "Setting retention is shared, but contact metrology and withdrawing a telescoping gauge test a different physical ability from locking an adjustment screw under coupled torque."
+      },
+      {
+        "id": "pr-1886",
+        "objective": "Place a shackle around a towing lug and screw its pin fully home, versus adjust and lock a gripper stop.",
+        "physical_skill": "PR-1886 requires multi-hole alignment, pin insertion, thread starting, and repeated regrasping; the candidate requires preserving a continuous screw setting while tightening its jam nut.",
+        "success_condition": "PR-1886 requires the pin through all three holes, collar seated, and hand-tight; it does not require retention of a calibrated adjustment or functional cycling.",
+        "verdict": "distinct",
+        "reason": "Threading is shared only as a generic primitive; the shackle task tests aligned assembly rather than counterheld adjustment locking."
+      },
+      {
+        "id": "pr-1947",
+        "objective": "Seat and tighten a positive battery-terminal clamp while preserving cable-lug alignment, versus set and lock a gripper stop.",
+        "physical_skill": "PR-1947 holds/seats a clamp and operates one wrench; the candidate simultaneously seats a hex driver and open-end wrench on a coupled screw and jam nut to oppose tightening torque.",
+        "success_condition": "PR-1947 requires a seated, torqued clamp, aligned lug, safe wrench removal, and an unmoved battery; the candidate additionally requires a retained target angle over repeated actuation.",
+        "verdict": "distinct",
+        "reason": "Although both involve tightening without disturbing alignment, battery-clamp installation does not test locking a continuous adjustment through coaxial countertorque and subsequent motion cycles."
+      },
+      {
+        "id": "pr-1960",
+        "objective": "Transfer and quarter-turn-lock an air-line gladhand to the correct trailer connector, versus set and jam-lock a gripper stop.",
+        "physical_skill": "PR-1960 requires hose handling, face alignment, seal compression, and bayonet rotation; the candidate requires two-tool screw/nut countertorque.",
+        "success_condition": "PR-1960 requires the correct connector, small plate gap, lock-stop angle, pull retention, and release; the candidate requires angular-setting accuracy and cycle repeatability.",
+        "verdict": "distinct",
+        "reason": "Connector mating and bayonet locking are different from preserving an adjustable stop while tightening a jam nut."
+      },
+      {
+        "id": "pr-1985",
+        "objective": "Reconfigure tongue-and-groove pliers from groove one to groove five and leave them locked, versus set and lock a gripper opening stop.",
+        "physical_skill": "PR-1985 opens the handles to disengage a tongue, slides a rivet to a discrete groove, and recloses; the candidate performs continuous screw adjustment with two-tool countertorque.",
+        "success_condition": "PR-1985 requires groove-five seating, resistance to a 5 N push, flat rest, and clearance; the candidate requires target angle, seated nuts, low stop drift, and three cycles.",
+        "verdict": "distinct",
+        "reason": "Both alter and retain a mechanism setting, but discrete groove release-slide-reengage does not test counterholding a screw against locknut torque."
+      },
+      {
+        "id": "pr-2003",
+        "objective": "Align and press two boards together over three dowels, versus adjust and lock a gripper stop.",
+        "physical_skill": "PR-2003 requires bimanual multi-axis insertion and even pressing across three pins; the candidate requires rotational tool seating and countertorque.",
+        "success_condition": "PR-2003 scores insertion depth, seam gaps, flush edges, flatness, release, and stillness; the candidate scores retained angular calibration and cycles.",
+        "verdict": "distinct",
+        "reason": "Multi-dowel alignment and insertion are unrelated to adjustable-stop locking."
+      },
+      {
+        "id": "pr-2073",
+        "objective": "Hang and latch a telescoping server rail at the same rack U on front and rear posts, versus set and lock a gripper stop.",
+        "physical_skill": "PR-2073 requires long-part support, peg alignment, telescoping extension, and two-end latching; the candidate requires localized two-tool countertorque and articulated verification.",
+        "success_condition": "PR-2073 requires both ends latched at the marked U, levelness, release, and no fall; the candidate requires angle retention through repeated gripper cycles.",
+        "verdict": "distinct",
+        "reason": "Rack-rail installation tests distributed alignment and latching, not preservation of a threaded adjustment."
+      },
+      {
+        "id": "pr-1272",
+        "objective": "Water soil while holding a springy leaf aside and avoiding wet leaves, versus adjust and lock a gripper stop.",
+        "physical_skill": "PR-1272 requires simultaneous obstruction control and controlled pouring; the candidate requires coaxial fastener manipulation and countertorque.",
+        "success_condition": "PR-1272 scores delivered water, leaf contamination, restored leaf/jug positions, and arm clearance; the candidate scores mechanical setting and retained function.",
+        "verdict": "distinct",
+        "reason": "Bimanual coordination is generic; liquid delivery around an obstruction is a different tested ability."
+      },
+      {
+        "id": "pr-1441",
+        "objective": "Cut a cable tie from a bundle without damaging insulation, versus set and lock a gripper stop.",
+        "physical_skill": "PR-1441 stabilizes a rolling bundle while precisely positioning and closing flush cutters; the candidate counterholds a screw while tightening a jam nut.",
+        "success_condition": "PR-1441 requires complete tie removal, no cable nick, tool return, and bundle stability; the candidate requires retained angle and repeated cycles.",
+        "verdict": "distinct",
+        "reason": "Damage-avoiding cutting is meaningfully different from adjustment and locknut control."
+      },
+      {
+        "id": "pr-1673",
+        "objective": "Remove one interleaved tissue while leaving the next exposed and the box stable, versus adjust and lock a gripper stop.",
+        "physical_skill": "PR-1673 requires delicate deformable-sheet extraction and force management; the candidate requires rigid two-tool rotational manipulation.",
+        "success_condition": "PR-1673 scores one-sheet removal, tray placement, next-sheet presentation, box placement, and release; the candidate scores a locked angular setting.",
+        "verdict": "distinct",
+        "reason": "Selective deformable separation is unrelated to screw-and-jam-nut adjustment."
+      },
+      {
+        "id": "pr-1850",
+        "objective": "Make a deli slicer safe, release its carriage, and place the carriage on a cleaning tray, versus set and lock a gripper stop.",
+        "physical_skill": "PR-1850 requires ordered knob operations, carriage translation/lift, and avoidance of a blade zone; the candidate requires coupled tool countertorque.",
+        "success_condition": "PR-1850 requires zero gauge opening before motion, release-knob travel, safe removal, tray placement, and clearance; the candidate requires retained opening angle across cycles.",
+        "verdict": "distinct",
+        "reason": "Safety-conditioned disassembly and carriage handling test a different ability from locking an adjustment."
+      },
+      {
+        "id": "pr-1905",
+        "objective": "Hold a spring-backed valve cartridge fully home while inserting its retainer clip, versus set and jam-lock a gripper stop.",
+        "physical_skill": "PR-1905 uses one hand to oppose axial O-ring force while the other aligns and slides a U-clip; the candidate opposes rotational locknut reaction with a driver while tightening with a wrench.",
+        "success_condition": "PR-1905 requires flush cartridge seating, fully seated clip, and retention under a 20 N pull; the candidate requires angular accuracy, nut retention, and repeatable actuation.",
+        "verdict": "distinct",
+        "reason": "Both coordinate holding with locking, but axial part seating plus transverse clip insertion is a different tested mechanism and ability from countertorque-preserved screw adjustment."
+      },
+      {
+        "id": "pr-1949",
+        "objective": "Flex a 3D-printer build plate to release a printed part without kinking it, versus adjust and lock a gripper stop.",
+        "physical_skill": "PR-1949 requires symmetric controlled elastic bending and part capture; the candidate requires rigid tool seating, turning, and countertorque.",
+        "success_condition": "PR-1949 requires part release into a bin, plate restoration, curvature safety, stillness, and clearance; the candidate requires retained angle and functional cycles.",
+        "verdict": "distinct",
+        "reason": "Controlled elastic flexure and release are unrelated to threaded adjustment locking."
+      },
+      {
+        "id": "pr-2037",
+        "objective": "Fit a separate key and keyed pulley onto a freely rotating shaft, versus set and lock a gripper stop.",
+        "physical_skill": "PR-2037 counterholds a shaft while placing a key, phase-aligning a pulley keyway, and sliding the pulley home; the candidate counterholds an adjustment screw while tightening its concentric jam nut.",
+        "success_condition": "PR-2037 requires key seating, pulley insertion to the shoulder, release, and one-second stillness; the candidate requires nut locking and repeated retained-angle cycles.",
+        "verdict": "distinct",
+        "reason": "Counterholding is shared, but keyed multi-part alignment and insertion are meaningfully different from preserving a continuous setting under tightening torque; no task.json spec was available, but the PR body provides the full staged rubric."
+      },
+      {
+        "id": "pr-2051",
+        "objective": "Spin lettuce dry by cranking a salad spinner while keeping the bowl stable, versus adjust and lock a gripper stop.",
+        "physical_skill": "PR-2051 requires one-hand fixture stabilization and repeated cyclic cranking with the other; the candidate requires precise two-tool countertorque and subsequent lever actuation.",
+        "success_condition": "PR-2051 scores crank turns or sustained basket speed, lid/bowl stability, and release; the candidate scores a calibrated locked stop and low drift over cycles.",
+        "verdict": "distinct",
+        "reason": "Stabilized repetitive cranking does not test adjustment locking, despite both involving rotational actions."
+      },
+      {
+        "id": "pr-2186",
+        "objective": "Mount and align a dogbone specimen in two tensile-tester wedge grips at a specified gauge length, versus set and lock a gripper opening stop.",
+        "physical_skill": "PR-2186 requires two-ended specimen insertion, spring-lever operation, straightening, and crosshead jogging; the candidate requires coaxial screw/nut tool coordination and countertorque.",
+        "success_condition": "PR-2186 scores independent tab seating, lever closure, end clearances, 115 mm jaw spacing, alignment, clearance, and a three-second hold; the candidate requires retained stop angle and repeated gripper cycles.",
+        "verdict": "distinct",
+        "reason": "Precision specimen fixturing in two clamps tests distributed insertion and alignment, not preservation of a threaded adjustment against locknut reaction."
+      }
+    ],
+    "inactive_uncertainty": [],
+    "at": "2026-11-16T03:42:55.213537+00:00"
+  },
   "selection_history": {
     "rejected": [
       {
-        "candidate": "lm-rail-parallel-jig",
-        "reason": "required benchmark overlap/uncertainty; inspect explicit comparison"
+        "candidate": "drg80-opening-stop-lock",
+        "reason": "novelty overlap/uncertainty: 1 records; inspect novelty.json"
       }
     ],
     "skipped": [
       {
-        "candidate": "thread-plug-go-no-go-inspection",
+        "candidate": "drg80-in80-endpoint-calibration",
         "reason": "not build-ready",
         "missing_evidence": [
-          "Authoritative dimensions for a selected gauge and matching thread",
-          "Robot-assembly or data-center evidence establishing category relevance",
-          "Native validation of physical multi-turn engagement and withdrawal",
-          "Evidence that GO/NO-GO outcomes arise from contact rather than scripted state",
-          "Reachable full-score YAM trial with torque and damage controls"
+          "A defensible ability-level novelty distinction from PR 2229",
+          "Authoritative or independently measured IN 80 sensor and bracket geometry",
+          "Native evidence that the small setback and fastening are stable and observable with YAM"
         ]
       },
       {
-        "candidate": "bearing-clearance-feeler-gauge",
+        "candidate": "drg80-spring-piston-reassembly",
         "reason": "not build-ready",
         "missing_evidence": [
-          "Selected bearing model with authoritative geometry and clearance range",
-          "Robot-assembly source establishing category relevance",
-          "Full-scale YAM-reachable fixture geometry",
-          "Native proof that adjacent blade thicknesses yield stable contact outcomes",
-          "Justification that rigid blades preserve the real probing skill",
-          "Full-score trial with force, movement, loss, and damage controls"
+          "Authoritative piston, spring, locating-hole, and internal housing geometry for DRG 80",
+          "Spring count, preload, travel, and force data or defensible physical measurements",
+          "A safe full-scale fixture arrangement reachable by both YAM arms",
+          "Native validation of compression, retention, controlled release, and reset behavior"
         ]
       }
     ],
