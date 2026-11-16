@@ -1,19 +1,17 @@
 {
   "verdict": "pass",
   "findings": [
-    "The prior failure is resolved: the plan uses prospective language, identifies only the probe script as reviewed source, and clearly labels reports and traces as future execution outputs.",
-    "The two task-cwd-compatible invocations schedule bounded native runs at 240 Hz and 480 Hz and resolve their reports under workspace/measurements.",
-    "The script reads the actual RigidObject root_pose_w ProxyArray through its pinned torch accessor after scene updates, synchronizes CUDA reads, and records fresh 7D pose samples.",
-    "Qualification checks trace to measured simulator state: actual dt error, CUDA device backing, finite pose values, normalized XYZW quaternions, authored quaternion readback, downward gravity displacement, and sample count. None are constant success readings.",
-    "The probe is correctly scoped to API discovery and makes no unsupported aperture, retention, spill, YAM, 20 Hz control-loop, or full-task qualification claim."
+    "The planned scripts are valid bounded discovery probes, not aggregate qualification claims. They derive checks from fresh native pose, mass, inertia, timestep, and swept full-body clearance data at 240 Hz and 480 Hz.",
+    "Report paths correctly resolve from the executor’s workspace/task cwd to workspace/measurements. The source explicitly distinguishes timestep arithmetic from observed control sampling and labels transverse-media and washer-proxy results as non-qualification observations.",
+    "The prior failure was controller-side cancellation before native launch; no generated-source defect remains. Native results are appropriately deferred until after this source review."
   ],
   "evidence_paths": [
     "artifacts/component-source-plan.json",
-    "task/run_rigid_cuboid_api_probe.py",
+    "task/run_aperture_native_probe.py",
     "input/last-failure.json",
+    "artifacts/contract.json",
     "input/runtime-api-preflight.json",
-    "input/pinned-runtime-sources/589e4ddab2af8f7b1ea788aba5f0bc4f13fa1c5e199ee75589c4b7ec41914157-asset_base_cfg.py",
-    "input/pinned-runtime-sources/841ca674429d5bd405d212f93494c42ff32ae162e4add373474193adbec746f7-base_rigid_object_data.py",
-    "input/pinned-runtime-sources/6e03c85172da8712bdebc6e19c89cea7868afb02f9e96259c82a281cca4270b4-rigid_object_data.py"
+    "input/pinned-runtime-sources/03238610d9750b565ca5badbd31975a6888dfc393e6d3bca0dff1769551dfc64-meshes.py",
+    "input/pinned-runtime-sources/841ca674429d5bd405d212f93494c42ff32ae162e4add373474193adbec746f7-base_rigid_object_data.py"
   ]
 }

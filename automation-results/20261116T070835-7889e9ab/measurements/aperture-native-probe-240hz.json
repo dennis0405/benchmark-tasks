@@ -23,21 +23,21 @@
     },
     {
       "name": "native_effective_density_relative_error",
-      "measured": 0.06445695786301403,
+      "measured": 1.2366255577944685e-08,
       "operator": "<=",
       "threshold": 0.02,
       "unit": "ratio"
     },
     {
       "name": "native_mass_vs_geometry_density_relative_error",
-      "measured": 0.06445695786301411,
+      "measured": 1.2366255580842193e-08,
       "operator": "<=",
       "threshold": 0.02,
       "unit": "ratio"
     },
     {
       "name": "native_principal_inertia_vs_geometry_density_error_max",
-      "measured": 0.12328812364518879,
+      "measured": 1.0688879638052064e-07,
       "operator": "<=",
       "threshold": 0.02,
       "unit": "ratio"
@@ -50,8 +50,8 @@
       "unit": "fraction_component_threshold"
     },
     {
-      "name": "outside_patch_escape_fraction",
-      "measured": 0.0625,
+      "name": "outside_bounded_cell_escape_fraction",
+      "measured": 0.0,
       "operator": "==",
       "threshold": 0.0,
       "unit": "fraction_validity"
@@ -73,7 +73,7 @@
     "closed_mesh_volume_m3": 1.3928088187296442e-06,
     "authored_density_kg_per_m3": 2500.0,
     "geometry_density_reference_mass_kg": 0.0034820220468241105,
-    "native_realized_mass_kg": 0.0032575814984738827,
+    "native_realized_mass_kg": 0.003482022089883685,
     "contract_analytic_mass_reference_kg": 0.0035044969,
     "contract_reference_vs_geometry_density_relative_difference": 0.006413146827406097,
     "geometry_density_principal_inertia_kg_m2": [
@@ -82,16 +82,16 @@
       1.336196416152532e-07
     ],
     "native_principal_inertia_kg_m2": [
-      3.414170279825157e-08,
-      1.228098227556984e-07,
-      1.2333222798588395e-07
+      3.894290401262879e-08,
+      1.3332687842648738e-07,
+      1.3361965045532997e-07
     ],
     "transverse_no_certified_passage_observed_fraction": 1.0,
     "washer_od_proxy_no_certified_passage_observed_fraction": 1.0,
     "transverse_ever_fully_below_floor_fraction": 0.0,
     "washer_od_proxy_ever_fully_below_floor_fraction": 0.0,
     "transverse_final_full_collider_above_floor_fraction": 0.0,
-    "washer_od_proxy_final_full_collider_above_floor_fraction": 0.15
+    "washer_od_proxy_final_full_collider_above_floor_fraction": 0.125
   },
   "limitations": [
     "The frozen 22.225 mm maximum envelope, parallel 15-degree cuts, and 2500 kg/m^3 density imply a geometry-derived mass below the contract's 3.5044969 g analytic full-cylinder reference. This probe preserves geometry and density, exposes the discrepancy, and does not force the contract reference mass.",
@@ -100,6 +100,6 @@
     "The nominal 20 Hz ratio is timestep arithmetic; no action loop is measured here.",
     "Genuine passage uses a conservative continuous swept-cylinder bound for every physics interval overlapping the floor slab; uncertified/tunneling crossings are not counted.",
     "For transverse media and washer proxies, no_certified_passage_observed is only the complement of the positive passage certificate. It does not certify retention and may include rib penetration, tunneling, below-floor escape, or partial seating.",
-    "The trace separately records complete below-floor escape, finite-patch escape, rib-clearance evidence, and final full-collider-above-floor state; none is aggregated into a retention check in this bounded discovery."
+    "The trace separately records complete below-floor escape, escape beyond the bounded cell's outer wall faces, rib-clearance evidence, and final full-collider-above-floor state; none is aggregated into a retention check in this bounded discovery."
   ]
 }

@@ -1248,5 +1248,636 @@
       }
     ],
     "at": "2026-11-16T15:40:22.941663+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Repaired the bounded aperture/material discovery probe after reviewing the actual 240 Hz report and log. The probe now leaves density unauthored so explicit geometry-and-density-derived MassAPI mass, COM, and inertia can remain authoritative, and it measures physical escape beyond the bounded cell’s outer wall faces instead of misclassifying legitimate inner-wall contact as patch escape. The previous 6.45% mass error, 12.33% inertia error, and 5/80 patch-boundary observations remain unqualified prior evidence; fresh native 240/480 Hz execution is required. This does not qualify retention, segmented washers, agitation, spill scoring, YAM manipulation, or the complete environment.",
+      "scripts": [
+        {
+          "id": "aperture_native_probe_240hz",
+          "script": "task/run_aperture_native_probe.py",
+          "args": [
+            "--physics-hz",
+            "240",
+            "--report",
+            "../measurements/aperture-native-probe-240hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/aperture-native-probe-240hz.json"
+        },
+        {
+          "id": "aperture_native_probe_480hz",
+          "script": "task/run_aperture_native_probe.py",
+          "args": [
+            "--physics-hz",
+            "480",
+            "--report",
+            "../measurements/aperture-native-probe-480hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/aperture-native-probe-480hz.json"
+        }
+      ],
+      "files": [
+        "task/run_aperture_native_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The planned 240 Hz and 480 Hz invocations are task-cwd compatible and write workspace-relative reports under measurements/.",
+        "The probe is honestly limited to aperture-passage discovery and explicitly excludes washer retention, agitation, fracture, spill scoring, YAM manipulation, and full-environment qualification.",
+        "Passage is derived from fresh native rigid-body pose traces using a conservative swept-volume clearance certificate; it is not inferred from raster counts, final pose alone, or a constant success flag.",
+        "Mass and principal-inertia checks compare native realized values against the same watertight source mesh and declared density, while the analytic full-cylinder mass discrepancy remains disclosed rather than hidden.",
+        "The repaired bounded-cell validity check measures support beyond the walls' outer faces, avoiding the previous false classification of legitimate inner-wall contact.",
+        "The nominal 20 Hz ratio is clearly labeled timestep arithmetic rather than an action-loop measurement, so it does not overclaim control validation.",
+        "Fresh native results are correctly left to the executor; existing failed measurements are described only as prior evidence requiring replacement."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_aperture_native_probe.py",
+        "input/last-failure.json",
+        "artifacts/contract.json",
+        "input/runtime-api-preflight.json",
+        "input/pinned-runtime-sources/03238610d9750b565ca5badbd31975a6888dfc393e6d3bca0dff1769551dfc64-meshes.py",
+        "measurements/aperture-native-probe-240hz.json"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_aperture_native_probe.py",
+          "--physics-hz",
+          "240",
+          "--report",
+          "../measurements/aperture-native-probe-240hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/aperture_native_probe_240hz-cbb2c7992e.log",
+        "finished_at": "2026-11-16T15:49:10.727945+00:00",
+        "id": "aperture_native_probe_240hz",
+        "report": "measurements/aperture-native-probe-240hz.json",
+        "report_sha256": "92b7d913102f9d3bfa3d7dc61600e32e7040d8535b8b9509f56676ff6c62e29f",
+        "source_digest": "600a715d1e64ab2470d49cc90b44427bc9335f5d879ce811f3438aca82a21da9",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_rigid_cuboid_api_probe.cpython-312.pyc",
+          "__pycache__/run_aperture_native_probe.cpython-312.pyc"
+        ],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_error_max",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "nominal_20hz_interval_physics_step_ratio",
+              "measured": 12.0,
+              "operator": "==",
+              "threshold": 12.0,
+              "unit": "ratio_not_action_measurement"
+            },
+            {
+              "name": "closed_media_mesh_volume",
+              "measured": 1.3928088187296442e-06,
+              "operator": ">",
+              "threshold": 0.0,
+              "unit": "m3"
+            },
+            {
+              "name": "native_effective_density_relative_error",
+              "measured": 1.2366255577944685e-08,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "native_mass_vs_geometry_density_relative_error",
+              "measured": 1.2366255580842193e-08,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "native_principal_inertia_vs_geometry_density_error_max",
+              "measured": 1.0688879638052064e-07,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "end_first_genuine_passage_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction_component_threshold"
+            },
+            {
+              "name": "outside_bounded_cell_escape_fraction",
+              "measured": 0.0,
+              "operator": "==",
+              "threshold": 0.0,
+              "unit": "fraction_validity"
+            },
+            {
+              "name": "deterministic_trial_count",
+              "measured": 80,
+              "operator": "==",
+              "threshold": 80,
+              "unit": "trials"
+            }
+          ],
+          "artifacts": [
+            "measurements/aperture-native-probe-240hz-trace.json"
+          ],
+          "observations_not_checks": {
+            "frozen_axial_envelope_m": 0.022225,
+            "mesh_centerline_length_m": 0.01967278394209356,
+            "closed_mesh_volume_m3": 1.3928088187296442e-06,
+            "authored_density_kg_per_m3": 2500.0,
+            "geometry_density_reference_mass_kg": 0.0034820220468241105,
+            "native_realized_mass_kg": 0.003482022089883685,
+            "contract_analytic_mass_reference_kg": 0.0035044969,
+            "contract_reference_vs_geometry_density_relative_difference": 0.006413146827406097,
+            "geometry_density_principal_inertia_kg_m2": [
+              3.8942899850069095e-08,
+              1.3332688381073797e-07,
+              1.336196416152532e-07
+            ],
+            "native_principal_inertia_kg_m2": [
+              3.894290401262879e-08,
+              1.3332687842648738e-07,
+              1.3361965045532997e-07
+            ],
+            "transverse_no_certified_passage_observed_fraction": 1.0,
+            "washer_od_proxy_no_certified_passage_observed_fraction": 1.0,
+            "transverse_ever_fully_below_floor_fraction": 0.0,
+            "washer_od_proxy_ever_fully_below_floor_fraction": 0.0,
+            "transverse_final_full_collider_above_floor_fraction": 0.0,
+            "washer_od_proxy_final_full_collider_above_floor_fraction": 0.125
+          },
+          "limitations": [
+            "The frozen 22.225 mm maximum envelope, parallel 15-degree cuts, and 2500 kg/m^3 density imply a geometry-derived mass below the contract's 3.5044969 g analytic full-cylinder reference. This probe preserves geometry and density, exposes the discrepancy, and does not force the contract reference mass.",
+            "The media collider is the frozen 15-degree parallel-angle-cut geometry; its native realized mass and inertia are reported. Solid washer-OD cylinders are discovery observations only, not the frozen four-segment washer assemblies and not retention evidence.",
+            "This probe does not test agitation release, washer-bore lodging, breakable joints, the full screen, spill scorer, YAM actions, or grading.",
+            "The nominal 20 Hz ratio is timestep arithmetic; no action loop is measured here.",
+            "Genuine passage uses a conservative continuous swept-cylinder bound for every physics interval overlapping the floor slab; uncertified/tunneling crossings are not counted.",
+            "For transverse media and washer proxies, no_certified_passage_observed is only the complement of the positive passage certificate. It does not certify retention and may include rib penetration, tunneling, below-floor escape, or partial seating.",
+            "The trace separately records complete below-floor escape, escape beyond the bounded cell's outer wall faces, rib-clearance evidence, and final full-collider-above-floor state; none is aggregated into a retention check in this bounded discovery."
+          ]
+        }
+      },
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_aperture_native_probe.py",
+          "--physics-hz",
+          "480",
+          "--report",
+          "../measurements/aperture-native-probe-480hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/aperture_native_probe_480hz-d101e55199.log",
+        "finished_at": "2026-11-16T15:49:26.645892+00:00",
+        "id": "aperture_native_probe_480hz",
+        "report": "measurements/aperture-native-probe-480hz.json",
+        "report_sha256": "9694e290e931bc7f709b3aecc346a5bc68aa6943f1e7335bb1eba820600c7b07",
+        "source_digest": "600a715d1e64ab2470d49cc90b44427bc9335f5d879ce811f3438aca82a21da9",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_error_max",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "nominal_20hz_interval_physics_step_ratio",
+              "measured": 24.0,
+              "operator": "==",
+              "threshold": 24.0,
+              "unit": "ratio_not_action_measurement"
+            },
+            {
+              "name": "closed_media_mesh_volume",
+              "measured": 1.3928088187296442e-06,
+              "operator": ">",
+              "threshold": 0.0,
+              "unit": "m3"
+            },
+            {
+              "name": "native_effective_density_relative_error",
+              "measured": 1.2366255577944685e-08,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "native_mass_vs_geometry_density_relative_error",
+              "measured": 1.2366255580842193e-08,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "native_principal_inertia_vs_geometry_density_error_max",
+              "measured": 1.0688879638052064e-07,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "end_first_genuine_passage_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction_component_threshold"
+            },
+            {
+              "name": "outside_bounded_cell_escape_fraction",
+              "measured": 0.0,
+              "operator": "==",
+              "threshold": 0.0,
+              "unit": "fraction_validity"
+            },
+            {
+              "name": "deterministic_trial_count",
+              "measured": 80,
+              "operator": "==",
+              "threshold": 80,
+              "unit": "trials"
+            }
+          ],
+          "artifacts": [
+            "measurements/aperture-native-probe-480hz-trace.json"
+          ],
+          "observations_not_checks": {
+            "frozen_axial_envelope_m": 0.022225,
+            "mesh_centerline_length_m": 0.01967278394209356,
+            "closed_mesh_volume_m3": 1.3928088187296442e-06,
+            "authored_density_kg_per_m3": 2500.0,
+            "geometry_density_reference_mass_kg": 0.0034820220468241105,
+            "native_realized_mass_kg": 0.003482022089883685,
+            "contract_analytic_mass_reference_kg": 0.0035044969,
+            "contract_reference_vs_geometry_density_relative_difference": 0.006413146827406097,
+            "geometry_density_principal_inertia_kg_m2": [
+              3.8942899850069095e-08,
+              1.3332688381073797e-07,
+              1.336196416152532e-07
+            ],
+            "native_principal_inertia_kg_m2": [
+              3.894290401262879e-08,
+              1.3332687842648738e-07,
+              1.3361965045532997e-07
+            ],
+            "transverse_no_certified_passage_observed_fraction": 1.0,
+            "washer_od_proxy_no_certified_passage_observed_fraction": 1.0,
+            "transverse_ever_fully_below_floor_fraction": 0.0,
+            "washer_od_proxy_ever_fully_below_floor_fraction": 0.0,
+            "transverse_final_full_collider_above_floor_fraction": 0.0,
+            "washer_od_proxy_final_full_collider_above_floor_fraction": 0.125
+          },
+          "limitations": [
+            "The frozen 22.225 mm maximum envelope, parallel 15-degree cuts, and 2500 kg/m^3 density imply a geometry-derived mass below the contract's 3.5044969 g analytic full-cylinder reference. This probe preserves geometry and density, exposes the discrepancy, and does not force the contract reference mass.",
+            "The media collider is the frozen 15-degree parallel-angle-cut geometry; its native realized mass and inertia are reported. Solid washer-OD cylinders are discovery observations only, not the frozen four-segment washer assemblies and not retention evidence.",
+            "This probe does not test agitation release, washer-bore lodging, breakable joints, the full screen, spill scorer, YAM actions, or grading.",
+            "The nominal 20 Hz ratio is timestep arithmetic; no action loop is measured here.",
+            "Genuine passage uses a conservative continuous swept-cylinder bound for every physics interval overlapping the floor slab; uncertified/tunneling crossings are not counted.",
+            "For transverse media and washer proxies, no_certified_passage_observed is only the complement of the positive passage certificate. It does not certify retention and may include rib penetration, tunneling, below-floor escape, or partial seating.",
+            "The trace separately records complete below-floor escape, escape beyond the bounded cell's outer wall faces, rib-clearance evidence, and final full-collider-above-floor state; none is aggregated into a retention check in this bounded discovery."
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-16T15:49:26.763279+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Bounded native component discovery only. The repaired probe resolves the prior mass/inertia and finite-patch mechanisms at both 240 Hz and 480 Hz using geometry-derived MassAPI properties and bounded-cell escape measurement. Existing native reports contain nonempty measured checks, but this does not qualify transverse-media or segmented-washer retention, agitation, spill scoring, YAM manipulation, or the complete environment.",
+      "scripts": [
+        {
+          "id": "aperture_native_probe_240hz",
+          "script": "task/run_aperture_native_probe.py",
+          "args": [
+            "--physics-hz",
+            "240",
+            "--report",
+            "../measurements/aperture-native-probe-240hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/aperture-native-probe-240hz.json"
+        },
+        {
+          "id": "aperture_native_probe_480hz",
+          "script": "task/run_aperture_native_probe.py",
+          "args": [
+            "--physics-hz",
+            "480",
+            "--report",
+            "../measurements/aperture-native-probe-480hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/aperture-native-probe-480hz.json"
+        }
+      ],
+      "files": [
+        "task/run_aperture_native_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The planned 240 Hz and 480 Hz commands are compatible with the executor’s task-directory cwd and produce workspace-relative reports under measurements/.",
+        "The probe is correctly limited to bounded component discovery; it does not claim qualification of washer retention, agitation, fracture, spill scoring, YAM manipulation, or the complete environment.",
+        "End-first passage is computed from fresh native pose traces with full-collider support bounds and per-physics-interval swept-aperture clearance, rather than a constant flag, raster count, or final pose alone.",
+        "Native mass and principal inertia are read back and compared with values jointly derived from the same watertight mesh and declared density. The distinct analytic mass reference and collision-cooking limitation remain disclosed.",
+        "The finite diagnostic patch includes physical containment walls, while escape is measured against their outer faces. Absence of certified transverse/proxy passage is explicitly retained as an observation rather than misrepresented as retention qualification.",
+        "The nominal 20 Hz ratio is labeled timestep arithmetic and is not claimed as an observed action-loop measurement.",
+        "The prior failure was controller-side cancellation before native launch, not a generated-source defect. Fresh native measurements are appropriately deferred until after this review."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_aperture_native_probe.py",
+        "input/last-failure.json",
+        "artifacts/contract.json",
+        "input/runtime-api-preflight.json",
+        "input/pinned-runtime-sources/03238610d9750b565ca5badbd31975a6888dfc393e6d3bca0dff1769551dfc64-meshes.py",
+        "input/pinned-runtime-sources/841ca674429d5bd405d212f93494c42ff32ae162e4add373474193adbec746f7-base_rigid_object_data.py"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_aperture_native_probe.py",
+          "--physics-hz",
+          "240",
+          "--report",
+          "../measurements/aperture-native-probe-240hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/aperture_native_probe_240hz-5e22285941.log",
+        "finished_at": "2026-11-16T15:51:07.348941+00:00",
+        "id": "aperture_native_probe_240hz",
+        "report": "measurements/aperture-native-probe-240hz.json",
+        "report_sha256": "92b7d913102f9d3bfa3d7dc61600e32e7040d8535b8b9509f56676ff6c62e29f",
+        "source_digest": "600a715d1e64ab2470d49cc90b44427bc9335f5d879ce811f3438aca82a21da9",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_error_max",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "nominal_20hz_interval_physics_step_ratio",
+              "measured": 12.0,
+              "operator": "==",
+              "threshold": 12.0,
+              "unit": "ratio_not_action_measurement"
+            },
+            {
+              "name": "closed_media_mesh_volume",
+              "measured": 1.3928088187296442e-06,
+              "operator": ">",
+              "threshold": 0.0,
+              "unit": "m3"
+            },
+            {
+              "name": "native_effective_density_relative_error",
+              "measured": 1.2366255577944685e-08,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "native_mass_vs_geometry_density_relative_error",
+              "measured": 1.2366255580842193e-08,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "native_principal_inertia_vs_geometry_density_error_max",
+              "measured": 1.0688879638052064e-07,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "end_first_genuine_passage_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction_component_threshold"
+            },
+            {
+              "name": "outside_bounded_cell_escape_fraction",
+              "measured": 0.0,
+              "operator": "==",
+              "threshold": 0.0,
+              "unit": "fraction_validity"
+            },
+            {
+              "name": "deterministic_trial_count",
+              "measured": 80,
+              "operator": "==",
+              "threshold": 80,
+              "unit": "trials"
+            }
+          ],
+          "artifacts": [
+            "measurements/aperture-native-probe-240hz-trace.json"
+          ],
+          "observations_not_checks": {
+            "frozen_axial_envelope_m": 0.022225,
+            "mesh_centerline_length_m": 0.01967278394209356,
+            "closed_mesh_volume_m3": 1.3928088187296442e-06,
+            "authored_density_kg_per_m3": 2500.0,
+            "geometry_density_reference_mass_kg": 0.0034820220468241105,
+            "native_realized_mass_kg": 0.003482022089883685,
+            "contract_analytic_mass_reference_kg": 0.0035044969,
+            "contract_reference_vs_geometry_density_relative_difference": 0.006413146827406097,
+            "geometry_density_principal_inertia_kg_m2": [
+              3.8942899850069095e-08,
+              1.3332688381073797e-07,
+              1.336196416152532e-07
+            ],
+            "native_principal_inertia_kg_m2": [
+              3.894290401262879e-08,
+              1.3332687842648738e-07,
+              1.3361965045532997e-07
+            ],
+            "transverse_no_certified_passage_observed_fraction": 1.0,
+            "washer_od_proxy_no_certified_passage_observed_fraction": 1.0,
+            "transverse_ever_fully_below_floor_fraction": 0.0,
+            "washer_od_proxy_ever_fully_below_floor_fraction": 0.0,
+            "transverse_final_full_collider_above_floor_fraction": 0.0,
+            "washer_od_proxy_final_full_collider_above_floor_fraction": 0.125
+          },
+          "limitations": [
+            "The frozen 22.225 mm maximum envelope, parallel 15-degree cuts, and 2500 kg/m^3 density imply a geometry-derived mass below the contract's 3.5044969 g analytic full-cylinder reference. This probe preserves geometry and density, exposes the discrepancy, and does not force the contract reference mass.",
+            "The media collider is the frozen 15-degree parallel-angle-cut geometry; its native realized mass and inertia are reported. Solid washer-OD cylinders are discovery observations only, not the frozen four-segment washer assemblies and not retention evidence.",
+            "This probe does not test agitation release, washer-bore lodging, breakable joints, the full screen, spill scorer, YAM actions, or grading.",
+            "The nominal 20 Hz ratio is timestep arithmetic; no action loop is measured here.",
+            "Genuine passage uses a conservative continuous swept-cylinder bound for every physics interval overlapping the floor slab; uncertified/tunneling crossings are not counted.",
+            "For transverse media and washer proxies, no_certified_passage_observed is only the complement of the positive passage certificate. It does not certify retention and may include rib penetration, tunneling, below-floor escape, or partial seating.",
+            "The trace separately records complete below-floor escape, escape beyond the bounded cell's outer wall faces, rib-clearance evidence, and final full-collider-above-floor state; none is aggregated into a retention check in this bounded discovery."
+          ]
+        }
+      },
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_aperture_native_probe.py",
+          "--physics-hz",
+          "480",
+          "--report",
+          "../measurements/aperture-native-probe-480hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/aperture_native_probe_480hz-bd88976129.log",
+        "finished_at": "2026-11-16T15:51:23.012241+00:00",
+        "id": "aperture_native_probe_480hz",
+        "report": "measurements/aperture-native-probe-480hz.json",
+        "report_sha256": "9694e290e931bc7f709b3aecc346a5bc68aa6943f1e7335bb1eba820600c7b07",
+        "source_digest": "600a715d1e64ab2470d49cc90b44427bc9335f5d879ce811f3438aca82a21da9",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_error_max",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "nominal_20hz_interval_physics_step_ratio",
+              "measured": 24.0,
+              "operator": "==",
+              "threshold": 24.0,
+              "unit": "ratio_not_action_measurement"
+            },
+            {
+              "name": "closed_media_mesh_volume",
+              "measured": 1.3928088187296442e-06,
+              "operator": ">",
+              "threshold": 0.0,
+              "unit": "m3"
+            },
+            {
+              "name": "native_effective_density_relative_error",
+              "measured": 1.2366255577944685e-08,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "native_mass_vs_geometry_density_relative_error",
+              "measured": 1.2366255580842193e-08,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "native_principal_inertia_vs_geometry_density_error_max",
+              "measured": 1.0688879638052064e-07,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "end_first_genuine_passage_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction_component_threshold"
+            },
+            {
+              "name": "outside_bounded_cell_escape_fraction",
+              "measured": 0.0,
+              "operator": "==",
+              "threshold": 0.0,
+              "unit": "fraction_validity"
+            },
+            {
+              "name": "deterministic_trial_count",
+              "measured": 80,
+              "operator": "==",
+              "threshold": 80,
+              "unit": "trials"
+            }
+          ],
+          "artifacts": [
+            "measurements/aperture-native-probe-480hz-trace.json"
+          ],
+          "observations_not_checks": {
+            "frozen_axial_envelope_m": 0.022225,
+            "mesh_centerline_length_m": 0.01967278394209356,
+            "closed_mesh_volume_m3": 1.3928088187296442e-06,
+            "authored_density_kg_per_m3": 2500.0,
+            "geometry_density_reference_mass_kg": 0.0034820220468241105,
+            "native_realized_mass_kg": 0.003482022089883685,
+            "contract_analytic_mass_reference_kg": 0.0035044969,
+            "contract_reference_vs_geometry_density_relative_difference": 0.006413146827406097,
+            "geometry_density_principal_inertia_kg_m2": [
+              3.8942899850069095e-08,
+              1.3332688381073797e-07,
+              1.336196416152532e-07
+            ],
+            "native_principal_inertia_kg_m2": [
+              3.894290401262879e-08,
+              1.3332687842648738e-07,
+              1.3361965045532997e-07
+            ],
+            "transverse_no_certified_passage_observed_fraction": 1.0,
+            "washer_od_proxy_no_certified_passage_observed_fraction": 1.0,
+            "transverse_ever_fully_below_floor_fraction": 0.0,
+            "washer_od_proxy_ever_fully_below_floor_fraction": 0.0,
+            "transverse_final_full_collider_above_floor_fraction": 0.0,
+            "washer_od_proxy_final_full_collider_above_floor_fraction": 0.125
+          },
+          "limitations": [
+            "The frozen 22.225 mm maximum envelope, parallel 15-degree cuts, and 2500 kg/m^3 density imply a geometry-derived mass below the contract's 3.5044969 g analytic full-cylinder reference. This probe preserves geometry and density, exposes the discrepancy, and does not force the contract reference mass.",
+            "The media collider is the frozen 15-degree parallel-angle-cut geometry; its native realized mass and inertia are reported. Solid washer-OD cylinders are discovery observations only, not the frozen four-segment washer assemblies and not retention evidence.",
+            "This probe does not test agitation release, washer-bore lodging, breakable joints, the full screen, spill scorer, YAM actions, or grading.",
+            "The nominal 20 Hz ratio is timestep arithmetic; no action loop is measured here.",
+            "Genuine passage uses a conservative continuous swept-cylinder bound for every physics interval overlapping the floor slab; uncertified/tunneling crossings are not counted.",
+            "For transverse media and washer proxies, no_certified_passage_observed is only the complement of the positive passage certificate. It does not certify retention and may include rib penetration, tunneling, below-floor escape, or partial seating.",
+            "The trace separately records complete below-floor escape, escape beyond the bounded cell's outer wall faces, rib-clearance evidence, and final full-collider-above-floor state; none is aggregated into a retention check in this bounded discovery."
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-16T15:51:23.129725+00:00"
   }
 ]

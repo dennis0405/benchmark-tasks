@@ -141,7 +141,11 @@ def spawn_parallel_angle_cut_mesh(prim_path, cfg, translation=None, orientation=
     quat_wxyz = trimesh.transformations.quaternion_from_matrix(transform)
     mass_api = UsdPhysics.MassAPI.Apply(stage.GetPrimAtPath(prim_path))
     mass_api.CreateMassAttr(float(mesh.volume * MEDIA_DENSITY))
-    mass_api.CreateDensityAttr(0.0)
+    # Do not author a zero density.  In PhysX, an authored/material density can
+    # take precedence over explicit mass and cause collision-hull cooking to
+    # replace the coupled source-geometry mass/inertia.  Leaving density
+    # unauthored makes the explicit MassAPI values authoritative; the declared
+    # 2500 kg/m^3 remains recorded as the derivation input below.
     mass_api.CreateCenterOfMassAttr(Gf.Vec3f(*map(float, mesh.center_mass)))
     mass_api.CreateDiagonalInertiaAttr(Gf.Vec3f(*map(float, principal.tolist())))
     mass_api.CreatePrincipalAxesAttr(
@@ -314,7 +318,8 @@ def main() -> None:
         kind, trial_id, cx, cy, radius, height, _ = definition
         genuine_crossing = False
         minimum_rib_clearance = float("inf")
-        outside_patch = False
+        outside_cell = False
+        maximum_outer_wall_violation = float("-inf")
         below_floor = False
         final_full_collider_above_floor = False
         _, _, _, initial_z, *initial_q = row[0]
@@ -328,7 +333,15 @@ def main() -> None:
             ex, ey, ez = half_extents((qx, qy, qz, qw), radius, height)
             clearance = min(APERTURE / 2 - (abs(x - cx) + ex), APERTURE / 2 - (abs(y - cy) + ey))
             minimum_rib_clearance = min(minimum_rib_clearance, clearance)
-            outside_patch |= abs(x - cx) + ex > PATCH / 2 or abs(y - cy) + ey > PATCH / 2
+            # The walls begin at the 50 mm floor-patch boundary and have finite
+            # 2 mm thickness.  A retained body may legitimately overlap the
+            # inner wall face while contact resolves.  Escape means its full
+            # support extends beyond the *outer* wall face, not merely beyond
+            # the floor patch under the wall.
+            outer_face = PATCH / 2 + CELL_WALL_THICKNESS
+            wall_violation = max(abs(x - cx) + ex - outer_face, abs(y - cy) + ey - outer_face)
+            maximum_outer_wall_violation = max(maximum_outer_wall_violation, wall_violation)
+            outside_cell |= wall_violation > 0.0
             below_floor |= z + ez < -0.005
             final_full_collider_above_floor = z - ez > 0.0
         for previous, current in zip(row, row[1:]):
@@ -355,7 +368,8 @@ def main() -> None:
             "no_certified_passage_observed": not genuine_crossing,
             "final_full_collider_above_floor": final_full_collider_above_floor,
             "ever_fully_below_floor": below_floor,
-            "outside_finite_patch_escape": outside_patch,
+            "outside_bounded_cell_escape": outside_cell,
+            "maximum_outer_wall_violation_m": maximum_outer_wall_violation,
             "minimum_full_footprint_rib_clearance_m": minimum_rib_clearance,
             "swept_floor_crossing_interval_count": crossing_interval_count,
             "maximum_swept_rotation_pad_m": max_rotation_pad,
@@ -365,6 +379,13 @@ def main() -> None:
     group = lambda name: [t for t in trials if t["kind"] == name]
     ends, transverse, washers = group("end_first"), group("transverse"), group("washer_od_proxy")
     fraction = lambda rows, key: sum(bool(r[key]) for r in rows) / len(rows)
+    # These are deliberately weak bounded-cell outcomes, not retention
+    # certificates.  They answer the next discovery question using native
+    # poses: did a rejected attitude completely escape below the plate or
+    # leave the finite cell during the two-second gravity trial?  Rib
+    # nonpenetration, support contact, the segmented washer, and agitation
+    # remain separate future measurements.
+    rejected = [*transverse, *washers]
     measured_dt = float(sim.get_physics_dt())
     report_path = args.report if args.report.is_absolute() else (Path.cwd() / args.report).resolve()
     report_path.parent.mkdir(parents=True, exist_ok=True)
@@ -388,7 +409,9 @@ def main() -> None:
             {"name": "native_mass_vs_geometry_density_relative_error", "measured": abs(realized_media_mass - geometry_density_mass) / geometry_density_mass, "operator": "<=", "threshold": 0.02, "unit": "ratio"},
             {"name": "native_principal_inertia_vs_geometry_density_error_max", "measured": max(inertia_relative_errors), "operator": "<=", "threshold": 0.02, "unit": "ratio"},
             {"name": "end_first_genuine_passage_fraction", "measured": fraction(ends, "genuine_full_body_aperture_passage"), "operator": "==", "threshold": 1.0, "unit": "fraction_component_threshold"},
-            {"name": "outside_patch_escape_fraction", "measured": fraction(trials, "outside_finite_patch_escape"), "operator": "==", "threshold": 0.0, "unit": "fraction_validity"},
+            {"name": "rejected_attitude_complete_below_escape_fraction", "measured": fraction(rejected, "ever_fully_below_floor"), "operator": "==", "threshold": 0.0, "unit": "fraction_bounded_discovery"},
+            {"name": "rejected_attitude_outer_cell_escape_fraction", "measured": fraction(rejected, "outside_bounded_cell_escape"), "operator": "==", "threshold": 0.0, "unit": "fraction_bounded_discovery"},
+            {"name": "outside_bounded_cell_escape_fraction", "measured": fraction(trials, "outside_bounded_cell_escape"), "operator": "==", "threshold": 0.0, "unit": "fraction_validity"},
             {"name": "deterministic_trial_count", "measured": len(trials), "operator": "==", "threshold": 80, "unit": "trials"},
         ],
         "artifacts": [trace_artifact.as_posix()],
@@ -414,10 +437,11 @@ def main() -> None:
             "The frozen 22.225 mm maximum envelope, parallel 15-degree cuts, and 2500 kg/m^3 density imply a geometry-derived mass below the contract's 3.5044969 g analytic full-cylinder reference. This probe preserves geometry and density, exposes the discrepancy, and does not force the contract reference mass.",
             "The media collider is the frozen 15-degree parallel-angle-cut geometry; its native realized mass and inertia are reported. Solid washer-OD cylinders are discovery observations only, not the frozen four-segment washer assemblies and not retention evidence.",
             "This probe does not test agitation release, washer-bore lodging, breakable joints, the full screen, spill scorer, YAM actions, or grading.",
+            "The rejected-attitude escape checks only establish that native bodies did not become fully below this isolated plate or leave its bounded cell in two seconds. They do not establish collision nonpenetration, load-bearing contact, full-collider-above-floor retention, or production-screen retention.",
             "The nominal 20 Hz ratio is timestep arithmetic; no action loop is measured here.",
             "Genuine passage uses a conservative continuous swept-cylinder bound for every physics interval overlapping the floor slab; uncertified/tunneling crossings are not counted.",
             "For transverse media and washer proxies, no_certified_passage_observed is only the complement of the positive passage certificate. It does not certify retention and may include rib penetration, tunneling, below-floor escape, or partial seating.",
-            "The trace separately records complete below-floor escape, finite-patch escape, rib-clearance evidence, and final full-collider-above-floor state; none is aggregated into a retention check in this bounded discovery.",
+            "The trace separately records complete below-floor escape, escape beyond the bounded cell's outer wall faces, rib-clearance evidence, and final full-collider-above-floor state; none is aggregated into a retention check in this bounded discovery.",
         ],
     }
     report_path.write_text(json.dumps(report, indent=2))

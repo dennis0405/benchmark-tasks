@@ -1,39 +1,35 @@
 {
   "phase": "preflight",
-  "summary": "Bounded native RigidObject API discovery only. The source is syntax-valid and prospectively measures fresh CUDA-backed 7D poses, XYZW quaternion readback, simulator dt, and gravity displacement at 240 Hz and 480 Hz. It does not claim aperture, density-cooking, retention, spill, YAM, 20 Hz loop, or full physics qualification. Measurement reports and traces are future host-execution outputs, not reviewed source evidence.",
+  "summary": "The cancelled diagnostic is replaced by a syntax-verified native probe. Fresh 240/480 Hz runs measure geometry-coupled mass/inertia, certified end-first aperture passage, and whether transverse media plus solid washer-OD proxies completely escape below the isolated plate or outside its bounded cell. The new escape checks are deliberately limited: they do not certify support contact, collision nonpenetration, segmented-washer retention, agitation, the full screen, scoring, or YAM manipulation.",
   "scripts": [
     {
-      "id": "rigid_cuboid_api_probe_240hz",
-      "script": "task/run_rigid_cuboid_api_probe.py",
+      "id": "aperture_retention_discovery_240hz",
+      "script": "task/run_aperture_native_probe.py",
       "args": [
         "--physics-hz",
         "240",
-        "--steps",
-        "24",
         "--report",
-        "../measurements/rigid-cuboid-api-240hz.json",
+        "../measurements/aperture-native-probe-240hz.json",
         "--device",
         "cuda:0"
       ],
-      "report": "measurements/rigid-cuboid-api-240hz.json"
+      "report": "measurements/aperture-native-probe-240hz.json"
     },
     {
-      "id": "rigid_cuboid_api_probe_480hz",
-      "script": "task/run_rigid_cuboid_api_probe.py",
+      "id": "aperture_retention_discovery_480hz",
+      "script": "task/run_aperture_native_probe.py",
       "args": [
         "--physics-hz",
         "480",
-        "--steps",
-        "24",
         "--report",
-        "../measurements/rigid-cuboid-api-480hz.json",
+        "../measurements/aperture-native-probe-480hz.json",
         "--device",
         "cuda:0"
       ],
-      "report": "measurements/rigid-cuboid-api-480hz.json"
+      "report": "measurements/aperture-native-probe-480hz.json"
     }
   ],
   "files": [
-    "task/run_rigid_cuboid_api_probe.py"
+    "task/run_aperture_native_probe.py"
   ]
 }
