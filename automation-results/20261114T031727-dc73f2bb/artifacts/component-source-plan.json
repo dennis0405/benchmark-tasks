@@ -1,17 +1,14 @@
 {
   "phase": "preflight",
-  "summary": "Latest host log showed the three rack-and-pinion/gear constraints are incompatible with direct-GPU PhysX and produced no fresh report. Repaired the bounded probe to deactivate exactly those unsupported composed constraints, measure the remaining native fixture joints under reversible physical torque, verify isolation and settling, invalidate stale outputs, and emit a fresh failure-linked report on Python exceptions. Static compilation passed; trusted GPU execution is still required and no qualification is claimed.",
+  "summary": "Repaired the bounded native GPU constraint-isolation probe. It now requires at least 5 degrees of opposite lever motion and measures piston/jaw isolation across both torque phases against one settled baseline, preventing cumulative drift from being hidden. This probe does not qualify the production mechanism.",
   "scripts": [
     {
-      "id": "drg80-gpu-constraint-isolation-preflight",
+      "id": "drg80_gpu_constraint_isolation",
       "script": "task/run_component_preflight.py",
       "args": [
+        "--headless",
         "--device",
-        "cuda:0",
-        "--output",
-        "../measurements/component-preflight.json",
-        "--trace",
-        "../measurements/component-preflight-trace.json"
+        "cuda:0"
       ],
       "report": "measurements/component-preflight.json"
     }

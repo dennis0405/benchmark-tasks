@@ -20,7 +20,7 @@ Status: **blocked**
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 
 
-failed check native_probe_completed: 0.0 == 1.0
+component-code-reviewer: The two prior probe defects are repaired: reversal now requires at least 5 degrees of opposite motion, and piston/jaw isolation is measured across both driven phases against the settled baseline.; The planned invocation cannot start: artifacts/component-source-plan.json passes `--headless`, but the pinned AppLauncher parser does not define that option. Replace it with the supported `--visualizer none` or configure headless mode through a verified constructor setting.; The report paths are unresolved and working-directory-dependent. The plan expects `measurements/component-preflight.json`, while the script defaults to `../measurements/component-preflight.json`; provide explicit plan arguments or resolve defaults relative to the script/workspace so the fresh report and trace land at their declared paths.; This remains an honest bounded constraint-isolation probe. Deactivating all three transmission couplers cannot qualify the production mechanism or any frozen torque-transfer, locking, preload, retention, scoring, or full-environment criteria.
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`

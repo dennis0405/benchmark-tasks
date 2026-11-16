@@ -20,6 +20,8 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import sys
+import traceback
 import uuid
 
 from isaaclab.app import AppLauncher
@@ -232,7 +234,12 @@ def main() -> None:
         wrap_weak_ref=False,
     )
 
-    zero_torque = wp.zeros((1, 3), dtype=wp.float32, device=args_cli.device)
+    # The pinned tensor frontend documents optional force/position buffers, but
+    # indices are not optional: as_contiguous_uint32(None) dereferences
+    # ``None.dtype`` before reaching PhysX.  Select the probe's sole lever body
+    # explicitly.  This also makes the target immutable if the view API later
+    # changes its handling of an omitted selection.
+    lever_indices = wp.array([0], dtype=wp.uint32, device=args_cli.device)
 
     def drive_phase(name: str, steps: int, lever_torque_y_nm: float) -> None:
         torque = torch.tensor([[0.0, lever_torque_y_nm, 0.0]], dtype=torch.float32, device=args_cli.device)
@@ -241,10 +248,10 @@ def main() -> None:
             driven_step["index"] += 1
             driven_step["phase"] = name
             views["lever"].apply_forces_and_torques_at_position(
-                force_data=zero_torque,
+                force_data=None,
                 torque_data=torque_wp,
                 position_data=None,
-                indices=None,
+                indices=lever_indices,
                 is_global=True,
             )
             sim.step(render=False)
@@ -311,17 +318,35 @@ def main() -> None:
     left_reversal_deg = signed_angle(positive, negative, "left_jaw")
     right_reversal_deg = signed_angle(positive, negative, "right_jaw")
 
+    # Use every fresh post-physics sample in each driven phase.  Endpoints alone
+    # can miss a transient excursion that returns before the phase completes.
+    # Isolation is measured against the single settled baseline across both
+    # driven phases.  Resetting the reference at torque reversal could hide
+    # cumulative same-direction drift split across the positive and negative
+    # phases.  Phase-relative endpoint values above remain useful diagnostics,
+    # but they are not used to pass the isolation claim.
+    positive_samples = [sample for sample in samples if sample["phase"] == "positive_lever_torque"]
+    negative_samples = [sample for sample in samples if sample["phase"] == "negative_lever_torque"]
+    if len(positive_samples) != 240 or len(negative_samples) != 480:
+        raise RuntimeError(
+            "driven-phase post-step sample count mismatch: "
+            f"positive={len(positive_samples)}, negative={len(negative_samples)}"
+        )
+    driven_samples = (*positive_samples, *negative_samples)
+
     lever_reversal_product = lever_positive_deg * lever_reversal_deg
-    uncoupled_piston_motion_mm = max(abs(piston_positive_mm), abs(piston_reversal_mm))
+    uncoupled_piston_motion_mm = max(
+        abs(signed_piston_mm(baseline, sample))
+        for sample in driven_samples
+    )
     uncoupled_jaw_motion_deg = max(
-        abs(left_positive_deg),
-        abs(right_positive_deg),
-        abs(left_reversal_deg),
-        abs(right_reversal_deg),
+        abs(signed_angle(baseline, sample, name))
+        for sample in driven_samples
+        for name in ("left_jaw", "right_jaw")
     )
     jaw_anchor_translation_mm = max(
         1000.0 * float(torch.linalg.vector_norm(position(sample, name) - position(baseline, name)).item())
-        for sample in (positive, negative, final)
+        for sample in driven_samples
         for name in ("left_jaw", "right_jaw")
     )
     finite_values = []
@@ -361,6 +386,7 @@ def main() -> None:
         _check("untouched_dynamic_linear_speed_max", settle_linear_speed, "<=", 0.02, "m/s"),
         _check("untouched_dynamic_angular_speed_max", settle_angular_speed, "<=", 0.10, "rad/s"),
         _check("lever_signed_rotation_magnitude_under_native_torque", abs(lever_positive_deg), ">=", 5.0, "degree"),
+        _check("lever_reversal_rotation_magnitude_under_native_torque", abs(lever_reversal_deg), ">=", 5.0, "degree"),
         _check("lever_reversal_direction_product", lever_reversal_product, "<", 0.0, "degree^2"),
         _check("uncoupled_piston_motion_max", uncoupled_piston_motion_mm, "<=", 0.10, "mm"),
         _check("uncoupled_jaw_rotation_max", uncoupled_jaw_motion_deg, "<=", 0.10, "degree"),
@@ -414,6 +440,10 @@ if __name__ == "__main__":
     except Exception as exc:
         # A native Python-side failure still produces a fresh, trial-linked
         # diagnostic rather than leaving a stale report from an earlier run.
+        # Capture the complete traceback while the exception is active and
+        # before SimulationApp shutdown can replace or obscure its context.
+        error_traceback = traceback.format_exc()
+        print(error_traceback, file=sys.stderr, flush=True)
         failure_report = {
             "native_trial_id": TRIAL_ID,
             "started_at_utc": STARTED_AT,
@@ -424,6 +454,7 @@ if __name__ == "__main__":
             "artifacts": [],
             "overall_pass": False,
             "error": f"{type(exc).__name__}: {exc}",
+            "traceback": error_traceback,
         }
         _write_json(Path(args_cli.output).resolve(), failure_report)
         raise
