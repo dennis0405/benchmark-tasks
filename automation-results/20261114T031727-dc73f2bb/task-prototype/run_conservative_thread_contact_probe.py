@@ -716,7 +716,17 @@ def main() -> None:
         check("native_dof_count", articulation.max_dofs, "==", 2, "dofs"),
         check("pre_physics_callback_count", callback_state["count"], "==", total_steps, "callbacks"),
         check("pre_physics_callback_dt_value_count", len(callback_state["dt_values"]), "==", 1, "distinct values"),
-        check("pre_physics_callback_dt", next(iter(callback_state["dt_values"])), "==", DT, "s"),
+        # PhysX delivers callback dt through a float32 ABI.  Compare the measured
+        # callback value to the configured double-precision timestep by an
+        # explicit absolute representation-error bound; exact binary equality
+        # incorrectly rejects 1/240 returned as float32 (2.17e-10 s error).
+        check(
+            "pre_physics_callback_dt_absolute_error",
+            abs(next(iter(callback_state["dt_values"])) - DT),
+            "<=",
+            1.0e-9,
+            "s",
+        ),
         check("native_applied_axial_law_effort_error_max", native_axial_effort_error, "<=", 5.0e-4, "N"),
         check("native_applied_rotor_law_effort_error_max", native_rotor_effort_error, "<=", 5.0e-6, "N*m"),
         check("filtered_contact_sensor_count", contact_view.sensor_count, "==", 1, "bodies"),

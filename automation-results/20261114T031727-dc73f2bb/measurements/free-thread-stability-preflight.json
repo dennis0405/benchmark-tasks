@@ -1,0 +1,164 @@
+{
+  "actual_physics_dt_s": 0.004166666666666667,
+  "artifacts": [
+    "measurements/free-thread-stability-preflight-trace.json"
+  ],
+  "checks": [
+    {
+      "measured": 1.0,
+      "name": "native_articulation_count",
+      "operator": "==",
+      "passed": true,
+      "threshold": 1,
+      "unit": "articulations"
+    },
+    {
+      "measured": 2.0,
+      "name": "native_dof_count",
+      "operator": "==",
+      "passed": true,
+      "threshold": 2,
+      "unit": "dofs"
+    },
+    {
+      "measured": 0.0,
+      "name": "actual_physics_dt_absolute_error",
+      "operator": "<=",
+      "passed": true,
+      "threshold": 1e-09,
+      "unit": "s"
+    },
+    {
+      "measured": 492.0,
+      "name": "pre_physics_callback_count",
+      "operator": "==",
+      "passed": true,
+      "threshold": 492,
+      "unit": "callbacks"
+    },
+    {
+      "measured": 1.0,
+      "name": "pre_physics_callback_dt_value_count",
+      "operator": "==",
+      "passed": true,
+      "threshold": 1,
+      "unit": "distinct values"
+    },
+    {
+      "measured": 2.1730860080143577e-10,
+      "name": "pre_physics_callback_dt_absolute_error",
+      "operator": "<=",
+      "passed": true,
+      "threshold": 1e-09,
+      "unit": "s"
+    },
+    {
+      "measured": 492.0,
+      "name": "fresh_native_sample_count",
+      "operator": "==",
+      "passed": true,
+      "threshold": 492,
+      "unit": "physics steps"
+    },
+    {
+      "measured": 1.0,
+      "name": "native_state_finite_fraction",
+      "operator": "==",
+      "passed": true,
+      "threshold": 1.0,
+      "unit": "fraction"
+    },
+    {
+      "measured": 0.0,
+      "name": "generalized_mass_matrix_symmetry_error_max",
+      "operator": "<=",
+      "passed": true,
+      "threshold": 1e-07,
+      "unit": "mixed SI generalized inertia"
+    },
+    {
+      "measured": 9.999988606068655e-07,
+      "name": "generalized_mass_matrix_eigenvalue_min",
+      "operator": ">",
+      "passed": true,
+      "threshold": 0.0,
+      "unit": "mixed SI generalized inertia"
+    },
+    {
+      "measured": -8.031714707612981e-05,
+      "name": "axial_joint_limit_clearance_min",
+      "operator": ">=",
+      "passed": false,
+      "threshold": 0.0005,
+      "unit": "m"
+    },
+    {
+      "measured": 17.157776610035484,
+      "name": "rotation_joint_limit_clearance_min",
+      "operator": ">=",
+      "passed": true,
+      "threshold": 1.0,
+      "unit": "rad"
+    },
+    {
+      "measured": 0.0004870295524597168,
+      "name": "native_applied_axial_law_effort_error_max",
+      "operator": "<=",
+      "passed": true,
+      "threshold": 0.0005,
+      "unit": "N"
+    },
+    {
+      "measured": 5.945492875802927e-08,
+      "name": "native_applied_rotor_law_effort_error_max",
+      "operator": "<=",
+      "passed": true,
+      "threshold": 5e-06,
+      "unit": "N*m"
+    },
+    {
+      "measured": 0.006303720393977422,
+      "name": "pre_release_hold_extension_magnitude_min",
+      "operator": ">=",
+      "passed": true,
+      "threshold": 1e-07,
+      "unit": "m"
+    },
+    {
+      "measured": 43.8420991960584,
+      "name": "pre_release_hold_mechanical_energy_min",
+      "operator": ">",
+      "passed": true,
+      "threshold": 0.0,
+      "unit": "J"
+    },
+    {
+      "measured": 0.9969474634702581,
+      "name": "released_peak_extension_ratio_max",
+      "operator": "<=",
+      "passed": true,
+      "threshold": 2.0,
+      "unit": "ratio"
+    },
+    {
+      "measured": 1.0007658096917276,
+      "name": "released_peak_mechanical_energy_ratio_max",
+      "operator": "<=",
+      "passed": true,
+      "threshold": 1.05,
+      "unit": "ratio"
+    },
+    {
+      "measured": 0.9882941397048186,
+      "name": "released_final_extension_ratio_max",
+      "operator": "<=",
+      "passed": false,
+      "threshold": 0.1,
+      "unit": "ratio"
+    }
+  ],
+  "native_trial_id": "3e65c071-a56e-4048-af02-d144ec86608c",
+  "overall_pass": false,
+  "qualification": false,
+  "source_sha256": "cc8018dc7310fff8b412762f47cdff00cd5026a1c978a5687a5ed5a486253363"
+}

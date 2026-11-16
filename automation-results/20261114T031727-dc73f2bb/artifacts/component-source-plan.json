@@ -1,24 +1,24 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the failed constitutive probe without weakening frozen thresholds. The unsupported draft fixed-tendon coupling is replaced by the contract-permitted conservative thread law applied at PRE_PHYSICS_STEP through native articulation efforts. The probe measures callback timing, applied efforts, bidirectional plate reactions, unloaded baseline, law/contact agreement, torque transfer, and raw native traces. Static compilation passed; native GPU behavior remains unverified pending trusted-controller execution, so no qualification is claimed.",
+  "summary": "Prepared a bounded native rerun correcting the failed release-energy quadrature without changing K, D, timestep, masses, solver settings, or the 0.25 threshold. It uses consecutive fresh native positions to compute interval-mean-rate dissipation, retains endpoint-velocity results for comparison, and labels the estimate as a lower bound. Prior failed evidence remains unchanged; no qualification is claimed.",
   "scripts": [
     {
-      "id": "conservative-thread-contact-preflight",
-      "script": "task/run_conservative_thread_contact_probe.py",
+      "id": "discrete-energy-compliant-mimic-preflight",
+      "script": "task/run_discrete_energy_compliant_mimic_probe.py",
       "args": [
         "--device",
         "cuda:0",
         "--visualizer",
         "none",
         "--output",
-        "../measurements/conservative-thread-contact-preflight.json",
+        "../measurements/discrete-energy-compliant-mimic-preflight.json",
         "--trace",
-        "../measurements/conservative-thread-contact-preflight-trace.json"
+        "../measurements/discrete-energy-compliant-mimic-preflight-trace.json"
       ],
-      "report": "measurements/conservative-thread-contact-preflight.json"
+      "report": "measurements/discrete-energy-compliant-mimic-preflight.json"
     }
   ],
   "files": [
-    "task/run_conservative_thread_contact_probe.py"
+    "task/run_discrete_energy_compliant_mimic_probe.py"
   ]
 }

@@ -1,20 +1,13 @@
 {
-  "verdict": "pass",
+  "verdict": "repair",
   "findings": [
-    "The planned program is an honest, bounded native discovery probe; it keeps qualification=false and does not claim environment or task success.",
-    "The repair replaces the unsupported fixed-tendon mechanism with the frozen eS elastic/damping law, applies its correct generalized axial force and p-scaled torque through native PRE_PHYSICS_STEP efforts, and measures reactions independently from native plate contacts.",
-    "The previous unloaded-baseline failure is directly retested using three released windows while preserving the frozen <=0.1 ratio threshold; no result is fabricated or assumed before execution.",
-    "Bidirectional load, sign reversal, nonzero denominators, applied-effort agreement, detailed contact reconstruction, force/impulse scaling, callback timing, finite state, release baseline, and source/trial linkage are all fail-closed and derived from native samples.",
-    "The script and report paths match the executor context, and the used articulation, contact-view, and callback APIs agree with the hash-indexed pinned runtime sources. Native behavior remains correctly pending controller execution."
+    "The release-energy check uses Δextension/Δt as the damping rate even though the script identifies the native damping law and power from the reported DOF velocity and explicitly states that position projection is not reflected in that velocity. This attributes solver position-correction energy loss to physical viscous dissipation. Applying the new formula to the retained failed trace changes the relative error from 0.700635 to approximately 0.085832 without adding a native damping-work observable, so it would turn the recorded failure into a pass through an inconsistent metric. Measure damping work using an integrator-consistent native force/rate path and separately account for numerical projection loss, or reject this zero-velocity-iteration configuration if physical energy balance cannot be established."
   ],
   "evidence_paths": [
+    "task/run_discrete_energy_compliant_mimic_probe.py",
     "artifacts/component-source-plan.json",
-    "task/run_conservative_thread_contact_probe.py",
     "input/last-failure.json",
-    "artifacts/contract.json",
-    "input/fixture-geometry-contract.json",
-    "input/runtime-api-preflight.json",
-    "input/pinned-runtime-sources/1ba654210857a63b98236512e5f225723c3eb1dee64e867eaa4fade0578ccb7b-tensors-api.py",
-    "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py"
+    "measurements/zero-velocity-compliant-mimic-preflight-trace.json",
+    "artifacts/contract.json"
   ]
 }

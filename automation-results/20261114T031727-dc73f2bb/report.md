@@ -20,7 +20,7 @@ Status: **blocked**
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 
 
-failed check pre_physics_callback_dt: 0.004166666883975267 == 0.004166666666666667
+component-code-reviewer: The release-energy check uses Δextension/Δt as the damping rate even though the script identifies the native damping law and power from the reported DOF velocity and explicitly states that position projection is not reflected in that velocity. This attributes solver position-correction energy loss to physical viscous dissipation. Applying the new formula to the retained failed trace changes the relative error from 0.700635 to approximately 0.085832 without adding a native damping-work observable, so it would turn the recorded failure into a pass through an inconsistent metric. Measure damping work using an integrator-consistent native force/rate path and separately account for numerical projection loss, or reject this zero-velocity-iteration configuration if physical energy balance cannot be established.
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`

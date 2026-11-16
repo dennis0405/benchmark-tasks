@@ -187,5 +187,561 @@
       }
     ],
     "at": "2026-11-16T13:26:38.997465+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Repaired the sole failed native check without changing any physical threshold. PhysX reports the PRE_PHYSICS_STEP timestep through a float32 callback ABI, producing a measured 2.173086e-10 s representation error from 1/240 s. The probe now checks that measured absolute error against a 1e-9 s bound while retaining the exact configured-timestep, callback-count, freshness, contact, reaction, torque-transfer, and unloaded-baseline checks. Static parsing passed. Trusted-controller rerun is still required; no qualification is claimed.",
+      "scripts": [
+        {
+          "id": "conservative-thread-contact-preflight",
+          "script": "task/run_conservative_thread_contact_probe.py",
+          "args": [
+            "--device",
+            "cuda:0",
+            "--visualizer",
+            "none",
+            "--output",
+            "../measurements/conservative-thread-contact-preflight.json",
+            "--trace",
+            "../measurements/conservative-thread-contact-preflight-trace.json"
+          ],
+          "report": "measurements/conservative-thread-contact-preflight.json"
+        }
+      ],
+      "files": [
+        "task/run_conservative_thread_contact_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The planned program is an honest bounded native discovery probe: it reports qualification=false and makes no environment, fixture, preload, friction, YAM-demo, or task-success claim.",
+        "The callback timestep repair directly addresses input/last-failure.json by checking the measured float32 callback representation against a 1e-9 s absolute-error bound while separately retaining exact configured physics-dt validation.",
+        "The probe derives the frozen screw-frame constitutive load from fresh native axial and rotational DOF states, applies the correct generalized axial force and p-scaled torque through the native articulation effort API, and measures the resulting reaction independently through native plate contacts.",
+        "Bidirectional loading, released baselines, sign reversal, nonzero ratio denominators, applied-effort agreement, detailed contact reconstruction, force-to-impulse scaling, callback count and timing, finite states, and source/trial linkage are fail-closed and based on actual planned native samples.",
+        "The script and report paths match the executor working-directory contract, the source parses successfully, and the callback, articulation, and contact-view APIs used are supported by the hash-indexed pinned runtime sources. Actual native behavior appropriately remains pending execution."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_conservative_thread_contact_probe.py",
+        "input/last-failure.json",
+        "artifacts/contract.json",
+        "input/fixture-geometry-contract.json",
+        "input/runtime-api-preflight.json",
+        "input/pinned-runtime-sources/1ba654210857a63b98236512e5f225723c3eb1dee64e867eaa4fade0578ccb7b-tensors-api.py",
+        "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb/workspace/task/run_conservative_thread_contact_probe.py",
+          "--device",
+          "cuda:0",
+          "--visualizer",
+          "none",
+          "--output",
+          "../measurements/conservative-thread-contact-preflight.json",
+          "--trace",
+          "../measurements/conservative-thread-contact-preflight-trace.json"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb/logs/conservative-thread-contact-preflight-04bfe1b8f3.log",
+        "finished_at": "2026-11-16T15:15:28.204143+00:00",
+        "id": "conservative-thread-contact-preflight",
+        "report": "measurements/conservative-thread-contact-preflight.json",
+        "report_sha256": "4aed4a75f5249de34bbcc5addc7beb4177641819642b7400545e516cb1897311",
+        "source_digest": "6181432d54895ed3094f8f62b888b2deb8b4fc39f33f776d6da203ef02d35b66",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "artifacts": [
+            "measurements/conservative-thread-contact-preflight-trace.json"
+          ],
+          "checks": [
+            {
+              "measured": 31.368176259797515,
+              "name": "positive_frozen_law_force_magnitude_min",
+              "operator": ">",
+              "passed": true,
+              "threshold": 1e-12,
+              "unit": "N"
+            },
+            {
+              "measured": 31.343378042391084,
+              "name": "negative_frozen_law_force_magnitude_min",
+              "operator": ">",
+              "passed": true,
+              "threshold": 1e-12,
+              "unit": "N"
+            },
+            {
+              "measured": 0.005,
+              "name": "positive_applied_rotor_effort_magnitude",
+              "operator": ">",
+              "passed": true,
+              "threshold": 1e-12,
+              "unit": "N*m"
+            },
+            {
+              "measured": 0.005,
+              "name": "negative_applied_rotor_effort_magnitude",
+              "operator": ">",
+              "passed": true,
+              "threshold": 1e-12,
+              "unit": "N*m"
+            },
+            {
+              "measured": 1.0,
+              "name": "native_articulation_count",
+              "operator": "==",
+              "passed": true,
+              "threshold": 1,
+              "unit": "articulations"
+            },
+            {
+              "measured": 2.0,
+              "name": "native_dof_count",
+              "operator": "==",
+              "passed": true,
+              "threshold": 2,
+              "unit": "dofs"
+            },
+            {
+              "measured": 5760.0,
+              "name": "pre_physics_callback_count",
+              "operator": "==",
+              "passed": true,
+              "threshold": 5760,
+              "unit": "callbacks"
+            },
+            {
+              "measured": 1.0,
+              "name": "pre_physics_callback_dt_value_count",
+              "operator": "==",
+              "passed": true,
+              "threshold": 1,
+              "unit": "distinct values"
+            },
+            {
+              "measured": 2.1730860080143577e-10,
+              "name": "pre_physics_callback_dt_absolute_error",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "measured": 1.8797846905727056e-06,
+              "name": "native_applied_axial_law_effort_error_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.0005,
+              "unit": "N"
+            },
+            {
+              "measured": 1.732231328863132e-10,
+              "name": "native_applied_rotor_law_effort_error_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 5e-06,
+              "unit": "N*m"
+            },
+            {
+              "measured": 1.0,
+              "name": "filtered_contact_sensor_count",
+              "operator": "==",
+              "passed": true,
+              "threshold": 1,
+              "unit": "bodies"
+            },
+            {
+              "measured": 2.0,
+              "name": "filtered_contact_plate_count",
+              "operator": "==",
+              "passed": true,
+              "threshold": 2,
+              "unit": "bodies"
+            },
+            {
+              "measured": 0.004166666666666667,
+              "name": "actual_physics_dt",
+              "operator": "==",
+              "passed": true,
+              "threshold": 0.004166666666666667,
+              "unit": "s"
+            },
+            {
+              "measured": 5760.0,
+              "name": "fresh_native_sample_count",
+              "operator": "==",
+              "passed": true,
+              "threshold": 5760,
+              "unit": "physics steps"
+            },
+            {
+              "measured": 1.0,
+              "name": "native_active_state_finite_fraction",
+              "operator": "==",
+              "passed": true,
+              "threshold": 1.0,
+              "unit": "fraction"
+            },
+            {
+              "measured": 46080.0,
+              "name": "native_active_contact_entry_count",
+              "operator": ">=",
+              "passed": true,
+              "threshold": 1,
+              "unit": "entries"
+            },
+            {
+              "measured": 46080.0,
+              "name": "native_active_impulse_entry_count",
+              "operator": ">=",
+              "passed": true,
+              "threshold": 1,
+              "unit": "entries"
+            },
+            {
+              "measured": 0.0,
+              "name": "active_contact_scalar_force_min",
+              "operator": ">=",
+              "passed": true,
+              "threshold": 0.0,
+              "unit": "N"
+            },
+            {
+              "measured": 0.0,
+              "name": "active_contact_scalar_impulse_min",
+              "operator": ">=",
+              "passed": true,
+              "threshold": 0.0,
+              "unit": "N*s"
+            },
+            {
+              "measured": 0.0,
+              "name": "active_contact_normal_unit_error_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.001,
+              "unit": "dimensionless"
+            },
+            {
+              "measured": 0.0,
+              "name": "active_contact_normal_transverse_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.02,
+              "unit": "dimensionless"
+            },
+            {
+              "measured": 0.0,
+              "name": "active_contact_point_lateral_excess_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.001,
+              "unit": "m"
+            },
+            {
+              "measured": 6.437301636186277e-08,
+              "name": "active_contact_point_interface_error_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.001,
+              "unit": "m"
+            },
+            {
+              "measured": -3.4458935260772705e-08,
+              "name": "active_contact_separation_min",
+              "operator": ">=",
+              "passed": true,
+              "threshold": -0.002,
+              "unit": "m"
+            },
+            {
+              "measured": 8.475035429000854e-08,
+              "name": "active_contact_separation_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.0005,
+              "unit": "m"
+            },
+            {
+              "measured": 0.0,
+              "name": "contact_dt_layout_count_error_max",
+              "operator": "==",
+              "passed": true,
+              "threshold": 0.0,
+              "unit": "entries"
+            },
+            {
+              "measured": 0.0,
+              "name": "contact_dt_layout_active_start_error_max",
+              "operator": "==",
+              "passed": true,
+              "threshold": 0.0,
+              "unit": "buffer indices"
+            },
+            {
+              "measured": 7.62939453125e-06,
+              "name": "per_sample_filter_detailed_force_matrix_error_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.0001,
+              "unit": "N"
+            },
+            {
+              "measured": 0.0,
+              "name": "per_sample_filter_detailed_impulse_matrix_error_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 1e-06,
+              "unit": "N*s"
+            },
+            {
+              "measured": 4.2716662096431435e-08,
+              "name": "per_sample_filter_detailed_dt_scaling_error_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 1e-06,
+              "unit": "N*s"
+            },
+            {
+              "measured": 7.077680841405254e-08,
+              "name": "axial_restraint_motion_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.0005,
+              "unit": "m"
+            },
+            {
+              "measured": 31.413684844970703,
+              "name": "positive_load_signed_axial_reaction_magnitude",
+              "operator": ">=",
+              "passed": true,
+              "threshold": 1.0,
+              "unit": "N"
+            },
+            {
+              "measured": 31.426790237426758,
+              "name": "negative_load_signed_axial_reaction_magnitude",
+              "operator": ">=",
+              "passed": true,
+              "threshold": 1.0,
+              "unit": "N"
+            },
+            {
+              "measured": 0.0,
+              "name": "positive_applied_rotor_effort_error_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 5e-05,
+              "unit": "N*m"
+            },
+            {
+              "measured": 0.0,
+              "name": "negative_applied_rotor_effort_error_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 5e-05,
+              "unit": "N*m"
+            },
+            {
+              "measured": -987.2312842075262,
+              "name": "filtered_plate_force_sign_reversal",
+              "operator": "<",
+              "passed": true,
+              "threshold": 0.0,
+              "unit": "N^2"
+            },
+            {
+              "measured": 983.9627573892752,
+              "name": "positive_aligned_reaction_frozen_law_sign_min",
+              "operator": ">",
+              "passed": true,
+              "threshold": 0.0,
+              "unit": "N^2"
+            },
+            {
+              "measured": 982.4076467938368,
+              "name": "negative_aligned_reaction_frozen_law_sign_min",
+              "operator": ">",
+              "passed": true,
+              "threshold": 0.0,
+              "unit": "N^2"
+            },
+            {
+              "measured": 0.0,
+              "name": "positive_inactive_plate_axial_ratio_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.1,
+              "unit": "ratio"
+            },
+            {
+              "measured": 0.0,
+              "name": "negative_inactive_plate_axial_ratio_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.1,
+              "unit": "ratio"
+            },
+            {
+              "measured": 0.0,
+              "name": "positive_transverse_to_axial_ratio_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.1,
+              "unit": "ratio"
+            },
+            {
+              "measured": 0.0,
+              "name": "negative_transverse_to_axial_ratio_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.1,
+              "unit": "ratio"
+            },
+            {
+              "measured": 0.0011098569867696777,
+              "name": "unloaded_axial_baseline_to_load_ratio_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.1,
+              "unit": "ratio"
+            },
+            {
+              "measured": -9.874024070786958e-10,
+              "name": "measured_tendon_extension_sign_reversal",
+              "operator": "<",
+              "passed": true,
+              "threshold": 0.0,
+              "unit": "m^2"
+            },
+            {
+              "measured": 3.141755826645355e-05,
+              "name": "positive_tendon_extension_magnitude",
+              "operator": ">=",
+              "passed": true,
+              "threshold": 1e-06,
+              "unit": "m"
+            },
+            {
+              "measured": 3.142836240501242e-05,
+              "name": "negative_tendon_extension_magnitude",
+              "operator": ">=",
+              "passed": true,
+              "threshold": 1e-06,
+              "unit": "m"
+            },
+            {
+              "measured": 1.0000001718315124,
+              "name": "positive_sample_aligned_contact_to_law_ratio_min",
+              "operator": ">=",
+              "passed": true,
+              "threshold": 0.5,
+              "unit": "ratio"
+            },
+            {
+              "measured": 1.0000005151078137,
+              "name": "positive_sample_aligned_contact_to_law_ratio_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 1.5,
+              "unit": "ratio"
+            },
+            {
+              "measured": 1.0000002732606201,
+              "name": "negative_sample_aligned_contact_to_law_ratio_min",
+              "operator": ">=",
+              "passed": true,
+              "threshold": 0.5,
+              "unit": "ratio"
+            },
+            {
+              "measured": 1.0000005156665377,
+              "name": "negative_sample_aligned_contact_to_law_ratio_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 1.5,
+              "unit": "ratio"
+            },
+            {
+              "measured": 5.151078137758015e-07,
+              "name": "positive_sample_aligned_law_relative_error_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.5,
+              "unit": "fraction"
+            },
+            {
+              "measured": 5.156665377487994e-07,
+              "name": "negative_sample_aligned_law_relative_error_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.5,
+              "unit": "fraction"
+            },
+            {
+              "measured": 0.9999286447616095,
+              "name": "positive_contact_to_applied_torque_ratio_min",
+              "operator": ">=",
+              "passed": true,
+              "threshold": 0.5,
+              "unit": "ratio"
+            },
+            {
+              "measured": 0.9999286447616095,
+              "name": "positive_contact_to_applied_torque_ratio_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 1.5,
+              "unit": "ratio"
+            },
+            {
+              "measured": 1.0003458023597176,
+              "name": "negative_contact_to_applied_torque_ratio_min",
+              "operator": ">=",
+              "passed": true,
+              "threshold": 0.5,
+              "unit": "ratio"
+            },
+            {
+              "measured": 1.0003458023597176,
+              "name": "negative_contact_to_applied_torque_ratio_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 1.5,
+              "unit": "ratio"
+            },
+            {
+              "measured": 0.0,
+              "name": "filtered_to_net_force_error_max",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 0.0001,
+              "unit": "N"
+            },
+            {
+              "measured": 1.7881393421514957e-08,
+              "name": "force_matrix_impulse_dt_scaling_error",
+              "operator": "<=",
+              "passed": true,
+              "threshold": 1e-05,
+              "unit": "N*s"
+            }
+          ],
+          "native_trial_id": "452a3e54-fee2-4a6a-b7a5-c14e53ed55ca",
+          "overall_pass": true,
+          "qualification": false,
+          "source_sha256": "fd17033bfc0082f413f20d4462755a0c03e0bbe608769b5d94dae5b94e09bd81"
+        }
+      }
+    ],
+    "at": "2026-11-16T15:15:28.542760+00:00"
   }
 ]
