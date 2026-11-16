@@ -1,0 +1,24 @@
+{
+  "context": "ed099192d7d16ace4691cc5004f16e234c32d3c7f64f519200d80895659862e5",
+  "record_digest": "3ed32d03fbdf0fff42e1f0d0f1406e62b049638869e20230eb102bd531e0e49d",
+  "comparison": {
+    "id": "pr-2203",
+    "objective": "Candidate sets a gripper’s angular stop, locks the concentric screw/jam-nut setting, then verifies repeated gripper motion. PR-2203 pulls a motor carriage against belt load, clamps it with two separate bolts, then measures belt deflection.",
+    "physical_skill": "Candidate tests simultaneous coaxial driver-and-wrench countertorque: jam-nut torque must not rotate the adjusted screw. PR-2203 tests holding a separate linear pull handle against belt restoring force while driving bolts; its complete Rig.step/Contacts.advance contains no bolt-torque-to-slide disturbance or coaxial reaction state.",
+    "success_condition": "Candidate requires retained 90° opening, seated/retained nuts, three repeatable cycles, ≤2° drift, tool withdrawal, and 1 s clearance. PR-2203 requires 1.40–1.95 mm deflection under 2.5 N, two ≥185 N clamps, ≤0.040 mm carriage drift, belt seating/alignment, parked driver, and clear arms; its task.json does not state the check duration, though implementation uses 0.45 s.",
+    "verdict": "distinct",
+    "reason": "The shared adjust-lock-release pattern is generic, but the essential causal abilities differ: resisting locking torque transferred through concentric threaded elements versus resisting pre-existing belt tension until separate clamps develop friction. PR-2203’s source does not support the prior characterization that tightening reaction disturbs its adjustment; the distinction remains conditional on the candidate actually implementing the declared screw/nut torque coupling rather than a scripted lock state."
+  },
+  "review_notes": {
+    "purpose": "ONE bounded source-enhanced factual reconsideration, not a requested verdict. Keep original overlap in history. If still overlap after reading originals, do not repeatedly resample.",
+    "original_source": "input/pr-2203-original-implementation.txt",
+    "pinned_head": "cb29b8fc8d4ca1d6a237d91d4932115d9db7598b",
+    "urls": [
+      "https://github.com/Miyamura80/benchmark-tasks/blob/cb29b8fc8d4ca1d6a237d91d4932115d9db7598b/tasks/set-timing-belt-tension/mechanics.py",
+      "https://github.com/Miyamura80/benchmark-tasks/blob/cb29b8fc8d4ca1d6a237d91d4932115d9db7598b/tasks/set-timing-belt-tension/run_task.py"
+    ],
+    "factual_dispute": "Prior comparison said both preserve a continuous adjustment against FASTENING REACTION. Read complete Rig.step and Contacts.advance: bolt turns change clamp normal load/friction; motor slide restoring force comes from the BELT and test probe. There is no screw/nut coaxial reaction torque state or bolt-torque-to-slide disturbance term. Holding the linear pull handle opposes preexisting belt load; tightening increases available clamping friction. Determine whether the prior claimed same reaction-control ability is actually supported rather than inferred from a high-level hold-while-tighten description.",
+    "candidate_claim_to_evaluate": "Current candidate explicitly proposes two simultaneously seated tools on concentric screw/nut elements: nut turning transfers torque into the adjusted screw, so its angular setting must be restrained during locking. This coupled-torque mechanism is NOT yet native-proven; loss of that causality during implementation must block final novelty. Neither hardware names, rotation-versus-translation alone, target units, tool count alone nor repeated verification is sufficient novelty.",
+    "balanced_question": "Compare actual essential physical abilities and causal loading, not just the shared generic adjustment/holding/fastening primitives. PR2018 held door-lever assembly while driving separate bolts and PR1540 body-plus-coupling-ring were judged distinct earlier; those judgments are evidence to inspect for consistency, not authority to preserve a pass. Do not discount PR2203 intended ability merely because its simulation is reduced-order. Keep overlap/uncertain if the mechanism distinction still does not establish a meaningfully different tested ability under official rules."
+  }
+}

@@ -2,116 +2,125 @@
   "comparisons": [
     {
       "suite": "LIBERO",
-      "coverage_method": "Verified manifest SHA-256 b831d34f8381cff2c56afa3934d675d840496ad3c292e7dcc37104263ec8fd9d and all 135 unique originals: 130 BDDL tasks, three benchmark/registry files, and two predicate files; all local files existed and matched recorded hashes. Cross-checked all five suite maps, searched the complete inventory for adjustment, fastener, locking, tool, and articulated-state mechanisms, and inspected the closest BDDL and TurnOn predicate. Git entries provide cache_path rather than local_path, so source paths resolve those exact cache paths under the suite root.",
-      "objective": "The candidate adjusts a gripper stop to a target opening, locks that setting with a jam nut, removes the tools, and verifies retention through repeated actuation. LIBERO's closest task only turns on a stove.",
-      "physical_skill": "Both may involve rotary manipulation, but LIBERO does not require coaxial driver seating, wrench seating, simultaneous countertorque, preservation of an adjustable setting during locking, or released functional cycling.",
-      "success_condition": "LIBERO requires the stove's Turnon predicate. The candidate requires a numeric opening angle, seated and retained nuts, tool clearance, three repeatable cycles, bounded drift, and revocation when locking or retention fails.",
+      "coverage_method": "Parsed the complete pinned manifest and all 135 indexed files: 130 BDDL definitions exactly match the static suite registry (10 spatial, 10 object, 10 goal, 10 LIBERO-10, 90 LIBERO-90), with five registry/predicate files. Verified every local file exists and matches its manifest SHA-256; no missing, duplicate, or mismatched files. Searched the complete definition inventory for adjustment, turning, locking, fastener, articulated-motion, and retention mechanisms, then read the closest BDDL and TurnOn predicate completely.",
+      "objective": "Candidate sets a gripper opening stop to 90°, locks that setting with a jam nut, and verifies retained opening over repeated cycles. LIBERO's nearest task only activates a stove.",
+      "physical_skill": "Candidate requires coaxial driver seating, wrench seating, coupled countertorque, setting preservation, tool withdrawal, and later articulated verification. LIBERO requires direct stove-control manipulation; its predicate delegates to the stove object's turn_on state and contains no adjustment screw, locknut, counterholding, or retained-cycle test.",
+      "success_condition": "Candidate requires angular accuracy, seated/retained nuts, three repeat cycles, at most 2° drift, and one second of hands-off clearance. LIBERO succeeds on the single Boolean goal Turnon(flat_stove_1).",
       "evidence_paths": [
         "input/benchmark-corpora/LIBERO/manifest.json",
-        "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/benchmark/__init__.py",
         "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/benchmark/libero_suite_task_map.py",
+        "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_90/KITCHEN_SCENE3_turn_on_the_stove.bddl",
         "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/envs/predicates/base_predicates.py"
       ],
       "closest_tasks": [
         {
-          "name": "turn_on_the_stove",
-          "source_path": "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_goal/turn_on_the_stove.bddl",
-          "quote": "(And (Turnon flat_stove_1))",
-          "objective": "Turn on the tabletop stove.",
-          "physical_skill": "Manipulate an appliance control sufficiently to reach its on state; the selected predicate delegates to the stove object's turn_on state implementation.",
-          "success_condition": "The flat stove must satisfy Turnon.",
-          "reason": "It is the closest rotary articulated-control task, but its binary appliance state omits adjustable-stop setting, coupled screw-and-nut locking, counterholding, and post-release retention tests.",
+          "name": "KITCHEN_SCENE3_turn_on_the_stove",
+          "source_path": "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_90/KITCHEN_SCENE3_turn_on_the_stove.bddl",
+          "quote": "(:language turn on the stove)",
+          "objective": "Turn on a flat stove.",
+          "physical_skill": "Manipulate the stove control sufficiently to change its on/off state.",
+          "success_condition": "The Turnon predicate for flat_stove_1 is true.",
+          "reason": "It is the closest LIBERO rotary-control task, but measures binary activation rather than setting and mechanically locking an adjustable stop against reaction torque and verifying retention.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "Complete-registry inspection found appliance and articulation state changes but no task centered on preserving a calibrated screw setting against jam-nut tightening and then verifying it through released motion cycles."
+      "reason": "The only relevant shared primitive is turning an articulated control; LIBERO has no coupled screw/jam-nut adjustment, bimanual counterholding, or hands-off cycle-retention outcome."
     },
     {
       "suite": "RoboCasa",
-      "coverage_method": "Verified manifest SHA-256 350996025cce434c13929aa7cf4bf9c52e905da42432bbf583feb9d7e727e0fd and all 381 unique originals: 379 kitchen environment definitions, the environment export, and dataset registry; every local file matched its recorded hash. Searched the complete environment inventory for screws, nuts, bolts, wrenches, tightening, locks, adjustment, knobs, and articulated controls, then read AdjustHeat completely. Git entries provide cache_path rather than local_path, so source paths resolve the exact cache paths under the suite root.",
-      "objective": "The candidate calibrates and mechanically locks an industrial gripper's maximum opening before functional verification. AdjustHeat places vegetables in a pan and turns the corresponding burner control to medium.",
-      "physical_skill": "Both regulate an angle-like control to a target band. AdjustHeat uses one stove knob without a separate locking fastener; the candidate's central skill is coordinated driver-and-wrench countertorque that prevents the stop from drifting during locknut tightening.",
-      "success_condition": "AdjustHeat succeeds when both vegetables are in the pan, the pan is over the selected burner, and the knob magnitude is between 45° and 135°. The candidate additionally requires nut seating and retention, tool withdrawal, three retained cycles, no more than 2° drift, and one-second clearance.",
+      "coverage_method": "Parsed the complete pinned manifest and all 381 indexed files: 379 kitchen source files plus the environment initializer and dataset registry. Static parsing found 380 top-level kitchen task classes, including every adjustment/knob class exposed by the inventory. Verified every file against its manifest SHA-256 with no missing, duplicate, or mismatched files. Read the complete stove-task source, including its reset and backend success checks.",
+      "objective": "Candidate calibrates and locks a mechanical gripper opening stop, then tests whether the setting survives repeated motion. RoboCasa's nearest task adjusts a stove knob until it lies in a low-heat angular band.",
+      "physical_skill": "Both require angular regulation, but RoboCasa uses direct one-control knob rotation. Candidate additionally requires two concentric tools, counterholding during jam-nut tightening, regrasping/withdrawal, and operation of a separate articulated test lever.",
+      "success_condition": "Candidate requires a retained 90° opening, seated nuts, three repeat cycles, bounded drift, and released clearance. LowerHeat succeeds whenever the selected stove knob's absolute joint value lies between 0.35 and STOVE_HIGH_MIN.",
       "evidence_paths": [
         "input/benchmark-corpora/RoboCasa/manifest.json",
-        "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/__init__.py",
-        "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/utils/dataset_registry.py"
+        "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/utils/dataset_registry.py",
+        "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/atomic/kitchen_stove.py"
       ],
       "closest_tasks": [
         {
-          "name": "AdjustHeat",
-          "source_path": "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/composite/sauteing_vegetables/adjust_heat.py",
-          "quote": "knob_at_medium = MEDIUM_HEAT_MIN <= np.abs(knob_value) <= MEDIUM_HEAT_MAX",
-          "objective": "Place two vegetables in a pan and set the correct burner to medium heat.",
-          "physical_skill": "Object placement followed by single-control angular adjustment.",
-          "success_condition": "Both vegetables must be in the pan, the pan must occupy the selected burner, and its knob must lie in the medium band.",
-          "reason": "It shares target angular regulation, but not two-tool screw/jam-nut counterholding, setting preservation during locking, or hands-off cycle retention.",
+          "name": "LowerHeat",
+          "source_path": "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/atomic/kitchen_stove.py",
+          "quote": "LOW_HEAT_LOWER_THRESHOLD = 0.35",
+          "objective": "Lower a kettle burner's heat by adjusting its stove knob.",
+          "physical_skill": "Rotate one stove knob into a target joint-value band.",
+          "success_condition": "The knob value is within the defined low-heat interval.",
+          "reason": "This is RoboCasa's strongest target-angle neighbor, but it neither locks the setting with a coupled fastener nor tests hands-off retention after repeated mechanism cycles.",
+          "verdict": "distinct"
+        },
+        {
+          "name": "TurnOnStove",
+          "source_path": "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/atomic/kitchen_stove.py",
+          "quote": "burner_on = self.stove.is_burner_on(env=self, burner_loc=self.knob)",
+          "objective": "Turn on a selected stove burner.",
+          "physical_skill": "Directly rotate a stove knob from off to an on state.",
+          "success_condition": "The selected burner reports on.",
+          "reason": "It shares rotary manipulation only; the outcome is binary activation with no screw/nut coupling, countertorque, setting preservation, or functional-cycle verification.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "The complete kitchen registry includes knob adjustment but no mechanically locked calibration whose setting must survive tightening reaction and subsequent articulated cycles."
+      "reason": "RoboCasa covers direct knob adjustment, including a target band, but not the candidate's central ability of preserving a calibrated screw position while locking a concentric jam nut and proving retained operation."
     },
     {
       "suite": "SimplerEnv",
-      "coverage_method": "Verified manifest SHA-256 cc80e1d57e6efb94085cf752198f8b57431cf5dbe96b42040fac08f8acc9a2c3 and all 11 unique originals across the SimplerEnv and ManiSkill2_real2sim components; every local file matched its recorded hash. Read the complete 25-entry ENVIRONMENTS/ENVIRONMENT_MAP registry, searched all selected implementations for fastener and locking mechanisms, and read the full drawer articulation implementation. Git entries provide cache_path rather than local_path, so source paths resolve the exact cache paths under the suite root.",
-      "objective": "The candidate sets and locks a gripper's maximum opening and proves that setting remains effective. SimplerEnv's closest articulated task opens a selected drawer.",
-      "physical_skill": "Both interact with a constrained joint. OpenDrawer requires a single pull on a prismatic joint; the candidate requires precision tool seating, bimanual countertorque, locknut tightening without screw drift, tool withdrawal, and later lever-driven revolute cycling.",
-      "success_condition": "OpenDrawer succeeds once drawer qpos reaches at least 0.15 m. The candidate requires a 90° setting within tolerance, locked hardware retention, repeatability over three cycles, bounded drift, and released clearance.",
+      "coverage_method": "Parsed the complete two-component manifest and all 11 indexed source files (two SimplerEnv registry/builder files and nine ManiSkill2-real2sim environment modules). Enumerated every registered environment and success function from those originals. Verified every file against its manifest SHA-256 with no missing, duplicate, or mismatched files, then read the complete nearest articulated-task definition.",
+      "objective": "Candidate adjusts and locks a gripper's maximum opening before testing repeated retained motion. SimplerEnv's nearest task opens or closes one cabinet drawer.",
+      "physical_skill": "Candidate combines precision tool seating, coupled countertorque, lock retention, tool release, and later lever actuation. OpenDrawer requires grasping/pulling a single prismatic drawer joint.",
+      "success_condition": "Candidate grades angular accuracy, lock retention, repeated return, drift, and released clearance. OpenDrawer succeeds when the chosen drawer joint reaches qpos at least 0.15; CloseDrawer succeeds at qpos at most 0.05.",
       "evidence_paths": [
         "input/benchmark-corpora/SimplerEnv/manifest.json",
-        "input/benchmark-corpora/SimplerEnv/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/__init__.py",
-        "input/benchmark-corpora/SimplerEnv/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/utils/env/env_builder.py"
+        "input/benchmark-corpora/SimplerEnv/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/utils/env/env_builder.py",
+        "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/open_drawer_in_scene.py"
       ],
       "closest_tasks": [
         {
-          "name": "google_robot_open_drawer / OpenDrawerCustomInScene-v0",
+          "name": "OpenDrawerCustomInScene-v0",
           "source_path": "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/open_drawer_in_scene.py",
           "quote": "return dict(success=qpos >= 0.15, qpos=qpos, episode_stats=self.episode_stats)",
-          "objective": "Open the selected cabinet drawer.",
-          "physical_skill": "Grasp or contact a drawer and translate its constrained prismatic joint.",
-          "success_condition": "The selected drawer joint must reach qpos of at least 0.15 m.",
-          "reason": "It is the suite's closest constrained-motion task, but tests only one joint displacement and lacks calibration, fastener locking, counterholding, and retained repeated motion.",
+          "objective": "Open a selected cabinet drawer.",
+          "physical_skill": "Move one prismatic articulated joint beyond an opening threshold.",
+          "success_condition": "The target drawer joint reaches qpos ≥ 0.15.",
+          "reason": "It is the closest articulated-motion task in the complete registry, but measures one direct displacement rather than calibrated stop adjustment, counterheld locking, and repeated retained motion.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "All registered tasks are grasping, relative placement, drawer operation, containment, or stacking; none tests coupled setting-and-locking followed by functional retention."
+      "reason": "SimplerEnv includes articulated drawer movement but no fastener adjustment, bimanual lock reaction management, or post-lock functional retention test."
     },
     {
       "suite": "BEHAVIOR",
-      "coverage_method": "Verified manifest SHA-256 78380659aabe3ba5b967e5cbc012f8a4efa870aae7f23f4cc2b5038873cc1c00 and all 1,122 unique originals: 1,018 current activity BDDLs, 101 legacy BDDLs, and three current task/state backends; every local file matched its recorded hash. Searched both complete activity versions for fasteners, tools, adjustment, locking, installation, and repair. Because the closest installation task uses an abstract attached predicate, read the full AttachedTo backend, including its proximity/orientation checks, pose alignment, and fixed-joint creation. Git entries provide cache_path rather than local_path, so source paths resolve the exact cache paths under the suite root.",
-      "objective": "The candidate performs adjustable-stop calibration, locknut securing, and repeated retained-motion verification. Installing a trailer hitch brings a hitch to a pickup until the abstract attached relationship holds.",
-      "physical_skill": "Both concern industrial hardware and alignment, but BEHAVIOR's backend aligns compatible attachment frames and creates a fixed joint after qualifying contact. It does not model screw adjustment, a jam nut, two concentric tools, countertorque, or preservation of a tunable stop.",
-      "success_condition": "The BEHAVIOR task requires the hitch attached to the pickup. The candidate requires a numeric angle, seated and retained nuts, tool removal, three repeatable cycles, bounded drift, and fresh clearance dwell.",
+      "coverage_method": "Parsed both complete pinned definition sets and all 1,122 indexed files: 1,018 current BEHAVIOR-1K BDDLs, 101 legacy BDDLs, and three task/predicate backend files. Verified every file against its manifest SHA-256 with no missing, duplicate, or mismatched files. Searched all definitions for screw, bolt, nut, wrench, adjustment, locking, attachment, and articulated goals. The only fastener-word hits were tool-storage activities, so the closest assembly goal was make_cabinet_doors. Read that BDDL and the complete AttachedTo implementation because its abstract goal underspecifies the actual mechanism.",
+      "objective": "Candidate calibrates a gripper stop, mechanically locks it, and verifies retained motion. BEHAVIOR's nearest assembly task attaches a cabinet door to a cabinet base.",
+      "physical_skill": "Candidate requires coordinated driver/wrench countertorque and a subsequent articulated function test. make_cabinet_doors requires bringing attachment meta-links into positional/orientational alignment; the backend then creates a fixed or spherical joint.",
+      "success_condition": "Candidate requires numeric angle accuracy, retained nuts, repeated cycles, bounded drift, and hands-off clearance. make_cabinet_doors succeeds when attached(cabinet_door, cabinet_base) is true; the backend attachment is selected within 5 cm and 15° before joint creation.",
       "evidence_paths": [
         "input/benchmark-corpora/BEHAVIOR/manifest.json",
-        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/object_states/attached_to.py",
-        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/tasks/behavior_task.py",
-        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/utils/bddl_utils.py"
+        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/make_cabinet_doors/problem0.bddl",
+        "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/OmniGibson/omnigibson/object_states/attached_to.py"
       ],
       "closest_tasks": [
         {
-          "name": "installing_a_trailer_hitch-0",
-          "source_path": "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/installing_a_trailer_hitch/problem0.bddl",
-          "quote": "(attached ?hitch.n.04_1 ?pickup.n.01_1)",
-          "objective": "Attach a trailer hitch to a pickup.",
-          "physical_skill": "Align compatible attachment frames and establish a fixed connection through contact-triggered attachment.",
-          "success_condition": "The hitch must satisfy attached relative to the pickup.",
-          "reason": "It is the closest hardware-installation goal, but its actual mechanism is mating-frame attachment rather than adjustable screw positioning, jam-nut counterlocking, and cyclic retention verification.",
+          "name": "make_cabinet_doors-0",
+          "source_path": "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/b544acbbb76b461349bcba21f93b870b11da6608/bddl3/bddl/activity_definitions/make_cabinet_doors/problem0.bddl",
+          "quote": "(attached ?cabinet_door.n.01_1 ?cabinet_base.n.01_1)",
+          "objective": "Attach a cabinet door to a cabinet base.",
+          "physical_skill": "Align compatible attachment interfaces closely enough for the attachment state to create a joint.",
+          "success_condition": "The cabinet door's AttachedTo state identifies the cabinet base as its parent.",
+          "reason": "Backend inspection resolves this as meta-link alignment followed by joint creation, not screw adjustment or locknut counterholding; it also lacks an angle target and repeated functional-retention test.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "Neither current nor legacy activity inventories contain the candidate's coupled screw-and-locknut calibration ability; the nearest attachment implementation tests frame mating and fixed attachment instead."
+      "reason": "BEHAVIOR contains a genuine assembly neighbor, but its tested ability is attachment-interface alignment; it does not test preserving an adjustable setting under locking torque or verifying that setting through repeated motion."
     },
     {
       "suite": "DataCenterBench",
-      "coverage_method": "Verified manifest SHA-256 15245b0e9925bc52bbb8d9c4bc6633829f295596227fa78c3fd7b899a7fc9040 and both authoritative originals using their exact manifest local_path values; both matched recorded hashes. Enumerated all ten Tier-1 IDs and read their complete setup, instruction, reset, rubric, and linked-procedure records. The closest task was selected from the full catalog, not the derived published-task-definitions navigation file.",
-      "objective": "The candidate sets and locks a robot gripper opening stop, then verifies retained motion. DC-knob rotates a data-center-relevant control until a witness line reaches a goal mark.",
-      "physical_skill": "Both require angular regulation against a visible target. DC-knob is a single-control turn; the candidate adds coaxial screw adjustment, thin-nut wrench seating, bimanual counterholding against tightening reaction, tool withdrawal, and articulated functional testing.",
-      "success_condition": "DC-knob gives full credit when the knob line points at the goal and partial credit for noticeable clockwise progress. The candidate requires locked hardware, three returns within 3°, no more than 2° drift, retained nuts, and one second of released clearance.",
+      "coverage_method": "Parsed both complete official JSON originals, verified their manifest hashes, and checked the authoritative task catalog: exactly ten published setup/instruction/reset/rubric records corresponding to the ten selected design IDs. Compared all ten complete published task records; unselected procedure candidates were not treated as benchmark tasks. Read the complete DC-knob record and its linked turn-knob industrial-procedure record.",
+      "objective": "Candidate sets and locks a robot-gripper opening stop, then verifies retained function. DC-knob rotates a fixed dimmer knob from a start mark to a goal mark.",
+      "physical_skill": "Both require target-directed angular motion. DC-knob is a single direct rotary manipulation; candidate adds coaxial driver and wrench seating, physical counterholding during locknut tightening, tool withdrawal, and separate repeated actuation.",
+      "success_condition": "Candidate requires a precise retained angle, both nuts retained, three repeat cycles, bounded drift, and one second of released clearance. DC-knob awards full score when the knob line points at the goal mark and partial credit for noticeable clockwise progress.",
       "evidence_paths": [
         "input/benchmark-corpora/DataCenterBench/manifest.json",
         "input/benchmark-corpora/DataCenterBench/official-setups.json",
@@ -121,52 +130,53 @@
         {
           "name": "DC-knob — Turn the knob to the mark",
           "source_path": "input/benchmark-corpora/DataCenterBench/official-setups.json",
-          "quote": "Turn the round knob on the white box clockwise until the black line on it points at the black mark on the box.",
-          "objective": "Rotate a marked knob clockwise to its marked goal position.",
-          "physical_skill": "Guarded single-axis rotary manipulation to a visual mark.",
-          "success_condition": "Full credit when the knob line points at the goal mark; half credit for noticeable clockwise motion that stops short.",
-          "reason": "It shares target-angle regulation, but not a separately adjustable stop, coupled jam-nut locking under countertorque, or post-release cycle retention.",
+          "quote": "The line on the knob points at the goal mark (turned clockwise to it).",
+          "objective": "Turn a rotary dimmer knob clockwise to a marked target.",
+          "physical_skill": "Directly rotate one knob to visual alignment with a mark.",
+          "success_condition": "Full credit at the goal mark, partial credit for clockwise movement that stops short, and zero for no clockwise progress.",
+          "reason": "This is the closest published target-angle task, but it has no adjustable screw plus jam nut, no need to preserve a setting against tightening reaction, and no repeated-cycle retention outcome.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "The complete ten-task catalog covers controls, covers, keypad entry, connectors, and cable routing, but no task locks a calibrated mechanical setting against fastener reaction and verifies its retained function."
+      "reason": "DataCenterBench tests marked rotary positioning, but the candidate's central tested ability is mechanically locking a calibrated stop without disturbing it and proving hands-off retention across cycles."
     },
     {
       "suite": "RoboDojo",
-      "coverage_method": "Verified manifest SHA-256 61e30ee56265ecc428fbc552ad81ef04dd77a68453e0214d3759f942d3a92c3a and all 110 unique originals: 54 task modules, 54 corresponding task configs, one base config, and the dynamic registry; every local file matched its recorded hash. Compared the complete task/config inventories, searched all originals for screws, nuts, bolts, wrenches, tightening, locks, adjustment, and articulated mechanisms, and read fasten_screws.py and its YAML completely. Git entries provide cache_path rather than local_path, so source paths resolve the exact cache paths under the suite root.",
-      "objective": "The candidate tunes one screw-defined stop, holds that setting while a jam nut is locked, and validates retained operation. FastenScrews inserts three color-matched nuts onto bolts and scores their final seating.",
-      "physical_skill": "Both involve threaded-hardware semantics, making FastenScrews the strongest suite neighbor. Its implementation measures upright orientation, 1 mm axial alignment, and 9 mm insertion depth; it does not require a driver and wrench acting concentrically, counterholding a setting against locknut reaction, or functional cycling of an adjusted mechanism.",
-      "success_condition": "FastenScrews awards progress for one, two, or three aligned and deeply seated nut/bolt pairs with open grippers. The candidate instead scores calibrated angle, jam-nut seating and retention, tool clearance, three repeatable cycles, and limited setting drift.",
+      "coverage_method": "Parsed the complete pinned manifest and all 110 indexed files: 54 task modules, 54 matching task configurations, the shared _task.yml, and task_registry.py. Static pair checking found no task without a configuration and only the expected configuration-only _task template. Verified every file against its manifest SHA-256 with no missing, duplicate, or mismatched files. Searched the full task/config inventory and read both complete fasten_screws originals plus the dynamic registry.",
+      "objective": "Candidate adjusts one screw-defined gripper stop, locks it with a jam nut while preserving a target angle, and validates retained motion. RoboDojo fasten_screws inserts and tightens three color-matched screw/nut pairs.",
+      "physical_skill": "Both involve threaded hardware and tightening. RoboDojo emphasizes matching, coaxial insertion, and seating of separate fasteners; candidate emphasizes maintaining an already-coupled adjustment against jam-nut reaction with simultaneous driver/wrench counterholding, followed by mechanism cycling.",
+      "success_condition": "Candidate grades opening angle, lock seating/retention, three return cycles, drift, and released clearance. RoboDojo grades one, two, or three matched pairs by nut uprightness, ≤1 mm XY alignment, ≥9 mm insertion depth, and open grippers.",
       "evidence_paths": [
         "input/benchmark-corpora/RoboDojo/manifest.json",
-        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/config/fasten_screws.yml",
-        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/task_registry.py"
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/task_registry.py",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/fasten_screws.py",
+        "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/config/fasten_screws.yml"
       ],
       "closest_tasks": [
         {
           "name": "fasten_screws",
           "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/f57e1633ffed59761bc8e568cfe7530c4b33381c/task/RoboDojo/tasks/fasten_screws.py",
-          "quote": "templates = [\"Insert and tighten each screw into the nut of the same color.\"]",
-          "objective": "Insert and tighten three color-matched screw/nut pairs.",
-          "physical_skill": "Align and seat multiple threaded-hardware-shaped parts; implemented scoring checks orientation, axial alignment, and insertion depth.",
-          "success_condition": "Each credited pair must be upright, aligned within 1 mm in XY, inserted to the configured 9 mm depth, and accompanied by open grippers.",
-          "reason": "It shares fastener handling, but not the candidate's central coupled adjustment-and-locking ability: preserving a tunable screw setting under opposing jam-nut torque and proving retention through later motion.",
+          "quote": "Insert and tighten each screw into the nut of the same color.",
+          "objective": "Insert and tighten three screws into their color-matched nuts.",
+          "physical_skill": "Match separate fasteners, align their axes, insert them, and achieve sufficient depth.",
+          "success_condition": "Each pair is upright, aligned within 0.001 m in XY, inserted to the 0.009 m depth threshold, with grippers open for scored completion.",
+          "reason": "This is the strongest shared-fastener neighbor, but insertion/depth of separate screw-nut pairs does not test preserving a calibrated setting while tightening a concentric jam nut or verifying retained articulated function.",
           "verdict": "distinct"
         }
       ],
       "verdict": "distinct",
-      "reason": "FastenScrews is a plausible near neighbor at the primitive level, but its tested outcome is multi-pair insertion/seating rather than counterheld calibration locking and released functional retention."
+      "reason": "The suites share threaded-hardware manipulation, but their hardest tested abilities and outcomes differ: RoboDojo measures insertion/seating, while the candidate measures counterheld locking of an adjustment and post-release functional retention."
     }
   ],
   "candidate_digest": "29a2dd2e1eb3cd7af97bd32ccdc3c884fc2afeab7deb8f05fd5d976cf6c5a0f7",
-  "at": "2026-11-16T03:09:38.368205+00:00",
+  "at": "2026-11-16T04:06:57.115383+00:00",
   "definition_manifests": {
-    "LIBERO": "b831d34f8381cff2c56afa3934d675d840496ad3c292e7dcc37104263ec8fd9d",
-    "RoboCasa": "350996025cce434c13929aa7cf4bf9c52e905da42432bbf583feb9d7e727e0fd",
-    "SimplerEnv": "cc80e1d57e6efb94085cf752198f8b57431cf5dbe96b42040fac08f8acc9a2c3",
-    "BEHAVIOR": "78380659aabe3ba5b967e5cbc012f8a4efa870aae7f23f4cc2b5038873cc1c00",
-    "DataCenterBench": "15245b0e9925bc52bbb8d9c4bc6633829f295596227fa78c3fd7b899a7fc9040",
-    "RoboDojo": "61e30ee56265ecc428fbc552ad81ef04dd77a68453e0214d3759f942d3a92c3a"
+    "LIBERO": "e2e18c3f1fea648365988d6a9a873a1a9786be0cd29f996a030e1a568a5dbea2",
+    "RoboCasa": "44d147cb496bc884391e51bc70084ca2a6cdfc43ef9ff7cb3e7c365ad79cf2b4",
+    "SimplerEnv": "d14e8b22908578a019de9910f81dadc6b1b03a64d667d8bd7aa8ac92329aad64",
+    "BEHAVIOR": "b29d9f63b93a077a9f4cb271148fe1ff44892456a75a8651fc8aa8225bfdcfc5",
+    "DataCenterBench": "18f9ea1f28ec335859ed8a587a7be17ec1bfd9227d698af841f37104d5bc3089",
+    "RoboDojo": "a92fe2aad922d74441178bc3196c1555d4813b8a21b61ba68222ab4071334c80"
   }
 }
