@@ -24,10 +24,11 @@ simulation_app = launcher.app
 
 import numpy as np
 import trimesh
-from pxr import Gf, PhysxSchema, Sdf, UsdGeom, UsdPhysics
+from pxr import Gf, PhysicsSchemaTools, PhysxSchema, Sdf, UsdGeom, UsdPhysics
+from omni.physx import get_physx_simulation_interface
 import isaaclab.sim as sim_utils
+from isaaclab.app.settings_manager import get_settings_manager
 from isaaclab.assets import RigidObject, RigidObjectCfg
-from isaaclab.sensors import ContactSensor, ContactSensorCfg
 from isaaclab.sim.spawners.meshes.meshes import _spawn_mesh_geom_from_mesh
 from isaaclab.sim.utils import get_current_stage
 
@@ -102,6 +103,11 @@ def spawn_moving_aperture():
     UsdPhysics.RigidBodyAPI.Apply(root.GetPrim())
     PhysxSchema.PhysxRigidBodyAPI.Apply(root.GetPrim()).CreateEnableCCDAttr(True)
     UsdPhysics.MassAPI.Apply(root.GetPrim()).CreateMassAttr(ROOT_MASS)
+    # get_contact_report() only emits pairs involving an actor carrying the
+    # native contact-report API.  The four ribs are collision children of this
+    # single rigid body, so activate reporting on the rigid-body root before
+    # the first simulation reset (shape children cannot carry RigidBodyAPI).
+    sim_utils.activate_contact_sensors("/World/MovingAperture", stage=stage)
     side = (PATCH - APERTURE) / 2
     specs = (((side, PATCH, FLOOR_T), (-(APERTURE+side)/2, 0, -FLOOR_T/2)),
              ((side, PATCH, FLOOR_T), ((APERTURE+side)/2, 0, -FLOOR_T/2)),
@@ -155,12 +161,101 @@ def derived_hinge_state(position, quaternion_xyzw):
     return angle, translation_residual, axis_residual
 
 
+def collision_prim_paths(stage, root_path):
+    """Return authored collision-shape prims below a rigid-body root."""
+    root = stage.GetPrimAtPath(root_path)
+    if not root.IsValid():
+        raise RuntimeError(f"missing collision inventory root {root_path}")
+    prefix = root_path.rstrip("/") + "/"
+    return sorted(str(prim.GetPath()) for prim in stage.Traverse()
+                  if (str(prim.GetPath()) == root_path or str(prim.GetPath()).startswith(prefix))
+                  and prim.HasAPI(UsdPhysics.CollisionAPI))
+
+
+class ContactPathResolver:
+    """Resolve native actor/collider IDs to the spawned collision prims."""
+    def __init__(self, stage):
+        self.medium_actor = "/World/Medium"
+        self.aperture_actor = "/World/MovingAperture"
+        self.medium_colliders = collision_prim_paths(stage, self.medium_actor)
+        self.rib_colliders = {
+            f"/World/MovingAperture/Rib_{i}": collision_prim_paths(
+                stage, f"/World/MovingAperture/Rib_{i}")
+            for i in range(4)
+        }
+        if not self.medium_colliders or any(not paths for paths in self.rib_colliders.values()):
+            raise RuntimeError("spawned CollisionAPI inventory is incomplete")
+        self.collider_to_rib = {
+            collider: rib for rib, colliders in self.rib_colliders.items()
+            for collider in colliders
+        }
+        self.observed_actor_paths = set()
+        self.observed_collider_paths = set()
+
+    def inventory(self):
+        return {
+            "medium_actor_path": self.medium_actor,
+            "aperture_actor_path": self.aperture_actor,
+            "medium_collision_prim_paths": self.medium_colliders,
+            "rib_collision_prim_paths": self.rib_colliders,
+            "observed_contact_actor_paths": sorted(self.observed_actor_paths),
+            "observed_contact_collider_paths": sorted(self.observed_collider_paths),
+        }
+
+
+def native_rib_contacts(physx, resolver, dt):
+    """Read this completed step's medium/rib contacts by collider path.
+
+    PhysX ContactSensor filters are body-level only in this pinned runtime, so
+    they cannot distinguish the four collision children of MovingAperture.
+    The native report retains collider IDs and is valid for the current step.
+    """
+    report = physx.get_contact_report()
+    if len(report) < 2:
+        raise RuntimeError(f"unexpected get_contact_report tuple length {len(report)}")
+    headers, data = report[0], report[1]
+    rib_ids = list(resolver.rib_colliders)
+    impulses = {path: np.zeros(3, dtype=float) for path in rib_ids}
+    point_counts = {path: 0 for path in rib_ids}
+    decoded_headers = 0
+    for header in headers:
+        actor0 = str(PhysicsSchemaTools.intToSdfPath(int(header.actor0)))
+        actor1 = str(PhysicsSchemaTools.intToSdfPath(int(header.actor1)))
+        collider0 = str(PhysicsSchemaTools.intToSdfPath(int(header.collider0)))
+        collider1 = str(PhysicsSchemaTools.intToSdfPath(int(header.collider1)))
+        resolver.observed_actor_paths.update((actor0, actor1))
+        resolver.observed_collider_paths.update((collider0, collider1))
+        if actor0 == resolver.medium_actor and actor1 == resolver.aperture_actor:
+            medium_collider, rib_collider = collider0, collider1
+        elif actor1 == resolver.medium_actor and actor0 == resolver.aperture_actor:
+            medium_collider, rib_collider = collider1, collider0
+        else:
+            continue
+        if medium_collider not in resolver.medium_colliders:
+            continue
+        rib_path = resolver.collider_to_rib.get(rib_collider)
+        if rib_path is None:
+            continue
+        decoded_headers += 1
+        begin = int(header.contact_data_offset)
+        end = begin + int(header.num_contact_data)
+        for contact in data[begin:end]:
+            impulses[rib_path] += np.asarray(tuple(contact.impulse), dtype=float)
+            point_counts[rib_path] += 1
+    forces = [float(np.linalg.norm(impulses[path]) / dt) for path in rib_ids]
+    contacted = [path for path in rib_ids if point_counts[path] > 0]
+    return contacted, forces, point_counts, decoded_headers, len(headers), len(data)
+
+
 class Crossing:
     def __init__(self, vertices, faces):
         self.previous, self.faces, self.xy = np.asarray(vertices), np.asarray(faces), []
         self.armed = False
         self.arm_step = None
         self.arm_margin_m = None
+        self.arm_support_loss_window = []
+        self.attempt_id = 0
+        self.invalidated_attempts = []
         self.maximum_step_motion = 0.0
         # A qualified bridge necessarily intersects the floor plane.  Requiring
         # every vertex to start above it made completion unreachable for the
@@ -181,7 +276,7 @@ class Crossing:
             return None
         return float(np.min(APERTURE / 2 - np.max(np.abs(np.asarray(points)), axis=1)))
 
-    def arm(self, current, step, margin):
+    def arm(self, current, step, margin, support_loss_window):
         # Discard every intersection belonging to the qualifying supported
         # bridge.  The causal passage record starts only after physical
         # two-rib support is lost and the sampled whole-mesh plane section
@@ -190,13 +285,54 @@ class Crossing:
         self.xy = []
         self.maximum_step_motion = 0.0
         self.armed = True
+        self.attempt_id += 1
         self.arm_step = int(step)
         self.arm_margin_m = float(margin)
+        # Bind the causal support-loss evidence to this attempt.  A shallow
+        # copy is not enough because the force lists are mutable diagnostics.
+        self.arm_support_loss_window = [
+            {
+                "drive_step": int(sample["drive_step"]),
+                "contacted_rib_ids": list(sample["contacted_rib_ids"]),
+                "rib_contact_force_magnitudes_N": list(sample["rib_contact_force_magnitudes_N"]),
+            }
+            for sample in support_loss_window
+        ]
 
-    def update(self, current):
+    def invalidate(self, current, step, reason):
+        """End an armed attempt without carrying intersections into a later one."""
+        if self.armed:
+            self.invalidated_attempts.append({
+                "attempt_id": self.attempt_id,
+                "arm_step": self.arm_step,
+                "invalidated_step": int(step),
+                "reason": str(reason),
+                "arming_support_loss_window": self.arm_support_loss_window,
+                "sampled_intersection_count_discarded": len(self.xy),
+            })
+        self.previous = np.asarray(current)
+        self.xy = []
+        self.maximum_step_motion = 0.0
+        self.armed = False
+
+    def update(self, current, step):
         current = np.asarray(current)
         if not self.armed:
             self.previous = current
+            return None
+        # A vertex that was below the aperture plane and returns to/on it is
+        # direct sampled evidence of upward re-entry.  End this attempt before
+        # collecting any intersections so separate recrossings cannot be
+        # combined.  This remains an endpoint-sampled predicate, not CCD.
+        if np.any((self.previous[:, 2] < 0) & (current[:, 2] >= 0)):
+            self.invalidate(current, step, "sampled_upward_plane_reentry")
+            return None
+        # Do not splice intersections across a non-monotonic attempt even
+        # when no individual vertex happens to recross the plane in this
+        # interval.  A later downward attempt must earn a new arm event and a
+        # new fresh support-loss window.
+        if float(np.mean(current[:, 2])) > float(np.mean(self.previous[:, 2])) + 1.0e-9:
+            self.invalidate(current, step, "sampled_upward_center_motion")
             return None
         self.maximum_step_motion = max(self.maximum_step_motion,
                                        float(np.max(np.linalg.norm(current-self.previous, axis=1))))
@@ -211,17 +347,25 @@ class Crossing:
         self.previous = current
         if not self.started_in_bridge_state or not np.all(current[:, 2] < 0): return None
         if not self.xy:
+            self.armed = False
             return {"completed": True, "sampled_aperture_polygon_within_tolerance": False, "sampled_aperture_polygon_margin_m": -1.0,
+                    "causal_crossing_arm_step": self.arm_step,
+                    "causal_crossing_attempt_id": self.attempt_id,
+                    "causal_crossing_arm_margin_m": self.arm_margin_m,
+                    "causal_crossing_arming_support_loss_window": self.arm_support_loss_window,
                     "maximum_observed_endpoint_vertex_displacement_m": self.maximum_step_motion,
                     "sampled_clearance_minus_endpoint_displacement_m": -1.0}
         clearance = APERTURE/2 - np.max(np.abs(np.asarray(self.xy)), axis=1)
         # Endpoint displacement is not a bound on a rotating edge's swept path.
         sampled_resolution_margin = float(clearance.min()) - self.maximum_step_motion
         # This is the frozen numerical contact allowance, not a larger hole.
+        self.armed = False
         return {"completed": True, "sampled_aperture_polygon_within_tolerance": bool(np.all(clearance >= -0.0005)),
                 "sampled_aperture_polygon_margin_m": float(clearance.min()),
                 "causal_crossing_arm_step": self.arm_step,
+                "causal_crossing_attempt_id": self.attempt_id,
                 "causal_crossing_arm_margin_m": self.arm_margin_m,
+                "causal_crossing_arming_support_loss_window": self.arm_support_loss_window,
                 "maximum_observed_endpoint_vertex_displacement_m": self.maximum_step_motion,
                 "sampled_clearance_minus_endpoint_displacement_m": sampled_resolution_margin}
 
@@ -230,6 +374,20 @@ def main():
     dt = 1 / args.physics_hz
     sim = sim_utils.SimulationContext(sim_utils.SimulationCfg(dt=dt, device=args.device,
         render_interval=max(1, args.physics_hz // 20)))
+    # The pinned PhysxManager disables contact processing during simulation
+    # construction.  Applying PhysxContactReportAPI to actors is necessary but
+    # does not reverse that global setting.  ContactSensor.__init__ normally
+    # does so; this probe intentionally reads native collider-level reports
+    # directly and therefore must perform the same verified settings operation
+    # after SimulationContext construction and before the first reset/step.
+    settings = get_settings_manager()
+    contact_processing_disabled_before_enable = bool(
+        settings.get("/physics/disableContactProcessing", True)
+    )
+    settings.set_bool("/physics/disableContactProcessing", False)
+    contact_processing_disabled_readback = bool(
+        settings.get("/physics/disableContactProcessing", True)
+    )
     root, drive = spawn_moving_aperture(); mesh = media_mesh()
     # Rz(45)Ry(35).  The previous fully transverse (Ry(90)) seed was a stable
     # bridge under the bounded +/-5 degree screen drive and therefore never
@@ -245,11 +403,10 @@ def main():
         init_state=RigidObjectCfg.InitialStateCfg(pos=(0, 0, ROOT_Z + hz + 1e-5), rot=quat)))
     aperture = RigidObject(RigidObjectCfg(prim_path="/World/MovingAperture", spawn=None))
     rib_ids = [f"/World/MovingAperture/Rib_{i}" for i in range(4)]
-    rib_sensor = ContactSensor(ContactSensorCfg(
-        prim_path="/World/Medium", update_period=0.0, history_length=0,
-        track_air_time=False, filter_prim_paths_expr=rib_ids))
     sim.reset(); body.reset(); aperture.reset(); native_dt = float(sim.get_physics_dt())
+    physx = get_physx_simulation_interface()
     stage = get_current_stage()
+    contact_resolver = ContactPathResolver(stage)
     medium_ccd_attr = PhysxSchema.PhysxRigidBodyAPI(
         stage.GetPrimAtPath("/World/Medium")
     ).GetEnableCCDAttr()
@@ -264,14 +421,16 @@ def main():
     settle_rib_contact_history = []
     for step in range(3 * args.physics_hz):
         sim.step(render=False); body.update(dt); aperture.update(dt)
-        rib_sensor.update(dt, force_recompute=True)
-        rib_forces = rib_sensor.data.normal_force_matrix_w.torch[0, 0].detach().cpu().numpy()
-        rib_force_magnitudes = np.linalg.norm(rib_forces, axis=1)
-        contacted_rib_ids = [rib_ids[i] for i, force in enumerate(rib_force_magnitudes) if force > 1.0e-6]
+        (contacted_rib_ids, rib_force_magnitudes, rib_point_counts,
+         decoded_rib_headers, native_header_count, native_contact_count) = native_rib_contacts(physx, contact_resolver, dt)
         settle_rib_contact_history.append({
             "settle_step": step + 1,
             "contacted_rib_ids": contacted_rib_ids,
-            "rib_contact_force_magnitudes_N": rib_force_magnitudes.tolist(),
+            "rib_contact_force_magnitudes_N": rib_force_magnitudes,
+            "rib_contact_point_counts": rib_point_counts,
+            "decoded_medium_rib_header_count": decoded_rib_headers,
+            "native_contact_header_count": native_header_count,
+            "native_contact_data_count": native_contact_count,
         })
         if len(contacted_rib_ids) >= 2:
             two_rib_consecutive += 1
@@ -290,16 +449,26 @@ def main():
                       "derived_native_relative_hinge_angle_deg":hinge_angle,
                       "hinge_frame_translation_residual_m":hinge_translation_residual,
                       "hinge_axis_rotation_residual_deg":hinge_axis_residual,
-                      "rib_contact_force_magnitudes_N":rib_force_magnitudes.tolist(),
+                      "rib_contact_force_magnitudes_N":rib_force_magnitudes,
+                      "rib_contact_point_counts":rib_point_counts,
+                      "decoded_medium_rib_header_count":decoded_rib_headers,
+                      "native_contact_header_count":native_header_count,
+                      "native_contact_data_count":native_contact_count,
                       "contacted_rib_ids":contacted_rib_ids,
                       "joint_drive_target_deg":0.0})
     initial = to_local_pose(ap, aq, world_vertices(body, mesh))
     retained_window_s = 0.5
     retained_window_samples = int(round(retained_window_s * args.physics_hz))
+    decoded_contact_fixture_valid = bool(
+        two_rib_consecutive >= retained_window_samples and
+        all(sample["decoded_medium_rib_header_count"] > 0
+            for sample in settle_rib_contact_history[-retained_window_samples:])
+    )
     bridged = bool(np.min(initial[:,2]) <= 0.001 and np.max(initial[:,2]) > 0 and
                    max(gravity_speeds[-retained_window_samples:]) < 0.005 and
                    np.ptp(initial[:,0]) > APERTURE and
-                   two_rib_consecutive >= retained_window_samples)
+                   two_rib_consecutive >= retained_window_samples and
+                   decoded_contact_fixture_valid)
     qualifying_rib_window = (settle_rib_contact_history[-retained_window_samples:]
                              if two_rib_consecutive >= retained_window_samples else [])
     qualifying_rib_id_union = sorted({rib_id for sample in qualifying_rib_window
@@ -314,9 +483,17 @@ def main():
                                    if qualifying_rib_window else -1),
         "distinct_rib_ids_across_window": qualifying_rib_id_union,
         "contacted_rib_ids_per_sample": qualifying_rib_id_sets,
+        "positive_decoded_contact_fixture_every_sample": decoded_contact_fixture_valid,
     }
     tracker, crossing, rolls = Crossing(initial, mesh.faces), None, []
-    release_step = None
+    # A support-loss candidate is deliberately revocable.  It starts on the
+    # first fresh native sample with fewer than two contacted ribs and is reset
+    # on any two-rib re-contact; it is not a permanent release latch.
+    release_candidate_start_step = None
+    maximum_support_loss_consecutive = 0
+    support_loss_consecutive = 0
+    support_loss_window = []
+    arming_support_loss_window = []
     drive_contact_history = []
     previous_local_center_z = float(np.mean(initial[:, 2]))
     for step in range(3 * args.physics_hz):
@@ -327,14 +504,29 @@ def main():
         target = 5.0 * math.sin(2 * math.pi * t) if t < 2 else 0.0
         drive.GetTargetPositionAttr().Set(target)
         sim.step(render=False); body.update(dt); aperture.update(dt)
-        rib_sensor.update(dt, force_recompute=True)
-        drive_rib_forces = rib_sensor.data.normal_force_matrix_w.torch[0, 0].detach().cpu().numpy()
-        drive_rib_force_magnitudes = np.linalg.norm(drive_rib_forces, axis=1)
-        drive_contacted_rib_ids = [rib_ids[i] for i, force in enumerate(drive_rib_force_magnitudes)
-                                   if force > 1.0e-6]
+        (drive_contacted_rib_ids, drive_rib_force_magnitudes, drive_rib_point_counts,
+         drive_decoded_headers, drive_native_header_count,
+         drive_native_contact_count) = native_rib_contacts(physx, contact_resolver, dt)
         drive_contact_history.append(drive_contacted_rib_ids)
-        if release_step is None and len(drive_contacted_rib_ids) < 2:
-            release_step = step + 1
+        if len(drive_contacted_rib_ids) < 2:
+            support_loss_consecutive += 1
+            maximum_support_loss_consecutive = max(
+                maximum_support_loss_consecutive, support_loss_consecutive)
+            support_loss_window.append({
+                "drive_step": step + 1,
+                "contacted_rib_ids": drive_contacted_rib_ids,
+                "rib_contact_force_magnitudes_N": drive_rib_force_magnitudes,
+                "rib_contact_point_counts": drive_rib_point_counts,
+            })
+            if release_candidate_start_step is None:
+                release_candidate_start_step = step + 1
+        else:
+            # Recovery of two-rib support ends an already armed attempt as
+            # well as revoking an unarmed candidate.  Its intersections must
+            # never be carried into a later release/crossing attempt.
+            support_loss_consecutive = 0
+            support_loss_window = []
+            release_candidate_start_step = None
         ap, aq, av = pose(aperture)
         roll, hinge_translation_residual, hinge_axis_residual = derived_hinge_state(ap, aq)
         rolls.append(roll)
@@ -342,11 +534,17 @@ def main():
         local_center_z = float(np.mean(local[:, 2]))
         local_center_downward = local_center_z < previous_local_center_z
         section_margin = tracker.section_margin(local)
-        if (not tracker.armed and bridged and release_step is not None and
+        # A completed crossing is immutable.  Continue sampling the physical
+        # trace, but never invalidate or arm another classifier attempt whose
+        # fields could be combined with the retained completion.
+        if crossing is None and tracker.armed and len(drive_contacted_rib_ids) >= 2:
+            tracker.invalidate(local, step + 1, "two_rib_support_recovered")
+        if (crossing is None and not tracker.armed and bridged and support_loss_consecutive >= 1 and
                 section_margin is not None and section_margin >= -0.0005 and local_center_downward):
-            tracker.arm(local, step + 1, section_margin)
+            arming_support_loss_window = list(support_loss_window)
+            tracker.arm(local, step + 1, section_margin, arming_support_loss_window)
         elif crossing is None:
-            crossing = tracker.update(local)
+            crossing = tracker.update(local, step + 1)
         trace.append({"phase":"drive", "step":step+1, "observed_roll_deg":roll,
                       "position_m":p.tolist(), "quaternion_xyzw":q.tolist(),
                       "velocity_mps_radps":v.tolist(), "aperture_position_m":ap.tolist(),
@@ -356,10 +554,19 @@ def main():
                       "hinge_frame_translation_residual_m":hinge_translation_residual,
                       "hinge_axis_rotation_residual_deg":hinge_axis_residual,
                       "contacted_rib_ids":drive_contacted_rib_ids,
+                      "release_candidate_start_step":release_candidate_start_step,
+                      "fresh_consecutive_support_loss_samples":support_loss_consecutive,
+                      "rib_contact_force_magnitudes_N":drive_rib_force_magnitudes,
+                      "rib_contact_point_counts":drive_rib_point_counts,
+                      "decoded_medium_rib_header_count":drive_decoded_headers,
+                      "native_contact_header_count":drive_native_header_count,
+                      "native_contact_data_count":drive_native_contact_count,
                       "sampled_plane_section_margin_m":section_margin,
                       "medium_center_z_in_aperture_frame_m":local_center_z,
                       "medium_center_downward_in_aperture_frame":local_center_downward,
                       "causal_crossing_armed":tracker.armed,
+                      "causal_crossing_attempt_id":tracker.attempt_id,
+                      "invalidated_crossing_attempt_count":len(tracker.invalidated_attempts),
                       "joint_drive_target_deg":target})
         previous_local_center_z = local_center_z
     numeric_trace = [x["position_m"] + x["quaternion_xyzw"] + x["velocity_mps_radps"] +
@@ -376,16 +583,27 @@ def main():
     with gzip.open(trace_path, "wt", encoding="utf-8") as f:
         json.dump({"scope":"single-seed sampled moving-frame crossing discovery only",
                    "retained_window_s":retained_window_s,
+                   "native_contact_processing_setting":{
+                       "path":"/physics/disableContactProcessing",
+                       "disabled_before_explicit_enable":contact_processing_disabled_before_enable,
+                       "disabled_after_explicit_enable_readback":contact_processing_disabled_readback,
+                       "settings_manager_omniverse_mode":bool(settings.is_omniverse_mode),
+                   },
                    "native_physx_ccd_readback":{
                        "/World/Medium":medium_ccd_enabled,
                        "/World/MovingAperture":aperture_ccd_enabled,
                    },
                    "coverage":"completed-physics-sample endpoints only; no continuous swept-geometry claim",
+                   "rib_contact_observable":"native current-step PhysX contact report decoded by collider path; summed impulse magnitude divided by dt is diagnostic force",
                    "crossing_classifier":"ideal fixed aperture polygon at sampled endpoints; not actual-rib signed distance, physical clearance, genuine passage, or continuous swept coverage",
                    "rib_ids":rib_ids, "final_bridge_contacted_rib_ids":final_two_rib_ids,
-                   "physical_two_rib_support_loss_step":release_step,
-                   "causal_crossing_arm_step":tracker.arm_step,
-                   "causal_crossing_arm_margin_m":tracker.arm_margin_m,
+                   "resolved_contact_paths":contact_resolver.inventory(),
+                   "current_release_candidate_start_step":release_candidate_start_step,
+                   "maximum_fresh_consecutive_support_loss_samples":maximum_support_loss_consecutive,
+                   "arming_support_loss_window":(crossing["causal_crossing_arming_support_loss_window"] if crossing else arming_support_loss_window),
+                   "causal_crossing_arm_step":(crossing["causal_crossing_arm_step"] if crossing else tracker.arm_step),
+                   "causal_crossing_arm_margin_m":(crossing["causal_crossing_arm_margin_m"] if crossing else tracker.arm_margin_m),
+                   "invalidated_crossing_attempts":tracker.invalidated_attempts,
                    "drive_contacted_rib_ids_per_sample":drive_contact_history,
                    "qualifying_two_rib_contact_window":qualifying_window_summary,
                    "maximum_consecutive_two_distinct_rib_contact_samples":two_rib_max_consecutive,
@@ -396,17 +614,30 @@ def main():
         {"name":"finite_native_samples","measured":int(finite),"operator":"==","threshold":1,"unit":"bool"},
         {"name":"medium_native_physx_ccd_enabled","measured":int(medium_ccd_enabled),"operator":"==","threshold":1,"unit":"bool"},
         {"name":"moving_aperture_native_physx_ccd_enabled","measured":int(aperture_ccd_enabled),"operator":"==","threshold":1,"unit":"bool"},
+        {"name":"contact_processing_enabled_readback_before_first_reset","measured":int(not contact_processing_disabled_readback),"operator":"==","threshold":1,"unit":"bool"},
+        {"name":"settings_manager_omniverse_mode","measured":int(settings.is_omniverse_mode),"operator":"==","threshold":1,"unit":"bool"},
         {"name":"fresh_physics_sample_count","measured":len(trace),"operator":"==","threshold":6*args.physics_hz,"unit":"completed_physics_samples"},
+        {"name":"spawned_medium_collision_prim_count","measured":len(contact_resolver.medium_colliders),"operator":">=","threshold":1,"unit":"collision_prims"},
+        {"name":"spawned_rib_collision_prim_count","measured":sum(map(len, contact_resolver.rib_colliders.values())),"operator":">=","threshold":4,"unit":"collision_prims"},
+        {"name":"positive_decoded_medium_rib_contact_header_count","measured":sum(x["decoded_medium_rib_header_count"] for x in settle_rib_contact_history),"operator":">","threshold":0,"unit":"headers"},
+        {"name":"positive_decoded_contact_fixture_for_support_loss_interpretation","measured":int(decoded_contact_fixture_valid),"operator":"==","threshold":1,"unit":"bool"},
         {"name":"gravity_retained_oblique_seed_with_fresh_two_distinct_rib_support","measured":int(bridged),"operator":"==","threshold":1,"unit":"bool"},
         {"name":"maximum_consecutive_two_distinct_rib_contact_samples","measured":two_rib_max_consecutive,"operator":">=","threshold":retained_window_samples,"unit":"completed_physics_samples"},
         {"name":"observed_roll_range","measured":max(rolls)-min(rolls),"operator":">=","threshold":8.0,"unit":"deg"},
-        {"name":"physical_two_rib_support_loss_observed","measured":int(release_step is not None),"operator":"==","threshold":1,"unit":"bool"},
-        {"name":"causal_crossing_window_armed_after_support_loss","measured":int(tracker.arm_step is not None and release_step is not None and tracker.arm_step >= release_step),"operator":"==","threshold":1,"unit":"bool"},
+        {"name":"physical_two_rib_support_loss_observed_after_qualified_bridge","measured":int(
+            bridged and maximum_support_loss_consecutive > 0
+        ),"operator":"==","threshold":1,"unit":"bool"},
+        {"name":"causal_crossing_window_armed_during_fresh_support_loss","measured":int(
+            crossing is not None and
+            bool(crossing["causal_crossing_arming_support_loss_window"]) and
+            crossing["causal_crossing_arming_support_loss_window"][-1]["drive_step"] == crossing["causal_crossing_arm_step"] and
+            len(crossing["causal_crossing_arming_support_loss_window"][-1]["contacted_rib_ids"]) < 2
+        ),"operator":"==","threshold":1,"unit":"bool"},
         {"name":"sampled_ideal_aperture_polygon_crossing_within_tolerance","measured":int(bool(crossing and crossing["sampled_aperture_polygon_within_tolerance"])),"operator":"==","threshold":1,"unit":"bool"},
         {"name":"minimum_sampled_ideal_aperture_polygon_margin","measured":float(crossing["sampled_aperture_polygon_margin_m"] if crossing else -1),"operator":">=","threshold":-0.0005,"unit":"m"},
         # Diagnostic only.  Endpoint motion is explicitly not used as a
         # conservative rotational swept-volume bound.
-        {"name":"maximum_observed_endpoint_vertex_displacement","measured":float(tracker.maximum_step_motion),"operator":">=","threshold":0.0,"unit":"m_per_completed_physics_interval"},
+        {"name":"maximum_observed_endpoint_vertex_displacement","measured":float(crossing["maximum_observed_endpoint_vertex_displacement_m"] if crossing else tracker.maximum_step_motion),"operator":">=","threshold":0.0,"unit":"m_per_completed_physics_interval"},
         {"name":"maximum_hinge_frame_translation_residual","measured":max(x["hinge_frame_translation_residual_m"] for x in trace),"operator":"<=","threshold":0.0005,"unit":"m"},
         {"name":"maximum_hinge_axis_rotation_residual","measured":max(x["hinge_axis_rotation_residual_deg"] for x in trace),"operator":"<=","threshold":0.5,"unit":"deg"},
         {"name":"native_aperture_state_samples","measured":len(trace),"operator":"==","threshold":6*args.physics_hz,"unit":"completed_physics_samples"},
@@ -415,9 +646,18 @@ def main():
         json.dump({
             "scope":"single-seed sampled moving-frame crossing discovery only",
             "coverage":"completed-physics-sample endpoints only; no continuous swept-geometry claim",
+            "rib_contact_observable":"native current-step PhysX contact report decoded by collider path; summed impulse magnitude divided by dt is diagnostic force",
             "crossing_classifier":"ideal fixed aperture polygon at sampled endpoints; not actual-rib signed distance, physical clearance, genuine passage, or continuous swept coverage",
             "qualification_claimed":False,
+            "native_contact_processing_setting":{
+                "path":"/physics/disableContactProcessing",
+                "disabled_before_explicit_enable":contact_processing_disabled_before_enable,
+                "disabled_after_explicit_enable_readback":contact_processing_disabled_readback,
+                "settings_manager_omniverse_mode":bool(settings.is_omniverse_mode),
+            },
+            "resolved_contact_paths":contact_resolver.inventory(),
             "qualifying_two_rib_contact_window":qualifying_window_summary,
+            "arming_support_loss_window":(crossing["causal_crossing_arming_support_loss_window"] if crossing else arming_support_loss_window),
             "checks":checks,
             "artifacts":[trace_path.relative_to(workspace).as_posix()],
         }, f, indent=2)

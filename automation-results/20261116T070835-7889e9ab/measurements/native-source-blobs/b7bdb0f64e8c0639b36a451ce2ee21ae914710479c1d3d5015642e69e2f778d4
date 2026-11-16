@@ -1,0 +1,246 @@
+"""Probe detailed native tensor contacts for the compound aperture and medium.
+
+This bounded repair asks only whether the supported ceramic medium and the
+four-collider aperture rigid body produce populated raw contact points, and
+whether those world points can be mapped back into the authored rib footprints.
+This static diagnostic validates point/count/start-index semantics and a known
+supported fixture only.  It does not establish moving-screen support loss,
+aperture passage, continuous swept clearance, or frozen qualification.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import math
+from pathlib import Path
+
+from isaaclab.app import AppLauncher
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--physics-hz", type=int, choices=(240, 480), required=True)
+parser.add_argument("--report", type=Path, required=True)
+AppLauncher.add_app_launcher_args(parser)
+args = parser.parse_args()
+launcher = AppLauncher(args)
+simulation_app = launcher.app
+
+import numpy as np
+import torch
+import trimesh
+from pxr import Gf, UsdGeom, UsdPhysics
+import isaaclab.sim as sim_utils
+from isaaclab.assets import RigidObject, RigidObjectCfg
+from isaaclab.sensors import ContactSensor, ContactSensorCfg
+from isaaclab.sim.spawners.meshes.meshes import _spawn_mesh_geom_from_mesh
+from isaaclab.sim.utils import get_current_stage
+
+APERTURE, PATCH, FLOOR_T = 0.0127, 0.050, 0.003
+MEDIA_D, MEDIA_L, DENSITY = 0.009525, 0.022225, 2500.0
+ROOT_Z, ROOT_MASS = 0.25, 0.40
+
+
+def material():
+    return sim_utils.RigidBodyMaterialCfg(static_friction=0.50, dynamic_friction=0.35, restitution=0.05)
+
+
+def collision():
+    return sim_utils.CollisionPropertiesCfg(contact_offset=0.00015, rest_offset=0.0)
+
+
+def medium_mesh():
+    radius, slope, count = MEDIA_D / 2, math.tan(math.radians(15)), 32
+    straight = MEDIA_L - 2 * radius * slope
+    vertices, faces = [], []
+    for sign in (-1, 1):
+        for i in range(count):
+            angle = 2 * math.pi * i / count
+            x, y = radius * math.cos(angle), radius * math.sin(angle)
+            vertices.append((x, y, slope * x + sign * straight / 2))
+    for i in range(1, count - 1):
+        faces.extend(((0, i + 1, i), (count, count + i, count + i + 1)))
+    for i in range(count):
+        j = (i + 1) % count
+        faces.extend(((i, j, count + j), (i, count + j, count + i)))
+    return trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
+
+
+def mesh_cfg(mesh):
+    def spawn(path, cfg, translation=None, orientation=None, **kwargs):
+        stage = get_current_stage()
+        _spawn_mesh_geom_from_mesh(path, cfg, mesh, translation, orientation, stage=stage)
+        prim = stage.GetPrimAtPath(path)
+        sim_utils.activate_contact_sensors(path, stage=stage)
+        mass = UsdPhysics.MassAPI.Apply(prim)
+        mass.CreateMassAttr(float(mesh.volume * DENSITY))
+        mass.CreateCenterOfMassAttr(Gf.Vec3f(*map(float, mesh.center_mass)))
+        inertia = mesh.moment_inertia * DENSITY
+        values, axes = np.linalg.eigh(inertia)
+        if np.linalg.det(axes) < 0:
+            axes[:, 0] *= -1
+        transform = np.eye(4)
+        transform[:3, :3] = axes
+        qw, qx, qy, qz = trimesh.transformations.quaternion_from_matrix(transform)
+        mass.CreateDiagonalInertiaAttr(Gf.Vec3f(*map(float, values)))
+        mass.CreatePrincipalAxesAttr(Gf.Quatf(float(qw), Gf.Vec3f(float(qx), float(qy), float(qz))))
+        return prim
+    return sim_utils.MeshCfg(
+        func=spawn,
+        rigid_props=sim_utils.RigidBodyPropertiesCfg(
+            solver_position_iteration_count=32, solver_velocity_iteration_count=8,
+            max_depenetration_velocity=2.0),
+        collision_props=collision(), physics_material=material(), activate_contact_sensors=True)
+
+
+def spawn_aperture():
+    stage = get_current_stage()
+    root = UsdGeom.Xform.Define(stage, "/World/Aperture")
+    root.AddTranslateOp().Set(Gf.Vec3d(0, 0, ROOT_Z))
+    UsdPhysics.RigidBodyAPI.Apply(root.GetPrim()).CreateKinematicEnabledAttr(True)
+    UsdPhysics.MassAPI.Apply(root.GetPrim()).CreateMassAttr(ROOT_MASS)
+    sim_utils.activate_contact_sensors("/World/Aperture", stage=stage)
+    side = (PATCH - APERTURE) / 2
+    specs = (((side, PATCH, FLOOR_T), (-(APERTURE + side) / 2, 0, -FLOOR_T / 2)),
+             ((side, PATCH, FLOOR_T), ((APERTURE + side) / 2, 0, -FLOOR_T / 2)),
+             ((APERTURE, side, FLOOR_T), (0, -(APERTURE + side) / 2, -FLOOR_T / 2)),
+             ((APERTURE, side, FLOOR_T), (0, (APERTURE + side) / 2, -FLOOR_T / 2)))
+    for index, (size, position) in enumerate(specs):
+        cfg = sim_utils.CuboidCfg(size=size, collision_props=collision(), physics_material=material())
+        cfg.func(f"/World/Aperture/Rib_{index}", cfg, translation=position)
+
+
+def main():
+    dt = 1.0 / args.physics_hz
+    sim = sim_utils.SimulationContext(sim_utils.SimulationCfg(
+        dt=dt, device=args.device, render_interval=max(1, args.physics_hz // 20)))
+    spawn_aperture()
+    mesh = medium_mesh()
+    yaw, pitch = math.radians(45) / 2, math.radians(35) / 2
+    quat = (-math.sin(yaw) * math.sin(pitch), math.cos(yaw) * math.sin(pitch),
+            math.sin(yaw) * math.cos(pitch), math.cos(yaw) * math.cos(pitch))
+    rotation = trimesh.transformations.quaternion_matrix((quat[3], *quat[:3]))[:3, :3]
+    half_height = float(np.max(np.abs((mesh.vertices @ rotation.T)[:, 2])))
+    medium = RigidObject(RigidObjectCfg(
+        prim_path="/World/Medium", spawn=mesh_cfg(mesh),
+        init_state=RigidObjectCfg.InitialStateCfg(
+            pos=(0, 0, ROOT_Z + half_height + 1e-5), rot=quat)))
+    sensor = ContactSensor(ContactSensorCfg(
+        prim_path="/World/Medium", update_period=0.0, history_length=0,
+        track_air_time=False, filter_prim_paths_expr=["/World/Aperture"],
+        max_contact_data_count_per_prim=32))
+    sim.reset()
+    medium.reset()
+    steps = 3 * args.physics_hz
+    contact_samples = consecutive = max_consecutive = 0
+    max_force = 0.0
+    forces, positions, detailed_samples = [], [], []
+    matrix_device = ""
+    matrix_shape = []
+    raw_device = ""
+    populated_raw_samples = mapped_raw_points = unmapped_raw_points = 0
+    two_rib_consecutive = max_two_rib_consecutive = 0
+    maximum_count = 0
+    side = (PATCH - APERTURE) / 2
+    rib_specs = [
+        (-(APERTURE + side) / 2, 0.0, side, PATCH),
+        ((APERTURE + side) / 2, 0.0, side, PATCH),
+        (0.0, -(APERTURE + side) / 2, APERTURE, side),
+        (0.0, (APERTURE + side) / 2, APERTURE, side),
+    ]
+    for step in range(steps):
+        sim.step(render=False)
+        medium.update(dt)
+        sensor.update(dt, force_recompute=True)
+        matrix = sensor.data.normal_force_matrix_w.torch
+        force = matrix[0, 0, 0].detach()
+        if step == 0:
+            matrix_device, matrix_shape = str(matrix.device), list(matrix.shape)
+        magnitude = float(torch.linalg.vector_norm(force).cpu())
+        max_force = max(max_force, magnitude)
+        touching = magnitude > 1.0e-6
+        if touching:
+            contact_samples += 1
+            consecutive += 1
+            max_consecutive = max(max_consecutive, consecutive)
+        else:
+            consecutive = 0
+        if step % max(1, args.physics_hz // 20) == 0 or touching:
+            forces.append({"step": step + 1, "force_w_N": force.cpu().tolist(), "magnitude_N": magnitude})
+            positions.append(medium.data.root_pos_w.torch[0].detach().cpu().tolist())
+        raw_force, raw_points, raw_normals, raw_separations, counts, starts = sensor.contact_view.get_contact_data(dt)
+        raw_points_tensor = raw_points.torch
+        raw_separations_tensor = raw_separations.torch
+        if step == 0:
+            raw_device = str(raw_points_tensor.device)
+        count = int(counts.torch[0, 0].detach().cpu())
+        start = int(starts.torch[0, 0].detach().cpu())
+        maximum_count = max(maximum_count, count)
+        if start < 0 or count < 0 or start + count > int(raw_points_tensor.shape[0]):
+            raise RuntimeError(f"invalid contact slice start={start} count={count} capacity={raw_points_tensor.shape[0]}")
+        points = raw_points_tensor[start:start + count].detach().cpu().numpy().astype(float)
+        separations = raw_separations_tensor[start:start + count].detach().cpu().numpy().reshape(-1).astype(float)
+        rib_ids = set()
+        mapped = []
+        for point, separation in zip(points, separations, strict=True):
+            local = point - np.array((0.0, 0.0, ROOT_Z))
+            candidates = []
+            for rib_id, (cx, cy, sx, sy) in enumerate(rib_specs):
+                if abs(local[0] - cx) <= sx / 2 + 5.0e-4 and abs(local[1] - cy) <= sy / 2 + 5.0e-4:
+                    candidates.append(rib_id)
+            # Rib footprints do not overlap except at numerical boundary bands.
+            # Ambiguous/unmapped points are retained as failures, never guessed.
+            rib_id = candidates[0] if len(candidates) == 1 else None
+            if rib_id is None:
+                unmapped_raw_points += 1
+            else:
+                mapped_raw_points += 1
+                rib_ids.add(rib_id)
+            mapped.append({"point_w_m": point.tolist(), "separation_m": float(separation),
+                           "candidate_rib_ids": candidates, "mapped_rib_id": rib_id})
+        if count > 0:
+            populated_raw_samples += 1
+        if len(rib_ids) >= 2:
+            two_rib_consecutive += 1
+            max_two_rib_consecutive = max(max_two_rib_consecutive, two_rib_consecutive)
+        else:
+            two_rib_consecutive = 0
+        if count > 0 or step % max(1, args.physics_hz // 20) == 0:
+            detailed_samples.append({"step": step + 1, "count": count, "start_index": start,
+                                     "mapped_distinct_rib_ids": sorted(rib_ids), "contacts": mapped})
+    report_path = args.report if args.report.is_absolute() else (Path.cwd() / args.report).resolve()
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    trace_path = report_path.with_name(report_path.stem + "-trace.json")
+    workspace = Path(__file__).resolve().parent.parent
+    trace_path.write_text(json.dumps({
+        "scope": "static compound aperture raw contact-point mapping discovery only",
+        "individual_rib_identity_method": "world contact point transformed into fixed aperture frame and uniquely contained by authored rib footprint plus 0.5 mm numerical mapping band",
+        "physics_sample_rate_hz": args.physics_hz,
+        "force_matrix_device": matrix_device,
+        "force_matrix_shape": matrix_shape,
+        "raw_contact_device": raw_device,
+        "raw_contact_capacity": int(sensor.contact_view.max_contact_data_count),
+        "sampled_positions_m": positions,
+        "sampled_forces": forces,
+        "detailed_contact_samples": detailed_samples,
+    }, indent=2))
+    report_path.write_text(json.dumps({
+        "checks": [
+            {"name": "physics_dt_absolute_error", "measured": abs(float(sim.get_physics_dt()) - dt), "operator": "<=", "threshold": 1e-9, "unit": "s"},
+            {"name": "cuda_backed_compound_pair_contact_matrix", "measured": int(matrix_device.startswith("cuda")), "operator": "==", "threshold": 1, "unit": "bool"},
+            {"name": "cuda_backed_raw_contact_points", "measured": int(raw_device.startswith("cuda")), "operator": "==", "threshold": 1, "unit": "bool"},
+            {"name": "positive_compound_aperture_medium_contact_samples", "measured": contact_samples, "operator": ">", "threshold": 0, "unit": "completed_physics_samples"},
+            {"name": "maximum_consecutive_compound_pair_contact_samples", "measured": max_consecutive, "operator": ">=", "threshold": 12, "unit": "completed_physics_samples"},
+            {"name": "maximum_observed_compound_pair_force", "measured": max_force, "operator": ">", "threshold": 0.0, "unit": "N"},
+            {"name": "populated_raw_contact_samples", "measured": populated_raw_samples, "operator": ">", "threshold": 0, "unit": "completed_physics_samples"},
+            {"name": "mapped_raw_contact_points", "measured": mapped_raw_points, "operator": ">", "threshold": 0, "unit": "points"},
+            {"name": "unmapped_or_ambiguous_raw_contact_points", "measured": unmapped_raw_points, "operator": "==", "threshold": 0, "unit": "points"},
+            {"name": "maximum_raw_contacts_in_one_sample", "measured": maximum_count, "operator": ">", "threshold": 0, "unit": "points"},
+            {"name": "maximum_consecutive_two_distinct_mapped_rib_samples", "measured": max_two_rib_consecutive, "operator": ">=", "threshold": int(round(0.5 * args.physics_hz)), "unit": "completed_physics_samples"},
+            {"name": "fresh_physics_sample_count", "measured": steps, "operator": "==", "threshold": steps, "unit": "completed_physics_samples"},
+        ],
+        "artifacts": [trace_path.relative_to(workspace).as_posix()],
+    }, indent=2))
+    simulation_app.close()
+
+
+if __name__ == "__main__":
+    main()

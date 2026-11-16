@@ -3237,5 +3237,205 @@
       }
     ],
     "at": "2026-11-16T17:16:41.583872+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Repaired the failed contact-observation mechanism with a bounded native probe using the source-verified CUDA filtered-contact tensor. It tests the actual four-collider compound aperture against the oblique ceramic medium at 240/480 Hz and requires fresh positive force samples. It intentionally makes no individual-rib, support-loss, crossing, swept-geometry, full-environment, scorer, or qualification claim. Static Python compilation passed; native GPU execution remains required.",
+      "scripts": [
+        {
+          "id": "compound_aperture_contact_tensor_240hz",
+          "script": "task/run_compound_aperture_contact_probe.py",
+          "args": [
+            "--physics-hz",
+            "240",
+            "--report",
+            "../measurements/compound-aperture-contact-240hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/compound-aperture-contact-240hz.json"
+        },
+        {
+          "id": "compound_aperture_contact_tensor_480hz",
+          "script": "task/run_compound_aperture_contact_probe.py",
+          "args": [
+            "--physics-hz",
+            "480",
+            "--report",
+            "../measurements/compound-aperture-contact-480hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/compound-aperture-contact-480hz.json"
+        }
+      ],
+      "files": [
+        "task/run_compound_aperture_contact_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_compound_aperture_contact_probe.py",
+        "input/last-failure.json",
+        "input/revision-request.txt",
+        "input/runtime-api-preflight.json",
+        "input/pinned-runtime-sources/000dde649a8b270af0f7102fff67a51abc1a2ff359fa3179f52830d5b83fde80-contact_sensor.py",
+        "input/pinned-runtime-sources/3f72a3cb2ccd2bedb666f58a912d9bd2d1b69e1c8c285d77e24e71c27ad2e3e9-contact_sensor_cfg.py"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_compound_aperture_contact_probe.py",
+          "--physics-hz",
+          "240",
+          "--report",
+          "../measurements/compound-aperture-contact-240hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/compound_aperture_contact_tensor_240hz-baa4c7861e.log",
+        "finished_at": "2026-11-16T18:28:40.142991+00:00",
+        "id": "compound_aperture_contact_tensor_240hz",
+        "report": "measurements/compound-aperture-contact-240hz.json",
+        "report_sha256": "11898c9393ad8e48735aee90da2d5bd88b2eebb49b6c0ed99aab4aedeeda81b5",
+        "source_digest": "5942961d2e41c386747cdebf40076eecfe84f34be14cd3e233f4207162b193d6",
+        "source_snapshot": "measurements/native-source-snapshots/5942961d2e41c386747cdebf40076eecfe84f34be14cd3e233f4207162b193d6.json",
+        "output_snapshot": "measurements/native-output-snapshots/855061c78dd647fe9e3a35ee2093077d.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_compound_aperture_contact_probe.cpython-310.pyc"
+        ],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "cuda_backed_compound_pair_contact_matrix",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "positive_compound_aperture_medium_contact_samples",
+              "measured": 717,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_consecutive_compound_pair_contact_samples",
+              "measured": 707,
+              "operator": ">=",
+              "threshold": 12,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_observed_compound_pair_force",
+              "measured": 0.261753648519516,
+              "operator": ">",
+              "threshold": 0.0,
+              "unit": "N"
+            },
+            {
+              "name": "fresh_physics_sample_count",
+              "measured": 720,
+              "operator": "==",
+              "threshold": 720,
+              "unit": "completed_physics_samples"
+            }
+          ],
+          "artifacts": [
+            "measurements/compound-aperture-contact-240hz-trace.json"
+          ]
+        }
+      },
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_compound_aperture_contact_probe.py",
+          "--physics-hz",
+          "480",
+          "--report",
+          "../measurements/compound-aperture-contact-480hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/compound_aperture_contact_tensor_480hz-39755e08cc.log",
+        "finished_at": "2026-11-16T18:28:47.740712+00:00",
+        "id": "compound_aperture_contact_tensor_480hz",
+        "report": "measurements/compound-aperture-contact-480hz.json",
+        "report_sha256": "af3814ca7e0bd60d0d6fa8d7abccf9b8f54bfc02c01187815ba6409c525ef84b",
+        "source_digest": "5942961d2e41c386747cdebf40076eecfe84f34be14cd3e233f4207162b193d6",
+        "source_snapshot": "measurements/native-source-snapshots/5942961d2e41c386747cdebf40076eecfe84f34be14cd3e233f4207162b193d6.json",
+        "output_snapshot": "measurements/native-output-snapshots/be425e3130ad4ef49b67eb49b9761444.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "cuda_backed_compound_pair_contact_matrix",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "positive_compound_aperture_medium_contact_samples",
+              "measured": 1432,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_consecutive_compound_pair_contact_samples",
+              "measured": 1413,
+              "operator": ">=",
+              "threshold": 12,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_observed_compound_pair_force",
+              "measured": 0.46544596552848816,
+              "operator": ">",
+              "threshold": 0.0,
+              "unit": "N"
+            },
+            {
+              "name": "fresh_physics_sample_count",
+              "measured": 1440,
+              "operator": "==",
+              "threshold": 1440,
+              "unit": "completed_physics_samples"
+            }
+          ],
+          "artifacts": [
+            "measurements/compound-aperture-contact-480hz-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-16T18:28:47.880936+00:00"
   }
 ]

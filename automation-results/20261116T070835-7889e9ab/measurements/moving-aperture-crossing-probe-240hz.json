@@ -1,0 +1,205 @@
+{
+  "scope": "single-seed sampled moving-frame crossing discovery only",
+  "coverage": "completed-physics-sample endpoints only; no continuous swept-geometry claim",
+  "rib_contact_observable": "native current-step PhysX contact report decoded by collider path; summed impulse magnitude divided by dt is diagnostic force",
+  "crossing_classifier": "ideal fixed aperture polygon at sampled endpoints; not actual-rib signed distance, physical clearance, genuine passage, or continuous swept coverage",
+  "qualification_claimed": false,
+  "native_contact_processing_setting": {
+    "path": "/physics/disableContactProcessing",
+    "disabled_before_explicit_enable": true,
+    "disabled_after_explicit_enable_readback": false,
+    "settings_manager_omniverse_mode": true
+  },
+  "resolved_contact_paths": {
+    "medium_actor_path": "/World/Medium",
+    "aperture_actor_path": "/World/MovingAperture",
+    "medium_collision_prim_paths": [
+      "/World/Medium/geometry/mesh"
+    ],
+    "rib_collision_prim_paths": {
+      "/World/MovingAperture/Rib_0": [
+        "/World/MovingAperture/Rib_0/geometry/mesh"
+      ],
+      "/World/MovingAperture/Rib_1": [
+        "/World/MovingAperture/Rib_1/geometry/mesh"
+      ],
+      "/World/MovingAperture/Rib_2": [
+        "/World/MovingAperture/Rib_2/geometry/mesh"
+      ],
+      "/World/MovingAperture/Rib_3": [
+        "/World/MovingAperture/Rib_3/geometry/mesh"
+      ]
+    },
+    "observed_contact_actor_paths": [],
+    "observed_contact_collider_paths": []
+  },
+  "qualifying_two_rib_contact_window": {
+    "required_consecutive_samples": 120,
+    "observed_consecutive_samples_at_settle_end": 0,
+    "window_start_settle_step": -1,
+    "window_end_settle_step": -1,
+    "distinct_rib_ids_across_window": [],
+    "contacted_rib_ids_per_sample": [],
+    "positive_decoded_contact_fixture_every_sample": false
+  },
+  "arming_support_loss_window": [],
+  "checks": [
+    {
+      "name": "physics_dt_absolute_error",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-09,
+      "unit": "s"
+    },
+    {
+      "name": "finite_native_samples",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "medium_native_physx_ccd_enabled",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "moving_aperture_native_physx_ccd_enabled",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "contact_processing_enabled_readback_before_first_reset",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "settings_manager_omniverse_mode",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "fresh_physics_sample_count",
+      "measured": 1440,
+      "operator": "==",
+      "threshold": 1440,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "spawned_medium_collision_prim_count",
+      "measured": 1,
+      "operator": ">=",
+      "threshold": 1,
+      "unit": "collision_prims"
+    },
+    {
+      "name": "spawned_rib_collision_prim_count",
+      "measured": 4,
+      "operator": ">=",
+      "threshold": 4,
+      "unit": "collision_prims"
+    },
+    {
+      "name": "positive_decoded_medium_rib_contact_header_count",
+      "measured": 0,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "headers"
+    },
+    {
+      "name": "positive_decoded_contact_fixture_for_support_loss_interpretation",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "gravity_retained_oblique_seed_with_fresh_two_distinct_rib_support",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "maximum_consecutive_two_distinct_rib_contact_samples",
+      "measured": 0,
+      "operator": ">=",
+      "threshold": 120,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "observed_roll_range",
+      "measured": 9.688603589353427,
+      "operator": ">=",
+      "threshold": 8.0,
+      "unit": "deg"
+    },
+    {
+      "name": "physical_two_rib_support_loss_observed_after_qualified_bridge",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "causal_crossing_window_armed_during_fresh_support_loss",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "sampled_ideal_aperture_polygon_crossing_within_tolerance",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "minimum_sampled_ideal_aperture_polygon_margin",
+      "measured": -1.0,
+      "operator": ">=",
+      "threshold": -0.0005,
+      "unit": "m"
+    },
+    {
+      "name": "maximum_observed_endpoint_vertex_displacement",
+      "measured": 0.0,
+      "operator": ">=",
+      "threshold": 0.0,
+      "unit": "m_per_completed_physics_interval"
+    },
+    {
+      "name": "maximum_hinge_frame_translation_residual",
+      "measured": 1.557968819435125e-08,
+      "operator": "<=",
+      "threshold": 0.0005,
+      "unit": "m"
+    },
+    {
+      "name": "maximum_hinge_axis_rotation_residual",
+      "measured": 7.526778593907925e-05,
+      "operator": "<=",
+      "threshold": 0.5,
+      "unit": "deg"
+    },
+    {
+      "name": "native_aperture_state_samples",
+      "measured": 1440,
+      "operator": "==",
+      "threshold": 1440,
+      "unit": "completed_physics_samples"
+    }
+  ],
+  "artifacts": [
+    "measurements/moving-aperture-crossing-probe-240hz-trace.json.gz"
+  ]
+}

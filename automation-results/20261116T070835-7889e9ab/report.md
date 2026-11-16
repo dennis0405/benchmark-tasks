@@ -61,7 +61,7 @@ Status: **blocked**
 9. review report.html, release-manifest digest와 실제 영상으로 사용자 검토. 구체적 검토 버전의 별도 승인 전 공식 미디어 업로드/대회 PR/최종 제출은 하지 않는다.
 
 
-component-code-reviewer: The prior accumulation defect is repaired: Crossing.arm clears pre-release intersections and begins a new sampled record only after the initial bridge qualification (task/run_moving_aperture_crossing_probe.py:184-194).; The causal release gate is still unsound: release_step permanently latches on the first single physics sample with fewer than two reported rib contacts, and arming may occur much later even if two-rib support has recovered. Therefore causal_crossing_window_armed_after_support_loss can pass after a transient contact-sensor dropout rather than actual continuing loss of support. Require the arming sample itself (or a defined fresh consecutive window ending at it) to have fewer than two distinct rib contacts, and report that release window (task/run_moving_aperture_crossing_probe.py:333-347, task/run_moving_aperture_crossing_probe.py:403-405).; The probe remains honestly bounded to sampled endpoint geometry and explicitly disclaims continuous swept coverage and full qualification; native results are correctly left for post-review execution (task/run_moving_aperture_crossing_probe.py:383-384, task/run_moving_aperture_crossing_probe.py:416-419).
+failed check unmapped_or_ambiguous_raw_contact_points: 737 == 0
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`

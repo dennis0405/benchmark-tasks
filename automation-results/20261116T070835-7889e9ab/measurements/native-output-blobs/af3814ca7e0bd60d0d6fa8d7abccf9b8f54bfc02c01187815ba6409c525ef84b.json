@@ -1,0 +1,49 @@
+{
+  "checks": [
+    {
+      "name": "physics_dt_absolute_error",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-09,
+      "unit": "s"
+    },
+    {
+      "name": "cuda_backed_compound_pair_contact_matrix",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "positive_compound_aperture_medium_contact_samples",
+      "measured": 1432,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "maximum_consecutive_compound_pair_contact_samples",
+      "measured": 1413,
+      "operator": ">=",
+      "threshold": 12,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "maximum_observed_compound_pair_force",
+      "measured": 0.46544596552848816,
+      "operator": ">",
+      "threshold": 0.0,
+      "unit": "N"
+    },
+    {
+      "name": "fresh_physics_sample_count",
+      "measured": 1440,
+      "operator": "==",
+      "threshold": 1440,
+      "unit": "completed_physics_samples"
+    }
+  ],
+  "artifacts": [
+    "measurements/compound-aperture-contact-480hz-trace.json"
+  ]
+}

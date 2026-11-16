@@ -1,31 +1,35 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the bounded moving-aperture probe after code review. Pre-release bridge intersections are now discarded; classification arms only after measured loss of two-rib support and whole-collider entry into the unchanged aperture tolerance while descending in the native moving frame. Contact activation remains repaired. Static AST validation passed. Native GPU execution is pending; no continuous-sweep, full-environment, or qualification claim is made.",
+  "summary": "Repaired the host-execution failure in the bounded native raw-contact probe. The pinned RigidContactView API returns Warp arrays, so the script now uses the documented native `.numpy()` transfer and device readback instead of the invalid ProxyArray-only `.torch` accessor. Static compilation passed. This probe covers populated contact slices and distinct-rib point mapping only; native GPU execution remains required and no full-environment qualification is claimed.",
   "scripts": [
     {
-      "id": "moving_aperture_crossing_probe_240hz",
-      "script": "task/run_moving_aperture_crossing_probe.py",
+      "id": "compound_raw_contact_points_240hz",
+      "script": "task/run_compound_aperture_contact_probe.py",
       "args": [
         "--physics-hz",
         "240",
         "--report",
-        "../measurements/moving-aperture-crossing-probe-240hz.json"
+        "../measurements/compound-raw-contact-points-240hz.json",
+        "--device",
+        "cuda:0"
       ],
-      "report": "measurements/moving-aperture-crossing-probe-240hz.json"
+      "report": "measurements/compound-raw-contact-points-240hz.json"
     },
     {
-      "id": "moving_aperture_crossing_probe_480hz",
-      "script": "task/run_moving_aperture_crossing_probe.py",
+      "id": "compound_raw_contact_points_480hz",
+      "script": "task/run_compound_aperture_contact_probe.py",
       "args": [
         "--physics-hz",
         "480",
         "--report",
-        "../measurements/moving-aperture-crossing-probe-480hz.json"
+        "../measurements/compound-raw-contact-points-480hz.json",
+        "--device",
+        "cuda:0"
       ],
-      "report": "measurements/moving-aperture-crossing-probe-480hz.json"
+      "report": "measurements/compound-raw-contact-points-480hz.json"
     }
   ],
   "files": [
-    "task/run_moving_aperture_crossing_probe.py"
+    "task/run_compound_aperture_contact_probe.py"
   ]
 }
