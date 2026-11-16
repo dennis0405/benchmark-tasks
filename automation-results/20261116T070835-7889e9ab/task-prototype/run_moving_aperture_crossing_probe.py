@@ -19,10 +19,15 @@ parser.add_argument("--physics-hz", type=int, choices=(240, 480), required=True)
 parser.add_argument("--report", type=Path, required=True)
 parser.add_argument("--drive-amplitude-deg", type=float, default=5.0)
 parser.add_argument("--drive-frequency-hz", type=float, default=1.0)
+parser.add_argument("--aperture-width-m", type=float, choices=(0.0127, 0.01905), default=0.0127)
+parser.add_argument("--pitch-deg", type=float, default=35.0)
+parser.add_argument("--yaw-deg", type=float, default=45.0)
+parser.add_argument("--roll-deg", type=float, default=0.0)
+parser.add_argument("--initial-clearance-m", type=float, default=1.0e-5)
 AppLauncher.add_app_launcher_args(parser)
 args = parser.parse_args()
-if not (0.0 < args.drive_amplitude_deg <= 12.0):
-    parser.error("--drive-amplitude-deg must be in (0, 12]")
+if not (0.0 < args.drive_amplitude_deg <= 45.0):
+    parser.error("--drive-amplitude-deg must be in (0, 45]")
 if not (0.0 < args.drive_frequency_hz <= 2.0):
     parser.error("--drive-frequency-hz must be in (0, 2]")
 launcher = AppLauncher(args)
@@ -38,7 +43,7 @@ from isaaclab.sensors import ContactSensor, ContactSensorCfg
 from isaaclab.sim.spawners.meshes.meshes import _spawn_mesh_geom_from_mesh
 from isaaclab.sim.utils import get_current_stage
 
-APERTURE, PATCH, FLOOR_T = 0.0127, 0.050, 0.003
+APERTURE, PATCH, FLOOR_T = args.aperture_width_m, 0.050, 0.003
 MEDIA_D, MEDIA_L, DENSITY = 0.009525, 0.022225, 2500.0
 ROOT_Z, ROOT_MASS = 0.25, 0.40
 
@@ -450,18 +455,19 @@ def main():
         settings.get("/physics/disableContactProcessing", True)
     )
     root, drive = spawn_moving_aperture(); mesh = media_mesh()
-    # Rz(45)Ry(35).  The previous fully transverse (Ry(90)) seed was a stable
-    # bridge under the bounded +/-5 degree screen drive and therefore never
-    # exercised the crossing classifier.  This oblique seed still has a full
-    # XY support span wider than the physical 12.7 mm aperture (checked after
-    # native settling below), but has an end-first route through the unchanged
-    # aperture once the physical screen drive breaks the bridge.
-    a, b = math.radians(45)/2, math.radians(35)/2
-    quat = (-math.sin(a)*math.sin(b), math.cos(a)*math.sin(b), math.sin(a)*math.cos(b), math.cos(a)*math.cos(b))
+    # Active extrinsic Rz(yaw) Ry(pitch) Rx(roll), matching the frozen
+    # diagnostic convention.  State is written only in this pre-reset initial
+    # configuration; no task-object state is overwritten after reset.
+    matrix = trimesh.transformations.euler_matrix(
+        math.radians(args.roll_deg), math.radians(args.pitch_deg),
+        math.radians(args.yaw_deg), axes="sxyz")
+    qw, qx, qy, qz = trimesh.transformations.quaternion_from_matrix(matrix)
+    quat = (float(qx), float(qy), float(qz), float(qw))
     rot = trimesh.transformations.quaternion_matrix((quat[3], *quat[:3]))[:3, :3]
     hz = float(np.max(np.abs((mesh.vertices @ rot.T)[:, 2])))
     body = RigidObject(RigidObjectCfg(prim_path="/World/Medium", spawn=spawn_mesh(mesh),
-        init_state=RigidObjectCfg.InitialStateCfg(pos=(0, 0, ROOT_Z + hz + 1e-5), rot=quat)))
+        init_state=RigidObjectCfg.InitialStateCfg(
+            pos=(0, 0, ROOT_Z + hz + args.initial_clearance_m), rot=quat)))
     aperture = RigidObject(RigidObjectCfg(prim_path="/World/MovingAperture", spawn=None))
     sensor = ContactSensor(ContactSensorCfg(
         prim_path="/World/Medium", update_period=0.0, history_length=0,
@@ -469,6 +475,7 @@ def main():
         max_contact_data_count_per_prim=32))
     rib_ids = [f"/World/MovingAperture/Rib_{i}" for i in range(4)]
     sim.reset(); body.reset(); aperture.reset(); native_dt = float(sim.get_physics_dt())
+    reset_body_position, reset_body_quaternion, reset_body_velocity = pose(body)
     stage = get_current_stage()
     raw_capacity = int(sensor.contact_view.max_contact_data_count)
     raw_totals = {key: 0 for key in ("total", "unique", "ambiguous", "unmapped",
@@ -554,11 +561,58 @@ def main():
         all(len(sample["contacted_rib_ids"]) >= 2
             for sample in settle_rib_contact_history[-retained_window_samples:])
     )
+    # The screen square is symmetric in aperture-local X/Y.  Use the larger
+    # in-plane mesh span rather than privileging X: a yaw=90 degree transverse
+    # body bridges along Y and must remain eligible for the same native
+    # sustained-distinct-rib test.  Contact identity, not this coarse span, is
+    # still the physical evidence for support on two different ribs.
+    initial_in_plane_spans = np.ptp(initial[:, :2], axis=0)
+    initial_max_in_plane_span = float(np.max(initial_in_plane_spans))
     bridged = bool(np.min(initial[:,2]) <= 0.001 and np.max(initial[:,2]) > 0 and
                    max(gravity_speeds[-retained_window_samples:]) < 0.005 and
-                   np.ptp(initial[:,0]) > APERTURE and
+                   initial_max_in_plane_span > APERTURE and
                    two_rib_consecutive >= retained_window_samples and
                    raw_contact_fixture_valid)
+    # Classify every unqualified initial condition from the same fresh final
+    # 0.5 s window used by the frozen bridge predicate.  This taxonomy is
+    # diagnostic only: it does not relax, replace, or promote bridge
+    # qualification.  A one-rib support must remain on exactly one identified
+    # rib throughout the window and satisfy the existing settling-speed bound;
+    # intermittent contact, changing ribs, residual motion, or nonconsecutive
+    # multi-rib contact is explicitly unstable rather than silently grouped.
+    settle_window_contacts = settle_rib_contact_history[-retained_window_samples:]
+    settle_window_speeds = gravity_speeds[-retained_window_samples:]
+    settle_window_rib_sets = [set(sample["contacted_rib_ids"])
+                              for sample in settle_window_contacts]
+    settle_window_rib_union = set().union(*settle_window_rib_sets)
+    settle_trace = [sample for sample in trace if sample["phase"] == "settle"]
+    initial_gravity_passage_observed = False
+    for sample in settle_trace:
+        sample_p = np.asarray(sample["position_m"], dtype=float)
+        sample_q = np.asarray(sample["quaternion_xyzw"], dtype=float)
+        sx, sy, sz, sw = sample_q
+        sample_rotation = trimesh.transformations.quaternion_matrix(
+            (sw, sx, sy, sz))[:3, :3]
+        sample_vertices_w = mesh.vertices @ sample_rotation.T + sample_p
+        sample_vertices_local = to_local_pose(
+            sample["aperture_position_m"], sample["aperture_quaternion_xyzw"],
+            sample_vertices_w)
+        if np.max(sample_vertices_local[:, 2]) < -FLOOR_T:
+            initial_gravity_passage_observed = True
+            break
+    if initial_gravity_passage_observed:
+        initial_support_outcome = "initial_gravity_passage"
+    elif bridged:
+        initial_support_outcome = "qualified_two_or_more_rib_bridge"
+    elif (all(len(ribs) == 0 for ribs in settle_window_rib_sets) and
+          max(settle_window_speeds) < 0.005):
+        initial_support_outcome = "no_support"
+    elif (all(len(ribs) == 1 for ribs in settle_window_rib_sets) and
+          len(settle_window_rib_union) == 1 and
+          max(settle_window_speeds) < 0.005):
+        initial_support_outcome = "one_rib_support"
+    else:
+        initial_support_outcome = "unstable_support"
     qualifying_rib_window = (settle_rib_contact_history[-retained_window_samples:]
                              if two_rib_consecutive >= retained_window_samples else [])
     qualifying_rib_id_union = sorted({rib_id for sample in qualifying_rib_window
@@ -681,11 +735,55 @@ def main():
                       x["hinge_axis_rotation_residual_deg"], x["joint_drive_target_deg"]]
                      for x in trace]
     finite = bool(np.isfinite(np.asarray(numeric_trace)).all())
+    drive_samples = [sample for sample in trace if sample["phase"] == "drive"]
+    patch_edge_exit_observed = False
+    floor_bottom_crossing_observed = False
+    for sample in drive_samples:
+        sample_p = np.asarray(sample["position_m"], dtype=float)
+        sample_q = np.asarray(sample["quaternion_xyzw"], dtype=float)
+        sx, sy, sz, sw = sample_q
+        sample_rotation = trimesh.transformations.quaternion_matrix((sw, sx, sy, sz))[:3, :3]
+        sample_vertices_w = mesh.vertices @ sample_rotation.T + sample_p
+        sample_vertices_local = to_local_pose(
+            sample["aperture_position_m"], sample["aperture_quaternion_xyzw"], sample_vertices_w)
+        patch_edge_exit_observed |= bool(np.any(np.max(np.abs(sample_vertices_local[:, :2]), axis=1) > PATCH / 2))
+        floor_bottom_crossing_observed |= bool(np.max(sample_vertices_local[:, 2]) < -FLOOR_T)
+    rebound_or_resupport_observed = bool(tracker.invalidated_attempts)
+    # Crossing.update() returns completed attempt records even when their
+    # sampled plane intersections fall outside the aperture polygon.  Keep
+    # those records as diagnostic evidence, but never label/count them as a
+    # sampled aperture crossing unless the polygon predicate itself passed.
+    valid_sampled_crossing = bool(
+        crossing is not None and
+        crossing.get("completed") is True and
+        crossing.get("sampled_aperture_polygon_within_tolerance") is True
+    )
+    if valid_sampled_crossing:
+        physical_outcome = "sampled_aperture_crossing"
+    elif patch_edge_exit_observed:
+        physical_outcome = "patch_edge_exit_or_side_loss"
+    elif rebound_or_resupport_observed:
+        physical_outcome = "rebound_or_resupport_without_sampled_crossing"
+    elif not bridged and initial_support_outcome == "initial_gravity_passage":
+        physical_outcome = "initial_gravity_passage_without_qualified_bridge"
+    elif bridged and maximum_support_loss_consecutive == 0:
+        physical_outcome = "non_release"
+    elif bridged:
+        physical_outcome = "support_loss_without_sampled_crossing"
+    elif initial_support_outcome == "one_rib_support":
+        physical_outcome = "one_rib_support_without_qualified_bridge"
+    elif initial_support_outcome == "no_support":
+        physical_outcome = "no_support_without_qualified_bridge"
+    else:
+        physical_outcome = "unstable_support_without_qualified_bridge"
     report_path = args.report if args.report.is_absolute() else (Path.cwd()/args.report).resolve()
     report_path.parent.mkdir(parents=True, exist_ok=True)
     trace_path = report_path.with_name(report_path.stem + "-trace.json.gz")
     with gzip.open(trace_path, "wt", encoding="utf-8") as f:
         json.dump({"scope":"single-seed sampled moving-frame crossing discovery only",
+                   "aperture_width_m":APERTURE,
+                   "initial_orientation_deg":{"roll":args.roll_deg,"pitch":args.pitch_deg,"yaw":args.yaw_deg},
+                   "initial_clearance_m":args.initial_clearance_m,
                    "drive_amplitude_deg":args.drive_amplitude_deg,
                    "drive_frequency_hz":args.drive_frequency_hz,
                    "contract_baseline_drive":bool(args.drive_amplitude_deg == 5.0 and args.drive_frequency_hz == 1.0),
@@ -723,6 +821,8 @@ def main():
                    "drive_contacted_rib_ids_per_sample":drive_contact_history,
                    "qualifying_two_rib_contact_window":qualifying_window_summary,
                    "maximum_consecutive_two_distinct_rib_contact_samples":two_rib_max_consecutive,
+                   "initial_in_plane_spans_m":initial_in_plane_spans.tolist(),
+                   "initial_max_in_plane_span_m":initial_max_in_plane_span,
                    "samples":trace, "crossing":crossing, "bridged":bridged}, f, separators=(",", ":"))
     workspace = Path(__file__).resolve().parent.parent
     checks = [
@@ -776,6 +876,25 @@ def main():
             "rib_contact_observable":"native Warp raw contact points transformed by each completed sample's observed aperture pose; support requires unique finite 3-D rib-face mapping and a nonzero signed-scalar-times-normal reaction whose sample sum reconciles with the native body-filter force vector",
             "crossing_classifier":"ideal fixed aperture polygon at sampled endpoints; not actual-rib signed distance, physical clearance, genuine passage, or continuous swept coverage",
             "qualification_claimed":False,
+            "aperture_width_m":APERTURE,
+            "initial_orientation_deg":{"roll":args.roll_deg,"pitch":args.pitch_deg,"yaw":args.yaw_deg},
+            "initial_clearance_m":args.initial_clearance_m,
+            "initial_native_pose":{"position_m":reset_body_position.tolist(),
+                                   "quaternion_xyzw":reset_body_quaternion.tolist(),
+                                   "velocity_mps_radps":reset_body_velocity.tolist()},
+            "final_native_pose":{"position_m":trace[-1]["position_m"],"quaternion_xyzw":trace[-1]["quaternion_xyzw"]},
+            "physical_outcome":physical_outcome,
+            "patch_edge_exit_or_side_loss_observed":patch_edge_exit_observed,
+            "rebound_or_resupport_observed":rebound_or_resupport_observed,
+            "floor_bottom_crossing_observed":floor_bottom_crossing_observed,
+            "initial_gravity_passage_observed":initial_gravity_passage_observed,
+            "initial_support_outcome":initial_support_outcome,
+            "initial_bridge_qualified":bridged,
+            "initial_in_plane_spans_m":initial_in_plane_spans.tolist(),
+            "initial_max_in_plane_span_m":initial_max_in_plane_span,
+            "sampled_crossing_observed":valid_sampled_crossing,
+            "maximum_fresh_consecutive_support_loss_samples":maximum_support_loss_consecutive,
+            "observed_roll_range_deg":max(rolls)-min(rolls),
             "drive_amplitude_deg":args.drive_amplitude_deg,
             "drive_frequency_hz":args.drive_frequency_hz,
             "contract_baseline_drive":bool(args.drive_amplitude_deg == 5.0 and args.drive_frequency_hz == 1.0),

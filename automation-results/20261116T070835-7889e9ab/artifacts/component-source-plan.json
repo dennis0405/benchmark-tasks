@@ -1,39 +1,36 @@
 {
   "phase": "preflight",
-  "summary": "The native 240 Hz baseline reconciled all 1,436 positive pair-force samples and confirmed sustained two-rib support, but the frozen ±5°/1 Hz drive produced no physical support loss or crossing. The probe now supports an explicitly labeled, non-qualifying ±8° excitation-amendment test while preserving 5°/1 Hz defaults. It records actual drive parameters, native contacts, support loss, moving-frame crossing, and whether the run matches the frozen baseline. Syntax compilation passed; GPU results remain unknown pending trusted-controller execution.",
+  "summary": "Repaired both reviewer findings in the bounded 37-case native aperture-release exploration. Bridge geometry now uses the maximum aperture-local X/Y span, preserving sustained distinct-rib contact as the physical support evidence and admitting yaw=90° bridges. The no_support label now additionally requires the existing settling-speed bound; moving unsupported cases remain unstable_support. Added auditable in-plane span measurements to child reports and traces. Both scripts pass Python static compilation. Native GPU execution remains for the trusted controller; no qualification is claimed.",
   "scripts": [
     {
-      "id": "moving_aperture_excitation_amendment_240hz",
-      "script": "task/run_moving_aperture_crossing_probe.py",
+      "id": "aperture_release_grid_240hz",
+      "script": "task/run_aperture_release_grid.py",
       "args": [
         "--physics-hz",
         "240",
-        "--drive-amplitude-deg",
-        "8",
-        "--drive-frequency-hz",
-        "1",
         "--report",
-        "../measurements/moving-aperture-excitation-amendment-240hz.json"
+        "../measurements/aperture-release-grid-240hz.json",
+        "--device",
+        "cuda:0"
       ],
-      "report": "measurements/moving-aperture-excitation-amendment-240hz.json"
+      "report": "measurements/aperture-release-grid-240hz.json"
     },
     {
-      "id": "moving_aperture_excitation_amendment_480hz",
-      "script": "task/run_moving_aperture_crossing_probe.py",
+      "id": "aperture_release_grid_480hz",
+      "script": "task/run_aperture_release_grid.py",
       "args": [
         "--physics-hz",
         "480",
-        "--drive-amplitude-deg",
-        "8",
-        "--drive-frequency-hz",
-        "1",
         "--report",
-        "../measurements/moving-aperture-excitation-amendment-480hz.json"
+        "../measurements/aperture-release-grid-480hz.json",
+        "--device",
+        "cuda:0"
       ],
-      "report": "measurements/moving-aperture-excitation-amendment-480hz.json"
+      "report": "measurements/aperture-release-grid-480hz.json"
     }
   ],
   "files": [
-    "task/run_moving_aperture_crossing_probe.py"
+    "task/run_moving_aperture_crossing_probe.py",
+    "task/run_aperture_release_grid.py"
   ]
 }

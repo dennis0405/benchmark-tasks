@@ -1,0 +1,3527 @@
+{
+  "scope": "frozen 37-case engineering-design exploration only",
+  "qualification_claimed": false,
+  "coverage": "sampled endpoint classifier; no continuous sweep, full screen, washer retention, robot, or scorer claim",
+  "physics_hz": 240,
+  "case_order": "aperture-major, amplitude-major, frequency-major, yaw-minor; preserved baseline last",
+  "physical_result_summary": {
+    "initial_bridge_qualified_cases": 19,
+    "sampled_crossings_among_qualified_bridges": 4,
+    "initial_support_outcome_counts": {
+      "initial_gravity_passage": 0,
+      "qualified_two_or_more_rib_bridge": 19,
+      "one_rib_support": 0,
+      "unstable_support": 18,
+      "no_support": 0
+    }
+  },
+  "diagnostics": {
+    "initial_bridge_qualified_case_count": 19,
+    "sampled_crossing_case_count_among_qualified_bridges": 4
+  },
+  "cases": [
+    {
+      "case_id": "case-01",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 5.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 0.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-01.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857431.118257   12927 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857431.119152   12927 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:30:31Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:30:31Z [38ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:30:45Z [13,753ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:30:46Z [14,377ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -6.1865364934208215e-27,
+          3.877409121342317e-26,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          3.984942600974211e-22,
+          0.7071067690849304,
+          3.332343848722559e-22,
+          0.7071067690849304
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -6.364005821524188e-05,
+          0.0018250371795147657,
+          0.25451940298080444
+        ],
+        "quaternion_xyzw": [
+          -0.13646602630615234,
+          0.6888521909713745,
+          -0.13853582739830017,
+          0.6983319520950317
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "non_release",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 9.688625491915214,
+      "raw_contact_accounting": {
+        "total": 9411,
+        "unique": 9411,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 7755,
+        "verified_reaction_point": 7755,
+        "positive_signed_force": 0,
+        "negative_signed_force": 7755,
+        "zero_force": 1656,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.8220058529714465e-07,
+        "minimum_direction_cosine": 0.9999999999999996
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-01-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-02",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 5.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 45.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-02.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857454.082003   13209 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857454.082039   13209 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:30:54Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:30:54Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:30:57Z [3,609ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:30:58Z [4,212ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          1.2924697071141057e-26,
+          0.0,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.27059802412986755,
+          0.6532814502716064,
+          0.27059802412986755,
+          0.653281569480896
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.0012701170053333044,
+          -0.0012807617895305157,
+          0.2545197010040283
+        ],
+        "quaternion_xyzw": [
+          -0.13695405423641205,
+          0.6887826323509216,
+          0.39455270767211914,
+          0.5925792455673218
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "support_loss_without_sampled_crossing",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 31,
+      "observed_roll_range_deg": 9.688473216552094,
+      "raw_contact_accounting": {
+        "total": 10227,
+        "unique": 6213,
+        "ambiguous": 4014,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 5692,
+        "verified_reaction_point": 5692,
+        "positive_signed_force": 0,
+        "negative_signed_force": 5692,
+        "zero_force": 4535,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.7068551279252466e-07,
+        "minimum_direction_cosine": 0.9999999999999993
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-02-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-03",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 5.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 90.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-03.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857466.290566   13393 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857466.290614   13393 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:31:06Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:31:06Z [7ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:31:10Z [3,513ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:31:10Z [4,103ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -1.2924697071141057e-26,
+          -6.979409110715992e-27,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.0018179996404796839,
+          -6.152020068839192e-05,
+          0.25451964139938354
+        ],
+        "quaternion_xyzw": [
+          -0.39085623621940613,
+          0.583457350730896,
+          0.59182208776474,
+          0.3956707715988159
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "unstable_support_without_qualified_bridge",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 9.68862634494857,
+      "raw_contact_accounting": {
+        "total": 9829,
+        "unique": 9829,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 8304,
+        "verified_reaction_point": 8304,
+        "positive_signed_force": 0,
+        "negative_signed_force": 8304,
+        "zero_force": 1525,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.8802076515262306e-07,
+        "minimum_direction_cosine": 0.9999999999999997
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-03-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-04",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 5.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 0.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-04.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857478.084382   13569 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857478.084432   13569 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:31:18Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:31:18Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:31:21Z [3,493ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:31:22Z [4,079ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -6.1865364934208215e-27,
+          3.877409121342317e-26,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          3.984942600974211e-22,
+          0.7071067690849304,
+          3.332343848722559e-22,
+          0.7071067690849304
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -6.363930879160762e-05,
+          0.001825036364607513,
+          0.25451940298080444
+        ],
+        "quaternion_xyzw": [
+          -0.13646595180034637,
+          0.6888521909713745,
+          -0.13853558897972107,
+          0.6983320116996765
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "non_release",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 8.958137521938312,
+      "raw_contact_accounting": {
+        "total": 9411,
+        "unique": 9411,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 7725,
+        "verified_reaction_point": 7725,
+        "positive_signed_force": 0,
+        "negative_signed_force": 7725,
+        "zero_force": 1686,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.7175571365550102e-07,
+        "minimum_direction_cosine": 0.9999999999999996
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-04-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-05",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 5.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 45.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-05.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857489.670401   13742 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857489.670458   13742 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:31:29Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:31:30Z [14ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:31:33Z [3,368ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:31:33Z [3,969ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          1.2924697071141057e-26,
+          0.0,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.27059802412986755,
+          0.6532814502716064,
+          0.27059802412986755,
+          0.653281569480896
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.0012639688793569803,
+          -0.0012772869085893035,
+          0.2545197010040283
+        ],
+        "quaternion_xyzw": [
+          -0.1367207169532776,
+          0.6888291835784912,
+          0.39435261487960815,
+          0.5927122235298157
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "support_loss_without_sampled_crossing",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 32,
+      "observed_roll_range_deg": 8.957965243865747,
+      "raw_contact_accounting": {
+        "total": 10497,
+        "unique": 6337,
+        "ambiguous": 4160,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 5686,
+        "verified_reaction_point": 5686,
+        "positive_signed_force": 0,
+        "negative_signed_force": 5686,
+        "zero_force": 4811,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.7068551279252466e-07,
+        "minimum_direction_cosine": 0.9999999999999996
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-05-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-06",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 5.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 90.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-06.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857501.755071   13932 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857501.755122   13932 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:31:42Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:31:42Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:31:45Z [3,406ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:31:46Z [4,004ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -1.2924697071141057e-26,
+          -6.979409110715992e-27,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.0018180643673986197,
+          -6.148695683805272e-05,
+          0.25451961159706116
+        ],
+        "quaternion_xyzw": [
+          -0.3908624053001404,
+          0.5834543108940125,
+          0.5918221473693848,
+          0.3956694006919861
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "unstable_support_without_qualified_bridge",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 8.958181030589365,
+      "raw_contact_accounting": {
+        "total": 9829,
+        "unique": 9829,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 8093,
+        "verified_reaction_point": 8093,
+        "positive_signed_force": 0,
+        "negative_signed_force": 8093,
+        "zero_force": 1736,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.8802076515262306e-07,
+        "minimum_direction_cosine": 0.9999999999999997
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-06-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-07",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 25.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 0.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-07.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857513.738058   14155 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857513.738110   14155 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:31:54Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:31:54Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:31:57Z [3,457ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:31:58Z [4,124ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -6.1865364934208215e-27,
+          3.877409121342317e-26,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          3.984942600974211e-22,
+          0.7071067690849304,
+          3.332343848722559e-22,
+          0.7071067690849304
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.008074188604950905,
+          -0.7395423650741577,
+          -34.91737365722656
+        ],
+        "quaternion_xyzw": [
+          0.20819367468357086,
+          -0.16542410850524902,
+          0.896272599697113,
+          -0.35494464635849
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "patch_edge_exit_or_side_loss",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 644,
+      "observed_roll_range_deg": 48.47110464168347,
+      "raw_contact_accounting": {
+        "total": 4943,
+        "unique": 4810,
+        "ambiguous": 133,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 3736,
+        "verified_reaction_point": 3736,
+        "positive_signed_force": 0,
+        "negative_signed_force": 3736,
+        "zero_force": 1207,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 789,
+        "verified_positive_pair_force_samples": 789,
+        "maximum_relative_residual": 1.7175571365550102e-07,
+        "minimum_direction_cosine": 0.9999999999999993
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-07-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-08",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 25.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 45.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-08.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857524.447023   14343 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857524.447071   14343 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:32:04Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:32:04Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:32:08Z [3,535ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:32:08Z [4,222ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          1.2924697071141057e-26,
+          0.0,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.27059802412986755,
+          0.6532814502716064,
+          0.27059802412986755,
+          0.653281569480896
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.38824498653411865,
+          -0.5901339650154114,
+          -33.90584945678711
+        ],
+        "quaternion_xyzw": [
+          0.05418475344777107,
+          -0.8624967932701111,
+          0.4524236023426056,
+          -0.22017286717891693
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "patch_edge_exit_or_side_loss",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 646,
+      "observed_roll_range_deg": 48.471507266206316,
+      "raw_contact_accounting": {
+        "total": 4066,
+        "unique": 2473,
+        "ambiguous": 1593,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 2399,
+        "verified_reaction_point": 2399,
+        "positive_signed_force": 0,
+        "negative_signed_force": 2399,
+        "zero_force": 1667,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 804,
+        "verified_positive_pair_force_samples": 804,
+        "maximum_relative_residual": 1.7068551279252466e-07,
+        "minimum_direction_cosine": 0.9999999999999987
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-08-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-09",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 25.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 90.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-09.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857535.241990   14484 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857535.242040   14484 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:32:15Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:32:15Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:32:19Z [3,576ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:32:19Z [4,182ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -1.2924697071141057e-26,
+          -6.979409110715992e-27,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.0012627291725948453,
+          -0.002726310631260276,
+          0.2529216706752777
+        ],
+        "quaternion_xyzw": [
+          -0.514615535736084,
+          0.7287852764129639,
+          0.39899691939353943,
+          0.2117646336555481
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "patch_edge_exit_or_side_loss",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 156,
+      "observed_roll_range_deg": 48.47053624569888,
+      "raw_contact_accounting": {
+        "total": 8775,
+        "unique": 8739,
+        "ambiguous": 36,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 6885,
+        "verified_reaction_point": 6885,
+        "positive_signed_force": 0,
+        "negative_signed_force": 6885,
+        "zero_force": 1890,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.9687590246585791e-07,
+        "minimum_direction_cosine": 0.9999999999999923
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-09-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-10",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 25.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 0.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-10.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857547.238567   14710 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857547.238620   14710 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:32:27Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:32:27Z [1ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:32:31Z [3,499ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:32:31Z [4,214ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -6.1865364934208215e-27,
+          3.877409121342317e-26,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          3.984942600974211e-22,
+          0.7071067690849304,
+          3.332343848722559e-22,
+          0.7071067690849304
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.00015513024118263274,
+          -0.4065280258655548,
+          -35.1292610168457
+        ],
+        "quaternion_xyzw": [
+          -0.25953707098960876,
+          0.22687332332134247,
+          -0.6748775243759155,
+          0.6524639129638672
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "patch_edge_exit_or_side_loss",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 646,
+      "observed_roll_range_deg": 44.81194917879921,
+      "raw_contact_accounting": {
+        "total": 4946,
+        "unique": 4747,
+        "ambiguous": 197,
+        "unmapped": 2,
+        "nonzero_signed_scalar": 3719,
+        "verified_reaction_point": 3719,
+        "positive_signed_force": 0,
+        "negative_signed_force": 3719,
+        "zero_force": 1227,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 789,
+        "verified_positive_pair_force_samples": 789,
+        "maximum_relative_residual": 1.7175571365550102e-07,
+        "minimum_direction_cosine": 0.9999999999999989
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-10-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-11",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 25.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 45.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-11.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857558.117058   14899 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857558.117105   14899 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:32:38Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:32:38Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:32:42Z [3,657ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:32:42Z [4,363ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          1.2924697071141057e-26,
+          0.0,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.27059802412986755,
+          0.6532814502716064,
+          0.27059802412986755,
+          0.653281569480896
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.020751753821969032,
+          -0.0041508059948682785,
+          0.25451985001564026
+        ],
+        "quaternion_xyzw": [
+          0.5204198360443115,
+          -0.4715442955493927,
+          -0.305347740650177,
+          -0.6430955529212952
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "patch_edge_exit_or_side_loss",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 660,
+      "observed_roll_range_deg": 44.81154430392067,
+      "raw_contact_accounting": {
+        "total": 6073,
+        "unique": 4508,
+        "ambiguous": 1564,
+        "unmapped": 1,
+        "nonzero_signed_scalar": 4289,
+        "verified_reaction_point": 4289,
+        "positive_signed_force": 0,
+        "negative_signed_force": 4289,
+        "zero_force": 1784,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.7068551279252466e-07,
+        "minimum_direction_cosine": 0.9999999999999986
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-11-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-12",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 25.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 90.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-12.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857569.708828   15077 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857569.708878   15077 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:32:50Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:32:50Z [1ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:32:53Z [3,403ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:32:54Z [4,075ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -1.2924697071141057e-26,
+          -6.979409110715992e-27,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.0015698709757998586,
+          -0.002694526920095086,
+          0.2529461085796356
+        ],
+        "quaternion_xyzw": [
+          -0.5111272931098938,
+          0.7222288846969604,
+          0.4107356369495392,
+          0.2200692892074585
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "unstable_support_without_qualified_bridge",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 17,
+      "observed_roll_range_deg": 44.8119022848267,
+      "raw_contact_accounting": {
+        "total": 9157,
+        "unique": 9157,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 6956,
+        "verified_reaction_point": 6956,
+        "positive_signed_force": 0,
+        "negative_signed_force": 6956,
+        "zero_force": 2201,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.8802076515262306e-07,
+        "minimum_direction_cosine": 0.9999999999999911
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-12-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-13",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 45.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 0.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-13.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857581.696957   15259 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857581.697006   15259 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:33:02Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:33:02Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:33:05Z [3,529ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:33:06Z [4,121ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -6.1865364934208215e-27,
+          3.877409121342317e-26,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          3.984942600974211e-22,
+          0.7071067690849304,
+          3.332343848722559e-22,
+          0.7071067690849304
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.060407496988773346,
+          -0.8733903765678406,
+          -37.88835525512695
+        ],
+        "quaternion_xyzw": [
+          0.1464046835899353,
+          -0.3212358355522156,
+          -0.5367642045021057,
+          -0.7663272619247437
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "patch_edge_exit_or_side_loss",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 665,
+      "observed_roll_range_deg": 87.25284788618333,
+      "raw_contact_accounting": {
+        "total": 4787,
+        "unique": 4703,
+        "ambiguous": 84,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 3625,
+        "verified_reaction_point": 3625,
+        "positive_signed_force": 0,
+        "negative_signed_force": 3625,
+        "zero_force": 1162,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 770,
+        "verified_positive_pair_force_samples": 770,
+        "maximum_relative_residual": 1.7175571365550102e-07,
+        "minimum_direction_cosine": 0.9999999999999988
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-13-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-14",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 45.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 45.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-14.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857592.173654   15434 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857592.173704   15434 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:33:12Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:33:12Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:33:15Z [3,393ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:33:16Z [4,123ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          1.2924697071141057e-26,
+          0.0,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.27059802412986755,
+          0.6532814502716064,
+          0.27059802412986755,
+          0.653281569480896
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.2642156183719635,
+          -0.8918787240982056,
+          -37.68080520629883
+        ],
+        "quaternion_xyzw": [
+          -0.6568376421928406,
+          0.23283573985099792,
+          -0.5839433670043945,
+          -0.41636747121810913
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "patch_edge_exit_or_side_loss",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 665,
+      "observed_roll_range_deg": 87.25311487017171,
+      "raw_contact_accounting": {
+        "total": 3939,
+        "unique": 2391,
+        "ambiguous": 1548,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 2295,
+        "verified_reaction_point": 2295,
+        "positive_signed_force": 0,
+        "negative_signed_force": 2295,
+        "zero_force": 1644,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 773,
+        "verified_positive_pair_force_samples": 773,
+        "maximum_relative_residual": 1.7068551279252466e-07,
+        "minimum_direction_cosine": 0.9999999999999992
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-14-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-15",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 45.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 90.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-15.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857602.672981   15609 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857602.673028   15609 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:33:22Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:33:22Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:33:26Z [3,429ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:33:26Z [4,017ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -1.2924697071141057e-26,
+          -6.979409110715992e-27,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.0024495411198586226,
+          -0.958080530166626,
+          -36.99960708618164
+        ],
+        "quaternion_xyzw": [
+          -0.07805333286523819,
+          0.2060268521308899,
+          0.6528151035308838,
+          -0.7247710227966309
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "patch_edge_exit_or_side_loss",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 671,
+      "observed_roll_range_deg": 87.25352580994945,
+      "raw_contact_accounting": {
+        "total": 5210,
+        "unique": 5210,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 4351,
+        "verified_reaction_point": 4351,
+        "positive_signed_force": 0,
+        "negative_signed_force": 4351,
+        "zero_force": 859,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 787,
+        "verified_positive_pair_force_samples": 787,
+        "maximum_relative_residual": 1.8802076515262306e-07,
+        "minimum_direction_cosine": 0.9999999999999967
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-15-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-16",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 45.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 0.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-16.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857613.256065   15792 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857613.256115   15792 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:33:33Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:33:33Z [3ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:33:36Z [3,382ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:33:37Z [3,981ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -6.1865364934208215e-27,
+          3.877409121342317e-26,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          3.984942600974211e-22,
+          0.7071067690849304,
+          3.332343848722559e-22,
+          0.7071067690849304
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.11710569262504578,
+          -1.116474986076355,
+          -38.44853591918945
+        ],
+        "quaternion_xyzw": [
+          0.8691134452819824,
+          0.35070404410362244,
+          0.2857111692428589,
+          -0.20004421472549438
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "patch_edge_exit_or_side_loss",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 673,
+      "observed_roll_range_deg": 80.64262984915949,
+      "raw_contact_accounting": {
+        "total": 4740,
+        "unique": 4642,
+        "ambiguous": 98,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 3553,
+        "verified_reaction_point": 3553,
+        "positive_signed_force": 0,
+        "negative_signed_force": 3553,
+        "zero_force": 1187,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 758,
+        "verified_positive_pair_force_samples": 758,
+        "maximum_relative_residual": 1.7175571365550102e-07,
+        "minimum_direction_cosine": 0.9999999999999986
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-16-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-17",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 45.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 45.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-17.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857623.744212   15978 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857623.744261   15978 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:33:44Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:33:44Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:33:47Z [3,450ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:33:48Z [4,044ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          1.2924697071141057e-26,
+          0.0,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.27059802412986755,
+          0.6532814502716064,
+          0.27059802412986755,
+          0.653281569480896
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.30761536955833435,
+          -1.163055181503296,
+          -38.167137145996094
+        ],
+        "quaternion_xyzw": [
+          0.20945137739181519,
+          -0.3047850430011749,
+          0.6606432199478149,
+          0.6532890796661377
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "patch_edge_exit_or_side_loss",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 671,
+      "observed_roll_range_deg": 80.64293764419499,
+      "raw_contact_accounting": {
+        "total": 3890,
+        "unique": 2339,
+        "ambiguous": 1551,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 2287,
+        "verified_reaction_point": 2287,
+        "positive_signed_force": 0,
+        "negative_signed_force": 2287,
+        "zero_force": 1603,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 770,
+        "verified_positive_pair_force_samples": 770,
+        "maximum_relative_residual": 1.7068551279252466e-07,
+        "minimum_direction_cosine": 0.9999999999999986
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-17-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-18",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 45.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 90.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-18.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857634.130584   16157 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857634.130640   16157 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:33:54Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:33:54Z [7ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:33:57Z [3,490ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:33:58Z [4,088ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -1.2924697071141057e-26,
+          -6.979409110715992e-27,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.005148668773472309,
+          -1.1570104360580444,
+          -37.67702102661133
+        ],
+        "quaternion_xyzw": [
+          -0.5302281379699707,
+          -0.8132030963897705,
+          -0.19052021205425262,
+          -0.145811066031456
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "patch_edge_exit_or_side_loss",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 684,
+      "observed_roll_range_deg": 80.64270337494571,
+      "raw_contact_accounting": {
+        "total": 5117,
+        "unique": 5117,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 4271,
+        "verified_reaction_point": 4271,
+        "positive_signed_force": 0,
+        "negative_signed_force": 4271,
+        "zero_force": 846,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 775,
+        "verified_positive_pair_force_samples": 775,
+        "maximum_relative_residual": 1.8802076515262306e-07,
+        "minimum_direction_cosine": 0.9999999999999986
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-18-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-19",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 5.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 0.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-19.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857644.824770   16290 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857644.824822   16290 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:34:05Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:34:05Z [4ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:34:08Z [3,416ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:34:09Z [4,005ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -6.1865364934208215e-27,
+          3.877409121342317e-26,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          3.984942600974211e-22,
+          0.7071067690849304,
+          3.332343848722559e-22,
+          0.7071067690849304
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.002406890969723463,
+          0.0005128789343871176,
+          0.25131499767303467
+        ],
+        "quaternion_xyzw": [
+          0.07435208559036255,
+          0.5054530501365662,
+          0.12634560465812683,
+          0.8503091335296631
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "non_release",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 9.688820116254561,
+      "raw_contact_accounting": {
+        "total": 5742,
+        "unique": 5742,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 4297,
+        "verified_reaction_point": 4297,
+        "positive_signed_force": 0,
+        "negative_signed_force": 4297,
+        "zero_force": 1445,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.4732403315454232e-07,
+        "minimum_direction_cosine": 0.999999999999998
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-19-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-20",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 5.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 45.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-20.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857655.902783   16471 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857655.902830   16471 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:34:16Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:34:16Z [6ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:34:19Z [3,421ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:34:20Z [4,024ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          1.2924697071141057e-26,
+          0.0,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.27059802412986755,
+          0.6532814502716064,
+          0.27059802412986755,
+          0.653281569480896
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.00036414945498108864,
+          -4.775897832587361e-05,
+          0.2520255744457245
+        ],
+        "quaternion_xyzw": [
+          -0.2964709401130676,
+          0.6370146870613098,
+          0.279228538274765,
+          0.654483437538147
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "unstable_support_without_qualified_bridge",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 9.688872589364724,
+      "raw_contact_accounting": {
+        "total": 7190,
+        "unique": 7190,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 7176,
+        "verified_reaction_point": 7176,
+        "positive_signed_force": 0,
+        "negative_signed_force": 7176,
+        "zero_force": 14,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1435,
+        "verified_positive_pair_force_samples": 1435,
+        "maximum_relative_residual": 1.0329515981353869e-06,
+        "minimum_direction_cosine": 0.9999999999999346
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-20-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-21",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 5.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 90.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-21.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857667.497722   16696 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857667.497771   16696 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:34:27Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:34:27Z [4ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:34:31Z [3,351ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:34:31Z [3,960ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -1.2924697071141057e-26,
+          -6.979409110715992e-27,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.0005122933653183281,
+          0.002407694701105356,
+          0.2513146996498108
+        ],
+        "quaternion_xyzw": [
+          -0.3047957718372345,
+          0.4100322425365448,
+          0.6906024217605591,
+          0.5118997097015381
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "unstable_support_without_qualified_bridge",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 9.688754723073465,
+      "raw_contact_accounting": {
+        "total": 5742,
+        "unique": 5742,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 4297,
+        "verified_reaction_point": 4297,
+        "positive_signed_force": 0,
+        "negative_signed_force": 4297,
+        "zero_force": 1445,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.48911437379217e-07,
+        "minimum_direction_cosine": 0.9999999999999964
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-21-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-22",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 5.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 0.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-22.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857678.507394   16876 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857678.507451   16876 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:34:38Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:34:38Z [6ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:34:42Z [3,427ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:34:42Z [4,019ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -6.1865364934208215e-27,
+          3.877409121342317e-26,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          3.984942600974211e-22,
+          0.7071067690849304,
+          3.332343848722559e-22,
+          0.7071067690849304
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.0024068939965218306,
+          0.0005128798657096922,
+          0.25131499767303467
+        ],
+        "quaternion_xyzw": [
+          0.07435168325901031,
+          0.5054529905319214,
+          0.1263454556465149,
+          0.8503092527389526
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "non_release",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 8.958288948878746,
+      "raw_contact_accounting": {
+        "total": 5742,
+        "unique": 5742,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 4297,
+        "verified_reaction_point": 4297,
+        "positive_signed_force": 0,
+        "negative_signed_force": 4297,
+        "zero_force": 1445,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.4732403315454232e-07,
+        "minimum_direction_cosine": 0.9999999999999981
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-22-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-23",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 5.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 45.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-23.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857689.482554   17060 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857689.482604   17060 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:34:49Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:34:49Z [4ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:34:53Z [3,470ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:34:53Z [4,067ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          1.2924697071141057e-26,
+          0.0,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.27059802412986755,
+          0.6532814502716064,
+          0.27059802412986755,
+          0.653281569480896
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.00036412663757801056,
+          -4.7752582759130746e-05,
+          0.2520255744457245
+        ],
+        "quaternion_xyzw": [
+          -0.29647114872932434,
+          0.6370146870613098,
+          0.279229074716568,
+          0.6544831991195679
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "unstable_support_without_qualified_bridge",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 8.958191002668503,
+      "raw_contact_accounting": {
+        "total": 7190,
+        "unique": 7190,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 7176,
+        "verified_reaction_point": 7176,
+        "positive_signed_force": 0,
+        "negative_signed_force": 7176,
+        "zero_force": 14,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1435,
+        "verified_positive_pair_force_samples": 1435,
+        "maximum_relative_residual": 1.0329515981353869e-06,
+        "minimum_direction_cosine": 0.999999999999942
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-23-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-24",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 5.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 90.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-24.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857701.169372   17240 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857701.169421   17240 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:35:01Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:35:01Z [3ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:35:04Z [3,442ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:35:05Z [4,048ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -1.2924697071141057e-26,
+          -6.979409110715992e-27,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.0005122939473949373,
+          0.002407691441476345,
+          0.2513146996498108
+        ],
+        "quaternion_xyzw": [
+          -0.3047957420349121,
+          0.41003215312957764,
+          0.6906024813652039,
+          0.5118997693061829
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "unstable_support_without_qualified_bridge",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 8.958309000330171,
+      "raw_contact_accounting": {
+        "total": 5742,
+        "unique": 5742,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 4297,
+        "verified_reaction_point": 4297,
+        "positive_signed_force": 0,
+        "negative_signed_force": 4297,
+        "zero_force": 1445,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.49246796462717e-07,
+        "minimum_direction_cosine": 0.999999999999998
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-24-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-25",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 25.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 0.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-25.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857712.352899   17415 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857712.352952   17415 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:35:12Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:35:12Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:35:16Z [3,373ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:35:16Z [3,970ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -6.1865364934208215e-27,
+          3.877409121342317e-26,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          3.984942600974211e-22,
+          0.7071067690849304,
+          3.332343848722559e-22,
+          0.7071067690849304
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.03384682163596153,
+          -0.20312543213367462,
+          -23.831762313842773
+        ],
+        "quaternion_xyzw": [
+          0.4336255192756653,
+          -0.3826509714126587,
+          -0.00944476667791605,
+          0.8157560229301453
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "sampled_aperture_crossing",
+      "sampled_crossing_observed": true,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": true,
+      "maximum_fresh_consecutive_support_loss_samples": 535,
+      "observed_roll_range_deg": 48.471801117697765,
+      "raw_contact_accounting": {
+        "total": 3634,
+        "unique": 3634,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 2674,
+        "verified_reaction_point": 2674,
+        "positive_signed_force": 0,
+        "negative_signed_force": 2674,
+        "zero_force": 960,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 911,
+        "verified_positive_pair_force_samples": 911,
+        "maximum_relative_residual": 1.4732403315454232e-07,
+        "minimum_direction_cosine": 0.9999999999999977
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-25-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-26",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 25.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 45.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-26.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857722.744107   17589 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857722.744167   17589 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:35:23Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:35:23Z [3ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:35:26Z [3,373ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:35:27Z [3,980ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          1.2924697071141057e-26,
+          0.0,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.27059802412986755,
+          0.6532814502716064,
+          0.27059802412986755,
+          0.653281569480896
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.00036412046756595373,
+          -4.7769230150152e-05,
+          0.2520255744457245
+        ],
+        "quaternion_xyzw": [
+          -0.29646992683410645,
+          0.6370152831077576,
+          0.27922940254211426,
+          0.6544830203056335
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "unstable_support_without_qualified_bridge",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 48.47187530256926,
+      "raw_contact_accounting": {
+        "total": 7190,
+        "unique": 7190,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 7176,
+        "verified_reaction_point": 7176,
+        "positive_signed_force": 0,
+        "negative_signed_force": 7176,
+        "zero_force": 14,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1435,
+        "verified_positive_pair_force_samples": 1435,
+        "maximum_relative_residual": 1.0329515981353869e-06,
+        "minimum_direction_cosine": 0.9999999999999359
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-26-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-27",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 25.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 90.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-27.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857734.327466   17769 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857734.327514   17769 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:35:34Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:35:34Z [3ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:35:38Z [3,394ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:35:38Z [4,001ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -1.2924697071141057e-26,
+          -6.979409110715992e-27,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.000512297498062253,
+          0.0024077787529677153,
+          0.25131475925445557
+        ],
+        "quaternion_xyzw": [
+          -0.3047846555709839,
+          0.41003844141960144,
+          0.6906077265739441,
+          0.5118942260742188
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "unstable_support_without_qualified_bridge",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 48.47162199020687,
+      "raw_contact_accounting": {
+        "total": 5742,
+        "unique": 5742,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 4296,
+        "verified_reaction_point": 4296,
+        "positive_signed_force": 0,
+        "negative_signed_force": 4296,
+        "zero_force": 1446,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.48911437379217e-07,
+        "minimum_direction_cosine": 0.9999999999999978
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-27-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-28",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 25.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 0.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-28.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857745.414675   17948 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857745.414724   17948 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:35:45Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:35:45Z [4ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:35:49Z [3,433ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:35:49Z [4,033ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -6.1865364934208215e-27,
+          3.877409121342317e-26,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          3.984942600974211e-22,
+          0.7071067690849304,
+          3.332343848722559e-22,
+          0.7071067690849304
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.100220687687397,
+          -0.051348499953746796,
+          -39.30741882324219
+        ],
+        "quaternion_xyzw": [
+          -0.5714271068572998,
+          -0.44563373923301697,
+          -0.4825390875339508,
+          -0.49197322130203247
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "sampled_aperture_crossing",
+      "sampled_crossing_observed": true,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 684,
+      "observed_roll_range_deg": 44.81275991467524,
+      "raw_contact_accounting": {
+        "total": 3037,
+        "unique": 3037,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 2252,
+        "verified_reaction_point": 2252,
+        "positive_signed_force": 0,
+        "negative_signed_force": 2252,
+        "zero_force": 785,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 762,
+        "verified_positive_pair_force_samples": 762,
+        "maximum_relative_residual": 1.4732403315454232e-07,
+        "minimum_direction_cosine": 0.999999999999998
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-28-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-29",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 25.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 45.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-29.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857755.596527   18139 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857755.596574   18139 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:35:55Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:35:55Z [2ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:35:59Z [3,363ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:35:59Z [3,953ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          1.2924697071141057e-26,
+          0.0,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.27059802412986755,
+          0.6532814502716064,
+          0.27059802412986755,
+          0.653281569480896
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.00036412960616871715,
+          -4.775805427925661e-05,
+          0.2520255744457245
+        ],
+        "quaternion_xyzw": [
+          -0.29647037386894226,
+          0.6370149254798889,
+          0.2792290151119232,
+          0.6544833183288574
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "unstable_support_without_qualified_bridge",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 44.813081726979405,
+      "raw_contact_accounting": {
+        "total": 7190,
+        "unique": 7190,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 7176,
+        "verified_reaction_point": 7176,
+        "positive_signed_force": 0,
+        "negative_signed_force": 7176,
+        "zero_force": 14,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1435,
+        "verified_positive_pair_force_samples": 1435,
+        "maximum_relative_residual": 1.0329515981353869e-06,
+        "minimum_direction_cosine": 0.9999999999999428
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-29-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-30",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 25.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 90.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-30.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857767.083803   18317 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857767.083849   18317 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:36:07Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:36:07Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:36:10Z [3,513ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:36:11Z [4,128ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -1.2924697071141057e-26,
+          -6.979409110715992e-27,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.0005121394642628729,
+          0.0024085710756480694,
+          0.25131455063819885
+        ],
+        "quaternion_xyzw": [
+          -0.30478793382644653,
+          0.4099837839603424,
+          0.6906412243843079,
+          0.5118909478187561
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "unstable_support_without_qualified_bridge",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 44.81288951704047,
+      "raw_contact_accounting": {
+        "total": 5742,
+        "unique": 5742,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 4296,
+        "verified_reaction_point": 4296,
+        "positive_signed_force": 0,
+        "negative_signed_force": 4296,
+        "zero_force": 1446,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1439,
+        "verified_positive_pair_force_samples": 1439,
+        "maximum_relative_residual": 1.48911437379217e-07,
+        "minimum_direction_cosine": 0.9999999999999972
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-30-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-31",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 45.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 0.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-31.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857778.287313   18494 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857778.287364   18494 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:36:18Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:36:18Z [15ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:36:22Z [3,528ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:36:22Z [4,116ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -6.1865364934208215e-27,
+          3.877409121342317e-26,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          3.984942600974211e-22,
+          0.7071067690849304,
+          3.332343848722559e-22,
+          0.7071067690849304
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.07875560969114304,
+          0.313047856092453,
+          -39.33296585083008
+        ],
+        "quaternion_xyzw": [
+          0.4093695878982544,
+          0.5135897397994995,
+          0.06867948174476624,
+          0.7509496212005615
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "sampled_aperture_crossing",
+      "sampled_crossing_observed": true,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 687,
+      "observed_roll_range_deg": 87.25439905921283,
+      "raw_contact_accounting": {
+        "total": 3028,
+        "unique": 3028,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 2245,
+        "verified_reaction_point": 2245,
+        "positive_signed_force": 0,
+        "negative_signed_force": 2245,
+        "zero_force": 783,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 760,
+        "verified_positive_pair_force_samples": 760,
+        "maximum_relative_residual": 1.4732403315454232e-07,
+        "minimum_direction_cosine": 0.9999999999999981
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-31-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-32",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 45.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 45.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-32.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857788.479949   18670 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857788.480001   18670 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:36:28Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:36:28Z [3ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:36:32Z [3,340ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:36:32Z [3,928ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          1.2924697071141057e-26,
+          0.0,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.27059802412986755,
+          0.6532814502716064,
+          0.27059802412986755,
+          0.653281569480896
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.0003641382500063628,
+          -4.7763292968738824e-05,
+          0.2520255744457245
+        ],
+        "quaternion_xyzw": [
+          -0.29647061228752136,
+          0.6370149850845337,
+          0.27922916412353516,
+          0.654482901096344
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "unstable_support_without_qualified_bridge",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 87.25466540994148,
+      "raw_contact_accounting": {
+        "total": 7190,
+        "unique": 7190,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 7176,
+        "verified_reaction_point": 7176,
+        "positive_signed_force": 0,
+        "negative_signed_force": 7176,
+        "zero_force": 14,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1435,
+        "verified_positive_pair_force_samples": 1435,
+        "maximum_relative_residual": 1.0329515981353869e-06,
+        "minimum_direction_cosine": 0.9999999999999101
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-32-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-33",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 45.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 90.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-33.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857799.869631   18851 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857799.869681   18851 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:36:40Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:36:40Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:36:43Z [3,410ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:36:44Z [4,000ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -1.2924697071141057e-26,
+          -6.979409110715992e-27,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.0056113386526703835,
+          -0.1998610645532608,
+          -25.727130889892578
+        ],
+        "quaternion_xyzw": [
+          0.1163455918431282,
+          0.3938741385936737,
+          0.8895116448402405,
+          -0.20023971796035767
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "patch_edge_exit_or_side_loss",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 559,
+      "observed_roll_range_deg": 87.25434134843859,
+      "raw_contact_accounting": {
+        "total": 3545,
+        "unique": 3545,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 2637,
+        "verified_reaction_point": 2637,
+        "positive_signed_force": 0,
+        "negative_signed_force": 2637,
+        "zero_force": 908,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 892,
+        "verified_positive_pair_force_samples": 892,
+        "maximum_relative_residual": 1.48911437379217e-07,
+        "minimum_direction_cosine": 0.999999999999998
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-33-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-34",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 45.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 0.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-34.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857810.164568   19027 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857810.164616   19027 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:36:50Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:36:50Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:36:53Z [3,370ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:36:54Z [3,967ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -6.1865364934208215e-27,
+          3.877409121342317e-26,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          3.984942600974211e-22,
+          0.7071067690849304,
+          3.332343848722559e-22,
+          0.7071067690849304
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.07094445079565048,
+          0.35811877250671387,
+          -40.89033889770508
+        ],
+        "quaternion_xyzw": [
+          0.19871440529823303,
+          0.34888526797294617,
+          -0.11099754273891449,
+          0.9091045260429382
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "sampled_aperture_crossing",
+      "sampled_crossing_observed": true,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 701,
+      "observed_roll_range_deg": 80.64376745555171,
+      "raw_contact_accounting": {
+        "total": 2972,
+        "unique": 2972,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 2199,
+        "verified_reaction_point": 2199,
+        "positive_signed_force": 0,
+        "negative_signed_force": 2199,
+        "zero_force": 773,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 746,
+        "verified_positive_pair_force_samples": 746,
+        "maximum_relative_residual": 1.4732403315454232e-07,
+        "minimum_direction_cosine": 0.9999999999999981
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-34-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-35",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 45.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 45.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-35.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857820.257934   19328 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857820.257981   19328 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:37:00Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:37:00Z [3ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:37:03Z [3,321ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:37:04Z [3,919ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          1.2924697071141057e-26,
+          0.0,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.27059802412986755,
+          0.6532814502716064,
+          0.27059802412986755,
+          0.653281569480896
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          -0.0003641377261374146,
+          -4.777894719154574e-05,
+          0.2520255744457245
+        ],
+        "quaternion_xyzw": [
+          -0.29646995663642883,
+          0.6370151042938232,
+          0.27922993898391724,
+          0.6544828414916992
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "unstable_support_without_qualified_bridge",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 80.64417207951861,
+      "raw_contact_accounting": {
+        "total": 7190,
+        "unique": 7190,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 7176,
+        "verified_reaction_point": 7176,
+        "positive_signed_force": 0,
+        "negative_signed_force": 7176,
+        "zero_force": 14,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1435,
+        "verified_positive_pair_force_samples": 1435,
+        "maximum_relative_residual": 1.0329515981353869e-06,
+        "minimum_direction_cosine": 0.9999999999999121
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-35-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-36",
+      "aperture_width_m": 0.01905,
+      "amplitude_deg": 45.0,
+      "frequency_hz": 2.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 90.0,
+      "yaw_deg": 90.0,
+      "initial_clearance_m": 0.001,
+      "kind": "transverse_grid",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-36.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857831.647199   19549 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857831.647257   19549 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:37:11Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:37:11Z [0ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:37:15Z [3,429ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:37:15Z [4,020ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          -1.2924697071141057e-26,
+          -6.979409110715992e-27,
+          0.25541654229164124
+        ],
+        "quaternion_xyzw": [
+          -0.5,
+          0.5,
+          0.5,
+          0.4999999701976776
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.00591010507196188,
+          -0.21601982414722443,
+          -33.13747787475586
+        ],
+        "quaternion_xyzw": [
+          -0.3344477117061615,
+          -0.7670753598213196,
+          0.4797970652580261,
+          -0.26369449496269226
+        ]
+      },
+      "initial_bridge_qualified": false,
+      "initial_support_outcome": "unstable_support",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "patch_edge_exit_or_side_loss",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": true,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 633,
+      "observed_roll_range_deg": 80.64361482577411,
+      "raw_contact_accounting": {
+        "total": 3253,
+        "unique": 3253,
+        "ambiguous": 0,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 2412,
+        "verified_reaction_point": 2412,
+        "positive_signed_force": 0,
+        "negative_signed_force": 2412,
+        "zero_force": 841,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 818,
+        "verified_positive_pair_force_samples": 818,
+        "maximum_relative_residual": 1.48911437379217e-07,
+        "minimum_direction_cosine": 0.999999999999998
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-36-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    },
+    {
+      "case_id": "case-37",
+      "aperture_width_m": 0.0127,
+      "amplitude_deg": 5.0,
+      "frequency_hz": 1.0,
+      "roll_deg": 0.0,
+      "pitch_deg": 35.0,
+      "yaw_deg": 45.0,
+      "initial_clearance_m": 1e-05,
+      "kind": "preserved_oblique_baseline",
+      "process_exit_code": 0,
+      "report": "measurements/aperture-release-grid-240hz-cases/case-37.json",
+      "log_tail": "WARNING: All log messages before absl::InitializeLog() is called are written to STDERR\nE0000 00:00:1794857841.926372   19676 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto\nW0000 00:00:1794857841.926421   19676 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto\n[ISAACLAB] AppLauncher initialization complete\n[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl\n[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl\n[ISAACLAB] Kit hash:    00c488ae\nWarp 1.16.0 initialized:\n   CUDA Toolkit 12.9, Driver 12.7\n   Devices:\n     \"cpu\"      : \"x86_64\"\n     \"cuda:0\"   : \"NVIDIA L40S\" (44 GiB, sm_89, mempool enabled)\n   Kernel cache:\n     /home/ubuntu/.cache/warp/1.16.0\n[INFO]: Registered backend 'physx' for factory RigidObject.\n[INFO]: Registered backend 'physx' for factory ContactSensor.\nLoading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'\n2026-11-16T19:37:22Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX\n2026-11-16T19:37:22Z [4ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.\n2026-11-16T19:37:25Z [3,347ms] [Warning] [omni.physx.plugin] Detected a rigid at /World/Medium with more than 4 velocity iterations being added to a TGS scene.The related behavior changed recently, please consult the changelog. This warning will only print once.\n2026-11-16T19:37:26Z [3,951ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?\n",
+      "initial_native_pose": {
+        "position_m": [
+          0.0,
+          6.462348535570529e-27,
+          0.2594078779220581
+        ],
+        "quaternion_xyzw": [
+          -0.11507514119148254,
+          0.27781596779823303,
+          0.36497172713279724,
+          0.8811195492744446
+        ],
+        "velocity_mps_radps": [
+          0.0,
+          0.0,
+          -0.08174996078014374,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "final_native_pose": {
+        "position_m": [
+          0.0031827413477003574,
+          0.0033930407371371984,
+          0.2536565959453583
+        ],
+        "quaternion_xyzw": [
+          -0.30634042620658875,
+          0.48588818311691284,
+          0.3161954879760742,
+          0.7550420761108398
+        ]
+      },
+      "initial_bridge_qualified": true,
+      "initial_support_outcome": "qualified_two_or_more_rib_bridge",
+      "initial_gravity_passage_observed": false,
+      "physical_outcome": "non_release",
+      "sampled_crossing_observed": false,
+      "patch_edge_exit_or_side_loss_observed": false,
+      "rebound_or_resupport_observed": false,
+      "maximum_fresh_consecutive_support_loss_samples": 0,
+      "observed_roll_range_deg": 9.688603589353427,
+      "raw_contact_accounting": {
+        "total": 8221,
+        "unique": 6773,
+        "ambiguous": 1448,
+        "unmapped": 0,
+        "nonzero_signed_scalar": 4270,
+        "verified_reaction_point": 4270,
+        "positive_signed_force": 0,
+        "negative_signed_force": 4270,
+        "zero_force": 3951,
+        "invalid_contacts": 0,
+        "invalid_fields": 0,
+        "saturated": 0
+      },
+      "raw_force_vector_reconciliation_summary": {
+        "positive_pair_force_samples": 1436,
+        "verified_positive_pair_force_samples": 1436,
+        "maximum_relative_residual": 1.3292892486686937e-07,
+        "minimum_direction_cosine": 0.9999999999999976
+      },
+      "native_contact_processing_setting": {
+        "path": "/physics/disableContactProcessing",
+        "disabled_before_explicit_enable": true,
+        "disabled_after_explicit_enable_readback": false,
+        "settings_manager_omniverse_mode": true
+      },
+      "child_artifacts": [
+        "measurements/aperture-release-grid-240hz-cases/case-37-trace.json.gz"
+      ],
+      "acquisition_checks_present": true,
+      "acquisition_checks_pass": true,
+      "observed_raw_contact": true,
+      "contact_conditional_positive_checks_applied": true,
+      "missing_acquisition_checks": [],
+      "failed_acquisition_checks": []
+    }
+  ],
+  "checks": [
+    {
+      "name": "predeclared_case_count",
+      "measured": 37,
+      "operator": "==",
+      "threshold": 37,
+      "unit": "cases"
+    },
+    {
+      "name": "completed_case_count",
+      "measured": 37,
+      "operator": "==",
+      "threshold": 37,
+      "unit": "cases"
+    },
+    {
+      "name": "data_integrity_case_count",
+      "measured": 37,
+      "operator": "==",
+      "threshold": 37,
+      "unit": "cases"
+    }
+  ],
+  "artifacts": [
+    "measurements/aperture-release-grid-240hz-cases/case-01.json",
+    "measurements/aperture-release-grid-240hz-cases/case-02.json",
+    "measurements/aperture-release-grid-240hz-cases/case-03.json",
+    "measurements/aperture-release-grid-240hz-cases/case-04.json",
+    "measurements/aperture-release-grid-240hz-cases/case-05.json",
+    "measurements/aperture-release-grid-240hz-cases/case-06.json",
+    "measurements/aperture-release-grid-240hz-cases/case-07.json",
+    "measurements/aperture-release-grid-240hz-cases/case-08.json",
+    "measurements/aperture-release-grid-240hz-cases/case-09.json",
+    "measurements/aperture-release-grid-240hz-cases/case-10.json",
+    "measurements/aperture-release-grid-240hz-cases/case-11.json",
+    "measurements/aperture-release-grid-240hz-cases/case-12.json",
+    "measurements/aperture-release-grid-240hz-cases/case-13.json",
+    "measurements/aperture-release-grid-240hz-cases/case-14.json",
+    "measurements/aperture-release-grid-240hz-cases/case-15.json",
+    "measurements/aperture-release-grid-240hz-cases/case-16.json",
+    "measurements/aperture-release-grid-240hz-cases/case-17.json",
+    "measurements/aperture-release-grid-240hz-cases/case-18.json",
+    "measurements/aperture-release-grid-240hz-cases/case-19.json",
+    "measurements/aperture-release-grid-240hz-cases/case-20.json",
+    "measurements/aperture-release-grid-240hz-cases/case-21.json",
+    "measurements/aperture-release-grid-240hz-cases/case-22.json",
+    "measurements/aperture-release-grid-240hz-cases/case-23.json",
+    "measurements/aperture-release-grid-240hz-cases/case-24.json",
+    "measurements/aperture-release-grid-240hz-cases/case-25.json",
+    "measurements/aperture-release-grid-240hz-cases/case-26.json",
+    "measurements/aperture-release-grid-240hz-cases/case-27.json",
+    "measurements/aperture-release-grid-240hz-cases/case-28.json",
+    "measurements/aperture-release-grid-240hz-cases/case-29.json",
+    "measurements/aperture-release-grid-240hz-cases/case-30.json",
+    "measurements/aperture-release-grid-240hz-cases/case-31.json",
+    "measurements/aperture-release-grid-240hz-cases/case-32.json",
+    "measurements/aperture-release-grid-240hz-cases/case-33.json",
+    "measurements/aperture-release-grid-240hz-cases/case-34.json",
+    "measurements/aperture-release-grid-240hz-cases/case-35.json",
+    "measurements/aperture-release-grid-240hz-cases/case-36.json",
+    "measurements/aperture-release-grid-240hz-cases/case-37.json",
+    "measurements/aperture-release-grid-240hz-cases/case-01-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-02-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-03-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-04-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-05-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-06-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-07-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-08-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-09-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-10-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-11-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-12-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-13-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-14-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-15-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-16-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-17-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-18-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-19-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-20-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-21-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-22-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-23-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-24-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-25-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-26-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-27-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-28-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-29-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-30-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-31-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-32-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-33-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-34-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-35-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-36-trace.json.gz",
+    "measurements/aperture-release-grid-240hz-cases/case-37-trace.json.gz"
+  ]
+}

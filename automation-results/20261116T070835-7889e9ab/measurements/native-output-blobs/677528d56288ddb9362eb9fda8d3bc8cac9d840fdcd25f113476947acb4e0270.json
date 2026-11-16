@@ -1,0 +1,335 @@
+{
+  "scope": "single-seed sampled moving-frame crossing discovery only",
+  "coverage": "completed-physics-sample endpoints only; no continuous swept-geometry claim",
+  "rib_contact_observable": "native Warp raw contact points transformed by each completed sample's observed aperture pose; support requires unique finite 3-D rib-face mapping and a nonzero signed-scalar-times-normal reaction whose sample sum reconciles with the native body-filter force vector",
+  "crossing_classifier": "ideal fixed aperture polygon at sampled endpoints; not actual-rib signed distance, physical clearance, genuine passage, or continuous swept coverage",
+  "qualification_claimed": false,
+  "aperture_width_m": 0.01905,
+  "initial_orientation_deg": {
+    "roll": 0.0,
+    "pitch": 90.0,
+    "yaw": 45.0
+  },
+  "initial_clearance_m": 0.001,
+  "initial_native_pose": {
+    "position_m": [
+      1.2924697071141057e-26,
+      0.0,
+      0.2556760013103485
+    ],
+    "quaternion_xyzw": [
+      -0.27059802412986755,
+      0.6532814502716064,
+      0.27059802412986755,
+      0.653281569480896
+    ],
+    "velocity_mps_radps": [
+      0.0,
+      0.0,
+      -0.04087498039007187,
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "final_native_pose": {
+    "position_m": [
+      -0.08016172051429749,
+      -0.08249635249376297,
+      -175.58534240722656
+    ],
+    "quaternion_xyzw": [
+      -0.9433015584945679,
+      -0.14130795001983643,
+      -0.2359214425086975,
+      0.18588992953300476
+    ]
+  },
+  "physical_outcome": "patch_edge_exit_or_side_loss",
+  "patch_edge_exit_or_side_loss_observed": true,
+  "rebound_or_resupport_observed": false,
+  "floor_bottom_crossing_observed": true,
+  "initial_gravity_passage_observed": true,
+  "initial_support_outcome": "initial_gravity_passage",
+  "initial_bridge_qualified": false,
+  "sampled_crossing_observed": false,
+  "maximum_fresh_consecutive_support_loss_samples": 1440,
+  "observed_roll_range_deg": 9.683478996698863,
+  "drive_amplitude_deg": 5.0,
+  "drive_frequency_hz": 1.0,
+  "contract_baseline_drive": true,
+  "native_contact_processing_setting": {
+    "path": "/physics/disableContactProcessing",
+    "disabled_before_explicit_enable": true,
+    "disabled_after_explicit_enable_readback": false,
+    "settings_manager_omniverse_mode": true
+  },
+  "raw_contact_device": "cuda:0",
+  "raw_contact_capacity": 32,
+  "raw_contact_accounting": {
+    "total": 119,
+    "unique": 119,
+    "ambiguous": 0,
+    "unmapped": 0,
+    "nonzero_signed_scalar": 28,
+    "verified_reaction_point": 28,
+    "positive_signed_force": 0,
+    "negative_signed_force": 28,
+    "zero_force": 91,
+    "invalid_contacts": 0,
+    "invalid_fields": 0,
+    "saturated": 0
+  },
+  "raw_force_vector_reconciliation_summary": {
+    "positive_pair_force_samples": 12,
+    "verified_positive_pair_force_samples": 12,
+    "maximum_relative_residual": 8.123520921480893e-08,
+    "minimum_direction_cosine": 0.9999999999999989
+  },
+  "qualifying_two_rib_contact_window": {
+    "required_consecutive_samples": 240,
+    "observed_consecutive_samples_at_settle_end": 0,
+    "window_start_settle_step": -1,
+    "window_end_settle_step": -1,
+    "distinct_rib_ids_across_window": [],
+    "contacted_rib_ids_per_sample": [],
+    "positive_raw_contact_fixture_every_sample": false
+  },
+  "arming_support_loss_window": [],
+  "checks": [
+    {
+      "name": "physics_dt_absolute_error",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-09,
+      "unit": "s"
+    },
+    {
+      "name": "finite_native_samples",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "medium_native_physx_ccd_enabled",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "moving_aperture_native_physx_ccd_enabled",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "contact_processing_enabled_readback_before_first_reset",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "settings_manager_omniverse_mode",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "fresh_physics_sample_count",
+      "measured": 2880,
+      "operator": "==",
+      "threshold": 2880,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "cuda_backed_raw_contact_points",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "populated_raw_contact_points",
+      "measured": 119,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "points"
+    },
+    {
+      "name": "uniquely_mapped_raw_contact_points",
+      "measured": 119,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "points"
+    },
+    {
+      "name": "nonzero_signed_scalar_raw_contact_points",
+      "measured": 28,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "points"
+    },
+    {
+      "name": "verified_signed_scalar_times_normal_reaction_points",
+      "measured": 28,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "points"
+    },
+    {
+      "name": "negative_signed_scalar_raw_contact_points",
+      "measured": 28,
+      "operator": ">=",
+      "threshold": 0,
+      "unit": "points"
+    },
+    {
+      "name": "positive_pair_force_samples_with_verified_vector_reconciliation",
+      "measured": 12,
+      "operator": "==",
+      "threshold": 12,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "maximum_signed_scalar_vector_sum_relative_residual",
+      "measured": 8.123520921480893e-08,
+      "operator": "<=",
+      "threshold": 0.05,
+      "unit": "ratio"
+    },
+    {
+      "name": "minimum_signed_scalar_vector_sum_direction_cosine",
+      "measured": 0.9999999999999989,
+      "operator": ">=",
+      "threshold": 0.99,
+      "unit": "cosine"
+    },
+    {
+      "name": "raw_contact_classification_sum_difference",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 0,
+      "unit": "points"
+    },
+    {
+      "name": "invalid_populated_raw_contact_fields",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 0,
+      "unit": "fields"
+    },
+    {
+      "name": "invalid_populated_raw_contacts",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 0,
+      "unit": "contacts"
+    },
+    {
+      "name": "raw_contact_buffer_saturated_samples",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 0,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "maximum_raw_contacts_strictly_below_capacity",
+      "measured": 9,
+      "operator": "<",
+      "threshold": 32,
+      "unit": "points"
+    },
+    {
+      "name": "positive_raw_contact_fixture_for_support_loss_interpretation",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "gravity_retained_oblique_seed_with_fresh_two_distinct_rib_support",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "maximum_consecutive_two_distinct_rib_contact_samples",
+      "measured": 5,
+      "operator": ">=",
+      "threshold": 240,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "observed_roll_range",
+      "measured": 9.683478996698863,
+      "operator": ">=",
+      "threshold": 8.0,
+      "unit": "deg"
+    },
+    {
+      "name": "physical_two_rib_support_loss_observed_after_qualified_bridge",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "causal_crossing_window_armed_during_fresh_support_loss",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "sampled_ideal_aperture_polygon_crossing_within_tolerance",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "minimum_sampled_ideal_aperture_polygon_margin",
+      "measured": -1.0,
+      "operator": ">=",
+      "threshold": -0.0005,
+      "unit": "m"
+    },
+    {
+      "name": "maximum_observed_endpoint_vertex_displacement",
+      "measured": 0.0,
+      "operator": ">=",
+      "threshold": 0.0,
+      "unit": "m_per_completed_physics_interval"
+    },
+    {
+      "name": "maximum_hinge_frame_translation_residual",
+      "measured": 2.987590063075407e-08,
+      "operator": "<=",
+      "threshold": 0.0005,
+      "unit": "m"
+    },
+    {
+      "name": "maximum_hinge_axis_rotation_residual",
+      "measured": 0.00017979791904172292,
+      "operator": "<=",
+      "threshold": 0.5,
+      "unit": "deg"
+    },
+    {
+      "name": "native_aperture_state_samples",
+      "measured": 2880,
+      "operator": "==",
+      "threshold": 2880,
+      "unit": "completed_physics_samples"
+    }
+  ],
+  "artifacts": [
+    "measurements/aperture-release-grid-480hz-cases/case-20-trace.json.gz"
+  ]
+}

@@ -1,13 +1,14 @@
 {
   "verdict": "repair",
   "findings": [
-    "Support classification violates the required positive-force rule: `verified_reaction` accepts any nonzero signed scalar, and lines 275-277 consequently count uniquely mapped negative-force contacts as rib support. Require `signed_normal_force > 0` in the support predicate so bridge retention, support loss, and crossing arming use only uniquely mapped positive-force contacts."
+    "The two prior failures are repaired: bridge qualification now uses the maximum aperture-local X/Y span, and `no_support` now requires the settling-speed bound (`task/run_moving_aperture_crossing_probe.py:564-615`).",
+    "The aggregate can nevertheless report all 37 cases as complete and data-integrity-passing when required outcome fields are absent or invalid. Completion checks only the two poses, while integrity does not require `initial_support_outcome`, `physical_outcome`, bridge/crossing booleans, or the declared child artifacts (`task/run_aperture_release_grid.py:145-188`). This permits an incomplete 37-case result table to pass; require these fields, validate outcome enums/types, and verify each trace artifact exists.",
+    "The aggregate does not bind each child report to its commanded case parameters. It copies the planned specification into each row but never checks the child's reported physics rate, aperture, orientation, clearance, amplitude, or frequency (`task/run_aperture_release_grid.py:106-174`). Add those child fields where missing and require exact/toleranced agreement before counting a case complete or integrity-valid."
   ],
   "evidence_paths": [
     "artifacts/component-source-plan.json",
-    "task/run_moving_aperture_crossing_probe.py:264",
-    "task/run_moving_aperture_crossing_probe.py:275",
-    "input/request.json",
-    "input/last-failure.json"
+    "input/last-failure.json",
+    "task/run_aperture_release_grid.py",
+    "task/run_moving_aperture_crossing_probe.py"
   ]
 }
