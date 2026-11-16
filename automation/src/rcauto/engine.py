@@ -1176,6 +1176,9 @@ class Production:
                 "that the host lacks a GPU. Do not run GPU rollouts inside the role, substitute static "
                 "facts/null values for native measurements, or return only a blocked stub. On host "
                 "execution failure read the actual ../logs/ runtime error and repair the script. "
+                "Verify launcher arguments against the installed parser, not old examples or mocks. "
+                "The controller executes with cwd=workspace/task; plan report paths are workspace-relative, "
+                "so scripts may resolve ../measurements from that cwd or their own __file__. "
                 "Create task/asset-manifest.json with assets [{path,sha256,source_url,license,license_reference,"
                 "units:'m',dimensions_m:[x,y,z],geometry_kind}]. Include license text and actual geometry files, "
                 "or procedural geometry source. Asset hashes must match. "
@@ -1212,6 +1215,10 @@ class Production:
                 "sampling windows, missing constitutive coupling or altered frozen criteria. "
                 "Trace every claimed metric to actual samples and correct bodies/windows/units. "
                 "Native results are gathered AFTER this review; do not demand them now. "
+                "Executor contract: cwd is workspace/task; plan report paths are workspace-relative. "
+                "The executor removes the previous report before launch and binds each successful "
+                "receipt to the immutable source digest and actual fresh report hash. These are "
+                "controller responsibilities; judge generated code against that real execution context. "
                 "Read-only source review, not a physical-success certification.",
                 implementation_only=True,
             )

@@ -136,3 +136,13 @@ physical transmission and load reaction before the frozen component checks,
 YAM demo or Dream evaluation. D6/articulation-mimic alternatives described above
 remain leads to test, not confirmed replacements. The GPU contact/callback cube
 probe passed independently; it does not resolve this mechanism incompatibility.
+
+`mimic_api_probe.py` is an unexecuted starting point for a smaller isolated
+native articulation test. Its explicit `--output` and `--trace` arguments and
+installed launcher parser avoid copying old unsupported CLI flags. It measures
+native link poses, a complete forward/reverse revolution, and the resulting
+linear/angular lead. The proposed mixed-unit gearing remains a hypothesis to
+measure. This ideal, gravity-free, noncontact coupon does not establish thread
+friction, the frozen compliant constitutive law, preload, gripper function or
+robot success. The trusted controller must obtain source review and real native
+execution before any runtime claim; import/compilation is not a physics test.
