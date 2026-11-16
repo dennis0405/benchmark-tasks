@@ -1,0 +1,16 @@
+{
+  "verdict": "repair",
+  "findings": [
+    "The prior swept-crossing failure is substantially addressed: `swept_interval_certificate` conservatively bounds translation and rotation for every sampled interval overlapping the floor slab, and uncertified crossings are not labeled genuine passage.",
+    "The reported retention observables are mislabeled and too weak: `retained_above_floor` is assigned `not below_floor`, where `below_floor` becomes true only after the entire collider is below z=-0.005 m. A partially passed, rib-penetrating, or lodged body therefore counts as “retained above floor.” Report genuine non-passage and full-collider-above-floor separately, and use the appropriate observable for transverse/washer proxy retention.",
+    "The trace artifact path is not workspace-relative as required. With reports under `workspace/measurements`, `trace_path.relative_to(report_path.parent.parent)` produces `workspace/measurements/...`; derive the artifact path relative to the executor workspace instead.",
+    "The permissive discovery thresholds remain acceptable only because the script explicitly disclaims qualification; these receipts must not be used as passage, bridge-release, segmented-washer, bore-lodging, spill, or paired-rate qualification evidence."
+  ],
+  "evidence_paths": [
+    "artifacts/component-source-plan.json",
+    "task/run_aperture_native_probe.py",
+    "input/last-failure.json",
+    "artifacts/contract.json",
+    "input/runtime-api-preflight.json"
+  ]
+}

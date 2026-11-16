@@ -1,0 +1,37 @@
+{
+  "phase": "preflight",
+  "summary": "Repaired the discovery-only native probe after the prior review failure. Genuine passage now requires a conservative continuous swept-cylinder certificate for every physics interval overlapping the floor slab; crossings with possible rib intersection or tunneling are not counted. The script compiles successfully. Native GPU execution remains pending, and no qualification, segmented-washer, agitation, bore-lodging, spill-scorer, or YAM-manipulation claims are made.",
+  "scripts": [
+    {
+      "id": "aperture_attitude_discovery_240hz",
+      "script": "run_aperture_native_probe.py",
+      "args": [
+        "--physics-hz",
+        "240",
+        "--device",
+        "cuda:0",
+        "--headless",
+        "--report",
+        "../measurements/aperture-native-240hz.json"
+      ],
+      "report": "measurements/aperture-native-240hz.json"
+    },
+    {
+      "id": "aperture_attitude_discovery_480hz",
+      "script": "run_aperture_native_probe.py",
+      "args": [
+        "--physics-hz",
+        "480",
+        "--device",
+        "cuda:0",
+        "--headless",
+        "--report",
+        "../measurements/aperture-native-480hz.json"
+      ],
+      "report": "measurements/aperture-native-480hz.json"
+    }
+  ],
+  "files": [
+    "task/run_aperture_native_probe.py"
+  ]
+}

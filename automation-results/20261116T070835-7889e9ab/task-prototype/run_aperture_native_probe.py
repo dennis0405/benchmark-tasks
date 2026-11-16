@@ -1,0 +1,269 @@
+"""Native discovery probe for screen-aperture collision at 240 or 480 Hz.
+
+This is not a qualification script.  It measures one bounded component question:
+whether the proposed square aperture separates the sourced media envelope from a
+washer-OD conservative proxy across deterministic attitudes.  It deliberately
+does not stand in for the segmented washer, joints, agitation, bore lodging,
+full screen, robot, provenance scorer, or production task.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+import math
+from pathlib import Path
+
+from isaaclab.app import AppLauncher
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--physics-hz", type=int, choices=(240, 480), required=True)
+parser.add_argument("--report", type=Path, required=True)
+AppLauncher.add_app_launcher_args(parser)
+args = parser.parse_args()
+launcher = AppLauncher(args)
+simulation_app = launcher.app
+
+import isaaclab.sim as sim_utils
+from isaaclab.assets import RigidObject, RigidObjectCfg
+
+APERTURE = 0.0127
+PATCH = 0.050
+FLOOR_THICKNESS = 0.003
+MEDIA_D = 0.009525
+MEDIA_L = 0.022225
+WASHER_D = 0.030
+WASHER_T = 0.004
+MEDIA_MASS = 0.0035044969
+WASHER_MASS = 0.0206170159
+END_TRIALS = 20
+TRANSVERSE_TRIALS = 20
+WASHER_TRIALS = 40
+
+
+def quat_y_then_z(tilt: float, azimuth: float) -> tuple[float, float, float, float]:
+    """WXYZ quaternion Rz(azimuth)*Ry(tilt)."""
+    ct, st = math.cos(tilt / 2), math.sin(tilt / 2)
+    ca, sa = math.cos(azimuth / 2), math.sin(azimuth / 2)
+    return (ca * ct, -sa * st, ca * st, sa * ct)
+
+
+def spawn_aperture(cx: float, cy: float, name: str) -> None:
+    mat = sim_utils.RigidBodyMaterialCfg(static_friction=0.50, dynamic_friction=0.35, restitution=0.05)
+    common = dict(
+        collision_props=sim_utils.CollisionPropertiesCfg(contact_offset=0.00015, rest_offset=0.0),
+        physics_material=mat,
+        visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.28, 0.35, 0.42)),
+    )
+    side = (PATCH - APERTURE) / 2
+    specs = (
+        ((side, PATCH, FLOOR_THICKNESS), (cx - (APERTURE + side) / 2, cy, 0.0)),
+        ((side, PATCH, FLOOR_THICKNESS), (cx + (APERTURE + side) / 2, cy, 0.0)),
+        ((APERTURE, side, FLOOR_THICKNESS), (cx, cy - (APERTURE + side) / 2, 0.0)),
+        ((APERTURE, side, FLOOR_THICKNESS), (cx, cy + (APERTURE + side) / 2, 0.0)),
+    )
+    for j, (size, pos) in enumerate(specs):
+        cfg = sim_utils.CuboidCfg(size=size, **common)
+        cfg.func(f"/World/{name}/Rib_{j}", cfg, translation=pos)
+
+
+def cylinder(path: str, radius: float, height: float, mass: float, pos, quat) -> RigidObject:
+    cfg = RigidObjectCfg(
+        prim_path=path,
+        spawn=sim_utils.CylinderCfg(
+            radius=radius,
+            height=height,
+            axis="Z",
+            rigid_props=sim_utils.RigidBodyPropertiesCfg(
+                solver_position_iteration_count=32,
+                solver_velocity_iteration_count=8,
+                max_depenetration_velocity=2.0,
+            ),
+            mass_props=sim_utils.MassPropertiesCfg(mass=mass),
+            collision_props=sim_utils.CollisionPropertiesCfg(contact_offset=0.00015, rest_offset=0.0),
+            physics_material=sim_utils.RigidBodyMaterialCfg(
+                static_friction=0.50, dynamic_friction=0.35, restitution=0.05
+            ),
+            visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.75, 0.55, 0.20)),
+        ),
+        init_state=RigidObjectCfg.InitialStateCfg(pos=pos, rot=quat),
+    )
+    return RigidObject(cfg)
+
+
+def axis_from_quat(q):
+    w, x, y, z = q
+    return (2 * (x * z + w * y), 2 * (y * z - w * x), 1 - 2 * (x * x + y * y))
+
+
+def half_extents(q, radius: float, height: float):
+    """Exact directional support extents of a finite cylinder."""
+    axis = axis_from_quat(q)
+    return tuple(abs(a) * height / 2 + radius * math.sqrt(max(0.0, 1 - a * a)) for a in axis)
+
+
+def quat_geodesic_angle(q0, q1):
+    """Shortest rotation angle between WXYZ unit quaternions."""
+    dot = abs(sum(a * b for a, b in zip(q0, q1, strict=True)))
+    return 2.0 * math.acos(min(1.0, max(-1.0, dot)))
+
+
+def swept_interval_certificate(a, b, cx, cy, radius, height):
+    """Conservatively bound a cylinder's continuous sweep between two poses.
+
+    Translation is linear over a PhysX interval.  Every material point is at
+    most ``bounding_radius * rotation_angle`` from its endpoint solely due to
+    rotation.  Expanding the endpoint support bounds by that amount therefore
+    encloses the continuous swept cylinder without relying on intermediate
+    discrete samples.
+    """
+    _, x0, y0, z0, *q0 = a
+    _, x1, y1, z1, *q1 = b
+    e0 = half_extents(q0, radius, height)
+    e1 = half_extents(q1, radius, height)
+    angle = quat_geodesic_angle(q0, q1)
+    bounding_radius = math.hypot(radius, height / 2)
+    rotation_pad = bounding_radius * angle
+    x_bound = max(abs(x0 - cx) + e0[0], abs(x1 - cx) + e1[0]) + rotation_pad
+    y_bound = max(abs(y0 - cy) + e0[1], abs(y1 - cy) + e1[1]) + rotation_pad
+    z_min = min(z0 - e0[2], z1 - e1[2]) - rotation_pad
+    z_max = max(z0 + e0[2], z1 + e1[2]) + rotation_pad
+    return {
+        "rib_clearance_m": min(APERTURE / 2 - x_bound, APERTURE / 2 - y_bound),
+        "z_min_m": z_min,
+        "z_max_m": z_max,
+        "rotation_pad_m": rotation_pad,
+    }
+
+
+def main() -> None:
+    dt = 1.0 / args.physics_hz
+    sim = sim_utils.SimulationContext(
+        sim_utils.SimulationCfg(dt=dt, device=args.device, render_interval=max(1, args.physics_hz // 20))
+    )
+    trials = []
+    spacing = 0.065
+    definitions = []
+    for kind, count in (("end_first", END_TRIALS), ("transverse", TRANSVERSE_TRIALS), ("washer_od_proxy", WASHER_TRIALS)):
+        for i in range(count):
+            index = len(definitions)
+            cx = (index % 10 - 4.5) * spacing
+            cy = (index // 10 - 3.5) * spacing
+            az = 2 * math.pi * i / count
+            if kind == "end_first":
+                tilt, radius, height, mass = math.radians(5), MEDIA_D / 2, MEDIA_L, MEDIA_MASS
+            elif kind == "transverse":
+                tilt, radius, height, mass = math.radians(85), MEDIA_D / 2, MEDIA_L, MEDIA_MASS
+            else:
+                # Face-on through edge-on and back, deterministic in both azimuth and inclination.
+                tilt = math.pi * i / (count - 1)
+                radius, height, mass = WASHER_D / 2, WASHER_T, WASHER_MASS
+            quat = quat_y_then_z(tilt, az)
+            hz = half_extents(quat, radius, height)[2]
+            spawn_aperture(cx, cy, f"Patch_{index:03d}")
+            body = cylinder(
+                f"/World/Body_{index:03d}", radius, height, mass,
+                (cx, cy, 0.010 + hz), quat,
+            )
+            definitions.append((kind, i, cx, cy, radius, height, body))
+    sim.reset()
+    for *_, body in definitions:
+        body.reset()
+
+    samples = 2 * args.physics_hz
+    trace = [[] for _ in definitions]
+    for step in range(samples):
+        sim.step(render=False)
+        for row, (*_, body) in zip(trace, definitions, strict=True):
+            body.update(dt)
+            p = body.data.root_pos_w[0].detach().cpu().tolist()
+            q = body.data.root_quat_w[0].detach().cpu().tolist()
+            row.append([step + 1, *map(float, p), *map(float, q)])
+
+    for definition, row in zip(definitions, trace, strict=True):
+        kind, trial_id, cx, cy, radius, height, _ = definition
+        genuine_crossing = False
+        minimum_rib_clearance = float("inf")
+        outside_patch = False
+        below_floor = False
+        _, _, _, initial_z, *initial_q = row[0]
+        started_fully_above = initial_z - half_extents(initial_q, radius, height)[2] > FLOOR_THICKNESS / 2
+        crossing_active = False
+        crossing_certified = True
+        crossing_interval_count = 0
+        max_rotation_pad = 0.0
+        for sample in row:
+            _, x, y, z, qw, qx, qy, qz = sample
+            ex, ey, ez = half_extents((qw, qx, qy, qz), radius, height)
+            clearance = min(APERTURE / 2 - (abs(x - cx) + ex), APERTURE / 2 - (abs(y - cy) + ey))
+            minimum_rib_clearance = min(minimum_rib_clearance, clearance)
+            outside_patch |= abs(x - cx) + ex > PATCH / 2 or abs(y - cy) + ey > PATCH / 2
+            below_floor |= z + ez < -0.005
+        for previous, current in zip(row, row[1:]):
+            swept = swept_interval_certificate(previous, current, cx, cy, radius, height)
+            overlaps_floor_slab = (
+                swept["z_min_m"] <= FLOOR_THICKNESS / 2
+                and swept["z_max_m"] >= -FLOOR_THICKNESS / 2
+            )
+            if started_fully_above and overlaps_floor_slab:
+                crossing_active = True
+                crossing_interval_count += 1
+                minimum_rib_clearance = min(minimum_rib_clearance, swept["rib_clearance_m"])
+                max_rotation_pad = max(max_rotation_pad, swept["rotation_pad_m"])
+                crossing_certified &= swept["rib_clearance_m"] >= 0.0
+            _, _, _, z_now, *q_now = current
+            ez_now = half_extents(q_now, radius, height)[2]
+            if crossing_active and z_now + ez_now < -0.005:
+                genuine_crossing = crossing_certified and crossing_interval_count > 0
+                break
+        trials.append({
+            "kind": kind,
+            "trial": trial_id,
+            "genuine_full_body_aperture_passage": genuine_crossing,
+            "retained_above_floor": not below_floor,
+            "outside_finite_patch_escape": outside_patch,
+            "minimum_full_footprint_rib_clearance_m": minimum_rib_clearance,
+            "swept_floor_crossing_interval_count": crossing_interval_count,
+            "maximum_swept_rotation_pad_m": max_rotation_pad,
+            "final_pose_wxyz": row[-1][1:],
+        })
+
+    group = lambda name: [t for t in trials if t["kind"] == name]
+    ends, transverse, washers = group("end_first"), group("transverse"), group("washer_od_proxy")
+    fraction = lambda rows, key: sum(bool(r[key]) for r in rows) / len(rows)
+    measured_dt = float(sim.get_physics_dt())
+    report_path = args.report if args.report.is_absolute() else (Path.cwd() / args.report).resolve()
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    trace_path = report_path.with_name(report_path.stem + "-trace.json")
+    trace_path.write_text(json.dumps({
+        "scope": "discovery_only_not_qualification",
+        "physics_hz": args.physics_hz,
+        "physics_sample_rate_hz": args.physics_hz,
+        "trace_columns": ["step", "x_m", "y_m", "z_m", "qw", "qx", "qy", "qz"],
+        "trial_results": trials,
+        "pose_traces": trace,
+    }))
+    report = {
+        "checks": [
+            {"name": "physics_dt_error_max", "measured": abs(measured_dt - dt), "operator": "<=", "threshold": 1e-9, "unit": "s"},
+            {"name": "nominal_20hz_interval_physics_step_ratio", "measured": 0.05 / measured_dt, "operator": "==", "threshold": args.physics_hz / 20, "unit": "ratio_not_action_measurement"},
+            {"name": "end_first_genuine_passage_fraction", "measured": fraction(ends, "genuine_full_body_aperture_passage"), "operator": ">=", "threshold": 0.0, "unit": "fraction_discovery"},
+            {"name": "transverse_retention_fraction", "measured": fraction(transverse, "retained_above_floor"), "operator": ">=", "threshold": 0.0, "unit": "fraction_discovery"},
+            {"name": "washer_od_proxy_retention_fraction", "measured": fraction(washers, "retained_above_floor"), "operator": ">=", "threshold": 0.0, "unit": "fraction_discovery"},
+            {"name": "outside_patch_escape_fraction", "measured": fraction(trials, "outside_finite_patch_escape"), "operator": "<=", "threshold": 1.0, "unit": "fraction_discovery"},
+            {"name": "deterministic_trial_count", "measured": len(trials), "operator": "==", "threshold": 80, "unit": "trials"},
+        ],
+        "artifacts": [str(trace_path.relative_to(report_path.parent.parent))],
+        "limitations": [
+            "Solid washer-OD cylinders are conservative collision-discovery proxies, not the frozen four-segment washer assemblies.",
+            "This probe does not test agitation release, washer-bore lodging, breakable joints, the full screen, spill scorer, YAM actions, or grading.",
+            "The nominal 20 Hz ratio is timestep arithmetic; no action loop is measured here.",
+            "Genuine passage uses a conservative continuous swept-cylinder bound for every physics interval overlapping the floor slab; uncertified/tunneling crossings are not counted.",
+        ],
+    }
+    report_path.write_text(json.dumps(report, indent=2))
+    simulation_app.close()
+
+
+if __name__ == "__main__":
+    main()
