@@ -64,3 +64,25 @@ parameters are assumptions. It is not a manufacturer's CAD model. For Arena
 integration use explicit body/root frames from `fixture-proposal.json` or a
 verified custom scene factory; a single ordinary library `Asset` does not
 automatically expose all seven native rigid bodies to task state/recording.
+
+## Analytic thread reference, not a solver result
+
+`thread_reference.py` supplies an optional energy-consistent internal force and
+torque pair for the coaxial screw/nut. Its tests check the energy gradient,
+reciprocal reaction, passive dissipation and multiple complete thread turns.
+It does not integrate motion, implement native contacts, claim static locking
+or pass a component gate. The coefficients used in tests are illustrative.
+The native builder must supply measured unwrapped relative angles and the
+correct COM/frame transforms. It must check integration stability with the
+actual masses, inertias, physics timestep and chosen solver. An implicit joint
+implementation may replace this reference.
+
+Version-specific schema caution: the actual pinned Isaac runtime's
+`generatedSchema.usda` SHA256
+`4a7638c3890522bbe7c25600c0090e6cb7f403550ccb8be7641bf84034213b83`
+defines the coupling relationships as `physics:hinge0`, `physics:hinge1`,
+`physics:hinge`, `physics:prismatic` and the ratio attributes as
+`physics:gearRatio`/`physics:ratio`. The current fixture proposal uses those
+names. Newer ovphysx docs show other namespaces; do not substitute those
+without checking the runtime actually used. This source check still does not
+prove native parsing or coupling behavior.
