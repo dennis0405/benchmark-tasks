@@ -55,56 +55,45 @@
 7. 모든 제작 게이트 후에만 trusted coordinator의 Dream 최종 episode1회와 누적20USD ledger. 실패/결과불명에도 자동 새 episode 금지. 키를 역할 에이전트에 넘기지 않는다.
 8. 별도 run origin branch에 코드·에셋·재현 명령·라이선스·최종 영상·주요 측정을 보존하고 실제 compute 상태를 보고. 50MB/file 또는100MB checkpoint 초과는 업로드 전 설명한다.
 9. review report.html, release-manifest digest와 실제 영상으로 사용자 검토. 구체적 검토 버전의 별도 승인 전 공식 미디어 업로드/대회 PR/최종 제출은 하지 않는다.
-</p><p>candidate selection ambiguous</p><p>Release digest: none</p><h2>selected</h2><pre>{
-  &quot;id&quot;: &quot;sidewall-pinch-continuous&quot;,
-  &quot;title&quot;: &quot;Continuous-belt open-carton rejection by body pinch&quot;,
-  &quot;objective&quot;: &quot;On a continuously running friction-driven belt, identify physically open cartons, avoid their articulated top flaps, grasp the rigid body below the hinges, and transfer each open carton nearly level into a reject tray without spilling its free contents. Initially closed cartons must remain untouched and continue past the downstream line. Body-pinching is a proposed robotic alternative, not a manufacturer-prescribed reject sequence.&quot;,
+</p><p>evidence quote is absent from acquired source s-058bb7939e386179: &#x27;A reject system using an air cylinder and push rod is located on the cartoner discharge conveyor.&#x27;</p><p>Release digest: none</p><h2>selected</h2><pre>{
+  &quot;id&quot;: &quot;sidewall-pinch-static-first&quot;,
+  &quot;title&quot;: &quot;Open-carton rejection by sidewall body pinch&quot;,
+  &quot;objective&quot;: &quot;On a friction-driven running belt, remove physically open cartons to a reject tray while avoiding their collision-enabled flaps and retaining all free contents; initially closed cartons remain untouched and continue across the downstream line.&quot;,
   &quot;skills&quot;: [
     &quot;state-conditioned intervention&quot;,
     &quot;moving-target tracking&quot;,
     &quot;finite-thickness flap avoidance&quot;,
     &quot;opposed sidewall grasping&quot;,
-    &quot;force-controlled lifting&quot;,
-    &quot;orientation-preserving transport&quot;,
-    &quot;guarded release and clearance verification&quot;
+    &quot;level transport&quot;,
+    &quot;guarded release&quot;
   ],
-  &quot;success_conditions&quot;: &quot;Score each carton and average. Open carton: 0.25 when opposed gripper-pad contacts are established on body walls below the hinges; 0.50 when the complete carton clears the belt by at least 20 mm with every content item retained; 0.75 when the body and all contents are inside the reject-tray footprint; 1.00 after complete release, at least 60 mm robot clearance, and uninterrupted 3.0 s stability. Closed carton: 1.00 only after crossing the downstream line on its original belt path without robot contact; otherwise 0. A content item crossing the rim and contacting the belt, tray exterior, table, or floor permanently caps that open carton at 0.50. A dropped carton scores 0. Closing an open carton and letting it pass is not rejection. Full aggregate score requires every open carton rejected and every closed carton passed. Grade state at 10 Hz using fresh observations; use separate 240 Hz physics traces to validate contact, collisions, hinge motion, and friction without making substep metrics grading conditions.&quot;,
-  &quot;industrial_value&quot;: &quot;Industrial cartoners detect open flaps and reject affected cartons. The acquired manual documents a pneumatic push-rod reject, while another industrial source warns that air-blast rejection is unsuitable for open packages that could spill. This task evaluates careful robotic removal of spill-prone rejects, relevant to packaging inspection and hand-removal work, without claiming that sidewall lifting is an established manufacturer procedure.&quot;,
-  &quot;dexterity&quot;: &quot;High: the gripper must synchronize with a translating carton, enter an 80 mm-tall body-access band beneath collision-enabled flaps, establish bilateral frictional contact, lift without rim strikes, preserve loose contents, and release without disturbing the deposited carton.&quot;,
+  &quot;success_conditions&quot;: &quot;Score each carton and average. Open carton: 0.25 when its body is arrested or controlled without spill; 0.50 when the complete carton clears the belt by at least 20 mm with every content item retained; 0.75 when the body and contents are inside the reject-tray footprint; 1.00 after complete release, at least 60 mm robot clearance, and 3.0 s stable dwell verified by fresh 10 Hz observations. Closed carton: 1.00 only after crossing the downstream line on its original belt path without robot contact; otherwise 0. Any content crossing the rim and touching an exterior surface permanently caps that open carton at 0.50; dropping the carton scores it 0. Closing and passing an initially open carton is not rejection. Full score requires every open carton rejected and every closed carton passed. Hand choice, contact order, and any physically safe equivalent body-support strategy are unrestricted. Separately labeled 240 Hz traces validate physics but do not grade performance.&quot;,
+  &quot;industrial_value&quot;: &quot;Industrial cartoners detect open flaps and reject affected cartons. Careful robotic removal is a representative alternative for spill-prone rejects, not a manufacturer-prescribed handling procedure, and is relevant to inspectors, testers and sorters, hand packers, and material movers.&quot;,
+  &quot;dexterity&quot;: &quot;High: synchronize with a translating carton, enter a 25 mm-high body contact band beneath articulated flaps, establish stable support, lift nearly level, preserve loose contents, and release without disturbing the deposit.&quot;,
   &quot;evidence&quot;: [
     {
       &quot;source_id&quot;: &quot;s-058bb7939e386179&quot;,
-      &quot;locator&quot;: &quot;CMK Continuous Motion Cartoner Operator’s Manual, Figure 5.16, page 82&quot;,
+      &quot;locator&quot;: &quot;CMK Continuous Motion Cartoner Operator’s Manual, Figure 5.16, physical PDF page 81 / printed page 5-13&quot;,
       &quot;quote_sha256&quot;: &quot;313ca108bc3fc0984b199a4a74c6b262455ff9fbdd4c0fa79ef91eaaf8d02af6&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-058bb7939e386179&quot;,
-      &quot;locator&quot;: &quot;CMK Continuous Motion Cartoner Operator’s Manual, Product Rejection, page 6-9&quot;,
+      &quot;locator&quot;: &quot;CMK Continuous Motion Cartoner Operator’s Manual, Product Rejection, physical PDF page 131 / printed page 6-9&quot;,
       &quot;quote_sha256&quot;: &quot;2e19a78e78c4a81da03b8a19218116e97a51c01981fb95c4ce84330167bd2e3a&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-2cfb4c8d748cc938&quot;,
-      &quot;locator&quot;: &quot;What reject method is right for my application?, Air Blast section&quot;,
+      &quot;locator&quot;: &quot;What Reject Method Is Right for My Application?, Air Blast section&quot;,
       &quot;quote_sha256&quot;: &quot;1ec62b195660efddecf5005c3aa78e7ff3ae72a0f24a82f6e3deee9e79684238&quot;
     },
     {
       &quot;source_id&quot;: &quot;s-613c0ffc934264ac&quot;,
-      &quot;locator&quot;: &quot;FEFCO Code Booklet, Slotted Boxes, page 8&quot;,
+      &quot;locator&quot;: &quot;FEFCO Code Booklet, Slotted Boxes, printed page 7; physical page 8 shows the 0201 form&quot;,
       &quot;quote_sha256&quot;: &quot;dee8aa46d3c03f32761cd5383b88c6c2c6918179e868e4e65f3b146cc346b421&quot;
-    },
-    {
-      &quot;source_id&quot;: &quot;s-591fb2e08d261bc8&quot;,
-      &quot;locator&quot;: &quot;PR #83 official final review comment&quot;,
-      &quot;quote_sha256&quot;: &quot;bb16cfd563f6f99f72cc0a5e54442759cece4a2a1da8ca1795f209c832b6231e&quot;
-    },
-    {
-      &quot;source_id&quot;: &quot;s-2b79d8a9bb1a2c26&quot;,
-      &quot;locator&quot;: &quot;PR #1214 review, construct-validity correction&quot;,
-      &quot;quote_sha256&quot;: &quot;570e0ac57d39563c4b432e646a3d16463a64695635b1a3dcd45b46586e74e2c7&quot;
     }
   ],
-  &quot;asset_plan&quot;: &quot;Use pinned Isaac Sim 6.1.0.0 and YAM commit 0059d02a1a91bc6834c1d0846022891df0c78730. The pinned snapshot defines FINGER_OPEN=-0.04695 m in yam_arena/constants.py and independently tests a 0.094 m open gap in tests/test_constants.py, so use a representative FEFCO 0201-style carton measuring 120 x 70 x 110 mm externally; its 70 mm grasp width leaves 24 mm nominal jaw-gap margin. Author 2 mm rigid walls, four 2 mm collision-enabled hinged flaps with 0–105 degree travel, an 80 mm-tall unobstructed body grasp band below the hinge axes, and three free 18 mm, 8 g rigid contents. Use a 500 x 180 mm belt at an initial 40 mm/s and a 180 x 160 x 50 mm reject tray. Model the closed state with an explicit break-free magnetic-detent approximation whose measured threshold is disclosed as a modeling assumption. Build from primitives and gate development in order: stationary grasp/lift; stationary transfer, release, and 3 s dwell; moving open carton; untouched closed-carton passage; mixed stream. Convey by surface motion and friction only; never force carton velocity, write object state, weld a grasp, or disable essential collisions.&quot;,
-  &quot;risk&quot;: &quot;Ready means the sourced mechanism and internally consistent geometry are sufficient for the first rigid-PhysX build, not that physical feasibility or novelty has been certified. Stop expansion if pinned-YAM traces do not show opposed pad contact, flap clearance, retained contents, stable transport, and release clearance. Novelty fails if flap interference and spill preservation do not alter outcomes relative to generic moving-object selection and pick-and-place. Rigid walls approximate corrugated compliance and must be disclosed. Required counterfactuals are no action, flap-only grasp, rough tilt, all-remove, all-ignore, closed-carton contact, and off-belt staging.&quot;,
+  &quot;asset_plan&quot;: &quot;First build a representative 120×70×70 mm external FEFCO-0201-style carton from rigid compound primitives with 2 mm walls, four finite-thickness collision-enabled open flaps on native revolute joints, a coherent initial sidewall contact band at z=15–40 mm, and three free 18 mm rigid contents. The pinned YAM source at commit 0059d02a1a91bc6834c1d0846022891df0c78730 states a nominal 94 mm open pad separation, and its acquired geometry test asserts approximately 94 mm; neither establishes carton clearance or a successful grasp. Use a sealed-closed approximation with fixed or bonded closed flaps for untouched normal cartons. Convey by frictional surface motion only. Gate implementation through stationary grasp/lift, stationary tray transfer and release, moving open-carton removal, untouched closed-carton passage, then a mixed stream. Never inject task-object poses or velocities, weld grasps, or disable essential collisions.&quot;,
+  &quot;risk&quot;: &quot;Construction readiness does not certify task success. Before expansion, native trials must verify finger and palm clearance, flap swept-volume contacts, hinge limits and damping, frictional belt transport, no-spill lift and transfer, release clearance, and scorer revocation. Novelty remains contingent on all-PR and six-suite comparison and on counterfactuals showing that articulated flaps and loose contents materially distinguish this from generic conveyor selection. Rigid walls simplify corrugated compliance. Required later controls include no action, flap-only handling, rough tilt, all-remove, all-ignore, closed-carton contact, and off-belt staging.&quot;,
   &quot;feasibility_status&quot;: &quot;ready&quot;,
   &quot;missing_evidence&quot;: []
 }</pre><h2>sources</h2><pre>[

@@ -1,19 +1,18 @@
 {
   "verdict": "repair",
   "findings": [
-    "The selected candidate does not implement the required geometry correction. It changes the requested initial 120 × 70 × 70 mm carton to 120 × 70 × 110 mm and claims an 80 mm access band, instead of the consistent z=15..40 mm contact band within a 70 mm body. The same unresolved text remains in candidates.json.",
-    "The asset plan claims tests/test_constants.py independently verifies a 0.094 m gap, but no acquired or hash-indexed snapshot of that file exists. The available primary snapshot is yam_arena/constants.py at commit 0059d02a1a91bc6834c1d0846022891df0c78730, blob 977df9b230e762ae6a8075365ca030fec0ec3b29, which documents a nominal 94 mm pad separation. The plan must cite only that sourced nominal model dimension and must not present the 24 mm width difference as measured grasp clearance.",
-    "The industrial evidence is otherwise supported by acquired sources: the Rovema open-flap detection and pneumatic push-rod excerpts, Loma spill warning for open packages, and FEFCO slotted-box description appear in the stored source text. Sidewall pinching is correctly disclosed as a proposed representative design rather than a manufacturer procedure.",
-    "No acquired PDF page images are present, so the requested independent visual inspection of the relevant primary FEFCO/manual diagrams cannot be completed from this workspace. Construction readiness should not be asserted until the selected record is corrected and any diagram-dependent equipment interpretation is visually verified."
+    "The selected candidate contains a false verbatim quotation. It says “A reject system using an air cylinder and push rod is located on the cartoner discharge coveyor.” The acquired page image prints “conveyor,” not “coveyor.” This violates the explicit requirement to retain the exact corrected industrial quote.",
+    "The construction plan does not yet provide explicit, testable initial assumptions for the open flaps’ dimensions, mass, hinge limits, damping, or contact/friction parameters. It merely defers these parameters to later native verification. Native validation properly remains a later gate, but construction readiness still requires conservative numerical starting values so the pinned-YAM build can be attempted reproducibly.",
+    "The principal geometry is otherwise internally consistent: the representative body is 120×70×70 mm, the z=15–40 mm contact band lies within the body, and the nominal 94 mm pad opening is correctly described as source-model evidence rather than measured grasp clearance. The source images also support the FEFCO 0201 structure and Rovema’s pneumatic open-flap rejection mechanism, while the robotic sidewall pinch is appropriately disclosed as a proposed alternative."
   ],
   "evidence_paths": [
-    "input/last-failure.json",
-    "input/operator-source-notes.json",
-    "artifacts/selected.json",
     "artifacts/candidates.json",
+    "artifacts/selected.json",
+    "input/operator-source-notes.json",
+    "input/source-visuals/s-058bb7939e386179-page-81.png",
+    "input/source-visuals/s-058bb7939e386179-page-131.png",
+    "input/source-visuals/s-613c0ffc934264ac-page-8.png",
     "input/sources/s-058bb7939e386179.json",
-    "input/sources/s-2cfb4c8d748cc938.json",
-    "input/sources/s-613c0ffc934264ac.json",
-    "artifacts/research.json"
+    "input/last-failure.json"
   ]
 }
