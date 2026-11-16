@@ -74,6 +74,13 @@ are intentionally missing. The scene is not a working environment. In
 particular, its draft drive targets must not be mistaken for a completed
 passive thread model. `native-component-plan.md` explains the component probes.
 
+The proposed piston now has a recessed 16 mm diameter head and a 6 mm diameter
+stop rod. At the 10.5 mm travel limit the head remains below the cover; only
+the narrow rod can enter its bore. A CPU geometry regression checks cover
+clearance, connection to the head, preserved stop datum and enough proposed
+travel for 180 degrees total opening. These remain geometric checks, not proof
+of native gear ratio, stroke, contact or actuation.
+
 This is an independently authored representative cold-bench fixture. The
 housing dimensions, exposed internal transmission, nut 74 placement and all
 parameters are assumptions. It is not a manufacturer's CAD model. For Arena

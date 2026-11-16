@@ -2,7 +2,7 @@
 
 import math
 
-from fixture_seed import fixture_layout, fixture_parts
+from fixture_seed import PISTON_TRAVEL, fixture_layout, fixture_parts
 from geometry_seed import CONTACT_OFFSET
 
 
@@ -55,3 +55,16 @@ def test_loose_nut_does_not_seat_before_the_proposed_90_degree_setting():
     assert screw_advance > 0
     nut_bottom_after_adjustment = layout["nut73"][1][2] - 0.002 - screw_advance
     assert nut_bottom_after_adjustment - 0.090 > 2 * CONTACT_OFFSET + 0.0001
+
+
+def test_piston_head_clears_cover_through_the_full_proposed_opening_stroke():
+    piston = fixture_parts()["piston"]
+    head = next(p for p in piston["pieces"] if p["name"].startswith("Piston"))
+    root_z = fixture_layout()["piston"][1][2]
+    head_top = head["center"][2] + head["height"] / 2
+    assert root_z + head_top + PISTON_TRAVEL < 0.080 - 2 * CONTACT_OFFSET
+    assert PISTON_TRAVEL >= math.radians(180 / 2) / 150
+    rod = next(p for p in piston["pieces"] if p["name"] == "StopRod")
+    assert rod["center"][2] + rod["height"] / 2 == 0  # Retain the declared stop datum.
+    assert rod["radius"] < 0.0044 - 2 * CONTACT_OFFSET
+    assert rod["center"][2] - rod["height"] / 2 < head_top

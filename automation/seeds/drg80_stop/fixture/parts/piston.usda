@@ -9,7 +9,7 @@ def Xform "Asset" (
 ) {
     bool physics:rigidBodyEnabled = true
     float physics:mass = 0.03
-    point3f physics:centerOfMass = (0, 0, -0.01)
+    point3f physics:centerOfMass = (0, 0, -0.0146)
     float3 physics:diagonalInertia = (1.5e-06, 1.5e-06, 1e-06)
     def Scope "Looks" {
         def Material "Steel" {
@@ -33,16 +33,29 @@ def Xform "Asset" (
             }
         }
     }
-    def Cylinder "Piston" (
+    def Cylinder "PistonHead" (
         prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
     ) {
         bool physics:collisionEnabled = true
         float physxCollision:contactOffset = 2.5e-05
         float physxCollision:restOffset = 0
         rel material:binding = </Asset/Looks/Steel>
-        double3 xformOp:translate = (0, 0, -0.01)
+        double3 xformOp:translate = (0, 0, -0.015)
         double radius = 0.008
         double height = 0.02
+        uniform token axis = "Z"
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+    def Cylinder "StopRod" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    ) {
+        bool physics:collisionEnabled = true
+        float physxCollision:contactOffset = 2.5e-05
+        float physxCollision:restOffset = 0
+        rel material:binding = </Asset/Looks/Steel>
+        double3 xformOp:translate = (0, 0, -0.003)
+        double radius = 0.003
+        double height = 0.006
         uniform token axis = "Z"
         uniform token[] xformOpOrder = ["xformOp:translate"]
     }

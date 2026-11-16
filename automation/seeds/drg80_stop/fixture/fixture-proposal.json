@@ -1,6 +1,6 @@
 {
   "status": "CPU geometry/joint-graph proposal; NOT native-validated or a runnable task",
-  "source_sha256": "409e57d543a7858da438fcf2ff24799031f803472329da2c99b0b0526283e731",
+  "source_sha256": "d448699fe32ebca9800b891a5121dd69ed82fb580340a4d71b3f09798b963861",
   "forms": "Representative cutaway angular-gripper bench, not exact DRG 80 geometry",
   "units": "m, kg; angular drive/limit targets follow USD degrees",
   "assumptions": "All dimensions, masses, springs, friction caps, internal transmission and nut74 placement are benchmark proposals. Rack ratio sign, coupling, contact, material properties and unit conversions need native verification.",
@@ -62,6 +62,7 @@
       ]
     }
   },
+  "piston_travel_limit_m": 0.0105,
   "parts": {
     "frame": {
       "pieces": [
@@ -5242,14 +5243,26 @@
     "piston": {
       "pieces": [
         {
-          "name": "Piston",
+          "name": "PistonHead",
           "kind": "cylinder",
           "radius": 0.008,
           "height": 0.02,
           "center": [
             0,
             0,
-            -0.01
+            -0.015
+          ],
+          "material": "Steel"
+        },
+        {
+          "name": "StopRod",
+          "kind": "cylinder",
+          "radius": 0.003,
+          "height": 0.006,
+          "center": [
+            0,
+            0,
+            -0.003
           ],
           "material": "Steel"
         }
@@ -5258,7 +5271,7 @@
       "com": [
         0,
         0,
-        -0.01
+        -0.0146
       ],
       "inertia": [
         1.5e-06,

@@ -14,6 +14,8 @@ from pathlib import Path
 
 from geometry_seed import asset_usd, box, cylinder, ring_sectors
 
+PISTON_TRAVEL = 0.0105
+
 
 def shift_mesh(piece, x, y):
     piece = copy.deepcopy(piece)
@@ -73,9 +75,12 @@ def fixture_parts():
             "datums": {"hinge": (0, 0, 0)},
         }
     parts["piston"] = {
-        "pieces": [cylinder("Piston", 0.008, 0.020, (0, 0, -0.010))],
+        "pieces": [
+            cylinder("PistonHead", 0.008, 0.020, (0, 0, -0.015)),
+            cylinder("StopRod", 0.003, 0.006, (0, 0, -0.003)),
+        ],
         "mass_kg": 0.03,
-        "com": (0, 0, -0.010),
+        "com": (0, 0, -0.0146),
         "inertia": (0.0000015, 0.0000015, 0.0000010),
         "datums": {"stop_contact": (0, 0, 0)},
     }
@@ -270,7 +275,7 @@ def export(root):
     connect(slider, "frame", "piston", layout["piston"][1])
     slider.CreateAxisAttr("Z")
     slider.CreateLowerLimitAttr(0)
-    slider.CreateUpperLimitAttr(0.010)
+    slider.CreateUpperLimitAttr(PISTON_TRAVEL)
     drive(slider, "linear", 0, 5, 0)  # Valve/runtime intentionally absent.
     physx_coupling(
         stage,
@@ -307,6 +312,7 @@ def export(root):
         "layout": {
             name: {"reference": ref, "position": pos} for name, (ref, pos) in layout.items()
         },
+        "piston_travel_limit_m": PISTON_TRAVEL,
         "parts": parts,
         "missing_runtime": [
             "two helical spring constraints and reaction torques",
