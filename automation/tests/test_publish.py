@@ -84,6 +84,10 @@ def test_fork_checkpoint_pushes_exact_task_and_verifies_remote_sha(tmp_path):
     prototype.write_text("# unfinished native prototype, not a certified task\n")
     research = {"evidence": [{"source_id": "source-1", "quote": quotation, "locator": "p2"}]}
     write_json(root / "workspace/artifacts/candidates.json", research)
+    frozen_geometry = root / "workspace/input/fixture-geometry-contract.json"
+    frozen_geometry.parent.mkdir(parents=True)
+    frozen_bytes = b'{ "thread_K": 1000000, "thread_D": 4000 }\n'
+    frozen_geometry.write_bytes(frozen_bytes)
     trace = root / "workspace/measurements/raw-trace.json"
     trace.parent.mkdir(parents=True)
     raw_trace = b'{"position":[0.1,0.2,0.3]}\n' * 50000
@@ -108,6 +112,12 @@ def test_fork_checkpoint_pushes_exact_task_and_verifies_remote_sha(tmp_path):
     assert json.loads((root / "workspace/artifacts/candidates.json").read_text()) == research
     assert trace.read_bytes() == raw_trace
     evidence = work / "automation-results" / r["id"]
+    assert (evidence / "frozen-inputs/fixture-geometry-contract.json").read_bytes() == frozen_bytes
+    from rcauto.gates import file_hash
+
+    frozen_manifest = json.loads((evidence / "frozen-inputs-manifest.json").read_text())
+    assert frozen_manifest[0]["sha256"] == file_hash(frozen_geometry)
+    assert frozen_manifest[0]["restore_to"] == "workspace/input/fixture-geometry-contract.json"
     archived = json.loads((evidence / "evidence-archive.json").read_text())["files"]
     assert archived[0]["original"] == "measurements/raw-trace.json"
     assert not (evidence / "measurements/raw-trace.json").exists()

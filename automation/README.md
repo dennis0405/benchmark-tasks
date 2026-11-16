@@ -124,6 +124,8 @@ stop을 검증하지만 모델·Dream·대회 제출을 호출하지 않는다. 
 `python3 restore-evidence.py`를 실행하면 `evidence-archive.json`의 크기·SHA-256을 검증하고
 기존 경로로 복원한다. 압축 후에도 기존 용량 제한을 적용하며, 데모 영상·작은 채점 보고서와
 제출할 task 파일은 압축하지 않는다.
+실험 중인 native prototype의 형상·물성 기준은 `frozen-inputs/`에도 원본 바이트 그대로
+보존한다. `frozen-inputs-manifest.json`에 복구 위치와 SHA-256이 기록된다.
 
 기본 도형 DSL로 표현할 수 없는 다관절 기구에는
 [task 전용 네이티브 YAM 어댑터](docs/design/native-runtime-adapter.md)를 명시적으로 사용한다.

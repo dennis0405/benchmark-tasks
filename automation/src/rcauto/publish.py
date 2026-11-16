@@ -158,6 +158,23 @@ class Publisher:
         artifacts = root / "workspace" / "artifacts"
         if artifacts.exists():
             shutil.copytree(artifacts, destination / "artifacts", dirs_exist_ok=True)
+        # These operator-authored normative values are needed to restore an
+        # unfinished native prototype. Preserve exact bytes and their digest;
+        # do not publish arbitrary input caches, manuals, SDK sources or auth.
+        frozen_inputs = []
+        for name in ["fixture-geometry-contract.json"]:
+            source = root / "workspace/input" / name
+            if source.is_file():
+                target = destination / "frozen-inputs" / name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source, target)
+                frozen_inputs.append({
+                    "path": "frozen-inputs/" + name,
+                    "restore_to": "workspace/input/" + name,
+                    "sha256": file_hash(target), "bytes": target.stat().st_size,
+                })
+        if frozen_inputs:
+            write_json(destination / "frozen-inputs-manifest.json", frozen_inputs)
         public_json = list((destination / "artifacts").rglob("*.json"))
         if (destination / "report.json").exists():
             public_json.append(destination / "report.json")
