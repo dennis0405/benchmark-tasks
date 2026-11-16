@@ -1,0 +1,77 @@
+{
+  "checks": [
+    {
+      "name": "physics_dt_absolute_error",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-09,
+      "unit": "s"
+    },
+    {
+      "name": "native_screen_mass_relative_error",
+      "measured": 1.4901161138336505e-08,
+      "operator": "<=",
+      "threshold": 1e-05,
+      "unit": "ratio"
+    },
+    {
+      "name": "finite_native_pose_velocity_samples",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "fresh_physics_sample_count",
+      "measured": 1200,
+      "operator": "==",
+      "threshold": 1200,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "positive_drive_maximum_observed_roll",
+      "measured": 4.9492383572023035,
+      "operator": ">",
+      "threshold": 2.0,
+      "unit": "deg"
+    },
+    {
+      "name": "negative_drive_minimum_observed_roll",
+      "measured": -5.037033306559546,
+      "operator": "<",
+      "threshold": -2.0,
+      "unit": "deg"
+    },
+    {
+      "name": "maximum_hinge_pivot_residual",
+      "measured": 2.2271565614322304e-07,
+      "operator": "<=",
+      "threshold": 0.0005,
+      "unit": "m"
+    },
+    {
+      "name": "final_half_second_maximum_absolute_roll",
+      "measured": 0.0508559267881508,
+      "operator": "<=",
+      "threshold": 1.0,
+      "unit": "deg"
+    },
+    {
+      "name": "final_half_second_maximum_linear_speed",
+      "measured": 9.830928553922623e-05,
+      "operator": "<=",
+      "threshold": 0.01,
+      "unit": "m/s"
+    },
+    {
+      "name": "final_half_second_maximum_angular_speed",
+      "measured": 0.0009830640628933907,
+      "operator": "<=",
+      "threshold": 0.05,
+      "unit": "rad/s"
+    }
+  ],
+  "artifacts": [
+    "measurements/screen-hinge-native-probe-240hz-trace.json.gz"
+  ]
+}

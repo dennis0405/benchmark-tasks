@@ -1,39 +1,35 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the current native failure in the bounded annular-bore probe: each square-hole plate rib is now an immobile kinematic rigid body, enabling filtered contact sensing in the pinned Isaac Lab runtime while preserving fixture physics. Static compilation passes. The probe remains limited to compound annulus geometry, mass properties, 6 mm bore passage, and 10 mm washer-only support; no segmented-washer or full-environment qualification is claimed.",
+  "summary": "Repaired the bounded moving-frame aperture probe. It now uses an equal 0.25-second retained-speed window at 240/480 Hz, records native aperture pose/quaternion/linear and angular velocity plus observed joint angle and drive target at every physics sample, enables PhysX CCD, and limits its claim to sampled geometric crossing with a conservative inter-sample motion-margin tunneling control. Syntax validation passed; trusted-controller native GPU execution is still required. This does not claim exact rotational continuous collision detection, frozen bridge qualification, or full environment readiness.",
   "scripts": [
     {
-      "id": "annular_bore_native_probe_240hz",
-      "script": "task/run_annular_bore_native_probe.py",
+      "id": "moving_aperture_crossing_probe_240hz",
+      "script": "task/run_moving_aperture_crossing_probe.py",
       "args": [
         "--physics-hz",
         "240",
-        "--seconds",
-        "4.0",
         "--report",
-        "../measurements/annular-bore-native-probe-240hz.json",
+        "../measurements/moving-aperture-crossing-probe-240hz.json",
         "--device",
         "cuda:0"
       ],
-      "report": "measurements/annular-bore-native-probe-240hz.json"
+      "report": "measurements/moving-aperture-crossing-probe-240hz.json"
     },
     {
-      "id": "annular_bore_native_probe_480hz",
-      "script": "task/run_annular_bore_native_probe.py",
+      "id": "moving_aperture_crossing_probe_480hz",
+      "script": "task/run_moving_aperture_crossing_probe.py",
       "args": [
         "--physics-hz",
         "480",
-        "--seconds",
-        "4.0",
         "--report",
-        "../measurements/annular-bore-native-probe-480hz.json",
+        "../measurements/moving-aperture-crossing-probe-480hz.json",
         "--device",
         "cuda:0"
       ],
-      "report": "measurements/annular-bore-native-probe-480hz.json"
+      "report": "measurements/moving-aperture-crossing-probe-480hz.json"
     }
   ],
   "files": [
-    "task/run_annular_bore_native_probe.py"
+    "task/run_moving_aperture_crossing_probe.py"
   ]
 }

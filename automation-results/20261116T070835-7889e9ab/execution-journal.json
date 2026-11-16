@@ -51,7 +51,7 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 52244,
+    "supervisor_pid": 58025,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log",
     "compute": "running",
     "migration": {
@@ -85,16 +85,16 @@
       "tool_write_verified": true,
       "production_task_validated": false
     },
-    "revision": 18,
+    "revision": 19,
     "revision_request": "사용자 확정 방향 유지: 체로 세라믹 연마재와 금속 와셔를 분리하는 task, scorer, 실제 YAM demo/영상. 직군상 중요성은 채점자 판단에 남기며 제작을 막지 않는다. 다른 주제로 변경하지 않는다. 같은 run20261116T070835-7889e9ab/전용instance/branch를 유지한다. rcauto가 실행과 checkpoint를 관리하고 공식 제출은 reviewed digest 승인 후다.\n\n현재 통과한 명세와 native 결과를 보존한다. 계약은 조기 회수 경로 정정까지 독립 검토를 통과했다. 작은 API pose, end-first aperture, filtered-contact probes는 실제240/480Hz에서 통과했다. environment-preflights.json의 실제 receipts와 input/operator-source-notes.json을 읽는다. 해결된 과거 last-failure 때문에 같은 probe를 다시 반환하지 않는다.\n\n여러 번 실패한 광범위 run_screen_components_native_probe.py를 다음 plan으로 또 반환하지 않는다. 전체 체/40washer/20bridge/fixture stability를 한 프로그램에서 불완전하게 주장하는 접근을 중단하고, 하나의 미해결 물리 질문을 완전하게 검증한다. 최종 frozen qualification을 약화시키는 지시가 아니며 그 단계는 이후 모두 이행한다.\n\n다음 bounded discovery 질문 (아래 질문의 실제 successful receipt가 아직 없을 때만 실행):\n- 실제 8mm bore를 가진 annular washer collision geometry를 구현하고, 중심 bore를 6mm pin은 통과하고10mm pin은 멈추는지 실제 native contact와 궤적으로 시험한다.\n- geometry 방법은 full-ring convex hull을 쓰지 않는다. inner/outer radii4/15mm, thickness4mm를 유지하는 명시적 작은 convex wedge들의 compound collider를 사용한다. convex wedge union이 bore를 유지하는지 생성 형상을 감사한다. 선언한 tessellation과 CAD mass/COM/inertia 일관성을 기록한다. material density7850kg/m3 기준이며 단순 target mass override로 성공을 만들지 않는다.\n- 이 작은 시험은 독립된 undeformable single rigid annulus를 쓸 수 있다. 최종 four-segment/breakable washer나 fracture/40orientation qualification의 통과라고 주장하지 않는다. collision geometry 제작법과 bore-contact API의 발견에만 한정한다. 이후 이 방법을 최종 segment 구현에 재사용한다.\n- 두 개의 물리적으로 분리된 작은 test cell을 준비한다. 각각 중앙12.7mm square hole을 가진50mm plate 위에 dynamic annulus를 수평으로 놓고, 동축 vertical pin을10mm 위에서 중력으로 놓는다. 한 cell은6mm pin, 다른 cell은10mm pin. pin길이/재질/질량/초기clearance/pose를 명시한다. 추가벽/용접/kinematicwasher/fake state제어는 쓰지 않는다.\n- 두 주파수240/480Hz에서 같은 물리 시간으로 실제 integrated root pose/quaternion, pin-washer filtered contacts, finite states와 boundary outcomes를 읽는다. 6mm pin은 실제 bore와platehole을 통해 아래로 통과하고,10mm pin은 실제 washer contact에 의해3초 동안 지지되며 완전히 빠지거나 관통하지 않는지 판정한다. 보고서의 범위는 이 두 경우만이며40orientation retained pass나 robot success로 부르지 않는다. 실제 raw physics traces와 재현 명령을 보존한다.\n- native AppLauncher/XYZW/ProxyArray/filtered contact 접근은 이미 검증된 작은 프로그램을 참고한다. USD prim 이름은 유효 identifier를 써서 부호/소수점 이름을 피한다. root/child local-to-world 배치를 실제 composed geometry와 native pose로 확인한다. geometry/source review만 실제 native 성공이라고 부르지 않는다.\n- 이 새 probe가 실제로 통과하면 다음 iteration은 그대로 재실행하지 말고 새로운 미검증 구성요소(실제 segment joint mechanics, physical hinge/readback, moving-frame crossing)에 한정하여 전진한다. bounded probes의 scope를 정직하게 유지하며 전체 environment ready는 모든 frozen 측정을 구현·실행한 뒤에만 선언한다. 매번 같은 '다음단일probe' 문장을 무조건 반복 지시로 해석하지 않는다.\n\n최종 scorer 전에 input/operator-source-notes.json의 receiver/floor contact-boundary 일관성 이슈를 반영한 명세 정정과 독립 검토가 필요하다. 그 문제를 지금 annulus API-discovery native 결과 전에 요구하거나 현재 계약을 임의 변경하지 않는다. 바닥에 놓인 정상 물체를 strict open interior 때문에 거부하지 않는 수치적 접촉 허용을 명세로 분명히 해야 한다. 실제 spill/contamination/tunneling/tampering 실패는 유지한다.\n\n전체 task에서 post-reset taskobject pose/velocity writes, teleport, fake weld, collider disable, particle freezing, hidden forces와 유실을 숨기는 낮은 속도 cap은 금지한다. diagnostic reset/fixture와 robot success를 분리한다. 원시 자료가 크면 lossless 압축을 사용하고 한계/재현성을 보존한다. Dream single-attempt/$20 ledger와 submission approval 조건은 기존 그대로다.\n",
     "approval": null,
     "resume_from_stage": "environment",
-    "error": "component-code-reviewer: The 6 mm qualification does not prove passage through the annulus bore and square plate hole. `six_mm_pin_complete_downward_passage` checks only the pin's final world-Z position, while `six_mm_pin_washer_contact_samples == 0` checks only absence of washer contact; there is no XY/axis-alignment or orientation bound during the crossing window. A pin deflected or tipped around the outside of the 50 mm fixture could satisfy both checks. Derive the aperture-crossing window from native poses and require the pin to remain within the geometric clearance and sufficiently upright while its body traverses both the washer and plate planes; preserve those measurements in the trace/report.",
+    "error": "component-code-reviewer: `joint_position_deg` is not a native joint-state measurement: it is hard-coded to `0.0` during settling and later copied from a roll derived from the aperture root quaternion. This does not satisfy the required actual joint-position trace and can misreport hinge motion.; `maximum_step_vertex_motion_m` is the displacement between completed sample endpoints, not a conservative bound on motion between samples. Subtracting it from sampled clearance therefore cannot rule out an inter-sample rotational rib intersection, so `conservative_inter_sample_motion_margin` and `tunneling_control_passed` overclaim the implemented control. Use a justified velocity/acceleration swept bound or rename and limit the check to endpoint-sampled evidence without claiming tunneling control.",
     "remote_status": {
       "status": "blocked",
-      "error": "component-code-reviewer: The 6 mm qualification does not prove passage through the annulus bore and square plate hole. `six_mm_pin_complete_downward_passage` checks only the pin's final world-Z position, while `six_mm_pin_washer_contact_samples == 0` checks only absence of washer contact; there is no XY/axis-alignment or orientation bound during the crossing window. A pin deflected or tipped around the outside of the 50 mm fixture could satisfy both checks. Derive the aperture-crossing window from native poses and require the pin to remain within the geometric clearance and sufficiently upright while its body traverses both the washer and plate planes; preserve those measurements in the trace/report.",
+      "error": "component-code-reviewer: `joint_position_deg` is not a native joint-state measurement: it is hard-coded to `0.0` during settling and later copied from a roll derived from the aperture root quaternion. This does not satisfy the required actual joint-position trace and can misreport hinge motion.; `maximum_step_vertex_motion_m` is the displacement between completed sample endpoints, not a conservative bound on motion between samples. Subtracting it from sampled clearance therefore cannot rule out an inter-sample rotational rib intersection, so `conservative_inter_sample_motion_margin` and `tunneling_control_passed` overclaim the implemented control. Use a justified velocity/acceleration swept bound or rename and limit the check to endpoint-sampled evidence without claiming tunneling control.",
       "type": "GateError",
-      "at": "2026-11-16T16:49:29.281637+00:00"
+      "at": "2026-11-16T17:22:12.610302+00:00"
     },
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab",
     "stop_error": "command failed: brev: you're logged out — run `brev login` to authenticate\n"
@@ -7089,6 +7089,726 @@
       "run": "20261116T070835-7889e9ab",
       "at": "2026-11-16T16:50:07.383772+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"component-code-reviewer: The 6 mm qualification does not prove passage through the annulus bore and square plate hole. `six_mm_pin_complete_downward_passage` checks only the pin's final world-Z position, while `six_mm_pin_washer_contact_samples == 0` checks only absence of washer contact; there is no XY/axis-alignment or orientation bound during the crossing window. A pin deflected or tipped around the outside of the 50 mm fixture could satisfy both checks. Derive the aperture-crossing window from native poses and require the pin to remain within the geometric clearance and sufficiently upright while its body traverses both the washer and plate planes; preserve those measurements in the trace/report.\"}"
+    },
+    {
+      "seq": 6637,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:50:40.783148+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 6639,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:50:54.499849+00:00",
+      "data": "{\"revision\": 19, \"revision_request\": \"\\uc0ac\\uc6a9\\uc790 \\ud655\\uc815 \\ubc29\\ud5a5 \\uc720\\uc9c0: \\uccb4\\ub85c \\uc138\\ub77c\\ubbf9 \\uc5f0\\ub9c8\\uc7ac\\uc640 \\uae08\\uc18d \\uc640\\uc154\\ub97c \\ubd84\\ub9ac\\ud558\\ub294 task, scorer, \\uc2e4\\uc81c YAM demo/\\uc601\\uc0c1. \\uc9c1\\uad70\\uc0c1 \\uc911\\uc694\\uc131\\uc740 \\ucc44\\uc810\\uc790 \\ud310\\ub2e8\\uc5d0 \\ub0a8\\uae30\\uba70 \\uc81c\\uc791\\uc744 \\ub9c9\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ub2e4\\ub978 \\uc8fc\\uc81c\\ub85c \\ubcc0\\uacbd\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uac19\\uc740 run20261116T070835-7889e9ab/\\uc804\\uc6a9instance/branch\\ub97c \\uc720\\uc9c0\\ud55c\\ub2e4. rcauto\\uac00 \\uc2e4\\ud589\\uacfc checkpoint\\ub97c \\uad00\\ub9ac\\ud558\\uace0 \\uacf5\\uc2dd \\uc81c\\ucd9c\\uc740 reviewed digest \\uc2b9\\uc778 \\ud6c4\\ub2e4.\\n\\n\\ud604\\uc7ac \\ud1b5\\uacfc\\ud55c \\uba85\\uc138\\uc640 native \\uacb0\\uacfc\\ub97c \\ubcf4\\uc874\\ud55c\\ub2e4. \\uacc4\\uc57d\\uc740 \\uc870\\uae30 \\ud68c\\uc218 \\uacbd\\ub85c \\uc815\\uc815\\uae4c\\uc9c0 \\ub3c5\\ub9bd \\uac80\\ud1a0\\ub97c \\ud1b5\\uacfc\\ud588\\ub2e4. \\uc791\\uc740 API pose, end-first aperture, filtered-contact probes\\ub294 \\uc2e4\\uc81c240/480Hz\\uc5d0\\uc11c \\ud1b5\\uacfc\\ud588\\ub2e4. environment-preflights.json\\uc758 \\uc2e4\\uc81c receipts\\uc640 input/operator-source-notes.json\\uc744 \\uc77d\\ub294\\ub2e4. \\ud574\\uacb0\\ub41c \\uacfc\\uac70 last-failure \\ub54c\\ubb38\\uc5d0 \\uac19\\uc740 probe\\ub97c \\ub2e4\\uc2dc \\ubc18\\ud658\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n\\n\\uc5ec\\ub7ec \\ubc88 \\uc2e4\\ud328\\ud55c \\uad11\\ubc94\\uc704 run_screen_components_native_probe.py\\ub97c \\ub2e4\\uc74c plan\\uc73c\\ub85c \\ub610 \\ubc18\\ud658\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc804\\uccb4 \\uccb4/40washer/20bridge/fixture stability\\ub97c \\ud55c \\ud504\\ub85c\\uadf8\\ub7a8\\uc5d0\\uc11c \\ubd88\\uc644\\uc804\\ud558\\uac8c \\uc8fc\\uc7a5\\ud558\\ub294 \\uc811\\uadfc\\uc744 \\uc911\\ub2e8\\ud558\\uace0, \\ud558\\ub098\\uc758 \\ubbf8\\ud574\\uacb0 \\ubb3c\\ub9ac \\uc9c8\\ubb38\\uc744 \\uc644\\uc804\\ud558\\uac8c \\uac80\\uc99d\\ud55c\\ub2e4. \\ucd5c\\uc885 frozen qualification\\uc744 \\uc57d\\ud654\\uc2dc\\ud0a4\\ub294 \\uc9c0\\uc2dc\\uac00 \\uc544\\ub2c8\\uba70 \\uadf8 \\ub2e8\\uacc4\\ub294 \\uc774\\ud6c4 \\ubaa8\\ub450 \\uc774\\ud589\\ud55c\\ub2e4.\\n\\n\\ub2e4\\uc74c bounded discovery \\uc9c8\\ubb38 (\\uc544\\ub798 \\uc9c8\\ubb38\\uc758 \\uc2e4\\uc81c successful receipt\\uac00 \\uc544\\uc9c1 \\uc5c6\\uc744 \\ub54c\\ub9cc \\uc2e4\\ud589):\\n- \\uc2e4\\uc81c 8mm bore\\ub97c \\uac00\\uc9c4 annular washer collision geometry\\ub97c \\uad6c\\ud604\\ud558\\uace0, \\uc911\\uc2ec bore\\ub97c 6mm pin\\uc740 \\ud1b5\\uacfc\\ud558\\uace010mm pin\\uc740 \\uba48\\ucd94\\ub294\\uc9c0 \\uc2e4\\uc81c native contact\\uc640 \\uada4\\uc801\\uc73c\\ub85c \\uc2dc\\ud5d8\\ud55c\\ub2e4.\\n- geometry \\ubc29\\ubc95\\uc740 full-ring convex hull\\uc744 \\uc4f0\\uc9c0 \\uc54a\\ub294\\ub2e4. inner/outer radii4/15mm, thickness4mm\\ub97c \\uc720\\uc9c0\\ud558\\ub294 \\uba85\\uc2dc\\uc801 \\uc791\\uc740 convex wedge\\ub4e4\\uc758 compound collider\\ub97c \\uc0ac\\uc6a9\\ud55c\\ub2e4. convex wedge union\\uc774 bore\\ub97c \\uc720\\uc9c0\\ud558\\ub294\\uc9c0 \\uc0dd\\uc131 \\ud615\\uc0c1\\uc744 \\uac10\\uc0ac\\ud55c\\ub2e4. \\uc120\\uc5b8\\ud55c tessellation\\uacfc CAD mass/COM/inertia \\uc77c\\uad00\\uc131\\uc744 \\uae30\\ub85d\\ud55c\\ub2e4. material density7850kg/m3 \\uae30\\uc900\\uc774\\uba70 \\ub2e8\\uc21c target mass override\\ub85c \\uc131\\uacf5\\uc744 \\ub9cc\\ub4e4\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\uc774 \\uc791\\uc740 \\uc2dc\\ud5d8\\uc740 \\ub3c5\\ub9bd\\ub41c undeformable single rigid annulus\\ub97c \\uc4f8 \\uc218 \\uc788\\ub2e4. \\ucd5c\\uc885 four-segment/breakable washer\\ub098 fracture/40orientation qualification\\uc758 \\ud1b5\\uacfc\\ub77c\\uace0 \\uc8fc\\uc7a5\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. collision geometry \\uc81c\\uc791\\ubc95\\uacfc bore-contact API\\uc758 \\ubc1c\\uacac\\uc5d0\\ub9cc \\ud55c\\uc815\\ud55c\\ub2e4. \\uc774\\ud6c4 \\uc774 \\ubc29\\ubc95\\uc744 \\ucd5c\\uc885 segment \\uad6c\\ud604\\uc5d0 \\uc7ac\\uc0ac\\uc6a9\\ud55c\\ub2e4.\\n- \\ub450 \\uac1c\\uc758 \\ubb3c\\ub9ac\\uc801\\uc73c\\ub85c \\ubd84\\ub9ac\\ub41c \\uc791\\uc740 test cell\\uc744 \\uc900\\ube44\\ud55c\\ub2e4. \\uac01\\uac01 \\uc911\\uc55912.7mm square hole\\uc744 \\uac00\\uc9c450mm plate \\uc704\\uc5d0 dynamic annulus\\ub97c \\uc218\\ud3c9\\uc73c\\ub85c \\ub193\\uace0, \\ub3d9\\ucd95 vertical pin\\uc74410mm \\uc704\\uc5d0\\uc11c \\uc911\\ub825\\uc73c\\ub85c \\ub193\\ub294\\ub2e4. \\ud55c cell\\uc7406mm pin, \\ub2e4\\ub978 cell\\uc74010mm pin. pin\\uae38\\uc774/\\uc7ac\\uc9c8/\\uc9c8\\ub7c9/\\ucd08\\uae30clearance/pose\\ub97c \\uba85\\uc2dc\\ud55c\\ub2e4. \\ucd94\\uac00\\ubcbd/\\uc6a9\\uc811/kinematicwasher/fake state\\uc81c\\uc5b4\\ub294 \\uc4f0\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\ub450 \\uc8fc\\ud30c\\uc218240/480Hz\\uc5d0\\uc11c \\uac19\\uc740 \\ubb3c\\ub9ac \\uc2dc\\uac04\\uc73c\\ub85c \\uc2e4\\uc81c integrated root pose/quaternion, pin-washer filtered contacts, finite states\\uc640 boundary outcomes\\ub97c \\uc77d\\ub294\\ub2e4. 6mm pin\\uc740 \\uc2e4\\uc81c bore\\uc640platehole\\uc744 \\ud1b5\\ud574 \\uc544\\ub798\\ub85c \\ud1b5\\uacfc\\ud558\\uace0,10mm pin\\uc740 \\uc2e4\\uc81c washer contact\\uc5d0 \\uc758\\ud5743\\ucd08 \\ub3d9\\uc548 \\uc9c0\\uc9c0\\ub418\\uba70 \\uc644\\uc804\\ud788 \\ube60\\uc9c0\\uac70\\ub098 \\uad00\\ud1b5\\ud558\\uc9c0 \\uc54a\\ub294\\uc9c0 \\ud310\\uc815\\ud55c\\ub2e4. \\ubcf4\\uace0\\uc11c\\uc758 \\ubc94\\uc704\\ub294 \\uc774 \\ub450 \\uacbd\\uc6b0\\ub9cc\\uc774\\uba7040orientation retained pass\\ub098 robot success\\ub85c \\ubd80\\ub974\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc2e4\\uc81c raw physics traces\\uc640 \\uc7ac\\ud604 \\uba85\\ub839\\uc744 \\ubcf4\\uc874\\ud55c\\ub2e4.\\n- native AppLauncher/XYZW/ProxyArray/filtered contact \\uc811\\uadfc\\uc740 \\uc774\\ubbf8 \\uac80\\uc99d\\ub41c \\uc791\\uc740 \\ud504\\ub85c\\uadf8\\ub7a8\\uc744 \\ucc38\\uace0\\ud55c\\ub2e4. USD prim \\uc774\\ub984\\uc740 \\uc720\\ud6a8 identifier\\ub97c \\uc368\\uc11c \\ubd80\\ud638/\\uc18c\\uc218\\uc810 \\uc774\\ub984\\uc744 \\ud53c\\ud55c\\ub2e4. root/child local-to-world \\ubc30\\uce58\\ub97c \\uc2e4\\uc81c composed geometry\\uc640 native pose\\ub85c \\ud655\\uc778\\ud55c\\ub2e4. geometry/source review\\ub9cc \\uc2e4\\uc81c native \\uc131\\uacf5\\uc774\\ub77c\\uace0 \\ubd80\\ub974\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\uc774 \\uc0c8 probe\\uac00 \\uc2e4\\uc81c\\ub85c \\ud1b5\\uacfc\\ud558\\uba74 \\ub2e4\\uc74c iteration\\uc740 \\uadf8\\ub300\\ub85c \\uc7ac\\uc2e4\\ud589\\ud558\\uc9c0 \\ub9d0\\uace0 \\uc0c8\\ub85c\\uc6b4 \\ubbf8\\uac80\\uc99d \\uad6c\\uc131\\uc694\\uc18c(\\uc2e4\\uc81c segment joint mechanics, physical hinge/readback, moving-frame crossing)\\uc5d0 \\ud55c\\uc815\\ud558\\uc5ec \\uc804\\uc9c4\\ud55c\\ub2e4. bounded probes\\uc758 scope\\ub97c \\uc815\\uc9c1\\ud558\\uac8c \\uc720\\uc9c0\\ud558\\uba70 \\uc804\\uccb4 environment ready\\ub294 \\ubaa8\\ub4e0 frozen \\uce21\\uc815\\uc744 \\uad6c\\ud604\\u00b7\\uc2e4\\ud589\\ud55c \\ub4a4\\uc5d0\\ub9cc \\uc120\\uc5b8\\ud55c\\ub2e4. \\ub9e4\\ubc88 \\uac19\\uc740 '\\ub2e4\\uc74c\\ub2e8\\uc77cprobe' \\ubb38\\uc7a5\\uc744 \\ubb34\\uc870\\uac74 \\ubc18\\ubcf5 \\uc9c0\\uc2dc\\ub85c \\ud574\\uc11d\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n\\n\\ucd5c\\uc885 scorer \\uc804\\uc5d0 input/operator-source-notes.json\\uc758 receiver/floor contact-boundary \\uc77c\\uad00\\uc131 \\uc774\\uc288\\ub97c \\ubc18\\uc601\\ud55c \\uba85\\uc138 \\uc815\\uc815\\uacfc \\ub3c5\\ub9bd \\uac80\\ud1a0\\uac00 \\ud544\\uc694\\ud558\\ub2e4. \\uadf8 \\ubb38\\uc81c\\ub97c \\uc9c0\\uae08 annulus API-discovery native \\uacb0\\uacfc \\uc804\\uc5d0 \\uc694\\uad6c\\ud558\\uac70\\ub098 \\ud604\\uc7ac \\uacc4\\uc57d\\uc744 \\uc784\\uc758 \\ubcc0\\uacbd\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ubc14\\ub2e5\\uc5d0 \\ub193\\uc778 \\uc815\\uc0c1 \\ubb3c\\uccb4\\ub97c strict open interior \\ub54c\\ubb38\\uc5d0 \\uac70\\ubd80\\ud558\\uc9c0 \\uc54a\\ub294 \\uc218\\uce58\\uc801 \\uc811\\ucd09 \\ud5c8\\uc6a9\\uc744 \\uba85\\uc138\\ub85c \\ubd84\\uba85\\ud788 \\ud574\\uc57c \\ud55c\\ub2e4. \\uc2e4\\uc81c spill/contamination/tunneling/tampering \\uc2e4\\ud328\\ub294 \\uc720\\uc9c0\\ud55c\\ub2e4.\\n\\n\\uc804\\uccb4 task\\uc5d0\\uc11c post-reset taskobject pose/velocity writes, teleport, fake weld, collider disable, particle freezing, hidden forces\\uc640 \\uc720\\uc2e4\\uc744 \\uc228\\uae30\\ub294 \\ub0ae\\uc740 \\uc18d\\ub3c4 cap\\uc740 \\uae08\\uc9c0\\ud55c\\ub2e4. diagnostic reset/fixture\\uc640 robot success\\ub97c \\ubd84\\ub9ac\\ud55c\\ub2e4. \\uc6d0\\uc2dc \\uc790\\ub8cc\\uac00 \\ud06c\\uba74 lossless \\uc555\\ucd95\\uc744 \\uc0ac\\uc6a9\\ud558\\uace0 \\ud55c\\uacc4/\\uc7ac\\ud604\\uc131\\uc744 \\ubcf4\\uc874\\ud55c\\ub2e4. Dream single-attempt/$20 ledger\\uc640 submission approval \\uc870\\uac74\\uc740 \\uae30\\uc874 \\uadf8\\ub300\\ub85c\\ub2e4.\\n\", \"approval\": null}"
+    },
+    {
+      "seq": 6640,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:50:54.502686+00:00",
+      "data": "{\"resume_from_stage\": \"environment\"}"
+    },
+    {
+      "seq": 6641,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:50:54.506154+00:00",
+      "data": "{\"supervisor_pid\": 58025, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log\"}"
+    },
+    {
+      "seq": 6642,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:50:54.584960+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 6649,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:52:25.532694+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 6653,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:53:07.014609+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 6656,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:53:52.143076+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab\"}"
+    },
+    {
+      "seq": 6657,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:53:52.542143+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6659,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:54:07.955580+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6661,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:54:23.374518+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6663,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:54:38.851194+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6665,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:54:54.251544+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6666,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:55:09.649174+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6667,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:55:25.062019+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6668,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:55:40.483596+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6671,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:55:55.895371+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6672,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:56:11.314683+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6674,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:56:26.784922+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6675,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:56:42.246576+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6676,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:56:57.697357+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6677,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:57:13.172364+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6678,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:57:28.634734+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6679,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:57:44.210106+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6680,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:57:59.647644+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6681,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:58:15.063259+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6682,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:58:30.588760+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6683,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:58:46.038940+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6684,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:59:01.444330+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6686,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:59:16.968809+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6687,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:59:32.434193+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6688,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T16:59:47.893733+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6689,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:00:03.311891+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6694,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:00:18.747353+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6695,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:00:34.175241+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6696,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:00:49.606917+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6697,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:01:05.038402+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6698,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:01:20.461990+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6699,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:01:35.882116+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6701,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:01:51.301778+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6702,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:02:06.860778+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6703,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:02:22.279632+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6705,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:02:37.713428+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6706,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:02:53.127522+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6707,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:03:08.554574+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6708,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:03:23.967917+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6709,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:03:39.427608+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6712,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:03:54.862999+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6714,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:04:10.461915+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6716,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:04:25.887622+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6718,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:04:41.318914+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6720,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:04:56.755551+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6722,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:05:12.207422+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6724,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:05:27.628351+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6726,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:05:43.532669+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6728,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:05:59.110490+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6730,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:06:14.573493+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6732,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:06:30.034830+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6734,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:06:45.463531+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6736,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:07:01.084992+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6738,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:07:16.629255+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6740,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:07:32.059714+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6742,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:07:47.657828+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6744,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:08:03.118453+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6746,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:08:18.555955+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6748,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:08:33.993151+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6750,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:08:49.428983+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6752,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:09:04.862545+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6754,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:09:20.303043+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6756,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:09:35.792050+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6758,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:09:51.258869+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6760,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:10:06.720264+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6762,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:10:22.285863+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6764,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:10:37.852046+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6766,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:10:53.316861+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6768,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:11:08.879603+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6770,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:11:24.343556+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6772,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:11:40.008758+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6774,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:11:55.574674+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6776,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:12:11.142911+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6778,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:12:26.704885+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6780,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:12:42.155152+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6782,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:12:57.678368+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6784,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:13:13.106840+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6786,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:13:28.760274+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6788,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:13:44.325797+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6790,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:13:59.747802+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6792,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:14:15.252703+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6794,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:14:30.815535+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6796,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:14:46.280016+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6798,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:15:01.713376+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6800,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:15:17.203207+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6802,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:15:32.667678+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6804,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:15:48.233762+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6806,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:16:03.678596+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6808,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:16:19.163600+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6810,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:16:34.607851+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6812,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:16:50.082942+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6814,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:17:05.648091+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6816,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:17:21.212588+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6818,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:17:36.778567+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6820,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:17:52.242741+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6822,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:18:07.704699+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6824,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:18:23.150844+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6826,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:18:38.630990+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6828,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:18:54.094320+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6830,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:19:09.556592+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6832,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:19:25.118399+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6834,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:19:40.584000+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6836,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:19:56.046081+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6838,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:20:11.511014+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6840,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:20:26.973235+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6842,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:20:42.411721+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6844,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:20:57.842904+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6846,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:21:13.464269+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6848,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:21:28.925747+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6850,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:21:44.361932+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6852,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:21:59.797600+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-16T16:53:52.381649+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 6854,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:22:15.418277+00:00",
+      "data": "{\"remote_status\": {\"status\": \"blocked\", \"error\": \"component-code-reviewer: `joint_position_deg` is not a native joint-state measurement: it is hard-coded to `0.0` during settling and later copied from a roll derived from the aperture root quaternion. This does not satisfy the required actual joint-position trace and can misreport hinge motion.; `maximum_step_vertex_motion_m` is the displacement between completed sample endpoints, not a conservative bound on motion between samples. Subtracting it from sampled clearance therefore cannot rule out an inter-sample rotational rib intersection, so `conservative_inter_sample_motion_margin` and `tunneling_control_passed` overclaim the implemented control. Use a justified velocity/acceleration swept bound or rename and limit the check to endpoint-sampled evidence without claiming tunneling control.\", \"type\": \"GateError\", \"at\": \"2026-11-16T17:22:12.610302+00:00\"}, \"stage\": null}"
+    },
+    {
+      "seq": 6857,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T17:22:41.901624+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"component-code-reviewer: `joint_position_deg` is not a native joint-state measurement: it is hard-coded to `0.0` during settling and later copied from a roll derived from the aperture root quaternion. This does not satisfy the required actual joint-position trace and can misreport hinge motion.; `maximum_step_vertex_motion_m` is the displacement between completed sample endpoints, not a conservative bound on motion between samples. Subtracting it from sampled clearance therefore cannot rule out an inter-sample rotational rib intersection, so `conservative_inter_sample_motion_margin` and `tunneling_control_passed` overclaim the implemented control. Use a justified velocity/acceleration swept bound or rename and limit the check to endpoint-sampled evidence without claiming tunneling control.\"}"
     }
   ],
   "effects": {

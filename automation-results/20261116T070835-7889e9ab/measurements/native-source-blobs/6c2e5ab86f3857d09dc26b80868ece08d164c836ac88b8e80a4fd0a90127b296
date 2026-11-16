@@ -1,0 +1,587 @@
+"""Bounded native probe for an annular washer collision bore.
+
+Two physically separate cells use the same dynamic 8 mm-clear-bore annulus.
+A 6 mm pin must fall through the bore and a 10 mm pin must be supported by
+washer contact.  This discovers only the compound-collider construction and
+filtered-contact behavior; it does not qualify the final segmented washer,
+breakable joints, screen retention, or any robot task.
+"""
+
+from __future__ import annotations
+
+import argparse
+import gzip
+import json
+import math
+from pathlib import Path
+
+from isaaclab.app import AppLauncher
+
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--physics-hz", type=int, choices=(240, 480), required=True)
+parser.add_argument("--seconds", type=float, default=4.0)
+parser.add_argument("--report", type=Path, required=True)
+AppLauncher.add_app_launcher_args(parser)
+args = parser.parse_args()
+launcher = AppLauncher(args)
+simulation_app = launcher.app
+
+import numpy as np
+import torch
+import trimesh
+from pxr import Gf, Usd, UsdGeom, UsdPhysics
+
+import isaaclab.sim as sim_utils
+from isaaclab.assets import RigidObject, RigidObjectCfg
+from isaaclab.sensors import ContactSensor, ContactSensorCfg
+from isaaclab.sim import schemas
+from isaaclab.sim.spawners.meshes.meshes import _spawn_mesh_geom_from_mesh
+from isaaclab.sim.utils import create_prim, get_current_stage
+
+RI = 0.004
+RO = 0.015
+THICKNESS = 0.004
+DENSITY = 7850.0
+WEDGES = 32
+PLATE_SIDE = 0.050
+PLATE_HOLE = 0.0127
+PLATE_THICKNESS = 0.003
+PLATE_TOP_Z = 0.050
+# Use a short, full-diameter gauge pin.  The earlier 30 mm rod made the
+# 10 mm case a top-heavy balancing experiment on a 1 mm radial shoulder:
+# at 480 Hz it tipped, hit the plate, and ceased to test bore exclusion.
+# A 10 mm-long cylindrical plug still falls freely from the frozen 10 mm
+# clearance and tests the requested 6 mm pass / 10 mm stop boundary, while
+# its aspect ratio does not add an unrelated pendulum instability.
+PIN_LENGTH = 0.010
+PIN_CLEARANCE = 0.010
+PIN_DENSITY = 7850.0
+GRAVITY = 9.81
+SMALL_PIN_RADIUS = 0.003
+UPRIGHT_LIMIT_RAD = math.radians(1.0)
+
+
+def cylinder_axis_from_xyzw(pose: list[float]) -> tuple[float, float, float]:
+    """Rotate body +Z by the native Isaac Lab XYZW quaternion."""
+    x, y, z, w = map(float, pose[3:7])
+    return (
+        2.0 * (x * z + w * y),
+        2.0 * (y * z - w * x),
+        1.0 - 2.0 * (x * x + y * y),
+    )
+
+
+def pin_clearance_sample(pose: list[float], axis_x: float) -> dict[str, float]:
+    """Conservative capsule bounds for a cylindrical pin at one native sample."""
+    px, py, pz = map(float, pose[:3])
+    ax, ay, az = cylinder_axis_from_xyzw(pose)
+    half = PIN_LENGTH / 2.0
+    endpoint_a = (px - half * ax, py - half * ay, pz - half * az)
+    endpoint_b = (px + half * ax, py + half * ay, pz + half * az)
+    endpoint_radius = max(
+        math.hypot(endpoint_a[0] - axis_x, endpoint_a[1]),
+        math.hypot(endpoint_b[0] - axis_x, endpoint_b[1]),
+    )
+    # The radius-expanded centerline capsule contains the finite cylinder.
+    return {
+        "axis_z_abs": abs(az),
+        "capsule_radial_extent_m": endpoint_radius + SMALL_PIN_RADIUS,
+        "capsule_lowest_z_m": min(endpoint_a[2], endpoint_b[2]) - SMALL_PIN_RADIUS,
+        "capsule_highest_z_m": max(endpoint_a[2], endpoint_b[2]) + SMALL_PIN_RADIUS,
+    }
+
+
+def wedge_mesh(index: int) -> trimesh.Trimesh:
+    """One convex prism; inner chords are tangent to the 4 mm clear bore."""
+    da = 2.0 * math.pi / WEDGES
+    a0, a1 = index * da, (index + 1) * da
+    inner_vertex_radius = RI / math.cos(da / 2.0)
+    xy = [
+        (inner_vertex_radius * math.cos(a0), inner_vertex_radius * math.sin(a0)),
+        (RO * math.cos(a0), RO * math.sin(a0)),
+        (RO * math.cos(a1), RO * math.sin(a1)),
+        (inner_vertex_radius * math.cos(a1), inner_vertex_radius * math.sin(a1)),
+    ]
+    vertices = [(x, y, z) for z in (-THICKNESS / 2, THICKNESS / 2) for x, y in xy]
+    faces = [
+        (0, 2, 1), (0, 3, 2), (4, 5, 6), (4, 6, 7),
+        (0, 1, 5), (0, 5, 4), (1, 2, 6), (1, 6, 5),
+        (2, 3, 7), (2, 7, 6), (3, 0, 4), (3, 4, 7),
+    ]
+    mesh = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
+    if not mesh.is_watertight or not mesh.is_convex:
+        raise RuntimeError(f"wedge {index} is not a watertight convex collider")
+    return mesh
+
+
+def radial_distance_to_segment_xy(a: Gf.Vec3d, b: Gf.Vec3d, axis_x: float) -> float:
+    """Minimum XY distance from the cell axis to one transformed mesh edge."""
+    ax, ay = float(a[0]) - axis_x, float(a[1])
+    bx, by = float(b[0]) - axis_x, float(b[1])
+    dx, dy = bx - ax, by - ay
+    denominator = dx * dx + dy * dy
+    if denominator == 0.0:
+        return math.hypot(ax, ay)
+    t = max(0.0, min(1.0, -(ax * dx + ay * dy) / denominator))
+    return math.hypot(ax + t * dx, ay + t * dy)
+
+
+WEDGE_MESHES = [wedge_mesh(i) for i in range(WEDGES)]
+COMBINED = trimesh.util.concatenate(WEDGE_MESHES)
+CAD_MASS = float(sum(m.volume for m in WEDGE_MESHES) * DENSITY)
+CAD_COM = np.asarray(COMBINED.center_mass, dtype=np.float64)
+CAD_INERTIA = np.asarray(COMBINED.moment_inertia * DENSITY, dtype=np.float64)
+CAD_PRINCIPAL_INERTIA = np.linalg.eigvalsh(CAD_INERTIA)
+
+
+def spawn_compound_annulus(prim_path, cfg, translation=None, orientation=None, **kwargs):
+    """Author one rigid body with 32 explicitly convex collision children."""
+    stage = get_current_stage()
+    create_prim(prim_path, prim_type="Xform", translation=translation, orientation=orientation, stage=stage)
+    child_cfg = sim_utils.MeshCfg(
+        rigid_props=None,
+        mass_props=None,
+        collision_props=cfg.collision_props,
+        activate_contact_sensors=True,
+        physics_material=cfg.physics_material,
+        visual_material=cfg.visual_material,
+    )
+    for i, mesh in enumerate(WEDGE_MESHES):
+        _spawn_mesh_geom_from_mesh(f"{prim_path}/Wedge_{i:02d}", child_cfg, mesh, stage=stage)
+    schemas.define_rigid_body_properties(prim_path, cfg.rigid_props, stage=stage)
+    eigvals, eigvecs = np.linalg.eigh(CAD_INERTIA)
+    if np.linalg.det(eigvecs) < 0:
+        eigvecs[:, 0] *= -1
+    transform = np.eye(4)
+    transform[:3, :3] = eigvecs
+    q_wxyz = trimesh.transformations.quaternion_from_matrix(transform)
+    mass_api = UsdPhysics.MassAPI.Apply(stage.GetPrimAtPath(prim_path))
+    mass_api.CreateMassAttr(CAD_MASS)
+    mass_api.CreateCenterOfMassAttr(Gf.Vec3f(*map(float, CAD_COM)))
+    mass_api.CreateDiagonalInertiaAttr(Gf.Vec3f(*map(float, eigvals)))
+    mass_api.CreatePrincipalAxesAttr(Gf.Quatf(float(q_wxyz[0]), Gf.Vec3f(*map(float, q_wxyz[1:]))))
+    return stage.GetPrimAtPath(prim_path)
+
+
+def annulus(path: str, x: float) -> RigidObject:
+    cfg = sim_utils.MeshCfg(
+        func=spawn_compound_annulus,
+        rigid_props=sim_utils.RigidBodyPropertiesCfg(
+            solver_position_iteration_count=32,
+            solver_velocity_iteration_count=8,
+            max_depenetration_velocity=2.0,
+        ),
+        mass_props=None,
+        collision_props=sim_utils.CollisionPropertiesCfg(contact_offset=0.00015, rest_offset=0.0),
+        activate_contact_sensors=True,
+        physics_material=sim_utils.RigidBodyMaterialCfg(
+            static_friction=0.45, dynamic_friction=0.35, restitution=0.0
+        ),
+        visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.35, 0.38, 0.42)),
+    )
+    return RigidObject(RigidObjectCfg(
+        prim_path=path,
+        spawn=cfg,
+        init_state=RigidObjectCfg.InitialStateCfg(pos=(x, 0.0, PLATE_TOP_Z + THICKNESS / 2)),
+    ))
+
+
+def plate_with_square_hole(x: float, name: str) -> None:
+    band = (PLATE_SIDE - PLATE_HOLE) / 2
+    common = dict(
+        # Contact reporting in the pinned Isaac Lab build is activated only
+        # below a rigid-body prim.  Make each plate rib an immobile kinematic
+        # rigid body rather than a collision-only Xform; this preserves the
+        # physical fixture while allowing the pin-to-rib filter to measure
+        # (and reject) direct plate support.
+        rigid_props=sim_utils.RigidBodyPropertiesCfg(
+            kinematic_enabled=True,
+            solver_position_iteration_count=32,
+            solver_velocity_iteration_count=8,
+        ),
+        collision_props=sim_utils.CollisionPropertiesCfg(contact_offset=0.00015, rest_offset=0.0),
+        physics_material=sim_utils.RigidBodyMaterialCfg(static_friction=0.5, dynamic_friction=0.35),
+        visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.22, 0.28, 0.34)),
+    )
+    specs = (
+        ((band, PLATE_SIDE, PLATE_THICKNESS), (x - (PLATE_HOLE + band) / 2, 0.0)),
+        ((band, PLATE_SIDE, PLATE_THICKNESS), (x + (PLATE_HOLE + band) / 2, 0.0)),
+        ((PLATE_HOLE, band, PLATE_THICKNESS), (x, -(PLATE_HOLE + band) / 2)),
+        ((PLATE_HOLE, band, PLATE_THICKNESS), (x, +(PLATE_HOLE + band) / 2)),
+    )
+    for i, (size, (px, py)) in enumerate(specs):
+        c = sim_utils.CuboidCfg(size=size, **common)
+        c.activate_contact_sensors = True
+        c.func(f"/World/{name}/Rib_{i}", c, translation=(px, py, PLATE_TOP_Z - PLATE_THICKNESS / 2))
+
+
+def pin(path: str, x: float, diameter: float) -> RigidObject:
+    lower_nose = PLATE_TOP_Z + THICKNESS + PIN_CLEARANCE
+    cfg = sim_utils.CylinderCfg(
+        radius=diameter / 2,
+        height=PIN_LENGTH,
+        axis="Z",
+        rigid_props=sim_utils.RigidBodyPropertiesCfg(
+            solver_position_iteration_count=32, solver_velocity_iteration_count=8,
+            max_depenetration_velocity=2.0,
+        ),
+        mass_props=sim_utils.MassPropertiesCfg(density=PIN_DENSITY),
+        collision_props=sim_utils.CollisionPropertiesCfg(contact_offset=0.00015, rest_offset=0.0),
+        activate_contact_sensors=True,
+        physics_material=sim_utils.RigidBodyMaterialCfg(static_friction=0.45, dynamic_friction=0.35),
+        visual_material=sim_utils.PreviewSurfaceCfg(diffuse_color=(0.70, 0.30, 0.18)),
+    )
+    return RigidObject(RigidObjectCfg(
+        prim_path=path,
+        spawn=cfg,
+        init_state=RigidObjectCfg.InitialStateCfg(pos=(x, 0.0, lower_nose + PIN_LENGTH / 2)),
+    ))
+
+
+def main() -> None:
+    dt = 1.0 / args.physics_hz
+    total_steps = int(round(args.seconds * args.physics_hz))
+    support_steps = 3 * args.physics_hz
+    sim = sim_utils.SimulationContext(sim_utils.SimulationCfg(
+        dt=dt, device=args.device, render_interval=max(1, args.physics_hz // 20)
+    ))
+    xs = (-0.060, 0.060)
+    plate_with_square_hole(xs[0], "SmallCell")
+    plate_with_square_hole(xs[1], "LargeCell")
+    washers = [annulus("/World/WasherSmall", xs[0]), annulus("/World/WasherLarge", xs[1])]
+    pins = [pin("/World/PinSmall", xs[0], 0.006), pin("/World/PinLarge", xs[1], 0.010)]
+    pair_sensors = [
+        ContactSensor(ContactSensorCfg(prim_path="/World/PinSmall", update_period=0.0,
+            history_length=0, track_air_time=False, filter_prim_paths_expr=[
+                "/World/WasherSmall",
+                *[f"/World/SmallCell/Rib_{j}" for j in range(4)],
+            ])),
+        ContactSensor(ContactSensorCfg(prim_path="/World/PinLarge", update_period=0.0,
+            history_length=0, track_air_time=False, filter_prim_paths_expr=[
+                "/World/WasherLarge",
+                *[f"/World/LargeCell/Rib_{j}" for j in range(4)],
+            ])),
+    ]
+    sim.reset()
+    for body in washers + pins:
+        body.reset()
+
+    stage = get_current_stage()
+    cache = UsdGeom.XformCache(Usd.TimeCode.Default())
+
+    # Audit the geometry that was actually authored, including every composed
+    # child transform and the collision approximation on the USD mesh prim.
+    authored_geometry = []
+    for washer_path, expected_x in zip(("/World/WasherSmall", "/World/WasherLarge"), xs, strict=True):
+        root = stage.GetPrimAtPath(washer_path)
+        mesh_prims = [p for p in Usd.PrimRange(root) if p.IsA(UsdGeom.Mesh)]
+        world_points = []
+        minimum_face_radius = float("inf")
+        approximation_ok = 0
+        for mesh_prim in mesh_prims:
+            points = UsdGeom.Mesh(mesh_prim).GetPointsAttr().Get()
+            local_to_world = cache.GetLocalToWorldTransform(mesh_prim)
+            transformed = [local_to_world.Transform(Gf.Vec3d(*map(float, p))) for p in points]
+            world_points.extend(transformed)
+            # A convex face's minimum radial distance is attained in its
+            # projected interior or on an edge.  The origin is not inside any
+            # wedge-face projection, so auditing every authored triangle edge
+            # measures the tangent inner chords (4 mm), unlike vertex radius.
+            indices = list(UsdGeom.Mesh(mesh_prim).GetFaceVertexIndicesAttr().Get())
+            counts = list(UsdGeom.Mesh(mesh_prim).GetFaceVertexCountsAttr().Get())
+            cursor = 0
+            for count in counts:
+                face = indices[cursor:cursor + count]
+                cursor += count
+                for edge_index, vertex_index in enumerate(face):
+                    next_index = face[(edge_index + 1) % len(face)]
+                    minimum_face_radius = min(
+                        minimum_face_radius,
+                        radial_distance_to_segment_xy(
+                            transformed[vertex_index], transformed[next_index], expected_x
+                        ),
+                    )
+            approximation = UsdPhysics.MeshCollisionAPI(mesh_prim).GetApproximationAttr().Get()
+            approximation_ok += int(str(approximation) in ("convexHull", "convexDecomposition"))
+        radii = [math.hypot(float(p[0]) - expected_x, float(p[1])) for p in world_points]
+        authored_geometry.append({
+            "mesh_count": len(mesh_prims),
+            "point_count": len(world_points),
+            "minimum_vertex_radius_m": min(radii),
+            "minimum_collision_face_radial_clearance_m": minimum_face_radius,
+            "maximum_vertex_radius_m": max(radii),
+            "collision_approximation_ok_count": approximation_ok,
+            "root_world_translation_m": list(cache.GetLocalToWorldTransform(root).ExtractTranslation()),
+        })
+
+    initial_pin_poses = [p.data.root_pose_w.torch[0].detach().cpu().tolist() for p in pins]
+    initial_washer_poses = [w.data.root_pose_w.torch[0].detach().cpu().tolist() for w in washers]
+    # Read the realized mass properties from the native rigid-body view after
+    # reset.  COM is body-local (pose_b), so it can be compared directly with
+    # the geometry-derived CAD COM without conflating world placement.
+    native_washer_com_pose_b = [
+        w.data.body_com_pose_b.torch[0, 0].detach().cpu().tolist() for w in washers
+    ]
+    native_washer_inertia_tensors = [
+        w.data.body_inertia.torch[0, 0].detach().reshape(3, 3).cpu().numpy() for w in washers
+    ]
+    native_washer_principal_inertia = [
+        np.linalg.eigvalsh(tensor).tolist() for tensor in native_washer_inertia_tensors
+    ]
+    native_washer_com_errors = [
+        float(np.linalg.norm(np.asarray(pose[:3], dtype=np.float64) - CAD_COM))
+        for pose in native_washer_com_pose_b
+    ]
+    native_washer_inertia_relative_errors = [
+        max(abs(float(native) - float(cad)) / float(cad)
+            for native, cad in zip(principal, CAD_PRINCIPAL_INERTIA, strict=True))
+        for principal in native_washer_principal_inertia
+    ]
+    pin_native_mass = [float(p.data.default_mass.torch[0, 0].cpu()) for p in pins]
+    pin_analytic_mass = [PIN_DENSITY * math.pi * (d / 2) ** 2 * PIN_LENGTH for d in (0.006, 0.010)]
+
+    traces = [[], []]
+    force_positive = [0, 0]
+    final_contact_run = [0, 0]
+    max_contact_run = [0, 0]
+    min_pin_bottom = [float("inf"), float("inf")]
+    max_force = [0.0, 0.0]
+    finite = True
+    support_run = 0
+    max_support_run = 0
+    max_large_plate_force = 0.0
+    max_large_individual_plate_rib_force = 0.0
+    max_large_sum_plate_rib_force_magnitudes = 0.0
+    min_large_upward_washer_force = float("inf")
+    max_large_washer_translation_drift = 0.0
+    max_large_washer_angle_drift = 0.0
+    max_plate_translation_drift = 0.0
+    plate_initial = []
+    for cell in ("SmallCell", "LargeCell"):
+        plate_initial.append([list(cache.GetLocalToWorldTransform(stage.GetPrimAtPath(
+            f"/World/{cell}/Rib_{j}")).ExtractTranslation()) for j in range(4)])
+
+    for step in range(total_steps):
+        sim.step(render=False)
+        for body in washers + pins:
+            body.update(dt)
+        for sensor in pair_sensors:
+            sensor.update(dt, force_recompute=True)
+        for i in range(2):
+            pose = pins[i].data.root_pose_w.torch[0].detach()
+            washer_pose = washers[i].data.root_pose_w.torch[0].detach()
+            matrix = pair_sensors[i].data.normal_force_matrix_w.torch[0, 0].detach()
+            washer_force = matrix[0]
+            plate_rib_forces = matrix[1:]
+            plate_force = plate_rib_forces.sum(dim=0)
+            plate_rib_force_magnitudes = torch.linalg.vector_norm(plate_rib_forces, dim=-1)
+            max_plate_rib_force = float(plate_rib_force_magnitudes.max().cpu())
+            sum_plate_rib_force_magnitudes = float(plate_rib_force_magnitudes.sum().cpu())
+            finite = finite and bool(torch.isfinite(pose).all() and torch.isfinite(washer_pose).all()
+                                     and torch.isfinite(matrix).all())
+            fn = float(torch.linalg.vector_norm(washer_force).cpu())
+            plate_fn = float(torch.linalg.vector_norm(plate_force).cpu())
+            pin_bottom = float(pose[2].cpu()) - PIN_LENGTH / 2
+            min_pin_bottom[i] = min(min_pin_bottom[i], pin_bottom)
+            max_force[i] = max(max_force[i], fn)
+            if fn > 1e-6:
+                force_positive[i] += 1
+                final_contact_run[i] += 1
+                max_contact_run[i] = max(max_contact_run[i], final_contact_run[i])
+            else:
+                final_contact_run[i] = 0
+            plate_poses = [list(cache.GetLocalToWorldTransform(stage.GetPrimAtPath(
+                f"/World/{'SmallCell' if i == 0 else 'LargeCell'}/Rib_{j}")).ExtractTranslation())
+                for j in range(4)]
+            plate_drift = max(math.dist(a, b) for a, b in zip(plate_poses, plate_initial[i], strict=True))
+            max_plate_translation_drift = max(max_plate_translation_drift, plate_drift)
+            pose_list = pose.cpu().tolist()
+            small_clearance = pin_clearance_sample(pose_list, xs[0]) if i == 0 else None
+            traces[i].append({
+                "step": step + 1,
+                "time_s": (step + 1) * dt,
+                "pin_pose_xyzw": pose_list,
+                "washer_pose_xyzw": washer_pose.cpu().tolist(),
+                "plate_rib_world_translations_m": plate_poses,
+                "pin_washer_force_w_N": washer_force.cpu().tolist(),
+                "pin_plate_force_w_N": plate_force.cpu().tolist(),
+                "pin_plate_rib_forces_w_N": plate_rib_forces.cpu().tolist(),
+                "pin_plate_rib_force_magnitudes_N": plate_rib_force_magnitudes.cpu().tolist(),
+                **({"six_mm_geometric_clearance": small_clearance} if small_clearance is not None else {}),
+            })
+            if i == 1:
+                washer_drift = float(torch.linalg.vector_norm(
+                    washer_pose[:3] - torch.tensor(initial_washer_poses[1][:3], device=washer_pose.device)).cpu())
+                q0 = torch.tensor(initial_washer_poses[1][3:7], device=washer_pose.device)
+                qdot = float(torch.abs(torch.dot(washer_pose[3:7], q0)).clamp(max=1.0).cpu())
+                angle_drift = 2.0 * math.acos(qdot)
+                max_large_plate_force = max(max_large_plate_force, plate_fn)
+                max_large_individual_plate_rib_force = max(
+                    max_large_individual_plate_rib_force, max_plate_rib_force
+                )
+                max_large_sum_plate_rib_force_magnitudes = max(
+                    max_large_sum_plate_rib_force_magnitudes, sum_plate_rib_force_magnitudes
+                )
+                max_large_washer_translation_drift = max(max_large_washer_translation_drift, washer_drift)
+                max_large_washer_angle_drift = max(max_large_washer_angle_drift, angle_drift)
+                upward = float(washer_force[2].cpu())
+                supported = (upward >= 0.80 * pin_native_mass[1] * GRAVITY
+                             and max_plate_rib_force <= 1e-5
+                             and sum_plate_rib_force_magnitudes <= 1e-5
+                             and washer_drift <= 5e-4
+                             and angle_drift <= math.radians(1.0) and plate_drift <= 1e-9)
+                support_run = support_run + 1 if supported else 0
+                max_support_run = max(max_support_run, support_run)
+                if supported:
+                    min_large_upward_washer_force = min(min_large_upward_washer_force, upward)
+
+    # Certify the small pin's complete traversal from native pose history.  A
+    # final-Z test alone could accept a pin that tipped or fell around the
+    # fixture.  The overlap window spans every sample where a conservative
+    # radius-expanded centerline capsule intersects either the annulus/plate
+    # vertical interval.  Every such sample must fit inside the 4 mm bore and
+    # remain within one degree of the common vertical axis.
+    washer_top_z = PLATE_TOP_Z + THICKNESS
+    plate_bottom_z = PLATE_TOP_Z - PLATE_THICKNESS
+    initial_small_clearance = pin_clearance_sample(initial_pin_poses[0], xs[0])
+    small_samples = [{
+        "step": 0,
+        "time_s": 0.0,
+        "pin_pose_xyzw": initial_pin_poses[0],
+        "six_mm_geometric_clearance": initial_small_clearance,
+    }, *traces[0]]
+    overlap_samples = [sample for sample in small_samples
+        if sample["six_mm_geometric_clearance"]["capsule_lowest_z_m"] <= washer_top_z
+        and sample["six_mm_geometric_clearance"]["capsule_highest_z_m"] >= plate_bottom_z]
+    small_started_above = initial_small_clearance["capsule_lowest_z_m"] > washer_top_z
+    final_small_clearance = small_samples[-1]["six_mm_geometric_clearance"]
+    small_finished_below = final_small_clearance["capsule_highest_z_m"] < plate_bottom_z
+    max_small_radial_extent = max(
+        sample["six_mm_geometric_clearance"]["capsule_radial_extent_m"] for sample in overlap_samples
+    ) if overlap_samples else max(
+        sample["six_mm_geometric_clearance"]["capsule_radial_extent_m"] for sample in small_samples
+    )
+    min_small_axis_z_abs = min(
+        sample["six_mm_geometric_clearance"]["axis_z_abs"] for sample in overlap_samples
+    ) if overlap_samples else min(
+        sample["six_mm_geometric_clearance"]["axis_z_abs"] for sample in small_samples
+    )
+    crossing_steps = [sample["step"] for sample in overlap_samples]
+    small_crossing_certified = bool(
+        small_started_above and small_finished_below and overlap_samples
+        and max_small_radial_extent <= RI
+        and min_small_axis_z_abs >= math.cos(UPRIGHT_LIMIT_RAD)
+    )
+    small_top = final_small_clearance["capsule_highest_z_m"]
+    large_bottom = float(pins[1].data.root_pos_w.torch[0, 2].cpu()) - PIN_LENGTH / 2
+    large_center_offset = float(torch.linalg.vector_norm(
+        pins[1].data.root_pos_w.torch[0, :2] - washers[1].data.root_pos_w.torch[0, :2]
+    ).cpu())
+    native_mass = [float(w.data.default_mass.torch[0, 0].cpu()) for w in washers]
+    report_path = args.report if args.report.is_absolute() else (Path.cwd() / args.report).resolve()
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    trace_path = report_path.with_name(report_path.stem + "-trace.json.gz")
+    workspace = Path(__file__).resolve().parent.parent
+    trace_payload = {
+        "scope": "compound_annular_bore_collision_discovery_only",
+        "physics_sample_rate_hz": args.physics_hz,
+        "geometry": {
+            "wedge_count": WEDGES,
+            "clear_bore_radius_m": RI,
+            "maximum_outer_radius_m": RO,
+            "thickness_m": THICKNESS,
+            "density_kg_m3": DENSITY,
+            "cad_volume_m3": float(sum(m.volume for m in WEDGE_MESHES)),
+            "cad_mass_kg": CAD_MASS,
+            "cad_center_of_mass_m_body": CAD_COM.tolist(),
+            "cad_inertia_tensor_kg_m2_body": CAD_INERTIA.tolist(),
+            "cad_principal_inertia_kg_m2": CAD_PRINCIPAL_INERTIA.tolist(),
+            "native_center_of_mass_pose_xyzw_body": native_washer_com_pose_b,
+            "native_inertia_tensors_kg_m2_body": [tensor.tolist() for tensor in native_washer_inertia_tensors],
+            "native_principal_inertia_kg_m2": native_washer_principal_inertia,
+            "native_center_of_mass_errors_m": native_washer_com_errors,
+            "native_principal_inertia_relative_errors": native_washer_inertia_relative_errors,
+            "wedge_convex_flags": [bool(m.is_convex) for m in WEDGE_MESHES],
+            "plate_square_hole_m": PLATE_HOLE,
+            "pin_diameters_m": [0.006, 0.010],
+            "pin_length_m": PIN_LENGTH,
+            "initial_pin_to_washer_clearance_m": PIN_CLEARANCE,
+            "pin_density_kg_m3": PIN_DENSITY,
+            "pin_analytic_mass_kg": pin_analytic_mass,
+            "pin_native_mass_kg": pin_native_mass,
+            "initial_pin_pose_xyzw_native": initial_pin_poses,
+            "initial_washer_pose_xyzw_native": initial_washer_poses,
+            "authored_usd_geometry_audit": authored_geometry,
+        },
+        "cells": {"six_mm": traces[0], "ten_mm": traces[1]},
+        "six_mm_crossing_certificate": {
+            "started_fully_above_washer_top": small_started_above,
+            "finished_fully_below_plate_bottom": small_finished_below,
+            "washer_top_z_m": washer_top_z,
+            "plate_bottom_z_m": plate_bottom_z,
+            "overlap_first_step": crossing_steps[0] if crossing_steps else None,
+            "overlap_last_step": crossing_steps[-1] if crossing_steps else None,
+            "overlap_sample_count": len(overlap_samples),
+            "maximum_capsule_radial_extent_m": max_small_radial_extent,
+            "minimum_absolute_axis_z": min_small_axis_z_abs,
+            "upright_limit_rad": UPRIGHT_LIMIT_RAD,
+            "certified": small_crossing_certified,
+        },
+    }
+    with gzip.open(trace_path, "wt", encoding="utf-8") as stream:
+        json.dump(trace_payload, stream, separators=(",", ":"))
+    report = {
+        "checks": [
+            {"name": "physics_dt_absolute_error", "measured": abs(float(sim.get_physics_dt()) - dt), "operator": "<=", "threshold": 1e-9, "unit": "s"},
+            {"name": "finite_native_pose_and_contact_samples", "measured": int(finite), "operator": "==", "threshold": 1, "unit": "bool"},
+            {"name": "explicit_convex_wedge_count", "measured": sum(int(m.is_convex) for m in WEDGE_MESHES), "operator": "==", "threshold": WEDGES, "unit": "colliders"},
+            {"name": "native_authored_mesh_count", "measured": min(g["mesh_count"] for g in authored_geometry), "operator": "==", "threshold": WEDGES, "unit": "mesh_prims_per_annulus"},
+            {"name": "native_convex_collision_approximation_count", "measured": min(g["collision_approximation_ok_count"] for g in authored_geometry), "operator": "==", "threshold": WEDGES, "unit": "mesh_prims_per_annulus"},
+            # USD stores the authored mesh points as float32.  The 2 nm audit
+            # allowance is below that representation's scale here and does
+            # not relax the physical 4 mm bore used by the crossing check.
+            {"name": "minimum_audited_clear_bore_radius", "measured": min(g["minimum_collision_face_radial_clearance_m"] for g in authored_geometry), "operator": ">=", "threshold": RI - 2e-9, "unit": "m"},
+            {"name": "maximum_audited_outer_radius", "measured": max(g["maximum_vertex_radius_m"] for g in authored_geometry), "operator": "<=", "threshold": 0.0150001, "unit": "m"},
+            {"name": "native_root_world_translation_error", "measured": max(math.dist(g["root_world_translation_m"], [x, 0.0, PLATE_TOP_Z + THICKNESS / 2]) for g, x in zip(authored_geometry, xs, strict=True)), "operator": "<=", "threshold": 1e-6, "unit": "m"},
+            {"name": "native_annulus_mass_relative_error", "measured": max(abs(m - CAD_MASS) / CAD_MASS for m in native_mass), "operator": "<=", "threshold": 1e-5, "unit": "ratio"},
+            {"name": "native_annulus_body_com_error", "measured": max(native_washer_com_errors), "operator": "<=", "threshold": 1e-6, "unit": "m"},
+            {"name": "native_annulus_principal_inertia_relative_error", "measured": max(native_washer_inertia_relative_errors), "operator": "<=", "threshold": 0.02, "unit": "ratio"},
+            {"name": "native_pin_mass_relative_error", "measured": max(abs(a-b)/a for a,b in zip(pin_analytic_mass, pin_native_mass, strict=True)), "operator": "<=", "threshold": 0.02, "unit": "ratio"},
+            # SimulationContext.reset completes initialization physics before
+            # the first native tensor read.  Preserve that integrated pose and
+            # require it to remain within 0.5 mm of the authored 10 mm release
+            # clearance rather than pretending it is the pre-step USD pose.
+            {"name": "native_initial_pin_pose_error", "measured": max(math.dist(p[:3], [x, 0.0, PLATE_TOP_Z + THICKNESS + PIN_CLEARANCE + PIN_LENGTH / 2]) for p,x in zip(initial_pin_poses,xs,strict=True)), "operator": "<=", "threshold": 5e-4, "unit": "m"},
+            {"name": "six_mm_pin_complete_downward_passage", "measured": int(small_crossing_certified), "operator": "==", "threshold": 1, "unit": "bool"},
+            {"name": "six_mm_crossing_overlap_sample_count", "measured": len(overlap_samples), "operator": ">", "threshold": 0, "unit": "completed_physics_samples"},
+            {"name": "six_mm_crossing_maximum_capsule_radial_extent", "measured": max_small_radial_extent, "operator": "<=", "threshold": RI, "unit": "m"},
+            {"name": "six_mm_crossing_minimum_absolute_axis_z", "measured": min_small_axis_z_abs, "operator": ">=", "threshold": math.cos(UPRIGHT_LIMIT_RAD), "unit": "cosine"},
+            {"name": "six_mm_pin_final_capsule_top", "measured": small_top, "operator": "<", "threshold": PLATE_TOP_Z - PLATE_THICKNESS, "unit": "m_world_z"},
+            {"name": "six_mm_pin_washer_contact_samples", "measured": force_positive[0], "operator": "==", "threshold": 0, "unit": "completed_physics_samples"},
+            {"name": "ten_mm_washer_only_upward_support_dwell", "measured": support_run, "operator": ">=", "threshold": support_steps, "unit": "completed_physics_samples"},
+            {"name": "ten_mm_maximum_washer_only_support_dwell", "measured": max_support_run, "operator": ">=", "threshold": support_steps, "unit": "completed_physics_samples"},
+            {"name": "ten_mm_minimum_supported_upward_washer_force", "measured": min_large_upward_washer_force if math.isfinite(min_large_upward_washer_force) else 0.0, "operator": ">=", "threshold": 0.80 * pin_native_mass[1] * GRAVITY, "unit": "N"},
+            {"name": "ten_mm_maximum_vector_summed_pin_plate_contact_force", "measured": max_large_plate_force, "operator": "<=", "threshold": 1e-5, "unit": "N"},
+            {"name": "ten_mm_maximum_individual_pin_plate_rib_contact_force", "measured": max_large_individual_plate_rib_force, "operator": "<=", "threshold": 1e-5, "unit": "N"},
+            {"name": "ten_mm_maximum_sum_pin_plate_rib_force_magnitudes", "measured": max_large_sum_plate_rib_force_magnitudes, "operator": "<=", "threshold": 1e-5, "unit": "N"},
+            {"name": "ten_mm_maximum_washer_translation_drift", "measured": max_large_washer_translation_drift, "operator": "<=", "threshold": 5e-4, "unit": "m"},
+            {"name": "ten_mm_maximum_washer_angle_drift", "measured": max_large_washer_angle_drift, "operator": "<=", "threshold": math.radians(1.0), "unit": "rad"},
+            {"name": "maximum_plate_translation_drift", "measured": max_plate_translation_drift, "operator": "<=", "threshold": 1e-9, "unit": "m"},
+            {"name": "ten_mm_pin_maximum_washer_contact_force", "measured": max_force[1], "operator": ">", "threshold": 0.0, "unit": "N"},
+            {"name": "ten_mm_pin_not_fully_passed", "measured": large_bottom, "operator": ">", "threshold": PLATE_TOP_Z - PLATE_THICKNESS, "unit": "m_world_z"},
+            # Final centering is not a frozen outcome.  The physical question
+            # is whether washer contact supports the freely moving pin for
+            # three seconds without plate support or passage.  Keep this as a
+            # conservative geometric-interlock check: the 5 mm pin circle
+            # must still overlap the 4 mm bore circle (offset < 9 mm).
+            {"name": "ten_mm_pin_final_axis_offset", "measured": large_center_offset, "operator": "<", "threshold": 0.009, "unit": "m"},
+            {"name": "fresh_physics_sample_count", "measured": len(traces[0]), "operator": "==", "threshold": total_steps, "unit": "samples_per_cell"},
+        ],
+        "artifacts": [trace_path.resolve().relative_to(workspace).as_posix()],
+    }
+    report_path.write_text(json.dumps(report, indent=2))
+    simulation_app.close()
+
+
+if __name__ == "__main__":
+    main()

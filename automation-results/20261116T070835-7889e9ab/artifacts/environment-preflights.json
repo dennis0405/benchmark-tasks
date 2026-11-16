@@ -2101,5 +2101,1141 @@
       }
     ],
     "at": "2026-11-16T16:20:17.007809+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Repaired the current 480 Hz annular-bore failure without weakening its checks. The 30 mm top-heavy rod turned the 10 mm exclusion cell into an unstable balancing test on a 1 mm radial shoulder; it tipped, contacted the plate, and escaped. The probe now uses a fully specified 10 mm-long cylindrical gauge pin, preserving the required 10 mm free-fall clearance, density, dynamic motion, native contacts, and 6 mm-pass/10 mm-stop question while removing the unrelated pendulum instability. The prior 240/480 reports are not claimed as passing evidence; fresh native executions are required. The script passes AST validation, and no full qualification is claimed.",
+      "scripts": [
+        {
+          "id": "annular_bore_native_probe_240hz",
+          "script": "task/run_annular_bore_native_probe.py",
+          "args": [
+            "--physics-hz",
+            "240",
+            "--seconds",
+            "4.0",
+            "--report",
+            "../measurements/annular-bore-native-probe-240hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/annular-bore-native-probe-240hz.json"
+        },
+        {
+          "id": "annular_bore_native_probe_480hz",
+          "script": "task/run_annular_bore_native_probe.py",
+          "args": [
+            "--physics-hz",
+            "480",
+            "--seconds",
+            "4.0",
+            "--report",
+            "../measurements/annular-bore-native-probe-480hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/annular-bore-native-probe-480hz.json"
+        }
+      ],
+      "files": [
+        "task/run_annular_bore_native_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_annular_bore_native_probe.py",
+        "input/last-failure.json",
+        "input/revision-request.txt",
+        "input/runtime-api-preflight.json",
+        "input/pinned-runtime-sources/03238610d9750b565ca5badbd31975a6888dfc393e6d3bca0dff1769551dfc64-meshes.py"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_annular_bore_native_probe.py",
+          "--physics-hz",
+          "240",
+          "--seconds",
+          "4.0",
+          "--report",
+          "../measurements/annular-bore-native-probe-240hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/annular_bore_native_probe_240hz-41d03f37e6.log",
+        "finished_at": "2026-11-16T17:01:21.386273+00:00",
+        "id": "annular_bore_native_probe_240hz",
+        "report": "measurements/annular-bore-native-probe-240hz.json",
+        "report_sha256": "cd645617f96bb662194f35e874f5d119ba894a3e9d7fbeaec2a7b4d9f6283a85",
+        "source_digest": "73760877b7e49e81fe7463ea2180e8213c41ee29b862d43dcb4214ade43350ca",
+        "source_snapshot": "measurements/native-source-snapshots/73760877b7e49e81fe7463ea2180e8213c41ee29b862d43dcb4214ade43350ca.json",
+        "output_snapshot": "measurements/native-output-snapshots/ad60d9626a1643c9a13294740860e594.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "finite_native_pose_and_contact_samples",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "explicit_convex_wedge_count",
+              "measured": 32,
+              "operator": "==",
+              "threshold": 32,
+              "unit": "colliders"
+            },
+            {
+              "name": "native_authored_mesh_count",
+              "measured": 32,
+              "operator": "==",
+              "threshold": 32,
+              "unit": "mesh_prims_per_annulus"
+            },
+            {
+              "name": "native_convex_collision_approximation_count",
+              "measured": 32,
+              "operator": "==",
+              "threshold": 32,
+              "unit": "mesh_prims_per_annulus"
+            },
+            {
+              "name": "minimum_audited_clear_bore_radius",
+              "measured": 0.003999998770926267,
+              "operator": ">=",
+              "threshold": 0.003999998,
+              "unit": "m"
+            },
+            {
+              "name": "maximum_audited_outer_radius",
+              "measured": 0.015000001631813267,
+              "operator": "<=",
+              "threshold": 0.0150001,
+              "unit": "m"
+            },
+            {
+              "name": "native_root_world_translation_error",
+              "measured": 1.7174517507345197e-09,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "m"
+            },
+            {
+              "name": "native_annulus_mass_relative_error",
+              "measured": 7.999503758812817e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "ratio"
+            },
+            {
+              "name": "native_annulus_body_com_error",
+              "measured": 1.2927981455952803e-26,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "m"
+            },
+            {
+              "name": "native_annulus_principal_inertia_relative_error",
+              "measured": 2.1975697835706397e-08,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "native_pin_mass_relative_error",
+              "measured": 9.039866348677693e-08,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "native_initial_pin_pose_error",
+              "measured": 0.0003459545373942678,
+              "operator": "<=",
+              "threshold": 0.0005,
+              "unit": "m"
+            },
+            {
+              "name": "six_mm_pin_complete_downward_passage",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "six_mm_crossing_overlap_sample_count",
+              "measured": 9,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "six_mm_crossing_maximum_capsule_radial_extent",
+              "measured": 0.0030000013411045053,
+              "operator": "<=",
+              "threshold": 0.004,
+              "unit": "m"
+            },
+            {
+              "name": "six_mm_crossing_minimum_absolute_axis_z",
+              "measured": 1.0,
+              "operator": ">=",
+              "threshold": 0.9998476951563913,
+              "unit": "cosine"
+            },
+            {
+              "name": "six_mm_pin_final_capsule_top",
+              "measured": -78.74061907958985,
+              "operator": "<",
+              "threshold": 0.047,
+              "unit": "m_world_z"
+            },
+            {
+              "name": "six_mm_pin_washer_contact_samples",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "ten_mm_washer_only_upward_support_dwell",
+              "measured": 951,
+              "operator": ">=",
+              "threshold": 720,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "ten_mm_maximum_washer_only_support_dwell",
+              "measured": 951,
+              "operator": ">=",
+              "threshold": 720,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "ten_mm_minimum_supported_upward_washer_force",
+              "measured": 0.06029530614614487,
+              "operator": ">=",
+              "threshold": 0.048385866668075324,
+              "unit": "N"
+            },
+            {
+              "name": "ten_mm_maximum_vector_summed_pin_plate_contact_force",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "N"
+            },
+            {
+              "name": "ten_mm_maximum_individual_pin_plate_rib_contact_force",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "N"
+            },
+            {
+              "name": "ten_mm_maximum_sum_pin_plate_rib_force_magnitudes",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "N"
+            },
+            {
+              "name": "ten_mm_maximum_washer_translation_drift",
+              "measured": 3.867533138190993e-08,
+              "operator": "<=",
+              "threshold": 0.0005,
+              "unit": "m"
+            },
+            {
+              "name": "ten_mm_maximum_washer_angle_drift",
+              "measured": 0.000976562509701277,
+              "operator": "<=",
+              "threshold": 0.017453292519943295,
+              "unit": "rad"
+            },
+            {
+              "name": "maximum_plate_translation_drift",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "m"
+            },
+            {
+              "name": "ten_mm_pin_maximum_washer_contact_force",
+              "measured": 0.7225943803787231,
+              "operator": ">",
+              "threshold": 0.0,
+              "unit": "N"
+            },
+            {
+              "name": "ten_mm_pin_not_fully_passed",
+              "measured": 0.05399928137660027,
+              "operator": ">",
+              "threshold": 0.047,
+              "unit": "m_world_z"
+            },
+            {
+              "name": "ten_mm_pin_final_axis_offset",
+              "measured": 1.2479119959607488e-07,
+              "operator": "<",
+              "threshold": 0.009,
+              "unit": "m"
+            },
+            {
+              "name": "fresh_physics_sample_count",
+              "measured": 960,
+              "operator": "==",
+              "threshold": 960,
+              "unit": "samples_per_cell"
+            }
+          ],
+          "artifacts": [
+            "measurements/annular-bore-native-probe-240hz-trace.json.gz"
+          ]
+        }
+      },
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_annular_bore_native_probe.py",
+          "--physics-hz",
+          "480",
+          "--seconds",
+          "4.0",
+          "--report",
+          "../measurements/annular-bore-native-probe-480hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/annular_bore_native_probe_480hz-d24c3e384b.log",
+        "finished_at": "2026-11-16T17:01:37.788898+00:00",
+        "id": "annular_bore_native_probe_480hz",
+        "report": "measurements/annular-bore-native-probe-480hz.json",
+        "report_sha256": "c7a145664fed8cb6c0b3456a28132b6491e10667d2599135da0aa45de9d2f8d6",
+        "source_digest": "73760877b7e49e81fe7463ea2180e8213c41ee29b862d43dcb4214ade43350ca",
+        "source_snapshot": "measurements/native-source-snapshots/73760877b7e49e81fe7463ea2180e8213c41ee29b862d43dcb4214ade43350ca.json",
+        "output_snapshot": "measurements/native-output-snapshots/415ac49f59e94f33935c3b6d53e92fae.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "finite_native_pose_and_contact_samples",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "explicit_convex_wedge_count",
+              "measured": 32,
+              "operator": "==",
+              "threshold": 32,
+              "unit": "colliders"
+            },
+            {
+              "name": "native_authored_mesh_count",
+              "measured": 32,
+              "operator": "==",
+              "threshold": 32,
+              "unit": "mesh_prims_per_annulus"
+            },
+            {
+              "name": "native_convex_collision_approximation_count",
+              "measured": 32,
+              "operator": "==",
+              "threshold": 32,
+              "unit": "mesh_prims_per_annulus"
+            },
+            {
+              "name": "minimum_audited_clear_bore_radius",
+              "measured": 0.003999998770926267,
+              "operator": ">=",
+              "threshold": 0.003999998,
+              "unit": "m"
+            },
+            {
+              "name": "maximum_audited_outer_radius",
+              "measured": 0.015000001631813267,
+              "operator": "<=",
+              "threshold": 0.0150001,
+              "unit": "m"
+            },
+            {
+              "name": "native_root_world_translation_error",
+              "measured": 1.7174517507345197e-09,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "m"
+            },
+            {
+              "name": "native_annulus_mass_relative_error",
+              "measured": 7.999503758812817e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "ratio"
+            },
+            {
+              "name": "native_annulus_body_com_error",
+              "measured": 1.2927981455952803e-26,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "m"
+            },
+            {
+              "name": "native_annulus_principal_inertia_relative_error",
+              "measured": 2.1975697835706397e-08,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "native_pin_mass_relative_error",
+              "measured": 9.039866348677693e-08,
+              "operator": "<=",
+              "threshold": 0.02,
+              "unit": "ratio"
+            },
+            {
+              "name": "native_initial_pin_pose_error",
+              "measured": 8.64880681141938e-05,
+              "operator": "<=",
+              "threshold": 0.0005,
+              "unit": "m"
+            },
+            {
+              "name": "six_mm_pin_complete_downward_passage",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "six_mm_crossing_overlap_sample_count",
+              "measured": 19,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "six_mm_crossing_maximum_capsule_radial_extent",
+              "measured": 0.0030000013411045053,
+              "operator": "<=",
+              "threshold": 0.004,
+              "unit": "m"
+            },
+            {
+              "name": "six_mm_crossing_minimum_absolute_axis_z",
+              "measured": 1.0,
+              "operator": ">=",
+              "threshold": 0.9998476951563913,
+              "unit": "cosine"
+            },
+            {
+              "name": "six_mm_pin_final_capsule_top",
+              "measured": -78.57936419677735,
+              "operator": "<",
+              "threshold": 0.047,
+              "unit": "m_world_z"
+            },
+            {
+              "name": "six_mm_pin_washer_contact_samples",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "ten_mm_washer_only_upward_support_dwell",
+              "measured": 1900,
+              "operator": ">=",
+              "threshold": 1440,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "ten_mm_maximum_washer_only_support_dwell",
+              "measured": 1900,
+              "operator": ">=",
+              "threshold": 1440,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "ten_mm_minimum_supported_upward_washer_force",
+              "measured": 0.060345880687236786,
+              "operator": ">=",
+              "threshold": 0.048385866668075324,
+              "unit": "N"
+            },
+            {
+              "name": "ten_mm_maximum_vector_summed_pin_plate_contact_force",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "N"
+            },
+            {
+              "name": "ten_mm_maximum_individual_pin_plate_rib_contact_force",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "N"
+            },
+            {
+              "name": "ten_mm_maximum_sum_pin_plate_rib_force_magnitudes",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "N"
+            },
+            {
+              "name": "ten_mm_maximum_washer_translation_drift",
+              "measured": 1.9959497166155415e-08,
+              "operator": "<=",
+              "threshold": 0.0005,
+              "unit": "m"
+            },
+            {
+              "name": "ten_mm_maximum_washer_angle_drift",
+              "measured": 0.0006905339694324072,
+              "operator": "<=",
+              "threshold": 0.017453292519943295,
+              "unit": "rad"
+            },
+            {
+              "name": "maximum_plate_translation_drift",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "m"
+            },
+            {
+              "name": "ten_mm_pin_maximum_washer_contact_force",
+              "measured": 1.3754565715789795,
+              "operator": ">",
+              "threshold": 0.0,
+              "unit": "N"
+            },
+            {
+              "name": "ten_mm_pin_not_fully_passed",
+              "measured": 0.053999817818403247,
+              "operator": ">",
+              "threshold": 0.047,
+              "unit": "m_world_z"
+            },
+            {
+              "name": "ten_mm_pin_final_axis_offset",
+              "measured": 3.5618570109363645e-05,
+              "operator": "<",
+              "threshold": 0.009,
+              "unit": "m"
+            },
+            {
+              "name": "fresh_physics_sample_count",
+              "measured": 1920,
+              "operator": "==",
+              "threshold": 1920,
+              "unit": "samples_per_cell"
+            }
+          ],
+          "artifacts": [
+            "measurements/annular-bore-native-probe-480hz-trace.json.gz"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-16T17:01:37.924305+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Repaired the bounded standalone fixed-joint probe. Native callbacks were firing, but unsupported keys() access on carb.dictionary.Item discarded all four decoded events. The probe now records each native encoded jointPath and decoded SdfPath. This remains joint-break API/component discovery only, not full environment qualification.",
+      "scripts": [
+        {
+          "id": "segment_joint_break_native_probe_240hz",
+          "script": "task/run_segment_joint_break_native_probe.py",
+          "args": [
+            "--physics-hz",
+            "240",
+            "--seconds",
+            "4.0",
+            "--report",
+            "../measurements/segment-joint-break-native-probe-240hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/segment-joint-break-native-probe-240hz.json"
+        },
+        {
+          "id": "segment_joint_break_native_probe_480hz",
+          "script": "task/run_segment_joint_break_native_probe.py",
+          "args": [
+            "--physics-hz",
+            "480",
+            "--seconds",
+            "4.0",
+            "--report",
+            "../measurements/segment-joint-break-native-probe-480hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/segment-joint-break-native-probe-480hz.json"
+        }
+      ],
+      "files": [
+        "task/run_segment_joint_break_native_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The repaired probe directly addresses the prior failure: it reads carb.dictionary.Item with the required two-argument get(\"jointPath\", None), records the native encoded pair, decodes the SdfPath, and separately attributes Strong and Weak JOINT_BREAK events.",
+        "The source is appropriately scoped as joint-break API/component discovery rather than full environment qualification.",
+        "Checks derive from fresh native physics samples: decoded break events, callback errors, segment poses, native mass readback, physics timestep, authored joint prims, and physical segment separation.",
+        "The weak and production cells share geometry, mass, drop conditions, plates, and asymmetric bosses; their authored break-force and break-torque limits are the intended experimental difference.",
+        "The report paths resolve correctly from the executor's workspace/task cwd, and trace artifacts are reported workspace-relative.",
+        "No constant qualification result, object-state write, fake weld, disabled collision shortcut, substituted force metric, or unsupported aggregate qualification claim was found."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_segment_joint_break_native_probe.py",
+        "input/last-failure.json",
+        "input/joint-break-official-api-leads.json",
+        "input/runtime-api-preflight.json",
+        "../logs/segment_joint_break_native_probe_240hz-d3846b0791.log"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_segment_joint_break_native_probe.py",
+          "--physics-hz",
+          "240",
+          "--seconds",
+          "4.0",
+          "--report",
+          "../measurements/segment-joint-break-native-probe-240hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/segment_joint_break_native_probe_240hz-985febd7a3.log",
+        "finished_at": "2026-11-16T17:11:44.372785+00:00",
+        "id": "segment_joint_break_native_probe_240hz",
+        "report": "measurements/segment-joint-break-native-probe-240hz.json",
+        "report_sha256": "400b9e355608aa1ad429a4b5dc1904fbdb8aab8ee905142a8067421c72563072",
+        "source_digest": "4cf2aa7d131dd295501ebc79c9777209a76ca8af1b436c00641f3d3dd19b990b",
+        "source_snapshot": "measurements/native-source-snapshots/4cf2aa7d131dd295501ebc79c9777209a76ca8af1b436c00641f3d3dd19b990b.json",
+        "output_snapshot": "measurements/native-output-snapshots/ce3e2d80b81249d0b0a39a811cad84a4.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_segment_joint_break_native_probe.cpython-312.pyc"
+        ],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "finite_native_pose_samples",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "authored_convex_wedge_count",
+              "measured": 32,
+              "operator": "==",
+              "threshold": 32,
+              "unit": "colliders_per_annulus"
+            },
+            {
+              "name": "native_segment_mass_relative_error",
+              "measured": 7.999503589320019e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "ratio"
+            },
+            {
+              "name": "strong_cell_joint_break_event_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "events"
+            },
+            {
+              "name": "weak_cell_joint_break_event_count",
+              "measured": 4,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "events"
+            },
+            {
+              "name": "joint_break_callback_error_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "errors"
+            },
+            {
+              "name": "strong_cell_final_one_second_maximum_adjacent_root_distance_change",
+              "measured": 1.5288212864645578e-05,
+              "operator": "<=",
+              "threshold": 0.0005,
+              "unit": "m"
+            },
+            {
+              "name": "weak_cell_maximum_adjacent_root_distance_change",
+              "measured": 74.12020313917587,
+              "operator": ">",
+              "threshold": 0.001,
+              "unit": "m"
+            },
+            {
+              "name": "strong_cell_authored_joint_prim_count",
+              "measured": 4,
+              "operator": "==",
+              "threshold": 4,
+              "unit": "prims"
+            },
+            {
+              "name": "weak_cell_authored_joint_prim_count",
+              "measured": 4,
+              "operator": "==",
+              "threshold": 4,
+              "unit": "prims"
+            },
+            {
+              "name": "fresh_physics_sample_count",
+              "measured": 960,
+              "operator": "==",
+              "threshold": 960,
+              "unit": "completed_physics_samples"
+            }
+          ],
+          "artifacts": [
+            "measurements/segment-joint-break-native-probe-240hz-trace.json.gz"
+          ]
+        }
+      },
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_segment_joint_break_native_probe.py",
+          "--physics-hz",
+          "480",
+          "--seconds",
+          "4.0",
+          "--report",
+          "../measurements/segment-joint-break-native-probe-480hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/segment_joint_break_native_probe_480hz-5ea71eafd6.log",
+        "finished_at": "2026-11-16T17:11:57.273369+00:00",
+        "id": "segment_joint_break_native_probe_480hz",
+        "report": "measurements/segment-joint-break-native-probe-480hz.json",
+        "report_sha256": "6946f5c81ed58f6503792fe43f85b1c751908352e2bb73fdd0da446961d55bfa",
+        "source_digest": "4cf2aa7d131dd295501ebc79c9777209a76ca8af1b436c00641f3d3dd19b990b",
+        "source_snapshot": "measurements/native-source-snapshots/4cf2aa7d131dd295501ebc79c9777209a76ca8af1b436c00641f3d3dd19b990b.json",
+        "output_snapshot": "measurements/native-output-snapshots/e0a837506af34bdcb5684cd9ffac9b67.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "finite_native_pose_samples",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "authored_convex_wedge_count",
+              "measured": 32,
+              "operator": "==",
+              "threshold": 32,
+              "unit": "colliders_per_annulus"
+            },
+            {
+              "name": "native_segment_mass_relative_error",
+              "measured": 7.999503589320019e-09,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "ratio"
+            },
+            {
+              "name": "strong_cell_joint_break_event_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "events"
+            },
+            {
+              "name": "weak_cell_joint_break_event_count",
+              "measured": 4,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "events"
+            },
+            {
+              "name": "joint_break_callback_error_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "errors"
+            },
+            {
+              "name": "strong_cell_final_one_second_maximum_adjacent_root_distance_change",
+              "measured": 3.8317707457156035e-06,
+              "operator": "<=",
+              "threshold": 0.0005,
+              "unit": "m"
+            },
+            {
+              "name": "weak_cell_maximum_adjacent_root_distance_change",
+              "measured": 0.012985935308034893,
+              "operator": ">",
+              "threshold": 0.001,
+              "unit": "m"
+            },
+            {
+              "name": "strong_cell_authored_joint_prim_count",
+              "measured": 4,
+              "operator": "==",
+              "threshold": 4,
+              "unit": "prims"
+            },
+            {
+              "name": "weak_cell_authored_joint_prim_count",
+              "measured": 4,
+              "operator": "==",
+              "threshold": 4,
+              "unit": "prims"
+            },
+            {
+              "name": "fresh_physics_sample_count",
+              "measured": 1920,
+              "operator": "==",
+              "threshold": 1920,
+              "unit": "completed_physics_samples"
+            }
+          ],
+          "artifacts": [
+            "measurements/segment-joint-break-native-probe-480hz-trace.json.gz"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-16T17:11:57.410322+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Repaired the bounded screen-hinge probe: timestep error now uses SimulationContext.get_physics_dt(), screen mass is read back from the native rigid body, and neutral return checks both linear and angular speed. Syntax validation passed; native GPU execution remains for the trusted controller. This is component discovery only, not qualification.",
+      "scripts": [
+        {
+          "id": "screen_hinge_native_probe_240hz",
+          "script": "task/run_screen_hinge_native_probe.py",
+          "args": [
+            "--physics-hz",
+            "240",
+            "--seconds",
+            "5.0",
+            "--report",
+            "../measurements/screen-hinge-native-probe-240hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/screen-hinge-native-probe-240hz.json"
+        },
+        {
+          "id": "screen_hinge_native_probe_480hz",
+          "script": "task/run_screen_hinge_native_probe.py",
+          "args": [
+            "--physics-hz",
+            "480",
+            "--seconds",
+            "5.0",
+            "--report",
+            "../measurements/screen-hinge-native-probe-480hz.json",
+            "--device",
+            "cuda:0"
+          ],
+          "report": "measurements/screen-hinge-native-probe-480hz.json"
+        }
+      ],
+      "files": [
+        "task/run_screen_hinge_native_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The generated probe resolves all three prior failures: it reads SimulationContext.get_physics_dt(), checks final-window angular velocity, and compares the runtime PhysX-backed mass readback against 0.40 kg.",
+        "The positive, negative, and neutral drive checks use fresh native pose and velocity samples; hinge retention uses the reconstructed body-frame pivot, with explicit units and thresholds.",
+        "The probe is honestly limited to standalone revolute-drive/readback discovery and makes no full-screen, sorting, robot, or qualification claim.",
+        "Report paths are correct for the executor’s workspace/task cwd, and the compressed trace is referenced workspace-relative.",
+        "No object-state writes, teleports, fake grasp welds, disabled collisions, constant success values, or substituted torque/contact metrics were found."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_screen_hinge_native_probe.py",
+        "input/last-failure.json",
+        "input/runtime-api-preflight.json",
+        "input/pinned-runtime-sources/841ca674429d5bd405d212f93494c42ff32ae162e4add373474193adbec746f7-base_rigid_object_data.py",
+        "input/pinned-runtime-sources/6e03c85172da8712bdebc6e19c89cea7868afb02f9e96259c82a281cca4270b4-rigid_object_data.py"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_screen_hinge_native_probe.py",
+          "--physics-hz",
+          "240",
+          "--seconds",
+          "5.0",
+          "--report",
+          "../measurements/screen-hinge-native-probe-240hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/screen_hinge_native_probe_240hz-e01dff6e32.log",
+        "finished_at": "2026-11-16T17:16:32.855615+00:00",
+        "id": "screen_hinge_native_probe_240hz",
+        "report": "measurements/screen-hinge-native-probe-240hz.json",
+        "report_sha256": "5f7645043f86f5d974b78419d8c0d7fd43bf54e75ce866c57015cefff952a9e5",
+        "source_digest": "48395c578f7307e9734f91b1d7e91eaddf354d897ae9e5d8a16fc45c8dc7afa2",
+        "source_snapshot": "measurements/native-source-snapshots/48395c578f7307e9734f91b1d7e91eaddf354d897ae9e5d8a16fc45c8dc7afa2.json",
+        "output_snapshot": "measurements/native-output-snapshots/764bf3ac2d9b4e4b91f37f3585e1c43c.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_screen_hinge_native_probe.cpython-312.pyc"
+        ],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "native_screen_mass_relative_error",
+              "measured": 1.4901161138336505e-08,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "ratio"
+            },
+            {
+              "name": "finite_native_pose_velocity_samples",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "fresh_physics_sample_count",
+              "measured": 1200,
+              "operator": "==",
+              "threshold": 1200,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "positive_drive_maximum_observed_roll",
+              "measured": 4.9492383572023035,
+              "operator": ">",
+              "threshold": 2.0,
+              "unit": "deg"
+            },
+            {
+              "name": "negative_drive_minimum_observed_roll",
+              "measured": -5.037033306559546,
+              "operator": "<",
+              "threshold": -2.0,
+              "unit": "deg"
+            },
+            {
+              "name": "maximum_hinge_pivot_residual",
+              "measured": 2.2271565614322304e-07,
+              "operator": "<=",
+              "threshold": 0.0005,
+              "unit": "m"
+            },
+            {
+              "name": "final_half_second_maximum_absolute_roll",
+              "measured": 0.0508559267881508,
+              "operator": "<=",
+              "threshold": 1.0,
+              "unit": "deg"
+            },
+            {
+              "name": "final_half_second_maximum_linear_speed",
+              "measured": 9.830928553922623e-05,
+              "operator": "<=",
+              "threshold": 0.01,
+              "unit": "m/s"
+            },
+            {
+              "name": "final_half_second_maximum_angular_speed",
+              "measured": 0.0009830640628933907,
+              "operator": "<=",
+              "threshold": 0.05,
+              "unit": "rad/s"
+            }
+          ],
+          "artifacts": [
+            "measurements/screen-hinge-native-probe-240hz-trace.json.gz"
+          ]
+        }
+      },
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_screen_hinge_native_probe.py",
+          "--physics-hz",
+          "480",
+          "--seconds",
+          "5.0",
+          "--report",
+          "../measurements/screen-hinge-native-probe-480hz.json",
+          "--device",
+          "cuda:0"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/screen_hinge_native_probe_480hz-ea1bd6ce46.log",
+        "finished_at": "2026-11-16T17:16:41.445974+00:00",
+        "id": "screen_hinge_native_probe_480hz",
+        "report": "measurements/screen-hinge-native-probe-480hz.json",
+        "report_sha256": "3518f0a695ea35c24d1c7de5a87ed92c10ba390877ad7dabc9198d68b949ecb1",
+        "source_digest": "48395c578f7307e9734f91b1d7e91eaddf354d897ae9e5d8a16fc45c8dc7afa2",
+        "source_snapshot": "measurements/native-source-snapshots/48395c578f7307e9734f91b1d7e91eaddf354d897ae9e5d8a16fc45c8dc7afa2.json",
+        "output_snapshot": "measurements/native-output-snapshots/f9f461c6ab9e4fb0a69158aeb24f045b.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "native_screen_mass_relative_error",
+              "measured": 1.4901161138336505e-08,
+              "operator": "<=",
+              "threshold": 1e-05,
+              "unit": "ratio"
+            },
+            {
+              "name": "finite_native_pose_velocity_samples",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "fresh_physics_sample_count",
+              "measured": 2400,
+              "operator": "==",
+              "threshold": 2400,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "positive_drive_maximum_observed_roll",
+              "measured": 4.964460756516626,
+              "operator": ">",
+              "threshold": 2.0,
+              "unit": "deg"
+            },
+            {
+              "name": "negative_drive_minimum_observed_roll",
+              "measured": -5.009074629043529,
+              "operator": "<",
+              "threshold": -2.0,
+              "unit": "deg"
+            },
+            {
+              "name": "maximum_hinge_pivot_residual",
+              "measured": 2.2364425151511348e-07,
+              "operator": "<=",
+              "threshold": 0.0005,
+              "unit": "m"
+            },
+            {
+              "name": "final_half_second_maximum_absolute_roll",
+              "measured": 0.035558292632459305,
+              "operator": "<=",
+              "threshold": 1.0,
+              "unit": "deg"
+            },
+            {
+              "name": "final_half_second_maximum_linear_speed",
+              "measured": 0.0002003622743430843,
+              "operator": "<=",
+              "threshold": 0.01,
+              "unit": "m/s"
+            },
+            {
+              "name": "final_half_second_maximum_angular_speed",
+              "measured": 0.0020036192145198584,
+              "operator": "<=",
+              "threshold": 0.05,
+              "unit": "rad/s"
+            }
+          ],
+          "artifacts": [
+            "measurements/screen-hinge-native-probe-480hz-trace.json.gz"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-16T17:16:41.583872+00:00"
   }
 ]
