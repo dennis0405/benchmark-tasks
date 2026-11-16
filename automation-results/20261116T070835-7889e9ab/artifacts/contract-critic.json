@@ -1,20 +1,28 @@
 {
   "verdict": "repair",
   "findings": [
-    "`artifacts/contract.json` contradicts `artifacts/selected.json` on washer damage. The selected specification caps the score at 0.40 after washer fracture or permanent deformation, whereas the contract makes fracture, reaching the 200 N threshold, or excessive segment displacement an immutable score-zero failure. Select one consequence and update the controls and both specifications consistently.",
-    "The Impact on jobs mapping remains unsupported at the required core-task level. The O*NET record establishes that SOC 51-9061 workers inspect and sort processed parts generally, while Raytech establishes that manual parts/media screening exists; neither establishes manual finishing-media recovery as work these 0.6 million inspectors regularly perform. The revised mapping asserts the connection but does not supply occupational evidence for it. Add evidence tying this operation to a qualifying occupation's regular duties or choose another supported category.",
-    "All contract control scores otherwise recompute correctly: 0 initially; 0.20 after complete admission; 0.5571428571 for 12/24 equal-mass media recovered; 0.90 at recovery threshold before dwell; 1.00 after 720 intervals; 0.90 after 719 intervals; and 0 after every specified hard failure. Processing O_57600 makes the two timeout controls consistent.",
-    "The previous observability defects are repaired: washer assembly mass/reference and segment constraints are defined; drift, speed, penetration, contact-force, joint-force, clearance, and refinement aggregations identify sampling rates, windows, and reset rules. The contract also correctly distinguishes 240 Hz scoring physics, 20 Hz reporting/control, and prospective 480 Hz refinement."
+    "`artifacts/selected.json` still states that washer fracture or permanent deformation caps the score at 0.40, contradicting the contract and revision request, which explicitly exclude plastic deformation from modeling, measurement, and scoring. Change the selected success condition to fracture-only.",
+    "The previous geometry and rim-boundary failures are repaired: the contract now deterministically defines the aperture lattice, boundary-square exclusion, wall radii/profile, containment volume, full-collider retention, and swept partial-rim escape.",
+    "Required-control arithmetic is consistent: initial 0; loaded/no recovery 0.20; 12/24 recovery 0.5571428571; threshold recovery without dwell 0.90; full score after exactly 720 completed 240 Hz intervals; 719 intervals 0.90; retained post-admission fracture capped at 0.40; every specified hard failure yields 0.",
+    "Timing is internally consistent and supported by the pinned sources: 4,800 actions at 20 Hz produce 240 seconds, production physics is 240 Hz with 12 intervals per action, O_57600 is processed before timeout, and 480 Hz is only a prospective refinement rate.",
+    "Contact, force, provenance, containment, event ordering, eligibility, and dwell are sampled from completed 240 Hz post-solve states; 20 Hz is correctly limited to action/report/render cadence. Bad physical events latch independently of desired actions, while recovery and dwell remain revocable.",
+    "The fracture/provenance rules are consistent: unauthorized pre-admission separation is a zero-score provenance failure, genuine post-admission authored-joint fracture permits retained fragments but permanently caps the score, and fragment loss independently yields zero.",
+    "Industrial evidence supports a real manual parts/media separation operation, while the contract appropriately leaves the over-500,000-worker occupation mapping uncertain. Novelty evidence identifies real overlap with historical PR684 without claiming that layout or difficulty alone establishes novelty."
   ],
   "evidence_paths": [
     "artifacts/contract.json",
     "artifacts/selected.json",
+    "input/revision-request.txt",
     "input/last-failure.json",
-    "input/review-prompt.txt",
-    "input/operator-source-notes.json",
-    "input/occupation-source-records/s-474cfcd0ccaa5ecb.json",
     "input/runtime-api-preflight.json",
     "input/pinned-runtime-sources/7c4081aa811b2839f908d533e12885dac7a0aaed62ff8da59e36995b50b87809-scene.py",
-    "input/pinned-runtime-sources/33783dab0ab4c2f2857455bb90d4d58217b14356f06772cca4e3b76a6883e22e-simulation_cfg.py"
+    "input/pinned-runtime-sources/1b0cbbcdf98b7385e4d213e88bd59c296639bb7031c80e8d73efdce0eabcc4c6-inspect_embodiment.py",
+    "input/pinned-runtime-sources/33783dab0ab4c2f2857455bb90d4d58217b14356f06772cca4e3b76a6883e22e-simulation_cfg.py",
+    "input/operator-source-notes.json",
+    "input/sources/s-b442a7fa63fcb80c.raw",
+    "input/sources/s-a3efcebbecba0048.raw",
+    "input/sources/s-855e796b5a3f8ecc.raw",
+    "artifacts/benchmark-novelty-selection.json",
+    "artifacts/benchmark-definition-coverage.json"
   ]
 }

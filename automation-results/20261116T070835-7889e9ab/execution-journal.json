@@ -51,7 +51,7 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 98472,
+    "supervisor_pid": 3919,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log",
     "compute": "running",
     "migration": {
@@ -85,16 +85,16 @@
       "tool_write_verified": true,
       "production_task_validated": false
     },
-    "revision": 9,
-    "revision_request": "사용자 최신 지시 원문:\n만약 중복이라면 다른 task로 변형해도 좋으니까,\n실제 유효한 주제를 하나 잡고 시작하자\n\n현재 권한과 목표:\n- 사용자는 원래의 불량 상자 배출과 다른 태스크로 변경해도 된다고 승인했다. 원래 carton proposal은PR1217과, 후속 lifting-pin assembly/load-transfer proposal은 대기 중인PR2042와의 능력 중복으로 차단됐다. 두 안은 보존하고 새 실제 물리 능력으로 변경한다. 두 안의 고정 치수/목표/인용/장비 제약은 이제 폐기됐다.\n- 같은 run20261116T070835-7889e9ab, 같은 origin 결과 브랜치, 전용robocurve-conveyor/lnfb4luqq, 기존 pinned native Isaac Sim6.1/YAM 환경으로 진행한다. 다른 run/인스턴스나 사용자가 폐기하는snack-film을 조작하지 않는다.\n- 실제로 유효한 주제 하나를 선택해 환경/핵심 부품 물리/YAM 데모/채점/이식까지 제작한다. 후보 탐색 자체를 반복하는 대신 출처와 신규성이 있는 하나의 최소 완성 가능한 작업을 우선한다. 신규성/물리 기준을 낮추거나 허위로 통과시키지 않는다.\n\n새로 검토할 작업: 제조 후처리에서 건조된 금속 부품과 실제 연마 미디어를 수동 분리 스크린으로 체질하기.\n- 예시 지시문: Use the separating screen to recover the finishing media into the collection tray, keeping all metal parts in the screen. Leave the screen resting on its supports.\n- 원래 재료는 실제 강체 ceramic angle-cut cylinders 또는 실제 규격의 polishing media와 실제 금속 가공 부품이다. 포장 검사/선택적 집기/임시 운반손잡이 장착 작업이 아니다. 핵심은 물질이 실제 구멍을 통과하는 입상체 흐름을 도구 자세·움직임으로 유도하고 큰 작업물을 보존하는 것이다.\n- 제조사Raytech가 manual separating screens와 규격·용도를 공개한다. 원문URL과 과거 이력은operator-source-notes에 있다. 알려진 과거 garden-sieve PR684는 현재closed/unmerged이며 최종 거절 사유는 업무 중요성 근거였다. 동일 기본 체질 능력의 역사적 선례임을 숨기지 않는다. 현재 활성/채택/보유권/팀 이력/지정6개 원문 벤치마크에는 실제로 없는지 전체 검사한다. 과거 원문에 원래 한계가 있어도 미검증 사실을 만들어내지 않는다.\n- 새 용도가 단순 산업 라벨인지 판단한다. 실제 parts/media separation이 제조 후처리의 실제 상시 작업이라는 제조사 절차와 장비 근거를 확보하고, 실제 입자 모양·크기와 screen의 물리 대응이 맞아야 한다. 물성을 모사하지 못하는 damp soil을 강체 막대로 대신하지 않는다. 이 씬은 DRY SEPARATION만 다루며 polishing/마모/물·기름·분진 응집을 시뮬레이션했다고 주장하지 않는다.\n- primary source의 검증할 예시: screen14.5inch diameter x2.5inch deep,1/2inch opening(12.7mm), 실제3/8x7/8inch ceramic angle-cut cylinders(9.525x22.225mm)처럼 길이가 aperture보다 긴 미디어. 이렇게 실제 재료의 orientation/bridging 때문에 움직임이 필요하도록 검토한다. Source photos와 dimensions를 시각적으로 확인한다. 짧은 구형 미디어가 중력만으로 모두 통과하는 경우에도 억지로 shaking 횟수를 채점하지 않는다. 핵심 물리 능력이 trivial pouring으로 사라지는지 실제 no-op/pour controls로 확인한다.\n- finished parts는실제 금속 nut/spacer 등의 형태와 제조사 규격으로 independently author하며 aperture보다 확실히 커야 한다. 단순 색상 구별이나 큐브를 산업 부품이라고 부르지 않는다. 필요하면1:1 실제 상용 화면/미디어/부품 크기를 사용한다. 작은 수의 실제 크기 샘플은 허용되지만 장비/물체 전체를 축소하고 실제 대형 공정을 모사했다고 주장하지 않는다.\n- 대안 비교가 필요하면 실제 제조 후처리/체질 작업 안에서 source-backed few implementations를 비교하고 하나만 선택한다. 아직 준비되지 않은 무관한 후보로 표를 채우지 않는다. 이 주제도 현재 활성/벤치마크와 실제 같은 능력이라면 그 정확한 근거를 보고한다.\n\n최소 구현과 물리:\n- 새 solver/연성체 연구 없이 native rigid PhysX/free-body contacts, 실제 열린 mesh와 finite-thickness walls로 구현한다. 실제 미디어와 실제 작업물은 모두 자유 강체이다. Screen hole은 장식/투명 texture가 아니라 실제 구멍이어야 한다. 미디어를 경로별로 teleport하거나 통과 event만 가짜 집계하지 않는다. 한쪽만 잡았을 때의 기울어짐, 수거 손실, over-rim spill이 실제 가능해야 한다.\n- 필요한 tool/source dimensions는 제조사 값 또는 명시적 testable assumptions로 구분한다. 초기 mass/density/geometry/clearance가 서로 맞아야 한다. 접촉 안정성/강한 교반의 실패를 속도 ceiling이나 hidden return forces로 억제해 만점을 만들지 않는다. solver/timestep/contact 설정은 실제 refinement/negative controls와 함께 기록한다.\n- 먼저 한 media가 올바른 자세에서 aperture를 통과하고, transverse orientation에서는 bridge하고, 실제 part는 통과하지 않는 component scenes를 검증한다. 여러 입자 no-op/자유낙하/기울임/수거/손실을 검사한 뒤 YAM으로 screen 실제 파지→lift3초 유지, feed mixture→controlled sifting→안착/해제까지 순서대로 확장한다.\n- 한 가지 초기0 setup은 혼합물을 별도 feed cup에, screen과 receiver는 비어 있게 두는 것이다. 로봇이 screen을 receiver 위에 잡고 실제 혼합물을 붓고 처리한다. 초기 media가 중력만으로 target tray에 이미 들어가 초기점수/성공이 되는 상황은 피한다. 표준 screen/collector와 feed cup의 실제 gripper access를 확인한다. Feed/hold/transfer도 모두 정상 guarded14D YAM controls로 한다.\n- 채점은 starting media mass 중 실제 mesh를 통과하여 receiver에 회수된 질량 비율, 모든 작업물의 보존, 수거 손실/오염/낙하, 최종 손을 뗀screen안착3초 유지로 작성한다. 의미 있는 부분점수와 immutable spill/loss 이력을 포함한다. 실제 실험에서도 저울과 영상으로 적용할 수 있어야 하며 damp soil을 가상의 crumb 개수로 세지 않는다.\n- core instruction은 실제 screen으로 분리하고 작업물을 그 안에 보존하는 것이다. 작업물을 따로 빼놓고 미디어를 rim 너머로 부은 뒤 복구하는 shortcut을 막는다. 실제 동등하게 유효한 screen 작업은 허용하며 특정 hand identity/강제shake횟수/임의행동순서로 채점하지 않는다. 물리 validation과 과제점수는 분리한다. Scorer는 read-only, 에피소드 중 task-object pose/velocity주입·가짜grasp weld·필수collider제거·particlefreeze 금지.\n\n품질/보존:\n- 후보·계약 단계는 일관된 원문 근거와 명시적 초기 모델이 실제 제작을 시작할 만큼 있는지 검토한다. 미래 native 결과를 제작 전에 요구하는 순환 조건을 만들지 않는다. 필수 물리/형상 자체가 정의되지 않은 경우에는 ready를 주장하지 않는다.\n- native object/mesh/flow 먼저, 그 후 실제 YAM14D 전체 데모. 동일 최종 소스의 fresh-process full-score 두 번, 의미 있는 실패/부분 점수 controls, action/body/joint/contact+mass原始trace와 독립재채점, 실제 현재trial에 연결된 H264/setup/final영상, 깨끗한 경로 이식 검증.\n- 공식 가이드대로 scripted experts의 simulator state READ는 허용한다. 모델 관측은 바꾸지 않는다. shared SDK/runtime/orchestrator를 수정하지 말고 task-local public task.py 구조를 사용한다.\n- 모든 제작 게이트 뒤 trusted coordinator만 최종 Dream episode1회. 누적20USD ledger 및 실패/결과불명 포함 자동 재시도 금지. 역할 에이전트에게 팀/Dream key를 주지 않는다.\n- 같은 origin branch에 actual code/assets/재현명령/licenses/영상/주요原始trace를 보존한다. 제3자 코드는 라이선스 확인과 attribution 없이는 복제하지 않는다. 원본 매뉴얼 전체/사적 인증은 공개하지 않는다. 파일50MB 또는checkpoint100MB 초과 전에 사용자에게 보관 방식을 설명한다.\n- 실제 완성품의 최신 신규성 재검사 후 report.html, actual videos, measurements, release-manifest digest로 검토 가능하게 한다. 종료/차단 때 provider의 실제 compute 상태를 보고한다. 명시적인 concrete reviewed-digest 승인 전 공식 미디어 업로드/대회 PR/최종 제출은 하지 않는다.\n\nCURRENT REVISION7: Same selected dry-angle-cut-media-recovery objective. Address numerical construction-readiness and exact score accounting only; no unrelated ideation or lower criteria. Read the new initial_test_configuration in input/operator-source-notes.json. It provides an actionable proposed baseline for screen/ribs, media cut profile and density, representative30x8x4mm carbon-steel washers and derived mass, material/contact parameters, fixtures, trusted20Hz control/240Hz physics, and a normalized score formula. These are explicit TESTABLE BENCH ASSUMPTIONS, not Raytech dimensions beyond the actually sourced nominal class/envelope, and not already validated physics.\nThe prior critic accepted representative washer geometry; choose it uniquely and declare mass/material. Do not require a commercial part SKU or future native trace for this independently authored representative workpiece. Preserve native washer aperture-retention and angle-cut-nose lodging/release controls; do not claim these already passed. Need independent factual review of any remaining actual essential-geometry contradiction.\nNominal1/2inch source marking does not prove exact clear12.7mm square holes. Label the selected clear width, aperture shape, bar/profile dimensions and cut angle as model assumptions and later measure native holes. Actual dimensions that ARE sourced remain correctly stated.\nScore preserves R_full=0.98 with recovery contribution0.70*clamp(r/0.98,0,1), plus0.20*F loading and0.10*D released/support dwell; explicit examples and loss caveats are supplied. Independently recompute initial/partial/full and revoke invalid progress; no unexplained0.90-to1.00 jump or native-success claim.\nThe pinned default10Hz is not production/evaluation timing: use explicit control_hz=20, actual state_time and240Hz physics/480Hz refinement. The stock native setup was verified at20Hz, but new task tests are still pending.\nSelect exactly one nonempty matching candidate only if this consistent construction plan is ready to ATTEMPT. Then preserve full current catalog/six-suite novelty gate, native components first, real YAM demos/controls/media/portability and later one final Dream episode. No official submission without reviewed-digest approval.\n",
+    "revision": 10,
+    "revision_request": "사용자의 최신 명시적 지시 (이전 작업 방향 및 내부 중요성 사전 심사보다 우선):\n\n체로 분리하는 거로 일단 진행해보자.\n해당 업무가 직군적으로 중요한건 채점자의 판단이고 일단 우리는 그럴싸한 작업이 나오면 그거로 진행하자.\n\n이번 revision의 확정 범위:\n- 현재 선택된 dry-angle-cut-media-recovery 태스크를 그대로 구현한다. 컵의 세라믹 연마재와 금속 와셔 혼합물을 실제 구멍이 있는 체에 붓고, 양팔 YAM으로 체를 다루어 연마재를 수거함으로 통과시키며 모든 와셔를 보존한 뒤 체를 받침에 내려놓고 손을 뗀다. 다른 주제 탐색, 품질검사 업무로의 목적 변경, 과거 상자·lifting-pin·snack-film 재개는 하지 않는다.\n- 사용자는 중요성/직군 규모를 채점자의 판단으로 남기고 실제 구현을 진행하라고 명시했다. 따라서 50만 명 직군 연결의 불확실성은 보고서의 한계이며 제작을 막는 내부 gate가 아니다. Impact on jobs를 잠정 카테고리로 쓰되, 602,000명 전체가 이 작업을 한다거나 공식 중요성 기준을 충족했다고 주장하지 않는다. 제조사 근거로 실제 작업임을 설명하고, 구체적 직무 연결과 채택 여부는 미검증이라고 기록한다. 이 예외는 중요성 사전 판단에 한정되며 물리·채점·신규성·비밀정보·제출 승인 조건을 해제하지 않는다.\n- 같은 run 20261116T070835-7889e9ab, 같은 전용 Brev 인스턴스, 같은 결과 브랜치를 유지한다. 다른 인스턴스와 run은 변경하지 않는다. CLI가 실행과 보존·종료를 관리한다.\n\n이미 있는 근거와 현재 수정 범위:\n- artifacts/selected.json, artifacts/candidate-preflight.json, artifacts/novelty.json, artifacts/novelty-critic.json, 최신 artifacts/contract.json 및 contract-critic.json을 읽는다. 현재 후보의 sourced 치수와 선언된 가정은 유지한다. 후보 ready는 구성 시도 준비이지 native-qualified 또는 submission-ready라는 뜻이 아니다.\n- 필수 제출물 703건 및 6개 suite의 완료된 신규성 검토 결과를 정확히 기록한다. PR684와 기본 체질 능력이 실제로 겹친다는 점은 그대로 남긴다. 그 기록은 검증된 closed/unmerged/other-team/non-board-required 역사 자료이며 현행 scope에서 nonblocking이다. active/accepted/pending/own-team/benchmark 중복을 무시하지 않으며 제출 전 최신 검사는 별도로 유지한다. 과거 카탈로그 검토가 아직 시작되지 않았다는 낡은 placeholder를 새 계약에 복사하지 않는다.\n- input/operator-source-notes.json의 initial_test_configuration.contract_source_review와 input/runtime-api-preflight.json 및 input/pinned-runtime-sources를 실제로 읽는다. 이 source index는 설치 소스의 해시와 버전을 확인한 자료이며 새 태스크의 native 성공 결과가 아니다. 명시적 20Hz 제어, 240Hz 생산 물리와 480Hz refinement는 실제 probe에서 확인한다.\n- 계약은 앞으로 구현할 물리/관측/채점을 정확히 정하는 문서다. 아직 없는 native 결과를 계약 작성 전에 요구하지 않는다. 이후 환경/물리/데모 gate는 실제 실행과 수치로 검증한다.\n\n정상 동작과 채점에 필요한 사항:\n- 입자는 컵 입구를 나와 여러 physics step 동안 자유 낙하한 후 체에 진입할 수 있다. 바로 인접한 두 샘플 사이에 컵에서 체로 순간 이동해야 하는 조건을 만들지 않는다. 컵이 빈 뒤 체를 흔들어 통과한 입자도 정상 회수로 인정한다. 개별 입자/와셔를 따로 골라 다른 표면에 적치하는 우회는 실제 provenance/접촉으로 구분한다.\n- 초기 점수 0, 유용한 부분 회수, 현재 회수량, 모든 와셔 잔류, 수거함 오염/실제 쏟아짐, 받침 접촉, 양손 이격 후 새로 측정한 연속 3초를 명확히 한다. 완전 유실 후 과거 loading만으로 점수가 남는 모순은 없앤다. 실제 24개 동일 질량 입자의 절반은 r=0.5이며 예전 r=0.49 예시는 synthetic 계산에만 해당한다.\n- composite washer를 쓰면 segment 집합, 조립체 기준점과 질량, segment 이탈/파손 때의 상태를 구분한다. 실제 구현하지 않은 소성 변형을 주장하지 않는다. 파손을 채점한다면 실제 authored joint/형상·한계와 물리적 break 이벤트로 구현하고 독립 시험한다. 물성을 유리하게 고정하거나 가짜 플래그로 성공을 만들지 않는다.\n- 마지막 검토가 지적한 washer consequence는 기존 selected와 일치시킨다: 실제 washer fracture가 발생했으나 모든 조각이 보존되고 다른 hard failure가 없다면 기존 0.40 상한을 적용한다. 조각 유실/오염/실제 spill 등 별도 hard failure는 0이다. 단순히 200N 같은 진단 임계값에 닿은 것과 실제 물리적 파손을 혼동하지 않는다. 구현하지 않은 plastic deformation을 새로운 성공/감점 관측값으로 만들어 넣지 않으며 모델의 한계를 명시한다.\n- task.py 공용 구조와 실제 14D YAM 제어를 쓴다. 실행 중 task object pose/velocity 쓰기, teleport, fake weld, collision disable, particle freezing, 쏟아짐을 숨기는 낮은 속도 cap은 금지한다. reset 및 별도 진단 fixture는 명확히 구분한다.\n\n계속할 실제 작업:\n1. 남은 계약의 산술/조립체/집계 모호함만 고쳐 독립 검토한다. 중요성 판단 대기로 다시 막지 않는다.\n2. 작은 native 장면에서 실제 구멍 통과·가로 걸림·흔들어 해소·와셔 잔류·실제 spill 검출 및 240/480Hz 비교를 구현·실행한다. 실제 데이터와 setup/시험 영상을 보존한다.\n3. 안정화 후 실제 YAM의 파지·붓기·체질·내려놓기·해제와 scorer를 구현해 전체 데모를 검증한다. diagnostic/stock demo를 새 태스크의 성공 데모라고 부르지 않는다.\n4. 코드·에셋·원시 계측·재현 명령·영상과 한계를 같은 브랜치에 보존한다. Dream 예산/단일 시도와 공식 제출의 명시적 release digest 승인 조건은 기존 그대로 유지한다. 중요성 인정이나 공식 채택을 미리 주장하지 않는다.\n",
     "approval": null,
     "resume_from_stage": "contract",
-    "error": "contract-critic: `artifacts/contract.json` contradicts `artifacts/selected.json` on washer damage. The selected specification caps the score at 0.40 after washer fracture or permanent deformation, whereas the contract makes fracture, reaching the 200 N threshold, or excessive segment displacement an immutable score-zero failure. Select one consequence and update the controls and both specifications consistently.; The Impact on jobs mapping remains unsupported at the required core-task level. The O*NET record establishes that SOC 51-9061 workers inspect and sort processed parts generally, while Raytech establishes that manual parts/media screening exists; neither establishes manual finishing-media recovery as work these 0.6 million inspectors regularly perform. The revised mapping asserts the connection but does not supply occupational evidence for it. Add evidence tying this operation to a qualifying occupation's regular duties or choose another supported category.; All contract control scores otherwise recompute correctly: 0 initially; 0.20 after complete admission; 0.5571428571 for 12/24 equal-mass media recovered; 0.90 at recovery threshold before dwell; 1.00 after 720 intervals; 0.90 after 719 intervals; and 0 after every specified hard failure. Processing O_57600 makes the two timeout controls consistent.; The previous observability defects are repaired: washer assembly mass/reference and segment constraints are defined; drift, speed, penetration, contact-force, joint-force, clearance, and refinement aggregations identify sampling rates, windows, and reset rules. The contract also correctly distinguishes 240 Hz scoring physics, 20 Hz reporting/control, and prospective 480 Hz refinement.",
+    "error": "contract-critic: `artifacts/selected.json` still states that washer fracture or permanent deformation caps the score at 0.40, contradicting the contract and revision request, which explicitly exclude plastic deformation from modeling, measurement, and scoring. Change the selected success condition to fracture-only.; The previous geometry and rim-boundary failures are repaired: the contract now deterministically defines the aperture lattice, boundary-square exclusion, wall radii/profile, containment volume, full-collider retention, and swept partial-rim escape.; Required-control arithmetic is consistent: initial 0; loaded/no recovery 0.20; 12/24 recovery 0.5571428571; threshold recovery without dwell 0.90; full score after exactly 720 completed 240 Hz intervals; 719 intervals 0.90; retained post-admission fracture capped at 0.40; every specified hard failure yields 0.; Timing is internally consistent and supported by the pinned sources: 4,800 actions at 20 Hz produce 240 seconds, production physics is 240 Hz with 12 intervals per action, O_57600 is processed before timeout, and 480 Hz is only a prospective refinement rate.; Contact, force, provenance, containment, event ordering, eligibility, and dwell are sampled from completed 240 Hz post-solve states; 20 Hz is correctly limited to action/report/render cadence. Bad physical events latch independently of desired actions, while recovery and dwell remain revocable.; The fracture/provenance rules are consistent: unauthorized pre-admission separation is a zero-score provenance failure, genuine post-admission authored-joint fracture permits retained fragments but permanently caps the score, and fragment loss independently yields zero.; Industrial evidence supports a real manual parts/media separation operation, while the contract appropriately leaves the over-500,000-worker occupation mapping uncertain. Novelty evidence identifies real overlap with historical PR684 without claiming that layout or difficulty alone establishes novelty.",
     "remote_status": {
       "status": "blocked",
-      "error": "contract-critic: `artifacts/contract.json` contradicts `artifacts/selected.json` on washer damage. The selected specification caps the score at 0.40 after washer fracture or permanent deformation, whereas the contract makes fracture, reaching the 200 N threshold, or excessive segment displacement an immutable score-zero failure. Select one consequence and update the controls and both specifications consistently.; The Impact on jobs mapping remains unsupported at the required core-task level. The O*NET record establishes that SOC 51-9061 workers inspect and sort processed parts generally, while Raytech establishes that manual parts/media screening exists; neither establishes manual finishing-media recovery as work these 0.6 million inspectors regularly perform. The revised mapping asserts the connection but does not supply occupational evidence for it. Add evidence tying this operation to a qualifying occupation's regular duties or choose another supported category.; All contract control scores otherwise recompute correctly: 0 initially; 0.20 after complete admission; 0.5571428571 for 12/24 equal-mass media recovered; 0.90 at recovery threshold before dwell; 1.00 after 720 intervals; 0.90 after 719 intervals; and 0 after every specified hard failure. Processing O_57600 makes the two timeout controls consistent.; The previous observability defects are repaired: washer assembly mass/reference and segment constraints are defined; drift, speed, penetration, contact-force, joint-force, clearance, and refinement aggregations identify sampling rates, windows, and reset rules. The contract also correctly distinguishes 240 Hz scoring physics, 20 Hz reporting/control, and prospective 480 Hz refinement.",
+      "error": "contract-critic: `artifacts/selected.json` still states that washer fracture or permanent deformation caps the score at 0.40, contradicting the contract and revision request, which explicitly exclude plastic deformation from modeling, measurement, and scoring. Change the selected success condition to fracture-only.; The previous geometry and rim-boundary failures are repaired: the contract now deterministically defines the aperture lattice, boundary-square exclusion, wall radii/profile, containment volume, full-collider retention, and swept partial-rim escape.; Required-control arithmetic is consistent: initial 0; loaded/no recovery 0.20; 12/24 recovery 0.5571428571; threshold recovery without dwell 0.90; full score after exactly 720 completed 240 Hz intervals; 719 intervals 0.90; retained post-admission fracture capped at 0.40; every specified hard failure yields 0.; Timing is internally consistent and supported by the pinned sources: 4,800 actions at 20 Hz produce 240 seconds, production physics is 240 Hz with 12 intervals per action, O_57600 is processed before timeout, and 480 Hz is only a prospective refinement rate.; Contact, force, provenance, containment, event ordering, eligibility, and dwell are sampled from completed 240 Hz post-solve states; 20 Hz is correctly limited to action/report/render cadence. Bad physical events latch independently of desired actions, while recovery and dwell remain revocable.; The fracture/provenance rules are consistent: unauthorized pre-admission separation is a zero-score provenance failure, genuine post-admission authored-joint fracture permits retained fragments but permanently caps the score, and fragment loss independently yields zero.; Industrial evidence supports a real manual parts/media separation operation, while the contract appropriately leaves the over-500,000-worker occupation mapping uncertain. Novelty evidence identifies real overlap with historical PR684 without claiming that layout or difficulty alone establishes novelty.",
       "type": "GateError",
-      "at": "2026-11-16T14:03:29.526182+00:00"
+      "at": "2026-11-16T14:19:01.118730+00:00"
     },
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab"
   },
@@ -3896,6 +3896,300 @@
       "run": "20261116T070835-7889e9ab",
       "at": "2026-11-16T14:03:58.062135+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"contract-critic: `artifacts/contract.json` contradicts `artifacts/selected.json` on washer damage. The selected specification caps the score at 0.40 after washer fracture or permanent deformation, whereas the contract makes fracture, reaching the 200 N threshold, or excessive segment displacement an immutable score-zero failure. Select one consequence and update the controls and both specifications consistently.; The Impact on jobs mapping remains unsupported at the required core-task level. The O*NET record establishes that SOC 51-9061 workers inspect and sort processed parts generally, while Raytech establishes that manual parts/media screening exists; neither establishes manual finishing-media recovery as work these 0.6 million inspectors regularly perform. The revised mapping asserts the connection but does not supply occupational evidence for it. Add evidence tying this operation to a qualifying occupation's regular duties or choose another supported category.; All contract control scores otherwise recompute correctly: 0 initially; 0.20 after complete admission; 0.5571428571 for 12/24 equal-mass media recovered; 0.90 at recovery threshold before dwell; 1.00 after 720 intervals; 0.90 after 719 intervals; and 0 after every specified hard failure. Processing O_57600 makes the two timeout controls consistent.; The previous observability defects are repaired: washer assembly mass/reference and segment constraints are defined; drift, speed, penetration, contact-force, joint-force, clearance, and refinement aggregations identify sampling rates, windows, and reset rules. The contract also correctly distinguishes 240 Hz scoring physics, 20 Hz reporting/control, and prospective 480 Hz refinement.\"}"
+    },
+    {
+      "seq": 5551,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:04:31.202847+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 5554,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:05:02.449053+00:00",
+      "data": "{\"revision\": 10, \"revision_request\": \"\\uc0ac\\uc6a9\\uc790\\uc758 \\ucd5c\\uc2e0 \\uba85\\uc2dc\\uc801 \\uc9c0\\uc2dc (\\uc774\\uc804 \\uc791\\uc5c5 \\ubc29\\ud5a5 \\ubc0f \\ub0b4\\ubd80 \\uc911\\uc694\\uc131 \\uc0ac\\uc804 \\uc2ec\\uc0ac\\ubcf4\\ub2e4 \\uc6b0\\uc120):\\n\\n\\uccb4\\ub85c \\ubd84\\ub9ac\\ud558\\ub294 \\uac70\\ub85c \\uc77c\\ub2e8 \\uc9c4\\ud589\\ud574\\ubcf4\\uc790.\\n\\ud574\\ub2f9 \\uc5c5\\ubb34\\uac00 \\uc9c1\\uad70\\uc801\\uc73c\\ub85c \\uc911\\uc694\\ud55c\\uac74 \\ucc44\\uc810\\uc790\\uc758 \\ud310\\ub2e8\\uc774\\uace0 \\uc77c\\ub2e8 \\uc6b0\\ub9ac\\ub294 \\uadf8\\ub7f4\\uc2f8\\ud55c \\uc791\\uc5c5\\uc774 \\ub098\\uc624\\uba74 \\uadf8\\uac70\\ub85c \\uc9c4\\ud589\\ud558\\uc790.\\n\\n\\uc774\\ubc88 revision\\uc758 \\ud655\\uc815 \\ubc94\\uc704:\\n- \\ud604\\uc7ac \\uc120\\ud0dd\\ub41c dry-angle-cut-media-recovery \\ud0dc\\uc2a4\\ud06c\\ub97c \\uadf8\\ub300\\ub85c \\uad6c\\ud604\\ud55c\\ub2e4. \\ucef5\\uc758 \\uc138\\ub77c\\ubbf9 \\uc5f0\\ub9c8\\uc7ac\\uc640 \\uae08\\uc18d \\uc640\\uc154 \\ud63c\\ud569\\ubb3c\\uc744 \\uc2e4\\uc81c \\uad6c\\uba4d\\uc774 \\uc788\\ub294 \\uccb4\\uc5d0 \\ubd93\\uace0, \\uc591\\ud314 YAM\\uc73c\\ub85c \\uccb4\\ub97c \\ub2e4\\ub8e8\\uc5b4 \\uc5f0\\ub9c8\\uc7ac\\ub97c \\uc218\\uac70\\ud568\\uc73c\\ub85c \\ud1b5\\uacfc\\uc2dc\\ud0a4\\uba70 \\ubaa8\\ub4e0 \\uc640\\uc154\\ub97c \\ubcf4\\uc874\\ud55c \\ub4a4 \\uccb4\\ub97c \\ubc1b\\uce68\\uc5d0 \\ub0b4\\ub824\\ub193\\uace0 \\uc190\\uc744 \\ub5c0\\ub2e4. \\ub2e4\\ub978 \\uc8fc\\uc81c \\ud0d0\\uc0c9, \\ud488\\uc9c8\\uac80\\uc0ac \\uc5c5\\ubb34\\ub85c\\uc758 \\ubaa9\\uc801 \\ubcc0\\uacbd, \\uacfc\\uac70 \\uc0c1\\uc790\\u00b7lifting-pin\\u00b7snack-film \\uc7ac\\uac1c\\ub294 \\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\uc0ac\\uc6a9\\uc790\\ub294 \\uc911\\uc694\\uc131/\\uc9c1\\uad70 \\uaddc\\ubaa8\\ub97c \\ucc44\\uc810\\uc790\\uc758 \\ud310\\ub2e8\\uc73c\\ub85c \\ub0a8\\uae30\\uace0 \\uc2e4\\uc81c \\uad6c\\ud604\\uc744 \\uc9c4\\ud589\\ud558\\ub77c\\uace0 \\uba85\\uc2dc\\ud588\\ub2e4. \\ub530\\ub77c\\uc11c 50\\ub9cc \\uba85 \\uc9c1\\uad70 \\uc5f0\\uacb0\\uc758 \\ubd88\\ud655\\uc2e4\\uc131\\uc740 \\ubcf4\\uace0\\uc11c\\uc758 \\ud55c\\uacc4\\uc774\\uba70 \\uc81c\\uc791\\uc744 \\ub9c9\\ub294 \\ub0b4\\ubd80 gate\\uac00 \\uc544\\ub2c8\\ub2e4. Impact on jobs\\ub97c \\uc7a0\\uc815 \\uce74\\ud14c\\uace0\\ub9ac\\ub85c \\uc4f0\\ub418, 602,000\\uba85 \\uc804\\uccb4\\uac00 \\uc774 \\uc791\\uc5c5\\uc744 \\ud55c\\ub2e4\\uac70\\ub098 \\uacf5\\uc2dd \\uc911\\uc694\\uc131 \\uae30\\uc900\\uc744 \\ucda9\\uc871\\ud588\\ub2e4\\uace0 \\uc8fc\\uc7a5\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc81c\\uc870\\uc0ac \\uadfc\\uac70\\ub85c \\uc2e4\\uc81c \\uc791\\uc5c5\\uc784\\uc744 \\uc124\\uba85\\ud558\\uace0, \\uad6c\\uccb4\\uc801 \\uc9c1\\ubb34 \\uc5f0\\uacb0\\uacfc \\ucc44\\ud0dd \\uc5ec\\ubd80\\ub294 \\ubbf8\\uac80\\uc99d\\uc774\\ub77c\\uace0 \\uae30\\ub85d\\ud55c\\ub2e4. \\uc774 \\uc608\\uc678\\ub294 \\uc911\\uc694\\uc131 \\uc0ac\\uc804 \\ud310\\ub2e8\\uc5d0 \\ud55c\\uc815\\ub418\\uba70 \\ubb3c\\ub9ac\\u00b7\\ucc44\\uc810\\u00b7\\uc2e0\\uaddc\\uc131\\u00b7\\ube44\\ubc00\\uc815\\ubcf4\\u00b7\\uc81c\\ucd9c \\uc2b9\\uc778 \\uc870\\uac74\\uc744 \\ud574\\uc81c\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\uac19\\uc740 run 20261116T070835-7889e9ab, \\uac19\\uc740 \\uc804\\uc6a9 Brev \\uc778\\uc2a4\\ud134\\uc2a4, \\uac19\\uc740 \\uacb0\\uacfc \\ube0c\\ub79c\\uce58\\ub97c \\uc720\\uc9c0\\ud55c\\ub2e4. \\ub2e4\\ub978 \\uc778\\uc2a4\\ud134\\uc2a4\\uc640 run\\uc740 \\ubcc0\\uacbd\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. CLI\\uac00 \\uc2e4\\ud589\\uacfc \\ubcf4\\uc874\\u00b7\\uc885\\ub8cc\\ub97c \\uad00\\ub9ac\\ud55c\\ub2e4.\\n\\n\\uc774\\ubbf8 \\uc788\\ub294 \\uadfc\\uac70\\uc640 \\ud604\\uc7ac \\uc218\\uc815 \\ubc94\\uc704:\\n- artifacts/selected.json, artifacts/candidate-preflight.json, artifacts/novelty.json, artifacts/novelty-critic.json, \\ucd5c\\uc2e0 artifacts/contract.json \\ubc0f contract-critic.json\\uc744 \\uc77d\\ub294\\ub2e4. \\ud604\\uc7ac \\ud6c4\\ubcf4\\uc758 sourced \\uce58\\uc218\\uc640 \\uc120\\uc5b8\\ub41c \\uac00\\uc815\\uc740 \\uc720\\uc9c0\\ud55c\\ub2e4. \\ud6c4\\ubcf4 ready\\ub294 \\uad6c\\uc131 \\uc2dc\\ub3c4 \\uc900\\ube44\\uc774\\uc9c0 native-qualified \\ub610\\ub294 submission-ready\\ub77c\\ub294 \\ub73b\\uc774 \\uc544\\ub2c8\\ub2e4.\\n- \\ud544\\uc218 \\uc81c\\ucd9c\\ubb3c 703\\uac74 \\ubc0f 6\\uac1c suite\\uc758 \\uc644\\ub8cc\\ub41c \\uc2e0\\uaddc\\uc131 \\uac80\\ud1a0 \\uacb0\\uacfc\\ub97c \\uc815\\ud655\\ud788 \\uae30\\ub85d\\ud55c\\ub2e4. PR684\\uc640 \\uae30\\ubcf8 \\uccb4\\uc9c8 \\ub2a5\\ub825\\uc774 \\uc2e4\\uc81c\\ub85c \\uacb9\\uce5c\\ub2e4\\ub294 \\uc810\\uc740 \\uadf8\\ub300\\ub85c \\ub0a8\\uae34\\ub2e4. \\uadf8 \\uae30\\ub85d\\uc740 \\uac80\\uc99d\\ub41c closed/unmerged/other-team/non-board-required \\uc5ed\\uc0ac \\uc790\\ub8cc\\uc774\\uba70 \\ud604\\ud589 scope\\uc5d0\\uc11c nonblocking\\uc774\\ub2e4. active/accepted/pending/own-team/benchmark \\uc911\\ubcf5\\uc744 \\ubb34\\uc2dc\\ud558\\uc9c0 \\uc54a\\uc73c\\uba70 \\uc81c\\ucd9c \\uc804 \\ucd5c\\uc2e0 \\uac80\\uc0ac\\ub294 \\ubcc4\\ub3c4\\ub85c \\uc720\\uc9c0\\ud55c\\ub2e4. \\uacfc\\uac70 \\uce74\\ud0c8\\ub85c\\uadf8 \\uac80\\ud1a0\\uac00 \\uc544\\uc9c1 \\uc2dc\\uc791\\ub418\\uc9c0 \\uc54a\\uc558\\ub2e4\\ub294 \\ub0a1\\uc740 placeholder\\ub97c \\uc0c8 \\uacc4\\uc57d\\uc5d0 \\ubcf5\\uc0ac\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- input/operator-source-notes.json\\uc758 initial_test_configuration.contract_source_review\\uc640 input/runtime-api-preflight.json \\ubc0f input/pinned-runtime-sources\\ub97c \\uc2e4\\uc81c\\ub85c \\uc77d\\ub294\\ub2e4. \\uc774 source index\\ub294 \\uc124\\uce58 \\uc18c\\uc2a4\\uc758 \\ud574\\uc2dc\\uc640 \\ubc84\\uc804\\uc744 \\ud655\\uc778\\ud55c \\uc790\\ub8cc\\uc774\\uba70 \\uc0c8 \\ud0dc\\uc2a4\\ud06c\\uc758 native \\uc131\\uacf5 \\uacb0\\uacfc\\uac00 \\uc544\\ub2c8\\ub2e4. \\uba85\\uc2dc\\uc801 20Hz \\uc81c\\uc5b4, 240Hz \\uc0dd\\uc0b0 \\ubb3c\\ub9ac\\uc640 480Hz refinement\\ub294 \\uc2e4\\uc81c probe\\uc5d0\\uc11c \\ud655\\uc778\\ud55c\\ub2e4.\\n- \\uacc4\\uc57d\\uc740 \\uc55e\\uc73c\\ub85c \\uad6c\\ud604\\ud560 \\ubb3c\\ub9ac/\\uad00\\uce21/\\ucc44\\uc810\\uc744 \\uc815\\ud655\\ud788 \\uc815\\ud558\\ub294 \\ubb38\\uc11c\\ub2e4. \\uc544\\uc9c1 \\uc5c6\\ub294 native \\uacb0\\uacfc\\ub97c \\uacc4\\uc57d \\uc791\\uc131 \\uc804\\uc5d0 \\uc694\\uad6c\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc774\\ud6c4 \\ud658\\uacbd/\\ubb3c\\ub9ac/\\ub370\\ubaa8 gate\\ub294 \\uc2e4\\uc81c \\uc2e4\\ud589\\uacfc \\uc218\\uce58\\ub85c \\uac80\\uc99d\\ud55c\\ub2e4.\\n\\n\\uc815\\uc0c1 \\ub3d9\\uc791\\uacfc \\ucc44\\uc810\\uc5d0 \\ud544\\uc694\\ud55c \\uc0ac\\ud56d:\\n- \\uc785\\uc790\\ub294 \\ucef5 \\uc785\\uad6c\\ub97c \\ub098\\uc640 \\uc5ec\\ub7ec physics step \\ub3d9\\uc548 \\uc790\\uc720 \\ub099\\ud558\\ud55c \\ud6c4 \\uccb4\\uc5d0 \\uc9c4\\uc785\\ud560 \\uc218 \\uc788\\ub2e4. \\ubc14\\ub85c \\uc778\\uc811\\ud55c \\ub450 \\uc0d8\\ud50c \\uc0ac\\uc774\\uc5d0 \\ucef5\\uc5d0\\uc11c \\uccb4\\ub85c \\uc21c\\uac04 \\uc774\\ub3d9\\ud574\\uc57c \\ud558\\ub294 \\uc870\\uac74\\uc744 \\ub9cc\\ub4e4\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ucef5\\uc774 \\ube48 \\ub4a4 \\uccb4\\ub97c \\ud754\\ub4e4\\uc5b4 \\ud1b5\\uacfc\\ud55c \\uc785\\uc790\\ub3c4 \\uc815\\uc0c1 \\ud68c\\uc218\\ub85c \\uc778\\uc815\\ud55c\\ub2e4. \\uac1c\\ubcc4 \\uc785\\uc790/\\uc640\\uc154\\ub97c \\ub530\\ub85c \\uace8\\ub77c \\ub2e4\\ub978 \\ud45c\\uba74\\uc5d0 \\uc801\\uce58\\ud558\\ub294 \\uc6b0\\ud68c\\ub294 \\uc2e4\\uc81c provenance/\\uc811\\ucd09\\uc73c\\ub85c \\uad6c\\ubd84\\ud55c\\ub2e4.\\n- \\ucd08\\uae30 \\uc810\\uc218 0, \\uc720\\uc6a9\\ud55c \\ubd80\\ubd84 \\ud68c\\uc218, \\ud604\\uc7ac \\ud68c\\uc218\\ub7c9, \\ubaa8\\ub4e0 \\uc640\\uc154 \\uc794\\ub958, \\uc218\\uac70\\ud568 \\uc624\\uc5fc/\\uc2e4\\uc81c \\uc3df\\uc544\\uc9d0, \\ubc1b\\uce68 \\uc811\\ucd09, \\uc591\\uc190 \\uc774\\uaca9 \\ud6c4 \\uc0c8\\ub85c \\uce21\\uc815\\ud55c \\uc5f0\\uc18d 3\\ucd08\\ub97c \\uba85\\ud655\\ud788 \\ud55c\\ub2e4. \\uc644\\uc804 \\uc720\\uc2e4 \\ud6c4 \\uacfc\\uac70 loading\\ub9cc\\uc73c\\ub85c \\uc810\\uc218\\uac00 \\ub0a8\\ub294 \\ubaa8\\uc21c\\uc740 \\uc5c6\\uc564\\ub2e4. \\uc2e4\\uc81c 24\\uac1c \\ub3d9\\uc77c \\uc9c8\\ub7c9 \\uc785\\uc790\\uc758 \\uc808\\ubc18\\uc740 r=0.5\\uc774\\uba70 \\uc608\\uc804 r=0.49 \\uc608\\uc2dc\\ub294 synthetic \\uacc4\\uc0b0\\uc5d0\\ub9cc \\ud574\\ub2f9\\ud55c\\ub2e4.\\n- composite washer\\ub97c \\uc4f0\\uba74 segment \\uc9d1\\ud569, \\uc870\\ub9bd\\uccb4 \\uae30\\uc900\\uc810\\uacfc \\uc9c8\\ub7c9, segment \\uc774\\ud0c8/\\ud30c\\uc190 \\ub54c\\uc758 \\uc0c1\\ud0dc\\ub97c \\uad6c\\ubd84\\ud55c\\ub2e4. \\uc2e4\\uc81c \\uad6c\\ud604\\ud558\\uc9c0 \\uc54a\\uc740 \\uc18c\\uc131 \\ubcc0\\ud615\\uc744 \\uc8fc\\uc7a5\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ud30c\\uc190\\uc744 \\ucc44\\uc810\\ud55c\\ub2e4\\uba74 \\uc2e4\\uc81c authored joint/\\ud615\\uc0c1\\u00b7\\ud55c\\uacc4\\uc640 \\ubb3c\\ub9ac\\uc801 break \\uc774\\ubca4\\ud2b8\\ub85c \\uad6c\\ud604\\ud558\\uace0 \\ub3c5\\ub9bd \\uc2dc\\ud5d8\\ud55c\\ub2e4. \\ubb3c\\uc131\\uc744 \\uc720\\ub9ac\\ud558\\uac8c \\uace0\\uc815\\ud558\\uac70\\ub098 \\uac00\\uc9dc \\ud50c\\ub798\\uadf8\\ub85c \\uc131\\uacf5\\uc744 \\ub9cc\\ub4e4\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n- \\ub9c8\\uc9c0\\ub9c9 \\uac80\\ud1a0\\uac00 \\uc9c0\\uc801\\ud55c washer consequence\\ub294 \\uae30\\uc874 selected\\uc640 \\uc77c\\uce58\\uc2dc\\ud0a8\\ub2e4: \\uc2e4\\uc81c washer fracture\\uac00 \\ubc1c\\uc0dd\\ud588\\uc73c\\ub098 \\ubaa8\\ub4e0 \\uc870\\uac01\\uc774 \\ubcf4\\uc874\\ub418\\uace0 \\ub2e4\\ub978 hard failure\\uac00 \\uc5c6\\ub2e4\\uba74 \\uae30\\uc874 0.40 \\uc0c1\\ud55c\\uc744 \\uc801\\uc6a9\\ud55c\\ub2e4. \\uc870\\uac01 \\uc720\\uc2e4/\\uc624\\uc5fc/\\uc2e4\\uc81c spill \\ub4f1 \\ubcc4\\ub3c4 hard failure\\ub294 0\\uc774\\ub2e4. \\ub2e8\\uc21c\\ud788 200N \\uac19\\uc740 \\uc9c4\\ub2e8 \\uc784\\uacc4\\uac12\\uc5d0 \\ub2ff\\uc740 \\uac83\\uacfc \\uc2e4\\uc81c \\ubb3c\\ub9ac\\uc801 \\ud30c\\uc190\\uc744 \\ud63c\\ub3d9\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uad6c\\ud604\\ud558\\uc9c0 \\uc54a\\uc740 plastic deformation\\uc744 \\uc0c8\\ub85c\\uc6b4 \\uc131\\uacf5/\\uac10\\uc810 \\uad00\\uce21\\uac12\\uc73c\\ub85c \\ub9cc\\ub4e4\\uc5b4 \\ub123\\uc9c0 \\uc54a\\uc73c\\uba70 \\ubaa8\\ub378\\uc758 \\ud55c\\uacc4\\ub97c \\uba85\\uc2dc\\ud55c\\ub2e4.\\n- task.py \\uacf5\\uc6a9 \\uad6c\\uc870\\uc640 \\uc2e4\\uc81c 14D YAM \\uc81c\\uc5b4\\ub97c \\uc4f4\\ub2e4. \\uc2e4\\ud589 \\uc911 task object pose/velocity \\uc4f0\\uae30, teleport, fake weld, collision disable, particle freezing, \\uc3df\\uc544\\uc9d0\\uc744 \\uc228\\uae30\\ub294 \\ub0ae\\uc740 \\uc18d\\ub3c4 cap\\uc740 \\uae08\\uc9c0\\ud55c\\ub2e4. reset \\ubc0f \\ubcc4\\ub3c4 \\uc9c4\\ub2e8 fixture\\ub294 \\uba85\\ud655\\ud788 \\uad6c\\ubd84\\ud55c\\ub2e4.\\n\\n\\uacc4\\uc18d\\ud560 \\uc2e4\\uc81c \\uc791\\uc5c5:\\n1. \\ub0a8\\uc740 \\uacc4\\uc57d\\uc758 \\uc0b0\\uc220/\\uc870\\ub9bd\\uccb4/\\uc9d1\\uacc4 \\ubaa8\\ud638\\ud568\\ub9cc \\uace0\\uccd0 \\ub3c5\\ub9bd \\uac80\\ud1a0\\ud55c\\ub2e4. \\uc911\\uc694\\uc131 \\ud310\\ub2e8 \\ub300\\uae30\\ub85c \\ub2e4\\uc2dc \\ub9c9\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n2. \\uc791\\uc740 native \\uc7a5\\uba74\\uc5d0\\uc11c \\uc2e4\\uc81c \\uad6c\\uba4d \\ud1b5\\uacfc\\u00b7\\uac00\\ub85c \\uac78\\ub9bc\\u00b7\\ud754\\ub4e4\\uc5b4 \\ud574\\uc18c\\u00b7\\uc640\\uc154 \\uc794\\ub958\\u00b7\\uc2e4\\uc81c spill \\uac80\\ucd9c \\ubc0f 240/480Hz \\ube44\\uad50\\ub97c \\uad6c\\ud604\\u00b7\\uc2e4\\ud589\\ud55c\\ub2e4. \\uc2e4\\uc81c \\ub370\\uc774\\ud130\\uc640 setup/\\uc2dc\\ud5d8 \\uc601\\uc0c1\\uc744 \\ubcf4\\uc874\\ud55c\\ub2e4.\\n3. \\uc548\\uc815\\ud654 \\ud6c4 \\uc2e4\\uc81c YAM\\uc758 \\ud30c\\uc9c0\\u00b7\\ubd93\\uae30\\u00b7\\uccb4\\uc9c8\\u00b7\\ub0b4\\ub824\\ub193\\uae30\\u00b7\\ud574\\uc81c\\uc640 scorer\\ub97c \\uad6c\\ud604\\ud574 \\uc804\\uccb4 \\ub370\\ubaa8\\ub97c \\uac80\\uc99d\\ud55c\\ub2e4. diagnostic/stock demo\\ub97c \\uc0c8 \\ud0dc\\uc2a4\\ud06c\\uc758 \\uc131\\uacf5 \\ub370\\ubaa8\\ub77c\\uace0 \\ubd80\\ub974\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n4. \\ucf54\\ub4dc\\u00b7\\uc5d0\\uc14b\\u00b7\\uc6d0\\uc2dc \\uacc4\\uce21\\u00b7\\uc7ac\\ud604 \\uba85\\ub839\\u00b7\\uc601\\uc0c1\\uacfc \\ud55c\\uacc4\\ub97c \\uac19\\uc740 \\ube0c\\ub79c\\uce58\\uc5d0 \\ubcf4\\uc874\\ud55c\\ub2e4. Dream \\uc608\\uc0b0/\\ub2e8\\uc77c \\uc2dc\\ub3c4\\uc640 \\uacf5\\uc2dd \\uc81c\\ucd9c\\uc758 \\uba85\\uc2dc\\uc801 release digest \\uc2b9\\uc778 \\uc870\\uac74\\uc740 \\uae30\\uc874 \\uadf8\\ub300\\ub85c \\uc720\\uc9c0\\ud55c\\ub2e4. \\uc911\\uc694\\uc131 \\uc778\\uc815\\uc774\\ub098 \\uacf5\\uc2dd \\ucc44\\ud0dd\\uc744 \\ubbf8\\ub9ac \\uc8fc\\uc7a5\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n\", \"approval\": null}"
+    },
+    {
+      "seq": 5555,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:05:02.449303+00:00",
+      "data": "{\"resume_from_stage\": \"contract\"}"
+    },
+    {
+      "seq": 5556,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:05:02.453150+00:00",
+      "data": "{\"supervisor_pid\": 3124, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log\"}"
+    },
+    {
+      "seq": 5557,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:05:02.528384+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 5562,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:06:05.115149+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"catalog incomplete: 1 records; see catalog-attempt.json\"}"
+    },
+    {
+      "seq": 5567,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:07:06.708313+00:00",
+      "data": "{\"supervisor_pid\": 3919, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log\"}"
+    },
+    {
+      "seq": 5568,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:07:06.782520+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 5574,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:08:25.370429+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 5578,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:09:06.809567+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 5581,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:09:50.531772+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab\"}"
+    },
+    {
+      "seq": 5583,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:09:50.978639+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5585,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:10:06.437274+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5587,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:10:21.890616+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5589,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:10:37.433402+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5591,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:10:52.889965+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5592,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:11:08.343168+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5593,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:11:23.797019+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5594,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:11:39.258463+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5596,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:11:54.754440+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5598,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:12:10.215354+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5599,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:12:25.678301+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5600,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:12:41.140488+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5601,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:12:56.597232+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5602,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:13:12.166665+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5603,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:13:27.712552+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5604,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:13:43.179169+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5606,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:13:58.647533+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5607,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:14:14.045669+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5610,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:14:29.456158+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5611,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:14:44.927735+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5612,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:15:00.332584+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5613,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:15:15.722181+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5615,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:15:31.127224+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5616,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:15:46.542010+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5617,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:16:01.950691+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5618,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:16:17.381211+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5619,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:16:32.783967+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5620,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:16:48.188193+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5621,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:17:03.592681+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5622,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:17:19.007668+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5623,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:17:34.413668+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5624,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:17:49.825388+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5625,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:18:05.226152+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5626,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:18:20.622302+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5629,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:18:36.130555+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5630,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:18:51.550531+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T14:09:50.883873+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 5631,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:19:07.050702+00:00",
+      "data": "{\"remote_status\": {\"status\": \"blocked\", \"error\": \"contract-critic: `artifacts/selected.json` still states that washer fracture or permanent deformation caps the score at 0.40, contradicting the contract and revision request, which explicitly exclude plastic deformation from modeling, measurement, and scoring. Change the selected success condition to fracture-only.; The previous geometry and rim-boundary failures are repaired: the contract now deterministically defines the aperture lattice, boundary-square exclusion, wall radii/profile, containment volume, full-collider retention, and swept partial-rim escape.; Required-control arithmetic is consistent: initial 0; loaded/no recovery 0.20; 12/24 recovery 0.5571428571; threshold recovery without dwell 0.90; full score after exactly 720 completed 240 Hz intervals; 719 intervals 0.90; retained post-admission fracture capped at 0.40; every specified hard failure yields 0.; Timing is internally consistent and supported by the pinned sources: 4,800 actions at 20 Hz produce 240 seconds, production physics is 240 Hz with 12 intervals per action, O_57600 is processed before timeout, and 480 Hz is only a prospective refinement rate.; Contact, force, provenance, containment, event ordering, eligibility, and dwell are sampled from completed 240 Hz post-solve states; 20 Hz is correctly limited to action/report/render cadence. Bad physical events latch independently of desired actions, while recovery and dwell remain revocable.; The fracture/provenance rules are consistent: unauthorized pre-admission separation is a zero-score provenance failure, genuine post-admission authored-joint fracture permits retained fragments but permanently caps the score, and fragment loss independently yields zero.; Industrial evidence supports a real manual parts/media separation operation, while the contract appropriately leaves the over-500,000-worker occupation mapping uncertain. Novelty evidence identifies real overlap with historical PR684 without claiming that layout or difficulty alone establishes novelty.\", \"type\": \"GateError\", \"at\": \"2026-11-16T14:19:01.118730+00:00\"}, \"stage\": null}"
+    },
+    {
+      "seq": 5632,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T14:19:24.128048+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"contract-critic: `artifacts/selected.json` still states that washer fracture or permanent deformation caps the score at 0.40, contradicting the contract and revision request, which explicitly exclude plastic deformation from modeling, measurement, and scoring. Change the selected success condition to fracture-only.; The previous geometry and rim-boundary failures are repaired: the contract now deterministically defines the aperture lattice, boundary-square exclusion, wall radii/profile, containment volume, full-collider retention, and swept partial-rim escape.; Required-control arithmetic is consistent: initial 0; loaded/no recovery 0.20; 12/24 recovery 0.5571428571; threshold recovery without dwell 0.90; full score after exactly 720 completed 240 Hz intervals; 719 intervals 0.90; retained post-admission fracture capped at 0.40; every specified hard failure yields 0.; Timing is internally consistent and supported by the pinned sources: 4,800 actions at 20 Hz produce 240 seconds, production physics is 240 Hz with 12 intervals per action, O_57600 is processed before timeout, and 480 Hz is only a prospective refinement rate.; Contact, force, provenance, containment, event ordering, eligibility, and dwell are sampled from completed 240 Hz post-solve states; 20 Hz is correctly limited to action/report/render cadence. Bad physical events latch independently of desired actions, while recovery and dwell remain revocable.; The fracture/provenance rules are consistent: unauthorized pre-admission separation is a zero-score provenance failure, genuine post-admission authored-joint fracture permits retained fragments but permanently caps the score, and fragment loss independently yields zero.; Industrial evidence supports a real manual parts/media separation operation, while the contract appropriately leaves the over-500,000-worker occupation mapping uncertain. Novelty evidence identifies real overlap with historical PR684 without claiming that layout or difficulty alone establishes novelty.\"}"
     }
   ],
   "effects": {
