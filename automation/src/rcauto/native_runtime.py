@@ -73,3 +73,20 @@ def register_native_runtime(task, expected):
         raise GateError("native runtime has no task-local scene constructor")
     embodiment(NAME)(cls)
     return NAME
+
+
+def main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Check native YAM adapter without Dream credentials")
+    parser.add_argument("--job", required=True)
+    args = parser.parse_args()
+    job = json.loads(Path(args.job).read_text())
+    name = register_native_runtime(job["task"], job.get("native_runtime"))
+    print(json.dumps({
+        "embodiment": name, "descriptor": job.get("native_runtime"), "qualification": False,
+    }))
+
+
+if __name__ == "__main__":
+    main()

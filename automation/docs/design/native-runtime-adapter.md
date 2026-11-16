@@ -24,8 +24,10 @@ without overriding them. The native scene and callback bridge still need real
 physics, reset, demo, scoring and portability qualification. A descriptor or
 class definition proves none of those.
 
-The controller checks the descriptor and module digest before a Dream budget
-reservation. The trusted entrypoint checks it against the validated job again,
+The controller checks the descriptor and module digest, then performs a real
+remote import/registration check without credentials or a simulation before a
+Dream budget reservation. Import errors and invalid receipts block the paid
+attempt. The trusted entrypoint checks it against the validated job again,
 then uses Inspect Robots' public embodiment registration decorator under
 `rcauto_yam_native`. It verifies parent class and method identities. The fixed
 20 Hz control, camera settings, task path, Dream policy and single-episode guard
@@ -43,8 +45,9 @@ public decorator (a task-local launcher or documented package entrypoint), not
 patch the installed SDK. A native dry run must use that same class and prove
 the inherited action/observation/scoring path before the one paid episode.
 
-Implementation validation: ten CPU regression cases cover unchanged primitive
+Implementation validation: thirteen CPU regression cases cover unchanged primitive
 tasks, exact module/job identity, task-relative paths, no bytecode writes and
-rejection of overrides to all five preserved methods. GPU/native integration
-is pending task construction and must not be reported as validated by these
-tests.
+rejection of overrides to all five preserved methods. These include
+failure-before-reservation checks using the actual SQLite ledger. GPU/native
+integration is pending task construction and must not be reported as validated
+by these tests.

@@ -432,6 +432,30 @@ class Coordinator:
         }
         write_json(root / "evaluation-job.json", job)
         self.brev.rsync(root / "evaluation-job.json", remote + "/evaluation-job.json")
+        if native_runtime is not None:
+            # Import/registration errors must not consume the single paid episode.
+            # This process receives no Dream credential and never constructs a sim.
+            preflight_command = (
+                "env PYTHONDONTWRITEBYTECODE=1 PYTHONPATH="
+                + shlex.quote(self.config["remote_root"] + "/pipeline/src")
+                + " " + shlex.quote(self.config["runtime"]["python"])
+                + " -m rcauto.native_runtime --job "
+                + shlex.quote(remote + "/evaluation-job.json")
+            )
+            output = self.brev.ssh(preflight_command, timeout=60)
+            try:
+                result = json.loads(output.strip().splitlines()[-1])
+            except (ValueError, IndexError) as exc:
+                raise GateError("native runtime preflight receipt missing") from exc
+            if result != {
+                "embodiment": "rcauto_yam_native", "descriptor": native_runtime,
+                "qualification": False,
+            }:
+                raise GateError("native runtime preflight receipt mismatch")
+            write_json(root / "native-runtime-import-preflight.json", {
+                "release_digest": read(root / "release-manifest.json")["digest"],
+                "result": result, "scope": "credential-free class import; not native physics",
+            })
         with self.store.lock("dream-budget"):
             # A stop may arrive while copying the validated job. Check again
             # at the one-episode reservation boundary, before any paid effect.

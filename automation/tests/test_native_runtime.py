@@ -114,3 +114,59 @@ def test_runtime_module_cannot_escape_task_directory(tmp_path):
     (tmp_path / "native-runtime.json").write_text(json.dumps(descriptor))
     with pytest.raises(GateError, match="escapes"):
         prepare_native_runtime(task)
+
+
+def test_native_entrypoint_check_needs_no_simulator_for_primitive_task(tmp_path):
+    import subprocess
+
+    task = tmp_path / "task.py"
+    task.write_text("# primitive scene")
+    job = tmp_path / "job.json"
+    job.write_text(json.dumps({"task": str(task), "native_runtime": None}))
+    result = subprocess.run(
+        [sys.executable, "-m", "rcauto.native_runtime", "--job", str(job)],
+        capture_output=True, text=True, check=True,
+    )
+    assert json.loads(result.stdout) == {
+        "embodiment": "yam_arena", "descriptor": None, "qualification": False,
+    }
+
+
+@pytest.mark.parametrize("failure", ["runtime_error", "unexpected_receipt"])
+def test_native_preflight_failure_cannot_reserve_or_receive_dream_credentials(tmp_path, failure):
+    from rcauto.coordinator import Coordinator
+    from rcauto.gates import manifest
+    from rcauto.store import Store, write_json
+
+    store = Store(tmp_path / "state")
+    run = store.create("native task", instance="test", mode="production")
+    root = store.run_dir(run["id"])
+    task_dir = root / "release/tasks/native-task"
+    task_dir.mkdir(parents=True)
+    native_task(task_dir)
+    write_json(task_dir / "task.json", {"instruction": "adjust the gripper"})
+    write_json(root / "release-manifest.json", manifest(root / "release"))
+    write_json(root / "workspace/artifacts/contract.json", {"run_steps": 1})
+    calls = []
+
+    class Remote:
+        def rsync(self, *args, **kwargs):
+            calls.append("job transfer")
+
+        def ssh(self, command, **kwargs):
+            assert "rcauto.native_runtime" in command
+            assert "stdin" not in kwargs
+            calls.append("credential-free native preflight")
+            if failure == "runtime_error":
+                raise GateError("native class rejected")
+            return json.dumps({"embodiment": "wrong", "descriptor": None})
+
+    coordinator = Coordinator(
+        store, {"instance": "test", "remote_root": "/remote", "runtime": {"python": "/python"}},
+        tmp_path,
+    )
+    coordinator.brev = Remote()
+    with pytest.raises(GateError):
+        coordinator.evaluate(run["id"], credentials={"DREAM_API_KEY": "test-only-placeholder"})
+    assert calls == ["job transfer", "credential-free native preflight"]
+    assert store.effect(run["id"], "dream") is None
