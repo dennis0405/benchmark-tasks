@@ -1,33 +1,20 @@
 {
-  "verdict": "blocked",
+  "verdict": "repair",
   "findings": [
-    "The prior admission and recovery-timing failures are repaired: the FEED→EXITED_FEED→FREE_FLIGHT→ENTERED_SCREEN machine permits multi-sample flight, and post-cup-empty aperture passage remains eligible.",
-    "Score arithmetic is correct for the stated realizable controls: untouched 0; loaded/no recovery 0.20; 12/24 media recovery 0.5571428571; threshold recovery without dwell 0.90; full dwell 1.00; exact 720-interval timeout 1.00; 719 intervals 0.90; hard failures 0; washer caps 0.20/0.40; apparatus cap 0.20; concurrent caps 0.20; spill state 0.20; and dwell revocation 0.90.",
-    "Timing is internally explicit: 4,800 controls at 20 Hz give 240 seconds, physics grading uses fresh post-solve observations at 240 Hz through O_57600, the first qualifying dwell sample contributes zero, camera checks are separately labeled 20 Hz, and refinement is 480 Hz.",
-    "The apparatus-fracture specification remains non-computable and apparently unrealizable. A is defined as screen, receiver, supports, and cup, but the assets specify these as rigid bodies without authored break joints, thresholds, or fracture locations; only washer break thresholds have a physics check. Therefore the apparatus-fracture controls and 0.20 cap lack a defined physical trigger.",
-    "Washer “permanent deformation” is still not a physically defined damage mode. The washers use rigid arc segments and breakable fixed joints, but no yielding, plastic, or alternative rest-transform mechanism is specified. A persistent offset of an unbroken fixed joint after unloading would measure constraint error, not authored permanent deformation, contradicting the claim that this damage mode is physically realizable.",
-    "The apparatus_fracture_low_base_control assumes an exact pre-cap B=0.10 without specifying a physically realizable body state. F is a discrete sum of four 0.0206170159 kg washers and twenty-four 0.0035044969 kg media bodies, so exact F=0.5—and hence B=0.10 with r=D=0—is not available from the frozen body masses. It must be labeled as a synthetic scorer-unit test or replaced by a realizable state and recomputed expectation.",
-    "The selected artifact contradicts the prospective contract: artifacts/selected.json declares feasibility_status=\"ready\" and missing_evidence=[], while artifacts/contract.json explicitly says feasibility, runtime compatibility, novelty, and Impact-on-jobs qualification are blocked. This prevents a consistent handoff.",
-    "The requested Impact-on-jobs qualification remains unsupported. Manufacturer sources establish a real separation operation but do not establish that it is a regular core task for qualifying US occupations totaling more than 500,000 workers.",
-    "Novelty remains materially unresolved against closed, unmerged PR684. The current-scope catalog pass correctly records substantial overlap in the essential selective-aperture sifting ability; closed/unmerged status removes ownership conflict but does not itself establish novelty.",
-    "Pinned-runtime/API evidence requested by the contract is absent: input/runtime-api-preflight.json and input/pinned-runtime-sources are not present. The contract appropriately avoids claiming compatibility, but guarded 14D and 240/480 Hz support therefore remain unresolved rather than reviewable from pinned sources.",
-    "The all-media-spilled control preserves a 0.20 score solely from historical loading progress. Because total spill is an industrially failed outcome, the contract should explicitly justify this retained partial credit as an observable useful outcome or revoke/cap it; otherwise grading rewards process history after its physical product has been completely lost."
+    "`artifacts/contract.json` contradicts `artifacts/selected.json` on washer damage. The selected specification caps the score at 0.40 after washer fracture or permanent deformation, whereas the contract makes fracture, reaching the 200 N threshold, or excessive segment displacement an immutable score-zero failure. Select one consequence and update the controls and both specifications consistently.",
+    "The Impact on jobs mapping remains unsupported at the required core-task level. The O*NET record establishes that SOC 51-9061 workers inspect and sort processed parts generally, while Raytech establishes that manual parts/media screening exists; neither establishes manual finishing-media recovery as work these 0.6 million inspectors regularly perform. The revised mapping asserts the connection but does not supply occupational evidence for it. Add evidence tying this operation to a qualifying occupation's regular duties or choose another supported category.",
+    "All contract control scores otherwise recompute correctly: 0 initially; 0.20 after complete admission; 0.5571428571 for 12/24 equal-mass media recovered; 0.90 at recovery threshold before dwell; 1.00 after 720 intervals; 0.90 after 719 intervals; and 0 after every specified hard failure. Processing O_57600 makes the two timeout controls consistent.",
+    "The previous observability defects are repaired: washer assembly mass/reference and segment constraints are defined; drift, speed, penetration, contact-force, joint-force, clearance, and refinement aggregations identify sampling rates, windows, and reset rules. The contract also correctly distinguishes 240 Hz scoring physics, 20 Hz reporting/control, and prospective 480 Hz refinement."
   ],
   "evidence_paths": [
     "artifacts/contract.json",
     "artifacts/selected.json",
-    "artifacts/contract-critic.json",
-    "artifacts/novelty-critic.json",
-    "artifacts/benchmark-novelty-selection.json",
     "input/last-failure.json",
-    "input/request.json",
-    "input/revision-request.txt",
-    "input/runtime.json",
-    "input/operator-source-notes.json",
-    "input/repository-AGENTS.md",
     "input/review-prompt.txt",
-    "input/sources/s-b442a7fa63fcb80c.raw",
-    "input/sources/s-a3efcebbecba0048.raw",
-    "input/sources/s-855e796b5a3f8ecc.raw"
+    "input/operator-source-notes.json",
+    "input/occupation-source-records/s-474cfcd0ccaa5ecb.json",
+    "input/runtime-api-preflight.json",
+    "input/pinned-runtime-sources/7c4081aa811b2839f908d533e12885dac7a0aaed62ff8da59e36995b50b87809-scene.py",
+    "input/pinned-runtime-sources/33783dab0ab4c2f2857455bb90d4d58217b14356f06772cca4e3b76a6883e22e-simulation_cfg.py"
   ]
 }
