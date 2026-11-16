@@ -51,3 +51,16 @@ rejection of overrides to all five preserved methods. These include
 failure-before-reservation checks using the actual SQLite ledger. GPU/native
 integration is pending task construction and must not be reported as validated
 by these tests.
+
+Native diagnostics preserve exact code/assets before launch under
+`measurements/native-source-snapshots` and content-addressed source blobs.
+After each command, including a nonzero exit or timeout, the controller retains
+the fresh report, declared measurement artifacts, changed/partial measurement
+files and command log under `native-output-snapshots` and `native-output-blobs`.
+Numeric validation happens afterwards. Reusing a report or trace filename during
+repair cannot overwrite these retained bytes. Hash checks reject corrupt blob
+reuse; unchanged unrelated measurements and snapshot folders are not recopied.
+Snapshots explicitly carry `qualification=false`: retaining outputs certifies
+neither successful execution nor physical validity. Successful command receipts
+link their source and output snapshots. Large retained text remains eligible for
+the checkpoint's existing verified gzip/restore workflow and unchanged size gates.

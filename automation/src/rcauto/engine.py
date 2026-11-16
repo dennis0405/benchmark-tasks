@@ -1017,6 +1017,9 @@ class Production:
             report_path = inside(self.workspace, script["report"])
             if not report_path.is_relative_to((self.workspace / "measurements").resolve()):
                 raise GateError("diagnostic reports must stay in measurements/")
+            from .evidence_archive import native_output_inventory, snapshot_native_outputs
+
+            output_before = native_output_inventory(self.workspace)
             if report_path.exists():
                 report_path.unlink()
             # CLI/python path and EULA flags are controlled by runtime config, not by generated argv.
@@ -1040,13 +1043,22 @@ class Production:
                 for p in (self.workspace / base).rglob("*")
                 if p.is_file()
             }
-            receipt = command(
-                [runtime["python"], str(path), *script["args"]],
-                self.workspace / "task",
-                self.root / "logs" / (script["id"] + "-" + uuid.uuid4().hex[:10] + ".log"),
-                timeout=self.config.get("sim_timeout", 1800),
-                env=env,
-            )
+            log_path = self.root / "logs" / (script["id"] + "-" + uuid.uuid4().hex[:10] + ".log")
+            execution_error = None
+            try:
+                receipt = command(
+                    [runtime["python"], str(path), *script["args"]],
+                    self.workspace / "task", log_path,
+                    timeout=self.config.get("sim_timeout", 1800), env=env,
+                )
+            except BaseException as exc:
+                execution_error = f"{type(exc).__name__}: {exc}"
+                raise
+            finally:
+                output_snapshot = snapshot_native_outputs(
+                    self.workspace, output_before, report_path,
+                    source_before["digest"], log_path, execution_error,
+                )
             discarded += discard_generated_bytecode(self.workspace / "task")
             verify_manifest(self.workspace / "task", source_before)
             if any(not Path(p).is_file() or file_hash(p) != h for p, h in protected.items()):
@@ -1091,6 +1103,7 @@ class Production:
                     report_sha256=file_hash(report_path),
                     source_digest=source_before["digest"],
                     source_snapshot=source_snapshot,
+                    output_snapshot=output_snapshot,
                     validation_scope=validation_scope,
                     discarded_bytecode=discarded,
                     measurements=report,

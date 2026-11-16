@@ -2,9 +2,11 @@
 
 import gzip
 import hashlib
+import json
 import os
 import shutil
 import tempfile
+import uuid
 from pathlib import Path
 
 from .gates import GateError, file_hash, inside
@@ -137,4 +139,87 @@ def snapshot_native_sources(workspace, source_manifest):
         "qualification": False, "scope": "Exact source bytes; not an execution or physics pass",
         "source_manifest": source_manifest, "blobs": blobs,
     })
+    return str(target.relative_to(workspace))
+
+
+_SNAPSHOT_DIRS = {
+    "native-source-blobs", "native-source-snapshots",
+    "native-output-blobs", "native-output-snapshots",
+}
+
+
+def native_output_inventory(workspace):
+    """Hash mutable measurement outputs without recursively archiving snapshots."""
+    base = workspace / "measurements"
+    return {
+        str(p.relative_to(workspace)): file_hash(p)
+        for p in base.rglob("*")
+        if p.is_file() and not p.is_symlink()
+        and p.relative_to(base).parts[0] not in _SNAPSHOT_DIRS
+    }
+
+
+def snapshot_native_outputs(workspace, before, report_path, source_digest, log_path, error):
+    """Retain fresh outputs before checking process exit or numeric qualification."""
+    files = {
+        name: workspace / name
+        for name, digest in native_output_inventory(workspace).items()
+        if before.get(name) != digest
+    }
+    if report_path.is_file() and not report_path.is_symlink():
+        files[str(report_path.relative_to(workspace))] = report_path
+        try:
+            report = json.loads(report_path.read_text())
+        except (OSError, ValueError, TypeError, AttributeError):
+            # Preserve malformed reports/partial traces too; the normal gate rejects them.
+            report = {}
+        artifacts = report.get("artifacts", []) if isinstance(report, dict) else []
+        for name in artifacts if isinstance(artifacts, list) else []:
+            if not isinstance(name, str):
+                continue
+            try:
+                relative = Path(name).relative_to("measurements")
+                artifact = inside(workspace / "measurements", str(relative))
+            except (ValueError, GateError):
+                continue
+            if (
+                relative.parts and relative.parts[0] not in _SNAPSHOT_DIRS
+                and artifact.is_file() and not artifact.is_symlink()
+            ):
+                files[name] = artifact
+    blob_root = workspace / "measurements/native-output-blobs"
+    blob_root.mkdir(parents=True, exist_ok=True)
+
+    def retain(source):
+        digest, size = file_hash(source), source.stat().st_size
+        # Keep text suffixes so the existing lossless public-copy compressor applies.
+        suffix = source.suffix if source.suffix in {".json", ".jsonl", ".log", ".txt"} else ".bin"
+        blob = blob_root / (digest + suffix)
+        temporary = None
+        try:
+            if not blob.exists():
+                with tempfile.NamedTemporaryFile(dir=blob_root, delete=False) as output:
+                    temporary = Path(output.name)
+                    with source.open("rb") as stream:
+                        shutil.copyfileobj(stream, output)
+                if file_hash(temporary) != digest or temporary.stat().st_size != size:
+                    raise GateError("native output changed during snapshot")
+                os.replace(temporary, blob)
+            if file_hash(blob) != digest or blob.stat().st_size != size:
+                raise GateError("native output snapshot is corrupt")
+        finally:
+            if temporary is not None:
+                temporary.unlink(missing_ok=True)
+        return {"sha256": digest, "bytes": size, "blob": str(blob.relative_to(workspace))}
+
+    record = {
+        "qualification": False,
+        "scope": "Exact command outputs before validation; not a physical pass",
+        "source_digest": source_digest,
+        "execution_error": error,
+        "files": {name: retain(path) for name, path in sorted(files.items())},
+        "log": retain(log_path) if log_path.is_file() else None,
+    }
+    target = workspace / "measurements/native-output-snapshots" / (uuid.uuid4().hex + ".json")
+    write_json(target, record)
     return str(target.relative_to(workspace))
