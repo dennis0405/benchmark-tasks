@@ -1,23 +1,24 @@
 {
-  "verdict": "pass",
+  "verdict": "repair",
   "findings": [
-    "The selected candidate addresses the prior failure: it no longer attributes GN 1130 safety instructions to EH 22350 and explicitly treats support-before-extraction as the benchmark’s tested condition rather than a manufacturer-specific prohibition.",
-    "The manufacturer datasheet visually and textually supports the EH 22350.0621 identity, movable shackle, spring-button mounting/removal sequence, H11 receiving bore, shaft tolerance, dimensions, directional load ratings, and 277 g mass.",
-    "The selected row is read correctly: d1=10.0 mm with −0.04/−0.08 mm tolerance, l1=15 mm, F1/F2/F3=2.7/2.4/2.1 kN, x=1.5–10 mm, location hole=10.0 mm H11, and mass=277 g.",
-    "The build plan now specifies usable collision geometry: a 9.94 mm shaft and 10.06 mm bore give 0.12 mm diametral clearance. Unpublished button travel, ball geometry, cam behavior, shoulder, workpiece, and fixture values are clearly disclosed as representative testable assumptions.",
-    "The proposed rigid-body mechanism preserves the essential physical ability—button-controlled radial retention, load transfer through the movable shackle, fixture seating, unloading, and complete pin recovery—and calls for native joints, colliders, and diagnostic controls without object-state writes or fake grasp welds.",
-    "The evidence supports attempting construction; completed physics trials, robot demonstrations, and novelty certification correctly remain later gates."
+    "The selected candidate is unambiguous and the primary catalog image verifies the key product rows: 14.5 in diameter × 2.5 in deep high-impact-polymer screens, #23209R 1/2 in screen, and #41316R 3/8 × 7/8 in angle-cut ceramic cylinders. The conversions to 368.3 × 63.5 mm, 12.7 mm, and 9.525 × 22.225 mm are correct.",
+    "The essential mechanism is credible but incompletely grounded: the source labels a “1/2 in Screen” and visually shows coarse square grids, but does not establish that #23209R has exactly 12.7 mm clear square apertures. The candidate must label aperture shape, clear width, bar thickness, and floor profile as testable modeling assumptions rather than “actual” dimensions.",
+    "Required physics assumptions remain unspecified despite the operator note identifying them: ceramic density/mass, angle-cut geometry, screen mass, bar thickness, friction/contact parameters, and the washer’s material/density or per-body mass. These materially control passage, bridging, agitation, damage, and YAM load feasibility and must be fixed or explicitly bounded before readiness is claimed.",
+    "The representative 30 mm OD × 8 mm bore × 4 mm washer is properly disclosed as an assumption and is retained by a 12.7 mm aperture, but its bore is smaller than the 9.525 mm media diameter by only 1.525 mm. The plan should explicitly validate that collision tolerances and the angle-cut ends cannot lodge in the bore, as required by the operator inspection.",
+    "The scoring contract is numerically inconsistent: a linear 0–70 recovery term gives 68.6 points at 98% recovery, so the stated full-score condition of “at least 98%” cannot yield 100 points without a defined threshold or normalization rule. Specify the exact formula and whether 98–100% maps to all 70 recovery points.",
+    "The source-backed industrial operation and sequence are sufficient to attempt construction: Raytech explicitly describes manual/powered screens configured for parts or media to pass, warns that excessive motion can damage uncushioned parts, and identifies washers as mass-finishing candidates. No completed physics or robot demo is required at this gate.",
+    "The pinned YAM constants support a 94 mm gripper opening, 240 Hz physics, and 10 Hz control, but the 368.3 mm screen’s bimanual rim grasp, support clearance, feed-cup access, and load remain construction risks rather than blockers once the missing masses and geometry assumptions are specified.",
+    "The prior “candidate selection ambiguous” failure is addressed by artifacts/selected.json selecting exactly one ready candidate; the additional entries in candidates.json are explicitly research-needed alternatives rather than competing selections."
   ],
   "evidence_paths": [
     "artifacts/selected.json",
     "artifacts/candidates.json",
     "input/last-failure.json",
-    "input/sources.json",
-    "input/sources/s-cdfde9d8db9d29dd.json",
-    "input/sources/s-cdfde9d8db9d29dd.raw",
-    "input/replacement-source-visuals/s-cdfde9d8db9d29dd-page-1.png",
-    "input/replacement-source-visuals/s-cdfde9d8db9d29dd-page-2.png",
     "input/operator-source-notes.json",
-    "input/revision-request.txt"
+    "input/media-separation-source-visuals/s-b442a7fa63fcb80c-page-21.png",
+    "input/sources/s-b442a7fa63fcb80c.json",
+    "input/sources/s-a3efcebbecba0048.json",
+    "input/sources/s-855e796b5a3f8ecc.json",
+    "input/request.json"
   ]
 }
