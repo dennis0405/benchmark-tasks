@@ -1,24 +1,24 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the failed loaded hard-mimic probe without weakening its criteria. The full ±0.005 N·m load, 240 Hz timestep, native filtered contact measurements, and 0.02 rad residual threshold remain unchanged. The coupon now models explicit combined screw-and-seated-tool rotor inertia while preserving the prior failed report and trace under their existing paths. Static Python compilation passed; native behavior remains unverified pending trusted-controller execution, so no qualification is claimed.",
+  "summary": "Repaired the failed constitutive probe without weakening frozen thresholds. The unsupported draft fixed-tendon coupling is replaced by the contract-permitted conservative thread law applied at PRE_PHYSICS_STEP through native articulation efforts. The probe measures callback timing, applied efforts, bidirectional plate reactions, unloaded baseline, law/contact agreement, torque transfer, and raw native traces. Static compilation passed; native GPU behavior remains unverified pending trusted-controller execution, so no qualification is claimed.",
   "scripts": [
     {
-      "id": "mimic-contact-inertia-preflight",
-      "script": "task/run_mimic_contact_probe.py",
+      "id": "conservative-thread-contact-preflight",
+      "script": "task/run_conservative_thread_contact_probe.py",
       "args": [
         "--device",
         "cuda:0",
         "--visualizer",
         "none",
         "--output",
-        "../measurements/mimic-contact-inertia-preflight.json",
+        "../measurements/conservative-thread-contact-preflight.json",
         "--trace",
-        "../measurements/mimic-contact-inertia-preflight-trace.json"
+        "../measurements/conservative-thread-contact-preflight-trace.json"
       ],
-      "report": "measurements/mimic-contact-inertia-preflight.json"
+      "report": "measurements/conservative-thread-contact-preflight.json"
     }
   ],
   "files": [
-    "task/run_mimic_contact_probe.py"
+    "task/run_conservative_thread_contact_probe.py"
   ]
 }

@@ -20,7 +20,7 @@ Status: **blocked**
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 
 
-failed check loaded_helix_residual_max: 0.07066107502708792 <= 0.02
+failed check pre_physics_callback_dt: 0.004166666883975267 == 0.004166666666666667
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`

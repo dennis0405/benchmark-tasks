@@ -1,22 +1,20 @@
 {
   "verdict": "pass",
   "findings": [
-    "The repaired discovery probe preserves the frozen ±0.005 N·m load, 240 Hz timestep, native filtered contact measurements, and 0.02 rad loaded helical-residual threshold.",
-    "The 1.0e-5 kg·m² rotor inertia is consistent with the authored 9.0e-6 kg·m² hex-driver axial inertia plus the prior 1.0e-6 kg·m² diagnostic-link inertia; it does not weaken the acceptance criterion.",
-    "Only the carrier has collision geometry, so the two filtered plate contacts form the observable load path without hidden frame or rotor contacts.",
-    "The probe records fresh native DOF states, commanded effort, pairwise forces, net force, and per-patch contact data after every physics step, with bidirectional load, sign-reversal, force/impulse scaling, ideal-force ratio, finite-state, and sample-count checks.",
-    "Reports retain a fresh trial ID and source digest, are written before check-triggered failure, and explicitly keep qualification=false; the code claims only isolated loaded-mimic/contact discovery, not environment qualification or task success.",
-    "The planned workspace-relative output paths resolve correctly from workspace/task, the pinned tensor and schema snapshots match their indexed SHA-256 digests, and static source compilation succeeds."
+    "The planned program is an honest, bounded native discovery probe; it keeps qualification=false and does not claim environment or task success.",
+    "The repair replaces the unsupported fixed-tendon mechanism with the frozen eS elastic/damping law, applies its correct generalized axial force and p-scaled torque through native PRE_PHYSICS_STEP efforts, and measures reactions independently from native plate contacts.",
+    "The previous unloaded-baseline failure is directly retested using three released windows while preserving the frozen <=0.1 ratio threshold; no result is fabricated or assumed before execution.",
+    "Bidirectional load, sign reversal, nonzero denominators, applied-effort agreement, detailed contact reconstruction, force/impulse scaling, callback timing, finite state, release baseline, and source/trial linkage are all fail-closed and derived from native samples.",
+    "The script and report paths match the executor context, and the used articulation, contact-view, and callback APIs agree with the hash-indexed pinned runtime sources. Native behavior remains correctly pending controller execution."
   ],
   "evidence_paths": [
     "artifacts/component-source-plan.json",
-    "task/run_mimic_contact_probe.py",
+    "task/run_conservative_thread_contact_probe.py",
     "input/last-failure.json",
     "artifacts/contract.json",
+    "input/fixture-geometry-contract.json",
     "input/runtime-api-preflight.json",
-    "input/first-party-seeds/drg80_stop/assets/geometry.json",
     "input/pinned-runtime-sources/1ba654210857a63b98236512e5f225723c3eb1dee64e867eaa4fade0578ccb7b-tensors-api.py",
-    "input/pinned-runtime-sources/4a7638c3890522bbe7c25600c0090e6cb7f403550ccb8be7641bf84034213b83-generatedSchema.usda",
-    "measurements/mimic-contact-preflight.json"
+    "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py"
   ]
 }
