@@ -1,19 +1,22 @@
 {
   "verdict": "pass",
   "findings": [
-    "The planned program is a complete, bounded native discovery probe, not an unfinished aggregate or qualification substitute.",
-    "It applies real generalized rotor torque, finite native axial restraint, and records fresh 240 Hz DOF, projected-force, actuation-force, and body-transform samples across zero, positive, negative, and release phases.",
-    "Checks cover finite native state, actual timestep, articulation/body topology, restraint motion, helical coupling residual, signed reaction reversal, and reciprocal effort magnitude; the report explicitly sets qualification=false.",
-    "Failure handling writes an explicit failed completion report, addressing the prior missing native_probe_completed outcome without fabricating measurements.",
-    "No fixture, contact, preload, scorer, YAM, or full-task qualification is claimed; those remain for later native stages."
+    "The repaired discovery probe preserves the frozen ±0.005 N·m load, 240 Hz timestep, native filtered contact measurements, and 0.02 rad loaded helical-residual threshold.",
+    "The 1.0e-5 kg·m² rotor inertia is consistent with the authored 9.0e-6 kg·m² hex-driver axial inertia plus the prior 1.0e-6 kg·m² diagnostic-link inertia; it does not weaken the acceptance criterion.",
+    "Only the carrier has collision geometry, so the two filtered plate contacts form the observable load path without hidden frame or rotor contacts.",
+    "The probe records fresh native DOF states, commanded effort, pairwise forces, net force, and per-patch contact data after every physics step, with bidirectional load, sign-reversal, force/impulse scaling, ideal-force ratio, finite-state, and sample-count checks.",
+    "Reports retain a fresh trial ID and source digest, are written before check-triggered failure, and explicitly keep qualification=false; the code claims only isolated loaded-mimic/contact discovery, not environment qualification or task success.",
+    "The planned workspace-relative output paths resolve correctly from workspace/task, the pinned tensor and schema snapshots match their indexed SHA-256 digests, and static source compilation succeeds."
   ],
   "evidence_paths": [
     "artifacts/component-source-plan.json",
-    "task/run_mimic_reaction_probe.py",
+    "task/run_mimic_contact_probe.py",
     "input/last-failure.json",
+    "artifacts/contract.json",
     "input/runtime-api-preflight.json",
+    "input/first-party-seeds/drg80_stop/assets/geometry.json",
     "input/pinned-runtime-sources/1ba654210857a63b98236512e5f225723c3eb1dee64e867eaa4fade0578ccb7b-tensors-api.py",
     "input/pinned-runtime-sources/4a7638c3890522bbe7c25600c0090e6cb7f403550ccb8be7641bf84034213b83-generatedSchema.usda",
-    "measurements/mimic-api-preflight.json"
+    "measurements/mimic-contact-preflight.json"
   ]
 }

@@ -1,24 +1,24 @@
 {
   "phase": "preflight",
-  "summary": "Added a complete bounded native reaction probe. It tests whether the previously validated GPU mimic coupling transmits signed rotor torque into reciprocal axial projected force under finite native restraint. Static compilation passed; trusted-controller execution is required. No fixture, contact, preload, YAM, or qualification claim is made.",
+  "summary": "Repaired the failed loaded hard-mimic probe without weakening its criteria. The full ±0.005 N·m load, 240 Hz timestep, native filtered contact measurements, and 0.02 rad residual threshold remain unchanged. The coupon now models explicit combined screw-and-seated-tool rotor inertia while preserving the prior failed report and trace under their existing paths. Static Python compilation passed; native behavior remains unverified pending trusted-controller execution, so no qualification is claimed.",
   "scripts": [
     {
-      "id": "mimic-reaction-preflight",
-      "script": "task/run_mimic_reaction_probe.py",
+      "id": "mimic-contact-inertia-preflight",
+      "script": "task/run_mimic_contact_probe.py",
       "args": [
         "--device",
         "cuda:0",
         "--visualizer",
         "none",
         "--output",
-        "../measurements/mimic-reaction-preflight.json",
+        "../measurements/mimic-contact-inertia-preflight.json",
         "--trace",
-        "../measurements/mimic-reaction-preflight-trace.json"
+        "../measurements/mimic-contact-inertia-preflight-trace.json"
       ],
-      "report": "measurements/mimic-reaction-preflight.json"
+      "report": "measurements/mimic-contact-inertia-preflight.json"
     }
   ],
   "files": [
-    "task/run_mimic_reaction_probe.py"
+    "task/run_mimic_contact_probe.py"
   ]
 }
