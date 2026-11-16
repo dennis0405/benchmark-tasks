@@ -61,7 +61,7 @@ Status: **blocked**
 9. review report.html, release-manifest digest와 실제 영상으로 사용자 검토. 구체적 검토 버전의 별도 승인 전 공식 미디어 업로드/대회 PR/최종 제출은 하지 않는다.
 
 
-failed check unmapped_or_ambiguous_raw_contact_points: 737 == 0
+worker paused at stage boundary
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`

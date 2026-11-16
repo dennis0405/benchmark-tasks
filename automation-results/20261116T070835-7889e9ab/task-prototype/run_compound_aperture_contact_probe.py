@@ -2,7 +2,8 @@
 
 This bounded repair asks only whether the supported ceramic medium and the
 four-collider aperture rigid body produce populated raw contact points, and
-whether those world points can be mapped back into the authored rib footprints.
+whether positive-force contacts can be mapped back into the authored 3-D rib
+collision boxes without assigning seam-ambiguous contacts to either rib.
 This static diagnostic validates point/count/start-index semantics and a known
 supported fixture only.  It does not establish moving-screen support loss,
 aperture passage, continuous swept clearance, or frozen qualification.
@@ -136,15 +137,22 @@ def main():
     matrix_device = ""
     matrix_shape = []
     raw_device = ""
-    populated_raw_samples = mapped_raw_points = unmapped_raw_points = 0
+    populated_raw_samples = unique_raw_points = ambiguous_raw_points = unmapped_raw_points = 0
+    positive_raw_points = zero_force_raw_points = 0
+    accounted_raw_points = total_raw_points = 0
+    zero_force_support_candidates = 0
+    support_force_magnitudes = []
+    no_pair_force_samples = no_pair_force_samples_with_support = 0
     two_rib_consecutive = max_two_rib_consecutive = 0
     maximum_count = 0
+    raw_capacity = int(sensor.contact_view.max_contact_data_count)
+    saturated_raw_samples = invalid_populated_contacts = invalid_populated_values = 0
     side = (PATCH - APERTURE) / 2
     rib_specs = [
-        (-(APERTURE + side) / 2, 0.0, side, PATCH),
-        ((APERTURE + side) / 2, 0.0, side, PATCH),
-        (0.0, -(APERTURE + side) / 2, APERTURE, side),
-        (0.0, (APERTURE + side) / 2, APERTURE, side),
+        (np.array((-(APERTURE + side) / 2, 0.0, -FLOOR_T / 2)), np.array((side, PATCH, FLOOR_T))),
+        (np.array(((APERTURE + side) / 2, 0.0, -FLOOR_T / 2)), np.array((side, PATCH, FLOOR_T))),
+        (np.array((0.0, -(APERTURE + side) / 2, -FLOOR_T / 2)), np.array((APERTURE, side, FLOOR_T))),
+        (np.array((0.0, (APERTURE + side) / 2, -FLOOR_T / 2)), np.array((APERTURE, side, FLOOR_T))),
     ]
     for step in range(steps):
         sim.step(render=False)
@@ -157,6 +165,7 @@ def main():
         magnitude = float(torch.linalg.vector_norm(force).cpu())
         max_force = max(max_force, magnitude)
         touching = magnitude > 1.0e-6
+        pair_positive = magnitude > 1.0e-9
         if touching:
             contact_samples += 1
             consecutive += 1
@@ -173,7 +182,9 @@ def main():
         # ``.torch``.  Copy only the current-step buffers to the host after the
         # backend has populated them; retain the native device readback as a
         # separate check.
+        raw_force_np = raw_force.numpy()
         raw_points_np = raw_points.numpy()
+        raw_normals_np = raw_normals.numpy()
         raw_separations_np = raw_separations.numpy()
         counts_np = counts.numpy()
         starts_np = starts.numpy()
@@ -182,28 +193,80 @@ def main():
         count = int(counts_np[0, 0])
         start = int(starts_np[0, 0])
         maximum_count = max(maximum_count, count)
+        if count >= raw_capacity:
+            saturated_raw_samples += 1
         if start < 0 or count < 0 or start + count > int(raw_points_np.shape[0]):
             raise RuntimeError(f"invalid contact slice start={start} count={count} capacity={raw_points_np.shape[0]}")
         points = raw_points_np[start:start + count].astype(float)
+        contact_forces = raw_force_np[start:start + count].astype(float)
+        normals = raw_normals_np[start:start + count].astype(float)
         separations = raw_separations_np[start:start + count].reshape(-1).astype(float)
         rib_ids = set()
         mapped = []
-        for point, separation in zip(points, separations, strict=True):
+        total_raw_points += count
+        for point, contact_force, normal, separation in zip(
+                points, contact_forces, normals, separations, strict=True):
+            finite_fields = {
+                "point": bool(np.all(np.isfinite(point))),
+                "force": bool(np.all(np.isfinite(contact_force))),
+                "normal": bool(np.all(np.isfinite(normal))),
+                "separation": bool(np.isfinite(separation)),
+            }
+            invalid_field_count = sum(not value for value in finite_fields.values())
+            if invalid_field_count:
+                invalid_populated_contacts += 1
+                invalid_populated_values += invalid_field_count
             local = point - np.array((0.0, 0.0, ROOT_Z))
             candidates = []
-            for rib_id, (cx, cy, sx, sy) in enumerate(rib_specs):
-                if abs(local[0] - cx) <= sx / 2 + 5.0e-4 and abs(local[1] - cy) <= sy / 2 + 5.0e-4:
+            mapping_band = 5.0e-4
+            for rib_id, (center, size) in enumerate(rib_specs):
+                half = size / 2
+                offset = np.abs(local - center)
+                inside_expanded_box = bool(np.all(offset <= half + mapping_band))
+                # A manifold point attributable to this collider must also be
+                # near one of its six physical faces.  The former XY-only test
+                # incorrectly accepted points at unrelated heights.
+                face_distance = float(np.min(np.abs(offset - half)))
+                if invalid_field_count == 0 and inside_expanded_box and face_distance <= mapping_band:
                     candidates.append(rib_id)
-            # Rib footprints do not overlap except at numerical boundary bands.
-            # Ambiguous/unmapped points are retained as failures, never guessed.
+            force_values = np.asarray(contact_force, dtype=float).reshape(-1)
+            if force_values.size != 1:
+                raise RuntimeError(f"unexpected per-contact normal-force shape {force_values.shape}")
+            normal_force = float(force_values[0])
+            positive_force = normal_force > 1.0e-9
             rib_id = candidates[0] if len(candidates) == 1 else None
-            if rib_id is None:
-                unmapped_raw_points += 1
+            if len(candidates) == 1:
+                classification = "unique"
+                unique_raw_points += 1
+            elif len(candidates) > 1:
+                classification = "ambiguous"
+                ambiguous_raw_points += 1
             else:
-                mapped_raw_points += 1
+                classification = "unmapped"
+                unmapped_raw_points += 1
+            accounted_raw_points += 1
+            if positive_force:
+                positive_raw_points += 1
+            else:
+                zero_force_raw_points += 1
+            # Only uniquely attributed, positive-force contacts establish
+            # physical support.  Speculative/cached zero-force contacts and
+            # seam points remain in the trace but contribute no rib identity.
+            if rib_id is not None and positive_force:
                 rib_ids.add(rib_id)
-            mapped.append({"point_w_m": point.tolist(), "separation_m": float(separation),
-                           "candidate_rib_ids": candidates, "mapped_rib_id": rib_id})
+                support_force_magnitudes.append(normal_force)
+            elif rib_id is not None:
+                zero_force_support_candidates += 1
+            mapped.append({"point_w_m": [float(v) if np.isfinite(v) else None for v in point],
+                           "separation_m": float(separation) if np.isfinite(separation) else None,
+                           "normal_force_N": normal_force if np.isfinite(normal_force) else None,
+                           "normal_w": [float(v) if np.isfinite(v) else None
+                                        for v in np.asarray(normal, dtype=float).reshape(-1)],
+                           "positive_force": positive_force,
+                           "finite_fields": finite_fields,
+                           "classification": classification,
+                           "candidate_rib_ids": candidates, "mapped_rib_id": rib_id,
+                           "support_rib_id": rib_id if positive_force else None})
         if count > 0:
             populated_raw_samples += 1
         if len(rib_ids) >= 2:
@@ -211,6 +274,10 @@ def main():
             max_two_rib_consecutive = max(max_two_rib_consecutive, two_rib_consecutive)
         else:
             two_rib_consecutive = 0
+        if not pair_positive:
+            no_pair_force_samples += 1
+            if rib_ids:
+                no_pair_force_samples_with_support += 1
         if count > 0 or step % max(1, args.physics_hz // 20) == 0:
             detailed_samples.append({"step": step + 1, "count": count, "start_index": start,
                                      "mapped_distinct_rib_ids": sorted(rib_ids), "contacts": mapped})
@@ -220,12 +287,29 @@ def main():
     workspace = Path(__file__).resolve().parent.parent
     trace_path.write_text(json.dumps({
         "scope": "static compound aperture raw contact-point mapping discovery only",
-        "individual_rib_identity_method": "world contact point transformed into fixed aperture frame and uniquely contained by authored rib footprint plus 0.5 mm numerical mapping band",
+        "individual_rib_identity_method": "world contact point transformed into the native aperture frame and uniquely matched to an authored 3-D rib collision-box face within the frozen 0.5 mm numerical band; only positive raw force is support",
         "physics_sample_rate_hz": args.physics_hz,
         "force_matrix_device": matrix_device,
         "force_matrix_shape": matrix_shape,
         "raw_contact_device": raw_device,
-        "raw_contact_capacity": int(sensor.contact_view.max_contact_data_count),
+        "raw_contact_capacity": raw_capacity,
+        "raw_contact_accounting": {
+            "total": total_raw_points,
+            "unique": unique_raw_points,
+            "ambiguous": ambiguous_raw_points,
+            "unmapped": unmapped_raw_points,
+            "positive_force": positive_raw_points,
+            "zero_force": zero_force_raw_points,
+            "unique_zero_force_excluded_from_support": zero_force_support_candidates,
+            "invalid_populated_contacts": invalid_populated_contacts,
+            "invalid_populated_fields": invalid_populated_values,
+            "saturated_samples": saturated_raw_samples,
+        },
+        "two_rib_support_intervals": {
+            "terminal_consecutive_completed_samples": two_rib_consecutive,
+            "historical_maximum_consecutive_completed_samples": max_two_rib_consecutive,
+            "required_terminal_completed_samples": int(round(0.5 * args.physics_hz)),
+        },
         "sampled_positions_m": positions,
         "sampled_forces": forces,
         "detailed_contact_samples": detailed_samples,
@@ -239,10 +323,20 @@ def main():
             {"name": "maximum_consecutive_compound_pair_contact_samples", "measured": max_consecutive, "operator": ">=", "threshold": 12, "unit": "completed_physics_samples"},
             {"name": "maximum_observed_compound_pair_force", "measured": max_force, "operator": ">", "threshold": 0.0, "unit": "N"},
             {"name": "populated_raw_contact_samples", "measured": populated_raw_samples, "operator": ">", "threshold": 0, "unit": "completed_physics_samples"},
-            {"name": "mapped_raw_contact_points", "measured": mapped_raw_points, "operator": ">", "threshold": 0, "unit": "points"},
-            {"name": "unmapped_or_ambiguous_raw_contact_points", "measured": unmapped_raw_points, "operator": "==", "threshold": 0, "unit": "points"},
+            {"name": "uniquely_mapped_raw_contact_points", "measured": unique_raw_points, "operator": ">", "threshold": 0, "unit": "points"},
+            {"name": "positive_force_raw_contact_points", "measured": positive_raw_points, "operator": ">", "threshold": 0, "unit": "points"},
+            {"name": "raw_contact_accounting_difference", "measured": abs(total_raw_points - accounted_raw_points), "operator": "==", "threshold": 0, "unit": "points"},
+            {"name": "raw_contact_classification_sum_difference", "measured": abs(total_raw_points - unique_raw_points - ambiguous_raw_points - unmapped_raw_points), "operator": "==", "threshold": 0, "unit": "points"},
+            {"name": "invalid_populated_raw_contact_fields", "measured": invalid_populated_values, "operator": "==", "threshold": 0, "unit": "fields"},
+            {"name": "invalid_populated_raw_contacts", "measured": invalid_populated_contacts, "operator": "==", "threshold": 0, "unit": "contacts"},
+            {"name": "nonpositive_force_contacts_counted_as_support", "measured": sum(value <= 1.0e-9 for value in support_force_magnitudes), "operator": "==", "threshold": 0, "unit": "points"},
+            {"name": "sampled_nonpositive_pair_force_samples", "measured": no_pair_force_samples, "operator": ">", "threshold": 0, "unit": "completed_physics_samples"},
+            {"name": "sampled_nonpositive_pair_force_samples_with_support", "measured": no_pair_force_samples_with_support, "operator": "==", "threshold": 0, "unit": "completed_physics_samples"},
             {"name": "maximum_raw_contacts_in_one_sample", "measured": maximum_count, "operator": ">", "threshold": 0, "unit": "points"},
-            {"name": "maximum_consecutive_two_distinct_mapped_rib_samples", "measured": max_two_rib_consecutive, "operator": ">=", "threshold": int(round(0.5 * args.physics_hz)), "unit": "completed_physics_samples"},
+            {"name": "raw_contact_buffer_saturated_samples", "measured": saturated_raw_samples, "operator": "==", "threshold": 0, "unit": "completed_physics_samples"},
+            {"name": "maximum_raw_contacts_strictly_below_capacity", "measured": maximum_count, "operator": "<", "threshold": raw_capacity, "unit": "points"},
+            {"name": "terminal_consecutive_two_distinct_positive_force_rib_samples", "measured": two_rib_consecutive, "operator": ">=", "threshold": int(round(0.5 * args.physics_hz)), "unit": "completed_physics_samples"},
+            {"name": "historical_maximum_consecutive_two_distinct_positive_force_rib_samples", "measured": max_two_rib_consecutive, "operator": ">=", "threshold": int(round(0.5 * args.physics_hz)), "unit": "completed_physics_samples"},
             {"name": "fresh_physics_sample_count", "measured": steps, "operator": "==", "threshold": steps, "unit": "completed_physics_samples"},
         ],
         "artifacts": [trace_path.relative_to(workspace).as_posix()],

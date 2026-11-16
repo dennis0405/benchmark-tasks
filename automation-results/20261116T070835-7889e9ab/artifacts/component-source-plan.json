@@ -1,6 +1,6 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the host-execution failure in the bounded native raw-contact probe. The pinned RigidContactView API returns Warp arrays, so the script now uses the documented native `.numpy()` transfer and device readback instead of the invalid ProxyArray-only `.torch` accessor. Static compilation passed. This probe covers populated contact slices and distinct-rib point mapping only; native GPU execution remains required and no full-environment qualification is claimed.",
+  "summary": "Repaired the bounded static compound-aperture contact probe. Qualification now requires the terminal consecutive two-rib support count to satisfy the fresh 0.5 s threshold, so later support loss revokes the pass. The terminal and historical maximum counts are reported separately in both the measurement checks and trace. Frozen geometry and criteria are unchanged. Python compilation passes; native GPU reruns are required for fresh measurements. No full environment or qualification claim is made.",
   "scripts": [
     {
       "id": "compound_raw_contact_points_240hz",

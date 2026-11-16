@@ -3437,5 +3437,411 @@
       }
     ],
     "at": "2026-11-16T18:28:47.880936+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Repaired the bounded raw-contact probe after the reviewed failure. It now rejects buffer saturation, validates finiteness of every populated point/force/normal/separation field, preserves invalid/ambiguous/unmapped contacts without counting them as support, and accurately labels the sampled nonpositive-force consistency check. The frozen two-distinct-rib 0.5 s criterion is unchanged. Syntax compilation passed; native GPU execution remains for the trusted controller.",
+      "scripts": [
+        {
+          "id": "compound_raw_contact_points_240hz",
+          "script": "task/run_compound_aperture_contact_probe.py",
+          "args": [
+            "--physics-hz",
+            "240",
+            "--report",
+            "../measurements/compound-raw-contact-points-240hz.json"
+          ],
+          "report": "measurements/compound-raw-contact-points-240hz.json"
+        },
+        {
+          "id": "compound_raw_contact_points_480hz",
+          "script": "task/run_compound_aperture_contact_probe.py",
+          "args": [
+            "--physics-hz",
+            "480",
+            "--report",
+            "../measurements/compound-raw-contact-points-480hz.json"
+          ],
+          "report": "measurements/compound-raw-contact-points-480hz.json"
+        }
+      ],
+      "files": [
+        "task/run_compound_aperture_contact_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The generated probe resolves the prior review failures: it rejects raw-contact buffer saturation, validates finiteness of every populated contact field, preserves complete unique/ambiguous/unmapped accounting, and excludes ambiguous, unmapped, invalid, and nonpositive-force contacts from rib support.",
+        "The frozen support requirement remains a fresh 0.5-second dwell on at least two distinct, uniquely identified ribs at both 240 Hz and 480 Hz; no rotation proxy, peak-only contact, constant success value, or altered criterion is used.",
+        "The probe is correctly scoped as static component discovery and does not claim moving-aperture, swept-clearance, production scorer, robot-demo, or full-environment qualification. Native results are appropriately deferred to controller execution.",
+        "Planned report paths are workspace-relative under the executor contract, and the detailed trace retains contact points, normals, separations, forces, classifications, candidate rib identities, and sample-rate metadata."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_compound_aperture_contact_probe.py",
+        "input/last-failure.json",
+        "input/runtime-api-preflight.json",
+        "input/pinned-runtime-sources/000dde649a8b270af0f7102fff67a51abc1a2ff359fa3179f52830d5b83fde80-contact_sensor.py",
+        "input/pinned-runtime-sources/1ba654210857a63b98236512e5f225723c3eb1dee64e867eaa4fade0578ccb7b-physics-tensors-api.py"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_compound_aperture_contact_probe.py",
+          "--physics-hz",
+          "240",
+          "--report",
+          "../measurements/compound-raw-contact-points-240hz.json"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/compound_raw_contact_points_240hz-fd251dab01.log",
+        "finished_at": "2026-11-16T18:46:10.015237+00:00",
+        "id": "compound_raw_contact_points_240hz",
+        "report": "measurements/compound-raw-contact-points-240hz.json",
+        "report_sha256": "151c398b0209a3fb57371605dbd6484255ee9fadabaaa8deda34cf550bbd8d83",
+        "source_digest": "0e6b7d4609b0d424b75542d0760051227061333cc56c952232bb674efb2329c2",
+        "source_snapshot": "measurements/native-source-snapshots/0e6b7d4609b0d424b75542d0760051227061333cc56c952232bb674efb2329c2.json",
+        "output_snapshot": "measurements/native-output-snapshots/2edcf55d98df4549aec58837f30663aa.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_compound_aperture_contact_probe.cpython-312.pyc"
+        ],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "cuda_backed_compound_pair_contact_matrix",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "cuda_backed_raw_contact_points",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "positive_compound_aperture_medium_contact_samples",
+              "measured": 717,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_consecutive_compound_pair_contact_samples",
+              "measured": 707,
+              "operator": ">=",
+              "threshold": 12,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_observed_compound_pair_force",
+              "measured": 0.261753648519516,
+              "operator": ">",
+              "threshold": 0.0,
+              "unit": "N"
+            },
+            {
+              "name": "populated_raw_contact_samples",
+              "measured": 718,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "uniquely_mapped_raw_contact_points",
+              "measured": 3542,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "points"
+            },
+            {
+              "name": "positive_force_raw_contact_points",
+              "measured": 2121,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "points"
+            },
+            {
+              "name": "raw_contact_accounting_difference",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "points"
+            },
+            {
+              "name": "raw_contact_classification_sum_difference",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "points"
+            },
+            {
+              "name": "invalid_populated_raw_contact_fields",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "fields"
+            },
+            {
+              "name": "invalid_populated_raw_contacts",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "contacts"
+            },
+            {
+              "name": "nonpositive_force_contacts_counted_as_support",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "points"
+            },
+            {
+              "name": "sampled_nonpositive_pair_force_samples",
+              "measured": 3,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "sampled_nonpositive_pair_force_samples_with_support",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_raw_contacts_in_one_sample",
+              "measured": 7,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "points"
+            },
+            {
+              "name": "raw_contact_buffer_saturated_samples",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_raw_contacts_strictly_below_capacity",
+              "measured": 7,
+              "operator": "<",
+              "threshold": 32,
+              "unit": "points"
+            },
+            {
+              "name": "maximum_consecutive_two_distinct_positive_force_rib_samples",
+              "measured": 704,
+              "operator": ">=",
+              "threshold": 120,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "fresh_physics_sample_count",
+              "measured": 720,
+              "operator": "==",
+              "threshold": 720,
+              "unit": "completed_physics_samples"
+            }
+          ],
+          "artifacts": [
+            "measurements/compound-raw-contact-points-240hz-trace.json"
+          ]
+        }
+      },
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_compound_aperture_contact_probe.py",
+          "--physics-hz",
+          "480",
+          "--report",
+          "../measurements/compound-raw-contact-points-480hz.json"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/compound_raw_contact_points_480hz-8801506c0b.log",
+        "finished_at": "2026-11-16T18:46:19.282835+00:00",
+        "id": "compound_raw_contact_points_480hz",
+        "report": "measurements/compound-raw-contact-points-480hz.json",
+        "report_sha256": "b921ec01c15a5f8343e81f7cae32d216df8b234fc5a87ea6c23278d9b16df697",
+        "source_digest": "0e6b7d4609b0d424b75542d0760051227061333cc56c952232bb674efb2329c2",
+        "source_snapshot": "measurements/native-source-snapshots/0e6b7d4609b0d424b75542d0760051227061333cc56c952232bb674efb2329c2.json",
+        "output_snapshot": "measurements/native-output-snapshots/f0f83b277176455fbbd4c5a6c9d8cfb3.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "checks": [
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "s"
+            },
+            {
+              "name": "cuda_backed_compound_pair_contact_matrix",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "cuda_backed_raw_contact_points",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "bool"
+            },
+            {
+              "name": "positive_compound_aperture_medium_contact_samples",
+              "measured": 1432,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_consecutive_compound_pair_contact_samples",
+              "measured": 1413,
+              "operator": ">=",
+              "threshold": 12,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_observed_compound_pair_force",
+              "measured": 0.46544596552848816,
+              "operator": ">",
+              "threshold": 0.0,
+              "unit": "N"
+            },
+            {
+              "name": "populated_raw_contact_samples",
+              "measured": 1435,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "uniquely_mapped_raw_contact_points",
+              "measured": 5696,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "points"
+            },
+            {
+              "name": "positive_force_raw_contact_points",
+              "measured": 5669,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "points"
+            },
+            {
+              "name": "raw_contact_accounting_difference",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "points"
+            },
+            {
+              "name": "raw_contact_classification_sum_difference",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "points"
+            },
+            {
+              "name": "invalid_populated_raw_contact_fields",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "fields"
+            },
+            {
+              "name": "invalid_populated_raw_contacts",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "contacts"
+            },
+            {
+              "name": "nonpositive_force_contacts_counted_as_support",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "points"
+            },
+            {
+              "name": "sampled_nonpositive_pair_force_samples",
+              "measured": 8,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "sampled_nonpositive_pair_force_samples_with_support",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_raw_contacts_in_one_sample",
+              "measured": 7,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "points"
+            },
+            {
+              "name": "raw_contact_buffer_saturated_samples",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "maximum_raw_contacts_strictly_below_capacity",
+              "measured": 7,
+              "operator": "<",
+              "threshold": 32,
+              "unit": "points"
+            },
+            {
+              "name": "maximum_consecutive_two_distinct_positive_force_rib_samples",
+              "measured": 1406,
+              "operator": ">=",
+              "threshold": 240,
+              "unit": "completed_physics_samples"
+            },
+            {
+              "name": "fresh_physics_sample_count",
+              "measured": 1440,
+              "operator": "==",
+              "threshold": 1440,
+              "unit": "completed_physics_samples"
+            }
+          ],
+          "artifacts": [
+            "measurements/compound-raw-contact-points-480hz-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-16T18:46:19.451766+00:00"
   }
 ]
