@@ -166,6 +166,59 @@ class GitHub:
             endpoint + ("&" if "?" in endpoint else "?") + "per_page=100&page=1", fetch
         )
 
+    def draft_documents(self, repo, pr, files):
+        """Retain original draft objective/physics/rubric; never fabricate task.json."""
+        import base64
+
+        head_repo = pr["head"].get("repo")
+        if not head_repo:
+            raise CatalogError("draft head repository deleted")
+        folders = sorted(
+            {
+                str(Path(f["filename"]).parent)
+                for f in files
+                if f["filename"].startswith("tasks/") and f["filename"].endswith("/task.py")
+            }
+        )
+        if not folders:
+            raise CatalogError("draft has no task implementation")
+        revisions = self.pages(
+            f"repos/{repo}/pulls/{pr['number']}/commits",
+            cached=True,
+            revision=pr["head"]["sha"],
+        )
+        if len(revisions) >= 250:
+            raise CatalogError("draft commit history may be truncated")
+        shas = list(dict.fromkeys([c["sha"] for c in revisions] + [pr["head"]["sha"]]))
+        documents = []
+        for sha in shas:
+            for folder in folders:
+                for name in ("README.md", "task.py", "scoring.py"):
+                    path = folder + "/" + name
+                    try:
+                        blob = self.get(
+                            f"repos/{head_repo['full_name']}/contents/{path}?ref={sha}",
+                            cached=True,
+                        )
+                        raw = base64.b64decode(blob["content"])
+                        if not raw.strip() or len(raw) > 1024 * 1024:
+                            raise CatalogError("draft source empty or too large: " + path)
+                        text = raw.decode("utf-8")
+                    except (CatalogError, KeyError, ValueError, UnicodeError):
+                        if sha == pr["head"]["sha"]:
+                            raise CatalogError("head draft source missing: " + path) from None
+                        continue  # A source may be introduced in a later commit.
+                    documents.append(
+                        {
+                            "sha": sha,
+                            "path": path,
+                            "text": text,
+                            "sha256": hashlib.sha256(raw).hexdigest(),
+                            "url": f"https://github.com/{head_repo['full_name']}/blob/{sha}/{path}",
+                        }
+                    )
+        return documents
+
     def sync(self, repo="robocurve/benchmark-tasks", own_authors=()):
         started = now()
         pulls = self.pages(f"repos/{repo}/pulls?state=all&sort=created&direction=asc")
@@ -187,6 +240,7 @@ class GitHub:
                 else "closed",
                 "own_team": pr["user"]["login"] in own_authors,
                 "head_sha": pr["head"]["sha"],
+                "draft": bool(pr.get("draft")),
                 "merged_at": pr.get("merged_at", "unknown"),
                 "board_required": None,  # Unknown until authenticated board reconciliation.
                 "specs": [],
@@ -205,6 +259,13 @@ class GitHub:
                         if not any(f["filename"].startswith("tasks/") for f in files):
                             record["excluded_detail_reason"] = (
                                 "non-task PR; metadata still compared"
+                            )
+                            records.append(record)
+                            continue
+                        if pr.get("draft") and pr["state"] == "open":
+                            record["source_documents"] = self.draft_documents(repo, pr, files)
+                            record["detail_format"] = (
+                                "original-draft-documents; no formal task.json"
                             )
                             records.append(record)
                             continue
