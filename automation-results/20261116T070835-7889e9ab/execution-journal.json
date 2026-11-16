@@ -5,7 +5,7 @@
     "instance": "robocurve-conveyor",
     "created_at": "2026-11-16T07:08:35.696140+00:00",
     "status": "blocked",
-    "stage": "environment",
+    "stage": "contract",
     "mode": "production",
     "config": {
       "instance": "robocurve-conveyor",
@@ -51,7 +51,7 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 44302,
+    "supervisor_pid": 54350,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log",
     "compute": "running",
     "migration": {
@@ -85,15 +85,15 @@
       "tool_write_verified": true,
       "production_task_validated": false
     },
-    "revision": 29,
-    "revision_request": "같은 체 분리run/branch에서진행. 이번첫작업은 input/operator-source-notes.json 맨앞 operator_required_native_pose_repair_v29의patch를baseline SHA확인후적용하는것이다. 적용전 native재실행금지. 변경대상은관측함수tip_paths_and_positions와두caller, 실제fingertip변화검사뿐이다. 현재함수는USD XformCache로정적인초기좌표를읽는다.285프레임모두4손끝좌표가정확히같았고, retreat/window를바꾼뒤에도releaseclearance가정확히0.029137018563402298m로반복됐다. 손을더멀리움직이거나0.06m기준을줄여해결할문제가아니다. 실제Articulation.data.body_link_pos_w.torch와verifiedbody_names를사용하는제공patch를먼저적용한다. 본문threshold/물리장면/실제동작/접촉조건은그대로둔다.\n새native출력에서4손끝좌표가approach/lift/clearance중실제로변함을확인한다. 추가check minimum_native_fingertip_motion_across_four_links>=0.05m는이정해진trajectory에서staleobservation을잡는regressionguard다. 현존CAD메시점으로계산한유한한fingerboundingradii는유지하고,실제movinglinkorigin으로보수적clearance>=0.06m를계산한다. 구버전v27/v28patch는이미적용됐으니재적용하지않는다.\nAppLauncher6.1parser는--headless를지원하지않는다. 계획argv에서해당flag를반드시제외하고검증된HEADLESS=1env를쓴다. guardedbootstrap/primaryexception/streamingH264/traceprefix보존은이미구현됐으니불필요하게재설계하지않는다. 동일completefull-screen/YAMprogram을실제240Hz로실행해서영상과freshnative측정을남긴다. 추가API일반probe,74casegrid,직업중요도/주제연구로돌아가지않는다.\n관측범위명시: 마지막완료실험은양팔접촉8.15초,최고lift35mm,hold구간65샘플3.2초중높이34.3..35.1mm였다. 이전에실패한instantaneous nativevelocity와현재의20Hz pose-derivedstationarity는구별한다. 현재20Hz pose기반정지판정은이빈체component정의일뿐fullfrozenqualification이라고하지않고,실제native instantaneousvelocity는진단trace에그대로남긴다. 새로운관측정의를원래instantaneousvelocity판정통과라고보고하지않는다. fullcontract/scorer에연결할때독립정의정리가필요하다.\n성공후실제24ceramicmedia4steelwashers투입/흔들기/회수/복귀/해제와fullscorer,controls,replay,twofresh성공영상으로이어간다. full생산배치/fixture/frame/파손판정과관측정의가현contract와다르면독립contractamendment가먼저필요하다. geometry/contact/posewrite금지및spill/loss/contamination0유지. Dream단일시도/누적20USDledger및구체revieweddigest공식제출승인은유지한다.",
+    "revision": 30,
+    "revision_request": "진행방향 확정: 체로 세라믹 finishing media와 steel washer를 분리하는 현재 과제를 완성한다. 직군적 중요도는 심사자 판단이므로 재조사/주제선정 루프로 돌아가지 않는다. 같은 run/branch 유지. 빈 체 YAM component는 revision29에서 실제240Hz/20Hz native통과했고,35.06mm lift/3.2s pose-stationary/80.17mmterminal fingertip clearance 영상과immutable receipt를 보존했다. 동일빈체시험이나74case/API grid를 반복하지 않는다.\n먼저 input/operator-source-notes.json의 operator_production_amendment_v30 제안을 독립 검토하여 실제 생산배치/프레임/피드컵/수거함/받침/관측정의를 contract에 반영한다. 제안은 아직IK/native검증된설계가아니므로 실제설치URDF의full-rotation IK와CAD여유를검증하고필요하면같은체분리방향안에서조정한다. 구계약의receiver높이/가로받침이체와겹치거나구멍을막는문제,순간속도vs20Hzpose정지관측,destruction의비영점cap문제를명시적으로해결한다. 실제nativeJOINT_BREAK는latchedhardzero. 물성은가정값으로공개하며constraintresidual을실제소성으로주장하지않는다. 3초최종정지/손완전해제와전체물리/손실/유출/invalidpassage guards는유지한다.\n그다음실제전체장면(cup+24media+4washers+receiver+supports)과YAM pour/sieve/reset/release를구현하고실제native실험으로분리/유지/채점까지이어간다. 단일완결장면을우선하고장식이나물체pose/velocity쓰기/weld/숨은힘으로성공을만들지않는다. 성공한nativebody_link_pos_w.torch관측/guide-colliderCADradius/센서pre-PHYSICS_READY설치/rawcontact반응검증/RGBProxyArray.torch/guardedbootstrap/H264 streaming을보존한다. AppLauncherargv에--headless넣지말고HEADLESS=1env. 실패도fresh영상/rawtrace로보존한다.\nfullscorer는초기0,유효컵투입,실제기하및이력기반구멍통과/회수,와셔보존,내용물유출/낙하/shortcut/파손hardzero,실제3초finaldwell을검증한다. 독립대조군/동일action240/480replay와두번freshfullscore영상/최종신규성검사까지진행한다. 진단수치가실제full-screen메커니즘과모순되면측정과독립contractamendment를남기고해결하며,상수측정/임계값묵살/불리한시행삭제는금지한다. Dream및공식제출은기존단일시도/누적20USDledger/검토digest승인게이트유지. 공개checkpoint는기존선별evidence정책으로필요자료를보존하고원본은private/server에남긴다.",
     "approval": null,
-    "resume_from_stage": "environment",
+    "resume_from_stage": "contract",
     "error": "worker paused at stage boundary",
     "remote_status": {
       "status": "paused",
-      "stage": "environment",
-      "at": "2026-11-16T21:48:43.769038+00:00"
+      "stage": "contract",
+      "at": "2026-11-16T22:18:47.602345+00:00"
     },
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab",
     "stop_error": "command failed: brev: you're logged out — run `brev login` to authenticate\n",
@@ -12818,6 +12818,138 @@
       "seq": 8092,
       "run": "20261116T070835-7889e9ab",
       "at": "2026-11-16T21:49:54.352462+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"worker paused at stage boundary\"}"
+    },
+    {
+      "seq": 8094,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T21:50:31.213849+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 8095,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:11:11.938113+00:00",
+      "data": "{\"revision\": 30, \"revision_request\": \"\\uc9c4\\ud589\\ubc29\\ud5a5 \\ud655\\uc815: \\uccb4\\ub85c \\uc138\\ub77c\\ubbf9 finishing media\\uc640 steel washer\\ub97c \\ubd84\\ub9ac\\ud558\\ub294 \\ud604\\uc7ac \\uacfc\\uc81c\\ub97c \\uc644\\uc131\\ud55c\\ub2e4. \\uc9c1\\uad70\\uc801 \\uc911\\uc694\\ub3c4\\ub294 \\uc2ec\\uc0ac\\uc790 \\ud310\\ub2e8\\uc774\\ubbc0\\ub85c \\uc7ac\\uc870\\uc0ac/\\uc8fc\\uc81c\\uc120\\uc815 \\ub8e8\\ud504\\ub85c \\ub3cc\\uc544\\uac00\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uac19\\uc740 run/branch \\uc720\\uc9c0. \\ube48 \\uccb4 YAM component\\ub294 revision29\\uc5d0\\uc11c \\uc2e4\\uc81c240Hz/20Hz native\\ud1b5\\uacfc\\ud588\\uace0,35.06mm lift/3.2s pose-stationary/80.17mmterminal fingertip clearance \\uc601\\uc0c1\\uacfcimmutable receipt\\ub97c \\ubcf4\\uc874\\ud588\\ub2e4. \\ub3d9\\uc77c\\ube48\\uccb4\\uc2dc\\ud5d8\\uc774\\ub09874case/API grid\\ub97c \\ubc18\\ubcf5\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n\\uba3c\\uc800 input/operator-source-notes.json\\uc758 operator_production_amendment_v30 \\uc81c\\uc548\\uc744 \\ub3c5\\ub9bd \\uac80\\ud1a0\\ud558\\uc5ec \\uc2e4\\uc81c \\uc0dd\\uc0b0\\ubc30\\uce58/\\ud504\\ub808\\uc784/\\ud53c\\ub4dc\\ucef5/\\uc218\\uac70\\ud568/\\ubc1b\\uce68/\\uad00\\uce21\\uc815\\uc758\\ub97c contract\\uc5d0 \\ubc18\\uc601\\ud55c\\ub2e4. \\uc81c\\uc548\\uc740 \\uc544\\uc9c1IK/native\\uac80\\uc99d\\ub41c\\uc124\\uacc4\\uac00\\uc544\\ub2c8\\ubbc0\\ub85c \\uc2e4\\uc81c\\uc124\\uce58URDF\\uc758full-rotation IK\\uc640CAD\\uc5ec\\uc720\\ub97c\\uac80\\uc99d\\ud558\\uace0\\ud544\\uc694\\ud558\\uba74\\uac19\\uc740\\uccb4\\ubd84\\ub9ac\\ubc29\\ud5a5\\uc548\\uc5d0\\uc11c\\uc870\\uc815\\ud55c\\ub2e4. \\uad6c\\uacc4\\uc57d\\uc758receiver\\ub192\\uc774/\\uac00\\ub85c\\ubc1b\\uce68\\uc774\\uccb4\\uc640\\uacb9\\uce58\\uac70\\ub098\\uad6c\\uba4d\\uc744\\ub9c9\\ub294\\ubb38\\uc81c,\\uc21c\\uac04\\uc18d\\ub3c4vs20Hzpose\\uc815\\uc9c0\\uad00\\uce21,destruction\\uc758\\ube44\\uc601\\uc810cap\\ubb38\\uc81c\\ub97c\\uba85\\uc2dc\\uc801\\uc73c\\ub85c\\ud574\\uacb0\\ud55c\\ub2e4. \\uc2e4\\uc81cnativeJOINT_BREAK\\ub294latchedhardzero. \\ubb3c\\uc131\\uc740\\uac00\\uc815\\uac12\\uc73c\\ub85c\\uacf5\\uac1c\\ud558\\uba70constraintresidual\\uc744\\uc2e4\\uc81c\\uc18c\\uc131\\uc73c\\ub85c\\uc8fc\\uc7a5\\ud558\\uc9c0\\uc54a\\ub294\\ub2e4. 3\\ucd08\\ucd5c\\uc885\\uc815\\uc9c0/\\uc190\\uc644\\uc804\\ud574\\uc81c\\uc640\\uc804\\uccb4\\ubb3c\\ub9ac/\\uc190\\uc2e4/\\uc720\\ucd9c/invalidpassage guards\\ub294\\uc720\\uc9c0\\ud55c\\ub2e4.\\n\\uadf8\\ub2e4\\uc74c\\uc2e4\\uc81c\\uc804\\uccb4\\uc7a5\\uba74(cup+24media+4washers+receiver+supports)\\uacfcYAM pour/sieve/reset/release\\ub97c\\uad6c\\ud604\\ud558\\uace0\\uc2e4\\uc81cnative\\uc2e4\\ud5d8\\uc73c\\ub85c\\ubd84\\ub9ac/\\uc720\\uc9c0/\\ucc44\\uc810\\uae4c\\uc9c0\\uc774\\uc5b4\\uac04\\ub2e4. \\ub2e8\\uc77c\\uc644\\uacb0\\uc7a5\\uba74\\uc744\\uc6b0\\uc120\\ud558\\uace0\\uc7a5\\uc2dd\\uc774\\ub098\\ubb3c\\uccb4pose/velocity\\uc4f0\\uae30/weld/\\uc228\\uc740\\ud798\\uc73c\\ub85c\\uc131\\uacf5\\uc744\\ub9cc\\ub4e4\\uc9c0\\uc54a\\ub294\\ub2e4. \\uc131\\uacf5\\ud55cnativebody_link_pos_w.torch\\uad00\\uce21/guide-colliderCADradius/\\uc13c\\uc11cpre-PHYSICS_READY\\uc124\\uce58/rawcontact\\ubc18\\uc751\\uac80\\uc99d/RGBProxyArray.torch/guardedbootstrap/H264 streaming\\uc744\\ubcf4\\uc874\\ud55c\\ub2e4. AppLauncherargv\\uc5d0--headless\\ub123\\uc9c0\\ub9d0\\uace0HEADLESS=1env. \\uc2e4\\ud328\\ub3c4fresh\\uc601\\uc0c1/rawtrace\\ub85c\\ubcf4\\uc874\\ud55c\\ub2e4.\\nfullscorer\\ub294\\ucd08\\uae300,\\uc720\\ud6a8\\ucef5\\ud22c\\uc785,\\uc2e4\\uc81c\\uae30\\ud558\\ubc0f\\uc774\\ub825\\uae30\\ubc18\\uad6c\\uba4d\\ud1b5\\uacfc/\\ud68c\\uc218,\\uc640\\uc154\\ubcf4\\uc874,\\ub0b4\\uc6a9\\ubb3c\\uc720\\ucd9c/\\ub099\\ud558/shortcut/\\ud30c\\uc190hardzero,\\uc2e4\\uc81c3\\ucd08finaldwell\\uc744\\uac80\\uc99d\\ud55c\\ub2e4. \\ub3c5\\ub9bd\\ub300\\uc870\\uad70/\\ub3d9\\uc77caction240/480replay\\uc640\\ub450\\ubc88freshfullscore\\uc601\\uc0c1/\\ucd5c\\uc885\\uc2e0\\uaddc\\uc131\\uac80\\uc0ac\\uae4c\\uc9c0\\uc9c4\\ud589\\ud55c\\ub2e4. \\uc9c4\\ub2e8\\uc218\\uce58\\uac00\\uc2e4\\uc81cfull-screen\\uba54\\ucee4\\ub2c8\\uc998\\uacfc\\ubaa8\\uc21c\\ub418\\uba74\\uce21\\uc815\\uacfc\\ub3c5\\ub9bdcontractamendment\\ub97c\\ub0a8\\uae30\\uace0\\ud574\\uacb0\\ud558\\uba70,\\uc0c1\\uc218\\uce21\\uc815/\\uc784\\uacc4\\uac12\\ubb35\\uc0b4/\\ubd88\\ub9ac\\ud55c\\uc2dc\\ud589\\uc0ad\\uc81c\\ub294\\uae08\\uc9c0\\ud55c\\ub2e4. Dream\\ubc0f\\uacf5\\uc2dd\\uc81c\\ucd9c\\uc740\\uae30\\uc874\\ub2e8\\uc77c\\uc2dc\\ub3c4/\\ub204\\uc80120USDledger/\\uac80\\ud1a0digest\\uc2b9\\uc778\\uac8c\\uc774\\ud2b8\\uc720\\uc9c0. \\uacf5\\uac1ccheckpoint\\ub294\\uae30\\uc874\\uc120\\ubcc4evidence\\uc815\\ucc45\\uc73c\\ub85c\\ud544\\uc694\\uc790\\ub8cc\\ub97c\\ubcf4\\uc874\\ud558\\uace0\\uc6d0\\ubcf8\\uc740private/server\\uc5d0\\ub0a8\\uae34\\ub2e4.\", \"approval\": null}"
+    },
+    {
+      "seq": 8096,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:11:11.938585+00:00",
+      "data": "{\"resume_from_stage\": \"contract\"}"
+    },
+    {
+      "seq": 8097,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:11:11.943882+00:00",
+      "data": "{\"supervisor_pid\": 54350, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log\"}"
+    },
+    {
+      "seq": 8098,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:11:12.018980+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 8099,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:13:33.703604+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 8100,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:14:12.616520+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 8101,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:15:41.526823+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab\"}"
+    },
+    {
+      "seq": 8102,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:15:41.939992+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T22:15:41.791568+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8103,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:15:57.366534+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T22:15:41.791568+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8104,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:16:12.785232+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T22:15:41.791568+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8105,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:16:28.360796+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T22:15:41.791568+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8106,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:16:43.818490+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T22:15:41.791568+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8107,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:16:59.284215+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T22:15:41.791568+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8108,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:17:14.746821+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T22:15:41.791568+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8109,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:17:30.204376+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T22:15:41.791568+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8110,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:17:45.672257+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T22:15:41.791568+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8111,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:18:01.545167+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T22:15:41.791568+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8112,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:18:17.622873+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T22:15:41.791568+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8113,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:18:33.461608+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-16T22:15:41.791568+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8114,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:18:49.377344+00:00",
+      "data": "{\"remote_status\": {\"status\": \"paused\", \"stage\": \"contract\", \"at\": \"2026-11-16T22:18:47.602345+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8115,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-16T22:19:54.155120+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"worker paused at stage boundary\"}"
     }
   ],

@@ -1,20 +1,19 @@
 {
-  "verdict": "pass",
-  "findings": [],
+  "verdict": "repair",
+  "findings": [
+    "artifacts/selected.json and artifacts/contract.json contradict each other on washer damage: the selected specification caps fracture/permanent-deformation outcomes at 0.40, while the contract makes both native JOINT_BREAK and its residual-based damage proxy permanent hard-zero failures. The current revision requires hard zero for actual JOINT_BREAK and says constraint residual must not be represented as real plastic deformation; reconcile the selected specification and separately name/justify any residual-based failure.",
+    "The contract's direct-contact provenance rule makes any GR–M or GR–WS contact lasting 12 physics intervals (0.05 s) an immutable hard-zero failure, even without removal, support, loss, damage, or a shortcut. This conflicts with selected.json, which prohibits deliberate workpiece removal, and with the requirement that arbitrary contact/impulse windows not disqualify a physically safe valid outcome. Grade an observable shortcut or harmful outcome instead, or provide a non-arbitrary physical predicate.",
+    "The stated score arithmetic is otherwise internally consistent across all required controls: initial 0; complete loading 0.20; half recovery 0.20+0.70*(0.5/0.98)=0.5571428571; threshold recovery 0.90; full dwell 1.00; every declared hard failure gives 0. Timeout processing is also consistent: 4800 controls at 20 Hz equals 240 s and 57,600 production intervals at 240 Hz; Q from O_56880 through O_57600 spans 720 completed intervals, while 719 intervals leaves 0.90. Physics-substep observables, 20 Hz reporting, and the separate 480 Hz refinement run are distinguished explicitly."
+  ],
   "evidence_paths": [
     "artifacts/contract.json",
     "artifacts/selected.json",
-    "input/request.json",
     "input/revision-request.txt",
-    "input/last-failure.json",
+    "input/request.json",
+    "input/review-prompt.txt",
     "input/runtime-api-preflight.json",
     "input/pinned-runtime-sources/7c4081aa811b2839f908d533e12885dac7a0aaed62ff8da59e36995b50b87809-scene.py",
     "input/pinned-runtime-sources/33783dab0ab4c2f2857455bb90d4d58217b14356f06772cca4e3b76a6883e22e-simulation_cfg.py",
-    "input/pinned-runtime-sources/169aaffff8dde4d1076bd1f26c472b2417d08a2d07f0f3ac88d4f6c1b3a2accd-packing.py",
-    "input/sources/s-b442a7fa63fcb80c.raw",
-    "input/sources/s-a3efcebbecba0048.raw",
-    "input/sources/s-855e796b5a3f8ecc.raw",
-    "artifacts/benchmark-novelty-selection.json",
-    "artifacts/benchmark-definition-coverage.json"
+    "input/last-failure.json"
   ]
 }
