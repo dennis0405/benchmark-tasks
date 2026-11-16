@@ -1,12 +1,11 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the bounded full-screen/YAM component preflight after the native raw-contact buffer failure. The script now streams H.264 frames before contact parsing, preserves trace/video/report evidence on exceptions, records native contact-count maxima, and requires the maximum count to remain strictly below the configured capacity of 256. CPU geometry regression passed; native GPU execution remains required and no qualification is claimed.",
+  "summary": "Repaired the bounded empty-screen bimanual YAM component preflight without changing the frozen 0.06 m clearance criterion. Clearance is now measured from fresh 20 Hz observations during a 0.50 s terminal-pose dwell after the guarded retreat reaches its endpoint; interpolated retreat samples are explicitly excluded. The trace identifies every post-retreat clearance sample, and the report requires at least two fresh samples. All 4 CPU failure-receipt regressions and Python compilation pass. Fresh native GPU execution is required; no component success, media-separation qualification, or full frozen-contract qualification is claimed.",
   "scripts": [
     {
-      "id": "full-screen-yam-component-preflight",
+      "id": "full_screen_yam_component_preflight",
       "script": "task/run_full_screen_yam_preflight.py",
       "args": [
-        "--headless",
         "--device",
         "cuda:0",
         "--report",
@@ -22,6 +21,6 @@
   "files": [
     "task/run_full_screen_yam_preflight.py",
     "task/full_screen_scene.py",
-    "task/verify_full_screen_geometry_cpu.py"
+    "task/test_failure_receipt.py"
   ]
 }

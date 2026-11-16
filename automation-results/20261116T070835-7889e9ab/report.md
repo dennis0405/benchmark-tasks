@@ -61,7 +61,7 @@ Status: **blocked**
 9. review report.html, release-manifest digest와 실제 영상으로 사용자 검토. 구체적 검토 버전의 별도 승인 전 공식 미디어 업로드/대회 PR/최종 제출은 하지 않는다.
 
 
-component-code-reviewer: Failure preservation still does not cover post-motion qualification: `final=state()`, H.264 decoding, screenshot reading, check construction/evaluation, and success-report writing occur outside the guarded block. Any exception there leaves no failure report or explicit failure metadata, contrary to the required failure receipt. Extend the guarded/finalization path through all native-data checks, preserve the existing video/trace, write a failure report, and re-raise the original exception.
+failed check released_fingertip_collider_to_screen_conservative_clearance: 0.029137018563402298 >= 0.06
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`

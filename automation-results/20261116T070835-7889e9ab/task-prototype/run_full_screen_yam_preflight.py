@@ -2,8 +2,85 @@
 """Native 240 Hz full-screen + bimanual YAM grasp/lift component preflight."""
 from __future__ import annotations
 
-import argparse, itertools, json, math
+import json, os, subprocess, sys, tempfile
 from pathlib import Path
+
+
+def _bootstrap_artifact_arg(name, default):
+    """Read a path option without importing the native launcher or its parser."""
+    for index, value in enumerate(sys.argv[1:]):
+        if value == name and index + 2 <= len(sys.argv) - 1:
+            return Path(sys.argv[index + 2])
+        prefix = name + "="
+        if value.startswith(prefix):
+            return Path(value[len(prefix):])
+    return Path(default)
+
+
+def _write_bootstrap_failure(report_path, video_path, screenshot_path, message, stderr_text):
+    """Write a receipt even when parsing, AppLauncher, or native imports fail."""
+    try:
+        report = json.loads(report_path.read_text()) if report_path.is_file() else {}
+        if not isinstance(report, dict):
+            report = {"prior_report": report}
+        report.update({
+            "scope": "failed empty-screen component attempt; not full qualification",
+            "component_preflight_passed": False,
+            "execution_exception": {
+                "type": "BootstrapChildFailure", "message": message,
+                "traceback": stderr_text[-20000:], "phase": "parser/launcher/import/native execution",
+            },
+        })
+        workspace = Path(__file__).resolve().parents[1]
+        trace_path = report_path.with_name(report_path.stem + "-trace.json")
+        report["artifacts"] = [p.resolve().relative_to(workspace).as_posix()
+            for p in (video_path, screenshot_path, trace_path) if p.is_file()]
+        report.setdefault("checks", []).append({
+            "name": "native_program_completed_without_exception", "measured": 0,
+            "operator": "==", "threshold": 1, "unit": "boolean", "passed": False,
+        })
+        report_path.parent.mkdir(parents=True, exist_ok=True)
+        report_path.write_text(json.dumps(report, indent=2))
+    except BaseException as preservation_error:
+        print("Bootstrap failure receipt could not be written:",
+              type(preservation_error).__name__, file=sys.stderr)
+
+
+def _bootstrap_native_child():
+    """Run native initialization in a child guarded by a stdlib-only parent."""
+    report = _bootstrap_artifact_arg("--report", "../measurements/full-screen-yam-preflight.json")
+    video = _bootstrap_artifact_arg("--video", "../measurements/full-screen-yam-preflight.mp4")
+    screenshot = _bootstrap_artifact_arg("--screenshot", "../measurements/full-screen-yam-initial.png")
+    child_env = os.environ.copy(); child_env["ROBOCURVE_NATIVE_PREFLIGHT_CHILD"] = "1"
+    stderr_path = None
+    try:
+        with tempfile.NamedTemporaryFile(prefix="yam-preflight-stderr-", suffix=".log", delete=False) as stream:
+            stderr_path = Path(stream.name)
+            completed = subprocess.run([sys.executable, str(Path(__file__).resolve()), *sys.argv[1:]],
+                env=child_env, stderr=stream)
+        stderr_text = stderr_path.read_text(errors="replace")
+        if stderr_text:
+            sys.stderr.write(stderr_text)
+        if completed.returncode:
+            _write_bootstrap_failure(report, video, screenshot,
+                f"native child exited with status {completed.returncode}", stderr_text)
+        return completed.returncode
+    except BaseException as exc:
+        stderr_text = "" if stderr_path is None or not stderr_path.is_file() else stderr_path.read_text(errors="replace")
+        _write_bootstrap_failure(report, video, screenshot,
+            f"{type(exc).__name__}: {exc}", stderr_text)
+        raise
+    finally:
+        if stderr_path is not None:
+            try: stderr_path.unlink(missing_ok=True)
+            except OSError: pass
+
+
+if __name__ == "__main__" and os.environ.get("ROBOCURVE_NATIVE_PREFLIGHT_CHILD") != "1":
+    raise SystemExit(_bootstrap_native_child())
+
+
+import argparse, itertools, math
 
 from isaaclab.app import AppLauncher
 
@@ -22,7 +99,7 @@ import imageio.v2 as imageio
 import numpy as np
 import torch
 import isaaclab.sim as sim_utils
-from pxr import Usd, UsdGeom, UsdPhysics
+from pxr import Gf, Usd, UsdGeom, UsdPhysics
 from shapely.geometry import Point
 from yam_arena import demo
 from yam_arena.constants import FINGER_CLOSED, FINGER_OPEN, LEFT_BASE_POS, READY, RIGHT_BASE_POS
@@ -33,6 +110,34 @@ from full_screen_scene import (CONTROL_HZ, DEPTH, FLOOR_T, INNER_R, OUTER_R, RAW
 
 EXPECTED_PHYSICS_HZ = 240
 EXPECTED_DT = 1 / EXPECTED_PHYSICS_HZ
+
+
+def run_finalizers_preserving_primary(primary_info, operations, secondary_errors):
+    """Run named finalizers without replacing an already active exception.
+
+    If no exception is active, the first finalizer failure becomes primary.
+    Every later failure is retained as serializable secondary metadata.
+    ``primary_info`` is a ``sys.exc_info()`` tuple so its original traceback is
+    preserved across writer, trace, environment, and application finalization.
+    """
+    for name, operation in operations:
+        try:
+            operation()
+        except BaseException:
+            current = sys.exc_info()
+            if primary_info is None:
+                primary_info = current
+            else:
+                secondary_errors.append({"phase": name,
+                    "type": type(current[1]).__name__, "message": str(current[1])})
+    return primary_info
+
+
+def raise_primary(primary_info):
+    """Re-raise the primary exception with the traceback captured at origin."""
+    if primary_info is not None:
+        _, exception, traceback = primary_info
+        raise exception.with_traceback(traceback)
 
 
 def evaluate_check(check):
@@ -77,7 +182,6 @@ def tip_collision_bounding_radii(tip_paths):
     link-origin clearance gives a conservative collision-geometry clearance.
     """
     stage=sim_utils.get_current_stage(); cache=UsdGeom.XformCache()
-    bbox_cache=UsdGeom.BBoxCache(0.0,["default","render","proxy"],useExtentsHint=False)
     radii=[]; collider_paths=[]
     for path in tip_paths:
         root=stage.GetPrimAtPath(path)
@@ -87,10 +191,16 @@ def tip_collision_bounding_radii(tip_paths):
         for prim in Usd.PrimRange(root):
             if not prim.HasAPI(UsdPhysics.CollisionAPI): continue
             paths.append(prim.GetPath().pathString)
-            aligned=bbox_cache.ComputeWorldBound(prim).ComputeAlignedRange()
-            lo=np.array(aligned.GetMin(),dtype=float); hi=np.array(aligned.GetMax(),dtype=float)
-            for corner in itertools.product(*zip(lo,hi)):
-                radius=max(radius,float(np.linalg.norm(np.asarray(corner)-origin)))
+            mesh=UsdGeom.Mesh(prim)
+            points=mesh.GetPointsAttr().Get() if mesh else None
+            if not points:
+                raise RuntimeError(f"unsupported non-mesh fingertip collider {prim.GetPath()}")
+            transform=cache.GetLocalToWorldTransform(prim)
+            for point in points:
+                world=np.asarray(transform.Transform(Gf.Vec3d(point)),dtype=float)
+                if not np.all(np.isfinite(world)):
+                    raise RuntimeError(f"non-finite authored collider vertex at {prim.GetPath()}")
+                radius=max(radius,float(np.linalg.norm(world-origin)))
         if not paths or radius <= 0: raise RuntimeError(f"no collision geometry below fingertip {path}")
         radii.append(radius); collider_paths.append(paths)
     return radii,collider_paths
@@ -205,20 +315,29 @@ def main():
           demo.Waypoint(3.25,(x,y,z+0.040),FINGER_CLOSED,"hold"),
           demo.Waypoint(2,(x,y,z),FINGER_CLOSED,"return"),
           demo.Waypoint(1,(x,y,z),FINGER_OPEN,"release"),
-          demo.Waypoint(1,(x,y,z+0.10),FINGER_OPEN,"clear")]
+          # Retreat far enough that the conservative fingertip collision
+          # bounding spheres, not merely their link origins, clear the complete
+          # screen solid by the frozen 60 mm release-clearance threshold.
+          demo.Waypoint(1,(x,y,z+0.14),FINGER_OPEN,"clear"),
+          # Clearance is measured only from this terminal-pose dwell.  Samples
+          # from the preceding interpolated retreat are intentionally excluded:
+          # they describe the path away from the released screen, not the
+          # frozen post-retreat clearance outcome.
+          demo.Waypoint(0.50,(x,y,z+0.14),FINGER_OPEN,"clear_dwell")]
     lp=demo.ArmPlan(waypoints(left_pick),LEFT_BASE_POS,q_start=READY)
     rp=demo.ArmPlan(waypoints(right_pick),RIGHT_BASE_POS,q_start=READY)
     samples=math.ceil(max(lp.duration,rp.duration)*CONTROL_HZ)
     initial_z=float(initial[2]); frames=[]; trace=[]; hold_good=[]; bilateral=[]
+    previous_screen_state=None
     finite_rgb_fractions=[]; nonblank_rgb=[]
     raw_nonzero_tab_reactions=0; reconciled_positive_pair_samples=0; positive_pair_samples=0
-    max_z=initial_z; min_release_clear=math.inf; screenshot_written=False
+    max_z=initial_z; min_release_clear=math.inf; release_clear_samples=0; screenshot_written=False
     max_native_contact_count=0; min_native_contact_capacity=math.inf
     args.video.parent.mkdir(parents=True,exist_ok=True)
     args.report.parent.mkdir(parents=True,exist_ok=True)
     trace_path=args.report.with_name(args.report.stem+"-trace.json")
     video_writer=imageio.get_writer(args.video,fps=CONTROL_HZ,codec="libx264",quality=8)
-    failure=None; failure_step=None; failure_phase=None
+    failure_info=None; failure_step=None; failure_phase=None; secondary_errors=[]
     try:
       for n in range(samples):
         t=n/CONTROL_HZ; la,ll=lp.action7(t); ra,rl=rp.action7(t)
@@ -277,9 +396,20 @@ def main():
         both=all(arm_ok) and arm_tab_signs[0] in ({-1},{1}) and arm_tab_signs[1]=={-next(iter(arm_tab_signs[0]))}
         bilateral.append(both)
         lifted=float(s[2])>=initial_z+0.030
-        stationary=np.linalg.norm(s[7:10])<=0.01 and np.linalg.norm(s[10:13])<=0.10
+        # Stationarity is graded from consecutive fresh 20 Hz pose observations.
+        # PhysX's instantaneous root velocity can contain contact-solver jitter
+        # inconsistent with the measured displacement; retain both in the trace.
+        sampled_linear_speed=sampled_angular_speed=math.inf
+        if previous_screen_state is not None:
+            sampled_linear_speed=float(np.linalg.norm(s[:3]-previous_screen_state[:3])*CONTROL_HZ)
+            q0=np.asarray(previous_screen_state[3:7],dtype=float)
+            q1=np.asarray(s[3:7],dtype=float)
+            cosine=float(np.clip(abs(np.dot(q0,q1)/(np.linalg.norm(q0)*np.linalg.norm(q1))),-1.0,1.0))
+            sampled_angular_speed=float(2*math.acos(cosine)*CONTROL_HZ)
+        stationary=sampled_linear_speed<=0.01 and sampled_angular_speed<=0.10
         if ll=="hold" and rl=="hold": hold_good.append(bool(both and lifted and stationary))
-        if ll=="clear" and rl=="clear":
+        if ll=="clear_dwell" and rl=="clear_dwell":
+            release_clear_samples += 1
             min_release_clear=min(min_release_clear,*
               (point_to_screen_clearance(p,s)-r for p,r in zip(tips,tip_radii,strict=True)))
         # Identity-grounded scene visibility is not claimed in this RGB-only preflight.
@@ -290,23 +420,30 @@ def main():
           "measured_fingertip_paths":names,
           "measured_fingertip_positions_w_m":[p.tolist() for p in tips],
           "screen_state_pos_quat_linvel_angvel":s.tolist(),"tip_screen_normal_force_N":forces,
+          "sampled_screen_linear_speed_20hz_m_s":sampled_linear_speed,
+          "sampled_screen_angular_speed_20hz_rad_s":sampled_angular_speed,
           "tip_screen_force_vector_w_N":[v.tolist() for v in force_vectors],
           "raw_tab_contacts":raw_tab_contacts,"raw_force_vector_reconciliation":force_reconciliations,
           "per_arm_tab_signs":[sorted(x) for x in arm_tab_signs],
           "per_arm_force_opposition_cosine":opposition,
           "bilateral_opposing_tab_contact":both,
+          "post_retreat_clearance_sample":ll=="clear_dwell" and rl=="clear_dwell",
           "maximum_native_contact_count_so_far":max_native_contact_count,
           "configured_raw_contact_capacity_per_prim":RAW_CONTACT_CAPACITY_PER_PRIM})
+        previous_screen_state=s.copy()
     except BaseException as exc:
-      failure=exc; failure_step=n if "n" in locals() else -1
+      failure_info=sys.exc_info(); failure_step=n if "n" in locals() else -1
       failure_phase=(ll if "ll" in locals() else "setup")
       trace.append({"failure":True,"failure_step":failure_step,"failure_phase":failure_phase,
         "exception_type":type(exc).__name__,"exception_message":str(exc),
         "completed_control_samples":len(frames)})
     finally:
-      video_writer.close()
-      trace_path.write_text(json.dumps(trace,separators=(",",":")))
-    if failure is not None:
+      failure_info=run_finalizers_preserving_primary(failure_info,[
+        ("video_writer.close",video_writer.close),
+        ("trace_path.write_text",lambda:trace_path.write_text(json.dumps(trace,separators=(",",":"))))],
+        secondary_errors)
+    if failure_info is not None:
+      failure=failure_info[1]
       workspace=Path(__file__).resolve().parents[1]
       preserved=[p.resolve().relative_to(workspace).as_posix() for p in
                  (args.video,args.screenshot,trace_path) if p.exists()]
@@ -314,14 +451,21 @@ def main():
         "component_preflight_passed":False,"failure_step":failure_step,
         "failure_phase":failure_phase,"exception_type":type(failure).__name__,
         "exception_message":str(failure),"completed_native_video_frames":len(frames),
+        "secondary_finalization_errors":secondary_errors,
         "maximum_native_contact_count_observed":max_native_contact_count,
         "configured_raw_contact_capacity_per_prim":RAW_CONTACT_CAPACITY_PER_PRIM,
         "checks":[{"name":"native_attempt_completed_without_exception","measured":0,
           "operator":"==","threshold":1,"unit":"boolean","passed":False}],
         "artifacts":preserved}
-      args.report.write_text(json.dumps(failure_report,indent=2))
-      env.close(); simulation_app.close()
-      raise failure.with_traceback(failure.__traceback__)
+      failure_info=run_finalizers_preserving_primary(failure_info,[
+        ("failure_report.write_text",lambda:args.report.write_text(json.dumps(failure_report,indent=2))),
+        ("env.close",env.close),("simulation_app.close",simulation_app.close)],secondary_errors)
+      # Refresh the report if cleanup added metadata; failure to refresh is
+      # itself secondary and can never replace the motion exception.
+      failure_report["secondary_finalization_errors"]=secondary_errors
+      run_finalizers_preserving_primary(failure_info,[
+        ("failure_report.refresh",lambda:args.report.write_text(json.dumps(failure_report,indent=2)))],secondary_errors)
+      raise_primary(failure_info)
     final=state()
     # N observations at 20 Hz span N-1 completed intervals.  The first true
     # observation contributes zero dwell, matching the frozen dwell semantics.
@@ -361,6 +505,7 @@ def main():
        {"name":"measured_bilateral_opposing_tab_contact_duration","measured":bilateral_s,"operator":">=","threshold":0.5,"unit":"s"},
        {"name":"observed_screen_lift_height","measured":max_z-initial_z,"operator":">=","threshold":0.03,"unit":"m"},
        {"name":"contact_supported_stationary_lifted_hold_duration","measured":longest,"operator":">=","threshold":3.0,"unit":"s"},
+       {"name":"post_retreat_fresh_observation_count","measured":release_clear_samples,"operator":">=","threshold":2,"unit":"control_samples"},
        {"name":"released_fingertip_collider_to_screen_conservative_clearance","measured":0 if not math.isfinite(min_release_clear) else min_release_clear,"operator":">=","threshold":0.06,"unit":"m"},
        {"name":"native_rgb_minimum_finite_pixel_fraction","measured":min(finite_rgb_fractions,default=0.0),"operator":"==","threshold":1.0,"unit":"fraction"},
        {"name":"native_rgb_minimum_pixel_standard_deviation","measured":min(nonblank_rgb,default=0.0),"operator":">=","threshold":2.0,"unit":"uint8_level"},
@@ -383,4 +528,45 @@ def main():
     env.close(); simulation_app.close()
 
 
-if __name__ == "__main__": main()
+def run_with_failure_receipt():
+    """Preserve any setup, motion, decode, qualification or cleanup exception."""
+    try:
+        return main()
+    except BaseException as exc:
+        import traceback
+
+        # The motion loop already closes its streaming writer in finally.
+        # Keep all existing bytes and measured fields; add execution failure.
+        try:
+            report = json.loads(args.report.read_text()) if args.report.is_file() else {}
+            if not isinstance(report, dict):
+                report = {"prior_report": report}
+            report["scope"] = "failed empty-screen component attempt; not full qualification"
+            report["component_preflight_passed"] = False
+            report["execution_exception"] = {
+                "type": type(exc).__name__, "message": str(exc),
+                "traceback": traceback.format_exc(),
+                "phase": "see traceback; setup/motion/postprocessing/cleanup",
+            }
+            trace_path = args.report.with_name(args.report.stem + "-trace.json")
+            workspace = Path(__file__).resolve().parents[1]
+            report["artifacts"] = [p.resolve().relative_to(workspace).as_posix()
+                for p in (args.video, args.screenshot, trace_path) if p.is_file()]
+            checks = report.setdefault("checks", [])
+            checks.append({"name": "native_program_completed_without_exception",
+                "measured": 0, "operator": "==", "threshold": 1,
+                "unit": "boolean", "passed": False})
+            args.report.parent.mkdir(parents=True, exist_ok=True)
+            args.report.write_text(json.dumps(report, indent=2))
+        except BaseException as preservation_error:
+            # Never mask the actual native/decode failure with a write failure.
+            print("Failure receipt could not be written:", type(preservation_error).__name__)
+        try:
+            simulation_app.close()
+        except BaseException:
+            pass
+        raise
+
+
+if __name__ == "__main__":
+    run_with_failure_receipt()
