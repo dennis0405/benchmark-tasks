@@ -52,6 +52,16 @@ relation and a piston/rack relation. Referenced body roots and six joint anchors
 resolve in CPU OpenUSD. PhysX-specific coupling frames and ratio sign require
 native verification; no simulator has run this proposal.
 
+Both screw guides use local-X translation and local-X twist, with their joint
+frames rotated to align X with the physical Z screw axis. This follows the
+[PhysX cylindrical-joint recommendation](https://nvidia-omniverse.github.io/PhysX/physx/5.4.1/docs/Joints.html)
+and avoids using swing as the multi-turn coordinate. CPU validation checks
+both guide axes, locked transverse freedoms and zero angular spring stiffness.
+The proposed bounded zero-velocity drag has no spring returning the screw to
+its initial angle. Actual parsing, multi-turn motion, friction and helix
+coupling still need native validation; the draft linear drives alone do not
+implement a thread.
+
 The loose nut begins 1 mm above the cover. Under the proposed piston/jaw ratio,
 setting the stop from its initial opening to 90 degrees advances the screw by
 about 0.464 mm. Even if the loose nut co-rotates and follows that travel, about

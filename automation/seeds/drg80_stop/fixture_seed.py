@@ -130,21 +130,26 @@ def drive(joint, axis, stiffness, damping, cap, target=0):
 
 
 def cylindrical(stage, name, parent, child, anchor0):
-    from pxr import UsdPhysics
+    from pxr import Gf, UsdPhysics
 
     joint = UsdPhysics.Joint.Define(stage, "/Bench/" + name)
     connect(joint, parent, child, anchor0)
-    for axis in ("transX", "transY", "rotX", "rotY"):
+    # A cylindrical joint uses native X translation + X twist. Rotate both
+    # joint frames so this local X follows the actual vertical screw axis.
+    axis_frame = Gf.Quatf(math.sqrt(0.5), Gf.Vec3f(0, -math.sqrt(0.5), 0))
+    joint.CreateLocalRot0Attr(axis_frame)
+    joint.CreateLocalRot1Attr(axis_frame)
+    for axis in ("transY", "transZ", "rotY", "rotZ"):
         limit = UsdPhysics.LimitAPI.Apply(joint.GetPrim(), axis)
         limit.CreateLowAttr(1)
         limit.CreateHighAttr(-1)
-    limit = UsdPhysics.LimitAPI.Apply(joint.GetPrim(), "transZ")
+    limit = UsdPhysics.LimitAPI.Apply(joint.GetPrim(), "transX")
     limit.CreateLowAttr(-0.005)
     limit.CreateHighAttr(0.005)
-    drive(joint, "transZ", 20000, 20, 25)
-    # Runtime must update helix targets and dissipative friction references from
-    # measured state, not the task goal. These are inert draft defaults only.
-    drive(joint, "rotZ", 1, 0.001, 0.001 if name == "screw_guide" else 0.004)
+    drive(joint, "transX", 20000, 20, 25)
+    # Runtime still needs validated helical coupling, not the task goal. A
+    # bounded zero-velocity drag proposal has no initial-angle restoring spring.
+    drive(joint, "rotX", 0, 0.001, 0.001 if name == "screw_guide" else 0.004)
     return joint
 
 
@@ -174,6 +179,7 @@ def validate_static_graph(stage):
     assert len(bodies) == 7
     cache = UsdGeom.XformCache(Usd.TimeCode.Default())
     anchors = []
+    guides = []
     mesh_count = 0
     for prim in stage.Traverse():
         if prim.IsA(UsdGeom.Mesh):
@@ -197,13 +203,33 @@ def validate_static_graph(stage):
         error = (va - vb).GetLength()
         assert error < 1e-7, (prim.GetPath(), error)
         anchors.append({"joint": str(prim.GetPath()), "initial_anchor_error_m": error})
+        if prim.GetName() in {"screw_guide", "nut_guide"}:
+            assert not prim.HasAPI(UsdPhysics.LimitAPI, "rotX"), "Proposal requires free X twist"
+            for axis in ("transY", "transZ", "rotY", "rotZ"):
+                limit = UsdPhysics.LimitAPI(prim, axis)
+                assert limit.GetLowAttr().Get() > limit.GetHighAttr().Get(), axis
+            directions = []
+            for attr in (joint.GetLocalRot0Attr(), joint.GetLocalRot1Attr()):
+                q = attr.Get()
+                x, y, z = q.GetImaginary()
+                w = q.GetReal()
+                direction = (1 - 2 * (y * y + z * z), 2 * (x * y + w * z), 2 * (x * z - w * y))
+                assert sum((a - b) ** 2 for a, b in zip(direction, (0, 0, 1))) < 1e-10
+                directions.append(direction)
+            drag = UsdPhysics.DriveAPI(prim, "rotX")
+            assert drag.GetStiffnessAttr().Get() == 0, "Draft drag must not restore the initial angle"
+            assert drag.GetTargetVelocityAttr().Get() == 0
+            assert drag.GetDampingAttr().Get() > 0
+            guides.append({"joint": str(prim.GetPath()), "body_local_twist_axes": directions})
     assert len(anchors) == 6
+    assert len(guides) == 2
     return {
         "status": "CPU composition, mesh topology and joint-anchor checks ONLY; NOT native physics",
         "openusd_version": list(Usd.GetVersion()),
         "rigid_bodies": len(bodies),
         "meshes_checked": mesh_count,
         "anchors": anchors,
+        "twist_guide_configuration_checks": guides,
         "physx_couplings": [
             {"path": str(p.GetPath()), "proposed_type": p.GetTypeName()}
             for p in stage.Traverse()
