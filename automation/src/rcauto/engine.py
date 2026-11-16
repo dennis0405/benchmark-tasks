@@ -1158,6 +1158,8 @@ class Production:
                 "environment-builder",
                 "Return phase=preflight for small complete native API/component discovery programs "
                 "when native behavior is not yet known. Read artifacts/environment-preflights.json "
+                "and input/operator-source-notes.json when present for source-verified SDK failures "
+                "and the explicit next bounded discovery question; "
                 "and actual logs before the next iteration. A preflight may cover only its stated "
                 "questions and must not claim full frozen physics coverage. Return phase=qualification "
                 "ONLY when the complete environment and all frozen measurement implementations exist. "
