@@ -1,18 +1,22 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the bounded native PhysX probe after the host GPU log showed that a static collision-only floor was rejected as a detailed-contact filter. The probe now uses the pinned API’s nested per-sensor filter structure and a contact-reporting kinematic rigid floor. Qualification remains blocked pending a fresh passing host execution; no production physics or demo success is claimed.",
+  "summary": "Latest host log showed the three rack-and-pinion/gear constraints are incompatible with direct-GPU PhysX and produced no fresh report. Repaired the bounded probe to deactivate exactly those unsupported composed constraints, measure the remaining native fixture joints under reversible physical torque, verify isolation and settling, invalidate stale outputs, and emit a fresh failure-linked report on Python exceptions. Static compilation passed; trusted GPU execution is still required and no qualification is claimed.",
   "scripts": [
     {
-      "id": "native-api-preflight",
-      "script": "task/run_native_api_preflight.py",
+      "id": "drg80-gpu-constraint-isolation-preflight",
+      "script": "task/run_component_preflight.py",
       "args": [
         "--device",
-        "cuda:0"
+        "cuda:0",
+        "--output",
+        "../measurements/component-preflight.json",
+        "--trace",
+        "../measurements/component-preflight-trace.json"
       ],
-      "report": "measurements/native-api-preflight.json"
+      "report": "measurements/component-preflight.json"
     }
   ],
   "files": [
-    "task/run_native_api_preflight.py"
+    "task/run_component_preflight.py"
   ]
 }

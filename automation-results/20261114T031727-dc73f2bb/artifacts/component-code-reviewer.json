@@ -1,20 +1,21 @@
 {
   "verdict": "pass",
-  "findings": [
-    "The repaired source is a bounded discovery probe for callback ordering, deregistration/reset behavior, rigid-body state freshness, and filtered contact-tensor semantics; it does not claim component qualification or task success.",
-    "The nested per-sensor filter structure matches the hash-verified pinned ContactSensor implementation, and the kinematic contact-reporting floor directly addresses the recorded no-filter native failure.",
-    "Measurements derive from POST_PHYSICS_STEP native tensors with explicit units, copied buffers, complete raw samples, callback exception propagation, and fail-closed report replacement; no constant success values, object-state writes, fake welds, or collision bypasses are present.",
-    "The planned invocation matches the pinned AppLauncher interface. A fresh native run is appropriately deferred until after this generated-source review and will be required before treating the probe as passed or proceeding to frozen component qualification."
-  ],
+  "findings": [],
   "evidence_paths": [
     "artifacts/component-source-plan.json",
-    "task/run_native_api_preflight.py",
-    "task/README.md",
-    "input/runtime-api-preflight.json",
+    "task/run_component_preflight.py",
+    "task/assets/fixture/drg80_fixture.usda",
+    "task/assets/fixture/parts/frame.usda",
+    "task/assets/fixture/parts/left_jaw.usda",
+    "task/assets/fixture/parts/right_jaw.usda",
+    "task/assets/fixture/parts/piston.usda",
+    "task/assets/fixture/parts/lever.usda",
+    "task/assets/tools/socket_adjuster.usda",
+    "task/assets/tools/thin_nut.usda",
     "input/last-failure.json",
+    "input/runtime-api-preflight.json",
     "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py",
-    "input/pinned-runtime-sources/000dde649a8b270af0f7102fff67a51abc1a2ff359fa3179f52830d5b83fde80-contact_sensor.py",
-    "input/pinned-runtime-sources/af8a09c87a05221f309892e24788a59c9776e7e9097b3cde0b57e607d4eb3675-app_launcher.py",
-    "../logs/native-api-preflight-ecca35497d.log"
+    "input/pinned-runtime-sources/4a7638c3890522bbe7c25600c0090e6cb7f403550ccb8be7641bf84034213b83-generatedSchema.usda",
+    "../logs/drg80-component-preflight-38c712934d.log"
   ]
 }
