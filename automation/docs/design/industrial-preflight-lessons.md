@@ -220,3 +220,29 @@ The independent critic receives these same scope/count rules. Regression tests v
 a newly reserved archive becomes mandatory and its overlapping verdict blocks production.
 This supersedes the earlier assertion that all historical records require fresh comparison;
 it changes scope accounting, not the physical novelty test for required claims.
+
+
+## 2026-11-16: native discovery before qualification, with source review
+
+The first gripper diagnostic draft substituted screw/nut rotation ratio for torque
+ratio, a general intended-contact peak for sustained vented N73 preload, all nonzero
+segmentation for fixture pixels, and literal zeroes for sampled scorer/control results.
+Those are invalid measurement implementations, regardless of whether a native process
+executes. The controller was cooperatively stopped before qualifying that draft.
+
+Environment plans now explicitly distinguish `preflight` from `qualification`. Up to
+three small native API/component rounds can run without demanding a complete production
+asset manifest or filling missing frozen fields. Their real receipts are retained under
+`environment-preflights.json` with `qualification:false`; they never complete the environment
+gate. The next builder reads those measurements and actual failure logs. Full qualification
+still requires the unchanged frozen checks, complete asset validation and post-run physics
+review. Exhausted discovery without qualification stops with evidence rather than passing.
+
+Before either phase executes, a read-only implementation reviewer inspects the planned
+programs and imported sources. It must trace metric bodies, windows and units to actual
+native data, and reject constants or wrong proxies. It does not demand future GPU results
+at this source gate; native evidence is obtained next by the trusted executor. Regression
+tests show discovery progressing to full qualification, repeated discovery failing closed
+without a completed environment, unfinished assets not blocking isolated API probes, and
+source rejection preventing any native launch. Selftest remains explicitly synthetic and
+ineligible for Dream, approval or submission.

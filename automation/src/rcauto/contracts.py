@@ -117,6 +117,7 @@ CONTRACT = obj(
 )
 SCRIPT = obj(id=S, script=S, args=array(S), report=S)
 BUILD = obj(summary=S, scripts=array(SCRIPT), files=array(S))
+ENV_BUILD = obj(phase={"type": "string", "enum": ["preflight", "qualification"]}, **BUILD["properties"])
 SCENARIO_POLICY = """
 You are one role in a RoboCurve production workflow, focused on Impact on AI timelines.
 The user's actual objective is in input/request.json. Read it and existing input and artifacts.
