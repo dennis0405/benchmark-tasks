@@ -164,3 +164,37 @@ This ideal, gravity-free, noncontact coupon does not establish thread friction,
 the frozen compliant constitutive law, preload, full gripper transmission or
 robot success. Reusing it in a changed runtime still requires source review
 and actual execution; import/compilation is not a physics test.
+
+## Loaded experiments: force transfer is not full accuracy
+
+The first loaded hard-mimic test failed: projected DOF forces were near zero
+and the reported angular/linear residual reached1.234rad. That force getter
+could not certify the intended transmitted load in this setup. Do not turn
+the measured zero into proof of no physical load, or replace it with a
+rotation ratio or spring calculation labelled as measured native force.
+
+A later known-pair physical contact test isolated the carrier collider from
+the overlapping frame/rotor diagnostic geometry. Source SHA256
+`57cee70840fce1409f45869f8ab9dca10a0c08176644bb4e63c65a975f0f9b93`
+produced20 passing checks out of21, with actual filtered contact medians
+31.419628N and31.413954N under signed0.005Nm inputs. The ideal prediction was
+31.415926N. Force/impulse scaling and filtered-versus-net force also matched.
+However, the evaluated loaded-window angular residual was0.0595967rad,
+exceeding0.02rad, and the full trace contained a0.107198rad transient.
+This is a **failed accuracy profile**, with useful scoped force observations.
+
+A separate seated-tool composite-inertia profile still failed the same
+accuracy test at0.0706611rad. Both original reports/traces remain preserved.
+Never transfer a composite tool inertia into the bare screw, duplicate tool
+mass, or weld a real tool to create apparent stability. The full task must
+include actual tool contact and tool-released checks.
+
+The next proposed route is the already frozen finite constitutive law, not
+continued inertia tuning of an ideal coupling. The
+[official fixed-tendon example](https://docs.omniverse.nvidia.com/kit/docs/omni_physics/107.3/dev_guide/rigid_bodies_articulations/articulations.html#fixed-tendons)
+exposes stiffness, damping and weighted joint coordinates. It is a native
+implementation lead only; mixed units and conservative force coefficients
+still require an installed-SDK source check and actual loaded experiment.
+For a finite spring, elastic displacement is expected: compare native contact
+reaction with the unchanged frozen force law. Do not relabel the old ideal
+accuracy failures or claim full qualification from a different coupon.
