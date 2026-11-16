@@ -8,6 +8,7 @@ import os
 import sys
 from pathlib import Path
 
+from .native_runtime import register_native_runtime
 from .store import now, write_json
 
 
@@ -71,11 +72,12 @@ def main():
     http.client.HTTPConnection.request = request
     from inspect_robots.cli import main as inspect_main
 
+    embodiment_name = register_native_runtime(job["task"], job.get("native_runtime"))
     sys.argv = [
         "inspect-robots",
         "run",
         "--embodiment",
-        "yam_arena",
+        embodiment_name,
         "--policy",
         "dream",
         "-E",

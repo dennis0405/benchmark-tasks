@@ -18,6 +18,7 @@ from .catalog import GitHub, get_source
 from .contracts import NOVELTY_SCOPE
 from .engine import Production, compare_catalog, read
 from .gates import GateError, evaluation_identity, manifest, validate_media, verify_manifest
+from .native_runtime import prepare_native_runtime
 from .publish import Publisher, public_evidence
 from .runtime import Brev
 from .store import StateError, now, write_json
@@ -416,6 +417,9 @@ class Coordinator:
         spec = read(task / "task.json")
         contract = read(root / "workspace/artifacts/contract.json")
         remote = self.config["remote_root"] + "/worker-state/runs/" + rid
+        if not (task / "task.py").is_file():
+            raise GateError("Dream requires the validated task.py adapter")
+        native_runtime = prepare_native_runtime(task / "task.py")
         job = {
             "task": remote + "/release/tasks/" + task.name + "/task.py",
             "output": remote + "/dream-result",
@@ -424,9 +428,8 @@ class Coordinator:
             "max_requests": self.config.get("dream_max_requests"),
             "run": rid,
             "owner_path": self.config["remote_root"] + "/worker-owner.json",
+            "native_runtime": native_runtime,
         }
-        if not (task / "task.py").is_file():
-            raise GateError("Dream requires the validated task.py adapter")
         write_json(root / "evaluation-job.json", job)
         self.brev.rsync(root / "evaluation-job.json", remote + "/evaluation-job.json")
         with self.store.lock("dream-budget"):
