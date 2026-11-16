@@ -1,13 +1,20 @@
 {
-  "verdict": "repair",
+  "verdict": "pass",
   "findings": [
-    "The release-energy check uses Δextension/Δt as the damping rate even though the script identifies the native damping law and power from the reported DOF velocity and explicitly states that position projection is not reflected in that velocity. This attributes solver position-correction energy loss to physical viscous dissipation. Applying the new formula to the retained failed trace changes the relative error from 0.700635 to approximately 0.085832 without adding a native damping-work observable, so it would turn the recorded failure into a pass through an inconsistent metric. Measure damping work using an integrator-consistent native force/rate path and separately account for numerical projection loss, or reject this zero-velocity-iteration configuration if physical energy balance cannot be established."
+    "The planned program is a bounded native discovery probe and consistently reports qualification=false; it does not claim environment, task, or physical-success certification.",
+    "The source applies real native rotor effort, samples fresh 240 Hz DOF/contact states, and fail-closes on bidirectional signed contact transmission, sustained settling rate, inferred bearing stiffness, hard-helix residual, release displacement, finite data, sample count, and applied-effort accuracy.",
+    "The serial topology preserves the stated 1 mm/revolution lead, 1e6 N/m bearing stiffness, 4000 N·s/m authored damping, 0.005 N·m test torque, and the prior 1e-6 m/s settling threshold without weakening the failed criterion. Damping identification and full frozen-contract qualification remain correctly outside this discovery probe's claims.",
+    "The opposed-plate geometry measures only the intended carrier contacts, and force, stiffness, and helix metrics are derived from recorded native samples rather than constants or proxy rotation ratios.",
+    "Planned arguments and workspace-relative report paths match the executor contract. The complete source parses successfully, and the relevant pinned runtime snapshots match their indexed SHA-256 digests. Native execution is correctly pending."
   ],
   "evidence_paths": [
-    "task/run_discrete_energy_compliant_mimic_probe.py",
     "artifacts/component-source-plan.json",
+    "task/run_serial_bearing_helix_probe.py",
     "input/last-failure.json",
-    "measurements/zero-velocity-compliant-mimic-preflight-trace.json",
-    "artifacts/contract.json"
+    "input/runtime-api-preflight.json",
+    "input/operator-source-notes.json",
+    "input/pinned-runtime-sources/1ba654210857a63b98236512e5f225723c3eb1dee64e867eaa4fade0578ccb7b-tensors-api.py",
+    "input/pinned-runtime-sources/4a7638c3890522bbe7c25600c0090e6cb7f403550ccb8be7641bf84034213b83-generatedSchema.usda",
+    "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py"
   ]
 }

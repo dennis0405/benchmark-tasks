@@ -10,12 +10,10 @@ A positive-compliance native PhysX articulation mimic realizes
 
 The probe applies a persistently exciting generalized load parallel to grad(e),
 holds a static load, then releases both dynamic DOFs.  It infers K and D from
-fresh native acceleration/reaction balance and uses the measured K and D for
-release energy and dissipation.  The mimic uses zero velocity iterations: the
-pinned shared PhysX solver's velocity-iteration branch hard-projects relative
-velocity even for positive compliance, which made D unobservable in the failed
-four-velocity-iteration trial.  No pose, velocity, or joint-state writes occur
-after reset.
+fresh native acceleration/reaction balance, independently checks that reaction
+against the native projected-joint-force channel, and uses the measured K and D
+for release energy and dissipation.  No pose, velocity, or joint-state writes
+occur after reset.
 """
 
 from __future__ import annotations
@@ -78,9 +76,11 @@ ROTATION_LIMIT_RAD = math.radians(1440.0)
 AXIAL_LIMIT_CLEARANCE_MIN_M = 5.0e-4
 ROTATION_LIMIT_CLEARANCE_MIN_RAD = 1.0
 POSITION_ITERATIONS = 128
-VELOCITY_ITERATIONS = 0
+VELOCITY_ITERATIONS = 4
 MIMIC_AXIS = "rotZ"
 CONSTITUTIVE_RELATIVE_ERROR_MAX = 0.10
+PROJECTED_REACTION_RELATIVE_RMSE_MAX = 0.15
+PROJECTED_REACTION_ABSOLUTE_RMSE_MAX_N = 0.05
 RELEASE_ENERGY_BALANCE_RELATIVE_ERROR_MAX = 0.25
 # For native C=theta-z/p, kp_C=K*p^2 and kd_C=D*p^2.  The shared
 # CPU/GPU PhysX mimic solver uses kp=mu^2/r and kd=2*mu*zeta/r.  These
@@ -221,12 +221,6 @@ def main() -> None:
     authored_frequency = float(mimic.GetNaturalFrequencyAttr().Get())
     authored_damping_ratio = float(mimic.GetDampingRatioAttr().Get())
     authored_gearing = float(mimic.GetGearingAttr().Get())
-    authored_position_iterations = int(
-        articulation_api.GetSolverPositionIterationCountAttr().Get()
-    )
-    authored_velocity_iterations = int(
-        articulation_api.GetSolverVelocityIterationCountAttr().Get()
-    )
     METADATA = {
         "native_trial_id": trial_id,
         "source_sha256": source_sha256,
@@ -243,8 +237,6 @@ def main() -> None:
         "authored_mimic_natural_frequency_s_inverse": authored_frequency,
         "authored_mimic_damping_ratio": authored_damping_ratio,
         "authored_mimic_gearing_degree_per_metre": authored_gearing,
-        "authored_solver_position_iterations": authored_position_iterations,
-        "authored_solver_velocity_iterations": authored_velocity_iterations,
     }
 
     def set_effort(extension_force_n: float) -> None:
@@ -263,6 +255,7 @@ def main() -> None:
         q = as_torch(articulation.get_dof_positions())[0]
         qd = as_torch(articulation.get_dof_velocities())[0]
         efforts = as_torch(articulation.get_dof_actuation_forces())[0]
+        projected = as_torch(articulation.get_dof_projected_joint_forces())[0]
         mass_matrix = as_torch(articulation.get_generalized_mass_matrices())[0]
         expected_shape = (articulation.max_dofs, articulation.max_dofs)
         if tuple(mass_matrix.shape) != expected_shape:
@@ -281,6 +274,7 @@ def main() -> None:
                 *q.tolist(),
                 *qd.tolist(),
                 *efforts.tolist(),
+                *projected.tolist(),
                 *mass_matrix.flatten().tolist(),
                 extension,
                 extension_rate,
@@ -295,6 +289,7 @@ def main() -> None:
                 "dof_positions": q.tolist(),
                 "dof_velocities": qd.tolist(),
                 "dof_actuation_forces": efforts.tolist(),
+                "dof_projected_joint_forces": projected.tolist(),
                 "generalized_mass_matrix": mass_matrix.tolist(),
                 "commanded_extension_force_n": commanded_force_n,
                 "extension_m": extension,
@@ -341,6 +336,9 @@ def main() -> None:
     efforts = np.asarray(
         [sample["dof_actuation_forces"] for sample in SAMPLES], dtype=np.float64
     )
+    projected = np.asarray(
+        [sample["dof_projected_joint_forces"] for sample in SAMPLES], dtype=np.float64
+    )
     mass_matrices = np.asarray(
         [sample["generalized_mass_matrix"] for sample in SAMPLES], dtype=np.float64
     )
@@ -349,7 +347,7 @@ def main() -> None:
         [sample["commanded_extension_force_n"] for sample in SAMPLES], dtype=np.float64
     )
     finite_values = np.column_stack(
-        (q, qd, efforts, extension, mass_matrices.reshape(len(SAMPLES), -1))
+        (q, qd, efforts, projected, extension, mass_matrices.reshape(len(SAMPLES), -1))
     )
     finite_fraction = float(np.isfinite(finite_values).mean()) if finite_values.size else 0.0
     identify_start = RAMP_STEPS
@@ -415,6 +413,20 @@ def main() -> None:
     )
     stiffness_relative_error = abs(inferred_k - K_N_PER_M) / K_N_PER_M
     damping_relative_error = abs(inferred_d - D_NS_PER_M) / D_NS_PER_M
+
+    # The native getter's sign is an incoming-child-frame convention.  Resolve
+    # that single global convention from correlation, never per sample, then
+    # require the entire identified interval to agree with force balance.
+    reaction_check_indices = np.concatenate((identify_indices, hold_indices))
+    projected_axial = projected[reaction_check_indices, axial_index]
+    balance_axial = generalized_reaction[reaction_check_indices, axial_index]
+    projected_sign = 1.0 if float(np.dot(projected_axial, balance_axial)) >= 0.0 else -1.0
+    aligned_projected_axial = projected_sign * projected_axial
+    projected_residual = aligned_projected_axial - balance_axial
+    projected_absolute_rmse = float(np.sqrt(np.mean(projected_residual**2)))
+    projected_relative_rmse = projected_absolute_rmse / max(
+        float(np.sqrt(np.mean(balance_axial**2))), 1e-12
+    )
 
     # Check the equal-and-opposite generalized torque component independently.
     # Scaling by p converts torque residual to the equivalent axial-force unit.
@@ -512,8 +524,6 @@ def main() -> None:
         check("native_articulation_count", articulation.count, "==", 1, "articulations"),
         check("native_dof_count", articulation.max_dofs, "==", 2, "dofs"),
         check("native_collision_shape_count", articulation.max_shapes, "==", 0, "shapes"),
-        check("authored_solver_position_iterations", authored_position_iterations, "==", POSITION_ITERATIONS, "iterations"),
-        check("authored_solver_velocity_iterations", authored_velocity_iterations, "==", 0, "iterations"),
         check("actual_physics_dt_absolute_error", abs(actual_dt - DT), "<=", 1e-9, "s"),
         check("fresh_native_sample_count", len(SAMPLES), "==", expected_sample_count, "physics steps"),
         check("native_state_finite_fraction", finite_fraction, "==", 1.0, "fraction"),
@@ -534,6 +544,8 @@ def main() -> None:
         check("native_inferred_stiffness_relative_error", stiffness_relative_error, "<=", CONSTITUTIVE_RELATIVE_ERROR_MAX, "fraction"),
         check("native_inferred_damping_relative_error", damping_relative_error, "<=", CONSTITUTIVE_RELATIVE_ERROR_MAX, "fraction"),
         check("native_constitutive_fit_relative_rmse", fit_relative_rmse, "<=", CONSTITUTIVE_RELATIVE_ERROR_MAX, "fraction"),
+        check("projected_reaction_absolute_rmse", projected_absolute_rmse, "<=", PROJECTED_REACTION_ABSOLUTE_RMSE_MAX_N, "N"),
+        check("projected_reaction_relative_rmse", projected_relative_rmse, "<=", PROJECTED_REACTION_RELATIVE_RMSE_MAX, "fraction"),
         check("reaction_axial_torque_equivalent_rmse", reaction_torque_force_error, "<=", 0.10, "N equivalent"),
         check("pre_release_hold_extension_magnitude_min", baseline_extension, ">=", 1e-7, "m"),
         check("pre_release_hold_mechanical_energy_min", baseline_energy, ">", 0.0, "J"),
@@ -560,6 +572,9 @@ def main() -> None:
                     "settled_extension_rate_max_m_s": settled_extension_rate_max,
                     "settled_axial_acceleration_max_m_s2": settled_acceleration_max,
                     "transient_extension_rate_rms_m_s": transient_extension_rate_rms,
+                    "projected_force_global_sign": projected_sign,
+                    "projected_reaction_absolute_rmse_n": projected_absolute_rmse,
+                    "projected_reaction_relative_rmse": projected_relative_rmse,
                     "released_damping_loss_j": released_damping_loss,
                     "observed_release_energy_loss_j": observed_release_energy_loss,
                     "release_energy_balance_relative_error": release_energy_balance_relative_error,

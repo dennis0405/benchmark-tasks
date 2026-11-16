@@ -1,24 +1,24 @@
 {
   "phase": "preflight",
-  "summary": "Prepared a bounded native rerun correcting the failed release-energy quadrature without changing K, D, timestep, masses, solver settings, or the 0.25 threshold. It uses consecutive fresh native positions to compute interval-mean-rate dissipation, retains endpoint-velocity results for comparison, and labels the estimate as a lower bound. Prior failed evidence remains unchanged; no qualification is claimed.",
+  "summary": "The native PGS trial failed the frozen settling, stiffness, damping, constitutive-fit, and energy checks, so the positive-compliance mimic route is retired without weakening criteria. This bounded probe tests a disclosed serial alternative: the supported hard helical coupling plus a native prismatic bearing spring/damper retaining K=1e6 N/m, D=4000 N·s/m, 1 mm/revolution lead, 0.005 N·m torque, and 240 Hz timing. It measures bidirectional contact transmission, settling, stiffness, helix residual, and release; even a pass is discovery evidence only and requires independent contract/fidelity review before qualification.",
   "scripts": [
     {
-      "id": "discrete-energy-compliant-mimic-preflight",
-      "script": "task/run_discrete_energy_compliant_mimic_probe.py",
+      "id": "serial-bearing-helix-preflight",
+      "script": "task/run_serial_bearing_helix_probe.py",
       "args": [
         "--device",
         "cuda:0",
         "--visualizer",
         "none",
         "--output",
-        "../measurements/discrete-energy-compliant-mimic-preflight.json",
+        "../measurements/serial-bearing-helix-preflight.json",
         "--trace",
-        "../measurements/discrete-energy-compliant-mimic-preflight-trace.json"
+        "../measurements/serial-bearing-helix-preflight-trace.json"
       ],
-      "report": "measurements/discrete-energy-compliant-mimic-preflight.json"
+      "report": "measurements/serial-bearing-helix-preflight.json"
     }
   ],
   "files": [
-    "task/run_discrete_energy_compliant_mimic_probe.py"
+    "task/run_serial_bearing_helix_probe.py"
   ]
 }

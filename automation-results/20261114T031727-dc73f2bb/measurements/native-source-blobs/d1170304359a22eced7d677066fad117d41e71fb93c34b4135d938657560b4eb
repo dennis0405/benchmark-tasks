@@ -1,24 +1,27 @@
 #!/usr/bin/env python3
-"""Native compliant-mimic probe for the frozen DRG80 thread law.
+"""Native loaded compliant-mimic probe for the frozen DRG80 thread law.
 
-This bounded preflight follows honestly failed explicit-callback, fixed-tendon,
-and post-step-velocity energy-quadrature baselines.  It does not qualify the
-gripper environment.
+This bounded preflight follows the honestly failed free-release energy
+bookkeeping probe.  It does not reinterpret that result and does not qualify
+the gripper environment.  The actual positive-compliance mimic is placed in
+the already validated carrier/bilateral-plate load-cell coupon.  Native plate
+contact force, native DOF velocity, extension and applied torque are sampled
+under bidirectional loading.
 A positive-compliance native PhysX articulation mimic realizes
 
     e = z - p*theta, U = 0.5*K*e**2,
     K = 1e6 N/m, D = 4000 N*s/m, p = 0.001/(2*pi) m/rad.
 
-The probe applies a persistently exciting generalized load parallel to grad(e),
-holds a static load, then releases both dynamic DOFs.  It infers K and D from
-fresh native acceleration/reaction balance and uses the measured K and D for
-release energy and dissipation.  Release dissipation is approximated from the
-measured extension increment between consecutive fresh post-step positions.
-That interval-mean-rate-squared quadrature is a lower bound on unresolved
-within-step viscous heat, not an exact heat measurement.  The previous baseline
-incorrectly used only the projected endpoint velocity, which does not include
-the compliant solver's within-step position correction.  Both quadratures are
-retained in the trace and no residual is filled with a constant or proxy.
+K and D are identified from an integrator-consistent generalized-impulse
+balance.  For every completed step, the balance subtracts the measured change
+in native generalized momentum and the native applied/contact impulses.  The
+resulting internal mimic impulse is independently reconstructed from the axial
+and rotational equations before its elastic part is removed.  Thus plate
+constraint impulse, carrier/rotor inertia, and applied torque are not silently
+called damping.  Damping work uses this internal impulse and the trapezoidal
+native DOF rate.  Release energy closure includes contact and applied work.
+Position-increment disagreement and any remaining projection/resolution loss
+are reported, and energy-closure error is a hard pass criterion.
 The mimic uses zero velocity iterations: the
 pinned shared PhysX solver's velocity-iteration branch hard-projects relative
 velocity even for positive compliance, which made D unobservable in the failed
@@ -76,11 +79,11 @@ D_NS_PER_M = 4000.0
 CARRIER_MASS_KG = 0.01
 ROTOR_MASS_KG = 0.01
 ROTOR_INERTIA_KG_M2 = 1.0e-6
-RAMP_STEPS = 6
-IDENTIFY_STEPS = 960
-HOLD_STEPS = 120
+SETTLE_STEPS = 480
+IDENTIFY_STEPS = 1440
+HOLD_STEPS = 480
 RELEASE_STEPS = 480
-TEST_EXTENSION_FORCE_N = 1.0
+TEST_TORQUE_NM = 0.005
 AXIAL_LIMIT_M = 0.005
 ROTATION_LIMIT_RAD = math.radians(1440.0)
 AXIAL_LIMIT_CLEARANCE_MIN_M = 5.0e-4
@@ -89,7 +92,8 @@ POSITION_ITERATIONS = 128
 VELOCITY_ITERATIONS = 0
 MIMIC_AXIS = "rotZ"
 CONSTITUTIVE_RELATIVE_ERROR_MAX = 0.10
-RELEASE_ENERGY_BALANCE_RELATIVE_ERROR_MAX = 0.25
+REACTION_CHANNEL_RELATIVE_RMSE_MAX = 0.10
+ENERGY_BALANCE_RELATIVE_ERROR_MAX = 0.25
 # For native C=theta-z/p, kp_C=K*p^2 and kd_C=D*p^2.  The shared
 # CPU/GPU PhysX mimic solver uses kp=mu^2/r and kd=2*mu*zeta/r.  These
 # values follow from the declared bare-mechanism mass matrix, not tuning.
@@ -150,16 +154,33 @@ def check(name: str, measured: float, operator: str, threshold: float, unit: str
     }
 
 
-def create_link(stage, name: str, mass_kg: float, inertia: float):
+def create_link(stage, name: str, mass_kg: float, inertia: float, *, collision=False):
     cube = UsdGeom.Cube.Define(stage, f"/World/Thread/{name}")
     cube.CreateSizeAttr(0.01)
     cube.AddTranslateOp().Set(Gf.Vec3d(0.0, 0.0, 0.5))
     UsdPhysics.RigidBodyAPI.Apply(cube.GetPrim())
+    if collision:
+        UsdPhysics.CollisionAPI.Apply(cube.GetPrim())
+        PhysxSchema.PhysxContactReportAPI.Apply(cube.GetPrim()).CreateThresholdAttr(0.0)
     mass = UsdPhysics.MassAPI.Apply(cube.GetPrim())
     mass.CreateMassAttr(mass_kg)
     mass.CreateDiagonalInertiaAttr(Gf.Vec3f(inertia, inertia, inertia))
     PhysxSchema.PhysxRigidBodyAPI.Apply(cube.GetPrim()).CreateDisableGravityAttr(True)
     return cube.GetPath()
+
+
+def create_plate(stage, name: str, z_m: float):
+    plate = UsdGeom.Cube.Define(stage, f"/World/{name}")
+    plate.CreateSizeAttr(1.0)
+    plate.AddTranslateOp().Set(Gf.Vec3d(0.0, 0.0, z_m))
+    plate.AddScaleOp().Set(Gf.Vec3f(0.05, 0.05, 0.004))
+    body = UsdPhysics.RigidBodyAPI.Apply(plate.GetPrim())
+    UsdPhysics.CollisionAPI.Apply(plate.GetPrim())
+    UsdPhysics.MassAPI.Apply(plate.GetPrim()).CreateMassAttr(100.0)
+    PhysxSchema.PhysxRigidBodyAPI.Apply(plate.GetPrim()).CreateDisableGravityAttr(True)
+    body.CreateKinematicEnabledAttr(True)
+    PhysxSchema.PhysxContactReportAPI.Apply(plate.GetPrim()).CreateThresholdAttr(0.0)
+    return plate.GetPath()
 
 
 def as_torch(value) -> torch.Tensor:
@@ -178,8 +199,12 @@ def main() -> None:
     articulation_api.CreateSolverVelocityIterationCountAttr(VELOCITY_ITERATIONS)
 
     frame = create_link(stage, "frame", 1.0, 1.0e-3)
-    carrier = create_link(stage, "carrier", CARRIER_MASS_KG, 1.0e-6)
+    carrier = create_link(stage, "carrier", CARRIER_MASS_KG, 1.0e-6, collision=True)
     rotor = create_link(stage, "rotor", ROTOR_MASS_KG, ROTOR_INERTIA_KG_M2)
+
+    contact_offset = 0.005 + 0.002
+    lower_plate = create_plate(stage, "LowerPlate", 0.5 - contact_offset)
+    upper_plate = create_plate(stage, "UpperPlate", 0.5 + contact_offset)
 
     mount = UsdPhysics.FixedJoint.Define(stage, "/World/Thread/mount")
     mount.CreateBody1Rel().SetTargets([frame])
@@ -225,6 +250,18 @@ def main() -> None:
     axial_index = dof_names.index("axial")
     rotation_index = dof_names.index("rotation")
     all_indices = wp.array([0], dtype=wp.uint32, device=args.device)
+    carrier_view = physics.create_rigid_body_view([str(carrier)])
+    contact_view = physics.create_rigid_contact_view(
+        [str(carrier)],
+        filter_patterns=[[str(lower_plate), str(upper_plate)]],
+        max_contact_data_count=32,
+    )
+    if carrier_view.count != 1 or contact_view.sensor_count != 1 or contact_view.filter_count != 2:
+        raise RuntimeError(
+            "unexpected native load-cell views: "
+            f"carrier={carrier_view.count}, "
+            f"contact=({contact_view.sensor_count},{contact_view.filter_count})"
+        )
 
     authored_frequency = float(mimic.GetNaturalFrequencyAttr().Get())
     authored_damping_ratio = float(mimic.GetDampingRatioAttr().Get())
@@ -238,13 +275,14 @@ def main() -> None:
     METADATA = {
         "native_trial_id": trial_id,
         "source_sha256": source_sha256,
-        "scope": "positive-compliance mimic free-release component preflight only",
+        "scope": "positive-compliance mimic native contact/load-cell preflight only",
         "dof_names": dof_names,
         "physics_dt_s": DT,
         "thread_stiffness_n_per_m": K_N_PER_M,
         "thread_damping_ns_per_m": D_NS_PER_M,
         "lead_m_per_revolution": LEAD_M_PER_REV,
-        "test_extension_force_n": TEST_EXTENSION_FORCE_N,
+        "test_rotor_torque_nm": TEST_TORQUE_NM,
+        "contact_filter_paths": list(contact_view.filter_paths),
         "analytic_inverse_mass_response": ANALYTIC_R,
         "kp_constraint_coordinate": KP_C,
         "kd_constraint_coordinate": KD_C,
@@ -255,19 +293,27 @@ def main() -> None:
         "authored_solver_velocity_iterations": authored_velocity_iterations,
     }
 
-    def set_effort(extension_force_n: float) -> None:
+    def persist_raw_trace(status: str) -> None:
+        # Phase-boundary persistence keeps genuine native observations even if
+        # a later SDK getter or validation fails.
+        write_json(
+            trace_path,
+            json_safe({**METADATA, "status": status, "samples": SAMPLES}),
+        )
+
+    def set_effort(rotor_torque_nm: float) -> None:
         efforts = torch.zeros(
             (articulation.count, articulation.max_dofs),
             dtype=torch.float32,
             device=args.device,
         )
-        efforts[0, axial_index] = extension_force_n
-        efforts[0, rotation_index] = -P_M_PER_RAD * extension_force_n
+        efforts[0, axial_index] = 0.0
+        efforts[0, rotation_index] = rotor_torque_nm
         articulation.set_dof_actuation_forces(
             wp.from_torch(efforts.contiguous(), dtype=wp.float32), all_indices
         )
 
-    def capture(phase: str, phase_step: int, commanded_force_n: float) -> bool:
+    def capture(phase: str, phase_step: int, commanded_torque_nm: float) -> bool:
         q = as_torch(articulation.get_dof_positions())[0]
         qd = as_torch(articulation.get_dof_velocities())[0]
         efforts = as_torch(articulation.get_dof_actuation_forces())[0]
@@ -284,6 +330,15 @@ def main() -> None:
         extension = z - P_M_PER_RAD * theta
         extension_rate = zd - P_M_PER_RAD * thetad
         kinetic_energy = 0.5 * float(qd @ mass_matrix @ qd)
+        contact_matrix = as_torch(
+            contact_view.get_contact_force_matrix(dt=DT)
+        ).reshape(1, 2, 3)[0]
+        contact_impulse_matrix = as_torch(
+            contact_view.get_contact_force_matrix(dt=1.0)
+        ).reshape(1, 2, 3)[0]
+        signed_contact_force = float(contact_matrix[:, 2].sum())
+        signed_contact_impulse = float(contact_impulse_matrix[:, 2].sum())
+        carrier_transform = as_torch(carrier_view.get_transforms())[0]
         values = np.asarray(
             [
                 *q.tolist(),
@@ -293,6 +348,11 @@ def main() -> None:
                 extension,
                 extension_rate,
                 kinetic_energy,
+                *contact_matrix.flatten().tolist(),
+                *contact_impulse_matrix.flatten().tolist(),
+                signed_contact_force,
+                signed_contact_impulse,
+                *carrier_transform.tolist(),
             ],
             dtype=np.float64,
         )
@@ -304,45 +364,52 @@ def main() -> None:
                 "dof_velocities": qd.tolist(),
                 "dof_actuation_forces": efforts.tolist(),
                 "generalized_mass_matrix": mass_matrix.tolist(),
-                "commanded_extension_force_n": commanded_force_n,
+                "commanded_rotor_torque_nm": commanded_torque_nm,
                 "extension_m": extension,
                 "extension_rate_m_s": extension_rate,
                 "kinetic_energy_j": kinetic_energy,
+                "contact_force_matrix_n": contact_matrix.tolist(),
+                "contact_impulse_matrix_ns": contact_impulse_matrix.tolist(),
+                "signed_carrier_contact_force_n": signed_contact_force,
+                "signed_carrier_contact_impulse_ns": signed_contact_impulse,
+                "carrier_transform_xyzw": carrier_transform.tolist(),
             }
         )
         return bool(np.all(np.isfinite(values)))
 
     all_finite = True
     for phase, steps in (
-        ("ramp", RAMP_STEPS),
+        ("settle", SETTLE_STEPS),
         ("identify", IDENTIFY_STEPS),
-        ("hold", HOLD_STEPS),
-        ("released", RELEASE_STEPS),
+        ("positive_hold", HOLD_STEPS),
+        ("released_mid", RELEASE_STEPS),
+        ("negative_hold", 2 * HOLD_STEPS),
+        ("released_final", RELEASE_STEPS),
     ):
         for phase_step in range(steps):
-            if phase == "ramp":
-                force_n = TEST_EXTENSION_FORCE_N * (phase_step + 1) / RAMP_STEPS
-            elif phase == "identify":
-                # Three non-harmonic components make extension and extension
-                # rate independently observable.  The zero-mean bounded load
-                # remains parallel to grad(e); it is not a pose/velocity drive.
+            if phase == "identify":
+                # Three non-harmonic components make extension and native rate
+                # independently observable without writing any state.
                 time_s = phase_step * DT
-                force_n = TEST_EXTENSION_FORCE_N * (
+                torque_nm = TEST_TORQUE_NM * (
                     0.60 * math.sin(2.0 * math.pi * 5.0 * time_s)
                     + 0.30 * math.sin(2.0 * math.pi * 17.0 * time_s)
                     + 0.10 * math.sin(2.0 * math.pi * 31.0 * time_s)
                 )
-            elif phase == "hold":
-                force_n = TEST_EXTENSION_FORCE_N
+            elif phase == "positive_hold":
+                torque_nm = TEST_TORQUE_NM
+            elif phase == "negative_hold":
+                torque_nm = -TEST_TORQUE_NM
             else:
-                force_n = 0.0
-            set_effort(force_n)
+                torque_nm = 0.0
+            set_effort(torque_nm)
             sim.step(render=False)
-            all_finite = capture(phase, phase_step, force_n) and all_finite
+            all_finite = capture(phase, phase_step, torque_nm) and all_finite
             if not all_finite:
                 break
         if not all_finite:
             break
+        persist_raw_trace(f"captured_{phase}")
 
     q = np.asarray([sample["dof_positions"] for sample in SAMPLES], dtype=np.float64)
     qd = np.asarray([sample["dof_velocities"] for sample in SAMPLES], dtype=np.float64)
@@ -354,104 +421,147 @@ def main() -> None:
     )
     extension = np.asarray([sample["extension_m"] for sample in SAMPLES], dtype=np.float64)
     commanded = np.asarray(
-        [sample["commanded_extension_force_n"] for sample in SAMPLES], dtype=np.float64
+        [sample["commanded_rotor_torque_nm"] for sample in SAMPLES], dtype=np.float64
+    )
+    contact_force = np.asarray(
+        [sample["signed_carrier_contact_force_n"] for sample in SAMPLES],
+        dtype=np.float64,
+    )
+    contact_matrices = np.asarray(
+        [sample["contact_force_matrix_n"] for sample in SAMPLES], dtype=np.float64
+    )
+    contact_impulse = np.asarray(
+        [sample["signed_carrier_contact_impulse_ns"] for sample in SAMPLES],
+        dtype=np.float64,
+    )
+    carrier_transforms = np.asarray(
+        [sample["carrier_transform_xyzw"] for sample in SAMPLES], dtype=np.float64
     )
     finite_values = np.column_stack(
-        (q, qd, efforts, extension, mass_matrices.reshape(len(SAMPLES), -1))
+        (
+            q,
+            qd,
+            efforts,
+            extension,
+            contact_force,
+            contact_impulse,
+            contact_matrices.reshape(len(SAMPLES), -1),
+            carrier_transforms,
+            mass_matrices.reshape(len(SAMPLES), -1),
+        )
     )
     finite_fraction = float(np.isfinite(finite_values).mean()) if finite_values.size else 0.0
-    identify_start = RAMP_STEPS
-    hold_start = identify_start + IDENTIFY_STEPS
-    release_start = hold_start + HOLD_STEPS
+    identify_start = SETTLE_STEPS
+    positive_hold_start = identify_start + IDENTIFY_STEPS
+    release_mid_start = positive_hold_start + HOLD_STEPS
+    negative_hold_start = release_mid_start + RELEASE_STEPS
+    release_start = negative_hold_start + 2 * HOLD_STEPS
     expected_sample_count = release_start + RELEASE_STEPS
     have_complete_trace = len(SAMPLES) == expected_sample_count
 
-    # For the post-step sample k, backward velocity difference is the native
-    # acceleration across the just-completed integration interval.  With
-    # gravity disabled, no shapes/contacts, and limits checked separately,
-    # Q_native = M(q_k)*(v_k-v_{k-1})/dt - Q_user is the measured passive
-    # generalized reaction.  The frozen law predicts
-    # Q_native = -(K*e + D*edot)*[1,-p].
-    acceleration = np.full_like(qd, np.nan)
-    generalized_reaction = np.full_like(qd, np.nan)
-    acceleration[1:] = (qd[1:] - qd[:-1]) / DT
-    generalized_reaction[1:] = np.einsum(
-        "nij,nj->ni", mass_matrices[1:], acceleration[1:]
-    ) - efforts[1:]
-    measured_force_n = -generalized_reaction[:, axial_index]
-
-    identify_indices = np.arange(identify_start + 1, hold_start, dtype=np.int64)
-    hold_indices = np.arange(release_start - 60, release_start, dtype=np.int64)
+    # Reconstruct the native mimic reaction from the discrete generalized
+    # impulse balance.  With e=z-p*theta and positive constitutive force F,
+    # Q_mimic=[-F,+pF].  For completed interval k:
+    #   M_k v_k - M_{k-1} v_{k-1} = J_contact + tau_applied*dt + J_mimic.
+    # The axial and rotational equations therefore provide independent F
+    # observations.  This explicitly accounts for carrier/rotor inertia and
+    # the complete resolved plate-contact impulse instead of treating their
+    # residual as damping.
+    generalized_momentum = np.einsum("nij,nj->ni", mass_matrices, qd)
+    momentum_delta = generalized_momentum[1:] - generalized_momentum[:-1]
+    axial_mimic_force = (
+        contact_impulse[1:]
+        + efforts[1:, axial_index] * DT
+        - momentum_delta[:, axial_index]
+    ) / DT
+    rotational_mimic_force = (
+        momentum_delta[:, rotation_index] - efforts[1:, rotation_index] * DT
+    ) / (P_M_PER_RAD * DT)
+    midpoint_extension = 0.5 * (extension[:-1] + extension[1:])
     extension_rate = qd[:, axial_index] - P_M_PER_RAD * qd[:, rotation_index]
+    midpoint_extension_rate = 0.5 * (extension_rate[:-1] + extension_rate[1:])
+
+    identify_indices = np.arange(identify_start + 1, positive_hold_start, dtype=np.int64)
+    positive_settled = np.arange(release_mid_start - 120, release_mid_start, dtype=np.int64)
+    negative_settled = np.arange(release_start - 120, release_start, dtype=np.int64)
+    hold_indices = np.concatenate((positive_settled, negative_settled))
+    identify_intervals = identify_indices - 1
     scaled_design = np.column_stack(
         (
-            K_N_PER_M * extension[identify_indices],
-            D_NS_PER_M * extension_rate[identify_indices],
+            K_N_PER_M * midpoint_extension[identify_intervals],
+            D_NS_PER_M * midpoint_extension_rate[identify_intervals],
         )
     )
-    response = measured_force_n[identify_indices]
+    response = axial_mimic_force[identify_intervals]
     singular_values = np.linalg.svd(scaled_design, compute_uv=False)
     design_condition = float(singular_values[0] / max(singular_values[-1], 1e-30))
     # K is measured in a settled constant-load window where the damping term
     # is negligible.  Holding that measured K fixed, D is identified from the
     # independent multi-frequency transient window.  This prevents a single
     # ill-conditioned two-parameter fit from trading stiffness for damping.
-    settled_force = measured_force_n[hold_indices]
-    settled_extension = extension[hold_indices]
+    settled_intervals = hold_indices - 1
+    settled_force = axial_mimic_force[settled_intervals]
+    settled_extension = midpoint_extension[settled_intervals]
     inferred_k = float(
         np.dot(settled_extension, settled_force)
         / max(float(np.dot(settled_extension, settled_extension)), 1e-30)
     )
-    damping_response = response - inferred_k * extension[identify_indices]
-    transient_rate = extension_rate[identify_indices]
+    damping_response = response - inferred_k * midpoint_extension[identify_intervals]
+    transient_rate = midpoint_extension_rate[identify_intervals]
     inferred_d = float(
         np.dot(transient_rate, damping_response)
         / max(float(np.dot(transient_rate, transient_rate)), 1e-30)
     )
     settled_extension_rate_max = float(np.max(np.abs(extension_rate[hold_indices])))
-    settled_acceleration_max = float(
-        np.max(np.abs(acceleration[hold_indices, axial_index]))
-    )
     transient_extension_rate_rms = float(np.sqrt(np.mean(transient_rate**2)))
     constitutive_prediction = (
-        inferred_k * extension + inferred_d
-        * (qd[:, axial_index] - P_M_PER_RAD * qd[:, rotation_index])
+        inferred_k * midpoint_extension + inferred_d * midpoint_extension_rate
     )
-    fit_residual = response - constitutive_prediction[identify_indices]
+    fit_residual = response - constitutive_prediction[identify_intervals]
     fit_relative_rmse = float(np.sqrt(np.mean(fit_residual**2))) / max(
         float(np.sqrt(np.mean(response**2))), 1e-12
     )
     stiffness_relative_error = abs(inferred_k - K_N_PER_M) / K_N_PER_M
     damping_relative_error = abs(inferred_d - D_NS_PER_M) / D_NS_PER_M
-
-    # Check the equal-and-opposite generalized torque component independently.
-    # Scaling by p converts torque residual to the equivalent axial-force unit.
-    reaction_torque_force_error = float(
-        np.sqrt(
-            np.mean(
-                (
-                    generalized_reaction[identify_indices, rotation_index]
-                    / (-P_M_PER_RAD)
-                    - generalized_reaction[identify_indices, axial_index]
-                )
-                ** 2
-            )
-        )
+    reaction_channel_error = (
+        axial_mimic_force[identify_intervals]
+        - rotational_mimic_force[identify_intervals]
     )
+    reaction_channel_relative_rmse = float(
+        np.sqrt(np.mean(reaction_channel_error**2))
+    ) / max(float(np.sqrt(np.mean(response**2))), 1e-12)
 
     measured_elastic_energy = 0.5 * inferred_k * extension**2
     measured_kinetic_energy = np.asarray(
         [sample["kinetic_energy_j"] for sample in SAMPLES], dtype=np.float64
     )
     measured_energy = measured_elastic_energy + measured_kinetic_energy
-    measured_damping_power = inferred_d * extension_rate**2
+    measured_damping_impulse = (
+        axial_mimic_force - inferred_k * midpoint_extension
+    ) * DT
+    measured_damping_power = (
+        measured_damping_impulse / DT * midpoint_extension_rate
+    )
     for index, sample in enumerate(SAMPLES):
-        sample["measured_constitutive_force_n"] = float(constitutive_prediction[index])
         sample["measured_elastic_energy_j"] = float(measured_elastic_energy[index])
         sample["measured_mechanical_energy_j"] = float(measured_energy[index])
-        sample["measured_damping_power_w"] = float(measured_damping_power[index])
         if index > 0:
-            sample["measured_generalized_reaction"] = generalized_reaction[index].tolist()
+            interval = index - 1
+            sample["native_axial_balance_mimic_force_n"] = float(
+                axial_mimic_force[interval]
+            )
+            sample["native_rotational_balance_mimic_force_n"] = float(
+                rotational_mimic_force[interval]
+            )
+            sample["measured_constitutive_force_n"] = float(
+                constitutive_prediction[interval]
+            )
+            sample["native_balance_damping_impulse_ns"] = float(
+                measured_damping_impulse[interval]
+            )
+            sample["native_balance_damping_power_w"] = float(
+                measured_damping_power[interval]
+            )
 
     if have_complete_trace:
         baseline_extension = abs(float(extension[release_start - 1]))
@@ -461,49 +571,93 @@ def main() -> None:
         peak_extension_ratio = float(np.max(release_extension)) / max(baseline_extension, 1e-15)
         final_extension_ratio = float(release_extension[-1]) / max(baseline_extension, 1e-15)
         peak_energy_ratio = float(np.max(release_energy)) / max(baseline_energy, 1e-15)
-        # Each SAMPLES[k] entry is a fresh state after one native physics step.
-        # For the release interval ending at k, the measured generalized
-        # extension increment is e[k]-e[k-1].  Its quotient by the actual DT
-        # is the only rate directly consistent with those two measured native
-        # positions over that completed interval.  The endpoint qdot getter is
-        # also recorded, but the compliant mimic's implicit position solve can
-        # correct position without reflecting that correction in the projected
-        # post-solve velocity.  Using only qdot[k] therefore omitted real
-        # measured displacement and caused the retained failed 0.7006 result.
-        released_interval_extension_rate = np.diff(
-            extension[release_start - 1:]
+        # Each entry k in the balance arrays represents sample interval
+        # [k,k+1].  Contact/applied work and internal damping work are paired
+        # with trapezoidal native generalized rates for that same interval.
+        interval_indices = np.arange(release_start, expected_sample_count)
+        balance_indices = interval_indices - 1
+        native_interval_rate = midpoint_extension_rate[balance_indices]
+        released_native_damping_work = float(
+            np.sum(measured_damping_impulse[balance_indices] * native_interval_rate)
+        )
+        released_expected_damping_work = float(
+            np.sum(D_NS_PER_M * native_interval_rate**2 * DT)
+        )
+        midpoint_axial_rate = 0.5 * (
+            qd[interval_indices - 1, axial_index]
+            + qd[interval_indices, axial_index]
+        )
+        midpoint_rotational_rate = 0.5 * (
+            qd[interval_indices - 1, rotation_index]
+            + qd[interval_indices, rotation_index]
+        )
+        released_contact_work = float(
+            np.sum(contact_impulse[interval_indices] * midpoint_axial_rate)
+        )
+        released_applied_work = float(
+            np.sum(
+                efforts[interval_indices, axial_index] * midpoint_axial_rate * DT
+                + efforts[interval_indices, rotation_index]
+                * midpoint_rotational_rate
+                * DT
+            )
+        )
+        released_external_work = released_contact_work + released_applied_work
+        position_increment_rate = (
+            extension[interval_indices] - extension[interval_indices - 1]
         ) / DT
-        released_damping_loss = float(
-            np.sum(inferred_d * released_interval_extension_rate**2) * DT
-        )
-        released_endpoint_velocity_damping_loss = float(
-            np.sum(measured_damping_power[release_start:]) * DT
-        )
-        released_interval_rate_finite_fraction = float(
-            np.isfinite(released_interval_extension_rate).mean()
+        projection_rate_rms = float(
+            np.sqrt(np.mean((position_increment_rate - native_interval_rate) ** 2))
         )
         observed_release_energy_loss = baseline_energy - float(release_energy[-1])
-        release_energy_balance_relative_error = abs(
-            released_damping_loss - observed_release_energy_loss
-        ) / max(baseline_energy, 1e-15)
+        energy_balance_residual = (
+            observed_release_energy_loss
+            - (released_native_damping_work - released_external_work)
+        )
+        energy_balance_relative_error = abs(energy_balance_residual) / max(
+            abs(observed_release_energy_loss),
+            abs(released_native_damping_work - released_external_work),
+            1e-15,
+        )
+        damping_work_relative_error = abs(
+            released_native_damping_work - released_expected_damping_work
+        ) / max(abs(released_expected_damping_work), 1e-15)
     else:
         baseline_extension = 0.0
         baseline_energy = 0.0
         peak_extension_ratio = math.inf
         final_extension_ratio = math.inf
         peak_energy_ratio = math.inf
-        released_damping_loss = 0.0
-        released_endpoint_velocity_damping_loss = 0.0
-        released_interval_rate_finite_fraction = 0.0
+        released_native_damping_work = 0.0
+        released_expected_damping_work = 0.0
+        released_contact_work = 0.0
+        released_applied_work = 0.0
+        released_external_work = 0.0
+        projection_rate_rms = math.inf
         observed_release_energy_loss = 0.0
-        release_energy_balance_relative_error = math.inf
+        energy_balance_residual = math.inf
+        energy_balance_relative_error = math.inf
+        damping_work_relative_error = math.inf
 
-    expected_axial = commanded
-    expected_rotor = -P_M_PER_RAD * commanded
-    axial_effort_error = float(np.max(np.abs(efforts[:, axial_index] - expected_axial)))
-    rotor_effort_error = float(np.max(np.abs(efforts[:, rotation_index] - expected_rotor)))
+    axial_effort_error = float(np.max(np.abs(efforts[:, axial_index])))
+    rotor_effort_error = float(np.max(np.abs(efforts[:, rotation_index] - commanded)))
+    positive_contact_mean = float(np.mean(contact_force[positive_settled]))
+    negative_contact_mean = float(np.mean(contact_force[negative_settled]))
+    carrier_axial_motion = float(
+        np.max(np.abs(carrier_transforms[:, 2] - carrier_transforms[0, 2]))
+    )
+    contact_transverse_peak = float(
+        np.max(np.linalg.norm(contact_matrices[:, :, :2].sum(axis=1), axis=1))
+    )
+    unloaded_contact_bias = float(np.mean(contact_force[SETTLE_STEPS - 120:SETTLE_STEPS]))
+    impulse_force_dt_error = float(
+        np.max(np.abs(contact_impulse - contact_force * DT))
+    )
     mass_symmetry_error = float(
         np.max(np.abs(mass_matrices - np.swapaxes(mass_matrices, 1, 2)))
+    )
+    mass_matrix_variation = float(
+        np.max(np.abs(mass_matrices - mass_matrices[0]))
     )
     min_mass_eigenvalue = float(
         np.min(
@@ -541,7 +695,9 @@ def main() -> None:
     checks = [
         check("native_articulation_count", articulation.count, "==", 1, "articulations"),
         check("native_dof_count", articulation.max_dofs, "==", 2, "dofs"),
-        check("native_collision_shape_count", articulation.max_shapes, "==", 0, "shapes"),
+        check("native_collision_shape_count", articulation.max_shapes, "==", 1, "shapes"),
+        check("native_contact_sensor_count", contact_view.sensor_count, "==", 1, "bodies"),
+        check("native_contact_filter_count", contact_view.filter_count, "==", 2, "bodies"),
         check("authored_solver_position_iterations", authored_position_iterations, "==", POSITION_ITERATIONS, "iterations"),
         check("authored_solver_velocity_iterations", authored_velocity_iterations, "==", 0, "iterations"),
         check("actual_physics_dt_absolute_error", abs(actual_dt - DT), "<=", 1e-9, "s"),
@@ -552,26 +708,35 @@ def main() -> None:
         check("native_mass_mapped_frequency_relative_error", frequency_mapping_relative_error, "<=", 1e-3, "fraction"),
         check("native_mass_mapped_damping_ratio_relative_error", damping_mapping_relative_error, "<=", 1e-3, "fraction"),
         check("generalized_mass_matrix_symmetry_error_max", mass_symmetry_error, "<=", 1e-7, "mixed SI generalized inertia"),
+        check("generalized_mass_matrix_variation_max", mass_matrix_variation, "<=", 1e-7, "mixed SI generalized inertia"),
         check("generalized_mass_matrix_eigenvalue_min", min_mass_eigenvalue, ">", 0.0, "mixed SI generalized inertia"),
         check("axial_joint_limit_clearance_min", axial_clearance, ">=", AXIAL_LIMIT_CLEARANCE_MIN_M, "m"),
         check("rotation_joint_limit_clearance_min", rotation_clearance, ">=", ROTATION_LIMIT_CLEARANCE_MIN_RAD, "rad"),
         check("native_applied_axial_excitation_error_max", axial_effort_error, "<=", 5e-6, "N"),
         check("native_applied_rotor_excitation_error_max", rotor_effort_error, "<=", 5e-9, "N*m"),
+        check("positive_contact_reaction_magnitude_min", abs(positive_contact_mean), ">=", 1.0, "N"),
+        check("negative_contact_reaction_magnitude_min", abs(negative_contact_mean), ">=", 1.0, "N"),
+        check("bidirectional_contact_reaction_sign_product", positive_contact_mean * negative_contact_mean, "<", 0.0, "N^2"),
+        check("carrier_axial_restraint_motion_max", carrier_axial_motion, "<=", 5e-4, "m"),
+        check("contact_transverse_force_peak_max", contact_transverse_peak, "<=", 0.1, "N"),
+        check("unloaded_signed_contact_bias_max", abs(unloaded_contact_bias), "<=", 0.1, "N"),
+        check("contact_impulse_force_dt_error_max", impulse_force_dt_error, "<=", 1e-6, "N*s"),
         check("constitutive_identification_design_condition_max", design_condition, "<=", 100.0, "condition number"),
         check("settled_extension_rate_max", settled_extension_rate_max, "<=", 1e-6, "m/s"),
-        check("settled_axial_acceleration_max", settled_acceleration_max, "<=", 1e-4, "m/s^2"),
         check("transient_extension_rate_rms_min", transient_extension_rate_rms, ">=", 1e-6, "m/s"),
         check("native_inferred_stiffness_relative_error", stiffness_relative_error, "<=", CONSTITUTIVE_RELATIVE_ERROR_MAX, "fraction"),
         check("native_inferred_damping_relative_error", damping_relative_error, "<=", CONSTITUTIVE_RELATIVE_ERROR_MAX, "fraction"),
         check("native_constitutive_fit_relative_rmse", fit_relative_rmse, "<=", CONSTITUTIVE_RELATIVE_ERROR_MAX, "fraction"),
-        check("reaction_axial_torque_equivalent_rmse", reaction_torque_force_error, "<=", 0.10, "N equivalent"),
+        check("native_axial_rotational_reaction_relative_rmse", reaction_channel_relative_rmse, "<=", REACTION_CHANNEL_RELATIVE_RMSE_MAX, "fraction"),
         check("pre_release_hold_extension_magnitude_min", baseline_extension, ">=", 1e-7, "m"),
         check("pre_release_hold_mechanical_energy_min", baseline_energy, ">", 0.0, "J"),
         check("released_peak_extension_ratio_max", peak_extension_ratio, "<=", 2.0, "ratio"),
         check("released_peak_mechanical_energy_ratio_max", peak_energy_ratio, "<=", 1.05, "ratio"),
         check("released_final_extension_ratio_max", final_extension_ratio, "<=", 0.1, "ratio"),
-        check("released_interval_rate_finite_fraction", released_interval_rate_finite_fraction, "==", 1.0, "fraction"),
-        check("released_measured_energy_balance_relative_error", release_energy_balance_relative_error, "<=", RELEASE_ENERGY_BALANCE_RELATIVE_ERROR_MAX, "fraction"),
+        check("released_native_balance_damping_work_min", released_native_damping_work, ">", 0.0, "J"),
+        check("released_native_vs_declared_damping_work_relative_error", damping_work_relative_error, "<=", CONSTITUTIVE_RELATIVE_ERROR_MAX, "fraction"),
+        check("released_energy_balance_relative_error", energy_balance_relative_error, "<=", ENERGY_BALANCE_RELATIVE_ERROR_MAX, "fraction"),
+        check("released_projection_rate_rms_finite", math.isfinite(projection_rate_rms), "==", 1.0, "boolean"),
     ]
     write_json(
         trace_path,
@@ -589,14 +754,20 @@ def main() -> None:
                     "settled_window_sample_indices": hold_indices.tolist(),
                     "transient_window_sample_indices": identify_indices.tolist(),
                     "settled_extension_rate_max_m_s": settled_extension_rate_max,
-                    "settled_axial_acceleration_max_m_s2": settled_acceleration_max,
                     "transient_extension_rate_rms_m_s": transient_extension_rate_rms,
-                    "released_damping_loss_j": released_damping_loss,
-                    "released_endpoint_velocity_damping_loss_j": released_endpoint_velocity_damping_loss,
-                    "released_interval_rate_finite_fraction": released_interval_rate_finite_fraction,
-                    "released_damping_quadrature_method": "D times squared measured interval-mean extension rate times dt; lower bound on unresolved within-step viscous heat",
+                    "axial_rotational_reaction_relative_rmse": reaction_channel_relative_rmse,
+                    "released_native_balance_damping_work_j": released_native_damping_work,
+                    "released_declared_law_damping_work_j": released_expected_damping_work,
+                    "released_damping_work_relative_error": damping_work_relative_error,
+                    "released_damping_work_method": "discrete native generalized-momentum balance after subtracting complete resolved contact and applied impulses; elastic midpoint impulse removed; result dotted with trapezoidal native extension rate",
+                    "released_contact_work_j": released_contact_work,
+                    "released_applied_work_j": released_applied_work,
+                    "released_external_work_j": released_external_work,
                     "observed_release_energy_loss_j": observed_release_energy_loss,
-                    "release_energy_balance_relative_error": release_energy_balance_relative_error,
+                    "energy_balance_residual_j": energy_balance_residual,
+                    "energy_balance_relative_error": energy_balance_relative_error,
+                    "position_increment_minus_native_rate_rms_m_s": projection_rate_rms,
+                    "energy_balance_is_pass_criterion": True,
                 },
                 "samples": SAMPLES,
             }
@@ -616,7 +787,7 @@ def main() -> None:
     )
     if not all(item["passed"] for item in checks):
         raise RuntimeError(
-            "positive-compliance mimic stability preflight failed: "
+            "positive-compliance mimic contact/load-cell preflight failed: "
             + ", ".join(item["name"] for item in checks if not item["passed"])
         )
 
@@ -635,7 +806,7 @@ if __name__ == "__main__":
                         **METADATA,
                         "native_trial_id": trial_id,
                         "source_sha256": source_sha256,
-                        "scope": "positive-compliance mimic free-release component preflight only",
+                        "scope": "positive-compliance mimic native contact/load-cell preflight only",
                         "status": "runtime_exception",
                         "error": detail,
                         "samples": SAMPLES,

@@ -1,0 +1,27 @@
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+E0000 00:00:1794847637.684790   28474 descriptor_database.cc:633] File already exists in database: grpc/health/v1/health.proto
+W0000 00:00:1794847637.684829   28474 message.cc:301] Protobuf GeneratedMessageFactory: File is already registered: grpc/health/v1/health.proto
+[ISAACLAB] AppLauncher initialization complete
+[ISAACLAB] Kit version: 110.3.0+feature.371399.00c488ae.gl
+[ISAACLAB] Kit kernel:  210.3.2+release.14366.2926fc80.gl
+[ISAACLAB] Kit hash:    00c488ae
+Loading user config located at: '/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/isaacsim/kit/data/Kit/IsaacLab/3.0/user.config.json'
+2026-11-16T16:47:17Z [0ms] [Warning] [omni.usd_config.extension] Enable omni.materialx.libs extension to use MaterialX
+2026-11-16T16:47:17Z [2ms] [Warning] [omni.platforminfo.plugin] failed to open the default display.  Can't verify X Server version.
+2026-11-16T16:47:20Z [2,064ms] [Error] [omni.physx.plugin] Physics scene enable external forces every iteration is not supported by the PGS solver type.
+2026-11-16T16:47:20Z [2,712ms] [Error] [omni.physx.plugin] Physics scene enable external forces every iteration is not supported by the PGS solver type.
+Traceback (most recent call last):
+  File "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb/workspace/task/run_pgs_loaded_compliant_mimic_probe.py", line 882, in <module>
+    main()
+  File "/data/robocurve-automation/worker-state/runs/20261114T031727-dc73f2bb/workspace/task/run_pgs_loaded_compliant_mimic_probe.py", line 874, in main
+    raise RuntimeError(
+RuntimeError: positive-compliance mimic contact/load-cell preflight failed: settled_extension_rate_max, transient_extension_rate_rms_min, native_inferred_stiffness_relative_error, native_inferred_damping_relative_error, native_constitutive_fit_relative_rmse, released_native_vs_declared_damping_work_relative_error, released_energy_balance_relative_error
+
+Warp 1.16.0 initialized:
+   CUDA Toolkit 12.9, Driver 12.7
+   Devices:
+     "cpu"      : "x86_64"
+     "cuda:0"   : "NVIDIA L40S" (44 GiB, sm_89, mempool enabled)
+   Kernel cache:
+     /home/ubuntu/.cache/warp/1.16.0
+2026-11-16T16:47:21Z [3,170ms] [Warning] [usdrt.population.plugin] Last global time was not created. Did you call setEnableUsdNoticeHandling?
