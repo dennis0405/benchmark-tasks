@@ -256,12 +256,15 @@ def native_screen_material_audit(stage):
         if not bound:
             raise RuntimeError(f"no resolved physics material on {path}")
         mat_prim = bound.GetPrim()
-        physx = PhysxSchema.PhysxMaterialAPI(mat_prim)
+        # Isaac Sim 6 / OpenUSD authors the rigid contact coefficients through
+        # UsdPhysics.MaterialAPI (``physics:*``).  PhysxMaterialAPI contains
+        # only PhysX-specific extensions and therefore has no friction accessors.
+        physics = UsdPhysics.MaterialAPI(mat_prim)
         rows[label] = {
             "collider_path": path,
             "material_path": mat_prim.GetPath().pathString,
-            "static_friction": float(physx.GetStaticFrictionAttr().Get()),
-            "dynamic_friction": float(physx.GetDynamicFrictionAttr().Get()),
+            "static_friction": float(physics.GetStaticFrictionAttr().Get()),
+            "dynamic_friction": float(physics.GetDynamicFrictionAttr().Get()),
         }
     return rows
 
@@ -270,6 +273,81 @@ def screen_object():
     return Object(name="screen", object_type=ObjectType.RIGID,
       spawner_cfg=sim_utils.SpawnerCfg(func=spawn_screen),
       initial_pose=Pose(position_xyz=(SCREEN_X, SCREEN_Y, SCREEN_ROOT_Z)))
+
+
+MEDIA_DIAMETER, MEDIA_LENGTH, MEDIA_DENSITY = 0.009525, 0.022225, 2500.0
+WASHER_OD, WASHER_BORE, WASHER_T, WASHER_DENSITY = 0.030, 0.008, 0.004, 7850.0
+
+
+def _rigid_root(prim_path, translation, mass_value, inertia):
+    root = UsdGeom.Xform.Define(sim_utils.get_current_stage(), prim_path)
+    root.AddTranslateOp().Set(Gf.Vec3d(*(translation or (0, 0, 0))))
+    UsdPhysics.RigidBodyAPI.Apply(root.GetPrim())
+    mass = UsdPhysics.MassAPI.Apply(root.GetPrim())
+    mass.CreateMassAttr(mass_value)
+    mass.CreateCenterOfMassAttr(Gf.Vec3f(0, 0, 0))
+    mass.CreateDiagonalInertiaAttr(Gf.Vec3f(*inertia))
+    return root
+
+
+def spawn_angle_cut_media(prim_path, cfg, translation=None, orientation=None, **_):
+    """Author one free 16-sided angle-cut ceramic cylinder, long axis local X."""
+    r, length, n = MEDIA_DIAMETER / 2, MEDIA_LENGTH, 16
+    volume = math.pi * r * r * length
+    mass_value = MEDIA_DENSITY * volume
+    i_axis = 0.5 * mass_value * r * r
+    i_cross = mass_value * (3 * r * r + length * length) / 12
+    root = _rigid_root(prim_path, translation, mass_value, (i_axis, i_cross, i_cross))
+    slope = math.tan(math.radians(15.0))
+    ring = [(r * math.cos(2 * math.pi * i / n), r * math.sin(2 * math.pi * i / n)) for i in range(n)]
+    points = []
+    for side in (-1, 1):
+        for y, z in ring:
+            points.append((side * length / 2 + slope * z, y, z))
+    faces = [list(range(n - 1, -1, -1)), list(range(n, 2 * n))]
+    faces += [[i, (i + 1) % n, (i + 1) % n + n, i + n] for i in range(n)]
+    mesh = UsdGeom.Mesh.Define(sim_utils.get_current_stage(), f"{prim_path}/Collider")
+    mesh.CreatePointsAttr(Vt.Vec3fArray([Gf.Vec3f(*p) for p in points]))
+    mesh.CreateFaceVertexCountsAttr([len(f) for f in faces])
+    mesh.CreateFaceVertexIndicesAttr([v for face in faces for v in face])
+    mesh.CreateSubdivisionSchemeAttr("none"); mesh.CreateDisplayColorAttr([Gf.Vec3f(0.82, 0.78, 0.69)])
+    UsdPhysics.CollisionAPI.Apply(mesh.GetPrim())
+    UsdPhysics.MeshCollisionAPI.Apply(mesh.GetPrim()).CreateApproximationAttr("convexHull")
+    sim_utils.activate_contact_sensors(prim_path)
+    return root.GetPrim()
+
+
+def spawn_washer(prim_path, cfg, translation=None, orientation=None, **_):
+    """Author one free compound annulus as 32 convex wedge colliders."""
+    ro, ri, n = WASHER_OD / 2, WASHER_BORE / 2, 32
+    volume = math.pi * (ro * ro - ri * ri) * WASHER_T
+    mass_value = WASHER_DENSITY * volume
+    iz = 0.5 * mass_value * (ro * ro + ri * ri)
+    ix = mass_value * (3 * (ro * ro + ri * ri) + WASHER_T * WASHER_T) / 12
+    root = _rigid_root(prim_path, translation, mass_value, (ix, ix, iz))
+    for i in range(n):
+        a0, a1 = 2 * math.pi * i / n, 2 * math.pi * (i + 1) / n
+        poly = Polygon([(ri*math.cos(a0),ri*math.sin(a0)), (ro*math.cos(a0),ro*math.sin(a0)),
+                        (ro*math.cos(a1),ro*math.sin(a1)), (ri*math.cos(a1),ri*math.sin(a1))])
+        prism(f"{prim_path}/Wedge_{i:02d}", poly, -WASHER_T/2, WASHER_T/2, (0.35,0.37,0.40), "washer")
+    sim_utils.activate_contact_sensors(prim_path)
+    return root.GetPrim()
+
+
+def loaded_objects():
+    assets = []
+    # Transverse, separated packing over central ribs; reset is above the physical floor.
+    for index, (x, y) in enumerate((
+        (-.0157,-.0471),(.0157,-.0471),(-.0157,-.0157),(.0157,-.0157),
+        (-.0157,.0157),(.0157,.0157),(-.0157,.0471),(.0157,.0471))):
+        assets.append(Object(name=f"media_{index:02d}", object_type=ObjectType.RIGID,
+            spawner_cfg=sim_utils.SpawnerCfg(func=spawn_angle_cut_media),
+            initial_pose=Pose(position_xyz=(SCREEN_X+x, SCREEN_Y+y, SCREEN_ROOT_Z+MEDIA_DIAMETER/2+0.0005))))
+    for index, (x, y) in enumerate(((.130,.070),(-.130,-.070))):
+        assets.append(Object(name=f"washer_{index:02d}", object_type=ObjectType.RIGID,
+            spawner_cfg=sim_utils.SpawnerCfg(func=spawn_washer),
+            initial_pose=Pose(position_xyz=(SCREEN_X+x, SCREEN_Y+y, SCREEN_ROOT_Z+WASHER_T/2+0.0005))))
+    return assets
 
 
 def spawn_support_pair(prim_path, cfg, translation=None, orientation=None, **_):
@@ -364,3 +442,11 @@ def build_environment():
     return IsaacLabArenaEnvironment(name="full_screen_yam_preflight",
       scene=Scene([*scene_assets(objects=False,d435_collider=False),*fixture_assets(),screen_object()]),
       embodiment=embodiment, env_cfg_callback=env_cfg_callback(CONTROL_HZ))
+
+
+def build_loaded_environment():
+    """Same public YAM scene with the frozen 8-media/2-washer free rigid batch."""
+    environment = build_environment()
+    environment.name = "loaded_screen_reset_preflight"
+    environment.scene.add_assets(loaded_objects())
+    return environment

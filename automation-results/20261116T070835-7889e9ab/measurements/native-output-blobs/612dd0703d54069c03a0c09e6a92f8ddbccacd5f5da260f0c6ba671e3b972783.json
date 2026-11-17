@@ -1,0 +1,25 @@
+{
+  "scope": "failed empty-screen component attempt; not full qualification",
+  "component_preflight_passed": false,
+  "execution_exception": {
+    "type": "AttributeError",
+    "message": "'PhysxMaterialAPI' object has no attribute 'GetStaticFrictionAttr'",
+    "traceback": "Traceback (most recent call last):\n  File \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_yam_preflight.py\", line 621, in run_with_failure_receipt\n    return main()\n           ^^^^^^\n  File \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_yam_preflight.py\", line 293, in main\n    material_audit = native_screen_material_audit(sim_utils.get_current_stage())\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/full_screen_scene.py\", line 263, in native_screen_material_audit\n    \"static_friction\": float(physx.GetStaticFrictionAttr().Get()),\n                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'PhysxMaterialAPI' object has no attribute 'GetStaticFrictionAttr'\n",
+    "phase": "see traceback; setup/motion/postprocessing/cleanup"
+  },
+  "artifacts": [
+    "measurements/full-screen-yam-preflight.mp4",
+    "measurements/full-screen-yam-initial.png",
+    "measurements/full-screen-yam-preflight-trace.json"
+  ],
+  "checks": [
+    {
+      "name": "native_program_completed_without_exception",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "boolean",
+      "passed": false
+    }
+  ]
+}

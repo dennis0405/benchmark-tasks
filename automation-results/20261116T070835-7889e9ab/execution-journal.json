@@ -5,7 +5,7 @@
     "instance": "robocurve-conveyor",
     "created_at": "2026-11-16T07:08:35.696140+00:00",
     "status": "blocked",
-    "stage": null,
+    "stage": "environment",
     "mode": "production",
     "config": {
       "instance": "robocurve-conveyor",
@@ -51,7 +51,7 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 4038,
+    "supervisor_pid": 39408,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log",
     "compute": "running",
     "migration": {
@@ -85,19 +85,18 @@
       "tool_write_verified": true,
       "production_task_validated": false
     },
-    "revision": 33,
-    "revision_request": "사용자의 현재 지시와 앞서 확정한 지시를 함께 따른다. 사용자 원문: \"체로 분리하는 거로 일단 진행해보자. 해당 업무가 직군적으로 중요한건 채점자의 판단이고 일단 우리는 그럴싸한 작업이 나오면 그거로 진행하자.\" 그리고 \"그거 검토하고 앞으로 skill 도 그렇게 동작하도록 수정한 다음에 우리 원래 작업 (체 기반 작업) 다시 진행하자.\"\n새 Sheet 기반 아이디어 중복 검사가 543/543, 최신원문14건, 6벤치마크 및 독립novelty-critic PASS로 완료됐다. 이 통과와 현재 selected는 유지한다. candidates/novelty/직군규모조사를 다시 시작하지 않는다. 같은 run/branch의 bimanual-tab-sieve-separation을 계속한다.\n이 run만 prototype_importance_deferred=true로 명시적으로 설정했다. 직군중요도와 500k specific-operation 근거는 미확인이다. 일반 O*NET 직군602k를 특정 수작업 종사자수로 둔갑시키거나 카테고리를 통과하려고 바꾸지 않는다. 제조사 manual-screen 방법에 대한 사실/형상/단위 검증은 유지하되, 직군중요도 판단은 보류하고 물리 시제품의 contract/environment/demo를 구현한다. 이 예외는 물리/신규성/채점 조건을 완화하지 않는다. Coordinator는 qualified native demo 완료 뒤 export/release/Dream 전에 미확인 eligibility를 기록하고 반드시 차단한다. 지금은 현장 인구조사나 자격확정이 아니라 실제 환경과 데모 완성이 목표다.\ncontract-critic의 실제 수학/측정 문제는 모두 고친다. 첫 true physics interval을 포함한 정확한3초dwell, initial speed 측정window, continuous synchronized bilateral contact, lift의기준root높이, camera시험집계, 240/480 동일actionpair수와pair간집계, force/penetration/jointmargin의계측대상/집계/reset을 명확히 고정한다. 수치 기준과 물리관측은 진짜소스/측정으로 검증하고 불리한시행을 없애지 않는다. 수정마다 이미정의된기준을 다시흐리게 만들지 않는다.\n구성은 현재 selected 그대로 8free ceramic media + 2thinsteel washers(OD30/bore8/T4mm), 실제261개 circular12.7mm openings/3mmfloor, OD368.3mm screen,50mmreceiver/solidannuluspostsupports. NO feedcup. YAM 양손tab실제접촉파지->lift->선택적통과/washer보존->양받침복귀->양손해제3초. 원형32gon/9256prismsCPU CAD와 -20deg/15mmX2Hz/70mmcommandlift CPU proposal은 가설이며 native 검증으로 간주하지 않는다. 빈SQUAREhole체lift35mm/3.2sposehold 성공은 기반 helper로만 재사용하고 새circle/loadedtask 성공이라 하지 않는다.\noperator-source-notes의 작동하는 SDK수정(센서PHYSICS_READY이전설치/body_link_pos_w.torch/actualquats/guidecolliderbounds/RGB.torch/rawcontactcomplete/streamingH264/guardedbootstrap)을 보존한다. --headless 금지HEADLESS=1env. scene변경 후 실제cookedcollider/openings/massI/materialfrictionbinding을 확인한다. 물체pose/velocity쓰기, weld, collisiondisable, hiddenforce, fakeconstantmetrics 금지. 옛74casegrid/API(empty체)시험을 반복하지 말고 실제내용물 새장면과관측/채점/동작을 구현한다. 실제 실패영상과rawtrace도 보존하고 안정되면 독립재채점,부분/실패controls,동일action240/480,두freshfullscoreH264까지 이어간다.\n이전revision32의모든비교/contract수정/측정원본은 보존한다. 원본private/server + 필요한근거GitHub 선별정책 그대로. Dream은 이 원형 제작 단계에서 실행하지 않는다.\n",
+    "revision": 34,
+    "revision_request": "사용자 현재 요청 원문: \"지금 어디까지 진행됐는지 확인하고, 체 환경 구현과 YAM 데모까지 이어서 진행해봐. 실제 실행 영상이 나오면 보여줘.\"\n같은run/branch의 selected bimanual-tab-sieve-separation을 계속한다. 543행Sheet +14최신원문과6benchmark의novelty PASS 및 현재contract-critic PASS를 보존한다. candidates/novelty/직군중요도조사를 다시 하지 않는다. prototype_importance_deferred=true로 직군중요도는미확인; native환경/채점/데모의기술검증은유지하고 export/release/Dream전기계적차단도유지한다.\n직전중단원인은 source reviewer가 PASS를반환했지만 evidence_paths의 task/full_screen_scene.py:154 같은파일:줄번호를controller가잘못해석한것이다. orchestration이수정돼 유효한confined/indexed실제파일과줄범위만허용한다. 소스마찰수정 자체가거절된것이아니다. CLI복원은동일내용 로컬복사+checksum검증,기존압축/전송재시도를유지해 원본전체재전송을줄인다.\n현재의정확한진척: 새원형20gon 261공, clear diameter12.5436419256mm/6124floorpieces/3mmt가nativecookedraycast에서261holecentre clear,484ribhit,24annulushit로확인됐다. 과거SQUAREhole성공과혼동하지않는다. 실제4기둥annulus-onlysupport(CADclearance15.8529mm)로수정했다. screencontactAPI를PHYSICS_READY전에활성화했다. 지원sensor가Xform부모를보던문제를4actual Post collider필터로수정해 native filter_count4/양그룹접촉을확인했다.\n원형빈체의실제성공snapshot measurements/native-output-snapshots/d638b5a4abeb4a9683694da8d5cd36c4.json, source8e910066e8f1c26dff00dbf9efe6e955b3ff207e8f814565ebf19afff30a99a3는lift35.2541mm/양측tab접촉관측8.15s/들고stationary3.2s/return양지지stationary1.85s/실제4finger보수적최소clearance80.2626mm를기록했다. 이것은EMPTY/20Hz관측기준component만증명하고 240Hzcontinuous/loadedseparation/fulltask성공이아니다. 실제H26414.75s295frames를사용자에게보여줬다.\n그이후코드는processing floor/wall 마찰.50/.35와오렌지tabs만1.2/1.0으로분리하고 composedmaterialreadbacks를추가했으며 모든dwell을20Hzsampled로정확히표기하도록수정됐다. 마지막component-code-reviewer(01:28:44UTC)는PASS지만 controller의linecitation오류로이수정버전native가아직실행되지않았다. 따라서 첫단계는 이 existing component-source-plan을변경없이신규native1회검증하는것이다. 이전oldsource empty성공을새마찰에대응하는결과로오인하지않는다.\n그다음부터 핵심8freeceramicmedia+2thinsteelwasher(OD30/bore8/T4mm)와receiver를실제scene에추가해작업한다. 동일empty/API/cooked-raycast진단을옛last-failure만읽고반복하지않는다. latest source/input과matching hash-bound receipt의정확한범위를읽고 다음미검증mechanism으로진행한다. 새loaded물리또는실제source변화의검증은필요하다. NO feedcup. 초기혼합물이체안에있고, YAM실제양손tab파지->충분한lift->tilt/agitation->작은media만구멍으로통과/washer모두보존->양받침복귀->handsreleased3s의전체 흐름을완성한다.\n작동하는helper의livebodyposes/RGB.torch/nativecontact/raw벡터reconciliation/guardedbootstrap/streamingH264를보존하고, 실제native scene좌표와잡은뒤grasp-relative변환을측정해lift/tilt/return목표를계산한다. CPU제안(.30root,-20deg,70mmcommandlift,15mmX2Hz)은native검증이아니고 현재실제base/screenroot와다르면그대로복사하지않는다. 물체state/velocity쓰기,weld,freeze,collisiondisable,hiddenforce,fakeconstantmetrics 금지. 실제채점은.90mediafraction+.10freshreleaseddwell,유출/washerloss/invalidpassage/forbiddenmutationhardzero. actualpartial/failurecontrols/독립재채점/동일action240480확인/2freshfullscoreH264까지이어간다. 20Hz관측을연속240Hz증거로표시하지않는다.\n원본서버/private+필요한자료GitHub선별정책유지. 모든실패raw/영상도보존한다. snapshot/report/source와다른trial의결과를섞지않는다. 실제영상은매번출력하고미완성실험이라도scope/실패원인을명시한다. 최종Dream이나제출은지금실행하지않는다.\n",
     "approval": null,
-    "resume_from_stage": "contract",
-    "error": "review evidence missing or outside approved run directories: task/full_screen_scene.py:154",
+    "resume_from_stage": "environment",
+    "error": "worker paused at stage boundary",
     "remote_status": {
-      "status": "blocked",
-      "error": "review evidence missing or outside approved run directories: task/full_screen_scene.py:154",
-      "type": "GateError",
-      "at": "2026-11-17T01:29:25.871571+00:00"
+      "status": "paused",
+      "stage": "environment",
+      "at": "2026-11-17T02:08:24.314334+00:00"
     },
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab",
-    "stop_error": "command failed: brev: you're logged out — run `brev login` to authenticate\n",
+    "stop_error": "command failed: ssh: ssh: Could not resolve hostname global.prd.ga.run.brev.nvidia.com: nodename nor servname provided, or not known\n",
     "preservation_error": null
   },
   "events": [
@@ -15934,6 +15933,342 @@
       "run": "20261116T070835-7889e9ab",
       "at": "2026-11-17T01:36:31.060731+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"review evidence missing or outside approved run directories: task/full_screen_scene.py:154\"}"
+    },
+    {
+      "seq": 8921,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:37:27.077816+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 8922,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:40:07.433295+00:00",
+      "data": "{\"revision\": 34, \"revision_request\": \"\\uc0ac\\uc6a9\\uc790 \\ud604\\uc7ac \\uc694\\uccad \\uc6d0\\ubb38: \\\"\\uc9c0\\uae08 \\uc5b4\\ub514\\uae4c\\uc9c0 \\uc9c4\\ud589\\ub410\\ub294\\uc9c0 \\ud655\\uc778\\ud558\\uace0, \\uccb4 \\ud658\\uacbd \\uad6c\\ud604\\uacfc YAM \\ub370\\ubaa8\\uae4c\\uc9c0 \\uc774\\uc5b4\\uc11c \\uc9c4\\ud589\\ud574\\ubd10. \\uc2e4\\uc81c \\uc2e4\\ud589 \\uc601\\uc0c1\\uc774 \\ub098\\uc624\\uba74 \\ubcf4\\uc5ec\\uc918.\\\"\\n\\uac19\\uc740run/branch\\uc758 selected bimanual-tab-sieve-separation\\uc744 \\uacc4\\uc18d\\ud55c\\ub2e4. 543\\ud589Sheet +14\\ucd5c\\uc2e0\\uc6d0\\ubb38\\uacfc6benchmark\\uc758novelty PASS \\ubc0f \\ud604\\uc7accontract-critic PASS\\ub97c \\ubcf4\\uc874\\ud55c\\ub2e4. candidates/novelty/\\uc9c1\\uad70\\uc911\\uc694\\ub3c4\\uc870\\uc0ac\\ub97c \\ub2e4\\uc2dc \\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. prototype_importance_deferred=true\\ub85c \\uc9c1\\uad70\\uc911\\uc694\\ub3c4\\ub294\\ubbf8\\ud655\\uc778; native\\ud658\\uacbd/\\ucc44\\uc810/\\ub370\\ubaa8\\uc758\\uae30\\uc220\\uac80\\uc99d\\uc740\\uc720\\uc9c0\\ud558\\uace0 export/release/Dream\\uc804\\uae30\\uacc4\\uc801\\ucc28\\ub2e8\\ub3c4\\uc720\\uc9c0\\ud55c\\ub2e4.\\n\\uc9c1\\uc804\\uc911\\ub2e8\\uc6d0\\uc778\\uc740 source reviewer\\uac00 PASS\\ub97c\\ubc18\\ud658\\ud588\\uc9c0\\ub9cc evidence_paths\\uc758 task/full_screen_scene.py:154 \\uac19\\uc740\\ud30c\\uc77c:\\uc904\\ubc88\\ud638\\ub97ccontroller\\uac00\\uc798\\ubabb\\ud574\\uc11d\\ud55c\\uac83\\uc774\\ub2e4. orchestration\\uc774\\uc218\\uc815\\ub3fc \\uc720\\ud6a8\\ud55cconfined/indexed\\uc2e4\\uc81c\\ud30c\\uc77c\\uacfc\\uc904\\ubc94\\uc704\\ub9cc\\ud5c8\\uc6a9\\ud55c\\ub2e4. \\uc18c\\uc2a4\\ub9c8\\ucc30\\uc218\\uc815 \\uc790\\uccb4\\uac00\\uac70\\uc808\\ub41c\\uac83\\uc774\\uc544\\ub2c8\\ub2e4. CLI\\ubcf5\\uc6d0\\uc740\\ub3d9\\uc77c\\ub0b4\\uc6a9 \\ub85c\\uceec\\ubcf5\\uc0ac+checksum\\uac80\\uc99d,\\uae30\\uc874\\uc555\\ucd95/\\uc804\\uc1a1\\uc7ac\\uc2dc\\ub3c4\\ub97c\\uc720\\uc9c0\\ud574 \\uc6d0\\ubcf8\\uc804\\uccb4\\uc7ac\\uc804\\uc1a1\\uc744\\uc904\\uc778\\ub2e4.\\n\\ud604\\uc7ac\\uc758\\uc815\\ud655\\ud55c\\uc9c4\\ucc99: \\uc0c8\\uc6d0\\ud61520gon 261\\uacf5, clear diameter12.5436419256mm/6124floorpieces/3mmt\\uac00nativecookedraycast\\uc5d0\\uc11c261holecentre clear,484ribhit,24annulushit\\ub85c\\ud655\\uc778\\ub410\\ub2e4. \\uacfc\\uac70SQUAREhole\\uc131\\uacf5\\uacfc\\ud63c\\ub3d9\\ud558\\uc9c0\\uc54a\\ub294\\ub2e4. \\uc2e4\\uc81c4\\uae30\\ub465annulus-onlysupport(CADclearance15.8529mm)\\ub85c\\uc218\\uc815\\ud588\\ub2e4. screencontactAPI\\ub97cPHYSICS_READY\\uc804\\uc5d0\\ud65c\\uc131\\ud654\\ud588\\ub2e4. \\uc9c0\\uc6d0sensor\\uac00Xform\\ubd80\\ubaa8\\ub97c\\ubcf4\\ub358\\ubb38\\uc81c\\ub97c4actual Post collider\\ud544\\ud130\\ub85c\\uc218\\uc815\\ud574 native filter_count4/\\uc591\\uadf8\\ub8f9\\uc811\\ucd09\\uc744\\ud655\\uc778\\ud588\\ub2e4.\\n\\uc6d0\\ud615\\ube48\\uccb4\\uc758\\uc2e4\\uc81c\\uc131\\uacf5snapshot measurements/native-output-snapshots/d638b5a4abeb4a9683694da8d5cd36c4.json, source8e910066e8f1c26dff00dbf9efe6e955b3ff207e8f814565ebf19afff30a99a3\\ub294lift35.2541mm/\\uc591\\uce21tab\\uc811\\ucd09\\uad00\\uce218.15s/\\ub4e4\\uace0stationary3.2s/return\\uc591\\uc9c0\\uc9c0stationary1.85s/\\uc2e4\\uc81c4finger\\ubcf4\\uc218\\uc801\\ucd5c\\uc18cclearance80.2626mm\\ub97c\\uae30\\ub85d\\ud588\\ub2e4. \\uc774\\uac83\\uc740EMPTY/20Hz\\uad00\\uce21\\uae30\\uc900component\\ub9cc\\uc99d\\uba85\\ud558\\uace0 240Hzcontinuous/loadedseparation/fulltask\\uc131\\uacf5\\uc774\\uc544\\ub2c8\\ub2e4. \\uc2e4\\uc81cH26414.75s295frames\\ub97c\\uc0ac\\uc6a9\\uc790\\uc5d0\\uac8c\\ubcf4\\uc5ec\\uc92c\\ub2e4.\\n\\uadf8\\uc774\\ud6c4\\ucf54\\ub4dc\\ub294processing floor/wall \\ub9c8\\ucc30.50/.35\\uc640\\uc624\\ub80c\\uc9c0tabs\\ub9cc1.2/1.0\\uc73c\\ub85c\\ubd84\\ub9ac\\ud558\\uace0 composedmaterialreadbacks\\ub97c\\ucd94\\uac00\\ud588\\uc73c\\uba70 \\ubaa8\\ub4e0dwell\\uc74420Hzsampled\\ub85c\\uc815\\ud655\\ud788\\ud45c\\uae30\\ud558\\ub3c4\\ub85d\\uc218\\uc815\\ub410\\ub2e4. \\ub9c8\\uc9c0\\ub9c9component-code-reviewer(01:28:44UTC)\\ub294PASS\\uc9c0\\ub9cc controller\\uc758linecitation\\uc624\\ub958\\ub85c\\uc774\\uc218\\uc815\\ubc84\\uc804native\\uac00\\uc544\\uc9c1\\uc2e4\\ud589\\ub418\\uc9c0\\uc54a\\uc558\\ub2e4. \\ub530\\ub77c\\uc11c \\uccab\\ub2e8\\uacc4\\ub294 \\uc774 existing component-source-plan\\uc744\\ubcc0\\uacbd\\uc5c6\\uc774\\uc2e0\\uaddcnative1\\ud68c\\uac80\\uc99d\\ud558\\ub294\\uac83\\uc774\\ub2e4. \\uc774\\uc804oldsource empty\\uc131\\uacf5\\uc744\\uc0c8\\ub9c8\\ucc30\\uc5d0\\ub300\\uc751\\ud558\\ub294\\uacb0\\uacfc\\ub85c\\uc624\\uc778\\ud558\\uc9c0\\uc54a\\ub294\\ub2e4.\\n\\uadf8\\ub2e4\\uc74c\\ubd80\\ud130 \\ud575\\uc2ec8freeceramicmedia+2thinsteelwasher(OD30/bore8/T4mm)\\uc640receiver\\ub97c\\uc2e4\\uc81cscene\\uc5d0\\ucd94\\uac00\\ud574\\uc791\\uc5c5\\ud55c\\ub2e4. \\ub3d9\\uc77cempty/API/cooked-raycast\\uc9c4\\ub2e8\\uc744\\uc61blast-failure\\ub9cc\\uc77d\\uace0\\ubc18\\ubcf5\\ud558\\uc9c0\\uc54a\\ub294\\ub2e4. latest source/input\\uacfcmatching hash-bound receipt\\uc758\\uc815\\ud655\\ud55c\\ubc94\\uc704\\ub97c\\uc77d\\uace0 \\ub2e4\\uc74c\\ubbf8\\uac80\\uc99dmechanism\\uc73c\\ub85c\\uc9c4\\ud589\\ud55c\\ub2e4. \\uc0c8loaded\\ubb3c\\ub9ac\\ub610\\ub294\\uc2e4\\uc81csource\\ubcc0\\ud654\\uc758\\uac80\\uc99d\\uc740\\ud544\\uc694\\ud558\\ub2e4. NO feedcup. \\ucd08\\uae30\\ud63c\\ud569\\ubb3c\\uc774\\uccb4\\uc548\\uc5d0\\uc788\\uace0, YAM\\uc2e4\\uc81c\\uc591\\uc190tab\\ud30c\\uc9c0->\\ucda9\\ubd84\\ud55clift->tilt/agitation->\\uc791\\uc740media\\ub9cc\\uad6c\\uba4d\\uc73c\\ub85c\\ud1b5\\uacfc/washer\\ubaa8\\ub450\\ubcf4\\uc874->\\uc591\\ubc1b\\uce68\\ubcf5\\uadc0->handsreleased3s\\uc758\\uc804\\uccb4 \\ud750\\ub984\\uc744\\uc644\\uc131\\ud55c\\ub2e4.\\n\\uc791\\ub3d9\\ud558\\ub294helper\\uc758livebodyposes/RGB.torch/nativecontact/raw\\ubca1\\ud130reconciliation/guardedbootstrap/streamingH264\\ub97c\\ubcf4\\uc874\\ud558\\uace0, \\uc2e4\\uc81cnative scene\\uc88c\\ud45c\\uc640\\uc7a1\\uc740\\ub4a4grasp-relative\\ubcc0\\ud658\\uc744\\uce21\\uc815\\ud574lift/tilt/return\\ubaa9\\ud45c\\ub97c\\uacc4\\uc0b0\\ud55c\\ub2e4. CPU\\uc81c\\uc548(.30root,-20deg,70mmcommandlift,15mmX2Hz)\\uc740native\\uac80\\uc99d\\uc774\\uc544\\ub2c8\\uace0 \\ud604\\uc7ac\\uc2e4\\uc81cbase/screenroot\\uc640\\ub2e4\\ub974\\uba74\\uadf8\\ub300\\ub85c\\ubcf5\\uc0ac\\ud558\\uc9c0\\uc54a\\ub294\\ub2e4. \\ubb3c\\uccb4state/velocity\\uc4f0\\uae30,weld,freeze,collisiondisable,hiddenforce,fakeconstantmetrics \\uae08\\uc9c0. \\uc2e4\\uc81c\\ucc44\\uc810\\uc740.90mediafraction+.10freshreleaseddwell,\\uc720\\ucd9c/washerloss/invalidpassage/forbiddenmutationhardzero. actualpartial/failurecontrols/\\ub3c5\\ub9bd\\uc7ac\\ucc44\\uc810/\\ub3d9\\uc77caction240480\\ud655\\uc778/2freshfullscoreH264\\uae4c\\uc9c0\\uc774\\uc5b4\\uac04\\ub2e4. 20Hz\\uad00\\uce21\\uc744\\uc5f0\\uc18d240Hz\\uc99d\\uac70\\ub85c\\ud45c\\uc2dc\\ud558\\uc9c0\\uc54a\\ub294\\ub2e4.\\n\\uc6d0\\ubcf8\\uc11c\\ubc84/private+\\ud544\\uc694\\ud55c\\uc790\\ub8ccGitHub\\uc120\\ubcc4\\uc815\\ucc45\\uc720\\uc9c0. \\ubaa8\\ub4e0\\uc2e4\\ud328raw/\\uc601\\uc0c1\\ub3c4\\ubcf4\\uc874\\ud55c\\ub2e4. snapshot/report/source\\uc640\\ub2e4\\ub978trial\\uc758\\uacb0\\uacfc\\ub97c\\uc11e\\uc9c0\\uc54a\\ub294\\ub2e4. \\uc2e4\\uc81c\\uc601\\uc0c1\\uc740\\ub9e4\\ubc88\\ucd9c\\ub825\\ud558\\uace0\\ubbf8\\uc644\\uc131\\uc2e4\\ud5d8\\uc774\\ub77c\\ub3c4scope/\\uc2e4\\ud328\\uc6d0\\uc778\\uc744\\uba85\\uc2dc\\ud55c\\ub2e4. \\ucd5c\\uc885Dream\\uc774\\ub098\\uc81c\\ucd9c\\uc740\\uc9c0\\uae08\\uc2e4\\ud589\\ud558\\uc9c0\\uc54a\\ub294\\ub2e4.\\n\", \"approval\": null}"
+    },
+    {
+      "seq": 8923,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:40:07.433544+00:00",
+      "data": "{\"resume_from_stage\": \"environment\"}"
+    },
+    {
+      "seq": 8924,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:40:07.438815+00:00",
+      "data": "{\"supervisor_pid\": 28957, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log\"}"
+    },
+    {
+      "seq": 8925,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:40:07.515231+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 8926,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:40:20.619024+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 8927,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:41:48.474562+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 8928,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:42:29.125451+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab\"}"
+    },
+    {
+      "seq": 8929,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:42:29.536649+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8930,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:42:44.970378+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8931,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:43:00.429817+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8932,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:43:15.853323+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8933,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:43:31.280510+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8934,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:43:46.700294+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8935,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:44:02.131099+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8936,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:44:17.553187+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8937,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:44:32.997778+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8938,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:44:48.429698+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8939,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:45:03.865182+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8940,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:45:19.302611+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8941,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:45:34.736635+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8942,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:45:50.156847+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8943,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:46:05.575468+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8944,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:46:21.015862+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8945,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:46:36.443902+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8946,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:46:51.873386+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8947,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:47:07.297722+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8948,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:47:22.729088+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8949,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:47:38.165162+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8950,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:47:53.595008+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8951,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:48:09.028459+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8952,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:48:24.467218+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8953,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:48:39.902030+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8954,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:48:55.336532+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8955,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:49:49.281983+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"command failed: ssh: mux_client_request_session: read from master failed: Broken pipe\\nssh: Could not resolve hostname global.prd.ga.run.brev.nvidia.com: nodename nor servname provided, or not known\\n\"}"
+    },
+    {
+      "seq": 8956,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:49:49.314646+00:00",
+      "data": "{\"compute\": \"stop-unknown\", \"stop_error\": \"command failed: ssh: ssh: Could not resolve hostname global.prd.ga.run.brev.nvidia.com: nodename nor servname provided, or not known\\n\"}"
+    },
+    {
+      "seq": 8963,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:04:29.285537+00:00",
+      "data": "{\"supervisor_pid\": 39408, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log\"}"
+    },
+    {
+      "seq": 8964,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:04:29.359328+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 8965,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:04:43.935942+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 8966,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:05:10.165741+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 8967,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:05:11.511315+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab\"}"
+    },
+    {
+      "seq": 8968,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:05:11.951023+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8969,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:05:27.410755+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8970,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:05:42.852590+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8971,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:05:58.332211+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8972,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:06:13.777731+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8973,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:06:29.225101+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8974,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:06:44.691423+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8975,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:07:00.581503+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8976,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:07:16.526764+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8977,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:07:32.404945+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8978,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:07:48.284723+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8979,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:08:04.170341+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8980,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:08:20.248345+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T01:42:29.488806+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8981,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:08:36.147697+00:00",
+      "data": "{\"remote_status\": {\"status\": \"paused\", \"stage\": \"environment\", \"at\": \"2026-11-17T02:08:24.314334+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8982,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T02:09:00.208179+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"worker paused at stage boundary\"}"
     }
   ],
   "effects": {

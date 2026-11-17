@@ -1,6 +1,7 @@
 {
   "scope": "empty full-screen bimanual YAM component only; not media-separation qualification",
   "unqualified_observables": [
+    "continuous 240 Hz bilateral contact/dwell",
     "object-identity camera visibility",
     "full frozen physics coverage",
     "media separation"
@@ -8,15 +9,16 @@
   "component_preflight_passed": true,
   "fingertip_pose_source": "native Articulation.data.body_link_pos_w",
   "native_fingertip_max_motion_m": [
-    0.24098070776274536,
-    0.18008656598197276,
-    0.2187283528334488,
-    0.19352637583980836
+    0.24107027004629003,
+    0.1802235872101745,
+    0.21920184614261254,
+    0.19564118526208463
   ],
   "native_physics_dt_s": 0.004166666666666667,
   "native_physics_hz": 240.0,
   "expected_physics_hz": 240,
   "control_hz": 20,
+  "dwell_observation_semantics": "Boolean contact and stationarity predicates are sampled after each 20 Hz control step; N consecutive true observations establish only (N-1)/20 seconds at that observation cadence and do not establish intervening 240 Hz continuity.",
   "geometry_audit": {
     "hole_count": 261,
     "piece_count": 6124,
@@ -72,6 +74,32 @@
     ],
     "minimum_perforated_region_clearance_m": 0.015852877514630298,
     "post_count": 4
+  },
+  "native_screen_material_audit": {
+    "floor": {
+      "collider_path": "/World/envs/env_0/screen/Floor_0000",
+      "material_path": "/World/envs/env_0/screen/ProcessingPhysicsMaterial",
+      "static_friction": 0.5,
+      "dynamic_friction": 0.3499999940395355
+    },
+    "wall": {
+      "collider_path": "/World/envs/env_0/screen/Wall_000",
+      "material_path": "/World/envs/env_0/screen/ProcessingPhysicsMaterial",
+      "static_friction": 0.5,
+      "dynamic_friction": 0.3499999940395355
+    },
+    "tab_neg": {
+      "collider_path": "/World/envs/env_0/screen/Tab_neg",
+      "material_path": "/World/envs/env_0/screen/VisibleTabGraspPhysicsMaterial",
+      "static_friction": 1.2000000476837158,
+      "dynamic_friction": 1.0
+    },
+    "tab_pos": {
+      "collider_path": "/World/envs/env_0/screen/Tab_pos",
+      "material_path": "/World/envs/env_0/screen/VisibleTabGraspPhysicsMaterial",
+      "static_friction": 1.2000000476837158,
+      "dynamic_friction": 1.0
+    }
   },
   "native_mass_kg": 0.4000000059604645,
   "expected_mass_kg": 0.4,
@@ -288,7 +316,7 @@
   "checks": [
     {
       "name": "minimum_native_fingertip_motion_across_four_links",
-      "measured": 0.18008656598197276,
+      "measured": 0.1802235872101745,
       "operator": ">=",
       "threshold": 0.05,
       "unit": "m",
@@ -375,6 +403,38 @@
       "passed": true
     },
     {
+      "name": "processing_floor_static_friction_readback_absolute_error",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "unit": "coefficient",
+      "passed": true
+    },
+    {
+      "name": "processing_wall_dynamic_friction_readback_absolute_error",
+      "measured": 5.960464455334602e-09,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "unit": "coefficient",
+      "passed": true
+    },
+    {
+      "name": "visible_tab_negative_static_friction_readback_absolute_error",
+      "measured": 4.768371586472142e-08,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "unit": "coefficient",
+      "passed": true
+    },
+    {
+      "name": "visible_tab_positive_dynamic_friction_readback_absolute_error",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "unit": "coefficient",
+      "passed": true
+    },
+    {
       "name": "native_mass_relative_error",
       "measured": 1.4901161138336505e-08,
       "operator": "<=",
@@ -392,7 +452,7 @@
     },
     {
       "name": "nonzero_signed_raw_tab_reaction_points",
-      "measured": 1094,
+      "measured": 776,
       "operator": ">",
       "threshold": 0,
       "unit": "points",
@@ -400,15 +460,15 @@
     },
     {
       "name": "positive_native_pair_samples_with_verified_raw_vector_reconciliation",
-      "measured": 658,
+      "measured": 661,
       "operator": "==",
-      "threshold": 658,
+      "threshold": 661,
       "unit": "control_samples",
       "passed": true
     },
     {
       "name": "maximum_native_contact_count_below_configured_capacity",
-      "measured": 152,
+      "measured": 159,
       "operator": "<",
       "threshold": 256,
       "unit": "contacts_per_prim",
@@ -423,35 +483,35 @@
       "passed": true
     },
     {
-      "name": "measured_bilateral_opposing_tab_contact_duration",
-      "measured": 8.15,
+      "name": "bilateral_opposing_tab_contact_dwell_from_20hz_observations",
+      "measured": 6.9,
       "operator": ">=",
       "threshold": 0.5,
-      "unit": "s",
+      "unit": "s_observed_at_20_hz",
       "passed": true
     },
     {
       "name": "observed_screen_lift_height",
-      "measured": 0.035254061222076416,
+      "measured": 0.035450518131256104,
       "operator": ">=",
       "threshold": 0.03,
       "unit": "m",
       "passed": true
     },
     {
-      "name": "contact_supported_stationary_lifted_hold_duration",
+      "name": "contact_supported_stationary_lifted_dwell_from_20hz_observations",
       "measured": 3.2,
       "operator": ">=",
       "threshold": 3.0,
-      "unit": "s",
+      "unit": "s_observed_at_20_hz",
       "passed": true
     },
     {
-      "name": "post_return_bilateral_support_pose_stationary_duration",
-      "measured": 1.85,
+      "name": "post_return_support_pose_stationary_dwell_from_20hz_observations",
+      "measured": 1.75,
       "operator": ">=",
       "threshold": 0.25,
-      "unit": "s",
+      "unit": "s_observed_at_20_hz",
       "passed": true
     },
     {
@@ -472,7 +532,7 @@
     },
     {
       "name": "released_fingertip_collider_to_screen_conservative_clearance",
-      "measured": 0.08026263092219289,
+      "measured": 0.08017477904745347,
       "operator": ">=",
       "threshold": 0.06,
       "unit": "m",
@@ -488,7 +548,7 @@
     },
     {
       "name": "native_rgb_minimum_pixel_standard_deviation",
-      "measured": 47.39491653442383,
+      "measured": 47.391700744628906,
       "operator": ">=",
       "threshold": 2.0,
       "unit": "uint8_level",

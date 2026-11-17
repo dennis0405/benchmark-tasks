@@ -1,25 +1,26 @@
 {
   "phase": "preflight",
-  "summary": "Repaired attempt-7 defects without claiming qualification: processing surfaces now use frozen 0.50/0.35 friction, visible orange tabs alone use 1.2/1.0, and native composed-material readbacks verify the bindings. Contact/stationarity dwell is explicitly labeled as 20 Hz sampled evidence and no longer claims continuous 240 Hz coverage. Full loaded-scene physics and workforce/category importance remain unresolved.",
+  "summary": "Repaired the bounded loaded-reset probe after the latest review. It now validates RGB finiteness/range before sanitization, records screen pose and loose-body angular state, and explicitly limits speed, displacement, and height results to 20 Hz endpoint observations. Authored-mass propagation is no longer presented as cooked-geometry validation, and final center height is not presented as genuine passage evidence. Full 240 Hz stability, continuous passage, loaded grasp/separation, scoring, and workforce eligibility remain unresolved. Static Python compilation passed; no sandbox GPU rollout was attempted.",
   "scripts": [
     {
-      "id": "full_screen_yam_material_and_sampled_dwell_preflight",
-      "script": "task/run_full_screen_yam_preflight.py",
+      "id": "loaded_reset_native_probe",
+      "script": "task/run_loaded_reset_native_probe.py",
       "args": [
         "--report",
-        "../measurements/full-screen-yam-preflight.json",
-        "--video",
-        "../measurements/full-screen-yam-preflight.mp4",
+        "../measurements/loaded-reset-native-probe.json",
         "--screenshot",
-        "../measurements/full-screen-yam-initial.png",
+        "../measurements/loaded-reset-native-probe.png",
         "--seed",
-        "2601"
+        "8261",
+        "--duration",
+        "3.0"
       ],
-      "report": "measurements/full-screen-yam-preflight.json"
+      "report": "measurements/loaded-reset-native-probe.json"
     }
   ],
   "files": [
+    "task/run_loaded_reset_native_probe.py",
     "task/full_screen_scene.py",
-    "task/run_full_screen_yam_preflight.py"
+    "task/task.py"
   ]
 }

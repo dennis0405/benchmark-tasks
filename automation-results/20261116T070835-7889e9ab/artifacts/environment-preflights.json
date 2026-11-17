@@ -13317,5 +13317,2672 @@
       }
     ],
     "at": "2026-11-17T01:25:07.189438+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Repaired the current host failure by replacing exact float32 friction equality with measured absolute-error checks at 1e-6 tolerance; authored friction values are unchanged. Syntax validation and all five failure-receipt tests pass. A fresh native run is still required; this preflight does not qualify loaded separation physics, and workforce/category importance remains unresolved.",
+      "scripts": [
+        {
+          "id": "full_screen_yam_material_readback_preflight",
+          "script": "task/run_full_screen_yam_preflight.py",
+          "args": [
+            "--report",
+            "../measurements/full-screen-yam-preflight.json",
+            "--video",
+            "../measurements/full-screen-yam-preflight.mp4",
+            "--screenshot",
+            "../measurements/full-screen-yam-initial.png",
+            "--seed",
+            "2601"
+          ],
+          "report": "measurements/full-screen-yam-preflight.json"
+        }
+      ],
+      "files": [
+        "task/run_full_screen_yam_preflight.py",
+        "task/full_screen_scene.py",
+        "task/test_failure_receipt.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The bounded empty-screen native component preflight has no material unresolved source issues.",
+        "The prior float32 friction-readback failure is correctly repaired with finite absolute-error checks at 1e-6 tolerance without changing authored coefficients.",
+        "Measurements use native poses, joint states, raw/filtered contacts, support contacts, material bindings, mass/inertia, and rendered frames; malformed values or exceptions cannot yield a passing receipt.",
+        "Dwell evidence is accurately labeled as 20 Hz sampled evidence. Continuous 240 Hz behavior, loaded separation, scoring, washer retention, and full frozen-contract qualification remain explicitly unclaimed pending native execution.",
+        "No object-state writes, teleports, fake welds, collider disabling, hidden forces, or constant success metrics were found.",
+        "Workforce/category importance remains unresolved and is not established by this preflight pass."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "input/last-failure.json",
+        "task/run_full_screen_yam_preflight.py",
+        "task/full_screen_scene.py",
+        "task/test_failure_receipt.py",
+        "artifacts/contract.json",
+        "input/runtime-api-preflight.json"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_yam_preflight.py",
+          "--report",
+          "../measurements/full-screen-yam-preflight.json",
+          "--video",
+          "../measurements/full-screen-yam-preflight.mp4",
+          "--screenshot",
+          "../measurements/full-screen-yam-initial.png",
+          "--seed",
+          "2601"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/full_screen_yam_material_readback_preflight-5a3de4526e.log",
+        "finished_at": "2026-11-17T01:52:11.188373+00:00",
+        "id": "full_screen_yam_material_readback_preflight",
+        "report": "measurements/full-screen-yam-preflight.json",
+        "report_sha256": "18fa0ae870a7032b4faae97bf1e82251a577f8bdbc476ca672ce908451ef3da5",
+        "source_digest": "ff62d87b1b0e27ac13d4f7730a4ef2845bb8ec92048312ba22b78fc2a92bbf35",
+        "source_snapshot": "measurements/native-source-snapshots/ff62d87b1b0e27ac13d4f7730a4ef2845bb8ec92048312ba22b78fc2a92bbf35.json",
+        "output_snapshot": "measurements/native-output-snapshots/1028fd795fa44a6492e48a59bdff5d42.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_full_screen_yam_preflight.cpython-312.pyc",
+          "__pycache__/test_failure_receipt.cpython-312.pyc",
+          "__pycache__/full_screen_scene.cpython-312.pyc"
+        ],
+        "measurements": {
+          "scope": "empty full-screen bimanual YAM component only; not media-separation qualification",
+          "unqualified_observables": [
+            "continuous 240 Hz bilateral contact/dwell",
+            "object-identity camera visibility",
+            "full frozen physics coverage",
+            "media separation"
+          ],
+          "component_preflight_passed": true,
+          "fingertip_pose_source": "native Articulation.data.body_link_pos_w",
+          "native_fingertip_max_motion_m": [
+            0.24107027004629003,
+            0.1802235872101745,
+            0.21920184614261254,
+            0.19564118526208463
+          ],
+          "native_physics_dt_s": 0.004166666666666667,
+          "native_physics_hz": 240.0,
+          "expected_physics_hz": 240,
+          "control_hz": 20,
+          "dwell_observation_semantics": "Boolean contact and stationarity predicates are sampled after each 20 Hz control step; N consecutive true observations establish only (N-1)/20 seconds at that observation cadence and do not establish intervening 240 Hz continuity.",
+          "geometry_audit": {
+            "hole_count": 261,
+            "piece_count": 6124,
+            "solid_connected_components": 1,
+            "symmetric_difference_area_m2": 0.0,
+            "intended_solid_area_m2": 0.07056629445413612,
+            "aperture_boundary_segments": 20,
+            "aperture_vertex_diameter_m": 0.0127,
+            "aperture_clear_diameter_m": 0.01254364192555825
+          },
+          "native_support_geometry_audit": {
+            "posts": [
+              {
+                "path": "/World/envs/env_0/support_neg/Post_0",
+                "center_w_m": [
+                  0.245,
+                  -0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_neg/Post_1",
+                "center_w_m": [
+                  0.495,
+                  -0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_pos/Post_0",
+                "center_w_m": [
+                  0.245,
+                  0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_pos/Post_1",
+                "center_w_m": [
+                  0.495,
+                  0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              }
+            ],
+            "minimum_perforated_region_clearance_m": 0.015852877514630298,
+            "post_count": 4
+          },
+          "native_screen_material_audit": {
+            "floor": {
+              "collider_path": "/World/envs/env_0/screen/Floor_0000",
+              "material_path": "/World/envs/env_0/screen/ProcessingPhysicsMaterial",
+              "static_friction": 0.5,
+              "dynamic_friction": 0.3499999940395355
+            },
+            "wall": {
+              "collider_path": "/World/envs/env_0/screen/Wall_000",
+              "material_path": "/World/envs/env_0/screen/ProcessingPhysicsMaterial",
+              "static_friction": 0.5,
+              "dynamic_friction": 0.3499999940395355
+            },
+            "tab_neg": {
+              "collider_path": "/World/envs/env_0/screen/Tab_neg",
+              "material_path": "/World/envs/env_0/screen/VisibleTabGraspPhysicsMaterial",
+              "static_friction": 1.2000000476837158,
+              "dynamic_friction": 1.0
+            },
+            "tab_pos": {
+              "collider_path": "/World/envs/env_0/screen/Tab_pos",
+              "material_path": "/World/envs/env_0/screen/VisibleTabGraspPhysicsMaterial",
+              "static_friction": 1.2000000476837158,
+              "dynamic_friction": 1.0
+            }
+          },
+          "native_mass_kg": 0.4000000059604645,
+          "expected_mass_kg": 0.4,
+          "native_principal_inertia_kg_m2": [
+            0.0052004544995725155,
+            0.0060911946929991245,
+            0.010954913683235645
+          ],
+          "expected_inertia_kg_m2": [
+            0.006091194530439144,
+            0.005200454716974203,
+            0.010954913761151082
+          ],
+          "tip_collision_bounding_radius_m": [
+            0.10578381235723194,
+            0.10578426718563368,
+            0.10578381235723194,
+            0.10578426718563368
+          ],
+          "tip_collision_prim_paths": [
+            [
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_000/tip_left_000",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_001/tip_left_001",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_002/tip_left_002",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_003/tip_left_003",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_004/tip_left_004",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_005/tip_left_005",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_006/tip_left_006",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_007/tip_left_007",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_008/tip_left_008",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_009/tip_left_009",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_010/tip_left_010",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_011/tip_left_011",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_012/tip_left_012",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_013/tip_left_013",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_014/tip_left_014",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_015/tip_left_015",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_016/tip_left_016",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_017/tip_left_017",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_018/tip_left_018",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_019/tip_left_019",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_020/tip_left_020",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_021/tip_left_021",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_022/tip_left_022",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_023/tip_left_023",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_024/tip_left_024",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_025/tip_left_025",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_026/tip_left_026",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_027/tip_left_027",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_028/tip_left_028",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_029/tip_left_029",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_030/tip_left_030",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_031/tip_left_031",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_032/tip_left_032",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_033/tip_left_033",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_034/tip_left_034",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_035/tip_left_035",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_036/tip_left_036",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_037/tip_left_037",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_038/tip_left_038",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_039/tip_left_039",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_040/tip_left_040",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_041/tip_left_041",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_042/tip_left_042",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_043/tip_left_043",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_044/tip_left_044"
+            ],
+            [
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_000/tip_right_000",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_001/tip_right_001",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_002/tip_right_002",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_003/tip_right_003",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_004/tip_right_004",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_005/tip_right_005",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_006/tip_right_006",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_007/tip_right_007",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_008/tip_right_008",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_009/tip_right_009",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_010/tip_right_010",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_011/tip_right_011",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_012/tip_right_012",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_013/tip_right_013",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_014/tip_right_014",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_015/tip_right_015",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_016/tip_right_016",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_017/tip_right_017",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_018/tip_right_018",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_019/tip_right_019",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_020/tip_right_020",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_021/tip_right_021",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_022/tip_right_022",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_023/tip_right_023",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_024/tip_right_024",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_025/tip_right_025",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_026/tip_right_026",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_027/tip_right_027",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_028/tip_right_028",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_029/tip_right_029",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_030/tip_right_030",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_031/tip_right_031",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_032/tip_right_032",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_033/tip_right_033",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_034/tip_right_034",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_035/tip_right_035",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_036/tip_right_036",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_037/tip_right_037",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_038/tip_right_038",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_039/tip_right_039",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_040/tip_right_040",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_041/tip_right_041",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_042/tip_right_042",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_043/tip_right_043",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_044/tip_right_044",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_045/tip_right_045",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_046/tip_right_046"
+            ],
+            [
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_000/tip_left_000",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_001/tip_left_001",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_002/tip_left_002",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_003/tip_left_003",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_004/tip_left_004",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_005/tip_left_005",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_006/tip_left_006",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_007/tip_left_007",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_008/tip_left_008",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_009/tip_left_009",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_010/tip_left_010",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_011/tip_left_011",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_012/tip_left_012",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_013/tip_left_013",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_014/tip_left_014",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_015/tip_left_015",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_016/tip_left_016",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_017/tip_left_017",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_018/tip_left_018",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_019/tip_left_019",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_020/tip_left_020",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_021/tip_left_021",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_022/tip_left_022",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_023/tip_left_023",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_024/tip_left_024",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_025/tip_left_025",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_026/tip_left_026",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_027/tip_left_027",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_028/tip_left_028",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_029/tip_left_029",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_030/tip_left_030",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_031/tip_left_031",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_032/tip_left_032",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_033/tip_left_033",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_034/tip_left_034",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_035/tip_left_035",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_036/tip_left_036",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_037/tip_left_037",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_038/tip_left_038",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_039/tip_left_039",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_040/tip_left_040",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_041/tip_left_041",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_042/tip_left_042",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_043/tip_left_043",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_044/tip_left_044"
+            ],
+            [
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_000/tip_right_000",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_001/tip_right_001",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_002/tip_right_002",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_003/tip_right_003",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_004/tip_right_004",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_005/tip_right_005",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_006/tip_right_006",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_007/tip_right_007",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_008/tip_right_008",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_009/tip_right_009",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_010/tip_right_010",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_011/tip_right_011",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_012/tip_right_012",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_013/tip_right_013",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_014/tip_right_014",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_015/tip_right_015",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_016/tip_right_016",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_017/tip_right_017",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_018/tip_right_018",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_019/tip_right_019",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_020/tip_right_020",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_021/tip_right_021",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_022/tip_right_022",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_023/tip_right_023",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_024/tip_right_024",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_025/tip_right_025",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_026/tip_right_026",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_027/tip_right_027",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_028/tip_right_028",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_029/tip_right_029",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_030/tip_right_030",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_031/tip_right_031",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_032/tip_right_032",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_033/tip_right_033",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_034/tip_right_034",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_035/tip_right_035",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_036/tip_right_036",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_037/tip_right_037",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_038/tip_right_038",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_039/tip_right_039",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_040/tip_right_040",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_041/tip_right_041",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_042/tip_right_042",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_043/tip_right_043",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_044/tip_right_044",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_045/tip_right_045",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_046/tip_right_046"
+            ]
+          ],
+          "checks": [
+            {
+              "name": "minimum_native_fingertip_motion_across_four_links",
+              "measured": 0.1802235872101745,
+              "operator": ">=",
+              "threshold": 0.05,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "scene_configured_contact_sensors_initialized",
+              "measured": 5,
+              "operator": "==",
+              "threshold": 5,
+              "unit": "sensors",
+              "passed": true
+            },
+            {
+              "name": "native_support_contact_filter_collider_count",
+              "measured": 4,
+              "operator": "==",
+              "threshold": 4,
+              "unit": "colliders",
+              "passed": true
+            },
+            {
+              "name": "native_physics_timestep_matches_240_hz_plan",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-12,
+              "unit": "s",
+              "passed": true
+            },
+            {
+              "name": "complete_circular_aperture_count",
+              "measured": 261,
+              "operator": "==",
+              "threshold": 261,
+              "unit": "holes",
+              "passed": true
+            },
+            {
+              "name": "circular_aperture_clear_diameter_lower_bound",
+              "measured": 0.01254364192555825,
+              "operator": ">=",
+              "threshold": 0.0125,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "circular_aperture_clear_diameter_upper_bound",
+              "measured": 0.01254364192555825,
+              "operator": "<=",
+              "threshold": 0.0129,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "authored_floor_symmetric_difference_area",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "m^2",
+              "passed": true
+            },
+            {
+              "name": "authored_solid_connected_components",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "components",
+              "passed": true
+            },
+            {
+              "name": "support_post_count_exact",
+              "measured": 4,
+              "operator": "==",
+              "threshold": 4,
+              "unit": "posts",
+              "passed": true
+            },
+            {
+              "name": "support_post_perforated_region_clearance_min",
+              "measured": 0.015852877514630298,
+              "operator": ">=",
+              "threshold": 0.004,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "processing_floor_static_friction_readback_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "processing_wall_dynamic_friction_readback_absolute_error",
+              "measured": 5.960464455334602e-09,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "visible_tab_negative_static_friction_readback_absolute_error",
+              "measured": 4.768371586472142e-08,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "visible_tab_positive_dynamic_friction_readback_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "native_mass_relative_error",
+              "measured": 1.4901161138336505e-08,
+              "operator": "<=",
+              "threshold": 0.0001,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "native_inertia_max_relative_error",
+              "measured": 4.180436127792526e-08,
+              "operator": "<=",
+              "threshold": 0.001,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "nonzero_signed_raw_tab_reaction_points",
+              "measured": 776,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "points",
+              "passed": true
+            },
+            {
+              "name": "positive_native_pair_samples_with_verified_raw_vector_reconciliation",
+              "measured": 661,
+              "operator": "==",
+              "threshold": 661,
+              "unit": "control_samples",
+              "passed": true
+            },
+            {
+              "name": "maximum_native_contact_count_below_configured_capacity",
+              "measured": 159,
+              "operator": "<",
+              "threshold": 256,
+              "unit": "contacts_per_prim",
+              "passed": true
+            },
+            {
+              "name": "native_reported_contact_capacity_matches_configuration",
+              "measured": 256,
+              "operator": "==",
+              "threshold": 256,
+              "unit": "contacts_per_prim",
+              "passed": true
+            },
+            {
+              "name": "bilateral_opposing_tab_contact_dwell_from_20hz_observations",
+              "measured": 6.9,
+              "operator": ">=",
+              "threshold": 0.5,
+              "unit": "s_observed_at_20_hz",
+              "passed": true
+            },
+            {
+              "name": "observed_screen_lift_height",
+              "measured": 0.035450518131256104,
+              "operator": ">=",
+              "threshold": 0.03,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "contact_supported_stationary_lifted_dwell_from_20hz_observations",
+              "measured": 3.2,
+              "operator": ">=",
+              "threshold": 3.0,
+              "unit": "s_observed_at_20_hz",
+              "passed": true
+            },
+            {
+              "name": "post_return_support_pose_stationary_dwell_from_20hz_observations",
+              "measured": 1.75,
+              "operator": ">=",
+              "threshold": 0.25,
+              "unit": "s_observed_at_20_hz",
+              "passed": true
+            },
+            {
+              "name": "reseating_established_before_clearance_evaluation",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "boolean",
+              "passed": true
+            },
+            {
+              "name": "post_retreat_fresh_observation_count",
+              "measured": 10,
+              "operator": ">=",
+              "threshold": 2,
+              "unit": "control_samples",
+              "passed": true
+            },
+            {
+              "name": "released_fingertip_collider_to_screen_conservative_clearance",
+              "measured": 0.08017477904745347,
+              "operator": ">=",
+              "threshold": 0.06,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "native_rgb_minimum_finite_pixel_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "native_rgb_minimum_pixel_standard_deviation",
+              "measured": 47.41505432128906,
+              "operator": ">=",
+              "threshold": 2.0,
+              "unit": "uint8_level",
+              "passed": true
+            },
+            {
+              "name": "decoded_h264_valid_frame_count",
+              "measured": 295,
+              "operator": "==",
+              "threshold": 295,
+              "unit": "frames",
+              "passed": true
+            },
+            {
+              "name": "decoded_h264_nonblank_frame_count",
+              "measured": 295,
+              "operator": "==",
+              "threshold": 295,
+              "unit": "frames",
+              "passed": true
+            },
+            {
+              "name": "decoded_initial_screenshot_valid_nonblank",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "boolean",
+              "passed": true
+            }
+          ],
+          "artifacts": [
+            "measurements/full-screen-yam-preflight.mp4",
+            "measurements/full-screen-yam-initial.png",
+            "measurements/full-screen-yam-preflight-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-17T01:52:12.483900+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Repaired the recorded float32 friction-readback failure using measured absolute error with a 1e-6 tolerance; authored friction remains unchanged. All five CPU failure-receipt tests and Python syntax checks pass. A fresh native GPU run is required before adding the loaded media/washer scene. No qualification, YAM separation demo, or workforce/category-importance claim is made.",
+      "scripts": [
+        {
+          "id": "full_screen_yam_material_readback_preflight",
+          "script": "task/run_full_screen_yam_preflight.py",
+          "args": [
+            "--report",
+            "../measurements/full-screen-yam-preflight.json",
+            "--video",
+            "../measurements/full-screen-yam-preflight.mp4",
+            "--screenshot",
+            "../measurements/full-screen-yam-initial.png",
+            "--seed",
+            "2601"
+          ],
+          "report": "measurements/full-screen-yam-preflight.json"
+        }
+      ],
+      "files": [
+        "task/run_full_screen_yam_preflight.py",
+        "task/full_screen_scene.py",
+        "task/test_failure_receipt.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The generated-source preflight has no material unresolved issue. The prior float32 friction-readback failure is repaired using measured absolute errors with a 1e-6 tolerance while preserving the authored coefficients.",
+        "The bounded empty-screen component uses native rigid-body poses, joint traces, raw and filtered contact data, support-post contacts, composed material bindings, mass/inertia readbacks, and rendered-frame decoding. Exceptions, malformed values, contact-buffer saturation, or failed checks cannot produce a passing receipt.",
+        "Qualification claims remain correctly limited: 20 Hz sampled grasp/lift/reseat dwell is not presented as continuous 240 Hz evidence, and loaded media separation, washer retention, frozen scoring, and full-task success remain unclaimed pending later native stages.",
+        "No object-state writes, teleports, fake welds, collider disabling, freezing, hidden forces, or constant success readings were found.",
+        "Impact-on-jobs eligibility remains unresolved and must continue to block export, release certification, and Dream, but it does not block this authorized prototype preflight."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "input/last-failure.json",
+        "task/run_full_screen_yam_preflight.py",
+        "task/full_screen_scene.py",
+        "task/test_failure_receipt.py",
+        "artifacts/contract.json",
+        "artifacts/contract-preflight.json",
+        "input/runtime-api-preflight.json"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_yam_preflight.py",
+          "--report",
+          "../measurements/full-screen-yam-preflight.json",
+          "--video",
+          "../measurements/full-screen-yam-preflight.mp4",
+          "--screenshot",
+          "../measurements/full-screen-yam-initial.png",
+          "--seed",
+          "2601"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/full_screen_yam_material_readback_preflight-ba0522a496.log",
+        "finished_at": "2026-11-17T01:55:22.127665+00:00",
+        "id": "full_screen_yam_material_readback_preflight",
+        "report": "measurements/full-screen-yam-preflight.json",
+        "report_sha256": "08a8fe3a36edf2a14e20a4478848b3c1d26a54e9f9f82f062d7e9cb3bf9891df",
+        "source_digest": "ff62d87b1b0e27ac13d4f7730a4ef2845bb8ec92048312ba22b78fc2a92bbf35",
+        "source_snapshot": "measurements/native-source-snapshots/ff62d87b1b0e27ac13d4f7730a4ef2845bb8ec92048312ba22b78fc2a92bbf35.json",
+        "output_snapshot": "measurements/native-output-snapshots/bc454840f9bd46a1bff5b25d4b2799b6.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_full_screen_yam_preflight.cpython-312.pyc",
+          "__pycache__/full_screen_scene.cpython-312.pyc"
+        ],
+        "measurements": {
+          "scope": "empty full-screen bimanual YAM component only; not media-separation qualification",
+          "unqualified_observables": [
+            "continuous 240 Hz bilateral contact/dwell",
+            "object-identity camera visibility",
+            "full frozen physics coverage",
+            "media separation"
+          ],
+          "component_preflight_passed": true,
+          "fingertip_pose_source": "native Articulation.data.body_link_pos_w",
+          "native_fingertip_max_motion_m": [
+            0.24107027004629003,
+            0.1802235872101745,
+            0.21920184614261254,
+            0.19564118526208463
+          ],
+          "native_physics_dt_s": 0.004166666666666667,
+          "native_physics_hz": 240.0,
+          "expected_physics_hz": 240,
+          "control_hz": 20,
+          "dwell_observation_semantics": "Boolean contact and stationarity predicates are sampled after each 20 Hz control step; N consecutive true observations establish only (N-1)/20 seconds at that observation cadence and do not establish intervening 240 Hz continuity.",
+          "geometry_audit": {
+            "hole_count": 261,
+            "piece_count": 6124,
+            "solid_connected_components": 1,
+            "symmetric_difference_area_m2": 0.0,
+            "intended_solid_area_m2": 0.07056629445413612,
+            "aperture_boundary_segments": 20,
+            "aperture_vertex_diameter_m": 0.0127,
+            "aperture_clear_diameter_m": 0.01254364192555825
+          },
+          "native_support_geometry_audit": {
+            "posts": [
+              {
+                "path": "/World/envs/env_0/support_neg/Post_0",
+                "center_w_m": [
+                  0.245,
+                  -0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_neg/Post_1",
+                "center_w_m": [
+                  0.495,
+                  -0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_pos/Post_0",
+                "center_w_m": [
+                  0.245,
+                  0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_pos/Post_1",
+                "center_w_m": [
+                  0.495,
+                  0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              }
+            ],
+            "minimum_perforated_region_clearance_m": 0.015852877514630298,
+            "post_count": 4
+          },
+          "native_screen_material_audit": {
+            "floor": {
+              "collider_path": "/World/envs/env_0/screen/Floor_0000",
+              "material_path": "/World/envs/env_0/screen/ProcessingPhysicsMaterial",
+              "static_friction": 0.5,
+              "dynamic_friction": 0.3499999940395355
+            },
+            "wall": {
+              "collider_path": "/World/envs/env_0/screen/Wall_000",
+              "material_path": "/World/envs/env_0/screen/ProcessingPhysicsMaterial",
+              "static_friction": 0.5,
+              "dynamic_friction": 0.3499999940395355
+            },
+            "tab_neg": {
+              "collider_path": "/World/envs/env_0/screen/Tab_neg",
+              "material_path": "/World/envs/env_0/screen/VisibleTabGraspPhysicsMaterial",
+              "static_friction": 1.2000000476837158,
+              "dynamic_friction": 1.0
+            },
+            "tab_pos": {
+              "collider_path": "/World/envs/env_0/screen/Tab_pos",
+              "material_path": "/World/envs/env_0/screen/VisibleTabGraspPhysicsMaterial",
+              "static_friction": 1.2000000476837158,
+              "dynamic_friction": 1.0
+            }
+          },
+          "native_mass_kg": 0.4000000059604645,
+          "expected_mass_kg": 0.4,
+          "native_principal_inertia_kg_m2": [
+            0.0052004544995725155,
+            0.0060911946929991245,
+            0.010954913683235645
+          ],
+          "expected_inertia_kg_m2": [
+            0.006091194530439144,
+            0.005200454716974203,
+            0.010954913761151082
+          ],
+          "tip_collision_bounding_radius_m": [
+            0.10578381235723194,
+            0.10578426718563368,
+            0.10578381235723194,
+            0.10578426718563368
+          ],
+          "tip_collision_prim_paths": [
+            [
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_000/tip_left_000",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_001/tip_left_001",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_002/tip_left_002",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_003/tip_left_003",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_004/tip_left_004",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_005/tip_left_005",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_006/tip_left_006",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_007/tip_left_007",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_008/tip_left_008",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_009/tip_left_009",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_010/tip_left_010",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_011/tip_left_011",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_012/tip_left_012",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_013/tip_left_013",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_014/tip_left_014",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_015/tip_left_015",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_016/tip_left_016",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_017/tip_left_017",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_018/tip_left_018",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_019/tip_left_019",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_020/tip_left_020",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_021/tip_left_021",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_022/tip_left_022",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_023/tip_left_023",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_024/tip_left_024",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_025/tip_left_025",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_026/tip_left_026",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_027/tip_left_027",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_028/tip_left_028",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_029/tip_left_029",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_030/tip_left_030",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_031/tip_left_031",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_032/tip_left_032",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_033/tip_left_033",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_034/tip_left_034",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_035/tip_left_035",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_036/tip_left_036",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_037/tip_left_037",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_038/tip_left_038",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_039/tip_left_039",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_040/tip_left_040",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_041/tip_left_041",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_042/tip_left_042",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_043/tip_left_043",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_044/tip_left_044"
+            ],
+            [
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_000/tip_right_000",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_001/tip_right_001",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_002/tip_right_002",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_003/tip_right_003",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_004/tip_right_004",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_005/tip_right_005",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_006/tip_right_006",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_007/tip_right_007",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_008/tip_right_008",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_009/tip_right_009",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_010/tip_right_010",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_011/tip_right_011",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_012/tip_right_012",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_013/tip_right_013",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_014/tip_right_014",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_015/tip_right_015",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_016/tip_right_016",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_017/tip_right_017",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_018/tip_right_018",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_019/tip_right_019",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_020/tip_right_020",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_021/tip_right_021",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_022/tip_right_022",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_023/tip_right_023",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_024/tip_right_024",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_025/tip_right_025",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_026/tip_right_026",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_027/tip_right_027",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_028/tip_right_028",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_029/tip_right_029",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_030/tip_right_030",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_031/tip_right_031",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_032/tip_right_032",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_033/tip_right_033",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_034/tip_right_034",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_035/tip_right_035",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_036/tip_right_036",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_037/tip_right_037",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_038/tip_right_038",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_039/tip_right_039",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_040/tip_right_040",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_041/tip_right_041",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_042/tip_right_042",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_043/tip_right_043",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_044/tip_right_044",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_045/tip_right_045",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_046/tip_right_046"
+            ],
+            [
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_000/tip_left_000",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_001/tip_left_001",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_002/tip_left_002",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_003/tip_left_003",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_004/tip_left_004",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_005/tip_left_005",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_006/tip_left_006",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_007/tip_left_007",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_008/tip_left_008",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_009/tip_left_009",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_010/tip_left_010",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_011/tip_left_011",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_012/tip_left_012",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_013/tip_left_013",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_014/tip_left_014",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_015/tip_left_015",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_016/tip_left_016",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_017/tip_left_017",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_018/tip_left_018",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_019/tip_left_019",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_020/tip_left_020",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_021/tip_left_021",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_022/tip_left_022",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_023/tip_left_023",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_024/tip_left_024",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_025/tip_left_025",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_026/tip_left_026",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_027/tip_left_027",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_028/tip_left_028",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_029/tip_left_029",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_030/tip_left_030",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_031/tip_left_031",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_032/tip_left_032",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_033/tip_left_033",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_034/tip_left_034",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_035/tip_left_035",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_036/tip_left_036",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_037/tip_left_037",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_038/tip_left_038",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_039/tip_left_039",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_040/tip_left_040",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_041/tip_left_041",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_042/tip_left_042",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_043/tip_left_043",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_044/tip_left_044"
+            ],
+            [
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_000/tip_right_000",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_001/tip_right_001",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_002/tip_right_002",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_003/tip_right_003",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_004/tip_right_004",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_005/tip_right_005",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_006/tip_right_006",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_007/tip_right_007",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_008/tip_right_008",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_009/tip_right_009",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_010/tip_right_010",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_011/tip_right_011",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_012/tip_right_012",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_013/tip_right_013",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_014/tip_right_014",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_015/tip_right_015",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_016/tip_right_016",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_017/tip_right_017",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_018/tip_right_018",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_019/tip_right_019",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_020/tip_right_020",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_021/tip_right_021",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_022/tip_right_022",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_023/tip_right_023",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_024/tip_right_024",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_025/tip_right_025",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_026/tip_right_026",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_027/tip_right_027",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_028/tip_right_028",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_029/tip_right_029",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_030/tip_right_030",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_031/tip_right_031",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_032/tip_right_032",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_033/tip_right_033",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_034/tip_right_034",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_035/tip_right_035",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_036/tip_right_036",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_037/tip_right_037",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_038/tip_right_038",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_039/tip_right_039",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_040/tip_right_040",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_041/tip_right_041",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_042/tip_right_042",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_043/tip_right_043",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_044/tip_right_044",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_045/tip_right_045",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_046/tip_right_046"
+            ]
+          ],
+          "checks": [
+            {
+              "name": "minimum_native_fingertip_motion_across_four_links",
+              "measured": 0.1802235872101745,
+              "operator": ">=",
+              "threshold": 0.05,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "scene_configured_contact_sensors_initialized",
+              "measured": 5,
+              "operator": "==",
+              "threshold": 5,
+              "unit": "sensors",
+              "passed": true
+            },
+            {
+              "name": "native_support_contact_filter_collider_count",
+              "measured": 4,
+              "operator": "==",
+              "threshold": 4,
+              "unit": "colliders",
+              "passed": true
+            },
+            {
+              "name": "native_physics_timestep_matches_240_hz_plan",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-12,
+              "unit": "s",
+              "passed": true
+            },
+            {
+              "name": "complete_circular_aperture_count",
+              "measured": 261,
+              "operator": "==",
+              "threshold": 261,
+              "unit": "holes",
+              "passed": true
+            },
+            {
+              "name": "circular_aperture_clear_diameter_lower_bound",
+              "measured": 0.01254364192555825,
+              "operator": ">=",
+              "threshold": 0.0125,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "circular_aperture_clear_diameter_upper_bound",
+              "measured": 0.01254364192555825,
+              "operator": "<=",
+              "threshold": 0.0129,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "authored_floor_symmetric_difference_area",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "m^2",
+              "passed": true
+            },
+            {
+              "name": "authored_solid_connected_components",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "components",
+              "passed": true
+            },
+            {
+              "name": "support_post_count_exact",
+              "measured": 4,
+              "operator": "==",
+              "threshold": 4,
+              "unit": "posts",
+              "passed": true
+            },
+            {
+              "name": "support_post_perforated_region_clearance_min",
+              "measured": 0.015852877514630298,
+              "operator": ">=",
+              "threshold": 0.004,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "processing_floor_static_friction_readback_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "processing_wall_dynamic_friction_readback_absolute_error",
+              "measured": 5.960464455334602e-09,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "visible_tab_negative_static_friction_readback_absolute_error",
+              "measured": 4.768371586472142e-08,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "visible_tab_positive_dynamic_friction_readback_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "native_mass_relative_error",
+              "measured": 1.4901161138336505e-08,
+              "operator": "<=",
+              "threshold": 0.0001,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "native_inertia_max_relative_error",
+              "measured": 4.180436127792526e-08,
+              "operator": "<=",
+              "threshold": 0.001,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "nonzero_signed_raw_tab_reaction_points",
+              "measured": 776,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "points",
+              "passed": true
+            },
+            {
+              "name": "positive_native_pair_samples_with_verified_raw_vector_reconciliation",
+              "measured": 661,
+              "operator": "==",
+              "threshold": 661,
+              "unit": "control_samples",
+              "passed": true
+            },
+            {
+              "name": "maximum_native_contact_count_below_configured_capacity",
+              "measured": 159,
+              "operator": "<",
+              "threshold": 256,
+              "unit": "contacts_per_prim",
+              "passed": true
+            },
+            {
+              "name": "native_reported_contact_capacity_matches_configuration",
+              "measured": 256,
+              "operator": "==",
+              "threshold": 256,
+              "unit": "contacts_per_prim",
+              "passed": true
+            },
+            {
+              "name": "bilateral_opposing_tab_contact_dwell_from_20hz_observations",
+              "measured": 6.9,
+              "operator": ">=",
+              "threshold": 0.5,
+              "unit": "s_observed_at_20_hz",
+              "passed": true
+            },
+            {
+              "name": "observed_screen_lift_height",
+              "measured": 0.035450518131256104,
+              "operator": ">=",
+              "threshold": 0.03,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "contact_supported_stationary_lifted_dwell_from_20hz_observations",
+              "measured": 3.2,
+              "operator": ">=",
+              "threshold": 3.0,
+              "unit": "s_observed_at_20_hz",
+              "passed": true
+            },
+            {
+              "name": "post_return_support_pose_stationary_dwell_from_20hz_observations",
+              "measured": 1.75,
+              "operator": ">=",
+              "threshold": 0.25,
+              "unit": "s_observed_at_20_hz",
+              "passed": true
+            },
+            {
+              "name": "reseating_established_before_clearance_evaluation",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "boolean",
+              "passed": true
+            },
+            {
+              "name": "post_retreat_fresh_observation_count",
+              "measured": 10,
+              "operator": ">=",
+              "threshold": 2,
+              "unit": "control_samples",
+              "passed": true
+            },
+            {
+              "name": "released_fingertip_collider_to_screen_conservative_clearance",
+              "measured": 0.08017477904745347,
+              "operator": ">=",
+              "threshold": 0.06,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "native_rgb_minimum_finite_pixel_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "native_rgb_minimum_pixel_standard_deviation",
+              "measured": 47.40054702758789,
+              "operator": ">=",
+              "threshold": 2.0,
+              "unit": "uint8_level",
+              "passed": true
+            },
+            {
+              "name": "decoded_h264_valid_frame_count",
+              "measured": 295,
+              "operator": "==",
+              "threshold": 295,
+              "unit": "frames",
+              "passed": true
+            },
+            {
+              "name": "decoded_h264_nonblank_frame_count",
+              "measured": 295,
+              "operator": "==",
+              "threshold": 295,
+              "unit": "frames",
+              "passed": true
+            },
+            {
+              "name": "decoded_initial_screenshot_valid_nonblank",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "boolean",
+              "passed": true
+            }
+          ],
+          "artifacts": [
+            "measurements/full-screen-yam-preflight.mp4",
+            "measurements/full-screen-yam-initial.png",
+            "measurements/full-screen-yam-preflight-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-17T01:55:22.921596+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Repaired the float32 friction-readback failure by measuring absolute error with a 1e-6 tolerance; authored friction values remain unchanged. All five CPU regression tests and syntax checks pass. A fresh native GPU execution is still required; no qualification, loaded-separation demo, or workforce/category-importance claim is made.",
+      "scripts": [
+        {
+          "id": "full_screen_yam_material_readback_preflight",
+          "script": "task/run_full_screen_yam_preflight.py",
+          "args": [
+            "--report",
+            "../measurements/full-screen-yam-preflight.json",
+            "--video",
+            "../measurements/full-screen-yam-preflight.mp4",
+            "--screenshot",
+            "../measurements/full-screen-yam-initial.png",
+            "--seed",
+            "2601"
+          ],
+          "report": "measurements/full-screen-yam-preflight.json"
+        }
+      ],
+      "files": [
+        "task/run_full_screen_yam_preflight.py",
+        "task/full_screen_scene.py",
+        "task/test_failure_receipt.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The float32 friction-readback failure is correctly repaired with absolute-error checks at 1e-6 tolerance; authored friction coefficients remain unchanged.",
+        "The preflight reads native poses, joint states, contacts, support forces, composed materials, mass/inertia, and rendered outputs. Invalid values, exceptions, or contact-buffer saturation cannot yield a pass.",
+        "Claims are properly limited to an empty-screen component measured at 20 Hz; continuous 240 Hz behavior, loaded separation, scoring qualification, and full-task success remain unclaimed.",
+        "No object-state writes, teleports, fake welds, collision disabling, freezing, hidden forces, or constant success readings were found.",
+        "Impact-on-jobs eligibility remains unresolved and must block export, release certification, and Dream, but does not block this authorized prototype preflight."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "input/last-failure.json",
+        "task/run_full_screen_yam_preflight.py",
+        "task/full_screen_scene.py",
+        "task/test_failure_receipt.py",
+        "artifacts/contract.json",
+        "artifacts/contract-preflight.json",
+        "input/runtime-api-preflight.json"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_yam_preflight.py",
+          "--report",
+          "../measurements/full-screen-yam-preflight.json",
+          "--video",
+          "../measurements/full-screen-yam-preflight.mp4",
+          "--screenshot",
+          "../measurements/full-screen-yam-initial.png",
+          "--seed",
+          "2601"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/full_screen_yam_material_readback_preflight-17892a10a6.log",
+        "finished_at": "2026-11-17T01:58:28.255091+00:00",
+        "id": "full_screen_yam_material_readback_preflight",
+        "report": "measurements/full-screen-yam-preflight.json",
+        "report_sha256": "b3aff185c3fff35f851e844f31534f8491c35ec8ad634c1b0b69ef8b32ecb432",
+        "source_digest": "ff62d87b1b0e27ac13d4f7730a4ef2845bb8ec92048312ba22b78fc2a92bbf35",
+        "source_snapshot": "measurements/native-source-snapshots/ff62d87b1b0e27ac13d4f7730a4ef2845bb8ec92048312ba22b78fc2a92bbf35.json",
+        "output_snapshot": "measurements/native-output-snapshots/5f5cbbac3db540af86a1ecac299432e6.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_full_screen_yam_preflight.cpython-312.pyc",
+          "__pycache__/test_failure_receipt.cpython-312.pyc",
+          "__pycache__/full_screen_scene.cpython-312.pyc"
+        ],
+        "measurements": {
+          "scope": "empty full-screen bimanual YAM component only; not media-separation qualification",
+          "unqualified_observables": [
+            "continuous 240 Hz bilateral contact/dwell",
+            "object-identity camera visibility",
+            "full frozen physics coverage",
+            "media separation"
+          ],
+          "component_preflight_passed": true,
+          "fingertip_pose_source": "native Articulation.data.body_link_pos_w",
+          "native_fingertip_max_motion_m": [
+            0.24107027004629003,
+            0.1802235872101745,
+            0.21920184614261254,
+            0.19564118526208463
+          ],
+          "native_physics_dt_s": 0.004166666666666667,
+          "native_physics_hz": 240.0,
+          "expected_physics_hz": 240,
+          "control_hz": 20,
+          "dwell_observation_semantics": "Boolean contact and stationarity predicates are sampled after each 20 Hz control step; N consecutive true observations establish only (N-1)/20 seconds at that observation cadence and do not establish intervening 240 Hz continuity.",
+          "geometry_audit": {
+            "hole_count": 261,
+            "piece_count": 6124,
+            "solid_connected_components": 1,
+            "symmetric_difference_area_m2": 0.0,
+            "intended_solid_area_m2": 0.07056629445413612,
+            "aperture_boundary_segments": 20,
+            "aperture_vertex_diameter_m": 0.0127,
+            "aperture_clear_diameter_m": 0.01254364192555825
+          },
+          "native_support_geometry_audit": {
+            "posts": [
+              {
+                "path": "/World/envs/env_0/support_neg/Post_0",
+                "center_w_m": [
+                  0.245,
+                  -0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_neg/Post_1",
+                "center_w_m": [
+                  0.495,
+                  -0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_pos/Post_0",
+                "center_w_m": [
+                  0.245,
+                  0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_pos/Post_1",
+                "center_w_m": [
+                  0.495,
+                  0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              }
+            ],
+            "minimum_perforated_region_clearance_m": 0.015852877514630298,
+            "post_count": 4
+          },
+          "native_screen_material_audit": {
+            "floor": {
+              "collider_path": "/World/envs/env_0/screen/Floor_0000",
+              "material_path": "/World/envs/env_0/screen/ProcessingPhysicsMaterial",
+              "static_friction": 0.5,
+              "dynamic_friction": 0.3499999940395355
+            },
+            "wall": {
+              "collider_path": "/World/envs/env_0/screen/Wall_000",
+              "material_path": "/World/envs/env_0/screen/ProcessingPhysicsMaterial",
+              "static_friction": 0.5,
+              "dynamic_friction": 0.3499999940395355
+            },
+            "tab_neg": {
+              "collider_path": "/World/envs/env_0/screen/Tab_neg",
+              "material_path": "/World/envs/env_0/screen/VisibleTabGraspPhysicsMaterial",
+              "static_friction": 1.2000000476837158,
+              "dynamic_friction": 1.0
+            },
+            "tab_pos": {
+              "collider_path": "/World/envs/env_0/screen/Tab_pos",
+              "material_path": "/World/envs/env_0/screen/VisibleTabGraspPhysicsMaterial",
+              "static_friction": 1.2000000476837158,
+              "dynamic_friction": 1.0
+            }
+          },
+          "native_mass_kg": 0.4000000059604645,
+          "expected_mass_kg": 0.4,
+          "native_principal_inertia_kg_m2": [
+            0.0052004544995725155,
+            0.0060911946929991245,
+            0.010954913683235645
+          ],
+          "expected_inertia_kg_m2": [
+            0.006091194530439144,
+            0.005200454716974203,
+            0.010954913761151082
+          ],
+          "tip_collision_bounding_radius_m": [
+            0.10578381235723194,
+            0.10578426718563368,
+            0.10578381235723194,
+            0.10578426718563368
+          ],
+          "tip_collision_prim_paths": [
+            [
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_000/tip_left_000",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_001/tip_left_001",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_002/tip_left_002",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_003/tip_left_003",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_004/tip_left_004",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_005/tip_left_005",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_006/tip_left_006",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_007/tip_left_007",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_008/tip_left_008",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_009/tip_left_009",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_010/tip_left_010",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_011/tip_left_011",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_012/tip_left_012",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_013/tip_left_013",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_014/tip_left_014",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_015/tip_left_015",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_016/tip_left_016",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_017/tip_left_017",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_018/tip_left_018",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_019/tip_left_019",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_020/tip_left_020",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_021/tip_left_021",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_022/tip_left_022",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_023/tip_left_023",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_024/tip_left_024",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_025/tip_left_025",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_026/tip_left_026",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_027/tip_left_027",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_028/tip_left_028",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_029/tip_left_029",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_030/tip_left_030",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_031/tip_left_031",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_032/tip_left_032",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_033/tip_left_033",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_034/tip_left_034",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_035/tip_left_035",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_036/tip_left_036",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_037/tip_left_037",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_038/tip_left_038",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_039/tip_left_039",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_040/tip_left_040",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_041/tip_left_041",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_042/tip_left_042",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_043/tip_left_043",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_044/tip_left_044"
+            ],
+            [
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_000/tip_right_000",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_001/tip_right_001",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_002/tip_right_002",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_003/tip_right_003",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_004/tip_right_004",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_005/tip_right_005",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_006/tip_right_006",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_007/tip_right_007",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_008/tip_right_008",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_009/tip_right_009",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_010/tip_right_010",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_011/tip_right_011",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_012/tip_right_012",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_013/tip_right_013",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_014/tip_right_014",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_015/tip_right_015",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_016/tip_right_016",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_017/tip_right_017",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_018/tip_right_018",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_019/tip_right_019",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_020/tip_right_020",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_021/tip_right_021",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_022/tip_right_022",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_023/tip_right_023",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_024/tip_right_024",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_025/tip_right_025",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_026/tip_right_026",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_027/tip_right_027",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_028/tip_right_028",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_029/tip_right_029",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_030/tip_right_030",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_031/tip_right_031",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_032/tip_right_032",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_033/tip_right_033",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_034/tip_right_034",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_035/tip_right_035",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_036/tip_right_036",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_037/tip_right_037",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_038/tip_right_038",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_039/tip_right_039",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_040/tip_right_040",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_041/tip_right_041",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_042/tip_right_042",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_043/tip_right_043",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_044/tip_right_044",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_045/tip_right_045",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_046/tip_right_046"
+            ],
+            [
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_000/tip_left_000",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_001/tip_left_001",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_002/tip_left_002",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_003/tip_left_003",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_004/tip_left_004",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_005/tip_left_005",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_006/tip_left_006",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_007/tip_left_007",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_008/tip_left_008",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_009/tip_left_009",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_010/tip_left_010",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_011/tip_left_011",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_012/tip_left_012",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_013/tip_left_013",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_014/tip_left_014",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_015/tip_left_015",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_016/tip_left_016",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_017/tip_left_017",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_018/tip_left_018",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_019/tip_left_019",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_020/tip_left_020",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_021/tip_left_021",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_022/tip_left_022",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_023/tip_left_023",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_024/tip_left_024",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_025/tip_left_025",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_026/tip_left_026",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_027/tip_left_027",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_028/tip_left_028",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_029/tip_left_029",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_030/tip_left_030",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_031/tip_left_031",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_032/tip_left_032",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_033/tip_left_033",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_034/tip_left_034",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_035/tip_left_035",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_036/tip_left_036",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_037/tip_left_037",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_038/tip_left_038",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_039/tip_left_039",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_040/tip_left_040",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_041/tip_left_041",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_042/tip_left_042",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_043/tip_left_043",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_044/tip_left_044"
+            ],
+            [
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_000/tip_right_000",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_001/tip_right_001",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_002/tip_right_002",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_003/tip_right_003",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_004/tip_right_004",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_005/tip_right_005",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_006/tip_right_006",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_007/tip_right_007",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_008/tip_right_008",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_009/tip_right_009",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_010/tip_right_010",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_011/tip_right_011",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_012/tip_right_012",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_013/tip_right_013",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_014/tip_right_014",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_015/tip_right_015",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_016/tip_right_016",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_017/tip_right_017",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_018/tip_right_018",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_019/tip_right_019",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_020/tip_right_020",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_021/tip_right_021",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_022/tip_right_022",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_023/tip_right_023",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_024/tip_right_024",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_025/tip_right_025",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_026/tip_right_026",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_027/tip_right_027",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_028/tip_right_028",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_029/tip_right_029",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_030/tip_right_030",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_031/tip_right_031",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_032/tip_right_032",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_033/tip_right_033",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_034/tip_right_034",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_035/tip_right_035",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_036/tip_right_036",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_037/tip_right_037",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_038/tip_right_038",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_039/tip_right_039",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_040/tip_right_040",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_041/tip_right_041",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_042/tip_right_042",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_043/tip_right_043",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_044/tip_right_044",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_045/tip_right_045",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_046/tip_right_046"
+            ]
+          ],
+          "checks": [
+            {
+              "name": "minimum_native_fingertip_motion_across_four_links",
+              "measured": 0.1802235872101745,
+              "operator": ">=",
+              "threshold": 0.05,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "scene_configured_contact_sensors_initialized",
+              "measured": 5,
+              "operator": "==",
+              "threshold": 5,
+              "unit": "sensors",
+              "passed": true
+            },
+            {
+              "name": "native_support_contact_filter_collider_count",
+              "measured": 4,
+              "operator": "==",
+              "threshold": 4,
+              "unit": "colliders",
+              "passed": true
+            },
+            {
+              "name": "native_physics_timestep_matches_240_hz_plan",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-12,
+              "unit": "s",
+              "passed": true
+            },
+            {
+              "name": "complete_circular_aperture_count",
+              "measured": 261,
+              "operator": "==",
+              "threshold": 261,
+              "unit": "holes",
+              "passed": true
+            },
+            {
+              "name": "circular_aperture_clear_diameter_lower_bound",
+              "measured": 0.01254364192555825,
+              "operator": ">=",
+              "threshold": 0.0125,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "circular_aperture_clear_diameter_upper_bound",
+              "measured": 0.01254364192555825,
+              "operator": "<=",
+              "threshold": 0.0129,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "authored_floor_symmetric_difference_area",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "m^2",
+              "passed": true
+            },
+            {
+              "name": "authored_solid_connected_components",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "components",
+              "passed": true
+            },
+            {
+              "name": "support_post_count_exact",
+              "measured": 4,
+              "operator": "==",
+              "threshold": 4,
+              "unit": "posts",
+              "passed": true
+            },
+            {
+              "name": "support_post_perforated_region_clearance_min",
+              "measured": 0.015852877514630298,
+              "operator": ">=",
+              "threshold": 0.004,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "processing_floor_static_friction_readback_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "processing_wall_dynamic_friction_readback_absolute_error",
+              "measured": 5.960464455334602e-09,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "visible_tab_negative_static_friction_readback_absolute_error",
+              "measured": 4.768371586472142e-08,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "visible_tab_positive_dynamic_friction_readback_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "native_mass_relative_error",
+              "measured": 1.4901161138336505e-08,
+              "operator": "<=",
+              "threshold": 0.0001,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "native_inertia_max_relative_error",
+              "measured": 4.180436127792526e-08,
+              "operator": "<=",
+              "threshold": 0.001,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "nonzero_signed_raw_tab_reaction_points",
+              "measured": 776,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "points",
+              "passed": true
+            },
+            {
+              "name": "positive_native_pair_samples_with_verified_raw_vector_reconciliation",
+              "measured": 661,
+              "operator": "==",
+              "threshold": 661,
+              "unit": "control_samples",
+              "passed": true
+            },
+            {
+              "name": "maximum_native_contact_count_below_configured_capacity",
+              "measured": 159,
+              "operator": "<",
+              "threshold": 256,
+              "unit": "contacts_per_prim",
+              "passed": true
+            },
+            {
+              "name": "native_reported_contact_capacity_matches_configuration",
+              "measured": 256,
+              "operator": "==",
+              "threshold": 256,
+              "unit": "contacts_per_prim",
+              "passed": true
+            },
+            {
+              "name": "bilateral_opposing_tab_contact_dwell_from_20hz_observations",
+              "measured": 6.9,
+              "operator": ">=",
+              "threshold": 0.5,
+              "unit": "s_observed_at_20_hz",
+              "passed": true
+            },
+            {
+              "name": "observed_screen_lift_height",
+              "measured": 0.035450518131256104,
+              "operator": ">=",
+              "threshold": 0.03,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "contact_supported_stationary_lifted_dwell_from_20hz_observations",
+              "measured": 3.2,
+              "operator": ">=",
+              "threshold": 3.0,
+              "unit": "s_observed_at_20_hz",
+              "passed": true
+            },
+            {
+              "name": "post_return_support_pose_stationary_dwell_from_20hz_observations",
+              "measured": 1.75,
+              "operator": ">=",
+              "threshold": 0.25,
+              "unit": "s_observed_at_20_hz",
+              "passed": true
+            },
+            {
+              "name": "reseating_established_before_clearance_evaluation",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "boolean",
+              "passed": true
+            },
+            {
+              "name": "post_retreat_fresh_observation_count",
+              "measured": 10,
+              "operator": ">=",
+              "threshold": 2,
+              "unit": "control_samples",
+              "passed": true
+            },
+            {
+              "name": "released_fingertip_collider_to_screen_conservative_clearance",
+              "measured": 0.08017477904745347,
+              "operator": ">=",
+              "threshold": 0.06,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "native_rgb_minimum_finite_pixel_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "native_rgb_minimum_pixel_standard_deviation",
+              "measured": 47.408836364746094,
+              "operator": ">=",
+              "threshold": 2.0,
+              "unit": "uint8_level",
+              "passed": true
+            },
+            {
+              "name": "decoded_h264_valid_frame_count",
+              "measured": 295,
+              "operator": "==",
+              "threshold": 295,
+              "unit": "frames",
+              "passed": true
+            },
+            {
+              "name": "decoded_h264_nonblank_frame_count",
+              "measured": 295,
+              "operator": "==",
+              "threshold": 295,
+              "unit": "frames",
+              "passed": true
+            },
+            {
+              "name": "decoded_initial_screenshot_valid_nonblank",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "boolean",
+              "passed": true
+            }
+          ],
+          "artifacts": [
+            "measurements/full-screen-yam-preflight.mp4",
+            "measurements/full-screen-yam-initial.png",
+            "measurements/full-screen-yam-preflight-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-17T01:58:29.045066+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "The float32 friction-readback failure is repaired with a 1e-6 absolute-error check while preserving the authored 0.35 coefficient. The latest hash-bound native run passed every component check, including 5.96e-9 wall-friction error. This remains an empty-screen YAM component preflight; loaded separation, full qualification, and workforce eligibility remain unresolved.",
+      "scripts": [
+        {
+          "id": "full_screen_yam_material_readback_preflight",
+          "script": "task/run_full_screen_yam_preflight.py",
+          "args": [
+            "--report",
+            "../measurements/full-screen-yam-preflight.json",
+            "--video",
+            "../measurements/full-screen-yam-preflight.mp4",
+            "--screenshot",
+            "../measurements/full-screen-yam-initial.png",
+            "--seed",
+            "2601"
+          ],
+          "report": "measurements/full-screen-yam-preflight.json"
+        }
+      ],
+      "files": [
+        "task/run_full_screen_yam_preflight.py",
+        "task/full_screen_scene.py",
+        "task/test_failure_receipt.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The recorded float32 friction-readback failure is repaired using absolute-error checks with 1e-6 tolerance while preserving the frozen authored coefficients.",
+        "The planned script reads actual native screen poses, YAM joint states, fingertip and support contacts, composed material bindings, mass/inertia, physics timestep, and rendered RGB output. Exceptions, malformed/non-finite checks, contact-buffer saturation, or artifact decoding failures cannot produce a pass.",
+        "The program uses guarded 14D YAM actions and contains no post-reset task-object state writes, teleports, fake welds, collision disabling, freezing, or hidden restoring forces.",
+        "Dwell claims are explicitly limited to fresh 20 Hz observations and do not claim continuous 240 Hz evidence. The report also excludes loaded separation, identity-grounded visibility, complete frozen-contract qualification, and full-task success.",
+        "This is honestly scoped as an empty-screen component preflight. Native measurements are appropriately deferred until execution; it does not substitute this run for aggregate qualification.",
+        "Impact-on-jobs eligibility remains unresolved and must continue to block export, release certification, and Dream, but it does not block this authorized prototype preflight."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "input/last-failure.json",
+        "task/run_full_screen_yam_preflight.py",
+        "task/full_screen_scene.py",
+        "task/test_failure_receipt.py",
+        "artifacts/contract.json",
+        "input/runtime-api-preflight.json"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_yam_preflight.py",
+          "--report",
+          "../measurements/full-screen-yam-preflight.json",
+          "--video",
+          "../measurements/full-screen-yam-preflight.mp4",
+          "--screenshot",
+          "../measurements/full-screen-yam-initial.png",
+          "--seed",
+          "2601"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/full_screen_yam_material_readback_preflight-0f1b85b994.log",
+        "finished_at": "2026-11-17T02:02:28.939271+00:00",
+        "id": "full_screen_yam_material_readback_preflight",
+        "report": "measurements/full-screen-yam-preflight.json",
+        "report_sha256": "4ce7c038ee96f760e64c46d59adce7fc3667321047028f3237b4023be26ca462",
+        "source_digest": "ff62d87b1b0e27ac13d4f7730a4ef2845bb8ec92048312ba22b78fc2a92bbf35",
+        "source_snapshot": "measurements/native-source-snapshots/ff62d87b1b0e27ac13d4f7730a4ef2845bb8ec92048312ba22b78fc2a92bbf35.json",
+        "output_snapshot": "measurements/native-output-snapshots/4d50df0de69e4ee29ceb69cda4b1ab2b.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "scope": "empty full-screen bimanual YAM component only; not media-separation qualification",
+          "unqualified_observables": [
+            "continuous 240 Hz bilateral contact/dwell",
+            "object-identity camera visibility",
+            "full frozen physics coverage",
+            "media separation"
+          ],
+          "component_preflight_passed": true,
+          "fingertip_pose_source": "native Articulation.data.body_link_pos_w",
+          "native_fingertip_max_motion_m": [
+            0.24107027004629003,
+            0.1802235872101745,
+            0.21920184614261254,
+            0.19564118526208463
+          ],
+          "native_physics_dt_s": 0.004166666666666667,
+          "native_physics_hz": 240.0,
+          "expected_physics_hz": 240,
+          "control_hz": 20,
+          "dwell_observation_semantics": "Boolean contact and stationarity predicates are sampled after each 20 Hz control step; N consecutive true observations establish only (N-1)/20 seconds at that observation cadence and do not establish intervening 240 Hz continuity.",
+          "geometry_audit": {
+            "hole_count": 261,
+            "piece_count": 6124,
+            "solid_connected_components": 1,
+            "symmetric_difference_area_m2": 0.0,
+            "intended_solid_area_m2": 0.07056629445413612,
+            "aperture_boundary_segments": 20,
+            "aperture_vertex_diameter_m": 0.0127,
+            "aperture_clear_diameter_m": 0.01254364192555825
+          },
+          "native_support_geometry_audit": {
+            "posts": [
+              {
+                "path": "/World/envs/env_0/support_neg/Post_0",
+                "center_w_m": [
+                  0.245,
+                  -0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_neg/Post_1",
+                "center_w_m": [
+                  0.495,
+                  -0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_pos/Post_0",
+                "center_w_m": [
+                  0.245,
+                  0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_pos/Post_1",
+                "center_w_m": [
+                  0.495,
+                  0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              }
+            ],
+            "minimum_perforated_region_clearance_m": 0.015852877514630298,
+            "post_count": 4
+          },
+          "native_screen_material_audit": {
+            "floor": {
+              "collider_path": "/World/envs/env_0/screen/Floor_0000",
+              "material_path": "/World/envs/env_0/screen/ProcessingPhysicsMaterial",
+              "static_friction": 0.5,
+              "dynamic_friction": 0.3499999940395355
+            },
+            "wall": {
+              "collider_path": "/World/envs/env_0/screen/Wall_000",
+              "material_path": "/World/envs/env_0/screen/ProcessingPhysicsMaterial",
+              "static_friction": 0.5,
+              "dynamic_friction": 0.3499999940395355
+            },
+            "tab_neg": {
+              "collider_path": "/World/envs/env_0/screen/Tab_neg",
+              "material_path": "/World/envs/env_0/screen/VisibleTabGraspPhysicsMaterial",
+              "static_friction": 1.2000000476837158,
+              "dynamic_friction": 1.0
+            },
+            "tab_pos": {
+              "collider_path": "/World/envs/env_0/screen/Tab_pos",
+              "material_path": "/World/envs/env_0/screen/VisibleTabGraspPhysicsMaterial",
+              "static_friction": 1.2000000476837158,
+              "dynamic_friction": 1.0
+            }
+          },
+          "native_mass_kg": 0.4000000059604645,
+          "expected_mass_kg": 0.4,
+          "native_principal_inertia_kg_m2": [
+            0.0052004544995725155,
+            0.0060911946929991245,
+            0.010954913683235645
+          ],
+          "expected_inertia_kg_m2": [
+            0.006091194530439144,
+            0.005200454716974203,
+            0.010954913761151082
+          ],
+          "tip_collision_bounding_radius_m": [
+            0.10578381235723194,
+            0.10578426718563368,
+            0.10578381235723194,
+            0.10578426718563368
+          ],
+          "tip_collision_prim_paths": [
+            [
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_000/tip_left_000",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_001/tip_left_001",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_002/tip_left_002",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_003/tip_left_003",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_004/tip_left_004",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_005/tip_left_005",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_006/tip_left_006",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_007/tip_left_007",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_008/tip_left_008",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_009/tip_left_009",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_010/tip_left_010",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_011/tip_left_011",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_012/tip_left_012",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_013/tip_left_013",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_014/tip_left_014",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_015/tip_left_015",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_016/tip_left_016",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_017/tip_left_017",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_018/tip_left_018",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_019/tip_left_019",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_020/tip_left_020",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_021/tip_left_021",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_022/tip_left_022",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_023/tip_left_023",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_024/tip_left_024",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_025/tip_left_025",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_026/tip_left_026",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_027/tip_left_027",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_028/tip_left_028",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_029/tip_left_029",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_030/tip_left_030",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_031/tip_left_031",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_032/tip_left_032",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_033/tip_left_033",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_034/tip_left_034",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_035/tip_left_035",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_036/tip_left_036",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_037/tip_left_037",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_038/tip_left_038",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_039/tip_left_039",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_040/tip_left_040",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_041/tip_left_041",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_042/tip_left_042",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_043/tip_left_043",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_044/tip_left_044"
+            ],
+            [
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_000/tip_right_000",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_001/tip_right_001",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_002/tip_right_002",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_003/tip_right_003",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_004/tip_right_004",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_005/tip_right_005",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_006/tip_right_006",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_007/tip_right_007",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_008/tip_right_008",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_009/tip_right_009",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_010/tip_right_010",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_011/tip_right_011",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_012/tip_right_012",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_013/tip_right_013",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_014/tip_right_014",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_015/tip_right_015",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_016/tip_right_016",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_017/tip_right_017",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_018/tip_right_018",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_019/tip_right_019",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_020/tip_right_020",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_021/tip_right_021",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_022/tip_right_022",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_023/tip_right_023",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_024/tip_right_024",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_025/tip_right_025",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_026/tip_right_026",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_027/tip_right_027",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_028/tip_right_028",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_029/tip_right_029",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_030/tip_right_030",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_031/tip_right_031",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_032/tip_right_032",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_033/tip_right_033",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_034/tip_right_034",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_035/tip_right_035",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_036/tip_right_036",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_037/tip_right_037",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_038/tip_right_038",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_039/tip_right_039",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_040/tip_right_040",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_041/tip_right_041",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_042/tip_right_042",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_043/tip_right_043",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_044/tip_right_044",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_045/tip_right_045",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_046/tip_right_046"
+            ],
+            [
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_000/tip_left_000",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_001/tip_left_001",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_002/tip_left_002",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_003/tip_left_003",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_004/tip_left_004",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_005/tip_left_005",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_006/tip_left_006",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_007/tip_left_007",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_008/tip_left_008",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_009/tip_left_009",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_010/tip_left_010",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_011/tip_left_011",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_012/tip_left_012",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_013/tip_left_013",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_014/tip_left_014",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_015/tip_left_015",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_016/tip_left_016",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_017/tip_left_017",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_018/tip_left_018",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_019/tip_left_019",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_020/tip_left_020",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_021/tip_left_021",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_022/tip_left_022",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_023/tip_left_023",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_024/tip_left_024",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_025/tip_left_025",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_026/tip_left_026",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_027/tip_left_027",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_028/tip_left_028",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_029/tip_left_029",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_030/tip_left_030",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_031/tip_left_031",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_032/tip_left_032",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_033/tip_left_033",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_034/tip_left_034",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_035/tip_left_035",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_036/tip_left_036",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_037/tip_left_037",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_038/tip_left_038",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_039/tip_left_039",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_040/tip_left_040",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_041/tip_left_041",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_042/tip_left_042",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_043/tip_left_043",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_044/tip_left_044"
+            ],
+            [
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_000/tip_right_000",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_001/tip_right_001",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_002/tip_right_002",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_003/tip_right_003",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_004/tip_right_004",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_005/tip_right_005",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_006/tip_right_006",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_007/tip_right_007",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_008/tip_right_008",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_009/tip_right_009",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_010/tip_right_010",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_011/tip_right_011",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_012/tip_right_012",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_013/tip_right_013",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_014/tip_right_014",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_015/tip_right_015",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_016/tip_right_016",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_017/tip_right_017",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_018/tip_right_018",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_019/tip_right_019",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_020/tip_right_020",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_021/tip_right_021",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_022/tip_right_022",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_023/tip_right_023",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_024/tip_right_024",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_025/tip_right_025",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_026/tip_right_026",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_027/tip_right_027",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_028/tip_right_028",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_029/tip_right_029",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_030/tip_right_030",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_031/tip_right_031",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_032/tip_right_032",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_033/tip_right_033",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_034/tip_right_034",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_035/tip_right_035",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_036/tip_right_036",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_037/tip_right_037",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_038/tip_right_038",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_039/tip_right_039",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_040/tip_right_040",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_041/tip_right_041",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_042/tip_right_042",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_043/tip_right_043",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_044/tip_right_044",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_045/tip_right_045",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_046/tip_right_046"
+            ]
+          ],
+          "checks": [
+            {
+              "name": "minimum_native_fingertip_motion_across_four_links",
+              "measured": 0.1802235872101745,
+              "operator": ">=",
+              "threshold": 0.05,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "scene_configured_contact_sensors_initialized",
+              "measured": 5,
+              "operator": "==",
+              "threshold": 5,
+              "unit": "sensors",
+              "passed": true
+            },
+            {
+              "name": "native_support_contact_filter_collider_count",
+              "measured": 4,
+              "operator": "==",
+              "threshold": 4,
+              "unit": "colliders",
+              "passed": true
+            },
+            {
+              "name": "native_physics_timestep_matches_240_hz_plan",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-12,
+              "unit": "s",
+              "passed": true
+            },
+            {
+              "name": "complete_circular_aperture_count",
+              "measured": 261,
+              "operator": "==",
+              "threshold": 261,
+              "unit": "holes",
+              "passed": true
+            },
+            {
+              "name": "circular_aperture_clear_diameter_lower_bound",
+              "measured": 0.01254364192555825,
+              "operator": ">=",
+              "threshold": 0.0125,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "circular_aperture_clear_diameter_upper_bound",
+              "measured": 0.01254364192555825,
+              "operator": "<=",
+              "threshold": 0.0129,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "authored_floor_symmetric_difference_area",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "m^2",
+              "passed": true
+            },
+            {
+              "name": "authored_solid_connected_components",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "components",
+              "passed": true
+            },
+            {
+              "name": "support_post_count_exact",
+              "measured": 4,
+              "operator": "==",
+              "threshold": 4,
+              "unit": "posts",
+              "passed": true
+            },
+            {
+              "name": "support_post_perforated_region_clearance_min",
+              "measured": 0.015852877514630298,
+              "operator": ">=",
+              "threshold": 0.004,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "processing_floor_static_friction_readback_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "processing_wall_dynamic_friction_readback_absolute_error",
+              "measured": 5.960464455334602e-09,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "visible_tab_negative_static_friction_readback_absolute_error",
+              "measured": 4.768371586472142e-08,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "visible_tab_positive_dynamic_friction_readback_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-06,
+              "unit": "coefficient",
+              "passed": true
+            },
+            {
+              "name": "native_mass_relative_error",
+              "measured": 1.4901161138336505e-08,
+              "operator": "<=",
+              "threshold": 0.0001,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "native_inertia_max_relative_error",
+              "measured": 4.180436127792526e-08,
+              "operator": "<=",
+              "threshold": 0.001,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "nonzero_signed_raw_tab_reaction_points",
+              "measured": 776,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "points",
+              "passed": true
+            },
+            {
+              "name": "positive_native_pair_samples_with_verified_raw_vector_reconciliation",
+              "measured": 661,
+              "operator": "==",
+              "threshold": 661,
+              "unit": "control_samples",
+              "passed": true
+            },
+            {
+              "name": "maximum_native_contact_count_below_configured_capacity",
+              "measured": 159,
+              "operator": "<",
+              "threshold": 256,
+              "unit": "contacts_per_prim",
+              "passed": true
+            },
+            {
+              "name": "native_reported_contact_capacity_matches_configuration",
+              "measured": 256,
+              "operator": "==",
+              "threshold": 256,
+              "unit": "contacts_per_prim",
+              "passed": true
+            },
+            {
+              "name": "bilateral_opposing_tab_contact_dwell_from_20hz_observations",
+              "measured": 6.9,
+              "operator": ">=",
+              "threshold": 0.5,
+              "unit": "s_observed_at_20_hz",
+              "passed": true
+            },
+            {
+              "name": "observed_screen_lift_height",
+              "measured": 0.035450518131256104,
+              "operator": ">=",
+              "threshold": 0.03,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "contact_supported_stationary_lifted_dwell_from_20hz_observations",
+              "measured": 3.2,
+              "operator": ">=",
+              "threshold": 3.0,
+              "unit": "s_observed_at_20_hz",
+              "passed": true
+            },
+            {
+              "name": "post_return_support_pose_stationary_dwell_from_20hz_observations",
+              "measured": 1.75,
+              "operator": ">=",
+              "threshold": 0.25,
+              "unit": "s_observed_at_20_hz",
+              "passed": true
+            },
+            {
+              "name": "reseating_established_before_clearance_evaluation",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "boolean",
+              "passed": true
+            },
+            {
+              "name": "post_retreat_fresh_observation_count",
+              "measured": 10,
+              "operator": ">=",
+              "threshold": 2,
+              "unit": "control_samples",
+              "passed": true
+            },
+            {
+              "name": "released_fingertip_collider_to_screen_conservative_clearance",
+              "measured": 0.08017477904745347,
+              "operator": ">=",
+              "threshold": 0.06,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "native_rgb_minimum_finite_pixel_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "native_rgb_minimum_pixel_standard_deviation",
+              "measured": 47.391700744628906,
+              "operator": ">=",
+              "threshold": 2.0,
+              "unit": "uint8_level",
+              "passed": true
+            },
+            {
+              "name": "decoded_h264_valid_frame_count",
+              "measured": 295,
+              "operator": "==",
+              "threshold": 295,
+              "unit": "frames",
+              "passed": true
+            },
+            {
+              "name": "decoded_h264_nonblank_frame_count",
+              "measured": 295,
+              "operator": "==",
+              "threshold": 295,
+              "unit": "frames",
+              "passed": true
+            },
+            {
+              "name": "decoded_initial_screenshot_valid_nonblank",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "boolean",
+              "passed": true
+            }
+          ],
+          "artifacts": [
+            "measurements/full-screen-yam-preflight.mp4",
+            "measurements/full-screen-yam-initial.png",
+            "measurements/full-screen-yam-preflight-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-17T02:02:29.729006+00:00"
   }
 ]

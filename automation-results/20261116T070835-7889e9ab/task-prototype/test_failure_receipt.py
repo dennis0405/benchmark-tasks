@@ -7,6 +7,24 @@ from tempfile import TemporaryDirectory
 
 
 class FailureReceiptTests(unittest.TestCase):
+    def test_material_readbacks_use_float_tolerance_not_exact_equality(self):
+        path=Path(__file__).with_name('run_full_screen_yam_preflight.py')
+        tree=ast.parse(path.read_text())
+        material_checks=[]
+        for node in ast.walk(tree):
+            if not isinstance(node,ast.Dict): continue
+            fields={key.value:value for key,value in zip(node.keys,node.values)
+                    if isinstance(key,ast.Constant) and isinstance(key.value,str)}
+            name=fields.get('name')
+            if (isinstance(name,ast.Constant) and isinstance(name.value,str)
+                    and 'friction_readback' in name.value):
+                material_checks.append(fields)
+        self.assertEqual(len(material_checks),4)
+        for fields in material_checks:
+            self.assertEqual(fields['operator'].value,'<=')
+            self.assertAlmostEqual(fields['threshold'].value,1e-6)
+            self.assertIn('absolute_error',fields['name'].value)
+
     def test_primary_survives_each_double_failure_finalizer(self):
         for failing_phase in ('video_writer.close','trace_path.write_text','env.close','simulation_app.close'):
             with self.subTest(failing_phase=failing_phase):
