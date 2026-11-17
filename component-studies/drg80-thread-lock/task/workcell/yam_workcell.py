@@ -14,6 +14,9 @@ parser.add_argument("--video", type=Path)
 parser.add_argument("--continuous-seat", action="store_true")
 parser.add_argument("--transmitted-reaction", action="store_true")
 parser.add_argument("--hz", type=int, choices=(240, 480), default=240)
+parser.add_argument(
+    "--square-bit", action="store_true", help="reproduce the original unbevelled bit"
+)
 parser.add_argument("--solver", choices=("tgs", "pgs"), default="tgs")
 parser.add_argument("--contact-last", action="store_true")
 parser.add_argument("--driver-correction-rad", type=float, default=0.0)
@@ -52,6 +55,11 @@ def tool_asset(filename):
     root.GetPrim().GetReferences().AddReference(
         str((task_assets() / "tools" / (filename + ".usda")).resolve())
     )
+    if filename == "hex_driver":
+        author_bit(
+            UsdGeom.Mesh(stage.GetPrimAtPath("/Tool/HexTip")),
+            0.0 if args.square_bit else CHAMFER,
+        )
     materials = {}
     for name, mus in (("Polymer", (1.2, 1.0)), ("Steel", (0.45, 0.3))):
         mat = UsdShade.Material.Define(stage, "/Tool/Physics" + name)
@@ -156,7 +164,7 @@ from scipy.spatial.transform import Rotation
 from isaaclab_physx.physics.physx_manager import IsaacEvents, PhysxManager
 from build_bench import build
 from native_bench import Bench
-from hex_fit import hex_fit
+from hex_fit import CHAMFER, author_bit, hex_fit
 from contact_limits import contact_bounds
 
 
@@ -207,6 +215,7 @@ def main():
         "scope": "physical YAM workcell commissioning, no competition grade",
         "solver": args.solver,
         "rate_hz": args.hz,
+        "bit_chamfer_m": 0.0 if args.square_bit else CHAMFER,
         "implicit_axial": args.implicit_axial,
         "transmitted_reaction": args.transmitted_reaction,
         "driver_correction_rad": args.driver_correction_rad,
@@ -636,10 +645,18 @@ def main():
         def measured_fit():
             pos, rot = tool(0)
             part = body_pose("screw")
-            return hex_fit(pos, rot, part[:3], Rotation.from_quat(part[3:]).as_matrix())
+            return hex_fit(
+                pos,
+                rot,
+                part[:3],
+                Rotation.from_quat(part[3:]).as_matrix(),
+                0.0 if args.square_bit else CHAMFER,
+            )
 
         def insert_driver(indexed, initial_height):
             height = initial_height
+            wrist_index = indexed
+            seated_steps = 0
             centre_error = np.zeros(2)
             prev_p, prev_r = tool(0)
             tip_step = np.zeros(3)
@@ -657,7 +674,7 @@ def main():
                 socket_yaw = math.atan2(part_rot[1, 0], part_rot[0, 0])
                 indexed = (
                     socket_yaw
-                    + round((indexed - socket_yaw) / (math.pi / 3)) * math.pi / 3
+                    + round((wrist_index - socket_yaw) / (math.pi / 3)) * math.pi / 3
                 )
                 goal_rot = Rotation.from_euler("z", indexed).as_matrix()
                 err_rot = Rotation.from_matrix(goal_rot @ tool_rot.T).as_rotvec()
@@ -671,7 +688,15 @@ def main():
                     and np.linalg.norm(err_rot[:2]) < 0.020
                     and abs(err_rot[2]) < 0.055
                 )
-                if height > 0.005 or aligned:
+                if args.square_bit:
+                    centered = aligned
+                else:
+                    centered = (
+                        radial < 0.00040
+                        and np.linalg.norm(err_rot[:2]) < 0.014
+                        and abs(err_rot[2]) < 0.09
+                    )
+                if height > 0.005 or centered:
                     if abs(axial_force) < 2.0:
                         height = max(
                             -0.0035, height - (0.00055 if height > 0.005 else 0.00013)
@@ -679,17 +704,45 @@ def main():
                     elif height < 0.002 and radial > 0.0001:
                         height = min(0.003, height + 0.00012)
                 # Search nearby faces only when the tip is at the mouth under load.
-                if abs(axial_force) > 1.0 and -0.0004 < tip_pos[2] - part[2] < 0.001:
+                if (
+                    args.square_bit
+                    and abs(axial_force) > 1.0
+                    and -0.0004 < tip_pos[2] - part[2] < 0.001
+                ):
                     delta[:2] += 0.00015 * np.array(
                         [math.cos(step * 0.30), math.sin(step * 0.30)]
                     )
-                fit = hex_fit(tip_pos, tool_rot, part[:3], part_rot)
+                fit = hex_fit(
+                    tip_pos,
+                    tool_rot,
+                    part[:3],
+                    part_rot,
+                    0.0 if args.square_bit else CHAMFER,
+                )
                 wall = fit["wall_clearance_m"]
                 if (wall is not None and wall < -0.00008) or fit[
                     "floor_clearance_m"
                 ] < 0.0:
                     # Back the bit out of face interference before recentering.
                     height = max(height, 0.0009)
+                engaged = (
+                    fit["straight_flank_depth_m"] >= 0.0016
+                    and wall is not None
+                    and wall >= -0.00005
+                    and fit["floor_clearance_m"] >= -0.00005
+                    and radial < 0.00022
+                )
+                seated_steps = seated_steps + 1 if engaged else 0
+                if seated_steps >= 3:
+                    break
+                if (
+                    not args.square_bit
+                    and wall is None
+                    and tip_pos[2] > part[2] + 0.0005
+                    and not centered
+                ):
+                    # Keep a clearance plane until the measured free tip is over the opening.
+                    height = max(height, 0.0010)
                 delta[2] += height
                 if height <= -0.0035 and abs(delta[2]) < 0.00025 and radial < 0.00015:
                     break
@@ -738,7 +791,7 @@ def main():
                 results["engagement_depth_m"] = reading["depth_m"]
             if (
                 reading["radial_m"] > 0.00045
-                or reading["depth_m"] < 0.001
+                or reading["straight_flank_depth_m"] < 0.001
                 or reading["wall_clearance_m"] is None
                 or reading["wall_clearance_m"] < -0.00005
                 or reading["floor_clearance_m"] < -0.00005

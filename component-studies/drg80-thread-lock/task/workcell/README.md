@@ -60,3 +60,13 @@ Short controlled torques of 0.0005 and 0.003 N·m for 12.5 ms at 240 Hz caused n
 The development runner additionally records maximum observed normal force and penetration for contacts between the protected hardware and the tools/robot. A single reported manifold above 250 N or 2 mm exceeds the universal bound. The remaining room-wide pair classification and event-work rules are still required for an official task score.
 
 In the 480 Hz PGS free-tool trial the flat-face guard withdrew after interference. At the final observation the driver centre was 0.773 mm off-axis and the shallowest tip corner stood 2.445 mm above the mouth. The trial correctly stopped before a torque stroke. Its full control trace is preserved on Mac and Brev. The current open problem is repeatable insertion and re-indexing of the unchamfered bit under robot contact. No Dream run or submission has been made.
+
+### Driver lead-in and physical capture
+
+The robot trial uses a 0.50 mm by 45° chamfer on the free driver. The width across flats at the nose is 2.95 mm and reaches 3.95 mm at 0.50 mm from the nose. The screw socket is 4.15 mm across flats. The full-depth clearance remains 0.10 mm per side. The [USD layer](../../input/chamfered-driver.usda) composes with the original first-party driver. The solver uses the same vertices and faces for the visible tip and convex collision hull. The robot command accepts `--square-bit` for an original-tip comparison.
+
+In the fixed-socket contact fixture the lateral tether pulls toward the *initial offset*. It receives no socket-centre target. With the original handling settings, the chamfer seated from the centre at 240 and 480 Hz but stalled at both 0.40 mm offsets. With a 20 N/m lateral tether, stronger upright correction and limited axial feed, the chamfer seated from all three starts at 480 Hz with the original socket sectors. At 240 Hz only the negative offset passed. Two alternative socket collision representations were also tested. The [case table and raw checksums](../../measurements/driver-capture.json) retain every control and failure. Each offset has one trajectory per configuration.
+
+```sh
+python "$study/check_bit_capture.py" --assets "$run/task-prototype/assets" --hz 480 --compliant-feed --out measurements/driver-capture.json
+```
