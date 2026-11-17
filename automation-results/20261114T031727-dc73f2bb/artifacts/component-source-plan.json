@@ -1,40 +1,40 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the stock M8 SDF-contact probe after trial 54555865 failed. It now restores Factory’s -90° nut phase, verifies that native phase after reset, runs each screw direction from an independent fresh state, applies opposing axial preload, and lowers the torque/speed command. Qualification remains false pending trusted native execution; the frozen DRG80 contract is unchanged.",
+  "summary": "Repaired the current qualification=false stock Factory M8 SDF probe to address the recorded reviewer failure: every physics step now detects detailed-contact buffer saturation, qualification fails unless the observed count stays strictly below the 4,096-entry capacity, and both maximum observed count and capacity are reported. Static compilation passed; native GPU execution remains required and no physical pass or DRG80 qualification is claimed. Source SHA256: 4d7a7c87bcf4c2078829aa2af0e59f8e58612d2bec7d92f9b877394139610dfc.",
   "scripts": [
     {
-      "id": "factory_sdf_positive",
+      "id": "factory-sdf-thread-positive-preflight",
       "script": "task/run_factory_sdf_thread_preflight.py",
       "args": [
+        "--device",
+        "cuda:0",
+        "--visualizer",
+        "none",
         "--direction",
         "positive",
         "--output",
-        "../measurements/factory-sdf-positive-preflight.json",
+        "../measurements/factory-sdf-thread-positive-preflight.json",
         "--trace",
-        "../measurements/factory-sdf-positive-preflight-trace.json",
+        "../measurements/factory-sdf-thread-positive-preflight-trace.json"
+      ],
+      "report": "measurements/factory-sdf-thread-positive-preflight.json"
+    },
+    {
+      "id": "factory-sdf-thread-negative-preflight",
+      "script": "task/run_factory_sdf_thread_preflight.py",
+      "args": [
         "--device",
         "cuda:0",
         "--visualizer",
-        "none"
-      ],
-      "report": "measurements/factory-sdf-positive-preflight.json"
-    },
-    {
-      "id": "factory_sdf_negative",
-      "script": "task/run_factory_sdf_thread_preflight.py",
-      "args": [
+        "none",
         "--direction",
         "negative",
         "--output",
-        "../measurements/factory-sdf-negative-preflight.json",
+        "../measurements/factory-sdf-thread-negative-preflight.json",
         "--trace",
-        "../measurements/factory-sdf-negative-preflight-trace.json",
-        "--device",
-        "cuda:0",
-        "--visualizer",
-        "none"
+        "../measurements/factory-sdf-thread-negative-preflight-trace.json"
       ],
-      "report": "measurements/factory-sdf-negative-preflight.json"
+      "report": "measurements/factory-sdf-thread-negative-preflight.json"
     }
   ],
   "files": [
