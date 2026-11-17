@@ -3,17 +3,21 @@
 
 This fresh coupon keeps the previously measured two-sided contact load path and
 the full +/-0.005 N*m rotor effort, but replaces the failed ideal hard mimic
-with the finite constitutive profile frozen in artifacts/contract.json:
+with either finite constitutive profile frozen in artifacts/contract.json:
 
-    e = z - p*theta, U = 0.5*K*e**2, K=1e6 N/m, D=4000 N*s/m.
+    e = z - p*theta, U = 0.5*K*e**2,
+    (K,D)=(1e6 N/m,4000 N*s/m) or (1e5 N/m,2500 N*s/m).
 
 The installed draft fixed-tendon axis API was rejected by an earlier native
 trial because its observed generalized reactions did not implement that
-gradient.  This probe instead evaluates the same conservative law from fresh
+gradient.  This probe instead evaluates the selected frozen law from fresh
 native DOF state in PRE_PHYSICS_STEP and applies its two generalized forces
 through the native articulation effort API.  Native plate contact remains the
 independent reaction measurement.  The program does not treat K*e as a force
-sensor and does not claim fixture qualification.
+sensor and does not claim fixture qualification.  With the KN/DN pair this is
+only an N73-relative-to-clamped-S constitutive/contact probe: it does not prove
+the required equal/opposite reactions on a freely moving S body, released seat
+preload, friction, or lock retention.
 """
 
 from __future__ import annotations
@@ -33,6 +37,18 @@ from isaaclab.app import AppLauncher
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--output", required=True)
 parser.add_argument("--trace", required=True)
+parser.add_argument(
+    "--thread-stiffness",
+    type=float,
+    default=1.0e6,
+    help="Frozen axial thread stiffness in N/m (KS=1e6 or KN=1e5).",
+)
+parser.add_argument(
+    "--thread-damping",
+    type=float,
+    default=4000.0,
+    help="Frozen axial thread damping in N*s/m (DS=4000 or DN=2500).",
+)
 AppLauncher.add_app_launcher_args(parser)
 args = parser.parse_args()
 
@@ -62,8 +78,8 @@ DT = 1.0 / 240.0
 LEAD_M_PER_REV = 0.001
 P_M_PER_RAD = LEAD_M_PER_REV / (2.0 * math.pi)
 P_M_PER_DEG = LEAD_M_PER_REV / 360.0
-THREAD_STIFFNESS_N_PER_M = 1.0e6
-THREAD_DAMPING_NS_PER_M = 4000.0
+THREAD_STIFFNESS_N_PER_M = float(args.thread_stiffness)
+THREAD_DAMPING_NS_PER_M = float(args.thread_damping)
 APPLIED_TORQUE_NM = 0.005
 LINK_INERTIA_KG_M2 = 1.0e-6
 SETTLE_STEPS = 480
@@ -153,6 +169,12 @@ def as_torch(value) -> torch.Tensor:
 
 def main() -> None:
     global DIAGNOSTIC_METADATA
+    allowed_pairs = {(1.0e6, 4000.0), (1.0e5, 2500.0)}
+    if (THREAD_STIFFNESS_N_PER_M, THREAD_DAMPING_NS_PER_M) not in allowed_pairs:
+        raise ValueError(
+            "thread stiffness/damping must be one frozen pair: "
+            "KS=1e6,DS=4000 or KN=1e5,DN=2500"
+        )
     sim = sim_utils.SimulationContext(sim_utils.SimulationCfg(dt=DT, device=args.device))
     stage = sim.stage
     root = UsdGeom.Xform.Define(stage, "/World/Thread")

@@ -1,27 +1,24 @@
 {
   "phase": "preflight",
-  "summary": "Run only the unexecuted lifted-remeshed comparison next. The already-failed lifted-original-cook replay is excluded so it cannot stop execution prematurely. Existing thresholds, original asset bytes, full raw-contact archival, and qualification=false remain unchanged; observe this result before planning further phase cases.",
+  "summary": "Repaired the rejected N73-relative coupling probe without replaying the completed 0° and +90° cases. The rack-and-pinion now enforces the frozen right-handed relation h=+p·theta. Fresh N73 and screw link transforms independently reconstruct relative axial travel, relative rotation, and eN=delta_z-p·delta_theta, with bidirectional fail-closed checks. Static parsing and pinned launcher-argument verification passed. Trusted native GPU execution remains required; no fixture or YAM qualification is claimed.",
   "scripts": [
     {
-      "id": "sdf-initial-lifted-remeshed",
-      "script": "task/run_sdf_initial_geometry_probe.py",
+      "id": "n73-relative-coupling-preflight",
+      "script": "task/run_n73_relative_coupling_probe.py",
       "args": [
         "--device",
         "cuda:0",
         "--visualizer",
         "none",
-        "--case",
-        "lifted-remeshed",
         "--output",
-        "../measurements/sdf-initial-lifted-remeshed-preflight.json",
+        "../measurements/n73-relative-coupling-preflight.json",
         "--trace",
-        "../measurements/sdf-initial-lifted-remeshed-preflight-trace.json"
+        "../measurements/n73-relative-coupling-preflight-trace.json"
       ],
-      "report": "measurements/sdf-initial-lifted-remeshed-preflight.json"
+      "report": "measurements/n73-relative-coupling-preflight.json"
     }
   ],
   "files": [
-    "task/run_sdf_initial_geometry_probe.py",
-    "task/bounded_contact_archive.py"
+    "task/run_n73_relative_coupling_probe.py"
   ]
 }

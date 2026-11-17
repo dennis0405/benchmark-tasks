@@ -20,7 +20,7 @@ Status: **blocked**
 - 기존 feature/close-snack-bag checkout 및 robocurve-snack-film 인스턴스는 별개 작업이므로 건드리지 않는다.
 
 
-failed check unpowered_pair_force_peak: 291.48135584508316 <= 250.0
+failed check positive_relative_extension: 0.0 > 5e-05
 
 - Release: `release/`
 - Evidence: `workspace/artifacts/`

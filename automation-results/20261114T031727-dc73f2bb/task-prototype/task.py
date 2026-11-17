@@ -1,10 +1,13 @@
 """Representative DRG 80 opening-stop workcell on the YAM station.
 
-The compound native fixture is installed by ``native_scene.install`` after Kit starts.
+The native workcell must publish one measured sample after every physics substep.
 These public TaskFile declarations provide the reproducible room layout and fallback
 visuals; scoring is intentionally inert until the native read-only observation bridge
 has supplied fresh post-physics samples.
 """
+
+from pathlib import Path
+from runpy import run_path
 
 from yam_arena.task_file import Box, Cylinder
 
@@ -28,21 +31,34 @@ OBJECTS = [
     Box("wrench_rack", pos=(0.18, -0.17, TABLE_Z + 0.006), size=(0.180, 0.060, 0.012), color=(0.12, 0.12, 0.12)),
 ]
 
-_native = None
+# The common YAM loader imports task.py by filename, including from outside this directory.
+_grading = run_path(str(Path(__file__).with_name("stop_lock_score.py")))
+_grader = None
+
+
+def reset_native_observations(physics_hz):
+    """The scene calls this after each physical reset, before the first sample."""
+    global _grader
+    _grader = _grading["StopLockScore"](physics_hz)
 
 
 def publish_native_observation(observation):
-    """Called only by the native bridge with a fresh, read-only sample."""
-    global _native
-    _native = dict(observation)
+    """Consume only measured fields, in native substep order."""
+    if _grader is None:
+        raise RuntimeError("reset_native_observations must precede the first sample")
+    try:
+        fields = _grading["Sample"].__dataclass_fields__
+        sample = _grading["Sample"](**{name: observation[name] for name in fields})
+        return _grader.observe(sample, observation["physics_tick"])
+    except (KeyError, ValueError, TypeError, OverflowError):
+        _grader.damaged = True
+        _grader.score = 0.0
+        raise
 
 
 def score(_objects):
-    if not _native or _native.get("hard_failure", True):
-        return 0.0
-    return float(_native.get("score", 0.0))
+    return _grader.score if _grader is not None else 0.0
 
 
 def success(objects):
     return score(objects) == 1.0
-
