@@ -193,6 +193,51 @@
         }
       ],
       "pass": true
+    },
+    "unseen36-480": {
+      "rate_hz": 480,
+      "solver": "pgs",
+      "implicit_axial": true,
+      "transmitted_reaction": true,
+      "trials": [
+        {
+          "body": "screw",
+          "force_n": -5,
+          "expected_m": -5e-06,
+          "measured_m": -5.000164890253077e-06,
+          "recovered_m": -1.2918428564639628e-12,
+          "pass_static": true,
+          "pass_return": true
+        },
+        {
+          "body": "screw",
+          "force_n": 5,
+          "expected_m": 5e-06,
+          "measured_m": 4.999769844020488e-06,
+          "recovered_m": 1.2968863453082524e-11,
+          "pass_static": true,
+          "pass_return": true
+        },
+        {
+          "body": "nut",
+          "force_n": -5,
+          "expected_m": -5e-05,
+          "measured_m": -4.9997878964329336e-05,
+          "recovered_m": 2.129074079271864e-12,
+          "pass_static": true,
+          "pass_return": true
+        },
+        {
+          "body": "nut",
+          "force_n": 5,
+          "expected_m": 5e-05,
+          "measured_m": 5.000030417859588e-05,
+          "recovered_m": -3.104886323030583e-13,
+          "pass_static": true,
+          "pass_return": true
+        }
+      ],
+      "pass": true
     }
   },
   "mounted_fixture": {
@@ -511,6 +556,33 @@
       ],
       "first_powered_violation": null,
       "all_necessary_pass": true
+    },
+    "mounted36-fault": {
+      "scope": "instrumented fixture only; these are necessary conditions, no task points",
+      "rate_hz": 240,
+      "verified_recoveries": 0,
+      "checks": {
+        "released_and_open_seat_gap": false,
+        "retained_preload": true,
+        "three_open_endpoints": false,
+        "three_closed": false,
+        "preload_at_open_endpoints": false,
+        "powered_motion": false,
+        "three_unloaded_recoveries": false
+      },
+      "release_min_n": 4.597058296203613,
+      "open_endpoints_deg": [],
+      "peak_powered_spans_um_deg_deg": [
+        5464.715068228543,
+        2051.403412757345,
+        456.1409741334468
+      ],
+      "first_powered_violation": {
+        "tick": 1753,
+        "phase": "open1",
+        "channel": "screw_angle_rad"
+      },
+      "all_necessary_pass": false
     }
   },
   "robot": {
@@ -544,6 +616,26 @@
       "engagement_depth_m": 0.003253638744354248,
       "engagement_radial_m": 5.185851053978823e-05,
       "failure": "native guide/seat failed at tick 14321: sz=-0.004892405588179827, nz=-0.005004518665373325, gap=-0.008896924253553151"
+    },
+    "yam11": {
+      "physics_ticks": 17664,
+      "held_lift_m": [
+        0.047946393489837646,
+        0.048427581787109375
+      ],
+      "engagement_depth_m": 0.003251194953918457,
+      "engagement_radial_m": 9.904107763836396e-05,
+      "driver_strokes": [
+        {
+          "turn_rad": -1.09238351136446,
+          "screw_rad": -1.1625182628631592,
+          "depth_m": 0.0011208057403564453,
+          "radial_m": 0.00011149773631205382,
+          "thread_extension_m": -7.424406435596728e-07
+        }
+      ],
+      "measured_driver_turn_rad": -1.09238351136446,
+      "failure": "driver failed indexed reinsertion: [0.0003999769687652588, -0.00010543875396251678, -2.205371856689453e-06]"
     }
   },
   "raw_files": {
@@ -667,6 +759,14 @@
       "bytes": 5950789,
       "sha256": "19cef95fbc3e90ba7621093a6eaabc1f62d935fa9881acdd7701ba5afe536a4e"
     },
+    "mounted36-fault.json": {
+      "bytes": 1005,
+      "sha256": "a1cee4c675ef69b1dbd54d759ec3e93524336ab20f1d293ddc56893ccc233925"
+    },
+    "mounted36-fault.trace.json": {
+      "bytes": 1526512,
+      "sha256": "1efa6f2eb8513174001f0260bcf57ea6b7337458ac5216d9cdb4c4eb973758b7"
+    },
     "unseen36-240.json": {
       "bytes": 1032,
       "sha256": "f7ead4630974922dea3cafa75abd6e200ecc483e519e1ebf7e220cd4d7c76a09"
@@ -674,6 +774,14 @@
     "unseen36-240.trace.json": {
       "bytes": 416123,
       "sha256": "f02f5284b7f927f9e89c62675f9747afc642a229f0d8d9b5f154990466929d31"
+    },
+    "unseen36-480.json": {
+      "bytes": 1031,
+      "sha256": "ec15edf9dd8647133b543a1044cd2203924f43d1a31ba84c46581d17407c30db"
+    },
+    "unseen36-480.trace.json": {
+      "bytes": 832822,
+      "sha256": "48d585773816f60d38a74542d9a475f95bbb81f589331623dac71a0956bb0214"
     },
     "yam08.json": {
       "bytes": 6753,
@@ -698,6 +806,14 @@
     "yam10.trace.json": {
       "bytes": 1073170,
       "sha256": "7d981bf619bdeaf5acbba75a6e99f2f82e070214f89c035fb57ec60f233a5a39"
+    },
+    "yam11.json": {
+      "bytes": 5186,
+      "sha256": "c8ce2866917deffe09c5c93bb07cccf73d9c5f82ed7ebf70c0f5c34faf95bbea"
+    },
+    "yam11.trace.json": {
+      "bytes": 1416775,
+      "sha256": "7ca7c9f8540d0900d60292456ee36f4e2136ba89c3556535ffd0db181ecf0d0f"
     }
   }
 }

@@ -48,3 +48,7 @@ For a real commissioning attempt use the same geometry, solver and driver correc
 ```sh
 python "$study/yam_workcell.py" --workspace "$run" --output measurements/actual-robot.json --solver pgs --continuous-seat --native-friction --implicit-axial --transmitted-reaction --rise-seconds .16 --driver-correction-rad=-.60
 ```
+
+A measured control perturbation of 0.030 N·m while the joint was powered triggered the angular fault at native tick 1753. The equivalent PGS axial-load controls at both rates measured approximately ±5 µm for the screw and ±50 µm for the nut. Each recovered after unloading. The 4.60 N versus 9.04 N release preload at the two rates shows that quantitative preload predictions still depend on the integration rate.
+
+In a free-tool trial with the alternative TGS integration, the actual driver reached 3.25 mm insertion and rotated the screw through 62.6° in the first stroke. At its end the measured helical extension was −0.74 µm. The next insertion stopped on the socket lip, with its centre displaced by 0.41 mm. The controller now uses the same measured alignment procedure for the first and subsequent insertions. The [rack-angle screen](../../measurements/driver-grasp-reach.json) uses the pinned YAM IK; it supplies planning data and does not prove grasp or contact success.

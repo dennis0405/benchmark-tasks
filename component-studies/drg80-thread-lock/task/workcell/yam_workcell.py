@@ -527,10 +527,39 @@ def main():
         for k in range(6):
             rot = Rotation.from_euler("z", k * math.pi / 3).as_matrix()
             q, ep, ea = solve_tool(0, above, rot)
+            # Prefer an index with a continuous clockwise working arc at
+            # the real socket, using the measured rack grasp transform.
+            offset, orient = offsets[0]
+            reachable = 0
+            warm = q.copy()
+            if ep < 0.002 and ea < 0.04:
+                for deg in range(0, 281, 10):
+                    trial = Rotation.from_euler(
+                        "z", k * math.pi / 3 - math.radians(deg)
+                    ).as_matrix()
+                    wrist = screw() - [0, 0, 0.0026] + trial @ offset
+                    candidate, pe, pr = ik.solve(
+                        wrist,
+                        ik.matrix_to_quat_xyzw(trial @ orient),
+                        q_init=warm,
+                        base_pos=rig.bases["left"],
+                        iters=80,
+                    )
+                    if pe > 0.0015 or pr > 0.030 or max(abs(candidate - warm)) > 1.25:
+                        break
+                    reachable = deg
+                    warm = candidate
             options.append(
-                (ep + ea * 0.05 + 0.00001 * np.linalg.norm(q - joints(0)), k, rot)
+                (
+                    -reachable,
+                    ep + ea * 0.05 + 0.00001 * np.linalg.norm(q - joints(0)),
+                    k,
+                    rot,
+                )
             )
-        _, idx, rot = min(options, key=lambda item: item[0])
+        neg_span, _, idx, rot = min(options, key=lambda item: item[:3])
+        results["planned_clockwise_arc_deg"] = -neg_span
+        print("INDEX ARCS", [(k, -n) for n, _, k, _ in options], flush=True)
         results["hex_index"] = idx
         # Transport above the rack before rotating to keep the long free driver clear.
         tp, tr = tool(0)
@@ -553,93 +582,102 @@ def main():
         # Stop the free-space transfer above the hardware. The 0.20 mm
         # difference across flats leaves only 0.10 mm clearance per side.
         go_tool("driver_preinsert", 0, screw() + [0, 0, 0.016], rot, 36)
-        height = 0.014
-        indexed = idx * math.pi / 3
-        centre_error = np.zeros(2)
-        prev_p, prev_r = tool(0)
-        tip_step = np.zeros(3)
-        angular_step = np.zeros(3)
-        for step in range(640):
-            tip_pos, tool_rot = tool(0)
-            tip_step = 0.65 * tip_step + 0.35 * (tip_pos - prev_p)
-            angular_step = (
-                0.65 * angular_step
-                + 0.35 * Rotation.from_matrix(tool_rot @ prev_r.T).as_rotvec()
-            )
-            prev_p, prev_r = tip_pos, tool_rot
-            part = body_pose("screw")
-            part_rot = Rotation.from_quat(part[3:]).as_matrix()
-            socket_yaw = math.atan2(part_rot[1, 0], part_rot[0, 0])
-            indexed = (
-                socket_yaw + round((indexed - socket_yaw) / (math.pi / 3)) * math.pi / 3
-            )
-            goal_rot = Rotation.from_euler("z", indexed).as_matrix()
-            err_rot = Rotation.from_matrix(goal_rot @ tool_rot.T).as_rotvec()
-            delta = np.asarray(part[:3]) - tip_pos
-            radial = np.linalg.norm(delta[:2])
-            centre_error = 0.85 * centre_error + 0.15 * delta[:2]
-            axial_force = bench.tool_efforts()[0]
-            aligned = (
-                np.linalg.norm(centre_error) < 0.00032
-                and radial < 0.00055
-                and np.linalg.norm(err_rot[:2]) < 0.020
-                and abs(err_rot[2]) < 0.055
-            )
-            if height > 0.005 or aligned:
-                if abs(axial_force) < 2.0:
-                    height = max(
-                        -0.0035, height - (0.00055 if height > 0.005 else 0.00013)
+
+        def insert_driver(indexed, initial_height):
+            height = initial_height
+            centre_error = np.zeros(2)
+            prev_p, prev_r = tool(0)
+            tip_step = np.zeros(3)
+            angular_step = np.zeros(3)
+            for step in range(640 if initial_height > 0.009 else 310):
+                tip_pos, tool_rot = tool(0)
+                tip_step = 0.65 * tip_step + 0.35 * (tip_pos - prev_p)
+                angular_step = (
+                    0.65 * angular_step
+                    + 0.35 * Rotation.from_matrix(tool_rot @ prev_r.T).as_rotvec()
+                )
+                prev_p, prev_r = tip_pos, tool_rot
+                part = body_pose("screw")
+                part_rot = Rotation.from_quat(part[3:]).as_matrix()
+                socket_yaw = math.atan2(part_rot[1, 0], part_rot[0, 0])
+                indexed = (
+                    socket_yaw
+                    + round((indexed - socket_yaw) / (math.pi / 3)) * math.pi / 3
+                )
+                goal_rot = Rotation.from_euler("z", indexed).as_matrix()
+                err_rot = Rotation.from_matrix(goal_rot @ tool_rot.T).as_rotvec()
+                delta = np.asarray(part[:3]) - tip_pos
+                radial = np.linalg.norm(delta[:2])
+                centre_error = 0.85 * centre_error + 0.15 * delta[:2]
+                axial_force = bench.tool_efforts()[0]
+                aligned = (
+                    np.linalg.norm(centre_error) < 0.00032
+                    and radial < 0.00055
+                    and np.linalg.norm(err_rot[:2]) < 0.020
+                    and abs(err_rot[2]) < 0.055
+                )
+                if height > 0.005 or aligned:
+                    if abs(axial_force) < 2.0:
+                        height = max(
+                            -0.0035, height - (0.00055 if height > 0.005 else 0.00013)
+                        )
+                    elif height < 0.002 and radial > 0.0001:
+                        height = min(0.003, height + 0.00012)
+                # Search nearby faces only when the tip is at the mouth under load.
+                if abs(axial_force) > 1.0 and -0.0004 < tip_pos[2] - part[2] < 0.001:
+                    delta[:2] += 0.00015 * np.array(
+                        [math.cos(step * 0.30), math.sin(step * 0.30)]
                     )
-                elif height < 0.002 and radial > 0.0001:
-                    height = min(0.003, height + 0.00012)
-            # Search nearby faces only when the tip is at the mouth under load.
-            if abs(axial_force) > 1.0 and -0.0004 < tip_pos[2] - part[2] < 0.001:
-                delta[:2] += 0.00015 * np.array(
-                    [math.cos(step * 0.30), math.sin(step * 0.30)]
+                delta[2] += height
+                if height <= -0.0035 and abs(delta[2]) < 0.00025 and radial < 0.00015:
+                    break
+                goals = commands.copy()
+                cp, cr = ik.tcp_pose(goals[0], rig.bases["left"])
+                actual_tcp = ik.tcp_pose(joints(0), rig.bases["left"])[0]
+                arm_to_tip = tip_pos - actual_tcp
+                dq = Rotation.from_rotvec(
+                    np.clip(0.033 * err_rot - 0.80 * angular_step, -0.003, 0.003)
+                ).as_matrix()
+                next_xyz = (
+                    cp
+                    + np.clip(0.045 * delta - 0.85 * tip_step, -0.0008, 0.0008)
+                    + arm_to_tip
+                    - dq @ arm_to_tip
                 )
-            delta[2] += height
-            if height <= -0.0035 and abs(delta[2]) < 0.00025 and radial < 0.00015:
-                break
-            goals = commands.copy()
-            cp, cr = ik.tcp_pose(goals[0], rig.bases["left"])
-            actual_tcp = ik.tcp_pose(joints(0), rig.bases["left"])[0]
-            arm_to_tip = tip_pos - actual_tcp
-            dq = Rotation.from_rotvec(
-                np.clip(0.033 * err_rot - 0.80 * angular_step, -0.003, 0.003)
-            ).as_matrix()
-            next_xyz = (
-                cp
-                + np.clip(0.045 * delta - 0.85 * tip_step, -0.0008, 0.0008)
-                + arm_to_tip
-                - dq @ arm_to_tip
-            )
-            goals[0], pe, ae = ik.solve(
-                next_xyz,
-                ik.matrix_to_quat_xyzw(dq @ cr),
-                q_init=goals[0],
-                base_pos=rig.bases["left"],
-                iters=18,
-                tol=0.000015,
-            )
-            if pe > 0.002 or ae > 0.035:
-                raise ValueError("guarded insertion wrist travel exhausted")
-            move("guarded_insert", goals, grip_state, 1)
-            if step % 20 == 0:
-                trace[-1]["guard"] = dict(
-                    height=height,
-                    radial=radial,
-                    rotation=err_rot.tolist(),
-                    tip_step=tip_step.tolist(),
-                    axial_force=axial_force,
+                goals[0], pe, ae = ik.solve(
+                    next_xyz,
+                    ik.matrix_to_quat_xyzw(dq @ cr),
+                    q_init=goals[0],
+                    base_pos=rig.bases["left"],
+                    iters=18,
+                    tol=0.000015,
                 )
-        results["commanded_insertion_height_m"] = height
-        tip = tool(0)[0] - screw()
-        results["engagement_radial_m"] = float(np.linalg.norm(tip[:2]))
-        results["engagement_depth_m"] = float(-tip[2])
-        if np.linalg.norm(tip[:2]) > 0.0015 or tip[2] > -0.001:
-            raise ValueError(
-                "insufficient measured hex engagement before applying torque"
+                if pe > 0.002 or ae > 0.035:
+                    raise ValueError("guarded insertion wrist travel exhausted")
+                move("guarded_insert", goals, grip_state, 1)
+                if step % 20 == 0:
+                    trace[-1]["guard"] = dict(
+                        height=height,
+                        radial=radial,
+                        rotation=err_rot.tolist(),
+                        tip_step=tip_step.tolist(),
+                        axial_force=axial_force,
+                    )
+            tip = tool(0)[0] - screw()
+            reading = dict(
+                radial_m=float(np.linalg.norm(tip[:2])),
+                depth_m=float(-tip[2]),
+                target_height_m=height,
             )
+            results.setdefault("insertions", []).append(reading)
+            if len(results["insertions"]) == 1:
+                results["engagement_radial_m"] = reading["radial_m"]
+                results["engagement_depth_m"] = reading["depth_m"]
+            if reading["radial_m"] > 0.00045 or reading["depth_m"] < 0.001:
+                raise ValueError(f"insufficient physical hex engagement: {reading}")
+            return indexed
+
+        indexed = insert_driver(idx * math.pi / 3, 0.014)
 
         # Stay in the grasp's measured wrist frame during contact. Recomputing
         # a full free-space IK command here reintroduces static arm sag.
@@ -693,13 +731,14 @@ def main():
             yaw_start = indexed
             # A hex face can be re-indexed every 60 degrees. Include a small
             # allowance for flank backlash and steer to the measured screw angle.
-            for j in range(1, 16):
+            arc = max(50, min(270, -neg_span - 12))
+            for j in range(math.ceil(arc / 4.5)):
                 remaining = latest["st"] - target_angle
                 if remaining < 0.10:
                     break
                 indexed -= min(math.radians(4.5), remaining)
                 servo_tool(0, indexed, drive_tip(0.0026), 7, "driver_in_socket")
-                if yaw_start - indexed >= math.pi / 3:
+                if yaw_start - indexed >= math.radians(arc):
                     break
             servo_tool(0, indexed, drive_tip(0.0026), 10, "driver_stroke_hold")
             state = bench.read()
@@ -729,24 +768,7 @@ def main():
             sy = math.atan2(sr[1, 0], sr[0, 0])
             indexed = sy + round((home_yaw - sy) / (math.pi / 3)) * (math.pi / 3)
             servo_tool(0, indexed, drive_tip(-0.007), 65, "driver_reindex")
-            for depth in np.linspace(-0.007, 0.0027, 42):
-                servo_tool(0, indexed, drive_tip(depth), 3, "driver_reinsert")
-            for _ in range(60):
-                tip = tool(0)[0] - screw()
-                if tip[2] < -0.002 and np.linalg.norm(tip[:2]) < 0.00022:
-                    break
-                # With a flat hex tip, relieve initial face contact before
-                # centring. Only real insertion depth permits another turn.
-                axial = abs(bench.tool_efforts()[0])
-                depth = (
-                    0.001
-                    if axial > 2.0 and np.linalg.norm(tip[:2]) > 0.00025
-                    else 0.0027
-                )
-                servo_tool(0, indexed, drive_tip(depth), 1, "driver_reinsert_hold")
-            tip = tool(0)[0] - screw()
-            if tip[2] > -0.001 or np.linalg.norm(tip[:2]) > 0.00045:
-                raise ValueError(f"driver failed indexed reinsertion: {tip.tolist()}")
+            indexed = insert_driver(indexed, 0.007)
         if abs(latest["st"] - target_angle) > 0.20:
             raise ValueError("measured screw angle outside 90-degree setting approach")
         # The second hand engages the nut laterally. Keep the left wrist's
