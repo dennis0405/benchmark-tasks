@@ -1,24 +1,19 @@
 {
   "verdict": "pass",
   "findings": [
-    "The recorded contact-buffer failure is addressed: every physics step compares the detailed-contact count against the 4,096-entry capacity, fails qualification on saturation, and reports maximum observed count, capacity, and saturated-step count.",
-    "The positive and negative directions are independently initialized and planned as separate native runs with distinct workspace-relative reports and traces.",
-    "The preflight uses hash-pinned original Factory M8 meshes, native SDF/contact/material/state APIs, effort-only post-reset control, signed same-interval work, native kinetic energy, and explicit non-qualification status. No pose writes, fake coupling, constant success, or frozen DRG80 contract changes were found.",
-    "Static AST parsing succeeded. Native GPU results remain pending, as expected for this generated-source review; this verdict is not physical certification."
+    "The prior blocking plan-order defect is resolved: the plan now schedules only the unexecuted `lifted-remeshed` case, so the known-failing `lifted-original-cook` replay cannot prevent execution.",
+    "The planned probe reads fresh native articulation, rigid-body, SDF-view, and detailed contact data after each physics step; retains unchanged physical thresholds; and keeps `qualification=false`.",
+    "Every canonical `<qq8d` contact payload is independently hashed and appended outside the optional eight-contact evidence-prefix condition. The archive verifies full decompression, record count, and whole-stream digest, including failed or partial rollouts.",
+    "The archive helper exactly matches the operator-provided source and recorded SHA-256 `13e998f29f8055c55343f68abdb706314e4647d2bb9b6ac40605d782656a0dd5`; private chunks are bounded to 4 MiB uncompressed and excluded from public report artifacts.",
+    "This pass is source-review approval for the stated discovery probe only; it does not certify native physics, component qualification, or the frozen DRG80 fixture contract."
   ],
   "evidence_paths": [
     "artifacts/component-source-plan.json",
-    "task/run_factory_sdf_thread_preflight.py",
-    "input/last-failure.json",
-    "input/runtime-api-preflight.json",
+    "task/run_sdf_initial_geometry_probe.py",
+    "task/bounded_contact_archive.py",
     "input/operator-source-notes.json",
-    "input/nvidia-factory-reference/sdf-reproduction-notes.md",
-    "input/nvidia-factory-reference/reference-manifest.json",
-    "input/nvidia-factory-reference/pinned-factory-source-index.json",
-    "input/nvidia-factory-reference/pinned-factory_env.py",
-    "input/nvidia-factory-reference/pinned-factory_env_cfg.py",
-    "input/nvidia-factory-reference/pinned-factory_tasks_cfg.py",
-    "input/pinned-runtime-sources/1ba654210857a63b98236512e5f225723c3eb1dee64e867eaa4fade0578ccb7b-tensors-api.py",
-    "input/pinned-runtime-sources/a20f98c841ea031329d0d083303e1fb4c84cb13a7ba3f4cc6bbeee028302bd35-physx_manager.py"
+    "input/operator-raw-contact-storage/bounded_contact_archive.py",
+    "input/last-failure.json",
+    "input/runtime-api-preflight.json"
   ]
 }

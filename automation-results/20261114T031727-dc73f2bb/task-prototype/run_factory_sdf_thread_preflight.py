@@ -26,6 +26,7 @@ import struct
 import traceback
 import uuid
 
+from bounded_contact_archive import BoundedContactArchive
 from isaaclab.app import AppLauncher
 
 
@@ -63,6 +64,8 @@ from pxr import Gf, PhysxSchema, UsdGeom, UsdPhysics, UsdShade
 
 ROOT = Path(__file__).resolve().parent.parent
 REFERENCE = ROOT / "input" / "nvidia-factory-reference"
+ARCHIVE_HELPER = Path(__file__).resolve().with_name("bounded_contact_archive.py")
+EXPECTED_ARCHIVE_HELPER_SHA256 = "13e998f29f8055c55343f68abdb706314e4647d2bb9b6ac40605d782656a0dd5"
 BOLT_OBJ = REFERENCE / "factory_bolt_m8_tight.obj"
 NUT_OBJ = REFERENCE / "factory_nut_m8_tight_subdiv_3x.obj"
 EXPECTED_HASHES = {
@@ -120,6 +123,19 @@ CONTACT_DATA_CAPACITY = 4096
 SAMPLES: list[dict] = []
 METADATA: dict = {}
 CALLBACK_ERRORS: list[str] = []
+CONTACT_ARCHIVE: BoundedContactArchive | None = None
+CONTACT_ARCHIVE_INDEX: dict | None = None
+RAW_CONTACT_DIGEST = None
+RAW_CONTACT_ENTRY_COUNT: list[int] | None = None
+
+
+def finish_contact_archive() -> dict | None:
+    """Idempotently finalize and expose the complete private raw stream index."""
+    global CONTACT_ARCHIVE_INDEX
+    if CONTACT_ARCHIVE is not None and CONTACT_ARCHIVE_INDEX is None:
+        CONTACT_ARCHIVE_INDEX = CONTACT_ARCHIVE.finish()
+        METADATA["raw_contact_archive"] = CONTACT_ARCHIVE_INDEX
+    return CONTACT_ARCHIVE_INDEX
 
 
 def write_json(path: Path, payload: dict) -> int:
@@ -336,7 +352,10 @@ def phase_contact_metrics(rows: list[dict]) -> dict:
 
 
 def main() -> None:
-    global METADATA
+    global CONTACT_ARCHIVE, METADATA, RAW_CONTACT_DIGEST, RAW_CONTACT_ENTRY_COUNT
+    if sha256(ARCHIVE_HELPER) != EXPECTED_ARCHIVE_HELPER_SHA256:
+        raise RuntimeError("bounded raw-contact archive helper hash mismatch")
+    CONTACT_ARCHIVE = BoundedContactArchive(ROOT, trial_id)
     for label, path in (("bolt", BOLT_OBJ), ("nut", NUT_OBJ)):
         if not path.is_file():
             raise RuntimeError(f"missing staged Factory asset: {path}")
@@ -643,6 +662,11 @@ def main() -> None:
                 "global_raw_extrema_entries": True,
                 "reason": "remain below the user's 50 MB/file advance-reporting boundary",
             },
+            "raw_contact_archive_helper": {
+                "path": str(ARCHIVE_HELPER.relative_to(ROOT)),
+                "sha256": sha256(ARCHIVE_HELPER),
+                "expected_sha256": EXPECTED_ARCHIVE_HELPER_SHA256,
+            },
         }
 
         def joint_state() -> dict:
@@ -662,8 +686,10 @@ def main() -> None:
                 "kinetic_energy_j": kinetic,
             }
 
-        raw_contact_digest = hashlib.sha256()
-        raw_contact_entry_count = [0]
+        RAW_CONTACT_DIGEST = hashlib.sha256()
+        RAW_CONTACT_ENTRY_COUNT = [0]
+        raw_contact_digest = RAW_CONTACT_DIGEST
+        raw_contact_entry_count = RAW_CONTACT_ENTRY_COUNT
         raw_contact_numeric_count = [0]
         raw_contact_finite_count = [0]
         raw_contact_min_separation = [math.inf]
@@ -730,7 +756,9 @@ def main() -> None:
                     "separation_m": separation,
                 }
                 raw_values = (scalar_force, *point.tolist(), *normal.tolist(), separation)
-                raw_contact_digest.update(struct.pack("<qq8d", step, k, *raw_values))
+                payload = struct.pack("<qq8d", step, k, *raw_values)
+                raw_contact_digest.update(payload)
+                CONTACT_ARCHIVE.append(payload)
                 raw_contact_entry_count[0] += 1
                 raw_contact_numeric_count[0] += len(raw_values)
                 raw_contact_finite_count[0] += sum(math.isfinite(value) for value in raw_values)
@@ -1017,6 +1045,13 @@ def main() -> None:
 
         checks = [
             check("qualification_flag", 0, "==", 0, "boolean"),
+            check(
+                "verified_raw_contact_archive_helper_hash_count",
+                int(sha256(ARCHIVE_HELPER) == EXPECTED_ARCHIVE_HELPER_SHA256),
+                "==",
+                1,
+                "files",
+            ),
             check("verified_original_obj_hash_count", 2, "==", 2, "assets"),
             check("authored_sdf_approximation_count", approximation_count, "==", 2, "colliders"),
             check("native_sdf_shape_count", bolt_sdf_view.count + nut_sdf_view.count, "==", 2, "shapes"),
@@ -1099,6 +1134,39 @@ def main() -> None:
             check("nut_angular_speed_peak", max(np.linalg.norm(row["nut_twist"][3:]) for row in SAMPLES), "<=", 10.0, "rad/s"),
         ]
 
+        archive_index = finish_contact_archive()
+        if archive_index is None:
+            raise RuntimeError("raw contact archive was not initialized")
+        archive_count_matches = int(archive_index["records"] == raw_contact_entry_count[0])
+        archive_digest_matches = int(
+            archive_index["stream_sha256"] == raw_contact_digest.hexdigest()
+        )
+        checks.extend(
+            [
+                check(
+                    "private_raw_contact_archive_record_count_matches_independent_count",
+                    archive_count_matches,
+                    "==",
+                    1,
+                    "boolean",
+                ),
+                check(
+                    "private_raw_contact_archive_digest_matches_independent_digest",
+                    archive_digest_matches,
+                    "==",
+                    1,
+                    "boolean",
+                ),
+                check(
+                    "private_raw_contact_archive_round_trip_verified",
+                    int(archive_index["all_appended_records_round_trip_verified"]),
+                    "==",
+                    1,
+                    "boolean",
+                ),
+            ]
+        )
+
         trace_payload = {
             "metadata": METADATA,
             "derived": {
@@ -1155,9 +1223,15 @@ def main() -> None:
 
 
 def failure_report(exc: Exception) -> None:
+    archive_error = None
+    try:
+        finish_contact_archive()
+    except Exception as error:
+        archive_error = f"{type(error).__name__}: {error}"
     trace_payload = {
         "metadata": METADATA,
         "error": f"{type(exc).__name__}: {exc}",
+        "raw_contact_archive_finalization_error": archive_error,
         "traceback": traceback.format_exc(),
         "samples": SAMPLES,
     }
@@ -1184,6 +1258,36 @@ def failure_report(exc: Exception) -> None:
         check("native_program_completed", 0, "==", 1, "boolean"),
         check("samples_preserved_on_failure", len(SAMPLES), ">=", 1, "samples"),
     ]
+    if CONTACT_ARCHIVE_INDEX is not None and RAW_CONTACT_ENTRY_COUNT is not None:
+        checks.extend(
+            [
+                check(
+                    "partial_private_raw_contact_archive_record_count_matches_independent_count",
+                    int(CONTACT_ARCHIVE_INDEX["records"] == RAW_CONTACT_ENTRY_COUNT[0]),
+                    "==",
+                    1,
+                    "boolean",
+                ),
+                check(
+                    "partial_private_raw_contact_archive_digest_matches_independent_digest",
+                    int(
+                        RAW_CONTACT_DIGEST is not None
+                        and CONTACT_ARCHIVE_INDEX["stream_sha256"]
+                        == RAW_CONTACT_DIGEST.hexdigest()
+                    ),
+                    "==",
+                    1,
+                    "boolean",
+                ),
+                check(
+                    "partial_private_raw_contact_archive_round_trip_verified",
+                    int(CONTACT_ARCHIVE_INDEX["all_appended_records_round_trip_verified"]),
+                    "==",
+                    1,
+                    "boolean",
+                ),
+            ]
+        )
     report = {
         "qualification": False,
         "native_trial_id": trial_id,
@@ -1205,5 +1309,8 @@ if __name__ == "__main__":
         failure_report(error)
         exit_code = 2
     finally:
-        app.close()
+        try:
+            finish_contact_archive()
+        finally:
+            app.close()
     raise SystemExit(exit_code)
