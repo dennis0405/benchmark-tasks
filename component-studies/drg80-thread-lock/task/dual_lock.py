@@ -15,6 +15,8 @@ parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--output", type=Path, required=True)
 parser.add_argument("--cover", choices=["rigid", "elastic"], required=True)
 parser.add_argument("--fixture", choices=["coupon","task"], default="task")
+parser.add_argument("--origin-shift",type=float,default=0.0)
+parser.add_argument("--solver",choices=["tgs","pgs"],default="tgs")
 parser.add_argument("--velocity-iters", type=int, default=1)
 parser.add_argument("--torque", type=float, default=.012)
 parser.add_argument("--hz", type=int, default=240)
@@ -30,11 +32,11 @@ from dual_fixture import make_fixture
 
 
 def run():
-    sim, stage, nut, nut_material = make_fixture(args.hz, args.device, args.fixture, args.velocity_iters)
+    sim, stage, nut, nut_material = make_fixture(args.hz, args.device, args.fixture, args.velocity_iters, int(args.solver=="tgs"),args.origin_shift)
     path = "/World/Cover"
     cover = UsdGeom.Xform.Define(stage, path)
     # Nut origin .508 m plus its minimum local mesh z .0064 m.
-    top = .5144 - .00030
+    top = .5144 - args.origin_shift - .00030
     cover.AddTranslateOp().Set(Gf.Vec3d(0, 0, top))
     UsdPhysics.RigidBodyAPI.Apply(cover.GetPrim())
     mass = UsdPhysics.MassAPI.Apply(cover.GetPrim())
@@ -115,7 +117,7 @@ def run():
                             omega_rad_s=last_speed,screw_angle_rad=last_screw_angle,screw_z_m=float(qs[saz]),
                             screw_world_yaw=world_yaw(screw_body),nut_world_yaw=world_yaw(nut_body),
                             driver_torque_nm=driver_torque,proof_force_n=float(driver[0,saz]),axial_m=float(q[zi]),cover_z_m=z,
-                            seat_gap_m=.5144+float(q[zi])-z,normal_n=normal))
+                            seat_gap_m=.5144-args.origin_shift+float(q[zi])-z,normal_n=normal))
     released = [x for x in samples if x["phase"]=="released"][-args.hz:]
     proof = [x for x in samples if x["phase"]=="proof_load"]
     def rate(rows,field):
@@ -139,7 +141,7 @@ def run():
                   powered_nut_angular_rate=rate(proof_all,"angle_rad")<=.01,
                   powered_screw_axial_rate=rate(proof_all,"screw_z_m")<=.00001,
                   maintains_preload=min(x["normal_n"] for x in proof)>=2)
-    result=dict(hz=args.hz,torque_limit_nm=args.torque,checks=checks,overall_pass=all(checks.values()),
+    result=dict(origin_shift=args.origin_shift,solver=args.solver,hz=args.hz,torque_limit_nm=args.torque,checks=checks,overall_pass=all(checks.values()),
                 released_min_n=min(x["normal_n"] for x in released),proof_min_n=min(x["normal_n"] for x in proof),
                 peak_seat_n=max(x["normal_n"] for x in samples),
                 released_world_deg_s=[math.degrees(screw_rate),math.degrees(nut_rate)],

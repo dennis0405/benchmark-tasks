@@ -153,13 +153,13 @@ def create_sdf_mesh(stage, path: str, obj_path: Path, resolution: int, material:
     return mesh, len(points), len(counts)
 
 
-def make_fixture(hz, device, fixture, velocity_iters):
+def make_fixture(hz, device, fixture, velocity_iters, solver_type=1, origin_shift=0.):
     cfg = sim_utils.SimulationCfg(
         dt=1.0/hz,
         device=device,
         gravity=(0.0, 0.0, 0.0),
         physics=PhysxCfg(
-            solver_type=1,
+            solver_type=solver_type,
             max_position_iteration_count=POSITION_ITERATIONS,
             max_velocity_iteration_count=velocity_iters,
             bounce_threshold_velocity=0.2,
@@ -197,7 +197,7 @@ def make_fixture(hz, device, fixture, velocity_iters):
     solver = PhysxSchema.PhysxArticulationAPI.Apply(screw_root.GetPrim())
     solver.CreateSolverPositionIterationCountAttr(POSITION_ITERATIONS)
     solver.CreateSolverVelocityIterationCountAttr(velocity_iters)
-    bolt = create_body(stage, "/World/ScrewGuide/screw", Gf.Vec3d(0.0, 0.0, 0.5), .009, Gf.Vec3f(5e-7, 5e-7, 7e-8))
+    bolt = create_body(stage, "/World/ScrewGuide/screw", Gf.Vec3d(0.0, 0.0, 0.5-origin_shift), .009, Gf.Vec3f(5e-7, 5e-7, 7e-8))
     # Tensor contact sensors resolve the reporting API on the rigid body, not
     # merely on its child collision mesh.  The first host log explicitly
     # reported that /World/Bolt and /World/NutAssembly/nut did not match rigid
@@ -206,7 +206,7 @@ def make_fixture(hz, device, fixture, velocity_iters):
     bolt_mesh, bolt_vertex_count, bolt_triangle_count = create_sdf_mesh(
         stage, "/World/ScrewGuide/screw/Collision", BOLT_OBJ, BOLT_SDF_RESOLUTION, bolt_material
     )
-    lower = create_body(stage,"/World/ThreadedInsert",Gf.Vec3d(0,0,.501),1.,rotation_z_deg=36.)
+    lower = create_body(stage,"/World/ThreadedInsert",Gf.Vec3d(0,0,.501-origin_shift),1.,rotation_z_deg=36.)
     insert_material = UsdShade.Material.Define(stage, "/World/FrameThreadMaterial")
     mi=UsdPhysics.MaterialAPI.Apply(insert_material.GetPrim())
     mi.CreateStaticFrictionAttr(.08)
@@ -217,14 +217,14 @@ def make_fixture(hz, device, fixture, velocity_iters):
     create_sdf_mesh(stage,"/World/ThreadedInsert/Collision",NUT_OBJ,NUT_SDF_RESOLUTION,insert_material)
     mount_insert = UsdPhysics.FixedJoint.Define(stage,"/World/InsertMount")
     mount_insert.CreateBody1Rel().SetTargets([lower.GetPath()])
-    mount_insert.CreateLocalPos0Attr(Gf.Vec3f(0,0,.501))
+    mount_insert.CreateLocalPos0Attr(Gf.Vec3f(0,0,.501-origin_shift))
     # Make the world-side and body-side fixed frames coincide at reset.
     mount_insert.CreateLocalRot0Attr(Gf.Quatf(math.cos(math.radians(18)),Gf.Vec3f(0,0,math.sin(math.radians(18)))))
-    frame_s = create_body(stage,"/World/ScrewGuide/frame",Gf.Vec3d(0,0,.5),1.)
-    carrier_s = create_body(stage,"/World/ScrewGuide/carrier",Gf.Vec3d(0,0,.5),.001,Gf.Vec3f(1e-7))
+    frame_s = create_body(stage,"/World/ScrewGuide/frame",Gf.Vec3d(0,0,.5-origin_shift),1.)
+    carrier_s = create_body(stage,"/World/ScrewGuide/carrier",Gf.Vec3d(0,0,.5-origin_shift),.001,Gf.Vec3f(1e-7))
     mount_s = UsdPhysics.FixedJoint.Define(stage,"/World/ScrewGuide/mount")
     mount_s.CreateBody1Rel().SetTargets([frame_s.GetPath()])
-    mount_s.CreateLocalPos0Attr(Gf.Vec3f(0,0,.5))
+    mount_s.CreateLocalPos0Attr(Gf.Vec3f(0,0,.5-origin_shift))
     for name, cls, a, b, limit in (("axial", UsdPhysics.PrismaticJoint,frame_s,carrier_s,.004),
                                    ("rotation", UsdPhysics.RevoluteJoint,carrier_s,bolt,1440.)):
         joint = cls.Define(stage,"/World/ScrewGuide/"+name)
@@ -239,11 +239,11 @@ def make_fixture(hz, device, fixture, velocity_iters):
     articulation_api.CreateSolverPositionIterationCountAttr(POSITION_ITERATIONS)
     articulation_api.CreateSolverVelocityIterationCountAttr(velocity_iters)
 
-    frame = create_body(stage, "/World/NutAssembly/frame", Gf.Vec3d(0.0, 0.0, 0.508), 1.0)
+    frame = create_body(stage, "/World/NutAssembly/frame", Gf.Vec3d(0.0, 0.0, 0.508-origin_shift), 1.0)
     carrier = create_body(
         stage,
         "/World/NutAssembly/carrier",
-        Gf.Vec3d(0.0, 0.0, 0.508),
+        Gf.Vec3d(0.0, 0.0, 0.508-origin_shift),
         CARRIER_MASS_KG,
         Gf.Vec3f(1.0e-7, 1.0e-7, 1.0e-7),
     )
@@ -253,7 +253,7 @@ def make_fixture(hz, device, fixture, velocity_iters):
     nut = create_body(
         stage,
         "/World/NutAssembly/nut",
-        Gf.Vec3d(0.0, 0.0, 0.508),
+        Gf.Vec3d(0.0, 0.0, 0.508-origin_shift),
         .009 if fixture == "task" else NUT_MASS_KG,
         diagonal_inertia=Gf.Vec3f(1.4e-7, 1.4e-7, 2.6e-7) if fixture == "task" else None,
         rotation_z_deg=36.0,
@@ -265,7 +265,7 @@ def make_fixture(hz, device, fixture, velocity_iters):
 
     mount = UsdPhysics.FixedJoint.Define(stage, "/World/NutAssembly/mount")
     mount.CreateBody1Rel().SetTargets([frame.GetPath()])
-    mount.CreateLocalPos0Attr(Gf.Vec3f(0.0, 0.0, 0.508))
+    mount.CreateLocalPos0Attr(Gf.Vec3f(0.0, 0.0, 0.508-origin_shift))
     axial = UsdPhysics.PrismaticJoint.Define(stage, "/World/NutAssembly/axial")
     axial.CreateBody0Rel().SetTargets([frame.GetPath()])
     axial.CreateBody1Rel().SetTargets([carrier.GetPath()])
