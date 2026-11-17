@@ -13,6 +13,7 @@ parser.add_argument("--output", type=Path, required=True)
 parser.add_argument("--video", type=Path)
 parser.add_argument("--continuous-seat", action="store_true")
 parser.add_argument("--transmitted-reaction", action="store_true")
+parser.add_argument("--hz", type=int, choices=(240, 480), default=240)
 parser.add_argument("--solver", choices=("tgs", "pgs"), default="tgs")
 parser.add_argument("--contact-last", action="store_true")
 parser.add_argument("--driver-correction-rad", type=float, default=0.0)
@@ -155,6 +156,7 @@ from scipy.spatial.transform import Rotation
 from isaaclab_physx.physics.physx_manager import IsaacEvents, PhysxManager
 from build_bench import build
 from native_bench import Bench
+from hex_fit import hex_fit
 
 
 def main():
@@ -177,6 +179,9 @@ def main():
 
     def physics_config(cfg):
         cfg = scene.env_cfg_callback(20)(cfg)
+        cfg.sim.dt = 1.0 / args.hz
+        cfg.decimation = args.hz // 20
+        cfg.sim.render_interval = cfg.decimation
         if cfg.sim.physics is None:
             from isaaclab_physx.physics import PhysxCfg
 
@@ -200,6 +205,7 @@ def main():
         "physics_ticks": 0,
         "scope": "physical YAM workcell commissioning, no competition grade",
         "solver": args.solver,
+        "rate_hz": args.hz,
         "implicit_axial": args.implicit_axial,
         "transmitted_reaction": args.transmitted_reaction,
         "driver_correction_rad": args.driver_correction_rad,
@@ -261,12 +267,33 @@ def main():
                 results["callback_error"] = repr(e)
 
         latest = None
+        reference_frame = bench.bodies["frame"].get_transforms().numpy()[0].copy()
 
         def post(*args, **kwargs):
             nonlocal latest
             results["physics_ticks"] += 1
             r = bench.read()
             latest = r
+            frame = bench.bodies["frame"].get_transforms().numpy()[0]
+            moved = float(np.linalg.norm(frame[:3] - reference_frame[:3]))
+            tilted = math.degrees(
+                2
+                * math.acos(float(np.clip(abs(frame[3:] @ reference_frame[3:]), 0, 1)))
+            )
+            if not np.isfinite(frame).all() or moved > 0.010 or tilted > 5.0:
+                results.setdefault(
+                    "callback_error",
+                    f"fixture mount displaced: {moved} m, {tilted} degrees",
+                )
+            if (
+                r["jl"] < math.radians(-91)
+                or r["jl"] > math.radians(1)
+                or r["jr"] < math.radians(-1)
+                or r["jr"] > math.radians(91)
+            ):
+                results.setdefault(
+                    "callback_error", "jaw exceeded physical joint range"
+                )
             violated = powered.observe(
                 results["physics_ticks"],
                 r["actuator_n"],
@@ -583,6 +610,11 @@ def main():
         # difference across flats leaves only 0.10 mm clearance per side.
         go_tool("driver_preinsert", 0, screw() + [0, 0, 0.016], rot, 36)
 
+        def measured_fit():
+            pos, rot = tool(0)
+            part = body_pose("screw")
+            return hex_fit(pos, rot, part[:3], Rotation.from_quat(part[3:]).as_matrix())
+
         def insert_driver(indexed, initial_height):
             height = initial_height
             centre_error = np.zeros(2)
@@ -628,6 +660,13 @@ def main():
                     delta[:2] += 0.00015 * np.array(
                         [math.cos(step * 0.30), math.sin(step * 0.30)]
                     )
+                fit = hex_fit(tip_pos, tool_rot, part[:3], part_rot)
+                wall = fit["wall_clearance_m"]
+                if (wall is not None and wall < -0.00008) or fit[
+                    "floor_clearance_m"
+                ] < 0.0:
+                    # Back the bit out of face interference before recentering.
+                    height = max(height, 0.0009)
                 delta[2] += height
                 if height <= -0.0035 and abs(delta[2]) < 0.00025 and radial < 0.00015:
                     break
@@ -658,7 +697,7 @@ def main():
                 if step % 20 == 0:
                     trace[-1]["guard"] = dict(
                         height=height,
-                        radial=radial,
+                        radial=float(radial),
                         rotation=err_rot.tolist(),
                         tip_step=tip_step.tolist(),
                         axial_force=axial_force,
@@ -669,11 +708,18 @@ def main():
                 depth_m=float(-tip[2]),
                 target_height_m=height,
             )
+            reading.update(measured_fit())
             results.setdefault("insertions", []).append(reading)
             if len(results["insertions"]) == 1:
                 results["engagement_radial_m"] = reading["radial_m"]
                 results["engagement_depth_m"] = reading["depth_m"]
-            if reading["radial_m"] > 0.00045 or reading["depth_m"] < 0.001:
+            if (
+                reading["radial_m"] > 0.00045
+                or reading["depth_m"] < 0.001
+                or reading["wall_clearance_m"] is None
+                or reading["wall_clearance_m"] < -0.00005
+                or reading["floor_clearance_m"] < -0.00005
+            ):
                 raise ValueError(f"insufficient physical hex engagement: {reading}")
             return indexed
 
@@ -888,8 +934,27 @@ def main():
         results["failure"] = str(exc)
         print("WORKCELL TRIAL", str(exc), flush=True)
     finally:
-        args.output.write_text(json.dumps(results, indent=2))
-        args.output.with_suffix(".trace.json").write_text(json.dumps(trace))
+
+        def number(value):
+            if isinstance(value, np.generic):
+                return value.item()
+            raise TypeError(type(value).__name__)
+
+        def save(path, data, indent=None):
+            temp = path.with_name(path.name + ".partial")
+            temp.write_text(
+                json.dumps(data, default=number, allow_nan=False, indent=indent)
+            )
+            temp.replace(path)
+
+        path = args.output.with_suffix(".trace.json")
+        try:
+            save(path, trace)
+            results["trace_file"] = path.name
+        except (OSError, TypeError, ValueError) as error:
+            results["trace_error"] = str(error)
+            results.setdefault("failure", "raw trace could not be preserved")
+        save(args.output, results, indent=2)
         for callback in callbacks:
             callback.unregister()
         if writer:
