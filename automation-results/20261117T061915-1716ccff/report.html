@@ -3,7 +3,7 @@ User priority (verbatim): 최대한 구현하기 쉬우면서도 기존과 핵�
 
 The selected proposal is to turn a partially baked pizza in place with a small turning peel inside a real-scale oven. Retain this direction. The underside has set enough to handle. Starting on the stone, bring the pale rim around toward the hot side while keeping the pizza near its initial center, top side up, supported by the deck, and inside the oven throughout. Withdraw the peel. Proposed target: roughly half a turn, with visible browning asymmetry. Assess the physics of manipulating the food, not cooking chemistry or food safety. Score true yaw change, center excursion throughout the trajectory, tool and deck support/contact, and final release. Negative controls include bypass by gripper, translating the pizza out to rotate, and loss of stone support. Use YAM&#x27;s actual gripper controls and existing common task structure. Candidate choices should stay within this same skill. Use a physically justified minimal crust contact model, including rim compliance if it materially affects insertion. Do not weld the tool to the pizza or drive pizza pose.
 First test full-scale reach and clearance of the handle, oven mouth and peel tip with the real YAM model, and blade insertion and tangential traction with no scripted food pose. Use existing submission-sheet comparisons, then focus on close cases. Official rejected launch PR #720 (https://github.com/robocurve/benchmark-tasks/pull/720#issuecomment-6816792297) had a 90 mm pizza, open-topped oven and rigid raw dough. Use a representative closed-roof pizza oven, a real turning peel and a roughly 30 cm pizza. Do not reduce the equipment scale to fix a reach problem. Sources: https://eu.ooni.com/products/ooni-koda-16 and https://ooni.com/products/ooni-pizza-turning-peel and https://ooni.com/blogs/ooni-insights/how-to-pick-the-right-pizza-peel . Distinguish actual measurements from provisional settings. Signed human review is for this new task separately before paid model inference or official submission.
-</p><p>contract-critic: The prior five scoring defects are repaired: topping separation anywhere off C latches after 60 native samples; eligibility requires simultaneous safe release and withdrawal; the episode stops at score freeze; Q-O includes grippers; and the untouched control now correctly attributes zero to yaw below 90 degrees.; All 23 required controls recompute as stated under the grading formula. Initial/insufficient, excursion, support-loss, topping-loss, bypass, containment, damage, shortcut, incomplete-dwell, and timeout cases score 0; safe 120 degrees scores 0.5; safe wrapped yaw of 150–180 degrees scores 1.0. The 210-degree directed case wraps to 150 degrees and scores 1.0. The first nonzero tier is 90 degrees, no bonus exists, and timeout remains zero unless eligibility was reached earlier.; The grading timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; 28,800 native samples at 240 Hz equal 120 seconds; the eligibility dwell is 240 native samples (1 second); topping loss is 60 samples (0.25 seconds); and refinement uses 480 Hz without changing the native grade.; Several prospective physics-validation metrics remain insufficiently computable despite having units and thresholds. The contract does not define the aggregation for `trajectory_*_signed_separation` metrics (minimum over which collider pairs and samples), whether `episode_depth_valid_pixel_fraction_min` is a per-frame minimum or episode-wide pixel ratio, or which contact pair/event supplies `refinement_peak_force_relative_difference_upper_bound`. `trajectory_core_deck_contact_gap_upper_bound` is also not defined from the signed-separation/contact observations and is potentially inconsistent in name with the exact resolved-contact SUPPORT predicate. Define each observable, pair scope, temporal aggregation, empty-contact behavior, and refinement matching rule explicitly.; The indexed pinned-runtime preflight and `input/pinned-runtime-sources` snapshot are absent, so compatibility with the pinned YAM/Arena APIs cannot be verified here. Consistent with the prospective-review rule and the contract’s own disclosure, this absence does not itself refute the specification, but no API-compatibility claim is established.</p><p>Release digest: none</p><h2>selected</h2><pre>{
+</p><p>contract-critic: All 23 required controls recompute consistently: zero for untouched, 60°, 51 mm excursion, one-sample support loss, 60-sample topping loss, gripper bypass, mouth crossing, 239-sample dwell, unwithdrawn peel, six-sample overforce, collision damage, invalid shortcut, and both refinement-only native-zero cases; 0.5 for safe 120°; 1.0 for safe 165°, 180°, wrapped 210°→150°, 59-sample topping recovery, late withdrawal, five-sample overforce, alternate-arm/order, and mid-interval camera-floor cases. Partial first becomes available at 90° and full at 150°; there is no bonus. Timeout is zero unless the 240-sample eligibility dwell completes by native physics step 28,800.; Timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; native grading is sampled at 240 Hz and refinement is separately replayed at 480 Hz. Eligibility, topping-loss, and overforce durations resolve respectively to 1.0 s, 0.25 s, and 0.025 s. Contact observables are explicitly fresh post-resolution physics-substep measurements.; The prior camera ambiguity is repaired: only fully completed 20 Hz intervals render and enter n; mid-interval termination adds no frame. Signed-separation reductions, deck gap versus normal load, worst-frame depth validity, and matched force-event refinement are also explicitly defined.; A material contradiction remains between artifacts/selected.json and artifacts/contract.json. The selection assigns zero for any “topping separation,” whereas the contract intentionally tolerates 1–59 consecutive detached 240 Hz samples and requires the 59-sample recovery control to score 1.0. The selected success condition must adopt the exact 60-consecutive-sample TOPPING_LOSS threshold, or the contract and controls must make any separation fail.; No input/runtime-api-preflight.json or input/pinned-runtime-sources snapshot is present. This does not independently invalidate the prospective specification because the contract explicitly leaves pinned API and AssetRegistry compatibility as an unverified later construction gate.</p><p>Release digest: none</p><h2>selected</h2><pre>{
   &quot;id&quot;: &quot;pizza-turn-180-small-strokes&quot;,
   &quot;title&quot;: &quot;Centered 180° pizza turn using repeated short peel strokes&quot;,
   &quot;objective&quot;: &quot;With YAM holding a full-scale 7-inch turning peel, rotate a roughly 300 mm partially baked pizza about 180° inside a representative closed-roof 16-inch oven. Use repeated short, low-lift strokes so some pizza-to-stone contact remains at all times, keep the pizza within 50 mm of its initial center throughout, release it top-side-up on the stone, and withdraw the peel. Cooking chemistry and food safety are outside scope.&quot;,
@@ -75,9 +75,9 @@ First test full-scale reach and clearance of the handle, oven mouth and peel tip
   &quot;selected&quot;: &quot;pizza-turn-180-small-strokes&quot;
 }</pre><h2>contract</h2><pre>{
   &quot;slug&quot;: &quot;centered-pizza-turn-small-strokes-1716ccff&quot;,
-  &quot;objective&quot;: &quot;Using YAM and a full-scale turning peel, rotate a roughly 300 mm partially baked pizza approximately 180 degrees about its initial center inside a representative closed-roof 16-inch pizza oven. Preserve core/rim-to-stone support and a maximum 50 mm center excursion throughout, leave the pizza top-side-up and fully contained, release it stably on the deck, and withdraw the peel. The tested ability is confined thin-blade insertion and repeated low-lift tangential traction, not cooking chemistry.&quot;,
-  &quot;instruction&quot;: &quot;Turn the pizza approximately 180 degrees using the turning peel. Keep its crust in contact with the oven deck and its center within 50 mm of its starting position throughout. Leave it top-side-up inside the oven, release it stably, and fully withdraw the peel. Any safe stroke count, arm choice, regrasp, or action order is allowed.&quot;,
-  &quot;industrial_mapping&quot;: &quot;Impact on jobs: in-oven pizza turning is real food-preparation work performed by pizza cooks and restaurant cooks. Official Ooni instructions describe sliding a peel underneath, rotating the pizza, keeping it in the oven, and maintaining baking-stone contact. The task tests long-tool steering, guarded under-edge insertion, tangential traction of weakly constrained food, center-drift suppression, confined release, and withdrawal. Its distinct ability is peel-mediated rotation while crust support remains continuous inside a roofed oven—not merely rotating cookware or changing pizza appearance.&quot;,
+  &quot;objective&quot;: &quot;Using YAM and a full-scale turning peel, rotate a roughly 300 mm partially baked pizza approximately 180 degrees about its initial center inside a representative closed-roof 16-inch pizza oven. Preserve crust-to-stone support and a maximum 50 mm center excursion throughout; leave the pizza top-side-up and fully contained; release it stably and withdraw the peel. This tests confined blade insertion and repeated low-lift tangential traction, not cooking chemistry.&quot;,
+  &quot;instruction&quot;: &quot;Turn the pizza approximately 180 degrees using the turning peel. Keep its crust supported by the oven deck and its center within 50 mm of its starting position throughout. Leave it top-side-up inside the oven, release it stably, and fully withdraw the peel. Any physically safe stroke count, arm choice, regrasp, or action order is allowed.&quot;,
+  &quot;industrial_mapping&quot;: &quot;Impact on jobs: in-oven pizza turning is food-preparation work performed by pizza and restaurant cooks. Manufacturer instructions describe sliding a peel beneath the pizza, rotating it in the oven, and maintaining baking-stone contact. The tested ability is steering a long tool beneath a weakly constrained food item and producing centered rotation under roof and mouth constraints while preserving deck support. This differs from generic rigid-object rotation, pizza launching, or appearance recognition.&quot;,
   &quot;run_steps&quot;: 2400,
   &quot;timing&quot;: {
     &quot;control_hz&quot;: 20,
@@ -87,79 +87,79 @@ First test full-scale reach and clearance of the handle, oven mouth and peel tip
   },
   &quot;physics_checks&quot;: [
     {
-      &quot;name&quot;: &quot;initial_settle_center_drift_240step_max&quot;,
+      &quot;name&quot;: &quot;initial_settle_core_center_drift_240sample_upper_bound&quot;,
       &quot;operator&quot;: &quot;&lt;=&quot;,
       &quot;threshold&quot;: 0.002,
       &quot;unit&quot;: &quot;m&quot;
     },
     {
-      &quot;name&quot;: &quot;initial_settle_yaw_drift_240step_max&quot;,
+      &quot;name&quot;: &quot;initial_settle_core_yaw_drift_240sample_upper_bound&quot;,
       &quot;operator&quot;: &quot;&lt;=&quot;,
       &quot;threshold&quot;: 2,
       &quot;unit&quot;: &quot;deg&quot;
     },
     {
-      &quot;name&quot;: &quot;initial_settle_terminal_linear_speed_max&quot;,
+      &quot;name&quot;: &quot;initial_settle_core_terminal_linear_speed_upper_bound&quot;,
       &quot;operator&quot;: &quot;&lt;=&quot;,
       &quot;threshold&quot;: 0.01,
       &quot;unit&quot;: &quot;m/s&quot;
     },
     {
-      &quot;name&quot;: &quot;initial_wrapped_yaw_change_upper_bound&quot;,
+      &quot;name&quot;: &quot;initial_wrapped_core_yaw_change_strict_upper_bound&quot;,
       &quot;operator&quot;: &quot;&lt;&quot;,
       &quot;threshold&quot;: 5,
       &quot;unit&quot;: &quot;deg&quot;
     },
     {
-      &quot;name&quot;: &quot;initial_untouched_score_exact&quot;,
+      &quot;name&quot;: &quot;initial_untouched_score_exact_zero&quot;,
       &quot;operator&quot;: &quot;==&quot;,
       &quot;threshold&quot;: 0,
       &quot;unit&quot;: &quot;score&quot;
     },
     {
-      &quot;name&quot;: &quot;initial_core_deck_contact_pair_count_min&quot;,
+      &quot;name&quot;: &quot;initial_resolved_core_deck_manifold_count_lower_bound&quot;,
       &quot;operator&quot;: &quot;&gt;=&quot;,
       &quot;threshold&quot;: 1,
-      &quot;unit&quot;: &quot;contact-pair&quot;
+      &quot;unit&quot;: &quot;contact-manifold&quot;
     },
     {
-      &quot;name&quot;: &quot;trajectory_center_excursion_upper_bound&quot;,
+      &quot;name&quot;: &quot;trajectory_core_center_excursion_upper_bound&quot;,
       &quot;operator&quot;: &quot;&lt;=&quot;,
       &quot;threshold&quot;: 0.05,
       &quot;unit&quot;: &quot;m&quot;
     },
     {
-      &quot;name&quot;: &quot;trajectory_core_deck_contact_gap_upper_bound&quot;,
+      &quot;name&quot;: &quot;trajectory_core_deck_positive_gap_upper_bound&quot;,
       &quot;operator&quot;: &quot;&lt;=&quot;,
       &quot;threshold&quot;: 0.001,
       &quot;unit&quot;: &quot;m&quot;
     },
     {
-      &quot;name&quot;: &quot;trajectory_pizza_top_normal_z_lower_bound&quot;,
+      &quot;name&quot;: &quot;trajectory_core_top_normal_world_z_lower_bound&quot;,
       &quot;operator&quot;: &quot;&gt;=&quot;,
       &quot;threshold&quot;: 0.866,
       &quot;unit&quot;: &quot;unitless&quot;
     },
     {
-      &quot;name&quot;: &quot;trajectory_pizza_oven_signed_separation_lower_bound&quot;,
+      &quot;name&quot;: &quot;trajectory_pizza_oven_global_signed_separation_lower_bound&quot;,
       &quot;operator&quot;: &quot;&gt;=&quot;,
       &quot;threshold&quot;: -0.003,
       &quot;unit&quot;: &quot;m&quot;
     },
     {
-      &quot;name&quot;: &quot;trajectory_peel_oven_signed_separation_lower_bound&quot;,
+      &quot;name&quot;: &quot;trajectory_peel_oven_global_signed_separation_lower_bound&quot;,
       &quot;operator&quot;: &quot;&gt;=&quot;,
       &quot;threshold&quot;: -0.003,
       &quot;unit&quot;: &quot;m&quot;
     },
     {
-      &quot;name&quot;: &quot;trajectory_crust_deck_signed_separation_lower_bound&quot;,
+      &quot;name&quot;: &quot;trajectory_core_deck_global_signed_separation_lower_bound&quot;,
       &quot;operator&quot;: &quot;&gt;=&quot;,
       &quot;threshold&quot;: -0.002,
       &quot;unit&quot;: &quot;m&quot;
     },
     {
-      &quot;name&quot;: &quot;trajectory_peel_crust_signed_separation_lower_bound&quot;,
+      &quot;name&quot;: &quot;trajectory_peel_core_global_signed_separation_lower_bound&quot;,
       &quot;operator&quot;: &quot;&gt;=&quot;,
       &quot;threshold&quot;: -0.003,
       &quot;unit&quot;: &quot;m&quot;
@@ -171,7 +171,7 @@ First test full-scale reach and clearance of the handle, oven mouth and peel tip
       &quot;unit&quot;: &quot;rad&quot;
     },
     {
-      &quot;name&quot;: &quot;trajectory_yam_command_tracking_error_upper_bound&quot;,
+      &quot;name&quot;: &quot;trajectory_yam_control_boundary_tracking_error_upper_bound&quot;,
       &quot;operator&quot;: &quot;&lt;=&quot;,
       &quot;threshold&quot;: 0.12,
       &quot;unit&quot;: &quot;rad&quot;
@@ -183,219 +183,221 @@ First test full-scale reach and clearance of the handle, oven mouth and peel tip
       &quot;unit&quot;: &quot;rad/s&quot;
     },
     {
-      &quot;name&quot;: &quot;active_grasp_opposed_finger_patch_count_min&quot;,
+      &quot;name&quot;: &quot;active_peel_motion_opposed_finger_pair_count_lower_bound&quot;,
       &quot;operator&quot;: &quot;&gt;=&quot;,
-      &quot;threshold&quot;: 2,
-      &quot;unit&quot;: &quot;contact-patch&quot;
+      &quot;threshold&quot;: 1,
+      &quot;unit&quot;: &quot;opposed-finger-pair&quot;
     },
     {
-      &quot;name&quot;: &quot;trajectory_peel_crust_step_force_upper_bound&quot;,
+      &quot;name&quot;: &quot;trajectory_peel_core_step_normal_force_upper_bound&quot;,
       &quot;operator&quot;: &quot;&lt;=&quot;,
       &quot;threshold&quot;: 40,
       &quot;unit&quot;: &quot;N&quot;
     },
     {
-      &quot;name&quot;: &quot;trajectory_crust_deck_step_force_upper_bound&quot;,
+      &quot;name&quot;: &quot;trajectory_core_deck_step_normal_force_upper_bound&quot;,
       &quot;operator&quot;: &quot;&lt;=&quot;,
       &quot;threshold&quot;: 80,
       &quot;unit&quot;: &quot;N&quot;
     },
     {
-      &quot;name&quot;: &quot;trajectory_peel_tip_tunneling_event_count_exact&quot;,
+      &quot;name&quot;: &quot;trajectory_peel_tip_core_unresolved_crossing_count_exact_zero&quot;,
       &quot;operator&quot;: &quot;==&quot;,
       &quot;threshold&quot;: 0,
       &quot;unit&quot;: &quot;event&quot;
     },
     {
-      &quot;name&quot;: &quot;episode_rgb_valid_frame_fraction_min&quot;,
+      &quot;name&quot;: &quot;episode_worst_camera_rgb_valid_frame_fraction_lower_bound&quot;,
       &quot;operator&quot;: &quot;&gt;=&quot;,
       &quot;threshold&quot;: 0.99,
       &quot;unit&quot;: &quot;fraction&quot;
     },
     {
-      &quot;name&quot;: &quot;episode_depth_valid_pixel_fraction_min&quot;,
+      &quot;name&quot;: &quot;episode_worst_camera_frame_depth_valid_pixel_fraction_lower_bound&quot;,
       &quot;operator&quot;: &quot;&gt;=&quot;,
       &quot;threshold&quot;: 0.98,
       &quot;unit&quot;: &quot;fraction&quot;
     },
     {
-      &quot;name&quot;: &quot;episode_target_visible_frame_fraction_min&quot;,
+      &quot;name&quot;: &quot;episode_worst_camera_target_visible_frame_fraction_lower_bound&quot;,
       &quot;operator&quot;: &quot;&gt;=&quot;,
       &quot;threshold&quot;: 0.7,
       &quot;unit&quot;: &quot;fraction&quot;
     },
     {
-      &quot;name&quot;: &quot;refinement_final_yaw_difference_upper_bound&quot;,
+      &quot;name&quot;: &quot;refinement_final_wrapped_yaw_absolute_difference_upper_bound&quot;,
       &quot;operator&quot;: &quot;&lt;=&quot;,
       &quot;threshold&quot;: 5,
       &quot;unit&quot;: &quot;deg&quot;
     },
     {
-      &quot;name&quot;: &quot;refinement_center_excursion_difference_upper_bound&quot;,
+      &quot;name&quot;: &quot;refinement_peak_center_excursion_absolute_difference_upper_bound&quot;,
       &quot;operator&quot;: &quot;&lt;=&quot;,
       &quot;threshold&quot;: 0.005,
       &quot;unit&quot;: &quot;m&quot;
     },
     {
-      &quot;name&quot;: &quot;refinement_peak_force_relative_difference_upper_bound&quot;,
+      &quot;name&quot;: &quot;refinement_matched_peel_core_peak_force_relative_difference_upper_bound&quot;,
       &quot;operator&quot;: &quot;&lt;=&quot;,
       &quot;threshold&quot;: 0.2,
       &quot;unit&quot;: &quot;fraction&quot;
     }
   ],
   &quot;damage_rules&quot;: [
-    &quot;At reset define disjoint collider-owner sets: C=pizza core and compliant rim; T=separable toppings; D=deck; L=peel blade and handle; G=YAM fingers and palms; R=all remaining YAM links; Q=G union R; O=oven roof, mouth lintel, walls, burner guard, and shell. T is never part of C, and T-D contact cannot satisfy crust support.&quot;,
-    &quot;At each native 240 Hz physics step k, sample after integration and contact resolution: body transforms and velocities, joint states, contact points, nonnegative normal impulses Jn in N·s, and signed separations d in metres. For pair A-B, F_AB(k)=sum(Jn_AB(k))/(1/240 s) in N. At 480 Hz use 1/480 s. Signed separation is positive for clearance, zero at first touch, and negative for penetration.&quot;,
-    &quot;A contact event for unordered set pair A-B is a maximal sequence of consecutive post-resolution physics samples containing at least one A-B contact. Event impulse is the sum of Jn over its points and samples; peak force is max F_AB(k). One complete contact-free physics sample closes an event. Event accumulators, counters, and irreversible latches reset only at native trial reset.&quot;,
-    &quot;CRUST_PUNCTURE latches if any L-C separation is below -0.003 m, F_LC(k)&gt;40 N for six consecutive native samples, or a peel collider crosses from above the core top to below its underside between adjacent samples without an intervening collision manifold. The force counter resets on F_LC(k)&lt;=40 N or absent L-C contact. At 480 Hz the diagnostic duration is twelve samples. The 3 mm and 40 N limits are conservative calibration assumptions.&quot;,
-    &quot;PERMANENT_RIM_FOLD latches if a rim joint exceeds 12 degrees angular displacement or 0.008 m translation from reset neutral and, after all L-C contact ends, remains beyond 8 degrees or 0.005 m for 240 consecutive native samples. The residual counter resets when both residuals return within limits or L-C contact resumes.&quot;,
-    &quot;TOPPING_LOSS uses no radial-distance exception. For each topping t, DETACHED_t(k) is true iff no resolved contact exists between t and any C body after contact resolution. Its counter increments on every consecutive DETACHED_t sample and resets to zero whenever t-C contact returns. TOPPING_LOSS latches irreversibly when any counter reaches 60 native samples; a topping detached anywhere on the core, deck, peel, or oven therefore causes zero.&quot;,
-    &quot;OVERTURN latches when the core top-frame normal has world-z component below zero. UPRIGHT is the stricter trajectory predicate n_z&gt;=cos(30 degrees)=0.866; any violation revokes score even without OVERTURN.&quot;,
-    &quot;COLLISION_DAMAGE includes gripper impacts: it latches when any L-O or Q-O contact event, where Q includes G and R, has peak force above 100 N or accumulated impulse above 5 N·s. These are conservative equipment-protection assumptions, not manufacturer limits.&quot;,
-    &quot;DIRECT_GRIPPER_BYPASS latches on any G-C or G-T contact. G-L contact used to grasp or regrasp the peel is permitted.&quot;,
-    &quot;Represent the closed oven workspace by reset-fixed inward half-spaces H_i={x:n_i·x+b_i&gt;=0}, including the mouth plane. At every native sample, transform each C and T collision shape into the oven frame and compute m_i as its minimum half-space margin using deterministic convex support queries; triangle meshes use all transformed collision vertices. CONTAINED holds iff every margin is nonnegative. OUTSIDE_OVEN latches on the first negative margin, including passage through the mouth.&quot;,
-    &quot;SUPPORT(k) holds iff at least one resolved C-D contact exists after contact resolution. A single sample without C-D contact latches SUPPORT_LOSS and forces zero. T-D, L-C, or L-D contact cannot substitute.&quot;,
-    &quot;CENTER_LIMIT_BREACH latches when ||c_xy(k)-c0_xy||_2&gt;0.050 m at any post-settle native sample. Returning the pizza to its initial center does not clear it.&quot;,
-    &quot;INACCESSIBLE_LOSS latches if the core center is more than 0.050 m below the deck top, any pizza collider exits through a wall or mouth, or the pizza enters the reset-fixed catch volume outside the workcell. IK or reachability failure alone is diagnostic and cannot latch loss.&quot;,
-    &quot;Any post-reset pose write to C or T, task-object weld, hidden pivot, disabled collision, disabled gravity, scorer-state mutation, or task-object velocity write is INVALID_SHORTCUT and forces zero. Slip, folding, puncture, topping separation, collision, support loss, and falling must remain physically possible rather than being prevented by validity logic.&quot;,
-    &quot;Every prerequisite is recomputed from fresh post-resolution observations. Counters reset exactly as specified; irreversible latches persist until trial reset. No progress from another trial ID may be imported.&quot;
+    &quot;At reset define disjoint collider-owner sets C=pizza core and articulated rim, T=separable toppings, D=cordierite deck, L=complete peel, L_tip=nonempty authored leading-edge peel colliders, G=YAM fingers and palms, R=other YAM colliders, Q=G union R, and O=oven roof, lintel, walls, burner guard, and shell. T is not part of C, and T-D contact is not crust support.&quot;,
+    &quot;At every physics substep k, sample after integration and contact resolution: transforms, velocities, joints, resolved manifolds, nonnegative normal impulses Jn in N·s, and signed collider-surface separations d in metres. F_AB(k)=sum(Jn for all A-B points)/dt, with dt=1/240 s natively and 1/480 s in refinement. Positive d is clearance, zero is touching, and negative d is penetration.&quot;,
+    &quot;For every named global signed-separation metric, enumerate every collision-shape pair in the named owner sets and compute S_AB=min over all scored substeps and pairs d_ab(k). Empty required sets are configuration failures. Signed deck separation uses the same definition. Positive deck gap is g_CD(k)=min over C-D pairs max(d_cd(k),0), reduced as G_CD=max_k g_CD(k); it is distinct from SUPPORT and normal load F_CD.&quot;,
+    &quot;An A-B contact event is a maximal consecutive sequence of post-resolution samples containing resolved A-B contact. Event impulse is the sum of Jn across all event points and samples; peak force is max F_AB(k). One contact-free physics sample closes the event. Counters and latches initialize only at native reset.&quot;,
+    &quot;CRUST_PUNCTURE latches if S_LC&lt;-0.003 m, F_LC(k)&gt;40 N for six consecutive native samples, or an L_tip collider crosses from wholly above the core top to intersecting or below the core underside between adjacent samples without resolved endpoint contact or a CCD hit. The force counter resets on absent contact or F_LC&lt;=40 N. Six native samples and twelve refinement samples both represent 0.025 s.&quot;,
+    &quot;PERMANENT_RIM_FOLD latches if a rim joint exceeds 12 degrees or 0.008 m from neutral and, after all L-C contact ends, remains beyond 8 degrees or 0.005 m for 240 consecutive native samples. Its residual counter resets when both residuals return within bounds or L-C contact resumes.&quot;,
+    &quot;For topping t, DETACHED_t(k) means no resolved t-C contact after resolution. Its counter increments on consecutive detached samples and resets when contact returns. TOPPING_LOSS latches at 60 consecutive native samples, or 0.25 s. A 1-59-sample separation is tolerated solely as contact jitter; 60 samples fails even if the topping remains over C or rests on D.&quot;,
+    &quot;OVERTURN latches when the core top normal has world-z component below zero. UPRIGHT requires n_z&gt;=cos(30 degrees)=0.866 at every scored sample; any violation permanently revokes eligibility.&quot;,
+    &quot;COLLISION_DAMAGE latches when any L-O or Q-O event has peak force greater than 100 N or accumulated normal impulse greater than 5 N·s. These provisional conservative limits include the entire peel and every robot link.&quot;,
+    &quot;DIRECT_GRIPPER_BYPASS latches on any resolved G-C or G-T contact. G-L contact for grasping or regrasping the peel is allowed.&quot;,
+    &quot;Represent the oven interior with reset-fixed inward half-spaces, including its mouth plane. At every native sample transform all C and T collision shapes into the oven frame. Use deterministic support queries for convex shapes and every transformed collision vertex for triangle meshes. CONTAINED holds only when every half-space margin is nonnegative; the first negative margin latches OUTSIDE_OVEN.&quot;,
+    &quot;SUPPORT holds only when at least one resolved C-D manifold exists. One native sample without one latches SUPPORT_LOSS. T-D, L-C, and L-D cannot substitute. CENTER_LIMIT_BREACH latches when norm(c_xy-c0_xy)&gt;0.050 m.&quot;,
+    &quot;INACCESSIBLE_LOSS latches if the core center is over 0.050 m below the deck top, any C or T collider exits an oven wall or mouth, or C enters the reset-fixed outside-workcell catch volume. IK failure alone is not loss.&quot;,
+    &quot;Any post-reset C or T pose/velocity write, task-object weld, hidden pivot, post-reset collision filtering, disabled collision or gravity, or scorer-state mutation is INVALID_SHORTCUT and forces zero. Slip, folding, puncture, topping loss, support loss, collision, and falling must remain physically possible.&quot;,
+    &quot;For refinement, E_LC is the native L-C event with greatest peak force, ties earliest. Its matched half-open window begins at the 20 Hz boundary at or before its first sample and ends at the first boundary after its last sample. At 480 Hz select the L-C event beginning in that window with greatest peak force, ties earliest. Relative difference is abs(P480-P240)/max(abs(P240),1 N). No contact in either replay gives zero; contact in exactly one gives positive infinity.&quot;,
+    &quot;All scoring predicates use fresh post-resolution observations. Reversible counters reset exactly as defined; irreversible latches persist until reset. Scores, journals, screenshots, and video from other native trial IDs are excluded.&quot;
   ],
   &quot;assets&quot;: [
-    &quot;Pinned YAM embodiment and native gripper controls from yam-isaac-lab-arena commit 0059d02a1a91bc6834c1d0846022891df0c78730, IsaacLab-Arena commit c7edf3a9d5d8276565208f72422f8f8a0806d6cf, and Isaac Sim 6.1.0.0. Runtime API compatibility remains unverified because the indexed pinned-source preflight snapshot is absent.&quot;,
-    &quot;Independently authored representative closed-roof oven preserving the documented 630 x 580 x 370 mm exterior, 16-inch capacity, and 15 mm cordierite deck. Mouth height, roof profile, usable deck area, and wall thickness are disclosed provisional scene measurements.&quot;,
-    &quot;Full-scale turning peel preserving documented dimensions 170 x 800 x 20 mm and mass 0.4 kg. Blade thickness, bevel, mass distribution, friction, and restitution are provisional calibration parameters.&quot;,
-    &quot;Approximately 300 mm pizza with a rigid set underside/core, shallow collision-enabled rim segments on limited compliant joints, a core-fixed asymmetric yaw marker, and separable rigid topping bodies.&quot;,
-    &quot;Fixed external and wrist RGB-D cameras using the common observation structure. Scripted experts and the scorer may read poses, joints, contacts, and latch flags but may not mutate simulation state or alter model observations.&quot;,
+    &quot;Pinned YAM embodiment and native gripper controls from yam-isaac-lab-arena commit 0059d02a1a91bc6834c1d0846022891df0c78730, IsaacLab-Arena commit c7edf3a9d5d8276565208f72422f8f8a0806d6cf, and Isaac Sim 6.1.0.0; pinned API and AssetRegistry compatibility remain an unverified construction gate.&quot;,
+    &quot;Independently authored representative closed-roof oven preserving the documented 630 x 580 x 370 mm exterior, 16-inch capacity, and 15 mm cordierite deck.&quot;,
+    &quot;Full-scale turning peel preserving the documented 170 x 800 x 20 mm envelope and 0.4 kg mass.&quot;,
+    &quot;Approximately 300 mm pizza with rigid set underside/core, shallow collision-enabled articulated rim, core-fixed asymmetric yaw marker, and separable rigid toppings.&quot;,
+    &quot;Fixed external and wrist RGB-D cameras using the common observation structure.&quot;,
     &quot;Collision-enabled workcell geometry exposing handle, mouth, roof, robot-link, fall, and withdrawal-clearance failures.&quot;
   ],
   &quot;approximations&quot;: [
-    &quot;Cooking, heat transfer, changing browning, smoke, thermal hazards, and food safety are out of scope. Browning asymmetry is a fixed orientation marker.&quot;,
-    &quot;The pizza uses rigid PhysX bodies with a shallow articulated rim solely to approximate compliance needed for peel entry. It makes no raw-dough or general deformable-food claim. No deformable solver is permitted without an already validated public example.&quot;,
-    &quot;Documented measurements are limited to oven exterior size, 16-inch capacity, 15 mm stone, and peel dimensions and mass. Pizza diameter, mouth and roof geometry, peel bevel, pizza mass, friction, restitution, rim stiffness and damping, penetration tolerances, force limits, and camera thresholds are explicit engineering assumptions requiring native calibration.&quot;,
-    &quot;Coulomb friction and rigid contacts approximate crust-stone and peel-crust traction. Calibration must preserve feasible tangential motion while retaining possible slip, fold, puncture, topping loss, support loss, and collision damage.&quot;,
-    &quot;Continuous support means at least one resolved C-D contact at every 240 Hz post-resolution physics sample. It is never inferred from 20 Hz control samples.&quot;,
-    &quot;Initial stability uses a hands-off 240-sample settle. Drift extrema are measured from its first sample; terminal speed, initial yaw, contact count, and untouched score use its last sample. Trajectory checks cover every native post-settle sample through termination. Joint margin is min(q-q_lower,q_upper-q); tracking error is |q_command-q| at matched control instants with commands held across physics samples; speed is |dq/dt|.&quot;,
-    &quot;Active grasp requires simultaneous contact patches on opposed fingers whose normals have dot product&lt;=-0.5 whenever the robot moves the peel. Tunneling counts manifold-free above-to-below crossings.&quot;,
-    &quot;Camera checks use all rendered observation frames. RGB is valid when finite, nonconstant, and has dynamic range at least 5/255. Depth-valid fraction counts pixels finite and within configured clipping planes. A target-visible frame contains at least 1% pizza segmentation pixels and 1% peel segmentation pixels. Missing rendered frames fail the checks.&quot;,
-    &quot;Refinement replays the identical seed, reset state, 20 Hz timestamped action journal, material parameters, and 120 s horizon at 480 Hz. Comparisons use identical control-time boundaries and the native termination time rounded upward to a control boundary. Refinement validates physics only and never changes the native grade.&quot;,
-    &quot;No feasibility success is asserted. Full-scale grasp, reach, roof and handle clearance, blade insertion, traction, physical joint/body traces, stable release, and withdrawal remain required native-trial gates before demo development.&quot;
+    &quot;Cooking, heat transfer, changing browning, smoke, thermal hazards, and food safety are excluded. Fixed browning asymmetry is only a yaw marker.&quot;,
+    &quot;The pizza uses rigid PhysX bodies and a shallow articulated rim solely for blade-entry compliance; it makes no raw-dough or general deformable-food claim.&quot;,
+    &quot;Only oven exterior size, capacity, stone thickness, and peel size and mass are documented measurements. Pizza mass, interior mouth and roof geometry, blade bevel, friction, restitution, rim properties, force limits, penetration tolerances, and camera thresholds are explicit provisional engineering assumptions requiring native calibration.&quot;,
+    &quot;Initial stability is a hands-off 240-native-sample settle. Drift extrema reference its first sample; terminal speed, initial contacts, yaw, and untouched score use its last sample. Trajectory checks cover every later native sample through termination.&quot;,
+    &quot;Joint margin is min(q-q_lower,q_upper-q). Tracking error is abs(q_command-q) at 20 Hz boundaries, with commands held between boundaries. Joint speed is abs(delta q/dt) at physics rate.&quot;,
+    &quot;During samples with peel centre-of-mass speed greater than 0.010 m/s, group G-L manifolds by finger link. An opposed pair requires positive-impulse patches on matching left and right fingers whose L-directed normals have dot product&lt;=-0.5. Reduce disjoint pair count by the minimum over active samples; peel motion without a qualifying active sample fails configuration.&quot;,
+    &quot;Cameras render once only after each fully completed 20 Hz control interval. Let m be the number of complete control intervals before termination and n=m. A terminal physics sample occurring inside an interval produces no extra frame; termination at that interval&#x27;s final substep produces its normal frame. Both cameras must have exactly n indexed frames. Missing indexed frames are invalid, and n=0 fails every camera check.&quot;,
+    &quot;An RGB frame is valid only when all pixels are finite, it is nonconstant, and maximum channelwise range is at least 5/255. RGB validity is valid frames/n per camera, reduced by the worst camera. Depth validity v_jf is the fraction of pixels finite and strictly between configured near and far planes; missing or zero-pixel frames contribute zero, reduced by the worst frame and camera.&quot;,
+    &quot;Segmentation ownership is C union T for pizza and L for peel. A target-visible frame has at least 1% pizza-owned pixels and 1% peel-owned pixels. Visibility is qualifying frames/n per camera, reduced by the worst camera.&quot;,
+    &quot;Refinement replays the identical seed, reset, materials, 20 Hz timestamped action journal, and native horizon at 480 Hz. Its duration ends at the first 20 Hz boundary at or after native termination. Refinement validates physics only and cannot change the native grade.&quot;,
+    &quot;Local component tests produced about 175-179 degrees rotation and 27-33 mm excursion across nominal, friction, compliance, and half-timestep conditions. They are prototype evidence, not native YAM certification. Full-scale physical grasp, reach, roof and handle clearance, insertion, traction, joint/body traces, release, and withdrawal remain mandatory unverified gates.&quot;
   ],
-  &quot;scoring_spec&quot;: &quot;Let native step 0 be the last hands-off settle sample. Freeze c0 and yaw0 from the core and its asymmetric marker. At every later 240 Hz post-resolution sample k, e_k=||c_xy(k)-c0_xy||_2 and E_k=max_{0&lt;=j&lt;=k}e_j. Define wrap180(a)=((a+180 degrees) mod 360 degrees)-180 degrees and Y_k=abs(wrap180(yaw(k)-yaw0)), so 0&lt;=Y_k&lt;=180 degrees. Historical predicates SUPPORT_ALL(k), CONTAINED_ALL(k), and UPRIGHT_ALL(k) require their respective predicates at every sample 0..k. RELEASED(k) is true iff no L-C, L-T, G-C, or G-T contact exists; core linear speed&lt;=0.02 m/s; and core angular speed&lt;=5 deg/s. WITHDRAWN(k) is true iff all L collision shapes lie outside the oven through the mouth side, measured by every shape&#x27;s maximum mouth-plane margin&lt;=0, and minimum L-to-(C union T) signed separation&gt;=0.050 m. SAFE(k) requires SUPPORT_ALL(k), CONTAINED_ALL(k), UPRIGHT_ALL(k), E_k&lt;=0.050 m, and absence of every irreversible damage, loss, bypass, or shortcut latch. The release-and-withdrawal counter r starts at zero, increments only when RELEASED(k), WITHDRAWN(k), and SAFE(k) are simultaneously true, and otherwise resets to zero. Thus completing a contact-free dwell before withdrawal neither freezes nor disqualifies a later safe withdrawal. ELIGIBLE(k) is true exactly when r reaches 240 fresh consecutive native samples. The first eligible sample is the evaluation sample. At that sample score=1.0 for 150&lt;=Y_k&lt;=180 degrees, score=0.5 for 90&lt;=Y_k&lt;150 degrees, and score=0 otherwise. There are no bonuses or directed-overrotation tiers. Immediately after recording the score, journals, and terminal observations at the first eligible sample, the evaluator terminates robot commands and physics for that episode; therefore no later unmonitored damage can occur after score freeze. If eligibility never occurs by native step 28800, terminate at timeout with score zero. Before termination displayed score is provisional zero. Stroke count, arm identity, action count, regrasp strategy, transient peel-contact pattern, and action order do not enter eligibility. The untouched state can satisfy release and withdrawal dwell but scores zero because Y_k&lt;90 degrees. The 20 Hz journal records commanded and measured joints and grippers; the 240 Hz journal records every scoring observable, counter, and latch in sample order. Score, journals, screenshots, and video must share the current native trial ID and may not aggregate other trials.&quot;,
+  &quot;scoring_spec&quot;: &quot;Let native step 0 be the final hands-off settle sample; freeze core center c0 and marker yaw yaw0. For every later 240 Hz post-resolution sample k, e_k=norm(c_xy(k)-c0_xy), E_k=max_{0&lt;=j&lt;=k}e_j, wrap180(a)=((a+180 deg) mod 360 deg)-180 deg, and Y_k=abs(wrap180(yaw(k)-yaw0)). SUPPORT_ALL, CONTAINED_ALL, and UPRIGHT_ALL require their predicates at every sample through k. RELEASED(k) holds iff no L-C, L-T, G-C, or G-T contact exists, core linear speed&lt;=0.02 m/s, and core angular speed&lt;=5 deg/s. WITHDRAWN(k) holds iff every L shape is wholly outside on the mouth side, each shape&#x27;s maximum inward mouth-plane margin&lt;=0, and min signed separation between L and C union T is&gt;=0.050 m. SAFE(k) requires the three ALL predicates, E_k&lt;=0.050 m, and absence of every damage or shortcut latch. Eligibility counter r starts at zero, increments only while RELEASED, WITHDRAWN, and SAFE are simultaneously true, and otherwise resets. ELIGIBLE first becomes true at 240 fresh consecutive native samples. At that first eligible sample score=1.0 if 150&lt;=Y_k&lt;=180 degrees, score=0.5 if 90&lt;=Y_k&lt;150 degrees, otherwise score=0. No bonus exists. Record terminal observations and stop commands and physics immediately. If eligibility never occurs by native step 28800, score=0. Before termination the displayed score is provisional zero. A hard-failure latch irrevocably forces zero and revokes prior dwell progress. Stroke count, hand identity, action count, regrasp strategy, peel-contact pattern, and order do not affect grading. Untouched release and withdrawal score zero because Y&lt;90 degrees. Directed rotation beyond 180 degrees is graded by wrapped yaw, so 210 degrees maps to 150 degrees. The 20 Hz journal records commanded and measured joints and grippers; the 240 Hz journal records every defined observable, counter, event, and latch in sampling order. Only the current native trial ID may supply evidence or score.&quot;,
   &quot;required_controls&quot;: [
     {
       &quot;name&quot;: &quot;control_untouched_withdrawn_yaw_zero&quot;,
       &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;The untouched configuration may complete the release-and-withdrawal dwell, but wrapped yaw remains below 90 degrees.&quot;
+      &quot;reason&quot;: &quot;Released and withdrawn but unchanged pizza has wrapped yaw below 90 degrees.&quot;
     },
     {
       &quot;name&quot;: &quot;control_safe_120deg_underturn_partial&quot;,
       &quot;expected_score&quot;: 0.5,
-      &quot;reason&quot;: &quot;A released and withdrawn 120-degree outcome satisfying every prerequisite lies in the sole partial interval.&quot;
+      &quot;reason&quot;: &quot;A safe eligible 120-degree result lies in the complete partial interval.&quot;
     },
     {
       &quot;name&quot;: &quot;control_safe_165deg_nominal_full&quot;,
       &quot;expected_score&quot;: 1,
-      &quot;reason&quot;: &quot;A released 165-degree turn with continuous support, bounded drift, containment, no damage, and withdrawal earns full credit.&quot;
+      &quot;reason&quot;: &quot;A safe eligible 165-degree result lies in the full interval.&quot;
     },
     {
       &quot;name&quot;: &quot;control_safe_180deg_boundary_full&quot;,
       &quot;expected_score&quot;: 1,
-      &quot;reason&quot;: &quot;Exactly 180 degrees is the maximum wrapped yaw and lies in the full-credit interval.&quot;
+      &quot;reason&quot;: &quot;Exactly 180 degrees is the inclusive full-score upper boundary.&quot;
     },
     {
       &quot;name&quot;: &quot;control_safe_60deg_insufficient_zero&quot;,
       &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;A safe, released, and withdrawn 60-degree turn remains below the partial threshold.&quot;
+      &quot;reason&quot;: &quot;A safe 60-degree result is below the partial threshold.&quot;
     },
     {
       &quot;name&quot;: &quot;control_directed_210deg_wrap150_full&quot;,
       &quot;expected_score&quot;: 1,
-      &quot;reason&quot;: &quot;A directed physical rotation of 210 degrees has wrapped final yaw 150 degrees and earns full credit.&quot;
+      &quot;reason&quot;: &quot;Directed 210-degree rotation wraps to 150 degrees.&quot;
     },
     {
       &quot;name&quot;: &quot;control_center_excursion_51mm_zero&quot;,
       &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;Any 51 mm trajectory excursion irreversibly breaches the selected 50 mm bound.&quot;
+      &quot;reason&quot;: &quot;A 51 mm trajectory excursion irreversibly breaches the limit.&quot;
     },
     {
-      &quot;name&quot;: &quot;control_single_physics_step_support_loss_zero&quot;,
+      &quot;name&quot;: &quot;control_single_native_step_support_loss_zero&quot;,
       &quot;expected_score&quot;: 0,
       &quot;reason&quot;: &quot;One 240 Hz sample without C-D contact latches support loss.&quot;
     },
     {
-      &quot;name&quot;: &quot;control_detached_topping_on_core_zero&quot;,
-      &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;A topping lacking T-C contact for 60 samples fails even if it remains radially over the core.&quot;
+      &quot;name&quot;: &quot;control_topping_detached_59samples_recovers_full&quot;,
+      &quot;expected_score&quot;: 1,
+      &quot;reason&quot;: &quot;Restored contact after 59 detached samples remains below the defined loss duration.&quot;
     },
     {
-      &quot;name&quot;: &quot;control_detached_topping_on_deck_zero&quot;,
+      &quot;name&quot;: &quot;control_topping_detached_60samples_zero&quot;,
       &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;A topping detached onto the deck neither satisfies crust support nor avoids topping loss.&quot;
+      &quot;reason&quot;: &quot;Sixty consecutive detached samples latch topping loss regardless of where the topping rests.&quot;
     },
     {
       &quot;name&quot;: &quot;control_direct_gripper_pizza_contact_zero&quot;,
       &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;Any finger or palm contact with crust or topping bypasses peel-mediated manipulation.&quot;
+      &quot;reason&quot;: &quot;Any finger or palm contact with crust or topping is a bypass.&quot;
     },
     {
       &quot;name&quot;: &quot;control_pizza_crosses_mouth_plane_zero&quot;,
       &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;Any pizza collider crossing the mouth boundary latches containment failure even if it returns.&quot;
+      &quot;reason&quot;: &quot;Any pizza collider crossing the mouth boundary latches containment failure.&quot;
     },
     {
       &quot;name&quot;: &quot;control_release_withdrawal_dwell_239_zero&quot;,
       &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;Only 239 simultaneous safe release-and-withdrawal samples do not satisfy the one-second dwell.&quot;
+      &quot;reason&quot;: &quot;Only 239 simultaneous eligible samples do not satisfy dwell.&quot;
     },
     {
-      &quot;name&quot;: &quot;control_release_then_late_withdrawal_scores&quot;,
+      &quot;name&quot;: &quot;control_release_then_late_withdrawal_full&quot;,
       &quot;expected_score&quot;: 1,
-      &quot;reason&quot;: &quot;An earlier contact-free dwell does not freeze zero; a later 240-sample safe withdrawn dwell at 165 degrees earns full credit.&quot;
+      &quot;reason&quot;: &quot;A later complete eligible dwell at 165 degrees earns full credit.&quot;
     },
     {
       &quot;name&quot;: &quot;control_unwithdrawn_contactfree_peel_zero&quot;,
       &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;A contact-free peel still inside the oven cannot increment the eligibility counter.&quot;
+      &quot;reason&quot;: &quot;A contact-free peel remaining inside cannot increment eligibility.&quot;
     },
     {
-      &quot;name&quot;: &quot;control_six_sample_peel_overforce_zero&quot;,
+      &quot;name&quot;: &quot;control_six_sample_peel_core_overforce_zero&quot;,
       &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;Peel-crust force above 40 N for six consecutive native samples latches puncture.&quot;
+      &quot;reason&quot;: &quot;Force above 40 N for six consecutive native samples latches puncture.&quot;
     },
     {
-      &quot;name&quot;: &quot;control_five_sample_peel_overforce_no_latch_full&quot;,
+      &quot;name&quot;: &quot;control_five_sample_peel_core_overforce_full&quot;,
       &quot;expected_score&quot;: 1,
-      &quot;reason&quot;: &quot;Five consecutive over-threshold samples alone do not meet the puncture-duration rule when all other conditions pass.&quot;
+      &quot;reason&quot;: &quot;Five over-threshold samples alone remain below the defined duration.&quot;
     },
     {
-      &quot;name&quot;: &quot;control_topping_loss_after_nominal_yaw_zero&quot;,
+      &quot;name&quot;: &quot;control_robot_oven_collision_damage_zero&quot;,
       &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;Nominal yaw cannot overcome a topping-loss latch.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control_gripper_oven_collision_damage_zero&quot;,
-      &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;A G-O event exceeding the force or impulse threshold forces zero.&quot;
-    },
-    {
-      &quot;name&quot;: &quot;control_non_gripper_robot_oven_damage_zero&quot;,
-      &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;A remaining robot-link impact on the oven is covered by Q-O and forces zero.&quot;
+      &quot;reason&quot;: &quot;A peel or robot-to-oven event exceeding either damage threshold forces zero.&quot;
     },
     {
       &quot;name&quot;: &quot;control_pose_write_or_fake_weld_zero&quot;,
       &quot;expected_score&quot;: 0,
-      &quot;reason&quot;: &quot;Pose writes, velocity writes, hidden pivots, fake welds, or disabled collisions are invalid shortcuts.&quot;
+      &quot;reason&quot;: &quot;Pose writes, hidden pivots, welds, disabled gravity, or disabled collisions are invalid shortcuts.&quot;
     },
     {
       &quot;name&quot;: &quot;control_alternate_arm_order_nominal_full&quot;,
       &quot;expected_score&quot;: 1,
-      &quot;reason&quot;: &quot;Arm choice, stroke count, regrasp, and action order are irrelevant when the same safe physical outcome is reached.&quot;
+      &quot;reason&quot;: &quot;Arm, order, stroke count, and regrasp are irrelevant when the same safe outcome is reached.&quot;
     },
     {
-      &quot;name&quot;: &quot;control_terminal_freeze_stops_commands_full&quot;,
+      &quot;name&quot;: &quot;control_terminal_midinterval_camera_floor_count_full&quot;,
       &quot;expected_score&quot;: 1,
-      &quot;reason&quot;: &quot;At the first eligible 165-degree sample, score is recorded and commands and physics terminate, preventing unscored later damage.&quot;
+      &quot;reason&quot;: &quot;A safe 165-degree trial terminating inside a control interval uses only fully completed intervals in camera denominators and can retain full score.&quot;
+    },
+    {
+      &quot;name&quot;: &quot;control_refinement_no_contact_both_runs_native_zero&quot;,
+      &quot;expected_score&quot;: 0,
+      &quot;reason&quot;: &quot;No matched contact defines zero relative difference but cannot change a native zero grade.&quot;
+    },
+    {
+      &quot;name&quot;: &quot;control_refinement_contact_only_one_run_native_zero&quot;,
+      &quot;expected_score&quot;: 0,
+      &quot;reason&quot;: &quot;Contact in exactly one replay gives infinite diagnostic difference but cannot alter native grading.&quot;
     }
   ]
 }</pre><h2>sources</h2><pre>[

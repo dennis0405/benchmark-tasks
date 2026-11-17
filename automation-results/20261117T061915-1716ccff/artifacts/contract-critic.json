@@ -1,20 +1,23 @@
 {
   "verdict": "repair",
   "findings": [
-    "The prior five scoring defects are repaired: topping separation anywhere off C latches after 60 native samples; eligibility requires simultaneous safe release and withdrawal; the episode stops at score freeze; Q-O includes grippers; and the untouched control now correctly attributes zero to yaw below 90 degrees.",
-    "All 23 required controls recompute as stated under the grading formula. Initial/insufficient, excursion, support-loss, topping-loss, bypass, containment, damage, shortcut, incomplete-dwell, and timeout cases score 0; safe 120 degrees scores 0.5; safe wrapped yaw of 150–180 degrees scores 1.0. The 210-degree directed case wraps to 150 degrees and scores 1.0. The first nonzero tier is 90 degrees, no bonus exists, and timeout remains zero unless eligibility was reached earlier.",
-    "The grading timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; 28,800 native samples at 240 Hz equal 120 seconds; the eligibility dwell is 240 native samples (1 second); topping loss is 60 samples (0.25 seconds); and refinement uses 480 Hz without changing the native grade.",
-    "Several prospective physics-validation metrics remain insufficiently computable despite having units and thresholds. The contract does not define the aggregation for `trajectory_*_signed_separation` metrics (minimum over which collider pairs and samples), whether `episode_depth_valid_pixel_fraction_min` is a per-frame minimum or episode-wide pixel ratio, or which contact pair/event supplies `refinement_peak_force_relative_difference_upper_bound`. `trajectory_core_deck_contact_gap_upper_bound` is also not defined from the signed-separation/contact observations and is potentially inconsistent in name with the exact resolved-contact SUPPORT predicate. Define each observable, pair scope, temporal aggregation, empty-contact behavior, and refinement matching rule explicitly.",
-    "The indexed pinned-runtime preflight and `input/pinned-runtime-sources` snapshot are absent, so compatibility with the pinned YAM/Arena APIs cannot be verified here. Consistent with the prospective-review rule and the contract’s own disclosure, this absence does not itself refute the specification, but no API-compatibility claim is established."
+    "All 23 required controls recompute consistently: zero for untouched, 60°, 51 mm excursion, one-sample support loss, 60-sample topping loss, gripper bypass, mouth crossing, 239-sample dwell, unwithdrawn peel, six-sample overforce, collision damage, invalid shortcut, and both refinement-only native-zero cases; 0.5 for safe 120°; 1.0 for safe 165°, 180°, wrapped 210°→150°, 59-sample topping recovery, late withdrawal, five-sample overforce, alternate-arm/order, and mid-interval camera-floor cases. Partial first becomes available at 90° and full at 150°; there is no bonus. Timeout is zero unless the 240-sample eligibility dwell completes by native physics step 28,800.",
+    "Timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; native grading is sampled at 240 Hz and refinement is separately replayed at 480 Hz. Eligibility, topping-loss, and overforce durations resolve respectively to 1.0 s, 0.25 s, and 0.025 s. Contact observables are explicitly fresh post-resolution physics-substep measurements.",
+    "The prior camera ambiguity is repaired: only fully completed 20 Hz intervals render and enter n; mid-interval termination adds no frame. Signed-separation reductions, deck gap versus normal load, worst-frame depth validity, and matched force-event refinement are also explicitly defined.",
+    "A material contradiction remains between artifacts/selected.json and artifacts/contract.json. The selection assigns zero for any “topping separation,” whereas the contract intentionally tolerates 1–59 consecutive detached 240 Hz samples and requires the 59-sample recovery control to score 1.0. The selected success condition must adopt the exact 60-consecutive-sample TOPPING_LOSS threshold, or the contract and controls must make any separation fail.",
+    "No input/runtime-api-preflight.json or input/pinned-runtime-sources snapshot is present. This does not independently invalidate the prospective specification because the contract explicitly leaves pinned API and AssetRegistry compatibility as an unverified later construction gate."
   ],
   "evidence_paths": [
     "artifacts/contract.json",
     "artifacts/selected.json",
     "input/last-failure.json",
+    "artifacts/contract-critic.json",
     "input/request.json",
-    "input/review-prompt.txt",
-    "input/repository-AGENTS.md",
+    "input/revision-request.txt",
     "input/operator-source-notes.json",
+    "input/runtime.json",
+    "input/repository-AGENTS.md",
+    "input/review-prompt.txt",
     "artifacts/research.json"
   ]
 }

@@ -54,22 +54,22 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 78311,
+    "supervisor_pid": 94113,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261117T061915-1716ccff/supervisor.log",
-    "error": "contract-critic: The prior five scoring defects are repaired: topping separation anywhere off C latches after 60 native samples; eligibility requires simultaneous safe release and withdrawal; the episode stops at score freeze; Q-O includes grippers; and the untouched control now correctly attributes zero to yaw below 90 degrees.; All 23 required controls recompute as stated under the grading formula. Initial/insufficient, excursion, support-loss, topping-loss, bypass, containment, damage, shortcut, incomplete-dwell, and timeout cases score 0; safe 120 degrees scores 0.5; safe wrapped yaw of 150–180 degrees scores 1.0. The 210-degree directed case wraps to 150 degrees and scores 1.0. The first nonzero tier is 90 degrees, no bonus exists, and timeout remains zero unless eligibility was reached earlier.; The grading timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; 28,800 native samples at 240 Hz equal 120 seconds; the eligibility dwell is 240 native samples (1 second); topping loss is 60 samples (0.25 seconds); and refinement uses 480 Hz without changing the native grade.; Several prospective physics-validation metrics remain insufficiently computable despite having units and thresholds. The contract does not define the aggregation for `trajectory_*_signed_separation` metrics (minimum over which collider pairs and samples), whether `episode_depth_valid_pixel_fraction_min` is a per-frame minimum or episode-wide pixel ratio, or which contact pair/event supplies `refinement_peak_force_relative_difference_upper_bound`. `trajectory_core_deck_contact_gap_upper_bound` is also not defined from the signed-separation/contact observations and is potentially inconsistent in name with the exact resolved-contact SUPPORT predicate. Define each observable, pair scope, temporal aggregation, empty-contact behavior, and refinement matching rule explicitly.; The indexed pinned-runtime preflight and `input/pinned-runtime-sources` snapshot are absent, so compatibility with the pinned YAM/Arena APIs cannot be verified here. Consistent with the prospective-review rule and the contract’s own disclosure, this absence does not itself refute the specification, but no API-compatibility claim is established.",
+    "error": "contract-critic: All 23 required controls recompute consistently: zero for untouched, 60°, 51 mm excursion, one-sample support loss, 60-sample topping loss, gripper bypass, mouth crossing, 239-sample dwell, unwithdrawn peel, six-sample overforce, collision damage, invalid shortcut, and both refinement-only native-zero cases; 0.5 for safe 120°; 1.0 for safe 165°, 180°, wrapped 210°→150°, 59-sample topping recovery, late withdrawal, five-sample overforce, alternate-arm/order, and mid-interval camera-floor cases. Partial first becomes available at 90° and full at 150°; there is no bonus. Timeout is zero unless the 240-sample eligibility dwell completes by native physics step 28,800.; Timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; native grading is sampled at 240 Hz and refinement is separately replayed at 480 Hz. Eligibility, topping-loss, and overforce durations resolve respectively to 1.0 s, 0.25 s, and 0.025 s. Contact observables are explicitly fresh post-resolution physics-substep measurements.; The prior camera ambiguity is repaired: only fully completed 20 Hz intervals render and enter n; mid-interval termination adds no frame. Signed-separation reductions, deck gap versus normal load, worst-frame depth validity, and matched force-event refinement are also explicitly defined.; A material contradiction remains between artifacts/selected.json and artifacts/contract.json. The selection assigns zero for any “topping separation,” whereas the contract intentionally tolerates 1–59 consecutive detached 240 Hz samples and requires the 59-sample recovery control to score 1.0. The selected success condition must adopt the exact 60-consecutive-sample TOPPING_LOSS threshold, or the contract and controls must make any separation fail.; No input/runtime-api-preflight.json or input/pinned-runtime-sources snapshot is present. This does not independently invalidate the prospective specification because the contract explicitly leaves pinned API and AssetRegistry compatibility as an unverified later construction gate.",
     "approval": null,
     "compute": "running",
     "remote_status": {
       "status": "blocked",
-      "error": "contract-critic: The prior five scoring defects are repaired: topping separation anywhere off C latches after 60 native samples; eligibility requires simultaneous safe release and withdrawal; the episode stops at score freeze; Q-O includes grippers; and the untouched control now correctly attributes zero to yaw below 90 degrees.; All 23 required controls recompute as stated under the grading formula. Initial/insufficient, excursion, support-loss, topping-loss, bypass, containment, damage, shortcut, incomplete-dwell, and timeout cases score 0; safe 120 degrees scores 0.5; safe wrapped yaw of 150–180 degrees scores 1.0. The 210-degree directed case wraps to 150 degrees and scores 1.0. The first nonzero tier is 90 degrees, no bonus exists, and timeout remains zero unless eligibility was reached earlier.; The grading timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; 28,800 native samples at 240 Hz equal 120 seconds; the eligibility dwell is 240 native samples (1 second); topping loss is 60 samples (0.25 seconds); and refinement uses 480 Hz without changing the native grade.; Several prospective physics-validation metrics remain insufficiently computable despite having units and thresholds. The contract does not define the aggregation for `trajectory_*_signed_separation` metrics (minimum over which collider pairs and samples), whether `episode_depth_valid_pixel_fraction_min` is a per-frame minimum or episode-wide pixel ratio, or which contact pair/event supplies `refinement_peak_force_relative_difference_upper_bound`. `trajectory_core_deck_contact_gap_upper_bound` is also not defined from the signed-separation/contact observations and is potentially inconsistent in name with the exact resolved-contact SUPPORT predicate. Define each observable, pair scope, temporal aggregation, empty-contact behavior, and refinement matching rule explicitly.; The indexed pinned-runtime preflight and `input/pinned-runtime-sources` snapshot are absent, so compatibility with the pinned YAM/Arena APIs cannot be verified here. Consistent with the prospective-review rule and the contract’s own disclosure, this absence does not itself refute the specification, but no API-compatibility claim is established.",
+      "error": "contract-critic: All 23 required controls recompute consistently: zero for untouched, 60°, 51 mm excursion, one-sample support loss, 60-sample topping loss, gripper bypass, mouth crossing, 239-sample dwell, unwithdrawn peel, six-sample overforce, collision damage, invalid shortcut, and both refinement-only native-zero cases; 0.5 for safe 120°; 1.0 for safe 165°, 180°, wrapped 210°→150°, 59-sample topping recovery, late withdrawal, five-sample overforce, alternate-arm/order, and mid-interval camera-floor cases. Partial first becomes available at 90° and full at 150°; there is no bonus. Timeout is zero unless the 240-sample eligibility dwell completes by native physics step 28,800.; Timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; native grading is sampled at 240 Hz and refinement is separately replayed at 480 Hz. Eligibility, topping-loss, and overforce durations resolve respectively to 1.0 s, 0.25 s, and 0.025 s. Contact observables are explicitly fresh post-resolution physics-substep measurements.; The prior camera ambiguity is repaired: only fully completed 20 Hz intervals render and enter n; mid-interval termination adds no frame. Signed-separation reductions, deck gap versus normal load, worst-frame depth validity, and matched force-event refinement are also explicitly defined.; A material contradiction remains between artifacts/selected.json and artifacts/contract.json. The selection assigns zero for any “topping separation,” whereas the contract intentionally tolerates 1–59 consecutive detached 240 Hz samples and requires the 59-sample recovery control to score 1.0. The selected success condition must adopt the exact 60-consecutive-sample TOPPING_LOSS threshold, or the contract and controls must make any separation fail.; No input/runtime-api-preflight.json or input/pinned-runtime-sources snapshot is present. This does not independently invalidate the prospective specification because the contract explicitly leaves pinned API and AssetRegistry compatibility as an unverified later construction gate.",
       "type": "GateError",
-      "at": "2026-11-17T07:50:23.214618+00:00"
+      "at": "2026-11-17T08:04:31.665735+00:00"
     },
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261117T061915-1716ccff",
     "stop_error": "command failed: ssh: ssh: Could not resolve hostname global.prd.ga.run.brev.nvidia.com: nodename nor servname provided, or not known\n",
-    "revision": 2,
-    "revision_request": "좋아. 그럼 삽으로 가장자리를 덜 들어 올리고 짧게 여러 번 돌려서, 피자가 화덕 바닥에 닿은 채 중심이 크게 밀리지 않고 180도 돌아가는지 검증해보자. 안정적으로 되면 Isaac Sim에서 YAM 데모까지 구현하고 실제 실행 영상도 보여줘. Preserve the selected task and prior evidence. Every quote in the candidate and critic must exceed 12 characters (include neighbouring text from input/sources.json). Retain the true board and peel specifications. Max centre travel 50mm throughout; contact with the deck throughout; evaluate final yaw from wrapped final orientation after release. Start with low repeated small strokes before the full native robot.",
-    "resume_from_stage": "candidates"
+    "revision": 3,
+    "revision_request": "Retain the passed candidate and novelty and the same scoring tiers. Define exact reductions for each unresolved metric from the contract critic: global min of signed collider-surface separations over specified body pairs at each physics substep and then time, worst per-frame valid pixel fraction, and same named tool/crust force event window in both dt trials with a defined small denominator. Define signed deck separation explicitly and distinguish normal load. Inspect last-failure for the remaining metric definitions. Use the short alternating strokes and the recent locally recorded component results in operator-source-notes.json. Deliver native contact validation then a physical YAM demo.",
+    "resume_from_stage": "contract"
   },
   "events": [
     {
@@ -881,6 +881,288 @@
       "run": "20261117T061915-1716ccff",
       "at": "2026-11-17T07:50:49.210810+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"contract-critic: The prior five scoring defects are repaired: topping separation anywhere off C latches after 60 native samples; eligibility requires simultaneous safe release and withdrawal; the episode stops at score freeze; Q-O includes grippers; and the untouched control now correctly attributes zero to yaw below 90 degrees.; All 23 required controls recompute as stated under the grading formula. Initial/insufficient, excursion, support-loss, topping-loss, bypass, containment, damage, shortcut, incomplete-dwell, and timeout cases score 0; safe 120 degrees scores 0.5; safe wrapped yaw of 150\\u2013180 degrees scores 1.0. The 210-degree directed case wraps to 150 degrees and scores 1.0. The first nonzero tier is 90 degrees, no bonus exists, and timeout remains zero unless eligibility was reached earlier.; The grading timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; 28,800 native samples at 240 Hz equal 120 seconds; the eligibility dwell is 240 native samples (1 second); topping loss is 60 samples (0.25 seconds); and refinement uses 480 Hz without changing the native grade.; Several prospective physics-validation metrics remain insufficiently computable despite having units and thresholds. The contract does not define the aggregation for `trajectory_*_signed_separation` metrics (minimum over which collider pairs and samples), whether `episode_depth_valid_pixel_fraction_min` is a per-frame minimum or episode-wide pixel ratio, or which contact pair/event supplies `refinement_peak_force_relative_difference_upper_bound`. `trajectory_core_deck_contact_gap_upper_bound` is also not defined from the signed-separation/contact observations and is potentially inconsistent in name with the exact resolved-contact SUPPORT predicate. Define each observable, pair scope, temporal aggregation, empty-contact behavior, and refinement matching rule explicitly.; The indexed pinned-runtime preflight and `input/pinned-runtime-sources` snapshot are absent, so compatibility with the pinned YAM/Arena APIs cannot be verified here. Consistent with the prospective-review rule and the contract\\u2019s own disclosure, this absence does not itself refute the specification, but no API-compatibility claim is established.\"}"
+    },
+    {
+      "seq": 9726,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:52:16.632259+00:00",
+      "data": "{\"revision\": 3, \"revision_request\": \"Retain the passed candidate and novelty and the same scoring tiers. Define exact reductions for each unresolved metric from the contract critic: global min of signed collider-surface separations over specified body pairs at each physics substep and then time, worst per-frame valid pixel fraction, and same named tool/crust force event window in both dt trials with a defined small denominator. Define signed deck separation explicitly and distinguish normal load. Inspect last-failure for the remaining metric definitions. Use the short alternating strokes and the recent locally recorded component results in operator-source-notes.json. Deliver native contact validation then a physical YAM demo.\", \"approval\": null}"
+    },
+    {
+      "seq": 9727,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:52:16.632417+00:00",
+      "data": "{\"resume_from_stage\": \"contract\"}"
+    },
+    {
+      "seq": 9728,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:52:16.635507+00:00",
+      "data": "{\"supervisor_pid\": 93505, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261117T061915-1716ccff/supervisor.log\"}"
+    },
+    {
+      "seq": 9729,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:53:00.756849+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 9730,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:53:22.542044+00:00",
+      "data": "{\"supervisor_pid\": 94113, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261117T061915-1716ccff/supervisor.log\"}"
+    },
+    {
+      "seq": 9731,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:53:22.623164+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 9732,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:53:35.811392+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 9733,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:54:39.909201+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 9734,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:55:11.672942+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261117T061915-1716ccff\"}"
+    },
+    {
+      "seq": 9735,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:55:12.161811+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9736,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:55:27.682654+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9737,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:55:43.179776+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9738,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:55:58.698759+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9739,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:56:14.367077+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9740,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:56:30.036180+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9741,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:56:45.531524+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9742,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:57:01.035475+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9743,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:57:16.534784+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9744,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:57:32.088818+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9745,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:57:47.738152+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9746,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:58:03.271132+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9747,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:58:18.771843+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9748,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:58:34.447051+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9749,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:58:49.929784+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9750,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:59:05.425075+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9751,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:59:21.090700+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9752,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:59:36.812827+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9753,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:59:52.282317+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9754,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:00:07.841477+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9755,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:00:23.480225+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9756,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:00:38.954122+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9757,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:00:54.536431+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9758,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:01:10.036554+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9759,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:01:25.570030+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9760,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:01:41.091043+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9761,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:01:56.595800+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9762,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:02:12.242971+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9763,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:02:27.855139+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9764,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:02:43.452586+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9765,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:02:58.896297+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9766,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:03:14.544648+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9767,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:03:30.054590+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9768,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:03:45.647912+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9769,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:04:01.153669+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9770,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:04:16.662104+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:55:11.967055+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9771,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:04:32.342776+00:00",
+      "data": "{\"remote_status\": {\"status\": \"blocked\", \"error\": \"contract-critic: All 23 required controls recompute consistently: zero for untouched, 60\\u00b0, 51 mm excursion, one-sample support loss, 60-sample topping loss, gripper bypass, mouth crossing, 239-sample dwell, unwithdrawn peel, six-sample overforce, collision damage, invalid shortcut, and both refinement-only native-zero cases; 0.5 for safe 120\\u00b0; 1.0 for safe 165\\u00b0, 180\\u00b0, wrapped 210\\u00b0\\u2192150\\u00b0, 59-sample topping recovery, late withdrawal, five-sample overforce, alternate-arm/order, and mid-interval camera-floor cases. Partial first becomes available at 90\\u00b0 and full at 150\\u00b0; there is no bonus. Timeout is zero unless the 240-sample eligibility dwell completes by native physics step 28,800.; Timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; native grading is sampled at 240 Hz and refinement is separately replayed at 480 Hz. Eligibility, topping-loss, and overforce durations resolve respectively to 1.0 s, 0.25 s, and 0.025 s. Contact observables are explicitly fresh post-resolution physics-substep measurements.; The prior camera ambiguity is repaired: only fully completed 20 Hz intervals render and enter n; mid-interval termination adds no frame. Signed-separation reductions, deck gap versus normal load, worst-frame depth validity, and matched force-event refinement are also explicitly defined.; A material contradiction remains between artifacts/selected.json and artifacts/contract.json. The selection assigns zero for any \\u201ctopping separation,\\u201d whereas the contract intentionally tolerates 1\\u201359 consecutive detached 240 Hz samples and requires the 59-sample recovery control to score 1.0. The selected success condition must adopt the exact 60-consecutive-sample TOPPING_LOSS threshold, or the contract and controls must make any separation fail.; No input/runtime-api-preflight.json or input/pinned-runtime-sources snapshot is present. This does not independently invalidate the prospective specification because the contract explicitly leaves pinned API and AssetRegistry compatibility as an unverified later construction gate.\", \"type\": \"GateError\", \"at\": \"2026-11-17T08:04:31.665735+00:00\"}, \"stage\": null}"
+    },
+    {
+      "seq": 9772,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T08:04:38.600065+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"contract-critic: All 23 required controls recompute consistently: zero for untouched, 60\\u00b0, 51 mm excursion, one-sample support loss, 60-sample topping loss, gripper bypass, mouth crossing, 239-sample dwell, unwithdrawn peel, six-sample overforce, collision damage, invalid shortcut, and both refinement-only native-zero cases; 0.5 for safe 120\\u00b0; 1.0 for safe 165\\u00b0, 180\\u00b0, wrapped 210\\u00b0\\u2192150\\u00b0, 59-sample topping recovery, late withdrawal, five-sample overforce, alternate-arm/order, and mid-interval camera-floor cases. Partial first becomes available at 90\\u00b0 and full at 150\\u00b0; there is no bonus. Timeout is zero unless the 240-sample eligibility dwell completes by native physics step 28,800.; Timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; native grading is sampled at 240 Hz and refinement is separately replayed at 480 Hz. Eligibility, topping-loss, and overforce durations resolve respectively to 1.0 s, 0.25 s, and 0.025 s. Contact observables are explicitly fresh post-resolution physics-substep measurements.; The prior camera ambiguity is repaired: only fully completed 20 Hz intervals render and enter n; mid-interval termination adds no frame. Signed-separation reductions, deck gap versus normal load, worst-frame depth validity, and matched force-event refinement are also explicitly defined.; A material contradiction remains between artifacts/selected.json and artifacts/contract.json. The selection assigns zero for any \\u201ctopping separation,\\u201d whereas the contract intentionally tolerates 1\\u201359 consecutive detached 240 Hz samples and requires the 59-sample recovery control to score 1.0. The selected success condition must adopt the exact 60-consecutive-sample TOPPING_LOSS threshold, or the contract and controls must make any separation fail.; No input/runtime-api-preflight.json or input/pinned-runtime-sources snapshot is present. This does not independently invalidate the prospective specification because the contract explicitly leaves pinned API and AssetRegistry compatibility as an unverified later construction gate.\"}"
     }
   ],
   "effects": {
