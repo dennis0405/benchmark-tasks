@@ -34,3 +34,5 @@ Offline YAM IK reaches the rack pregrasp, grasp and lift points for the left dri
 Repeating the piston test at 480 Hz retained the stop face and clamp but exceeded both peak screw speed limits. Tightening to 0.020 N·m at 240 Hz maintained 14.818 N after tool removal, with 0.0671 µm peak-to-peak axial motion across the proof phase. Its 0.01075 mm/s instantaneous axial maximum still exceeds 0.01000 mm/s.
 
 For a separate powered-adjustment negative control, the same 240 Hz assembly received an actual finite 0.030 N·m external driver torque for 0.25 s starting at 13.25 s. Screw travel rose from 0.202 µm to 228.76 µm and the seat force fell to zero. The official frozen score has not changed. The file `motion-resolution-replay.json` evaluates a possible alternative on existing traces only, with no certification or YAM result.
+
+The final independent counterhold variant uses a native implicit, bounded rotational tool drive during tightening. Its native maximum effort was verified as zero after releasing the driver. It retained stop contact and 5.86 N on the cover, but the powered axial speed reached 0.01319 mm/s at 240 Hz. This also remains a component result.
