@@ -157,6 +157,7 @@ from isaaclab_physx.physics.physx_manager import IsaacEvents, PhysxManager
 from build_bench import build
 from native_bench import Bench
 from hex_fit import hex_fit
+from contact_limits import contact_bounds
 
 
 def main():
@@ -294,6 +295,28 @@ def main():
                 results.setdefault(
                     "callback_error", "jaw exceeded physical joint range"
                 )
+            contact_data = contacts.get_contact_data(dt=base.physics_dt)
+            count = contact_data[4].numpy()
+            released = not np.any(count)
+            if not released:
+                force, pen = contact_bounds(
+                    contact_data[0].numpy(),
+                    contact_data[3].numpy(),
+                    count,
+                    contact_data[5].numpy(),
+                )
+                peaks = results.setdefault(
+                    "protected_contact_peaks", dict(force_n=0.0, penetration_m=0.0)
+                )
+                peaks["force_n"] = max(peaks["force_n"], force)
+                peaks["penetration_m"] = max(peaks["penetration_m"], pen)
+                # Every intended and unintended pair is subject to both of these
+                # outer limits. Absence of a violation is not a room damage grade.
+                if force > 250 or pen > 0.002:
+                    results.setdefault(
+                        "callback_error",
+                        f"protected contact exceeded universal limit at tick {results['physics_ticks']}: {force:.3f} N, {pen:.6f} m",
+                    )
             violated = powered.observe(
                 results["physics_ticks"],
                 r["actuator_n"],
@@ -301,7 +324,7 @@ def main():
                 r["st"],
                 r["st"] + r["nt"],
                 r["stop_n"],
-                not np.any(contacts.get_contact_data(dt=base.physics_dt)[4].numpy()),
+                released,
                 abs(r["angular_speed"]) <= 2 and abs(r["piston_speed"]) <= 0.005,
             )
             if violated:

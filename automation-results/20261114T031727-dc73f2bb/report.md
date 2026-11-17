@@ -2,6 +2,9 @@
 
 Status: **blocked**
 
+2026-11-17 추가 실험에서 원래 나사·너트 물성으로 양방향 하중, 가압 중 탄성 복귀, 고의 풀림 감지를 검증했다. 계측 작업대는 세 번의 개폐를 240 Hz와 480 Hz에서 통과했다. YAM의 실제 공구 조작 결과는 별도로 기록하며, 전체 데모와 대회 점수는 아직 미확정이다. [실험 결과](../../component-studies/drg80-thread-lock/measurements/robot-load-qualification.json) · [Brev 재실행 방법](../../component-studies/drg80-thread-lock/task/workcell/README.md).
+
+
 사용자 요청 원문:
 좋아. 이제 인스턴스를 다시 켜고 첫 태스크를 만들어보자.
 필요한 CLI 인증부터 확인하고, 로봇 조립·데이터센터 정비 분야에서 산업 근거가 있고 기존 제출과 겹치지 않는 후보를 골라 제출 전 검토 단계까지 진행해줘.
