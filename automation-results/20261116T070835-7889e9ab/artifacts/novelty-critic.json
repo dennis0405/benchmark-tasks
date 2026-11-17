@@ -1,29 +1,29 @@
 {
   "verdict": "pass",
   "findings": [
-    "The selected objective is clear and industrially grounded: physically screen dry ceramic finishing media into a receiver while retaining all metal washers, preventing spill, contamination, loss, and damage, and releasing the screen stably. Raytech identifies manual screens for separating parts from media and warns that excessive separation motion can damage uncushioned parts: https://www.raytech-ind.com/media/wysiwyg/raytech/RaytechCatalog.pdf and https://raytech-ind.com/the-art-and-science-of-mass-finishing.",
-    "The essential tested ability is orientation-dependent, aperture-mediated separation of mixed rigid bodies, including bimanual load sharing, controlled agitation, selective retention, and safe release. It is not merely pouring, appearance sorting, or a prescribed shaking sequence. The proposed score has observable partial outcomes and explicit irreversible spill/loss/damage conditions; physics-validation tests remain separate from grading.",
-    "Catalog coverage is internally complete: catalog_total=2413, required_total=703, required_compared=703, with all 703 required active comparisons recorded as distinct. The remaining 1710 records are retained archival references rather than active novelty claims.",
-    "PR-684, “Add sift-soil-through-a-garden-sieve task” (https://github.com/robocurve/benchmark-tasks/pull/684), has substantial actual ability overlap: lifting and shaking a bimanual sieve so smaller bodies pass through while larger bodies remain, followed by support replacement. It is not novel relative to the candidate and is not relabeled distinct. It is nonblocking only because the catalog verifies it as closed, unmerged, other-team, and not board-required; its archival record correctly says it is retained history and not certified distinct.",
-    "All six required pinned suites were covered from their definition manifests and original registry/source files. Closest named tasks are LIBERO “put_the_cream_cheese_in_the_bowl”; RoboCasa “ShakePan” and “DrainVeggies”; SimplerEnv “PutOnInSceneEnv”; BEHAVIOR “clean_a_sieve-0” and “pouring_water_in_a_glass-0”; DataCenterBench “DC-join — Join the Ethernet plug and coupler”; and RoboDojo “pour_balls_into_vase.” The strongest current-suite neighbor is RoboDojo’s multi-body pouring task, but it transfers one homogeneous population and does not test aperture-based classification with simultaneous retention of a second population. Original suite repositories include https://github.com/Lifelong-Robot-Learning/LIBERO, https://github.com/robocasa/robocasa, https://github.com/simpler-env/SimplerEnv, https://github.com/StanfordVL/BEHAVIOR-1K, and https://github.com/robodojo-benchmark/RoboDojo.",
-    "This pass is limited to the ideation novelty gate. Native aperture geometry, passage/bridging/release behavior, washer retention, spill controls, YAM reach and contact traces, demos, scorer behavior, and portability remain mandatory downstream gates and are not claimed as completed."
+    "The ideation novelty gate is complete for the configured Google Sheet scope only: all 543 pending/accepted rows were compared, with 543 sheet-summary reviews and latest-source inspection of all 14 plausible or unclear rows. The four blank-summary rows (PRs 2207–2210) are included in those latest-source reviews; no read errors, overlap, or unresolved ambiguity remains. Sheet-summary evidence is correctly retained as weaker than original-rubric verification.",
+    "The closest catalog tasks remain meaningfully distinct: PR-520 “Cap a cocktail shaker and shake it with both hands without spilling,” PR-740 “Hold a vial up to a counting tray’s chute…,” PR-1156 “Mix the two layers in a separatory funnel,” PR-1436 “Free the ice cubes,” PR-1592 “Pour and sort mixed coins,” PR-2048 “Lift each gnocchi…with a slotted spoon,” and PR-2130 “Empty the sink strainer into the bin.” None tests aperture-mediated separation of an intermixed batch while retaining the larger workpieces in the manipulated screen. Catalog source: https://docs.google.com/spreadsheets/d/1BhGPjoAtA9DEE7BU5Rr2pt2M--9q0IHlovTsIDCoLvk/edit?gid=823012646",
+    "All six required benchmark definition sets are pinned and covered by selector/registry-aware comparisons. Closest original tasks are LIBERO “put_the_cream_cheese_in_the_bowl,” RoboCasa “ShakePan” and “DrainVeggies,” SimplerEnv “PutOnInSceneEnv,” BEHAVIOR “clean_a_sieve-0” and “pouring_water_in_a_glass-0,” DataCenterBench “DC-join — Join the Ethernet plug and coupler,” and RoboDojo “pour_balls_into_vase.” RoboDojo supplies substantive many-body pouring overlap, but none of these tasks tests selective physical passage of one intermixed population while retaining another.",
+    "The selected objective and essential mechanism are clear: bimanual load sharing, physical agitation of a rigid apertured screen, orientation-dependent passage of eight free ceramic-media bodies, retention of two free steel washers, support reseating, release, and a fresh three-second dwell. Novelty does not rest on color, layout, object naming, or a prescribed motion sequence.",
+    "Industrial relevance is source-grounded by Raytech’s manual sifting screens and media-separation guidance: https://www.raytech-ind.com/media/wysiwyg/raytech/RaytechCatalog.pdf, https://raytech-ind.com/manual-separating.html, and https://raytech-ind.com/the-art-and-science-of-mass-finishing. This pass is limited to ideation novelty and makes no downstream physics, implementation, scorer, demo, or feasibility-certification claim."
   ],
   "evidence_paths": [
     "artifacts/selected.json",
     "artifacts/novelty.json",
     "artifacts/benchmark-novelty-selection.json",
     "artifacts/benchmark-definition-coverage.json",
-    "artifacts/candidate-preflight.json",
     "input/catalog.json",
+    "input/sheet-novelty-batch.json",
+    "input/sheet-novelty-details.json",
     "input/benchmark-sources.json",
-    "input/operator-source-notes.json",
-    "input/sources.json",
-    "input/sources/s-b442a7fa63fcb80c.raw",
     "input/benchmark-corpora/LIBERO/manifest.json",
     "input/benchmark-corpora/RoboCasa/manifest.json",
     "input/benchmark-corpora/SimplerEnv/manifest.json",
     "input/benchmark-corpora/BEHAVIOR/manifest.json",
     "input/benchmark-corpora/DataCenterBench/manifest.json",
-    "input/benchmark-corpora/RoboDojo/manifest.json"
+    "input/benchmark-corpora/RoboDojo/manifest.json",
+    "input/sources/s-b442a7fa63fcb80c.json",
+    "input/sources/s-a3efcebbecba0048.json",
+    "input/sources/s-855e796b5a3f8ecc.json"
   ]
 }

@@ -1,8 +1,8 @@
 {
-  "slug": "dry-finishing-media-screen-separation-7889e9ab",
-  "objective": "Use a full-scale manual separating screen to recover dry ceramic finishing media into a receiver while retaining every representative steel washer, then return and fully release the screen on both supports. This frozen rigid-PhysX TaskContract specifies later construction and qualification; it does not claim that the full scene or robot task has passed.",
-  "instruction": "Pour the dry mixture into the separating screen. Manipulate the screen to recover the ceramic media in the receiver while retaining every metal washer. Return the screen to both supports and release it.",
-  "industrial_mapping": "Provisional category: Impact on jobs. Raytech documentation identifies manual screens as equipment for separating manufactured parts from finishing media and warns that excessive separation motion can damage uncushioned parts. The tested ability is controlled cup pouring followed by bimanual load sharing, orientation-dependent aperture passage, bridge release, workpiece retention, spill prevention, supported replacement, and collision-free release. Visual sorting, homogeneous transfer, and generic pouring are alternatives but do not exercise physical size/orientation separation. Occupational-scale importance and final novelty remain subject to independent review; industrial setting alone is not treated as novelty.",
+  "slug": "bimanual-tab-sieve-separation-7889e9ab",
+  "objective": "Starting with eight free rigid ceramic finishing-media bodies and two free rigid steel washers settled together inside a supported manual screen, physically grasp both tabs, lift and manipulate the screen so the media passes through its circular apertures into the receiver while both washers remain in the screen, then reseat the screen on both supports, fully release it, and preserve the completed state for 3 seconds. This frozen rigid-PhysX contract specifies later construction and qualification; it does not claim that the current scaffold or square-aperture prototype passes.",
+  "instruction": "Separate the ceramic finishing media into the receiver while retaining both steel washers in the screen. Return the screen to both supports and release it.",
+  "industrial_mapping": "Provisional category: Impact on jobs, currently blocked on importance eligibility. O*NET record s-474cfcd0ccaa5ecb reports 602,000 Inspectors, Testers, Sorters, Samplers, and Weighers and lists grading or sorting products by size, weight, color, or other specifications as regular work. Raytech records s-b442a7fa63fcb80c, s-a3efcebbecba0048, and s-855e796b5a3f8ecc document manual screens for separating manufactured parts from finishing media and warn that excessive motion can damage exposed parts. These sources establish a real industrial method, but they do not establish that this specific manual parts/media screening operation is regularly performed by more than 500,000 US workers. Therefore the review prompt's Impact-on-jobs threshold is unresolved and no eligibility success is asserted. The tested ability remains bimanual load sharing, orientation-dependent many-body passage, retained-workpiece control, spill avoidance, loaded-screen reseating, and collision-free release—not visual classification, ordinary pouring, pick-and-place, or a prescribed shaking strategy.",
   "run_steps": 4800,
   "timing": {
     "control_hz": 20,
@@ -12,19 +12,19 @@
   },
   "physics_checks": [
     {
-      "name": "reset_screen_translation_envelope_3s_max",
+      "name": "initial_screen_translation_envelope_3s_max",
       "operator": "<=",
       "threshold": 0.002,
       "unit": "m"
     },
     {
-      "name": "reset_screen_rotation_envelope_3s_max",
+      "name": "initial_screen_rotation_envelope_3s_max",
       "operator": "<=",
       "threshold": 1,
       "unit": "deg"
     },
     {
-      "name": "reset_batch_linear_speed_diagnostic_max",
+      "name": "initial_loose_body_speed_3s_max",
       "operator": "<=",
       "threshold": 0.01,
       "unit": "m/s"
@@ -36,49 +36,37 @@
       "unit": "normalized_score"
     },
     {
-      "name": "untouched_valid_admission_count_exact",
+      "name": "untouched_initial_receiver_media_count_exact",
       "operator": "==",
       "threshold": 0,
-      "unit": "assemblies"
+      "unit": "bodies"
     },
     {
-      "name": "clear_aperture_width_lower_bound",
+      "name": "circular_aperture_clear_diameter_min",
       "operator": ">=",
       "threshold": 0.0125,
       "unit": "m"
     },
     {
-      "name": "clear_aperture_width_upper_bound",
+      "name": "circular_aperture_clear_diameter_max",
       "operator": "<=",
       "threshold": 0.0129,
       "unit": "m"
     },
     {
-      "name": "complete_aperture_count_exact",
+      "name": "circular_aperture_count_exact",
       "operator": "==",
       "threshold": 261,
       "unit": "holes"
     },
     {
-      "name": "support_cap_radial_clearance_from_perforated_disk_min",
+      "name": "support_post_perforated_region_clearance_min",
       "operator": ">=",
       "threshold": 0.004,
       "unit": "m"
     },
     {
-      "name": "screen_receiver_initial_geometry_clearance_min",
-      "operator": ">=",
-      "threshold": 0.001,
-      "unit": "m"
-    },
-    {
-      "name": "feed_cup_initial_geometry_clearance_min",
-      "operator": ">=",
-      "threshold": 0.001,
-      "unit": "m"
-    },
-    {
-      "name": "packed_content_initial_geometry_clearance_min",
+      "name": "initial_dynamic_geometry_clearance_min",
       "operator": ">=",
       "threshold": 0.0005,
       "unit": "m"
@@ -114,76 +102,52 @@
       "unit": "fraction_of_20_trials"
     },
     {
-      "name": "screen_fixture_penetration_depth_max",
+      "name": "screen_fixture_penetration_depth_episode_max",
       "operator": "<=",
       "threshold": 0.001,
       "unit": "m"
     },
     {
-      "name": "dynamic_body_penetration_depth_max",
+      "name": "dynamic_body_penetration_depth_episode_max",
       "operator": "<=",
       "threshold": 0.0005,
       "unit": "m"
     },
     {
-      "name": "screen_external_step_average_contact_force_max",
+      "name": "screen_external_step_average_contact_force_episode_max",
       "operator": "<=",
       "threshold": 180,
       "unit": "N"
     },
     {
-      "name": "washer_joint_diagnostic_step_average_force_upper_bound",
-      "operator": "<",
-      "threshold": 200,
-      "unit": "N"
-    },
-    {
-      "name": "native_joint_break_callback_error_count_exact",
+      "name": "unexpected_native_joint_break_event_count_exact",
       "operator": "==",
       "threshold": 0,
-      "unit": "errors"
+      "unit": "events"
     },
     {
-      "name": "derived_washer_joint_translation_residual_max",
-      "operator": "<=",
-      "threshold": 0.0005,
-      "unit": "m"
-    },
-    {
-      "name": "derived_washer_joint_rotation_residual_max",
-      "operator": "<=",
-      "threshold": 0.5,
-      "unit": "deg"
-    },
-    {
-      "name": "controlled_joint_lower_limit_margin_min",
+      "name": "controlled_joint_lower_limit_margin_episode_min",
       "operator": ">=",
       "threshold": 0.02,
       "unit": "rad"
     },
     {
-      "name": "controlled_joint_upper_limit_margin_min",
+      "name": "controlled_joint_upper_limit_margin_episode_min",
       "operator": ">=",
       "threshold": 0.02,
       "unit": "rad"
     },
     {
-      "name": "bilateral_screen_grip_duration_min",
+      "name": "simultaneous_bilateral_tab_contact_continuous_duration_min",
       "operator": ">=",
       "threshold": 0.5,
       "unit": "s"
     },
     {
-      "name": "loaded_screen_lift_height_min",
+      "name": "loaded_screen_lift_above_reset_support_height_min",
       "operator": ">=",
       "threshold": 0.03,
       "unit": "m"
-    },
-    {
-      "name": "loaded_screen_pose_stationary_hold_duration_min",
-      "operator": ">=",
-      "threshold": 3,
-      "unit": "s"
     },
     {
       "name": "released_gripper_task_clearance_min",
@@ -198,245 +162,204 @@
       "unit": "writes"
     },
     {
-      "name": "camera_rgb_valid_pixel_fraction_min",
+      "name": "camera_rgb_episode_worst_frame_valid_pixel_fraction_min",
       "operator": ">=",
       "threshold": 0.99,
-      "unit": "fraction_per_frame"
+      "unit": "fraction"
     },
     {
-      "name": "camera_depth_valid_pixel_fraction_min",
+      "name": "camera_depth_episode_worst_frame_valid_pixel_fraction_min",
       "operator": ">=",
       "threshold": 0.99,
-      "unit": "fraction_per_frame"
+      "unit": "fraction"
     },
     {
-      "name": "camera_required_asset_visibility_fraction_min",
+      "name": "camera_required_asset_visibility_control_frame_fraction_min",
       "operator": ">=",
       "threshold": 0.8,
-      "unit": "fraction_of_control_frames"
+      "unit": "fraction"
     },
     {
-      "name": "paired_refinement_recovery_fraction_delta_max",
+      "name": "paired_refinement_20_pair_recovery_fraction_delta_max",
       "operator": "<=",
       "threshold": 0.02,
       "unit": "absolute_fraction"
     },
     {
-      "name": "paired_refinement_immutable_event_type_delta_exact",
+      "name": "paired_refinement_20_pair_hard_failure_type_delta_exact",
       "operator": "==",
       "threshold": 0,
       "unit": "event_types"
     }
   ],
   "damage_rules": [
-    "Freeze at reset media assemblies M={m01…m24}, washer assemblies A={a01…a04}, washer segments WS={a01s01…a04s04}, and collider sets SC, RC, SU, FC, GR, ENV for screen, receiver, supports, feed cup, robot/grippers, and table/floor. Count an intact washer assembly once when computing admitted mass.",
-    "For every completed production physics interval k: resolve physics; read native poses, velocities, joint-break events, derived joint-frame states, signed distances, contacts, and impulses; convert pair-summed impulse J in N·s to step-average force |J|/(1/240 s) in N; advance admission and passage state; latch immutable events; recompute containment, recovery, support, clearance, and dwell; then compute score. Process observation O_57600 before timeout scoring. A 20 Hz report uses the latest completed physics observation and is not evidence of substep behavior.",
-    "Use delta=0.0005 m. Signed distance is positive when disjoint, zero at touch, and negative in penetration. For a moving convex section crossing the screen-floor slab, aperture_margin is signed distance inside its selected fixed aperture polygon and rib_clearance is swept signed distance from every physical rib. Genuine passage requires both minima >=-delta under conservative advancement with rotational subdivision limiting unobserved surface travel to delta/2. Endpoint-only or center-only passage is invalid.",
-    "Admission state is FEED→EXITED_FEED→ENTERED_SCREEN. EXITED_FEED requires an outward swept crossing through the physical cup mouth. ENTERED_SCREEN requires a subsequent inward swept crossing into the screen retained volume. Continuous cup-to-screen contact is allowed and no artificial free-flight sample is required. Non-mouth departure, receiver entry before admission and genuine aperture passage, inconsistent washer-segment admission, or unauthorized pre-admission separation is an immediate immutable hard failure.",
-    "Receiver containment requires every transformed convex part and conservatively swept edge to remain inside receiver free volume RV, which excludes support-post intrusions and allows intended floor or wall support overlap no deeper than delta. Over-rim exit, bottom escape, wall penetration deeper than delta, invalid entry, later exit, off-path loss, contamination, or deterministic inaccessibility permanently revokes eligibility; re-entry never clears a latched event.",
-    "A medium gains persistent causal_passage only after valid admission and genuine whole-collider aperture passage. Its receiver eligibility is recomputed at every physics sample and is revoked by loss of containment or any immutable prerequisite.",
-    "Direct-contact provenance is evaluated on GR–M and GR–WS collider pairs. contact_pair(g,b,k)=1 iff the completed post-solve sample contains positive normal impulse or signed distance <=0. A segment begins on the first true sample, accumulates consecutive completed intervals, and resets on the first false sample. Twelve consecutive intervals, 0.05 s at 240 Hz, latch invalid provenance before that sample is scored. Shorter incidental contact is exempt only from this provenance rule and cannot erase spill, staging, contamination, damage, or loss.",
-    "Unauthorized staging latches when an individual medium or washer segment is supported by GR, SU, or ENV while outside both FC and SC for 12 consecutive completed physics intervals. Reset and episode end clear unfinished segments only between trials, never during a trial.",
-    "Screen retained volume SV is bounded by authored inner rim surfaces and physical floor/rib top surfaces. full_inside_screen requires every transformed convex part and swept edge to have inward side margin >=-delta and support clearance >=-delta, with no crossing through a rib, non-aperture floor, or floor bottom deeper than delta. A registered genuine aperture passage alone uses the separate swept-crossing rule. Over-rim exit or invalid floor/rib crossing latches media spill or washer loss.",
-    "Receiver contamination uses frozen contaminant set C=SC∪SU∪FC∪GR∪ENV∪WS, excluding RC and M. It latches when a contaminant has positive-volume intersection with RV eroded inward by delta. Boundary touch or intended supported overlap no deeper than delta is not contamination.",
-    "Each washer comprises four rigid arc segments joined by four assumed breakable fixed joints with 200 N diagnostic limits. washer_damage latches on any native PhysX JOINT_BREAK event or, after external contact ends and all segments remain below 0.01 m/s linear and 0.05 rad/s angular speed for 0.5 s, a joint-frame translation residual >0.0005 m or rotation residual >0.5 deg throughout that settling window. Any washer damage is a permanent hard failure with score zero. Force threshold alone is diagnostic and never establishes fracture or real plastic deformation.",
-    "Workspace WV={-0.55<=x<=0.55,-0.05<=y<=0.75,-0.02<=z<=1.20} m. A collider is inaccessible when any vertex leaves WV, any collider falls below z=-0.02 m, or the complete collider is physically trapped while all four frozen approach prisms are obstructed. IK failure alone is not inaccessibility.",
-    "Any post-reset pose or velocity write to M, WS, SC, RC, SU, or FC; fake grasp weld; required-collider disablement; particle or rigid-body freezing; hidden restoring force; teleport; or unlogged physics substitution is a permanent hard failure. Breakage, spill, loss, excessive force, penetration, and escape must remain physically possible.",
-    "A loaded screen is pose-stationary for a window iff its position remains within a 0.002 m diameter envelope and orientation within a 1 deg geodesic envelope for every completed 240 Hz sample in that window. Instantaneous native linear and angular velocities are logged separately and are not replaced by 20 Hz pose differences.",
-    "Reset all accumulators, causal records, event segments, damage flags, fault latches, eligibility flags, and dwell clocks between trials. Event duration equals the number of completed true intervals times dt. Camera validity is sampled on rendered 20 Hz frames; collision, contact, passage, force, damage, and dwell predicates are sampled after every completed physics interval."
+    "At each reset freeze media set M={m01,…,m08}, washer set W={w01,w02}, and collider-body sets SC, RC, SU, GR, RB, and ENV for screen, receiver, supports, grippers, remaining robot, and table/floor. Each washer is one free rigid compound ring. All extrema, passage and containment histories, adverse-event latches, dwell counters, and accumulators reset only at trial start and never during an episode.",
+    "For every completed production physics interval k, in order: resolve physics; read native poses, velocities, joint states, joint-break events, signed distances, contacts, and pair impulses; update swept passage and containment; latch adverse events; recompute recovery, retention, support, and release; update dwell; compute score. Production dt=1/240 s. O_57600 is processed before timeout. A 20 Hz report uses the latest completed physics observation and does not establish behavior between physics samples.",
+    "Let delta=0.0005 m. Signed distance d_signed(A,B,k) is positive when disjoint, zero at contact, and negative in penetration; p(A,B,k)=max(0,-d_signed). The fixture metric is the maximum across all completed intervals and unordered pairs with one body in SC and the other in RC∪SU∪ENV, excluding authored support contacts no deeper than delta. The dynamic metric is the corresponding maximum for pairs involving M∪W∪SC∪GR∪RB, excluding those supports and valid media-to-receiver-floor support. Batch results are the worst trial values.",
+    "For external screen-body pairs P={{a,b}:a∈SC,b∈RC∪SU∪GR∪RB∪ENV∪M∪W}, excluding SC self-collision, vector-sum all native contact impulses for each pair per interval before magnitude: J_pair(k)=|Σc J_c(k)|. Then F_screen(k)=Σpair∈P J_pair(k)/dt in N. The episode metric is max_k F_screen(k), and batch qualification uses the maximum episode value. This is qualification-only; force alone never changes score.",
+    "For controlled joint j, lower_margin(j,k)=q_j(k)-q_lower,j and upper_margin(j,k)=q_upper,j-q_j(k). Each metric is the minimum across every finite-limit controlled arm joint and every completed interval, then the minimum across qualification trials. Explicitly list excluded continuous joints. Joint margins validate mechanics but do not grade strategy.",
+    "Initial stability metrics use all completed intervals from O_1 through O_720 inclusive, exactly 3.000 s at 240 Hz. Translation and rotation are maximum deviations from the reset screen pose; loose-body speed is max over every body in M∪W and every interval in that window. The untouched score and receiver count are evaluated at O_720 after no robot actions.",
+    "Simultaneous bilateral tab contact is true at k only when at least one left-gripper collider and at least one right-gripper collider each have a resolved nonzero normal contact impulse with their respective connected tab collider during the same interval. The metric is the longest uninterrupted run of true intervals times dt, not cumulative contact. Lift height is max_k[z_floor_center(k)-z_floor_center(reset)], where the reset reference is captured after valid settling while both support groups contact the screen; qualification requires at least one medium and both washers screen-contained throughout the rise to the maximum.",
+    "Camera RGB validity for frame f is finite, in-range RGB pixels divided by all pixels; depth validity is finite positive in-range depth pixels divided by all pixels. Episode RGB and depth metrics are the minimum over every 20 Hz control frame O_12,O_24,…,O_57600; batch values are the minimum over all qualification trials. Required-asset visibility is the fraction of those control frames in which screen, receiver, both tabs, both support groups, both grippers, both washers, and every unrecovered medium each occupy at least 16 non-occluded rendered pixels; recovered media may be represented by a visible receiver and trace-verified containment.",
+    "Matched-rate qualification consists of 20 frozen seed/action pairs. Each pair replays identical time-indexed guarded joint targets for 240 s at 240 Hz and 480 Hz, with each 20 Hz command held for respectively 12 and 24 completed physics intervals. For pair p, recovery delta is |r240,p-r480,p|; report max over 20 pairs. Hard-failure type delta is the cardinality of the symmetric difference between the union of named hard-failure types observed across all 20 production trials and the corresponding union across all 20 refinement trials. No pair may be discarded or replaced.",
+    "Genuine passage requires an entire media collider to move from above the physical screen-floor slab to below it through exactly one indexed circular aperture, with swept aperture margin and swept rib clearance at least -delta. Adaptive translational and rotational subdivision must keep maximum unobserved surface travel at or below delta/2. Endpoint-only, center-only, floor, rib, solid-annulus, or tunneled crossings are invalid and permanently hard-fail.",
+    "Receiver-contained(i,k) requires every transformed convex component and conservatively swept edge of medium i to lie inside receiver free volume RV, excluding support-post intrusions, with no wall or floor penetration deeper than delta. Eligibility begins only after genuine passage and is recomputed every physics sample. It is permanently revoked if the medium exits RV, spills, follows an invalid path, or participates in a hard failure.",
+    "Screen-contained(b,k) requires every convex component and swept edge of b to remain inward of the authored inner rim and above physical floor/rib surfaces within delta. Genuine aperture passage is the only permitted downward media exit. A washer crossing the rim or floor, entering RV, or otherwise leaving the screen is washer loss. A medium crossing the rim or entering ENV outside RV is media spill. Re-entry never clears a latch.",
+    "Receiver contamination latches when a collider in C=SC∪SU∪GR∪RB∪ENV∪W has positive-volume intersection with RV eroded inward by delta. Boundary contact and intended receiver-floor support overlap no deeper than delta are not contamination.",
+    "Damage latches only from an observable physical outcome: native JOINT_BREAK involving robot or task mechanism, fractured or disconnected authored geometry, or permanent loss of a required body. Action count, hand identity, order, contact duration, peak force alone, and arbitrary impulse windows do not establish damage.",
+    "Screen-supported requires resolved contact with both distinct support groups, screen-floor height within 0.002 m of the reset support reference, |roll|≤3 deg, |pitch|≤3 deg, and screen-center projection inside x=[0.04,0.56], y=[-0.10,0.10] m. Released requires minimum signed distance from every gripper collider to SC∪M∪W of at least 0.060 m.",
+    "Workspace WV={-0.55≤x≤0.55,-0.05≤y≤0.75,-0.02≤z≤1.20} m. Inaccessibility applies only to SC, W, and unrecovered media U(k)={i∈M:eligible(i,k)=0}; correctly recovered media in RV are excluded. A subject is inaccessible if any collider vertex leaves WV, any collider point falls below z=-0.02 m, or its complete collider lies inside a closed fixture region while all four frozen 0.08×0.08×0.20 m approach prisms along +z,-x,+x,-y have positive-volume intersection with non-target collision geometry. CPU IK failure alone is not inaccessibility.",
+    "Any post-reset pose or velocity write to M, W, SC, RC, or SU; fake grasp weld; required-collider disablement; rigid-body freezing; hidden restoring force; teleport; or unlogged physics substitution is a permanent hard failure. Spill, loss, breakage, penetration, escape, and excessive contact must remain physically possible and be observed rather than prevented by action-validity logic."
   ],
   "assets": [
-    "Independently authored full-scale separating screen: sourced outer diameter 0.3683 m and depth 0.0635 m; assumed 0.003 m walls/floor, 0.150 m perforated radius, 261 square apertures of 0.0127 m clear width, 0.003 m ribs on 0.0157 m pitch, 0.40 kg mass, and two connected grasp tabs.",
-    "Twenty-four free rigid ceramic angle-cut media bodies: sourced diameter 0.009525 m and axial envelope 0.022225 m; assumed 15 deg cuts and 2500 kg/m^3 density; frozen mesh mass approximately 0.003482 kg each.",
-    "Four representative steel washer assemblies: 0.030 m outer diameter, 0.008 m bore, 0.004 m thickness, density 7850 kg/m^3, four rigid arc segments, and four breakable fixed joints; these are disclosed representative workpieces rather than a claimed commercial SKU.",
-    "Rigid receiver 0.450 by 0.400 by 0.050 m with 0.005 m floor/walls, rooted at world (0.300,0,0.750) m; its scoring free volume excludes the authored support-post intrusions.",
-    "Two fixed support assemblies, each using two 0.008 m diameter posts at screen-relative x=±0.125 m and y=±0.115 m, plus a 0.280 by 0.012 by 0.003 m bottom bar embedded in the receiver floor. The screen floor top is nominally z=0.813 m and rim top z=0.8765 m.",
-    "Rigid open-mouth feed cup: 0.078 m outer diameter, 0.100 m height, 0.003 m walls/floor, 0.10 kg assumed mass, initially centered at world (0.160,0.360,0.800) m with a physically closed bottom.",
-    "Pinned public YAM asset and guarded 14D joint-action interface. Production physics is 240 Hz with 20 Hz actions held for 12 completed intervals; paired refinement is 480 Hz with the identical seed and time-indexed action sequence.",
-    "Industrial evidence preserved from Raytech manual-screening, ceramic-media, and separation guidance. Every third-party asset must receive an explicit license entry; task-specific geometry is independently authored."
+    "Independently authored full-scale rigid manual screen: 368.3 mm outer diameter, 63.5 mm depth, 3 mm floor/ribs, 261 circular apertures with 12.7 mm nominal clear diameter, solid annular support region, and two connected grasp tabs.",
+    "Eight independent free rigid ceramic angle-cut-cylinder media bodies, each with 9.525×22.225 mm nominal envelope, assumed 15-degree end cuts, and assumed density 2500 kg/m^3.",
+    "Two independent free rigid compound-ring steel washers, each 30 mm outer diameter, 8 mm bore, 4 mm thickness, and assumed density 7850 kg/m^3.",
+    "Rigid receiver with 50 mm-high walls and free volume sufficient for all eight media, plus two distinct support assemblies whose post pairs contact only the screen's solid annulus and obstruct no aperture.",
+    "Pinned public YAM dual-arm asset and guarded 14D left-seven/right-seven joint-action interface. Each 20 Hz production action is held for 12 completed 240 Hz intervals; refinement holds it for 24 completed 480 Hz intervals.",
+    "Industrial records s-b442a7fa63fcb80c, s-a3efcebbecba0048, s-855e796b5a3f8ecc, and occupational record s-474cfcd0ccaa5ecb. Every third-party asset requires an explicit license entry; task geometry is independently authored."
   ],
   "approximations": [
-    "Only dry rigid-body separation is modeled. Polishing, abrasion, liquid, wet cohesion, dust, wear, lubrication, and actual plastic deformation are excluded.",
-    "Aperture layout, mass, tabs, support fixtures, receiver, cup, media cuts/density, representative washers, segmented damage model, 200 N joint threshold, and all safety tolerances are disclosed engineering assumptions rather than manufacturer CAD or calibrated product limits.",
-    "Uncalibrated contacts use ceramic/polymer static/dynamic friction 0.50/0.35, steel/polymer 0.45/0.35, media/media 0.40/0.30, restitution 0.05, contact offset 0.00015 m, rest offset 0 m, and 32/8 solver position/velocity iterations. Any higher-friction grasp zone must be visibly authored and disclosed as a textured handle surface.",
-    "The 180 N external-force limit, 0.5 mm dynamic penetration limit, 1 mm fixture penetration limit, 2 mm/1 deg pose-stationarity envelope, 60 mm release clearance, and three-second dwell are explicit conservative assumptions requiring native qualification.",
-    "delta=0.0005 m is solely a numerical tolerance. It does not enlarge apertures, authorize passage through ribs or solid floor, permit center-only containment, or excuse receiver-wall breach.",
-    "Apertures are indexed lexicographically by grid row then column; only complete 0.0127 m squares whose closure lies within the 0.150 m perforated circle are retained. The central aperture AP(0,0) is used for diagnostics. World rotations use active extrinsic Rz(yaw)Ry(pitch)Rx(roll).",
-    "End-first diagnostics use yaw=[0,18,…,342] deg, the medium long axis within 5 deg of gravity, initial collider clearance >=0.001 m, zero velocity, and 1.0 s simulation. Success requires genuine whole-collider passage. Transverse trials use the same yaw list with the long axis horizontal and otherwise identical conditions.",
-    "Bridge diagnostics begin from the 20 transverse transforms. A seed qualifies after support by at least two distinct ribs for 0.5 s. Then a native hinge drive commands theta=5 deg*sin(2*pi*t) for 2 s and returns to zero. Use seeds 788901 upward until exactly 20 qualified trials exist; retain every rejected seed and reason.",
-    "Washer escape uses ten frozen orientations per washer over AP(0,0), initial clearance >=0.001 m, zero velocity, and 2.0 s gravity simulation. Any segment crossing below the screen floor bottom is escape. Bore-lodging uses 20 fixed media orientations and requires full-collider intersection with the exact 8 mm bore prism for 0.5 consecutive seconds without robot or external constraint.",
-    "The production layout is a proposed full-task design, not a validated result. Actual generated-CAD clearances, installed-URDF full-rotation IK, joint margins, whole-path collisions, cup packing, native settling, screen/support contact, and receiver capacity must pass before robot-demo development.",
-    "The external-force diagnostic closes both grippers symmetrically on the tabs for 0.5 s, raises the screen reference 0.03 m over 0.5 s, and holds it for 3 s using guarded 20 Hz joint targets. Force is max_k |sum J_pair,k|/dt over SC contacts against GR, SU, and ENV.",
-    "The signed-distance manifest includes SC–SU, SC–FC, SC–RC, SC–ENV, SC–GR, M–SC, M–FC, M–RC, M–SU, M–ENV, M–GR, distinct M–M, M–WS, WS–SC, WS–FC, WS–RC, WS–SU, WS–ENV, WS–GR, and applicable WS–WS pairs. Only same-rigid-body, authored adjacent joined segments, and pinned YAM self-filter pairs are excluded. Missing or unexpectedly filtered required pairs fail qualification.",
-    "Production and 480 Hz refinement trials replay identical seeds and time-indexed guarded joint actions. Refinement is a validation run, not an alternate scoring opportunity. A successful expert may terminate after genuine full-score dwell; 4800 controls is the maximum episode length.",
-    "Existing empty-screen evidence establishes only a 240 Hz native component result: 35.06 mm lift, 3.2 s pose-stationary hold, and 80.17 mm terminal clearance. It does not establish loaded-scene feasibility, instantaneous-velocity stationarity, refinement equivalence, scoring correctness, or full-task success."
+    "Only dry rigid-body separation is represented. Polishing, abrasion, liquid compound, wet cohesion, dust, wear, lubrication, fracture mechanics, and plastic deformation are excluded.",
+    "Aperture layout, rib width, pitch, screen mass, tabs, fixtures, receiver, media cuts and density, washers, and tolerances are disclosed engineering assumptions rather than manufacturer CAD or calibrated product limits.",
+    "Uncalibrated contacts initially use ceramic/polymer static/dynamic friction 0.50/0.35, steel/polymer 0.45/0.35, media/media 0.40/0.30, restitution 0.05, contact offset 0.00015 m, rest offset 0 m, and 32/8 solver position/velocity iterations. Any higher-friction grasp surface must be visible and disclosed.",
+    "The 180 N force diagnostic, 0.5 mm dynamic penetration bound, 1 mm fixture penetration bound, 2 mm support-height tolerance, 60 mm release clearance, and 3 s dwell are conservative explicit assumptions requiring native qualification, not sourced product limits.",
+    "The numerical tolerance delta=0.0005 m does not enlarge apertures, permit center-only containment, authorize rib/floor passage, or excuse receiver-wall breach.",
+    "Circular apertures must be exact CAD cylinders or approximations whose measured inscribed diameters remain 12.5–12.9 mm. The earlier square-hole empty-screen prototype is feasibility evidence only and cannot certify this scene.",
+    "End-first passage diagnostics use 20 evenly spaced yaw angles, long axis within 5 degrees of gravity, at least 0.001 m initial clearance, zero initial velocity, and 1.0 s simulation. Transverse trials use the same yaw set with the long axis horizontal.",
+    "Bridge diagnostics begin from transverse transforms supported by at least two distinct ribs for 0.5 s, then apply a native 5-degree sinusoidal screen rotation for 2 s and return to zero. Every seed and result is preserved.",
+    "Washer escape testing uses 20 frozen orientations per washer, including edge-on and bore-hook configurations, at least 0.001 m initial clearance, zero velocity, and 2.0 s gravity simulation. Any escape blocks demo development.",
+    "The production layout remains proposed rather than validated. Circular-CAD clearances, loaded reset stability, unrestricted body motion, positive CAD mass and inertia readback, frictional grasping, retention, passage, receiver capacity, support contact, complete collision paths, camera validity, and matched-rate behavior must pass before demo development.",
+    "Production and refinement trials replay identical seeds and time-indexed guarded joint actions. Refinement is qualification-only, never an alternate scoring opportunity.",
+    "A scripted expert may read simulator poses, joint states, contacts, and scorer flags to plan normal guarded joint actions. Such reads do not alter model observations and do not authorize object-state writes, teleports, welds, collider disabling, freezing, or hidden forces.",
+    "Impact-on-jobs eligibility remains blocked until a source establishes that this specific operation is regular work for occupations totaling more than 500,000 US workers; the broad O*NET occupation count alone is not treated as proof."
   ],
-  "scoring_spec": "At reset freeze masses, collider manifests, SV, RV, aperture polygons, fixture exclusions, and approach prisms. Let M0 be total mass of the 24 media and four intact washer assemblies and MM0 the initial media mass. valid_admission(b)=1 only after b completes FEED→EXITED_FEED→ENTERED_SCREEN through the physical cup mouth and screen volume without a hard failure; continuous contact transfer is allowed. F=clamp(sum_b(m_b*valid_admission(b))/M0,0,1). causal_passage(i)=1 persistently only after valid admission and a genuine whole-collider aperture crossing satisfying swept aperture/rib rules. full_inside_screen is the all-convex-part and swept-edge SV predicate defined in damage_rules. eligible_receiver(i,k)=1 iff causal_passage(i)=1, every convex part and swept edge is inside RV with intended overlap no deeper than delta, and i has never spilled, exited RV, become inaccessible, entered by an invalid path, penetrated an RC wall deeper than delta, or incurred invalid provenance. Receiver-contained always means eligible_receiver=1, never a center test. complete_loading holds iff all 28 assemblies are validly admitted, every washer segment is full_inside_screen, and each medium is either full_inside_screen or eligible_receiver. r=clamp(sum_i(m_i*eligible_receiver(i,k))/MM0,0,1); eligibility is recomputed each physics sample and revoked when prerequisites fail. washer_retained requires all washer segments inside SV and all authored joints intact with no damage predicate. supported requires resolved contact with both distinct support groups, screen floor height within 0.002 m of the support plane, |roll|<=3 deg, |pitch|<=3 deg, and screen-center projection inside x=[0.04,0.56], y=[-0.10,0.10] m. clear requires signed distance from every gripper collider to SC∪M∪WS >=0.060 m. Hard failure H is any washer damage or loss, media spill, receiver contamination, invalid provenance, unauthorized staging, forbidden mutation, invalid/tunneled passage, or deterministic inaccessibility. Q=1 iff complete_loading, F=1, r>=0.98, washer_retained, supported, clear, and H=0. Dwell starts at k0 when Q first becomes true, with zero elapsed time on that sample. D=1 only after Q remains true for at least 720 consecutive completed 240 Hz intervals; any false prerequisite resets k0 and immediately revokes D. Base B=0.20F+0.70*clamp(r/0.98,0,1)+0.10D. Final score S=0 if H=1, otherwise S=B. Score is reported at 20 Hz from the latest completed physics sample, and O_57600 is processed before timeout. Observable reference states are: untouched=0; complete valid loading with zero recovery=0.20; 12 of 24 equal-mass media eligible with F=1 and D=0 gives 0.5571428571; r>=0.98 without dwell gives 0.90; valid released three-second dwell gives 1.00. Hand identity, action count, shake count, and action order are not graded.",
+  "scoring_spec": "At reset freeze media masses m_i and MM0=Σ_i m_i. causal_passage(i,k)=1 only after medium i completes genuine whole-collider passage through one physical circular aperture. eligible(i,k)=1 iff causal_passage(i,k)=1, receiver_contained(i,k)=1, and i has never spilled, exited RV, entered through an invalid path, or participated in a hard failure. Let r(k)=clamp(Σ_i m_i·eligible(i,k)/MM0,0,1). washer_retained(k)=1 iff both complete washer colliders are screen-contained and neither has ever been lost or entered RV. H(k) permanently becomes 1 after washer loss or receiver entry, media spill outside RV, receiver contamination, invalid or tunneled passage, native JOINT_BREAK, disconnected authored geometry, inaccessibility of SC/W/an unrecovered medium under the frozen predicate, forbidden mutation, fake weld, collider disablement, freezing, hidden force, teleport, or invalid reset. Recovered media inside RV cannot trigger inaccessibility. Q(k)=1 iff r(k)≥0.98, washer_retained(k)=1, screen_supported(k)=1, released(k)=1, and H(k)=0. Define consecutive_true(k)=consecutive_true(k-1)+1 when Q(k)=1 and 0 otherwise, initialized to 0 before O_1; the first qualifying completed interval counts as 1. D(k)=1 iff consecutive_true(k)≥720. Exactly 720 consecutive completed 240 Hz intervals equal 3.000 s. The timeout-full control has Q=1 for O_56881 through O_57600 inclusive, exactly 720 observations; O_56882 through O_57600 is only 719. If Q becomes false, D immediately returns to 0; prior dwell does not survive loss of support, release, recovery, retention, or any prerequisite. Let B(k)=0.90·clamp(r(k)/0.98,0,1)+0.10·D(k), and S(k)=0 when H(k)=1, otherwise B(k). Initial S is exactly 0. With eight equal-mass media, each eligible body contributes 0.90·(0.125/0.98)=0.1147959184 before saturation: four score 0.4591836735, seven score 0.8035714286, all eight without dwell score 0.90, and valid dwell scores 1.00. Report at 20 Hz from the latest completed physics state and process O_57600 before timeout. Hand identity, grasp choice, action count, shake count, and motion order are not graded. Paired-rate agreement and all force, penetration, camera, contact-duration, lift, and joint-margin checks are qualification-only and never alter S(k).",
   "required_controls": [
     {
       "name": "control_untouched_reset_zero",
       "expected_score": 0,
-      "reason": "Fresh reset has F=r=D=0 and no initial success."
+      "reason": "No medium has genuine passage or receiver eligibility at a valid untouched reset."
     },
     {
-      "name": "control_complete_loading_zero_recovery",
-      "expected_score": 0.2,
-      "reason": "All assemblies are validly admitted, F=1, r=0, D=0, and no hard failure occurs."
+      "name": "control_four_of_eight_recovered",
+      "expected_score": 0.4591836735,
+      "reason": "Four equal-mass media are eligible, both washers are retained, and no hard failure or dwell exists."
     },
     {
-      "name": "control_half_recovery_baseline",
-      "expected_score": 0.5571428571,
-      "reason": "F=1, exactly 12 equal-mass media are eligible in RV, washers are retained, and D=0."
+      "name": "control_seven_of_eight_recovered",
+      "expected_score": 0.8035714286,
+      "reason": "Seven equal-mass media are eligible with no hard failure; incomplete recovery cannot start dwell."
     },
     {
-      "name": "control_threshold_recovery_unreleased",
+      "name": "control_all_media_unreleased",
       "expected_score": 0.9,
-      "reason": "F=1 and r>=0.98, but support or clearance is false, so D=0."
+      "reason": "All eight media are eligible and washers retained, but support or release is false, so D=0."
     },
     {
       "name": "control_released_supported_full_dwell",
       "expected_score": 1,
-      "reason": "All full-score prerequisites remain true for 720 completed physics intervals."
+      "reason": "All prerequisites remain true for at least 720 consecutive completed production intervals."
     },
     {
-      "name": "control_timeout_exact_720_dwell",
+      "name": "control_timeout_observations_56881_to_57600_full",
       "expected_score": 1,
-      "reason": "Q is true from O_56880 through processed O_57600, providing exactly 720 intervals."
+      "reason": "Q is true from O_56881 through O_57600 inclusive, so the first true observation counts and the run contains exactly 720 qualifying intervals."
     },
     {
-      "name": "control_timeout_719_dwell",
+      "name": "control_timeout_observations_56882_to_57600_partial",
       "expected_score": 0.9,
-      "reason": "Threshold recovery holds but Q spans only 719 completed intervals."
+      "reason": "Q is true for only the final 719 completed observations, so recovery credit remains but D=0."
     },
     {
-      "name": "control_continuous_contact_admission",
-      "expected_score": 0.2,
-      "reason": "All bodies cross the cup mouth into SV without an artificial free-flight gap; F=1 and r=D=0."
-    },
-    {
-      "name": "control_early_passage_then_loading",
+      "name": "control_recovered_media_inaccessibility_excluded",
       "expected_score": 0.9,
-      "reason": "Valid passages precede final admission; later F=1 and r>=0.98 with D=0."
+      "reason": "All media are correctly contained in RV and cannot hard-fail merely because receiver geometry blocks approach prisms; dwell is absent."
     },
     {
-      "name": "control_receiver_exit_revokes_recovery",
+      "name": "control_unrecovered_body_inaccessible_hardzero",
       "expected_score": 0,
-      "reason": "A previously eligible medium exits RV, latching immutable spill."
+      "reason": "An unrecovered medium leaves WV or becomes trapped under the frozen geometric predicate."
+    },
+    {
+      "name": "control_receiver_exit_hardzero",
+      "expected_score": 0,
+      "reason": "A previously eligible medium exits RV, permanently latching spill or loss."
+    },
+    {
+      "name": "control_washer_receiver_entry_hardzero",
+      "expected_score": 0,
+      "reason": "Either washer entering RV is permanent washer loss."
+    },
+    {
+      "name": "control_washer_over_rim_hardzero",
+      "expected_score": 0,
+      "reason": "A washer leaving the screen over its rim permanently fails retention."
+    },
+    {
+      "name": "control_single_media_over_rim_hardzero",
+      "expected_score": 0,
+      "reason": "A medium exits over the rim rather than through an aperture into RV."
+    },
+    {
+      "name": "control_valid_whole_collider_passage_no_dwell",
+      "expected_score": 0.9,
+      "reason": "All media receive credit through swept whole-collider aperture crossings while dwell remains absent."
+    },
+    {
+      "name": "control_rib_or_floor_tunnel_hardzero",
+      "expected_score": 0,
+      "reason": "Any crossing through a rib, solid floor, or annulus is invalid passage."
+    },
+    {
+      "name": "control_receiver_contamination_hardzero",
+      "expected_score": 0,
+      "reason": "A frozen contaminant enters receiver free volume eroded by delta."
+    },
+    {
+      "name": "control_receiver_boundary_touch_valid",
+      "expected_score": 0.9,
+      "reason": "Boundary contact or intended support overlap no deeper than delta is not contamination."
     },
     {
       "name": "control_native_joint_break_hardzero",
       "expected_score": 0,
-      "reason": "Any native washer JOINT_BREAK event is destruction and permanently hard-fails the trial."
+      "reason": "An observable native JOINT_BREAK permanently fails the trial."
     },
     {
-      "name": "control_settled_joint_residual_hardzero",
-      "expected_score": 0,
-      "reason": "A settled washer exceeds the declared persistent joint-frame residual bound."
-    },
-    {
-      "name": "control_force_without_damage",
+      "name": "control_high_force_without_damage_valid",
       "expected_score": 0.9,
-      "reason": "Threshold recovery holds with D=0; force reaches 200 N but no break or residual damage predicate occurs."
+      "reason": "Recovery remains valid and dwell absent; qualification force alone is not a grading failure."
     },
     {
-      "name": "control_supported_receiver_contact_tolerance",
+      "name": "control_incidental_workpiece_contact_valid",
       "expected_score": 0.9,
-      "reason": "All recovered media remain eligible with intended receiver overlap no deeper than delta."
+      "reason": "Safe gripper contact causing no loss, invalid passage, or damage is not independently disqualifying."
     },
     {
-      "name": "control_receiver_wall_breach_failure",
+      "name": "control_deliberate_washer_removal_hardzero",
       "expected_score": 0,
-      "reason": "A medium penetrates an RC wall deeper than delta."
+      "reason": "Robot handling causes a washer to leave the screen, producing observable permanent loss."
     },
     {
-      "name": "control_valid_full_collider_passage",
+      "name": "control_clearance_dwell_revoked",
       "expected_score": 0.9,
-      "reason": "F=1, r>=0.98, D=0, and every credited passage satisfies swept whole-collider geometry."
+      "reason": "After full dwell, a gripper returns within 0.060 m while recovery and retention remain valid, immediately revoking D."
     },
     {
-      "name": "control_rib_sweep_breach_failure",
-      "expected_score": 0,
-      "reason": "A swept rib overlap deeper than delta or unqualified crossing latches invalid passage."
-    },
-    {
-      "name": "control_direct_cup_receiver_shortcut",
-      "expected_score": 0,
-      "reason": "A medium enters RV without admission into SV and genuine aperture passage."
-    },
-    {
-      "name": "control_separate_washer_staging",
-      "expected_score": 0,
-      "reason": "A washer segment is externally supported outside FC and SC for at least 12 physics intervals."
-    },
-    {
-      "name": "control_individual_media_robot_contact",
-      "expected_score": 0,
-      "reason": "A GR–M contact pair persists for 12 consecutive physics intervals."
-    },
-    {
-      "name": "control_single_media_over_rim_spill",
-      "expected_score": 0,
-      "reason": "One medium exits over the screen rim; re-entry cannot clear spill."
-    },
-    {
-      "name": "control_partial_washer_escape",
-      "expected_score": 0,
-      "reason": "Any washer segment exits over the rim or crosses the floor without genuine passage."
-    },
-    {
-      "name": "control_receiver_contamination",
-      "expected_score": 0,
-      "reason": "A collider in contaminant set C intersects RV eroded inward by delta."
-    },
-    {
-      "name": "control_clearance_dwell_revocation",
+      "name": "control_support_dwell_revoked",
       "expected_score": 0.9,
-      "reason": "After D=1, a gripper approaches within 0.060 m while F=1 and r>=0.98 remain true."
+      "reason": "After full dwell, one support contact is lost while recovery and retention remain valid, immediately revoking D."
     },
     {
-      "name": "control_support_dwell_revocation",
-      "expected_score": 0.9,
-      "reason": "After D=1, contact with one support group is lost while non-dwell progress remains valid."
-    },
-    {
-      "name": "control_forbidden_state_mutation",
+      "name": "control_forbidden_state_mutation_hardzero",
       "expected_score": 0,
-      "reason": "A post-reset task-object state write, teleport, fake weld, collider disablement, freeze, or hidden force occurs."
+      "reason": "A post-reset state write, fake weld, collider disablement, freeze, hidden force, or teleport occurs."
     },
     {
-      "name": "control_screen_supported_contact_tolerance",
-      "expected_score": 0.2,
-      "reason": "F=1, r=0, D=0; contents rest on screen surfaces with penetration no deeper than delta."
-    },
-    {
-      "name": "control_screen_floor_breach_failure",
+      "name": "control_initial_media_below_screen_invalid_reset",
       "expected_score": 0,
-      "reason": "A body crosses a rib, solid floor, or floor bottom deeper than delta without genuine passage."
-    },
-    {
-      "name": "control_incidental_direct_contact_exempt",
-      "expected_score": 0.2,
-      "reason": "A GR–M contact lasts 11 intervals and ends, so direct-contact provenance does not latch."
-    },
-    {
-      "name": "control_direct_contact_threshold_fault",
-      "expected_score": 0,
-      "reason": "A GR–M or GR–WS pair remains true for 12 intervals and latches on the twelfth sample."
-    },
-    {
-      "name": "control_receiver_boundary_touch_not_contamination",
-      "expected_score": 0.9,
-      "reason": "A contaminant only touches the RC boundary or overlaps by at most delta without entering eroded RV."
-    },
-    {
-      "name": "control_receiver_foreign_interior_contamination",
-      "expected_score": 0,
-      "reason": "A frozen contaminant intersects receiver free volume eroded inward by delta."
-    },
-    {
-      "name": "control_pose_stationary_loaded_hold",
-      "expected_score": 0.2,
-      "reason": "F=1 and r=0 while the loaded screen stays within the 2 mm/1 deg envelope for three seconds; the hold itself adds no score."
+      "reason": "A reset containing pre-passed media is invalid and cannot receive initial credit."
     }
   ]
 }
