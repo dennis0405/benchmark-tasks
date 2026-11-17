@@ -1,0 +1,340 @@
+{
+  "scope": "Native 480 Hz PGS component controls. The service and fault probes use a torque-limited instrument, separate from YAM.",
+  "original_fixed_root": {
+    "hz": 480,
+    "external_mount": false,
+    "authored_break_force_n": 150.0,
+    "authored_break_torque_nm": 15.0,
+    "displacement_m": 0.0,
+    "break_paths": [],
+    "peak_applied_force_n": 200.0,
+    "substeps": 1440,
+    "passed": false
+  },
+  "finite_external_support": {
+    "hz": 480,
+    "external_mount": true,
+    "authored_break_force_n": 150.0,
+    "authored_break_torque_nm": 15.0,
+    "displacement_m": 0.011415759101510048,
+    "break_paths": [
+      "/World/Press/mount"
+    ],
+    "peak_applied_force_n": 152.91666666666666,
+    "substeps": 367,
+    "passed": true
+  },
+  "bidirectional_loads": {
+    "rate_hz": 480,
+    "solver": "pgs",
+    "implicit_axial": true,
+    "transmitted_reaction": true,
+    "trials": [
+      {
+        "body": "screw",
+        "force_n": -5,
+        "expected_m": -5e-06,
+        "measured_m": -5.00017277531953e-06,
+        "recovered_m": -4.5444828287572773e-13,
+        "pass_static": true,
+        "pass_return": true
+      },
+      {
+        "body": "screw",
+        "force_n": 5,
+        "expected_m": 5e-06,
+        "measured_m": 5.0003081937614485e-06,
+        "recovered_m": -5.087873493016071e-12,
+        "pass_static": true,
+        "pass_return": true
+      },
+      {
+        "body": "nut",
+        "force_n": -5,
+        "expected_m": -5e-05,
+        "measured_m": -4.9998211615521796e-05,
+        "recovered_m": -1.067891925064132e-11,
+        "pass_static": true,
+        "pass_return": true
+      },
+      {
+        "body": "nut",
+        "force_n": 5,
+        "expected_m": 5e-05,
+        "measured_m": 5.0000017613671185e-05,
+        "recovered_m": 1.0544582894183975e-09,
+        "pass_static": true,
+        "pass_return": true
+      }
+    ],
+    "pass": true
+  },
+  "normal_service": {
+    "scope": "instrumented fixture only; these are necessary conditions, no task points",
+    "rate_hz": 480,
+    "verified_recoveries": 3,
+    "checks": {
+      "released_and_open_seat_gap": true,
+      "retained_preload": true,
+      "three_open_endpoints": true,
+      "three_closed": true,
+      "preload_at_open_endpoints": true,
+      "powered_motion": true,
+      "three_unloaded_recoveries": true
+    },
+    "release_min_n": 5.067101955413818,
+    "open_endpoints_deg": [
+      88.73291353749899,
+      88.73293061297191,
+      88.73299208467444
+    ],
+    "peak_powered_spans_um_deg_deg": [
+      6.8490044213831425,
+      0.0,
+      0.0008059623220615047
+    ],
+    "first_powered_violation": null,
+    "all_necessary_pass": true
+  },
+  "powered_fault": {
+    "scope": "instrumented fixture only; these are necessary conditions, no task points",
+    "rate_hz": 480,
+    "verified_recoveries": 0,
+    "checks": {
+      "released_and_open_seat_gap": false,
+      "retained_preload": true,
+      "three_open_endpoints": false,
+      "three_closed": false,
+      "preload_at_open_endpoints": false,
+      "powered_motion": false,
+      "three_unloaded_recoveries": false
+    },
+    "release_min_n": 5.067101955413818,
+    "open_endpoints_deg": [],
+    "peak_powered_spans_um_deg_deg": [
+      5528.1484965234995,
+      2000.9580397742186,
+      425.83554772950527
+    ],
+    "first_powered_violation": {
+      "tick": 3505,
+      "phase": "open1",
+      "channel": "screw_angle_rad"
+    },
+    "all_necessary_pass": false
+  },
+  "reset_on_external_support": {
+    "completed": [
+      "observe_reset"
+    ],
+    "physics_ticks": 288,
+    "scope": "physical YAM workcell commissioning, no competition grade",
+    "solver": "pgs",
+    "rate_hz": 480,
+    "contact_guided": false,
+    "supported_turn": false,
+    "align_before_feed": false,
+    "wrench_preload_target_n": 5.0,
+    "seated_regrasp": false,
+    "adaptive_stroke": false,
+    "external_mount": true,
+    "bit_chamfer_m": 0.001,
+    "implicit_axial": true,
+    "transmitted_reaction": true,
+    "driver_correction_rad": 0.0,
+    "joint_breaks": [],
+    "rack_transitions": [
+      {
+        "tick": 1,
+        "driver": true,
+        "wrench": true
+      }
+    ],
+    "reset_observation": {
+      "robot_tool_clearance_lower_bound_m": 0.1004568004012748,
+      "clearance_certified_30mm": true,
+      "nut_guide_overlap_m": [
+        0.004,
+        0.003999974250793457
+      ],
+      "retainer_installed_error_m": 2.5749206543010383e-08,
+      "nuts_retained": true,
+      "adjustment_clearances_m": [
+        0.13481621936455848,
+        0.1369589010496998
+      ],
+      "tools_outside_adjustment": true,
+      "tools_racked": true,
+      "measured_finger_joints_m": [
+        -0.046950001269578934,
+        -0.046950001269578934,
+        -0.046950001269578934,
+        -0.046950001269578934
+      ],
+      "fingers_open": true
+    },
+    "local_score_bound": {
+      "native_ticks": 288,
+      "current_upper": 0,
+      "peak_upper": 0,
+      "certain_current_zero": true,
+      "official_submission": false
+    },
+    "room_contacts": {
+      "ticks": 288,
+      "registered_actors": [
+        "/World/envs/env_0/driver",
+        "/World/envs/env_0/wrench",
+        "/World/envs/env_0/gripper_bench/frame",
+        "/World/envs/env_0/gripper_bench/s_car",
+        "/World/envs/env_0/gripper_bench/screw",
+        "/World/envs/env_0/gripper_bench/n_car",
+        "/World/envs/env_0/gripper_bench/nut",
+        "/World/envs/env_0/gripper_bench/retainer",
+        "/World/envs/env_0/gripper_bench/piston",
+        "/World/envs/env_0/gripper_bench/left_jaw",
+        "/World/envs/env_0/gripper_bench/right_jaw",
+        "/World/envs/env_0/gripper_bench/lever",
+        "/World/envs/env_0/LeftArm/Geometry/base",
+        "/World/envs/env_0/LeftArm/Geometry/base/link1",
+        "/World/envs/env_0/LeftArm/Geometry/base/link1/link2",
+        "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3",
+        "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4",
+        "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5",
+        "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper",
+        "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left",
+        "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right",
+        "/World/envs/env_0/RightArm/Geometry/base",
+        "/World/envs/env_0/RightArm/Geometry/base/link1",
+        "/World/envs/env_0/RightArm/Geometry/base/link1/link2",
+        "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3",
+        "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4",
+        "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5",
+        "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper",
+        "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left",
+        "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right",
+        "/World/envs/env_0/floor/geometry/mesh",
+        "/World/envs/env_0/table/geometry/mesh",
+        "/World/envs/env_0/stand_foot/geometry/mesh",
+        "/World/envs/env_0/stand_mast/geometry/mesh",
+        "/World/envs/env_0/stand_arm/geometry/mesh",
+        "/World/envs/env_0/camera_housing/geometry/mesh",
+        "/World/envs/env_0/driver_rack/geometry/mesh",
+        "/World/envs/env_0/driver_support_0/geometry/mesh",
+        "/World/envs/env_0/driver_support_1/geometry/mesh",
+        "/World/envs/env_0/wrench_rack/geometry/mesh",
+        "/World/envs/env_0/wrench_support_0/geometry/mesh",
+        "/World/envs/env_0/wrench_support_1/geometry/mesh"
+      ],
+      "tabletop_collider_bounds_m": [
+        [
+          -0.18999999247491317,
+          -0.6499999663978819,
+          0.6874999720603228
+        ],
+        [
+          0.9100000210851427,
+          0.6499999663978819,
+          0.7474999707192183
+        ]
+      ],
+      "last_tool_observations": [
+        {
+          "centre": [
+            0.23999999463558197,
+            0.1899999976158142,
+            0.7930000424385071
+          ],
+          "opposed_fingers": false,
+          "supported": true,
+          "equipment_impact": true,
+          "failure": null
+        },
+        {
+          "centre": [
+            0.17999999597668648,
+            -0.17000000178813934,
+            0.7899999618530273
+          ],
+          "opposed_fingers": false,
+          "supported": true,
+          "equipment_impact": true,
+          "failure": null
+        }
+      ],
+      "tool_drop_or_loss": [
+        null,
+        null
+      ],
+      "peak_pair_force_n": 0.4422460198402405,
+      "min_signed_normal_force_n": 0.0,
+      "negative_normal_samples": 0,
+      "peak_penetration_m": 4.0978193283081055e-08,
+      "strict_failure": null,
+      "universal_failure": null,
+      "confirmed_contact_failure": null,
+      "exempt_base_table_pairs": [
+        [
+          12,
+          31
+        ],
+        [
+          21,
+          31
+        ]
+      ],
+      "first_driver_support_normal": [
+        2.6910450864198188e-12,
+        -6.320098327705637e-05,
+        1.0
+      ],
+      "active_pairs": [
+        {
+          "actors": [
+            "/World/envs/env_0/driver",
+            "/World/envs/env_0/driver_support_0/geometry/mesh"
+          ],
+          "peak_force_n": 0.44066792726516724
+        },
+        {
+          "actors": [
+            "/World/envs/env_0/driver",
+            "/World/envs/env_0/driver_support_1/geometry/mesh"
+          ],
+          "peak_force_n": 0.4422460198402405
+        },
+        {
+          "actors": [
+            "/World/envs/env_0/wrench",
+            "/World/envs/env_0/wrench_support_0/geometry/mesh"
+          ],
+          "peak_force_n": 0.17938470840454102
+        },
+        {
+          "actors": [
+            "/World/envs/env_0/wrench",
+            "/World/envs/env_0/wrench_support_1/geometry/mesh"
+          ],
+          "peak_force_n": 0.21342897415161133
+        }
+      ],
+      "status": "below_both_damage_bands"
+    },
+    "trace_file": "reset62-ext.trace.json"
+  },
+  "raw_sha256": {
+    "fault62-ext.audit.json": "067af445b165cd96a4bc300357a4f65cab644d56458ca7dd3b4ea4937f4d6739",
+    "fault62-ext.json": "49622a7e75de752827864e37f0e9524e898db0e73d96bbc0344c8991168f39f1",
+    "fault62-ext.trace.json": "7b2e5f62bb478b263f35bf887f0ff2f23e5b20d3ba6a30486d0c4d1bc9992a16",
+    "load62-ext.json": "23eeffdf2ef1fc14e35f8ae982a8fecd0724c603820a3f32641107e92e1cd986",
+    "load62-ext.trace.json": "f4bc61d613d38b96c394e87e9c90a3ea400d9b39843279e95f29f7dabc1a571e",
+    "mount62-base.json": "17a87fa4815753c56f7a6c2eb468f97088af88950fb08f1a3b29facc396f486b",
+    "mount62-ext.json": "1e1bb2c059accd2648b711433da4b6ad92e5836b69206b3b38e47847d8eddbff",
+    "placement62.json": "97513986c765cf7873dbd8fee01053d437783e2866a6a11993ac09d4851ecf2c",
+    "reset62-ext.json": "72554ea261ae942aa8509b84a12380606f9e926200ea8d7398aa61c79a2b0639",
+    "reset62-ext.trace.json": "71ced6ffe06d3936e4faa164424401c61bbd5cbeca37f4669a5523992c0df4c7",
+    "service62-ext.audit.json": "b6536c1d1a27d3d6d0f30e853f23ce4d04ae62dfb26505b0b1cd497a96aaeda8",
+    "service62-ext.json": "ed47dd88457a7e2b4b2d999813740e6d9ea2a49c4738a3a36060ca83f125b746",
+    "service62-ext.trace.json": "543a0b1a066a43cf971ed300c9449b4d59e9f910e00f13b7c82066e4924433a6"
+  }
+}

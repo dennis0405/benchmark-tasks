@@ -12,6 +12,7 @@ class ToolBounds:
         root = stage.GetDefaultPrim()
         cache = UsdGeom.XformCache()
         points = []
+        self.handle = None
         self.cylinders = []
         self.convex_parts = []
         for prim in Usd.PrimRange(root):
@@ -43,6 +44,8 @@ class ToolBounds:
             else:
                 raise ValueError(f"unhandled tool collider {prim.GetPath()}")
             part = np.array([tuple(local.Transform(Gf.Vec3d(*v))) for v in vertices])
+            if prim.GetName() in ("Grip", "Handle"):
+                self.handle = part
             self.convex_parts.append(part)
             points.extend(part)
         if not (points or self.cylinders):

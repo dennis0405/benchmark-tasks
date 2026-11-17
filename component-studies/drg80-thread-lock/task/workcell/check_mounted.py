@@ -13,6 +13,11 @@ p.add_argument("--rise-seconds", type=float, default=0.0)
 p.add_argument("--diagnostic-support-stiffness", type=float, default=1e6)
 p.add_argument("--measured-contact", action="store_true")
 p.add_argument("--transmitted-reaction", action="store_true")
+p.add_argument(
+    "--external-mount",
+    action="store_true",
+    help="Use the physical breakable external fixed joint.",
+)
 p.add_argument("--implicit-axial", action="store_true")
 p.add_argument("--native-friction", action="store_true")
 p.add_argument("--continuous-seat", action="store_true")
@@ -50,6 +55,7 @@ def main():
         velocity_iters=args.velocity_iters,
         continuous_seat=args.continuous_seat,
         implicit_axial=args.implicit_axial,
+        external_mount=args.external_mount,
     )
     sim = sim_utils.SimulationContext(
         sim_utils.SimulationCfg(

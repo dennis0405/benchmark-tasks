@@ -26,6 +26,11 @@ parser.add_argument(
     help="End torque early at the physical wrist limit and reindex in free space.",
 )
 parser.add_argument("--seated-regrasp", action="store_true")
+parser.add_argument(
+    "--depth-stop",
+    action="store_true",
+    help="Use the removable 4.75 mm bit depth stop.",
+)
 parser.add_argument("--supported-turn", action="store_true")
 parser.add_argument("--align-before-feed", action="store_true")
 parser.add_argument("--wrench-preload-n", type=float, default=5.0)
@@ -59,11 +64,27 @@ parser.add_argument(
     type=Path,
     help="Replay logged 14-D joint commands from reset through normal YAM actions.",
 )
+parser.add_argument("--quick-valve", action="store_true")
+parser.add_argument(
+    "--check-three-valve-cycles",
+    action="store_true",
+    help="Measure three real reversals at the original unadjusted stop.",
+)
+parser.add_argument(
+    "--reserve-retreat",
+    action="store_true",
+    help="Reserve wrist travel for pulling out of the socket while turning.",
+)
 parser.add_argument("--observe-reset", action="store_true")
 parser.add_argument("--room-damage", action="store_true")
 parser.add_argument("--solver", choices=("tgs", "pgs"), default="tgs")
 parser.add_argument("--contact-last", action="store_true")
 parser.add_argument("--driver-correction-rad", type=float, default=0.0)
+parser.add_argument(
+    "--external-mount",
+    action="store_true",
+    help="Attach the workcell with a finite-strength external fixed joint.",
+)
 parser.add_argument("--implicit-axial", action="store_true")
 parser.add_argument("--native-friction", action="store_true")
 parser.add_argument("--rise-seconds", type=float, default=0.0)
@@ -104,6 +125,10 @@ def tool_asset(filename):
             UsdGeom.Mesh(stage.GetPrimAtPath("/Tool/HexTip")),
             bit_chamfer,
         )
+        if args.depth_stop:
+            from depth_stop import add_depth_stop
+
+            add_depth_stop(stage, "/Tool")
     if filename == "open_wrench" and args.guided_wrench:
         from wrench_guide import author_wrench_guide
 
@@ -232,6 +257,7 @@ def main():
         task_assets(),
         continuous_seat=args.continuous_seat,
         implicit_axial=args.implicit_axial,
+        external_mount=args.external_mount,
     )
     objects.append(
         scene.Object(
@@ -277,6 +303,10 @@ def main():
         "wrench_preload_target_n": args.wrench_preload_n,
         "seated_regrasp": args.seated_regrasp,
         "adaptive_stroke": args.adaptive_stroke,
+        "reserve_retreat": args.reserve_retreat,
+        "depth_stop": args.depth_stop,
+        "guided_wrench": args.guided_wrench,
+        "external_mount": args.external_mount,
         "bit_chamfer_m": bit_chamfer,
         "implicit_axial": args.implicit_axial,
         "transmitted_reaction": args.transmitted_reaction,
@@ -287,6 +317,7 @@ def main():
     writer = None
     room_contacts = None
     grade_bound = None
+    break_subscription = None
     try:
         env.reset()
         base = env.unwrapped
@@ -300,6 +331,29 @@ def main():
             str(x.GetPath().GetParentPath())
             for x in base.sim.stage.Traverse()
             if x.GetName() == "sz"
+        )
+        from omni.physx import get_physx_interface
+        from omni.physx.bindings._physx import SimulationEvent
+        from pxr import PhysicsSchemaTools
+
+        results["joint_breaks"] = []
+
+        def joint_event(event):
+            if event.type == int(SimulationEvent.JOINT_BREAK):
+                path = str(
+                    PhysicsSchemaTools.decodeSdfPath(*event.payload["jointPath"])
+                )
+                results["joint_breaks"].append(
+                    dict(path=path, observed_tick=results["physics_ticks"])
+                )
+                results.setdefault(
+                    "callback_error", f"required workcell joint broke: {path}"
+                )
+
+        break_subscription = (
+            get_physx_interface()
+            .get_simulation_event_stream_v2()
+            .create_subscription_to_pop(joint_event)
         )
         targets = [base.scene[name].root_physx_view.prim_paths[0] for name in names]
         bench = Bench(
@@ -378,7 +432,11 @@ def main():
                 for side in sides
             ],
         )
+        from tool_extraction import certify_extraction
+
         prior_rack = None
+        if any(g.handle is None for g in geometry):
+            raise ValueError("tool has no designated physical grasp handle")
 
         def pre(*args, **kwargs):
             if "callback_error" in results:
@@ -397,6 +455,27 @@ def main():
             results["physics_ticks"] += 1
             r = bench.read()
             latest = r
+            if room_contacts is not None:
+                q, v = bench.state()
+                if not np.isfinite(q).all() or not np.isfinite(v).all():
+                    results.setdefault(
+                        "callback_error", "nonfinite workcell joint state"
+                    )
+                for view, _ in finger_views:
+                    if (
+                        not np.isfinite(view.get_dof_positions().numpy()).all()
+                        or not np.isfinite(view.get_dof_velocities().numpy()).all()
+                    ):
+                        results.setdefault(
+                            "callback_error", "nonfinite YAM joint state"
+                        )
+                maximum = 3 + math.degrees(300 * (bench.gap0[1] + r["sz"]))
+                r["configured_max_opening_deg"] = maximum
+                if not 20 <= maximum <= 180:
+                    results.setdefault(
+                        "callback_error",
+                        f"configured jaw opening outside physical range: {maximum}",
+                    )
             poses = tool_view.get_transforms().numpy()[tool_order]
             contained = [
                 body.in_cradle(pose[:3], Rotation.from_quat(pose[3:]).as_matrix(), box)
@@ -419,8 +498,35 @@ def main():
                 )
                 prior_rack = contained
             r["tools_racked"] = all(contained)
+            bounds = (
+                clear_view.world_bounds()
+                if all(contained) or room_contacts is not None
+                else None
+            )
+            if room_contacts is not None:
+                lo, hi = [a[clear_view.fixture_shapes] for a in bounds]
+                certificates = []
+                for i, (pose, geom, record) in enumerate(
+                    zip(poses, geometry, room_contacts.last_tool_observations)
+                ):
+                    rot = Rotation.from_quat(pose[3:]).as_matrix()
+                    handle = geom.handle @ rot.T + pose[:3]
+                    certificates.append(
+                        certify_extraction(
+                            np.array(record["centre"]),
+                            handle,
+                            rot[:, 2 if i == 0 else 0],
+                            lo,
+                            hi,
+                        )
+                    )
+                r["tool_extraction_certificates"] = certificates
+                if any(c is None for c in certificates):
+                    results.setdefault(
+                        "first_unresolved_extraction_tick", results["physics_ticks"]
+                    )
             if all(contained):
-                r["robot_tool_clearance_lower_bound_m"] = clear_view.lower_bound()
+                r["robot_tool_clearance_lower_bound_m"] = clear_view.lower_bound(bounds)
                 r["clearance_certified_30mm"] = (
                     r["robot_tool_clearance_lower_bound_m"] >= 0.030
                 )
@@ -693,6 +799,8 @@ def main():
                     if cold_test
                     else [1, -1, 1, -1, 1, -1, 1]
                 )
+                if cold_test and args.check_three_valve_cycles:
+                    directions = [-1, 1] * 3
                 for direction in directions:
                     sample = push_valve(
                         direction,
@@ -703,6 +811,7 @@ def main():
                         commands,
                         grip_state,
                         move,
+                        quick=args.quick_valve,
                     )
                     results.setdefault("valve_pushes", []).append(sample)
                     if cold_test and direction == -1:
@@ -829,7 +938,11 @@ def main():
             move("equipment_clear", [READY, READY], grip_state, 60)
             move("clear_dwell", [READY, READY], grip_state, 30)
 
-        if args.check_valve_close or args.check_valve_reversal:
+        if (
+            args.check_valve_close
+            or args.check_valve_reversal
+            or args.check_three_valve_cycles
+        ):
             move("unpowered_reset_settle", commands.copy(), [1, 1], 12)
             run_valve([1.0, 1.0], cold_test=True)
             return
@@ -1007,7 +1120,7 @@ def main():
                     q_init=commands[i],
                     base_pos=rig.bases[sides[i]],
                     iters=30,
-                    tol=0.000015,
+                    tol=0.000003 if args.reserve_retreat else 0.000015,
                 )
                 if err > 0.0012 or ea > 0.025:
                     if args.adaptive_stroke and label == "driver_in_socket":
@@ -1373,7 +1486,7 @@ def main():
                     q_init=goals[0],
                     base_pos=rig.bases["left"],
                     iters=18,
-                    tol=0.000015,
+                    tol=0.000003 if args.reserve_retreat else 0.000015,
                 )
                 if pe > 0.002 or ae > 0.035:
                     raise ValueError("guarded insertion wrist travel exhausted")
@@ -1501,6 +1614,43 @@ def main():
                 remaining = latest["st"] - target_angle
                 if remaining < 0.10:
                     break
+                if args.reserve_retreat and initial_angle - latest["st"] > 0.12:
+                    # On the measured failed third stroke, joint4 saturated
+                    # before the driver could retract. Check the current arm and
+                    # an actual 12 mm straight withdrawal before continuing.
+                    q = commands[0]
+                    cp, cr = ik.tcp_pose(q, rig.bases["left"])
+                    retreat_q, retreat_m, retreat_rad = ik.solve(
+                        cp + [0, 0, 0.012],
+                        ik.matrix_to_quat_xyzw(cr),
+                        q_init=q,
+                        base_pos=rig.bases["left"],
+                        iters=75,
+                        tol=0.00004,
+                    )
+                    margin = min(
+                        float(np.minimum(q - ik.LOWER, ik.UPPER - q).min()),
+                        float(
+                            np.minimum(retreat_q - ik.LOWER, ik.UPPER - retreat_q).min()
+                        ),
+                    )
+                    if (
+                        margin < math.radians(12)
+                        or retreat_m > 0.0005
+                        or retreat_rad > 0.01
+                    ):
+                        _, actual_rot = tool(0)
+                        indexed = math.atan2(actual_rot[1, 0], actual_rot[0, 0])
+                        results.setdefault("retreat_reserves", []).append(
+                            dict(
+                                tick=results["physics_ticks"],
+                                screw_rad=latest["st"],
+                                joint_margin_deg=math.degrees(margin),
+                                fit=measured_fit(),
+                            )
+                        )
+                        within_reach = False
+                        break
                 indexed -= min(math.radians(increment), remaining)
                 within_reach = servo_tool(
                     0, indexed, drive_tip(depth), 7, "driver_in_socket"
@@ -1574,17 +1724,29 @@ def main():
             if turn > -0.10 or tip[2] > -0.001:
                 raise ValueError("driver stroke lost measured engagement")
             if args.seated_regrasp:
-                indexed = regrasp_in_socket(yaw_start - indexed)
+                indexed = regrasp_in_socket(math.remainder(yaw_start - indexed, math.tau))
                 continue
             # Withdraw straight and verify clearance before moving to another flat.
-            servo_tool(0, indexed, drive_tip(-0.007), 65, "driver_withdraw")
+            if args.reserve_retreat:
+                for _ in range(13):
+                    servo_tool(0, indexed, drive_tip(-0.007), 5, "driver_withdraw")
+                    if (tool(0)[0] - screw())[2] >= 0.005:
+                        break
+            else:
+                servo_tool(0, indexed, drive_tip(-0.007), 65, "driver_withdraw")
             if (tool(0)[0] - screw())[2] < 0.003:
                 raise ValueError("driver failed to clear socket for re-index")
             part = body_pose("screw")
             sr = Rotation.from_quat(part[3:]).as_matrix()
             sy = math.atan2(sr[1, 0], sr[0, 0])
             indexed = sy + round((home_yaw - sy) / (math.pi / 3)) * (math.pi / 3)
-            servo_tool(0, indexed, drive_tip(-0.007), 65, "driver_reindex")
+            servo_tool(
+                0,
+                indexed,
+                drive_tip(-0.007),
+                45 if args.reserve_retreat else 65,
+                "driver_reindex",
+            )
             indexed = insert_driver(indexed, 0.007)
         if abs(latest["st"] - target_angle) > 0.20:
             raise ValueError("measured screw angle outside 90-degree setting approach")
@@ -1639,6 +1801,7 @@ def main():
         save(args.output, results, indent=2)
         for callback in callbacks:
             callback.unregister()
+        break_subscription = None
         if writer:
             writer.close()
         env.close()

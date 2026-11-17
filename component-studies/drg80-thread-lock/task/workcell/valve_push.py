@@ -12,7 +12,9 @@ from yam_arena.demo import grip_rotation
 from service_paths import screen
 
 
-def push_valve(direction, pivot, bench, bases, joints, commands, grips, move):
+def push_valve(
+    direction, pivot, bench, bases, joints, commands, grips, move, quick=False
+):
     side_names = ("left", "right")
     height = 0.066
     initial = math.degrees(bench.read()["lever"])
@@ -50,7 +52,7 @@ def push_valve(direction, pivot, bench, bases, joints, commands, grips, move):
     _, i, tilt, yaw, rot = min(candidates, key=lambda c: c[0])
     base = bases[side_names[i]]
     grips[i] = 0.0
-    move("valve_prepare_pusher", commands.copy(), grips, 15)
+    move("valve_prepare_pusher", commands.copy(), grips, 8 if quick else 15)
 
     def advance(label, x, z, steps):
         goals = commands.copy()
@@ -65,17 +67,17 @@ def push_valve(direction, pivot, bench, bases, joints, commands, grips, move):
             raise ValueError(f"{label} exceeds elbow or wrist travel")
         move(label, goals, grips, steps)
 
-    advance("valve_overhead", initial_x, 0.13, 45)
-    advance("valve_near_handle", initial_x, height, 32)
+    advance("valve_overhead", initial_x, 0.13, 28 if quick else 45)
+    advance("valve_near_handle", initial_x, height, 18 if quick else 32)
     history = []
-    for x in np.linspace(initial_x, final_x, 45):
-        advance("valve_side_press", x, height, 3)
+    for x in np.linspace(initial_x, final_x, 32 if quick else 45):
+        advance("valve_side_press", x, height, 2 if quick else 3)
         angle = math.degrees(bench.read()["lever"])
         history.append((float(x), angle))
         if direction * angle >= 28:
             break
-    advance("valve_vertical_release", x, 0.13, 28)
-    move("valve_detent_settle", commands.copy(), grips, 24)
+    advance("valve_vertical_release", x, 0.13, 18 if quick else 28)
+    move("valve_detent_settle", commands.copy(), grips, 12 if quick else 24)
     final = bench.read()
     return {
         "arm": side_names[i],

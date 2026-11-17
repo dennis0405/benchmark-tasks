@@ -49,9 +49,17 @@ class Bench:
         self.order = ["sz", "st", "nz", "nt", "p", "jl", "jr", "valve"]
         self.index = [self.names.index(s) for s in self.order]
         matrix = self.art.get_generalized_mass_matrices().numpy()[0]
-        if matrix.shape != (len(self.order), len(self.order)):
-            raise RuntimeError(f"unexpected fixed-base mass matrix {matrix.shape}")
-        self.mass = matrix[np.ix_(self.index, self.index)].astype(float)
+        n = len(self.order)
+        if matrix.shape not in ((n, n), (n + 6, n + 6)):
+            raise RuntimeError(f"unexpected articulated mass matrix {matrix.shape}")
+        # A floating base adds six leading base coordinates. While its external
+        # mount is intact, use the tool mechanism's joint block.
+        mass_ids = np.asarray(self.index) + matrix.shape[0] - n
+        self.mass = matrix[np.ix_(mass_ids, mass_ids)].astype(float)
+        gsize = self.art.get_gravity_compensation_forces().numpy().shape[1]
+        if gsize not in (n, n + 6):
+            raise RuntimeError("unexpected generalized gravity dimension")
+        self.gravity_ids = np.asarray(self.index) + gsize - n
         print(
             "joint inertias",
             dict(zip(self.order, self.mass.diagonal().tolist())),
@@ -192,7 +200,9 @@ class Bench:
         self.bearing_nm = self.bearing_torque()
         sensed[1] += self.bearing_nm
         sensed[3] += self.bearing_nm
-        gravity = -self.art.get_gravity_compensation_forces().numpy()[0, self.index]
+        gravity = -self.art.get_gravity_compensation_forces().numpy()[
+            0, self.gravity_ids
+        ]
         if self.transmitted_reaction:
             # Axial momentum balance in the two serial prismatic coordinates.
             # The native bearing and stop normals act upward on their workpieces.

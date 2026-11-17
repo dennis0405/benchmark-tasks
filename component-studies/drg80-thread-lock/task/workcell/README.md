@@ -108,3 +108,20 @@ A measured 14-dimensional action sequence can be repeated from reset using `--re
 The room observer detects off-table tool loss and unsupported falls by the measured centres of mass, opposing finger impulses, rack containment and later impacts. It reads the table collider from USD. The pinned Arena station actually spans 1.10 × 1.30 m at z = 0.7475 m; the early fixture proposal listed 0.80 × 1.20 m at z = 0.750 m. The tools and mechanism in the valve tests remained inside both footprints. The production specification must reconcile this before submission. The general enclosed-tool extraction predicate and ambiguous contact-surface classifications are still open. The local grade bound assumes remaining unknowns are favourable. A positive bound cannot be published as a verified score.
 
 The [22.8 s Arena top-camera recording](../../measurements/yam-valve-detents.mp4) replays all 456 stored bimanual actions of valve58 from a fresh reset. Native measurements independently confirmed both detents and a 102.04° unadjusted opening again. With the tapered wrench guide (wrench59), the nut reached 0.59 mm longitudinal and 0.052 mm lateral offset between the jaws, with 0.086 mm remaining geometric side clearance. The wrench alone drove the freely moving shaft approximately 41.6° during the stroke. The final relative nut turn was only 9.18°, below the diagnostic 20° criterion. The separate wrench trial did not use a left-hand counterhold or produce locking preload.
+
+### Finite mount and tool release
+
+The anchored articulation root resisted the full 200 N overload without any displacement. With the mount fixed to the world outside the internal articulation, the native joint broke at an applied 152.92 N and the fixture moved 11.42 mm. Use `--external-mount` for the finite support. On the new support, ±5 N gave ±5 µm at the screw and ±50 µm at the nut. Both recovered after unloading. An instrumented lock retained at least 5.07 N. The jaw reached 88.733° on each of three openings with three verified unloaded returns. The deliberately applied powered torque tripped the screw-angle guard at tick 3505. [Native checks and trace hashes](../../measurements/finite-mount-controls.json).
+
+From the repository root, with the pinned Arena Python active:
+
+```sh
+w=component-studies/drg80-thread-lock/task/workcell
+run=automation-results/20261114T031727-dc73f2bb
+python "$w/check_mount_release.py" --assets "$run/task-prototype/assets" --out measurements/support.json --external-mount
+python "$w/check_bit_capture.py" --assets "$run/task-prototype/assets" --out measurements/unheld.json --hz 480 --external-mount --compliant-feed --long-lead --depth-stop --mounted-offset-mm 0.4 --release
+```
+
+The depth stop is a convex 24-sided steel collar 6.50 mm across the vertices and 2.00 mm thick. Its lower face sits 4.75 mm above the bit tip. The driver mass and inertia include this extra material. In the native capture probe the instrument released all force and torque for 480 steps. The smallest floor clearance was 1.25 mm, the straight hex engagement stayed above 3.62 mm and the peak contact load was below 0.90 N. The original uncollared driver crossed the geometric floor by 0.102 mm. A preliminary thin-cylinder collar also failed. [All three physical controls](../../measurements/unheld-driver.json).
+
+In yam23 the free driver turned the adjuster to −197.53°. The left arm reached its wrist limit before it could withdraw. The [camera recording](../../measurements/yam-three-driver-strokes.mp4) shows the entire partial attempt. The follow-up trial (yam24) reserved 12 mm of straight withdrawal and checked joint margin before the next torque command. The first withdrawal cleared the socket, but only the bevel entered on the second insertion. Independent YAM valve tests from the original setting recorded three complete 3.00° → 102.04° reversals. The [valve results](../../measurements/yam-actuator-and-wrench-checks.json) report native contacts and score bounds. The separate [30-position YAM reach survey](../../measurements/fixture-placement-screen.json) uses offline IK and leaves the physical scene unchanged.

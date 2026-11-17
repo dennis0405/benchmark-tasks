@@ -17,6 +17,11 @@ parser.add_argument("--assets", type=Path, required=True)
 parser.add_argument("--out", type=Path, required=True)
 parser.add_argument("--hz", type=int, choices=(240, 480), default=240)
 parser.add_argument("--solver", choices=("tgs", "pgs"), default="tgs")
+parser.add_argument(
+    "--external-mount",
+    action="store_true",
+    help="Attach the workcell with a finite-strength external fixed joint.",
+)
 parser.add_argument("--implicit-axial", action="store_true")
 parser.add_argument("--transmitted-reaction", action="store_true")
 args = parser.parse_args()
@@ -34,7 +39,13 @@ from native_bench import Bench
 def main():
     args.out.parent.mkdir(parents=True, exist_ok=True)
     asset = args.out.with_suffix(".usda").resolve()
-    build(asset, args.assets, continuous_seat=True, implicit_axial=args.implicit_axial)
+    build(
+        asset,
+        args.assets,
+        continuous_seat=True,
+        implicit_axial=args.implicit_axial,
+        external_mount=args.external_mount,
+    )
     sim = sim_utils.SimulationContext(
         sim_utils.SimulationCfg(
             dt=1 / args.hz,

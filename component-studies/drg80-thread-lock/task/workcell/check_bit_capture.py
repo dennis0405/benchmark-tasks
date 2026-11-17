@@ -21,6 +21,13 @@ p.add_argument("--compliant-feed", action="store_true")
 p.add_argument("--long-lead", action="store_true")
 p.add_argument("--align-before-feed", action="store_true")
 p.add_argument("--driver-phase-deg", type=float, default=0.0)
+p.add_argument("--depth-stop", action="store_true")
+p.add_argument(
+    "--release",
+    action="store_true",
+    help="Remove all instrument drive for a full second after feed.",
+)
+p.add_argument("--external-mount", action="store_true")
 a = p.parse_args()
 app = AppLauncher(headless=True).app
 
@@ -52,11 +59,18 @@ def main():
     api.CreateStaticFrictionAttr(0.45)
     api.CreateDynamicFrictionAttr(0.3)
     api.CreateRestitutionAttr(0.0)
+    driver_mass = 0.09
     cases = []
     mounted = a.mounted_offset_mm is not None
     if mounted:
         fixture = a.out.with_suffix(".usda").resolve()
-        build(fixture, a.assets, continuous_seat=True, implicit_axial=True)
+        build(
+            fixture,
+            a.assets,
+            continuous_seat=True,
+            implicit_axial=True,
+            external_mount=a.external_mount,
+        )
         UsdGeom.Xform.Define(
             stage, "/World/Press"
         ).GetPrim().GetReferences().AddReference(str(fixture))
@@ -94,6 +108,10 @@ def main():
                     author_bit(
                         UsdGeom.Mesh(stage.GetPrimAtPath(path + "/HexTip")), bevel
                     )
+                    if a.depth_stop:
+                        from depth_stop import add_depth_stop
+
+                        driver_mass = add_depth_stop(stage, path)
                 PhysxSchema.PhysxContactReportAPI.Apply(
                     item.GetPrim()
                 ).CreateThresholdAttr(0.0)
@@ -144,7 +162,9 @@ def main():
     reference = Rotation.from_euler("z", a.driver_phase_deg, degrees=True)
     if a.align_before_feed and bench is None:
         raise ValueError("prealignment requires a measured workcell socket")
-    for tick in range((3 if a.align_before_feed else 2) * a.hz):
+    feed_ticks = (3 if a.align_before_feed else 2) * a.hz
+    unsupported_minimum = [dict(floor_m=1.0, flank_m=1.0, wall_m=1.0) for _ in cases]
+    for tick in range(feed_ticks + (a.hz if a.release else 0)):
         pose = bodies.get_transforms().numpy()
         vel = bodies.get_velocities().numpy()
         R = Rotation.from_quat(pose[:, 3:])
@@ -154,7 +174,7 @@ def main():
         force[:, :2] = (20.0 if a.compliant_feed else 80.0) * (
             init[:, :2] - pose[:, :2]
         ) - 2.0 * vel[:, :2]
-        force[:, 2] = 0.09 * 9.81 + np.clip(
+        force[:, 2] = driver_mass * 9.81 + np.clip(
             (30.0 if a.compliant_feed else 10.0) * (-0.008 - vel[:, 2]), -0.35, 0.35
         )
         if a.align_before_feed and tick < a.hz:
@@ -167,7 +187,7 @@ def main():
             ) * (np.pi / 3)
             reference = Rotation.from_euler("z", nearest)
             # Retain the measured clearance height while only the free driver indexes.
-            force[:, 2] = 0.09 * 9.81 + np.clip(
+            force[:, 2] = driver_mass * 9.81 + np.clip(
                 120.0 * (init[:, 2] + 0.0015 - pose[:, 2]) - 4.0 * vel[:, 2],
                 -0.35,
                 0.35,
@@ -178,6 +198,9 @@ def main():
             -0.02,
             0.02,
         )
+        if tick >= feed_ticks:
+            force[:] = 0.0
+            torque[:] = 0.0
         bodies.apply_forces_and_torques_at_position(
             wp.array(force.astype(np.float32), device="cuda:0"),
             wp.array(torque.astype(np.float32), device="cuda:0"),
@@ -218,6 +241,14 @@ def main():
                 and fit["wall_clearance_m"] >= -0.00005
                 and fit["floor_clearance_m"] >= -0.00005
             )
+            if tick >= feed_ticks:
+                check = unsupported_minimum[i]
+                check["floor_m"] = min(check["floor_m"], fit["floor_clearance_m"])
+                check["flank_m"] = min(check["flank_m"], fit["straight_flank_depth_m"])
+                if fit["wall_clearance_m"] is None:
+                    check["wall_m"] = None
+                elif check["wall_m"] is not None:
+                    check["wall_m"] = min(check["wall_m"], fit["wall_clearance_m"])
             captured[i] = captured[i] + 1 if good else 0
             measured.append(
                 dict(
@@ -242,6 +273,10 @@ def main():
         json.dumps(
             dict(
                 rate_hz=a.hz,
+                depth_stop=a.depth_stop,
+                external_mount=a.external_mount,
+                unheld_ticks=a.hz if a.release else 0,
+                unheld_minima=unsupported_minimum if a.release else None,
                 continuous_socket=a.continuous_socket,
                 six_faces=a.six_faces,
                 mounted_offset_mm=a.mounted_offset_mm,

@@ -146,6 +146,8 @@ class RoomContacts:
         contacts = []
         transforms = self.motion.get_transforms().numpy()[self.motion_order]
         vels = self.motion.get_velocities().numpy()[self.motion_order]
+        if not np.isfinite(transforms).all() or not np.isfinite(vels).all():
+            raise ValueError("nonfinite native rigid-body state")
         centers = transforms[:, :3] + Rotation.from_quat(transforms[:, 3:]).apply(
             self.com
         )

@@ -80,8 +80,9 @@ class WorkcellClearance:
         self.by_body = [np.flatnonzero(self.owner == i) for i in range(len(self.paths))]
         self.moving = [indices[p] for p in sorted(moving)]
         self.equipment = [indices[p] for p in sorted(equipment)]
+        self.fixture_shapes = np.isin(self.owner, self.equipment)
 
-    def lower_bound(self):
+    def world_bounds(self):
         poses = self.view.get_transforms().numpy()
         rotations = Rotation.from_quat(poses[:, 3:]).as_matrix()[self.owner]
         centres = (
@@ -89,6 +90,10 @@ class WorkcellClearance:
         )
         half = np.einsum("nij,nj->ni", abs(rotations), self.sizes)
         lo, hi = centres - half, centres + half
+        return lo, hi
+
+    def lower_bound(self, bounds=None):
+        lo, hi = self.world_bounds() if bounds is None else bounds
         actor_lo = np.array([lo[ids].min(axis=0) for ids in self.by_body])
         actor_hi = np.array([hi[ids].max(axis=0) for ids in self.by_body])
         best = float("inf")

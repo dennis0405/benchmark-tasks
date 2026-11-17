@@ -65,6 +65,7 @@ def build(
     velocity_iters=4,
     continuous_seat=False,
     implicit_axial=False,
+    external_mount=False,
 ):
     stage = Usd.Stage.CreateNew(str(destination))
     root = UsdGeom.Xform.Define(stage, "/Bench")
@@ -128,6 +129,8 @@ def build(
     slide = UsdPhysics.PrismaticJoint
     hinge = UsdPhysics.RevoluteJoint
     mount = joint("mount", fixed, None, "frame")
+    if external_mount:
+        mount.CreateExcludeFromArticulationAttr(True)
     mount.CreateBreakForceAttr(150.0)
     mount.CreateBreakTorqueAttr(15.0)
     joint("sz", slide, "frame", "s_car", "Z", (-0.0048, 0.0048))
