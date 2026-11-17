@@ -92,6 +92,7 @@ class Bench:
 
         self.seat = pair("nut", root + "/frame")
         self.stop = pair("piston", root + "/screw")
+        self.driver_contact_force = np.zeros(3)
         self.tool_pairs = (
             []
             if not tools
@@ -99,6 +100,7 @@ class Bench:
                 (name, pair(name, tool)) for name in ("nut", "screw") for tool in tools
             ]
         )
+        self.driver_pair = self.tool_pairs[len(tools)][1] if tools else None
         self.trace = []
         self.actuator = 0.0
         self.peak_external = 0.0
@@ -113,6 +115,7 @@ class Bench:
 
     def tool_efforts(self):
         efforts = np.zeros(8)
+        self.driver_contact_force.fill(0)
         for name, view in self.tool_pairs:
             forces, points, normals, sep, count, start = view.get_contact_data(
                 dt=self.h
@@ -127,6 +130,10 @@ class Bench:
             vectors = forces.numpy()[sl].reshape(-1, 1) * normals.numpy()[sl].reshape(
                 -1, 3
             )
+            if (
+                view is self.driver_pair
+            ):  # Screw on driver is the opposite of the measured tool-on-screw load.
+                self.driver_contact_force -= vectors.sum(axis=0)
             torque = float(np.cross(lever, vectors)[:, 2].sum())
             force = float(vectors[:, 2].sum())
             # Sidewall friction also loads a real driver axially. Normal
@@ -138,6 +145,8 @@ class Bench:
                 region = slice(head, head + patch_count)
                 tangent = tangent.numpy()[region].reshape(-1, 3)
                 arms = anchors.numpy()[region].reshape(-1, 3) - position
+                if view is self.driver_pair:
+                    self.driver_contact_force -= tangent.sum(axis=0)
                 force += float(tangent[:, 2].sum())
                 torque += float(np.cross(arms, tangent)[:, 2].sum())
             # The parent coordinates also move the distal nut.

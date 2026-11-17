@@ -1,8 +1,7 @@
-"""Native contact-only capture test with the prescribed driver and a stationary test socket."""
+"""Probe a free driver against the fixed socket or the full threaded workcell."""
 
 import argparse
 import json
-import math
 from pathlib import Path
 
 from isaaclab.app import AppLauncher
@@ -13,7 +12,13 @@ p.add_argument("--out", type=Path, required=True)
 p.add_argument("--hz", type=int, choices=(240, 480), default=240)
 p.add_argument("--continuous-socket", action="store_true")
 p.add_argument("--six-faces", action="store_true")
+p.add_argument(
+    "--mounted-offset-mm",
+    type=float,
+    help="use the actual threaded workcell and a single chamfered driver",
+)
 p.add_argument("--compliant-feed", action="store_true")
+p.add_argument("--long-lead", action="store_true")
 a = p.parse_args()
 app = AppLauncher(headless=True).app
 
@@ -23,9 +28,10 @@ from scipy.spatial.transform import Rotation
 from pxr import UsdGeom, UsdPhysics, PhysxSchema, UsdShade, Gf
 import isaaclab.sim as sim_utils
 from isaaclab_physx.physics import PhysxManager, PhysxCfg
-from build_bench import continuous_ring
+from build_bench import build, continuous_ring
+from native_bench import Bench
 from hex_fit import six_socket_faces
-from hex_fit import author_bit, CHAMFER, hex_fit
+from hex_fit import author_bit, CHAMFER, LONG_CHAMFER, hex_fit
 
 
 def main():
@@ -45,15 +51,27 @@ def main():
     api.CreateDynamicFrictionAttr(0.3)
     api.CreateRestitutionAttr(0.0)
     cases = []
-    for bevel in (0.0, CHAMFER):
-        for dx in (-0.00040, 0.0, 0.00040):
+    mounted = a.mounted_offset_mm is not None
+    if mounted:
+        fixture = a.out.with_suffix(".usda").resolve()
+        build(fixture, a.assets, continuous_seat=True, implicit_axial=True)
+        UsdGeom.Xform.Define(
+            stage, "/World/Press"
+        ).GetPrim().GetReferences().AddReference(str(fixture))
+    bevel_size = LONG_CHAMFER if a.long_lead else CHAMFER
+    for bevel in (bevel_size,) if mounted else (0.0, bevel_size):
+        for dx in [a.mounted_offset_mm / 1000] if mounted else [-0.00040, 0.0, 0.00040]:
             i = len(cases)
-            center = np.array([0.2 * i, 0.0, 0.75])
+            center = np.array(
+                [0.36, -0.018, 0.8517] if mounted else [0.2 * i, 0.0, 0.75]
+            )
             offset = np.array([0.0, dx, 0.0])
             for shape, file, pos in (
                 ("Socket", "socket_adjuster", center),
                 ("Driver", "hex_driver", center + offset + [0, 0, 0.0015]),
             ):
+                if mounted and shape == "Socket":
+                    continue
                 path = f"/World/{shape}{i}"
                 item = UsdGeom.Xform.Define(stage, path)
                 item.GetPrim().GetReferences().AddReference(
@@ -90,10 +108,25 @@ def main():
     order = [int(str(path).rsplit("Driver", 1)[1]) for path in bodies.prim_paths]
     assert sorted(order) == list(range(len(cases)))
     cases = [cases[i] for i in order]
+    bench = (
+        Bench(
+            "/World/Press",
+            a.hz,
+            tools=["/World/Driver0"],
+            native_friction=True,
+            implicit_axial=True,
+            transmitted_reaction=True,
+            rise_seconds=0.16,
+        )
+        if mounted
+        else None
+    )
     pairs = [
         world.create_rigid_contact_view(
             [f"/World/Driver{i}"],
-            filter_patterns=[[f"/World/Socket{i}"]],
+            filter_patterns=[
+                ["/World/Press/screw" if mounted else f"/World/Socket{i}"]
+            ],
             max_contact_data_count=128,
         )
         for i in order
@@ -130,15 +163,21 @@ def main():
             idx,
             True,
         )
+        if bench is not None:
+            bench.step()
         sim.step(render=False)
         pose = bodies.get_transforms().numpy()
         measured = []
         for i, ((ch, center, offset), view) in enumerate(zip(cases, pairs)):
+            sr = np.eye(3)
+            if bench is not None:
+                socket = bench.bodies["screw"].get_transforms().numpy()[0]
+                center, sr = socket[:3], Rotation.from_quat(socket[3:]).as_matrix()
             fit = hex_fit(
                 pose[i, :3],
                 Rotation.from_quat(pose[i, 3:]).as_matrix(),
                 center,
-                np.eye(3),
+                sr,
                 ch,
             )
             force_d, _, _, sep, ct, first = view.get_contact_data(dt=1 / a.hz)
@@ -183,6 +222,8 @@ def main():
                 rate_hz=a.hz,
                 continuous_socket=a.continuous_socket,
                 six_faces=a.six_faces,
+                mounted_offset_mm=a.mounted_offset_mm,
+                final_fixture=bench.read() if mounted else None,
                 compliant_feed=a.compliant_feed,
                 scope="contact fixture, not robot points",
                 cases=out,

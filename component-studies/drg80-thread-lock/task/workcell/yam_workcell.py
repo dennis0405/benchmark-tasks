@@ -14,9 +14,14 @@ parser.add_argument("--video", type=Path)
 parser.add_argument("--continuous-seat", action="store_true")
 parser.add_argument("--transmitted-reaction", action="store_true")
 parser.add_argument("--hz", type=int, choices=(240, 480), default=240)
-parser.add_argument(
+tips = parser.add_mutually_exclusive_group()
+tips.add_argument(
     "--square-bit", action="store_true", help="reproduce the original unbevelled bit"
 )
+parser.add_argument("--contact-guided", action="store_true")
+tips.add_argument("--long-lead", action="store_true")
+parser.add_argument("--seated-regrasp", action="store_true")
+parser.add_argument("--supported-turn", action="store_true")
 parser.add_argument("--solver", choices=("tgs", "pgs"), default="tgs")
 parser.add_argument("--contact-last", action="store_true")
 parser.add_argument("--driver-correction-rad", type=float, default=0.0)
@@ -58,7 +63,7 @@ def tool_asset(filename):
     if filename == "hex_driver":
         author_bit(
             UsdGeom.Mesh(stage.GetPrimAtPath("/Tool/HexTip")),
-            0.0 if args.square_bit else CHAMFER,
+            bit_chamfer,
         )
     materials = {}
     for name, mus in (("Polymer", (1.2, 1.0)), ("Steel", (0.45, 0.3))):
@@ -164,8 +169,11 @@ from scipy.spatial.transform import Rotation
 from isaaclab_physx.physics.physx_manager import IsaacEvents, PhysxManager
 from build_bench import build
 from native_bench import Bench
-from hex_fit import CHAMFER, author_bit, hex_fit
+from hex_fit import CHAMFER, LONG_CHAMFER, author_bit, hex_fit
+
+bit_chamfer = 0.0 if args.square_bit else LONG_CHAMFER if args.long_lead else CHAMFER
 from contact_limits import contact_bounds
+from tool_bounds import ToolBounds
 
 
 def main():
@@ -215,7 +223,10 @@ def main():
         "scope": "physical YAM workcell commissioning, no competition grade",
         "solver": args.solver,
         "rate_hz": args.hz,
-        "bit_chamfer_m": 0.0 if args.square_bit else CHAMFER,
+        "contact_guided": args.contact_guided,
+        "supported_turn": args.supported_turn,
+        "seated_regrasp": args.seated_regrasp,
+        "bit_chamfer_m": bit_chamfer,
         "implicit_axial": args.implicit_axial,
         "transmitted_reaction": args.transmitted_reaction,
         "driver_correction_rad": args.driver_correction_rad,
@@ -268,11 +279,29 @@ def main():
             max_contact_data_count=2048,
         )
 
+        driver_impulse = np.zeros(3)
+
+        rack = json.loads(
+            (task_assets() / "fixture-geometry-contract.json").read_text()
+        )["rack"]
+        cradle = [np.array(rack[k + "_cradle_bounds_world_m"]) for k in ("D", "W")]
+        geometry = [
+            ToolBounds(args.output.with_name(args.output.stem + "_" + name + ".usda"))
+            for name in ("hex_driver", "open_wrench")
+        ]
+        tool_view = PhysxManager.get_physics_sim_view().create_rigid_body_view(targets)
+        tool_paths = list(tool_view.prim_paths)
+        if set(tool_paths) != set(targets):
+            raise ValueError("tool containment body view did not resolve both tools")
+        tool_order = [tool_paths.index(path) for path in targets]
+        prior_rack = None
+
         def pre(*args, **kwargs):
             if "callback_error" in results:
                 return
             try:
                 bench.step()
+                driver_impulse[:] += bench.driver_contact_force * base.physics_dt
             except Exception as e:
                 results["callback_error"] = repr(e)
 
@@ -280,10 +309,25 @@ def main():
         reference_frame = bench.bodies["frame"].get_transforms().numpy()[0].copy()
 
         def post(*args, **kwargs):
-            nonlocal latest
+            nonlocal latest, prior_rack
             results["physics_ticks"] += 1
             r = bench.read()
             latest = r
+            poses = tool_view.get_transforms().numpy()[tool_order]
+            contained = [
+                body.in_cradle(pose[:3], Rotation.from_quat(pose[3:]).as_matrix(), box)
+                for body, pose, box in zip(geometry, poses, cradle)
+            ]
+            if contained != prior_rack:
+                results.setdefault("rack_transitions", []).append(
+                    dict(
+                        tick=results["physics_ticks"],
+                        driver=contained[0],
+                        wrench=contained[1],
+                    )
+                )
+                prior_rack = contained
+            r["tools_racked"] = all(contained)
             frame = bench.bodies["frame"].get_transforms().numpy()[0]
             moved = float(np.linalg.norm(frame[:3] - reference_frame[:3]))
             tilted = math.degrees(
@@ -390,6 +434,7 @@ def main():
                 action = np.r_[q[0], grips[0], q[1], grips[1]]
                 if len(trace) >= 4800:
                     raise ValueError("native task control horizon reached")
+                driver_impulse.fill(0.0)
                 before = results["physics_ticks"]
                 env.step(
                     torch.as_tensor(
@@ -405,6 +450,7 @@ def main():
                 poses = [tool(i) for i in range(2)]
                 rec = dict(
                     phase=label,
+                    driver_contact_n=(driver_impulse / base.step_dt).tolist(),
                     fixture=latest,
                     tools=[p.tolist() for p, _ in poses],
                     tool_quats_xyzw=[
@@ -650,7 +696,7 @@ def main():
                 rot,
                 part[:3],
                 Rotation.from_quat(part[3:]).as_matrix(),
-                0.0 if args.square_bit else CHAMFER,
+                bit_chamfer,
             )
 
         def insert_driver(indexed, initial_height):
@@ -676,6 +722,9 @@ def main():
                     socket_yaw
                     + round((wrist_index - socket_yaw) / (math.pi / 3)) * math.pi / 3
                 )
+                if args.contact_guided:
+                    # Let a freely turning screw index against the stationary wrist.
+                    indexed = wrist_index
                 goal_rot = Rotation.from_euler("z", indexed).as_matrix()
                 err_rot = Rotation.from_matrix(goal_rot @ tool_rot.T).as_rotvec()
                 delta = np.asarray(part[:3]) - tip_pos
@@ -717,7 +766,7 @@ def main():
                     tool_rot,
                     part[:3],
                     part_rot,
-                    0.0 if args.square_bit else CHAMFER,
+                    bit_chamfer,
                 )
                 wall = fit["wall_clearance_m"]
                 if (wall is not None and wall < -0.00008) or fit[
@@ -726,7 +775,8 @@ def main():
                     # Back the bit out of face interference before recentering.
                     height = max(height, 0.0009)
                 engaged = (
-                    fit["straight_flank_depth_m"] >= 0.0016
+                    fit["straight_flank_depth_m"]
+                    >= (0.0029 if args.supported_turn else 0.0016)
                     and wall is not None
                     and wall >= -0.00005
                     and fit["floor_clearance_m"] >= -0.00005
@@ -743,8 +793,31 @@ def main():
                 ):
                     # Keep a clearance plane until the measured free tip is over the opening.
                     height = max(height, 0.0010)
+                if args.contact_guided:
+                    # A remote-centre approach commands the wrist only. Allow the
+                    # physical bevel reaction to displace the held tip laterally.
+                    force = driver_impulse / base.step_dt
+                    height_error = tip_pos[2] - part[2]
+                    if step == 0:
+                        feed_height = initial_height
+                    if radial < 0.00048 and np.linalg.norm(err_rot[:2]) < 0.025:
+                        feed_height = max(
+                            -0.0042 if args.supported_turn else -0.0026,
+                            feed_height
+                            - (0.00038 if height_error > 0.002 else 0.000055),
+                        )
+                    if force[2] > 0.45 or (wall is not None and wall < -0.00009):
+                        feed_height = max(feed_height, height_error + 0.00008)
+                    height = feed_height
+                    if height_error < 0.0015:
+                        delta[:2] += np.clip(0.0012 * force[:2], -0.00035, 0.00035)
                 delta[2] += height
-                if height <= -0.0035 and abs(delta[2]) < 0.00025 and radial < 0.00015:
+                if (
+                    not args.contact_guided
+                    and height <= -0.0035
+                    and abs(delta[2]) < 0.00025
+                    and radial < 0.00015
+                ):
                     break
                 goals = commands.copy()
                 cp, cr = ik.tcp_pose(goals[0], rig.bases["left"])
@@ -835,12 +908,74 @@ def main():
             math.radians(87) / 300 - 0.0057
         ) * math.tau / 0.001 + args.driver_correction_rad
         start_angle = latest["st"]
-        nominal_z = 0.8517
         lead = 0.001 / math.tau
 
         def drive_tip(depth):
-            state = latest
-            return np.r_[screw()[:2], nominal_z + lead * state["st"] - depth]
+            return screw() - [0.0, 0.0, depth]
+
+        def regrasp_in_socket(sweep):
+            # The socket supports the tool. The only outputs are normal YAM arm
+            # and finger commands. Monitor the free bit throughout release.
+            tip, tool_r = tool(0)
+            grasp = tip + tool_r[:, 2] * 0.100
+            initial_pos, initial_rot = ik.tcp_pose(joints(0), rig.bases["left"])
+            arm = initial_pos - grasp
+            grip_state[0] = 1.0
+            move("driver_unpinch", commands.copy(), grip_state, 10)
+            for fraction in np.linspace(0.0, 1.0, 31)[1:]:
+                free = measured_fit()
+                if (
+                    free["straight_flank_depth_m"] < 0.001
+                    or free["wall_clearance_m"] is None
+                    or free["wall_clearance_m"] < -0.00008
+                    or free["floor_clearance_m"] < -0.00005
+                ):
+                    raise ValueError(f"unheld driver lost its socket support: {free}")
+                tip, tool_r = tool(0)
+                pivot = tip + 0.100 * tool_r[:, 2]
+                r = Rotation.from_euler("z", fraction * sweep).as_matrix()
+                goal = pivot + r @ arm
+                targets = commands.copy()
+                targets[0], pe, re = ik.solve(
+                    goal,
+                    ik.matrix_to_quat_xyzw(r @ initial_rot),
+                    q_init=commands[0],
+                    base_pos=rig.bases["left"],
+                    iters=45,
+                    tol=0.000035,
+                )
+                if pe > 0.0012 or re > 0.025:
+                    raise ValueError("empty wrist cannot reach next handle grasp")
+                move("driver_empty_wrist_return", targets, grip_state, 2)
+            # The 24 mm square grip presents a larger width on its diagonals.
+            # Infer the actual fingertip closing axis from the two measured pad poses.
+            links = base.scene["left_robot"].root_physx_view
+            paths = list(links.link_paths[0])
+            pad_ids = [
+                i
+                for i, path in enumerate(paths)
+                if str(path).rsplit("/", 1)[-1].lower() in ("tip_left", "tip_right")
+            ]
+            if len(pad_ids) != 2:
+                raise ValueError(f"could not identify two finger links in {paths}")
+            centres = links.get_link_transforms().numpy()[0, pad_ids, :3]
+            axis = tool(0)[1].T @ (centres[1] - centres[0])
+            axis /= np.linalg.norm(axis)
+            half_width = (
+                abs(axis[0]) * 0.012 + abs(axis[1]) * 0.012 + abs(axis[2]) * 0.025
+            )
+            grip_state[0] = np.clip((half_width - 0.0016) / abs(FINGER_OPEN), 0.0, 1.0)
+            move("driver_repinch", commands.copy(), grip_state, 15)
+            free = measured_fit()
+            if (
+                free["straight_flank_depth_m"] < 0.001
+                or free["wall_clearance_m"] is None
+                or free["wall_clearance_m"] < -0.00008
+                or free["floor_clearance_m"] < -0.00005
+            ):
+                raise ValueError(f"driver displaced during physical regrasp: {free}")
+            _, r = tool(0)
+            return math.atan2(r[1, 0], r[0, 0])
 
         home_yaw = indexed
         for stroke in range(7):
@@ -854,15 +989,48 @@ def main():
             # A hex face can be re-indexed every 60 degrees. Include a small
             # allowance for flank backlash and steer to the measured screw angle.
             arc = max(50, min(270, -neg_span - 12))
-            for j in range(math.ceil(arc / 4.5)):
+            increment = 2.0 if args.supported_turn else 4.5
+            depth = 0.0040 if args.supported_turn else 0.0026
+            for j in range(math.ceil(arc / increment)):
                 remaining = latest["st"] - target_angle
                 if remaining < 0.10:
                     break
-                indexed -= min(math.radians(4.5), remaining)
-                servo_tool(0, indexed, drive_tip(0.0026), 7, "driver_in_socket")
+                indexed -= min(math.radians(increment), remaining)
+                servo_tool(0, indexed, drive_tip(depth), 7, "driver_in_socket")
+                surface = measured_fit()
+                if (
+                    args.supported_turn
+                    and 0.0 < surface["straight_flank_depth_m"] < 0.0018
+                    and surface["wall_clearance_m"] is not None
+                    and surface["wall_clearance_m"] >= -0.00008
+                ):
+                    # Pause twisting. Hold the measured tool yaw and feed axially until
+                    # the full-width land has regained contact length.
+                    _, actual_rot = tool(0)
+                    held = math.atan2(actual_rot[1, 0], actual_rot[0, 0])
+                    for _ in range(36):
+                        servo_tool(0, held, drive_tip(depth), 1, "driver_reseat")
+                        surface = measured_fit()
+                        if (
+                            surface["straight_flank_depth_m"] >= 0.0022
+                            or surface["straight_flank_depth_m"] <= 0
+                            or surface["wall_clearance_m"] is None
+                            or surface["wall_clearance_m"] < -0.00008
+                        ):
+                            break
+                if (
+                    surface["straight_flank_depth_m"] < 0.0008
+                    or surface["wall_clearance_m"] is None
+                    or surface["wall_clearance_m"] < -0.00008
+                    or surface["floor_clearance_m"] < -0.00005
+                ):
+                    results.setdefault("lost_drive_fit", surface)
+                    raise ValueError(
+                        f"driver lost flank contact during torque: {surface}"
+                    )
                 if yaw_start - indexed >= math.radians(arc):
                     break
-            servo_tool(0, indexed, drive_tip(0.0026), 10, "driver_stroke_hold")
+            servo_tool(0, indexed, drive_tip(depth), 10, "driver_stroke_hold")
             state = bench.read()
             turn = state["st"] - initial_angle
             tip = tool(0)[0] - screw()
@@ -881,6 +1049,9 @@ def main():
                 break
             if turn > -0.10 or tip[2] > -0.001:
                 raise ValueError("driver stroke lost measured engagement")
+            if args.seated_regrasp:
+                indexed = regrasp_in_socket(yaw_start - indexed)
+                continue
             # Withdraw straight and verify clearance before moving to another flat.
             servo_tool(0, indexed, drive_tip(-0.007), 65, "driver_withdraw")
             if (tool(0)[0] - screw())[2] < 0.003:

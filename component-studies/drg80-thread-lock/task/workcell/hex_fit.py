@@ -9,12 +9,13 @@ radius = 0.001975 / np.cos(np.pi / 6)
 rim = radius * np.column_stack((np.cos(angles), np.sin(angles)))
 flat_normals = np.column_stack((np.cos(angles + np.pi / 6), np.sin(angles + np.pi / 6)))
 CHAMFER = 0.0005
+LONG_CHAMFER = 0.001
 
 
-@lru_cache(maxsize=2)
+@lru_cache(maxsize=3)
 def bit_mesh(chamfer):
-    if chamfer not in (0.0, CHAMFER):
-        raise ValueError("expected the original bit or the approved 0.50 mm bevel")
+    if chamfer not in (0.0, CHAMFER, LONG_CHAMFER):
+        raise ValueError("expected a square bit or the 0.50/1.00 mm lead-in")
     rings = [(0.0, 0.001975 - chamfer)]
     if chamfer:
         rings.append((chamfer, 0.001975))

@@ -70,3 +70,15 @@ In the fixed-socket contact fixture the lateral tether pulls toward the *initial
 ```sh
 python "$study/check_bit_capture.py" --assets "$run/task-prototype/assets" --hz 480 --compliant-feed --out measurements/driver-capture.json
 ```
+
+### Capture with the threaded assembly and free robot tools
+
+The diagnostic accepts `--mounted-offset-mm` to use the complete unpowered workcell, including the movable screw, nut, seat and axial/rotational coupling. The contact fixture supplies a finite feed to a free driver. No robot participates in that test. With the 0.50 mm lead-in, the 480 Hz mounted fixture passed at zero offset and stalled at −0.40 and +0.40 mm. The 1.00 mm, 45° lead-in passed all three positions with approximately 5.00 mm of full-width flank seated. Each result is a single trajectory. Both tips retain the original 3.95 mm driving width. The [longer-tip USD](../../input/long-lead-driver.usda) is a removable first-party layer.
+
+```sh
+python "$study/check_bit_capture.py" --assets "$run/task-prototype/assets" --hz 480 --compliant-feed --long-lead --mounted-offset-mm=0.4 --out measurements/mounted-driver.json
+```
+
+YAM can physically seat the 0.50 mm tip and turn the screw by holding wrist yaw during entry and responding to the measured contact wrench at 20 Hz. In yam17 the shallowest nose corner reached 2.13 mm below the mouth, the full-width flank reached 1.63 mm, and the centres were 0.058 mm apart. The screw turned 61.44° before the land depth decreased to 0.75 mm and twisting stopped. At that point the wall clearance remained positive. The `--supported-turn` option seats the driver deeper and pauses its twist to reseat a rising bit. The `--seated-regrasp` option opens the real fingers with the bit in the socket, returns the empty wrist around the handle, then pinches again. Neither option applies forces to the robot's tools or prescribes screw motion. See the [mounted trials, robot outcomes and raw trace checksums](../../measurements/mounted-driver-and-yam.json).
+
+The rack observer transforms the active mesh, box and finite cylindrical collision geometry into world coordinates and checks the entire tool against its cradle. Replay with `check_tool_racks.py --assets "$run/task-prototype/assets" --trace measurements/yam15.trace.json --out measurements/yam15-racks.json`. The per-run tool USD wrappers must be next to the trace. That replay saw both tools racked at reset and each leave its own cradle during lift; two negative controls placed a tool origin inside while its handle protruded. The replay samples at the 20 Hz action rate. The instrumented robot runner also records containment transitions on native physics ticks.
