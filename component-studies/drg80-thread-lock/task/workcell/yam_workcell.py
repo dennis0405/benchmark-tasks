@@ -22,6 +22,8 @@ parser.add_argument("--contact-guided", action="store_true")
 tips.add_argument("--long-lead", action="store_true")
 parser.add_argument("--seated-regrasp", action="store_true")
 parser.add_argument("--supported-turn", action="store_true")
+parser.add_argument("--align-before-feed", action="store_true")
+parser.add_argument("--wrench-preload-n", type=float, default=5.0)
 parser.add_argument("--solver", choices=("tgs", "pgs"), default="tgs")
 parser.add_argument("--contact-last", action="store_true")
 parser.add_argument("--driver-correction-rad", type=float, default=0.0)
@@ -174,6 +176,7 @@ from hex_fit import CHAMFER, LONG_CHAMFER, author_bit, hex_fit
 bit_chamfer = 0.0 if args.square_bit else LONG_CHAMFER if args.long_lead else CHAMFER
 from contact_limits import contact_bounds
 from tool_bounds import ToolBounds
+from service_paths import wrench_flat, lever_grasp, lever_pose
 
 
 def main():
@@ -225,6 +228,8 @@ def main():
         "rate_hz": args.hz,
         "contact_guided": args.contact_guided,
         "supported_turn": args.supported_turn,
+        "align_before_feed": args.align_before_feed,
+        "wrench_preload_target_n": args.wrench_preload_n,
         "seated_regrasp": args.seated_regrasp,
         "bit_chamfer_m": bit_chamfer,
         "implicit_axial": args.implicit_axial,
@@ -702,12 +707,15 @@ def main():
         def insert_driver(indexed, initial_height):
             height = initial_height
             wrist_index = indexed
+            free_align = args.align_before_feed
+            align_count = 0
+            last_alignment = -120
             seated_steps = 0
             centre_error = np.zeros(2)
             prev_p, prev_r = tool(0)
             tip_step = np.zeros(3)
             angular_step = np.zeros(3)
-            for step in range(640 if initial_height > 0.009 else 310):
+            for step in range(640 if initial_height > 0.009 else 430):
                 tip_pos, tool_rot = tool(0)
                 tip_step = 0.65 * tip_step + 0.35 * (tip_pos - prev_p)
                 angular_step = (
@@ -722,6 +730,24 @@ def main():
                     socket_yaw
                     + round((wrist_index - socket_yaw) / (math.pi / 3)) * math.pi / 3
                 )
+                if free_align:
+                    # Index only in free space. Once the bevel bears load the
+                    # mobile screw can rotate without the hand chasing its phase.
+                    if tip_pos[2] - part[2] > 0.00065:
+                        wrist_index = indexed
+                        actual_yaw = math.atan2(tool_rot[1, 0], tool_rot[0, 0])
+                        phase_error = math.remainder(indexed - actual_yaw, math.tau)
+                        if (
+                            abs(phase_error) < 0.055
+                            and np.linalg.norm(tip_pos[:2] - part[:2]) < 0.00055
+                        ):
+                            align_count += 1
+                        else:
+                            align_count = 0
+                        if align_count >= 5:
+                            free_align = False
+                            last_alignment = step
+                            align_count = 0
                 if args.contact_guided:
                     # Let a freely turning screw index against the stationary wrist.
                     indexed = wrist_index
@@ -800,7 +826,10 @@ def main():
                     height_error = tip_pos[2] - part[2]
                     if step == 0:
                         feed_height = initial_height
-                    if radial < 0.00048 and np.linalg.norm(err_rot[:2]) < 0.025:
+                    if (
+                        radial < (0.00075 if args.long_lead else 0.00048)
+                        and np.linalg.norm(err_rot[:2]) < 0.025
+                    ):
                         feed_height = max(
                             -0.0042 if args.supported_turn else -0.0026,
                             feed_height
@@ -808,6 +837,20 @@ def main():
                         )
                     if force[2] > 0.45 or (wall is not None and wall < -0.00009):
                         feed_height = max(feed_height, height_error + 0.00008)
+                    if (
+                        args.align_before_feed
+                        and step - last_alignment > 90
+                        and 0.0 < fit["depth_m"] < 0.0011
+                    ):
+                        actual_yaw = math.atan2(tool_rot[1, 0], tool_rot[0, 0])
+                        off_flat = abs(
+                            math.remainder(socket_yaw - actual_yaw, math.pi / 3)
+                        )
+                        if off_flat > 0.12:
+                            free_align = True
+                            last_alignment = step
+                    if free_align:
+                        feed_height = max(feed_height, 0.0015)
                     height = feed_height
                     if height_error < 0.0015:
                         delta[:2] += np.clip(0.0012 * force[:2], -0.00035, 0.00035)
@@ -1068,16 +1111,13 @@ def main():
         # commanded position while turning, then withdraw the tools sequentially.
         nut = lambda: body_pose("nut")[:3]
         nut_phase = float(bench.state()[0][1] + bench.state()[0][3])
-        options = []
-        for k in range(6):
-            yaw = nut_phase + k * math.pi / 3
-            wr = Rotation.from_euler("z", yaw).as_matrix()
-            pre_nut = nut() - 0.036 * wr[:, 0]
-            q, ep, ea = solve_tool(1, pre_nut, wr)
-            options.append(
-                (ep + 0.05 * ea + 0.00002 * np.linalg.norm(q - joints(1)), yaw, wr)
-            )
-        _, yaw, wr = min(options, key=lambda x: x[0])
+        tp, tr = tool(1)
+        cp, cr = ik.tcp_pose(joints(1), rig.bases["right"])
+        offsets[1] = (tr.T @ (cp - tp), tr.T @ cr)
+        _, yaw, wr = wrench_flat(
+            nut(), nut_phase, *offsets[1], joints(1), rig.bases["right"]
+        )
+        results["selected_wrench_yaw_deg"] = math.degrees(yaw)
         go_tool(
             "wrench_above_approach", 1, nut() - 0.036 * wr[:, 0] + [0, 0, 0.04], wr, 52
         )
@@ -1095,14 +1135,16 @@ def main():
                 wr = Rotation.from_euler("z", yaw).as_matrix()
                 servo_tool(1, yaw, nut(), 6, "wrench_tighten")
                 seat.append(latest["seat_n"])
-                if len(seat) >= 3 and min(seat[-3:]) >= 5.0:
+                if len(seat) >= 3 and min(seat[-3:]) >= args.wrench_preload_n:
                     break
             results.setdefault("wrench_strokes", []).append(
                 dict(relative_turn_rad=latest["nt"] - old_nt, seat_n=latest["seat_n"])
             )
             for dist in np.linspace(0.0, 0.035, 22):
                 servo_tool(1, yaw, nut() - dist * wr[:, 0], 3, "wrench_back_out")
-            if latest["seat_n"] >= 3.0:
+            if min(r["fixture"]["seat_n"] for r in trace[-5:]) >= max(
+                3.0, 0.90 * args.wrench_preload_n
+            ):
                 break
             if latest["nt"] - old_nt > -0.08:
                 raise ValueError("wrench failed to rotate the physical nut")
@@ -1129,18 +1171,23 @@ def main():
         # A real parallel-jaw grasp on the instrument handle drives the pivot.
         pivot = np.array(bench.poses()["lever"][:3])
 
-        def lever_tcp(deg):
-            axis = Rotation.from_euler("y", deg, degrees=True).apply([0, 0, 1])
-            return pivot + 0.070 * axis + np.array([0, 0, PAD_TIP_PAST_TCP])
-
-        hand = 1
+        residual, hand, neutral, tilt, yaw = lever_grasp(
+            pivot, [joints(0), joints(1)], rig.bases
+        )
+        results["lever_plan"] = dict(
+            arm=sides[hand],
+            neutral_tilt_deg=tilt,
+            yaw_deg=yaw,
+            weighted_ik_error_m=residual,
+        )
         arm = rig.bases[sides[hand]]
 
         def handle_motion(label, deg, steps, extra_z=0.0):
             goals = commands.copy()
+            pos, rot = lever_pose(pivot, deg, neutral, extra_z)
             q, ep, ea = ik.solve(
-                lever_tcp(deg) + [0, 0, extra_z],
-                ik.matrix_to_quat_xyzw(grip_rotation(0)),
+                pos,
+                ik.matrix_to_quat_xyzw(rot),
                 q_init=joints(hand),
                 base_pos=arm,
                 iters=180,

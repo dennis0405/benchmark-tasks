@@ -19,6 +19,8 @@ p.add_argument(
 )
 p.add_argument("--compliant-feed", action="store_true")
 p.add_argument("--long-lead", action="store_true")
+p.add_argument("--align-before-feed", action="store_true")
+p.add_argument("--driver-phase-deg", type=float, default=0.0)
 a = p.parse_args()
 app = AppLauncher(headless=True).app
 
@@ -78,6 +80,8 @@ def main():
                     str((a.assets / "tools" / (file + ".usda")).resolve())
                 )
                 item.AddTranslateOp().Set(Gf.Vec3d(*pos))
+                if shape == "Driver" and a.driver_phase_deg:
+                    item.AddRotateZOp().Set(a.driver_phase_deg)
                 if shape == "Socket":
                     if a.six_faces:
                         six_socket_faces(stage, path)
@@ -137,7 +141,10 @@ def main():
     captured = np.zeros(len(cases), int)
     measured = []
     rows = []
-    for tick in range(2 * a.hz):
+    reference = Rotation.from_euler("z", a.driver_phase_deg, degrees=True)
+    if a.align_before_feed and bench is None:
+        raise ValueError("prealignment requires a measured workcell socket")
+    for tick in range((3 if a.align_before_feed else 2) * a.hz):
         pose = bodies.get_transforms().numpy()
         vel = bodies.get_velocities().numpy()
         R = Rotation.from_quat(pose[:, 3:])
@@ -150,8 +157,23 @@ def main():
         force[:, 2] = 0.09 * 9.81 + np.clip(
             (30.0 if a.compliant_feed else 10.0) * (-0.008 - vel[:, 2]), -0.35, 0.35
         )
+        if a.align_before_feed and tick < a.hz:
+            axis = Rotation.from_quat(
+                bench.bodies["screw"].get_transforms().numpy()[0, 3:]
+            ).as_matrix()
+            yaw = np.arctan2(axis[1, 0], axis[0, 0])
+            nearest = yaw + np.round(
+                (np.deg2rad(a.driver_phase_deg) - yaw) / (np.pi / 3)
+            ) * (np.pi / 3)
+            reference = Rotation.from_euler("z", nearest)
+            # Retain the measured clearance height while only the free driver indexes.
+            force[:, 2] = 0.09 * 9.81 + np.clip(
+                120.0 * (init[:, 2] + 0.0015 - pose[:, 2]) - 4.0 * vel[:, 2],
+                -0.35,
+                0.35,
+            )
         torque = np.clip(
-            -(0.6 if a.compliant_feed else 0.02) * R.as_rotvec()
+            -(0.6 if a.compliant_feed else 0.02) * (R * reference.inv()).as_rotvec()
             - (0.009 if a.compliant_feed else 0.002) * vel[:, 3:],
             -0.02,
             0.02,
@@ -223,6 +245,8 @@ def main():
                 continuous_socket=a.continuous_socket,
                 six_faces=a.six_faces,
                 mounted_offset_mm=a.mounted_offset_mm,
+                driver_phase_deg=a.driver_phase_deg,
+                align_before_feed=a.align_before_feed,
                 final_fixture=bench.read() if mounted else None,
                 compliant_feed=a.compliant_feed,
                 scope="contact fixture, not robot points",
