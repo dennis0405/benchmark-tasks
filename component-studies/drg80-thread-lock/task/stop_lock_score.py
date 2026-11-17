@@ -5,7 +5,44 @@ surface clearances and rack containment. No action or expert phase is an input.
 Angles are degrees, lengths metres, time seconds and forces newtons.
 """
 from dataclasses import dataclass, fields
-from math import degrees, isfinite
+from math import degrees, isfinite, radians
+
+
+class EnergizedMotion:
+    """One tracker per episode. Supply unwrapped absolute screw and nut angles in radians."""
+
+    limits = (1e-6, radians(.01), radians(.01))
+    channels = ("screw_axial_m", "screw_angle_rad", "nut_angle_rad")
+
+    def __init__(self):
+        self.previous = None
+        self.low = self.high = None
+        self.maximum = [0.] * 3
+        self.first_failure = None
+        self.windows = 0
+
+    def observe(self, tick, force_n, screw_z_m, screw_rad, nut_rad):
+        pose = (screw_z_m, screw_rad, nut_rad)
+        if not all(map(isfinite, (force_n, *pose))):
+            if self.first_failure is None:
+                self.first_failure = (tick, "nonfinite")
+            return True
+        if abs(force_n) <= 1:
+            self.low = self.high = None
+        elif self.previous is not None:
+            if self.low is None:
+                self.windows += 1
+                self.low = list(self.previous)
+                self.high = list(self.previous)
+            for i, value in enumerate(pose):
+                self.low[i] = min(value, self.low[i])
+                self.high[i] = max(value, self.high[i])
+                span = self.high[i] - self.low[i]
+                self.maximum[i] = max(self.maximum[i], span)
+                if span > self.limits[i] and self.first_failure is None:
+                    self.first_failure = (tick, self.channels[i])
+        self.previous = pose
+        return self.first_failure is not None
 
 
 @dataclass(frozen=True)
@@ -38,6 +75,7 @@ class StopLockScore:
         if hz not in (240, 480):
             raise ValueError("Expected a verified 240 or 480 Hz physics stream")
         self.hz = hz
+        self.energized_motion = EnergizedMotion()
         self.previous = None
         self.tick = 0
         self.damaged = False
@@ -65,9 +103,9 @@ class StopLockScore:
         s = sample
         finite = all(isfinite(getattr(s, f.name)) for f in fields(s))
         self.damaged |= not finite or s.damage or not s.nuts_retained
-        if prior is not None and abs(s.opening_force) > 1:
-            self.damaged |= (max(abs(s.screw_angle-prior.screw_angle), abs(s.nut_angle-prior.nut_angle))
-                             * self.hz > degrees(.01) or abs(s.screw_height-prior.screw_height)*self.hz > .00001)
+        self.damaged |= self.energized_motion.observe(
+            tick, s.opening_force, s.screw_height, radians(s.screw_angle), radians(s.nut_angle)
+        )
         if self.damaged:
             self.score = 0.0
             return self.score

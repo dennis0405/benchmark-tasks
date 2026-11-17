@@ -2,7 +2,43 @@
 
 These are component experiments for the 90-degree opening-stop benchmark, recorded on the production Brev L40S. The whole workcell still requires a physical YAM demonstration and end-to-end grading.
 
-## Reproduce
+## Approved powered-motion revision
+
+The current contract measures the maximum minus minimum over each contiguous interval above 1 N of absolute native piston effort. Include the previous sample at entry. A span above 1 µm along the screw axis or above 0.01° about either the screw or nut axis latches damage until reset. The instantaneous-rate results documented below describe earlier experiments. The approved revision changes one damage rule and its matching negative control. The prior review receipt applies to its original digest.
+
+Reproduce the native comparison in separate Isaac processes from this directory. Both cases use identical initial geometry, torque and pressure schedules. Only the fault case adds a 0.03 N·m driver torque for 0.25 s under pressure. All other checks are preserved.
+
+```sh
+for hz in 240 480; do
+  for item in normal fault; do
+    mode=normal
+    if [ "$item" = fault ]; then mode=powered-adjustment; fi
+    python task/approved_piston.py --device cuda:0 --fixture task --cover rigid --velocity-iters 8 --hz "$hz" --case "$mode" --output "measurements/dual-rev${item}${hz}.json"
+  done
+done
+python task/check_energized_motion.py
+python task/check_score.py
+python task/verify_powered_series.py measurements
+```
+
+The public YAM task loader can exercise the actual raw-sample callback using `task/check_yam_grade_entry.py PATH/TO/task.py`. Its inputs are synthetic. Run `task/yam_rack_lift.py --workspace WORKSPACE --output measurements/yam-rack-lift.json` in the pinned Arena environment to replay the independent physical pickup using the two free USD tools, their rack supports and joint commands to both arms. The workspace must include `input/fixture-geometry-contract.json` and `task/assets/tools/`. The held lift is measured against the settled pose throughout the final 1.5 s. This stage earns no adjustment or locking credit.
+
+### Fresh Brev results
+
+| Case | Physics Hz | Screw axial span (µm) | Screw angle span (°) | Nut angle span (°) | Minimum seat force (N) | Powered hazard |
+|---|---:|---:|---:|---:|---:|---|
+| normal | 240 | 0.184 | 0.00267 | 0.00100 | 6.526 | clear, 17/17 checks |
+| powered-adjustment | 240 | 228.740 | 83.26805 | 92.71708 | 0.000 | latched on step 3181 |
+| normal | 480 | 0.172 | 0.00194 | 0.00054 | 6.604 | clear, 17/17 checks |
+| powered-adjustment | 480 | 239.089 | 86.61138 | 138.77968 | 0.000 | latched on step 6361 |
+
+The normal and injected traces at each rate were identical until the first fault torque. The damage flag latched on that first physical substep at both rates. The full per-substep traces are preserved on Mac and Brev. Their SHA-256 hashes are in [the replays](measurements/powered-motion-native-series.json).
+
+[Recorded YAM acquisition](measurements/yam-rack-camera.mp4) contains the overhead and two wrist views from a 13 s native episode. Minimum lift throughout the 1.5 s hold was 48.1 mm for the driver and 48.9 mm for the wrench. A second episode with the fingers held open and otherwise identical arm commands left both tools on their racks. This recording ends after acquisition. No full-workcell success, Dream score or submission is recorded.
+
+The separate relative-N73 load test still blocks full workcell qualification. Explicitly supplying both actor relationships to the rack-and-pinion joint produced the native error `not allowed to add a non-GPU compatible PxConstraint` in direct-GPU mode. Axial extension and load plate force remained zero. The alternate native fixed-tendon diagnostic produced axial travel in both directions, but hit the rotary limits and reached about 3.90 mm of calculated elastic extension against an expected static magnitude of 0.314 mm. The alternate gearing trial also exceeded the prescribed N73 force envelope. The locked-piston and pickup tests do not qualify this separate load law. Keep the complete physical tests before any full-score claim. The USD gearing and force coefficient units used in the primary tendon trial follow the [NVIDIA schema](https://nvidia-omniverse.github.io/PhysX/ovphysx/latest/population/PhysxTendonAxisAPI.html).
+
+## Reproduce the earlier component experiments
 
 Use the run's pinned IsaacLab-Arena Python (Kit 110.3). Fetch the two M8 OBJ files named in `input/nvidia-factory-reference/reference-manifest.json` into that directory. Verify their listed SHA-256 hashes. The original Factory acknowledgments and license accompany the references.
 
