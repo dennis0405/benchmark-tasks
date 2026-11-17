@@ -22,6 +22,15 @@
 
 ## 사용
 
+아이디어 중복 검사는 기본적으로 연구실 제출 현황 Google Sheet의 **pending·accepted**
+요약을 모두 비교한다. 제목·지시문·카테고리·키워드로 명백히 다른 작업을 간결하게 묶고,
+유사하거나 설명이 부족한 항목만 최신 `task.json` 또는 README·task·scoring 원문을 읽는다.
+rejected 행과 모든 PR의 과거 수정본을 매번 읽지 않는다. 보고서에는 시트 스냅샷·건수와
+요약 비교/원문 검증 범위를 구분한다. 변경 없는 행은 재사용하며 재개 요청 문구만 바뀌어도
+아이디어 전체 검사를 다시 하지 않는다. 시트 방식은 아이디어 단계에 적용하며,
+지정 벤치마크·물리·최종 제출 전 공식 목록 검토·제출 승인 검사는 유지한다.
+기존 GitHub 전체 이력 감사는 `novelty_source`가 없는 별도 설정에서 사용할 수 있다.
+
 현재 Mac에 `rcauto`와 `robocurve-workflow` skill을 설치했다. CLI는 이 소스에 editable로 연결된다.
 다른 Mac에는 다음과 같이 설치한다. Brev CLI·GitHub CLI 로그인과 ffmpeg/ffprobe도 필요하다.
 
@@ -101,6 +110,9 @@ rcauto catalog-sync
 
 `selftest`는 합성 fixture다. `--remote`는 실제 Brev start·SSH·별도 worker·7단계 실행·파일 반출·
 stop을 검증하지만 모델·Dream·대회 제출을 호출하지 않는다. fixture는 승인·평가·제출할 수 없다.
+원격 파일은 압축 전송하며 중단된 부분을 보존한다. EOF·연결 끊김 같은 일시적인 전송 오류만
+최대 세 번 시도한다. 권한·호스트 키·경로 오류를 재시도하지 않으며, 이 재시도는 Dream 평가나
+태스크 실행을 반복하는 기능이 아니다.
 `doctor --sim`은 고정된 upstream 블록 쌓기 예제이며 산업 태스크 제작 실적으로 세지 않는다.
 
 ## 저장과 실행 경계

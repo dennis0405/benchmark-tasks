@@ -66,3 +66,50 @@ def test_start_returns_control_to_our_state_monitor_instead_of_blocking_cli(monk
 
     TestBrev({"instance": "vm", "instance_id": "id"}).start()
     assert calls[0] == ["brev", "start", "vm", "--detached"]
+
+
+def test_transient_transfer_failure_recovers_the_actual_payload(monkeypatch, tmp_path):
+    from rcauto import runtime
+
+    source, target = tmp_path / "source", tmp_path / "target"
+    source.mkdir()
+    target.mkdir()
+    data = b"complete evidence\n" * 1000
+    (source / "evidence.json").write_bytes(data)
+    actual_capture = runtime.capture
+    attempts = []
+
+    def interrupted_then_local_transfer(argv, **kwargs):
+        attempts.append(argv)
+        if len(attempts) == 1:
+            (target / "evidence.json").write_bytes(b"partial")
+            raise RuntimeErrorState("rsync: unexpected end of file")
+        local = [arg.removeprefix("vm:") for arg in argv]
+        local[0] = "/usr/bin/rsync"
+        return actual_capture(local, **kwargs)
+
+    monkeypatch.setattr(runtime, "capture", interrupted_then_local_transfer)
+    monkeypatch.setattr(runtime.time, "sleep", lambda _: None)
+    Brev({"instance": "vm"}).rsync(str(source) + "/", target, download=True)
+    assert (target / "evidence.json").read_bytes() == data
+    assert len(attempts) == 2
+
+
+@pytest.mark.parametrize("error,expected_attempts", [
+    ("rsync: unexpected end of file", 3),
+    ("rsync: Permission denied", 1),
+])
+def test_transfer_retries_are_bounded_and_do_not_retry_permission_errors(monkeypatch, error, expected_attempts):
+    from rcauto import runtime
+
+    attempts = []
+
+    def failed(argv, **kwargs):
+        attempts.append(argv)
+        raise RuntimeErrorState(error)
+
+    monkeypatch.setattr(runtime, "capture", failed)
+    monkeypatch.setattr(runtime.time, "sleep", lambda _: None)
+    with pytest.raises(RuntimeErrorState, match="rsync"):
+        Brev({"instance": "vm"}).rsync("/source/", "/target/", download=True)
+    assert len(attempts) == expected_attempts

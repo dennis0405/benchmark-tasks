@@ -98,22 +98,35 @@ class Brev:
             raise RuntimeErrorState("remote transfer path must be an absolute simple path")
         src = self.name + ":" + str(source) if download else str(source)
         dst = str(destination) if download else self.name + ":" + str(destination)
-        return capture(
-            [
-                "rsync",
-                "-a",
-                "--exclude=__pycache__",
-                "--exclude=.venv",
-                "--exclude=.git",
-                "--exclude=.pytest_cache",
-                *["--exclude=" + pattern for pattern in exclude],
-                "-e",
-                "ssh -o BatchMode=yes -o ConnectTimeout=20",
-                src,
-                dst,
-            ],
-            timeout=600,
-        )
+        argv = [
+            "rsync",
+            "-az",
+            "--partial",
+            "--exclude=__pycache__",
+            "--exclude=.venv",
+            "--exclude=.git",
+            "--exclude=.pytest_cache",
+            *["--exclude=" + pattern for pattern in exclude],
+            "-e",
+            "ssh -o BatchMode=yes -o ConnectTimeout=20",
+            src,
+            dst,
+        ]
+        for attempt in range(3):
+            try:
+                return capture(argv, timeout=600)
+            except (RuntimeErrorState, subprocess.TimeoutExpired) as error:
+                message = str(error).lower()
+                permanent = any(text in message for text in (
+                    "permission denied", "host key verification failed", "no such file",
+                ))
+                transient = any(text in message for text in (
+                    "unexpected end of file", "connection unexpectedly closed",
+                    "connection reset", "connection closed", "broken pipe", "timed out",
+                ))
+                if attempt == 2 or permanent or not transient:
+                    raise
+                time.sleep(attempt + 1)
 
     def deploy(self, source):
         base = self.config["remote_root"]
