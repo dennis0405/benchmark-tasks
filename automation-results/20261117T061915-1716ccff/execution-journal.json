@@ -1,0 +1,351 @@
+{
+  "run": {
+    "id": "20261117T061915-1716ccff",
+    "prompt": "User selection (verbatim): 피자로 진행해볼까?\nUser priority (verbatim): 최대한 구현하기 쉬우면서도 기존과 핵심 조작 능력이 겹치지 않는 것들 위주로 생각해봐\n\nThe selected proposal is to turn a partially baked pizza in place with a small turning peel inside a real-scale oven. Retain this direction. The underside has set enough to handle. Starting on the stone, bring the pale rim around toward the hot side while keeping the pizza near its initial center, top side up, supported by the deck, and inside the oven throughout. Withdraw the peel. Proposed target: roughly half a turn, with visible browning asymmetry. Assess the physics of manipulating the food, not cooking chemistry or food safety. Score true yaw change, center excursion throughout the trajectory, tool and deck support/contact, and final release. Negative controls include bypass by gripper, translating the pizza out to rotate, and loss of stone support. Use YAM's actual gripper controls and existing common task structure. Candidate choices should stay within this same skill. Use a physically justified minimal crust contact model, including rim compliance if it materially affects insertion. Do not weld the tool to the pizza or drive pizza pose.\nFirst test full-scale reach and clearance of the handle, oven mouth and peel tip with the real YAM model, and blade insertion and tangential traction with no scripted food pose. Use existing submission-sheet comparisons, then focus on close cases. Official rejected launch PR #720 (https://github.com/robocurve/benchmark-tasks/pull/720#issuecomment-6816792297) had a 90 mm pizza, open-topped oven and rigid raw dough. Use a representative closed-roof pizza oven, a real turning peel and a roughly 30 cm pizza. Do not reduce the equipment scale to fix a reach problem. Sources: https://eu.ooni.com/products/ooni-koda-16 and https://ooni.com/products/ooni-pizza-turning-peel and https://ooni.com/blogs/ooni-insights/how-to-pick-the-right-pizza-peel . Distinguish actual measurements from provisional settings. Signed human review is for this new task separately before paid model inference or official submission.\n",
+    "instance": "robocurve-conveyor",
+    "created_at": "2026-11-17T06:19:15.266132+00:00",
+    "status": "blocked",
+    "stage": null,
+    "mode": "production",
+    "config": {
+      "instance": "robocurve-conveyor",
+      "instance_id": "lnfb4luqq",
+      "remote_root": "/data/robocurve-automation",
+      "fork": "dennis0405/benchmark-tasks",
+      "upstream": "robocurve/benchmark-tasks",
+      "novelty_source": "google_sheet",
+      "novelty_sheet_url": "https://docs.google.com/spreadsheets/d/1BhGPjoAtA9DEE7BU5Rr2pt2M--9q0IHlovTsIDCoLvk/edit?gid=823012646",
+      "own_authors": [
+        "dennis0405",
+        "eainx"
+      ],
+      "receipt_authors": [
+        "achyutha11"
+      ],
+      "board_history_receipts": {
+        "TK-ZFPEC9": 686,
+        "TK-JQRFWD": 2303
+      },
+      "git_name": "dennis0405",
+      "git_email": "dennis0405@users.noreply.github.com",
+      "model": null,
+      "repair_attempts": 2,
+      "agent_timeout": 1800,
+      "sim_timeout": 1800,
+      "poll_seconds": 15,
+      "worker_timeout": 28800,
+      "dream_cumulative_usd": 0,
+      "dream_episode_reserve_usd": 20,
+      "dream_max_requests": null,
+      "benchmarks": [
+        "LIBERO",
+        "RoboCasa",
+        "SimplerEnv",
+        "BEHAVIOR",
+        "DataCenterBench",
+        "RoboDojo"
+      ],
+      "runtime": {
+        "python": "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+        "arena": "/data/robocurve-automation/sources/IsaacLab-Arena",
+        "yam": "/data/robocurve-automation/sources/yam-isaac-lab-arena",
+        "isaacsim": "6.1.0.0",
+        "arena_sha": "c7edf3a9d5d8276565208f72422f8f8a0806d6cf",
+        "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
+      }
+    },
+    "supervisor_pid": 47172,
+    "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261117T061915-1716ccff/supervisor.log",
+    "error": "incomplete evidence reference: source_id='s-6ff9ae104970e4bc', known_source=True, has_locator=True, quote_chars=6 (minimum 12). Use an exact acquired-text excerpt; inspect images separately, rather than quoting a short figure label.",
+    "approval": null,
+    "compute": "running",
+    "remote_status": {
+      "status": "blocked",
+      "error": "incomplete evidence reference: source_id='s-6ff9ae104970e4bc', known_source=True, has_locator=True, quote_chars=6 (minimum 12). Use an exact acquired-text excerpt; inspect images separately, rather than quoting a short figure label.",
+      "type": "GateError",
+      "at": "2026-11-17T06:38:06.193254+00:00"
+    },
+    "remote_run": "/data/robocurve-automation/worker-state/runs/20261117T061915-1716ccff",
+    "stop_error": "command failed: ssh: ssh: Could not resolve hostname global.prd.ga.run.brev.nvidia.com: nodename nor servname provided, or not known\n",
+    "revision": 1,
+    "revision_request": "Keep the selected centered half-turn. The exact official product pages were acquired into input/sources.json, with verbatim snippets and IDs in input/operator-source-notes.json. Use those for dimensions; only quote strings actually present in the indexed source text. Continue the same proposal.",
+    "resume_from_stage": "candidates"
+  },
+  "events": [
+    {
+      "seq": 9589,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:19:15.266386+00:00",
+      "data": "{\"event\": \"created\", \"instance\": \"robocurve-conveyor\"}"
+    },
+    {
+      "seq": 9590,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:19:15.270280+00:00",
+      "data": "{\"supervisor_pid\": 38860, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261117T061915-1716ccff/supervisor.log\"}"
+    },
+    {
+      "seq": 9591,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:19:15.348105+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 9592,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:19:27.008884+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 9593,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:19:44.757658+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 9594,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:19:59.598037+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261117T061915-1716ccff\"}"
+    },
+    {
+      "seq": 9595,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:20:00.098887+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-17T06:19:59.736563+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 9596,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:20:15.586442+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-17T06:19:59.736563+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 9597,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:21:06.518673+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-17T06:19:59.736563+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 9598,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:21:22.091821+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"research\", \"at\": \"2026-11-17T06:19:59.736563+00:00\"}, \"stage\": \"research\"}"
+    },
+    {
+      "seq": 9599,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:21:37.531533+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:21:27.953607+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9600,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:21:52.947057+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:21:27.953607+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9601,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:22:08.362816+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:21:27.953607+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9602,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:22:23.817732+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:21:27.953607+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9603,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:23:23.125085+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"command failed: ssh: ssh: Could not resolve hostname global.prd.ga.run.brev.nvidia.com: nodename nor servname provided, or not known\\n\"}"
+    },
+    {
+      "seq": 9604,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:23:23.140770+00:00",
+      "data": "{\"compute\": \"stop-unknown\", \"stop_error\": \"command failed: ssh: ssh: Could not resolve hostname global.prd.ga.run.brev.nvidia.com: nodename nor servname provided, or not known\\n\"}"
+    },
+    {
+      "seq": 9605,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:31:42.998717+00:00",
+      "data": "{\"revision\": 1, \"revision_request\": \"Keep the selected centered half-turn. The exact official product pages were acquired into input/sources.json, with verbatim snippets and IDs in input/operator-source-notes.json. Use those for dimensions; only quote strings actually present in the indexed source text. Continue the same proposal.\", \"approval\": null}"
+    },
+    {
+      "seq": 9606,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:31:42.999078+00:00",
+      "data": "{\"resume_from_stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9607,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:31:43.002406+00:00",
+      "data": "{\"supervisor_pid\": 47172, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261117T061915-1716ccff/supervisor.log\"}"
+    },
+    {
+      "seq": 9608,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:31:43.079487+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 9609,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:31:58.735277+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 9610,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:32:32.377450+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 9611,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:33:00.820857+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261117T061915-1716ccff\"}"
+    },
+    {
+      "seq": 9612,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:33:01.242805+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9613,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:33:16.682484+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9614,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:33:32.353251+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9615,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:33:47.780514+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9616,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:34:03.218717+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9617,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:34:18.878985+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9618,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:34:34.308706+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9619,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:34:49.768495+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9620,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:35:05.208911+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9621,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:35:20.635415+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9622,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:35:36.102733+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9623,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:35:51.526966+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9624,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:36:07.051043+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9625,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:36:22.598208+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9626,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:36:38.039375+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9627,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:36:53.456876+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9628,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:37:08.890225+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9629,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:37:24.322046+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9630,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:37:39.757107+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9631,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:37:55.183650+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T06:33:00.968575+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9632,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:38:10.617131+00:00",
+      "data": "{\"remote_status\": {\"status\": \"blocked\", \"error\": \"incomplete evidence reference: source_id='s-6ff9ae104970e4bc', known_source=True, has_locator=True, quote_chars=6 (minimum 12). Use an exact acquired-text excerpt; inspect images separately, rather than quoting a short figure label.\", \"type\": \"GateError\", \"at\": \"2026-11-17T06:38:06.193254+00:00\"}, \"stage\": null}"
+    },
+    {
+      "seq": 9633,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:38:16.625448+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"incomplete evidence reference: source_id='s-6ff9ae104970e4bc', known_source=True, has_locator=True, quote_chars=6 (minimum 12). Use an exact acquired-text excerpt; inspect images separately, rather than quoting a short figure label.\"}"
+    }
+  ],
+  "effects": {
+    "dream": null,
+    "upload": null,
+    "pr": null
+  }
+}

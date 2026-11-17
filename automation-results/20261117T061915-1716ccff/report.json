@@ -1,0 +1,147 @@
+{
+  "run": "20261117T061915-1716ccff",
+  "status": "blocked",
+  "prompt": "User selection (verbatim): 피자로 진행해볼까?\nUser priority (verbatim): 최대한 구현하기 쉬우면서도 기존과 핵심 조작 능력이 겹치지 않는 것들 위주로 생각해봐\n\nThe selected proposal is to turn a partially baked pizza in place with a small turning peel inside a real-scale oven. Retain this direction. The underside has set enough to handle. Starting on the stone, bring the pale rim around toward the hot side while keeping the pizza near its initial center, top side up, supported by the deck, and inside the oven throughout. Withdraw the peel. Proposed target: roughly half a turn, with visible browning asymmetry. Assess the physics of manipulating the food, not cooking chemistry or food safety. Score true yaw change, center excursion throughout the trajectory, tool and deck support/contact, and final release. Negative controls include bypass by gripper, translating the pizza out to rotate, and loss of stone support. Use YAM's actual gripper controls and existing common task structure. Candidate choices should stay within this same skill. Use a physically justified minimal crust contact model, including rim compliance if it materially affects insertion. Do not weld the tool to the pizza or drive pizza pose.\nFirst test full-scale reach and clearance of the handle, oven mouth and peel tip with the real YAM model, and blade insertion and tangential traction with no scripted food pose. Use existing submission-sheet comparisons, then focus on close cases. Official rejected launch PR #720 (https://github.com/robocurve/benchmark-tasks/pull/720#issuecomment-6816792297) had a 90 mm pizza, open-topped oven and rigid raw dough. Use a representative closed-roof pizza oven, a real turning peel and a roughly 30 cm pizza. Do not reduce the equipment scale to fix a reach problem. Sources: https://eu.ooni.com/products/ooni-koda-16 and https://ooni.com/products/ooni-pizza-turning-peel and https://ooni.com/blogs/ooni-insights/how-to-pick-the-right-pizza-peel . Distinguish actual measurements from provisional settings. Signed human review is for this new task separately before paid model inference or official submission.\n",
+  "at": "2026-11-17T06:38:16.625636+00:00",
+  "error": "incomplete evidence reference: source_id='s-6ff9ae104970e4bc', known_source=True, has_locator=True, quote_chars=6 (minimum 12). Use an exact acquired-text excerpt; inspect images separately, rather than quoting a short figure label.",
+  "mode": "production",
+  "dream": null,
+  "release": null,
+  "review_path": "workspace/artifacts",
+  "note": "local report; not a contest submission",
+  "selected": {
+    "id": "pizza-turn-180-centered",
+    "title": "Centered half-turn of a partially baked pizza with a turning peel",
+    "objective": "Using YAM and a representative full-scale turning peel, rotate a roughly 300 mm partially baked pizza approximately 180 degrees on the stone inside a closed-roof 16-inch-class oven. Bring the visibly pale rim sector toward the modeled hot side while keeping the pizza near its initial center, top-side-up, supported, and inside the oven throughout; then withdraw the peel completely. Cooking chemistry and food safety are outside scope.",
+    "skills": [
+      "long-handled tool grasp and control",
+      "thin-blade insertion beneath a compliant crust rim",
+      "guarded lifting to reduce deck friction",
+      "tangential traction and in-plane yaw control",
+      "confined wrist and tool coordination",
+      "controlled release and collision-free withdrawal"
+    ],
+    "success_conditions": "Use native pose and contact traces plus video. Full credit: absolute yaw change 150–210 degrees; maximum center excursion throughout the trial no more than 50 mm; final center displacement no more than 35 mm; pizza continuously supported by stone, peel, or both; pizza remains top-side-up and entirely inside the oven; peel finishes fully clear. Partial credit: yaw change 90–149 degrees; maximum trajectory excursion no more than 80 mm; final displacement no more than 60 mm; all support, containment, orientation, release, and damage conditions still satisfied. Zero credit otherwise, including gripper contact with pizza, removing it to rotate, any interval without stone-or-peel support, overturning, pose writes, welds, unreleased peel contact, crust penetration, permanent rim folding outside the validated compliance range, topping separation, a fall, or damaging robot/tool/oven collision. The pale sector is visible corroboration, not a substitute for measured yaw.",
+    "industrial_value": "Represents the repeated in-oven turning operation used to expose different pizza sectors to uneven heat without extracting the food. It evaluates confined food-service tool manipulation rather than the rejected miniature launch task.",
+    "dexterity": "High: the robot must acquire and steer a long tool, insert a thin blade under a compliant edge, modulate normal force, generate controlled tangential traction, limit translation of a weakly supported food object, and release it cleanly through a restricted oven mouth.",
+    "evidence": [
+      {
+        "source_id": "s-dc498840962a0e73",
+        "locator": "The Turning Peel section, acquired text near line 9320",
+        "quote_sha256": "bd932b7f60ba0dd632bc7a5bace137956f438d7370a52c2f017d8ac52e495da5"
+      },
+      {
+        "source_id": "s-dcad206fb5f64f5c",
+        "locator": "Pizza peel use procedure, acquired text near line 12375",
+        "quote_sha256": "7bb8ba3155e2e3d1bd26b3ea8cd7abd4ffc145c72b418ad254e533361b58512c"
+      },
+      {
+        "source_id": "s-dc498840962a0e73",
+        "locator": "How to Pick the Right Pizza Peel, form-and-function paragraph near lines 9270–9273",
+        "quote_sha256": "7e16b4bd65ed6642e97d91616e310dca1a02da27d34ee4fc72a359a1c00b8476"
+      },
+      {
+        "source_id": "s-2fa2e714ac721261",
+        "locator": "Final review record, Construct validity paragraph near line 2055",
+        "quote_sha256": "3b86459e10716b929d85876f31284e25aee82b672970a6c7777ef353b4d4fc48"
+      }
+    ],
+    "asset_plan": "Create an independently authored representative fixture rather than claiming an exact product replica: a closed-roof 16-inch-class oven with a nominal 406 mm pizza capacity, a 300 mm pizza, and a small circular perforated turning-peel head on a long handle. Treat mouth height, deck depth, blade thickness, masses, friction, and stiffness as disclosed provisional settings. Model the set underside/core as rigid and use only a shallow validated compliant rim/contact approximation; toppings may be visually integrated but must not create hidden grasp geometry. Before full-demo development, run separate current-trial native tests for YAM grasp acquisition, full-scale handle reach, roof and mouth clearance, blade insertion, tangential traction, continuous support, release, and withdrawal. Use ordinary guarded YAM joint and gripper actions only, with no task-object pose control, weld, collision disabling, or scale reduction.",
+    "risk": "The dominant risks are insufficient full-scale reach, handle or wrist collision at the oven mouth, blade tunneling, excessive stone friction, unrealistic rim compliance, and poor yaw observability. A visible asymmetric browning marker resolves yaw ambiguity without changing collision or mass. Any failed reach, clearance, insertion, traction, support, or release gate blocks the full demonstration rather than permitting smaller equipment or hidden constraints.",
+    "feasibility_status": "ready",
+    "missing_evidence": []
+  },
+  "sources": [
+    {
+      "id": "s-dc498840962a0e73",
+      "title": "How to Pick the Right Pizza Peel",
+      "publisher": "Ooni",
+      "url": "https://eu.ooni.com/blogs/ooni-insights/how-to-pick-the-right-pizza-peel",
+      "sha256": "f2d69210fb224b359e67a75dee75e28ffeac3d47d88bc47b0ecf2b6af0d25d8f"
+    },
+    {
+      "id": "s-dcad206fb5f64f5c",
+      "title": "Pizza Peels and Turning Procedure",
+      "publisher": "Ooni",
+      "url": "https://ooni.com/collections/pizza-peels",
+      "sha256": "12e5c70607dc7b3ad6751d73a1b369e52753646e00b7f6e18d838f2f743b664f"
+    },
+    {
+      "id": "s-e784e1da72502b14",
+      "title": "Isaac Sim Assets and custom USD asset workflow",
+      "publisher": "NVIDIA",
+      "url": "https://docs.isaacsim.omniverse.nvidia.com/latest/assets/usd_assets_overview.html",
+      "sha256": "8a34a30ac7dbf806caf9fa9a5fbd75030b843e41b1b9f58ec87a17da647dc621"
+    },
+    {
+      "id": "s-1a6ca1a0659e5e03",
+      "title": "NVIDIA Isaac Sim Additional Software and Materials License",
+      "publisher": "NVIDIA",
+      "url": "https://www.nvidia.com/content/dam/en-zz/Solutions/license-agreements/enterprise-software/NVIDIA-IsaacSim-Additional-Software-and-Materials-License-9June2025.pdf",
+      "sha256": "f05ce80e66e6c5214dba21bba3a461dda1484fbbc9536e72f03815b3db31a866"
+    },
+    {
+      "id": "s-863944427b8e3519",
+      "title": "LIBERO original kitchen task definition",
+      "publisher": "Lifelong Robot Learning",
+      "url": "https://raw.githubusercontent.com/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_10/KITCHEN_SCENE3_turn_on_the_stove_and_put_the_moka_pot_on_it.bddl",
+      "sha256": "491835cc2eb6956f7ce3d1ee4e266377116168fe453e6529fe105e3b0333635d"
+    },
+    {
+      "id": "s-3d2b1e0f114cf469",
+      "title": "RoboCasa original kitchen oven task definitions",
+      "publisher": "RoboCasa",
+      "url": "https://raw.githubusercontent.com/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/atomic/kitchen_oven.py",
+      "sha256": "792f5aa6350abfc6349db7e7e73a4dfe73d5f3588a7dd0624cf8f3c4699bfa2a"
+    },
+    {
+      "id": "s-396760d996a2e1d5",
+      "title": "SimplerEnv original environment/task registry",
+      "publisher": "SimplerEnv",
+      "url": "https://raw.githubusercontent.com/simpler-env/SimplerEnv/eddb5690749a1e34267807c0f7b5eede323918d7/simpler_env/__init__.py",
+      "sha256": "ed5079f2aa8d9c85938f86440195ecdf90c4ee3afebb96b778375aad7cccac25"
+    },
+    {
+      "id": "s-a77ce97cc90bf8a3",
+      "title": "BEHAVIOR-1K original make-pizza task definition",
+      "publisher": "Stanford Vision and Learning Lab",
+      "url": "https://raw.githubusercontent.com/StanfordVL/BEHAVIOR-1K/cc8f4ce0c89fa5a2f4be510b187989aa0dc69761/bddl3/bddl/activity_definitions/make_pizza/problem0.bddl",
+      "sha256": "c1f24b4d8fa268325f353216932770052aa9ed8955a5b89155af48f60e732b23"
+    },
+    {
+      "id": "s-46ed257e6f29003f",
+      "title": "DataCenterBench official task definitions",
+      "publisher": "RoboCurve",
+      "url": "https://robocurve.org/datacenterbench/data/tasks.json",
+      "sha256": "88a2339f720ff977b7201890af172a3518ce5692ec35d679baaf4a5fb21ad448"
+    },
+    {
+      "id": "s-a6f791813edc704c",
+      "title": "RoboDojo original task registry",
+      "publisher": "RoboDojo Benchmark",
+      "url": "https://raw.githubusercontent.com/robodojo-benchmark/RoboDojo/fbfbbcb3801397fa00dcffaef3ca64d97c3fe76f/task/RoboDojo/task_registry.py",
+      "sha256": "11218028f772d9253ee709a7d85aa72d1e1fd87e4f8d33ee3787d6064438f9ab"
+    },
+    {
+      "id": "s-2fa2e714ac721261",
+      "title": "Rejected miniature pizza-oven task and review record",
+      "publisher": "RoboCurve Benchmark Tasks",
+      "url": "https://github.com/robocurve/benchmark-tasks/pull/720#issuecomment-6816792297",
+      "sha256": "1fae7efe6ee72a51fd4f59f8f958f31fe9c32cfeaaef137ad2ae1f2c2d6b0c88"
+    },
+    {
+      "id": "s-0ddef800cdce9843",
+      "title": "ooni-pizza-turning-peel",
+      "publisher": "Ooni",
+      "url": "https://eu.ooni.com/products/ooni-pizza-turning-peel",
+      "sha256": "204f96cd7fc86b6f1ddfb307447445380f70856589c206a5bf299a1fefbd7f26"
+    },
+    {
+      "id": "s-6ff9ae104970e4bc",
+      "title": "ooni-koda-16",
+      "publisher": "Ooni",
+      "url": "https://eu.ooni.com/products/ooni-koda-16",
+      "sha256": "65925fd1ef9ce95dd4d424a146eb5e973ee130c91237ccd4dd8b94c7cc3b3f1f"
+    }
+  ]
+}
