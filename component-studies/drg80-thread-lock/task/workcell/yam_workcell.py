@@ -3,6 +3,7 @@
 import argparse
 import json
 import math
+import os
 from pathlib import Path
 
 from isaaclab.app import AppLauncher
@@ -247,6 +248,26 @@ from nut_retention import nut_retention
 from room_contacts import RoomContacts
 from workcell_clearance import WorkcellClearance
 from service_paths import wrench_flat, lever_grasp, lever_pose
+
+
+def checkpoint_actions(output, trace):
+    # Persist only completed controls. A provider stop may bypass finally;
+    # the last prefix can still be replayed from the original reset.
+    prefix = output.with_suffix(".actions.partial.json")
+    writing = prefix.with_suffix(".tmp")
+    with writing.open("w") as handle:
+        json.dump(
+            [
+                {"phase": r["phase"], "action": r["action"]}
+                for r in trace
+            ],
+            handle,
+            allow_nan=False,
+            separators=(",", ":"),
+        )
+        handle.flush()
+        os.fsync(handle.fileno())
+    writing.replace(prefix)
 
 
 def main():
@@ -711,6 +732,8 @@ def main():
                     ],
                 )
                 trace.append(rec)
+                if len(trace) % 80 == 0:
+                    checkpoint_actions(args.output, trace)
                 if writer and len(trace) % 2 == 0:
                     rgb = base.scene["top_cam"].data.output["rgb"]
                     rgb = rgb.torch if hasattr(rgb, "torch") else rgb
@@ -1724,7 +1747,9 @@ def main():
             if turn > -0.10 or tip[2] > -0.001:
                 raise ValueError("driver stroke lost measured engagement")
             if args.seated_regrasp:
-                indexed = regrasp_in_socket(math.remainder(yaw_start - indexed, math.tau))
+                indexed = regrasp_in_socket(
+                    math.remainder(yaw_start - indexed, math.tau)
+                )
                 continue
             # Withdraw straight and verify clearance before moving to another flat.
             if args.reserve_retreat:
