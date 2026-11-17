@@ -24,6 +24,7 @@ parser.add_argument("--seated-regrasp", action="store_true")
 parser.add_argument("--supported-turn", action="store_true")
 parser.add_argument("--align-before-feed", action="store_true")
 parser.add_argument("--wrench-preload-n", type=float, default=5.0)
+parser.add_argument("--observe-reset", action="store_true")
 parser.add_argument("--solver", choices=("tgs", "pgs"), default="tgs")
 parser.add_argument("--contact-last", action="store_true")
 parser.add_argument("--driver-correction-rad", type=float, default=0.0)
@@ -176,6 +177,8 @@ from hex_fit import CHAMFER, LONG_CHAMFER, author_bit, hex_fit
 bit_chamfer = 0.0 if args.square_bit else LONG_CHAMFER if args.long_lead else CHAMFER
 from contact_limits import contact_bounds
 from tool_bounds import ToolBounds
+from adjustment_volume import AdjustmentVolume
+from nut_retention import nut_retention
 from service_paths import wrench_flat, lever_grasp, lever_pose
 
 
@@ -299,6 +302,18 @@ def main():
         if set(tool_paths) != set(targets):
             raise ValueError("tool containment body view did not resolve both tools")
         tool_order = [tool_paths.index(path) for path in targets]
+        volumes = [AdjustmentVolume(body) for body in geometry]
+        finger_views = []
+        for side in sides:
+            view = base.scene[side + "_robot"].root_physx_view
+            dofs = list(view.get_metatype(0).dof_names)
+            finger_views.append((view, [dofs.index("joint7"), dofs.index("joint8")]))
+        guides = [root + "/" + k for k in ("screw", "nut", "retainer")]
+        guide_view = PhysxManager.get_physics_sim_view().create_rigid_body_view(guides)
+        guide_paths = list(guide_view.prim_paths)
+        if set(guide_paths) != set(guides):
+            raise ValueError("nut retention view did not resolve all three bodies")
+        guide_order = [guide_paths.index(path) for path in guides]
         prior_rack = None
 
         def pre(*args, **kwargs):
@@ -334,6 +349,31 @@ def main():
                 prior_rack = contained
             r["tools_racked"] = all(contained)
             frame = bench.bodies["frame"].get_transforms().numpy()[0]
+            retention = nut_retention(*guide_view.get_transforms().numpy()[guide_order])
+            r.update(retention)
+            if not r["nuts_retained"]:
+                results.setdefault(
+                    "callback_error",
+                    f"nut retention failed at tick {results['physics_ticks']}: {retention}",
+                )
+            frame_rotation = Rotation.from_quat(frame[3:]).as_matrix()
+            r["adjustment_clearances_m"] = [
+                volume.distance(
+                    pose[:3],
+                    Rotation.from_quat(pose[3:]).as_matrix(),
+                    frame[:3],
+                    frame_rotation,
+                )
+                for pose, volume in zip(poses, volumes)
+            ]
+            r["tools_outside_adjustment"] = min(r["adjustment_clearances_m"]) > 0.0
+            fingers = np.concatenate(
+                [view.get_dof_positions().numpy()[0, ids] for view, ids in finger_views]
+            )
+            r["measured_finger_joints_m"] = fingers.tolist()
+            r["fingers_open"] = bool(
+                np.all(fingers >= -0.04705) and np.all(fingers <= -0.03756)
+            )
             moved = float(np.linalg.norm(frame[:3] - reference_frame[:3]))
             tilted = math.degrees(
                 2
@@ -497,6 +537,22 @@ def main():
                 flush=True,
             )
 
+        if args.observe_reset:
+            move("observe_reset", commands.copy(), [1.0, 1.0], 12)
+            results["reset_observation"] = {
+                key: latest[key]
+                for key in (
+                    "nut_guide_overlap_m",
+                    "retainer_installed_error_m",
+                    "nuts_retained",
+                    "adjustment_clearances_m",
+                    "tools_outside_adjustment",
+                    "tools_racked",
+                    "measured_finger_joints_m",
+                    "fingers_open",
+                )
+            }
+            return
         plans = []
         for side, grasp, yaw in zip(sides, grasps, (math.pi / 2, 0)):
             answers = []

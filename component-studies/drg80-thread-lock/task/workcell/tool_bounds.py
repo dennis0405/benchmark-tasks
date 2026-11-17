@@ -13,6 +13,7 @@ class ToolBounds:
         cache = UsdGeom.XformCache()
         points = []
         self.cylinders = []
+        self.convex_parts = []
         for prim in Usd.PrimRange(root):
             if not prim.HasAPI(UsdPhysics.CollisionAPI):
                 continue
@@ -41,7 +42,9 @@ class ToolBounds:
                 continue
             else:
                 raise ValueError(f"unhandled tool collider {prim.GetPath()}")
-            points.extend(tuple(local.Transform(Gf.Vec3d(*v))) for v in vertices)
+            part = np.array([tuple(local.Transform(Gf.Vec3d(*v))) for v in vertices])
+            self.convex_parts.append(part)
+            points.extend(part)
         if not (points or self.cylinders):
             raise ValueError(f"no active collision geometry in {usd}")
         self.points = np.asarray(points, dtype=float).reshape(-1, 3)
