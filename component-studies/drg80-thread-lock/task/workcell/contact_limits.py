@@ -22,6 +22,6 @@ def contact_bounds(forces, separations, counts, starts):
         gaps = sep[a:b]
         if not np.isfinite(pair).all() or not np.isfinite(gaps).all():
             raise ValueError("nonfinite protected contact")
-        maximum_force = max(maximum_force, float(np.abs(pair).sum()))
+        maximum_force = max(maximum_force, float(np.maximum(pair, 0.0).sum()))
         penetration = max(penetration, float(-gaps.min()))
     return maximum_force, penetration

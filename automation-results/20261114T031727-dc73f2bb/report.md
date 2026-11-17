@@ -2,7 +2,7 @@
 
 Status: **blocked**
 
-2026-11-17 추가 실험에서 원래 나사·너트 물성으로 양방향 하중, 가압 중 탄성 복귀, 고의 풀림 감지를 검증했다. 계측 작업대는 세 번의 개폐를 240 Hz와 480 Hz에서 통과했다. YAM의 실제 공구 조작 결과는 별도로 기록하며, 전체 데모와 대회 점수는 아직 미확정이다. [실험 결과](../../component-studies/drg80-thread-lock/measurements/robot-load-qualification.json) · [Brev 재실행 방법](../../component-studies/drg80-thread-lock/task/workcell/README.md).
+2026-11-17 YAM이 실제 육각 드라이버를 세 번 물려 나사를 197.53°까지 돌렸다. 별도 시험에서 YAM이 레버를 양방향으로 조작해 미조정 턱을 3.00°와 102.04°로 개폐했다. 계측 작업대의 90° 잠금 및 세 번 개폐는 통과했다. YAM의 90° 조정·너트 잠금·반복 개폐를 한 번에 완료한 제출물은 아직 없다. [측정 자료와 재실행 방법](../../component-studies/drg80-thread-lock/task/workcell/README.md).
 
 
 사용자 요청 원문:

@@ -34,6 +34,31 @@ parser.add_argument(
     action="store_true",
     help="Test the real YAM lever closure separately on the unadjusted workcell.",
 )
+parser.add_argument(
+    "--push-valve",
+    action="store_true",
+    help="Press either side of the valve handle with closed fingertips.",
+)
+parser.add_argument(
+    "--check-wrench-stroke",
+    action="store_true",
+    help="Test a single free wrench stroke on the unadjusted mechanism.",
+)
+parser.add_argument(
+    "--check-valve-reversal",
+    action="store_true",
+    help="Check both physical detents without claiming a calibrated endpoint.",
+)
+parser.add_argument(
+    "--guided-wrench",
+    action="store_true",
+    help="Use tool-jaw lead-ins and verify the physical nut is between the flats before torque.",
+)
+parser.add_argument(
+    "--replay-actions",
+    type=Path,
+    help="Replay logged 14-D joint commands from reset through normal YAM actions.",
+)
 parser.add_argument("--observe-reset", action="store_true")
 parser.add_argument("--room-damage", action="store_true")
 parser.add_argument("--solver", choices=("tgs", "pgs"), default="tgs")
@@ -79,6 +104,10 @@ def tool_asset(filename):
             UsdGeom.Mesh(stage.GetPrimAtPath("/Tool/HexTip")),
             bit_chamfer,
         )
+    if filename == "open_wrench" and args.guided_wrench:
+        from wrench_guide import author_wrench_guide
+
+        author_wrench_guide(stage)
     materials = {}
     for name, mus in (("Polymer", (1.2, 1.0)), ("Steel", (0.45, 0.3))):
         mat = UsdShade.Material.Define(stage, "/Tool/Physics" + name)
@@ -257,6 +286,7 @@ def main():
     callbacks = []
     writer = None
     room_contacts = None
+    grade_bound = None
     try:
         env.reset()
         base = env.unwrapped
@@ -287,6 +317,9 @@ def main():
         scoring = run_path(
             str(Path(__file__).resolve().parent.parent / "stop_lock_score.py")
         )
+        from native_grade import NativeGradeBound
+
+        grade_bound = NativeGradeBound(scoring, round(1 / base.physics_dt))
         powered = scoring["ElasticLockMotion"](round(1 / base.physics_dt))
         protected = [
             root + "/" + name
@@ -364,18 +397,18 @@ def main():
             results["physics_ticks"] += 1
             r = bench.read()
             latest = r
-            if room_contacts is not None:
-                violation = room_contacts.observe(results["physics_ticks"])
-                if violation:
-                    results.setdefault(
-                        "callback_error",
-                        f"room contact exceeded universal damage limit: {violation}",
-                    )
             poses = tool_view.get_transforms().numpy()[tool_order]
             contained = [
                 body.in_cradle(pose[:3], Rotation.from_quat(pose[3:]).as_matrix(), box)
                 for body, pose, box in zip(geometry, poses, cradle)
             ]
+            if room_contacts is not None:
+                violation = room_contacts.observe(results["physics_ticks"], contained)
+                if violation:
+                    results.setdefault(
+                        "callback_error",
+                        f"room contact or tool-loss failure: {violation}",
+                    )
             if contained != prior_rack:
                 results.setdefault("rack_transitions", []).append(
                     dict(
@@ -486,6 +519,18 @@ def main():
                     f"native guide/seat failed at tick {results['physics_ticks']}: sz={r['sz']}, nz={r['nz']}, gap={r['seat_gap']}",
                 )
 
+            r["score_upper_bound"] = grade_bound.observe(
+                r,
+                results["physics_ticks"],
+                bool(
+                    room_contacts
+                    and (
+                        room_contacts.known_damage.failure
+                        or any(m.failure for m in room_contacts.drop)
+                    )
+                ),
+            )
+
         def observe_after_step(*args, **kwargs):
             if "callback_error" in results:
                 return
@@ -594,10 +639,96 @@ def main():
                 flush=True,
             )
 
+        if args.replay_actions:
+            import hashlib
+
+            source = args.replay_actions.resolve()
+            if source == args.output.with_suffix(".trace.json").resolve():
+                raise ValueError("input trajectory and output trace must differ")
+            data = source.read_bytes()
+            rows = json.loads(data)
+            if not 1 <= len(rows) <= 4800:
+                raise ValueError("replay length outside task horizon")
+            results["replay"] = dict(
+                source=source.name,
+                sha256=hashlib.sha256(data).hexdigest(),
+                actions=len(rows),
+            )
+            detents = []
+            for row in rows:
+                action = np.asarray(row["action"], dtype=float)
+                if (
+                    action.shape != (14,)
+                    or not np.isfinite(action).all()
+                    or not np.all((action[[6, 13]] >= 0) & (action[[6, 13]] <= 1))
+                ):
+                    raise ValueError("invalid normal YAM command in saved trajectory")
+                move(
+                    str(row["phase"]),
+                    np.stack([action[:6], action[7:13]]),
+                    action[[6, 13]],
+                    1,
+                )
+                angle = math.degrees(latest["lever"])
+                detent = 1 if angle >= 25 else -1 if angle <= -25 else 0
+                if not detents or detents[-1]["detent"] != detent:
+                    detents.append(dict(action=len(trace), detent=detent))
+            results["replay"].update(
+                detent_transitions=detents,
+                terminal_jaw_deg=latest["angle"],
+                terminal_valve_deg=math.degrees(latest["lever"]),
+                terminal_piston_n=latest["actuator_n"],
+            )
+            return
+
         def run_valve(grip_state, cold_test=False):
             # A real parallel-jaw grasp on the instrument handle drives the pivot.
             pivot = np.array(bench.poses()["lever"][:3])
 
+            if args.push_valve:
+                from valve_push import push_valve
+
+                directions = (
+                    ([-1, 1] if args.check_valve_reversal else [-1])
+                    if cold_test
+                    else [1, -1, 1, -1, 1, -1, 1]
+                )
+                for direction in directions:
+                    sample = push_valve(
+                        direction,
+                        pivot,
+                        bench,
+                        rig.bases,
+                        joints,
+                        commands,
+                        grip_state,
+                        move,
+                    )
+                    results.setdefault("valve_pushes", []).append(sample)
+                    if cold_test and direction == -1:
+                        results["cold_close"] = sample
+                    valid = (
+                        direction * sample["lever_deg"] >= 25
+                        and direction * sample["actuator_n"] > 1
+                    )
+                    endpoint = (
+                        abs(sample["jaw_deg"] - 90) <= 3
+                        if direction == 1
+                        else sample["jaw_deg"] <= 10
+                    )
+                    if cold_test and direction == 1:
+                        endpoint = sample["jaw_deg"] > 10
+                    if not valid or not endpoint:
+                        raise ValueError(
+                            f"side press missed physical detent or jaw endpoint: {sample}"
+                        )
+                if not cold_test:
+                    results["actual_open_endpoints_deg"] = [
+                        r["jaw_deg"] for r in results["valve_pushes"][::2]
+                    ]
+                    move("equipment_clear", [READY, READY], [1, 1], 60)
+                    move("clear_dwell", [READY, READY], [1, 1], 30)
+                return
             residual, hand, neutral, tilt, yaw = lever_grasp(
                 pivot, [joints(0), joints(1)], rig.bases
             )
@@ -698,7 +829,8 @@ def main():
             move("equipment_clear", [READY, READY], grip_state, 60)
             move("clear_dwell", [READY, READY], grip_state, 30)
 
-        if args.check_valve_close:
+        if args.check_valve_close or args.check_valve_reversal:
+            move("unpowered_reset_settle", commands.copy(), [1, 1], 12)
             run_valve([1.0, 1.0], cold_test=True)
             return
         if args.observe_reset:
@@ -851,6 +983,144 @@ def main():
         def body_pose(name):
             return bench.bodies[name].get_transforms().numpy()[0].copy()
 
+        # Stay in the grasp's measured wrist frame during contact. Recomputing
+        # a full free-space IK command here reintroduces static arm sag.
+        def servo_tool(i, angle, tip_target, n, label):
+            goal_rot = Rotation.from_euler("z", angle).as_matrix()
+            for _ in range(n):
+                tp, tr = tool(i)
+                actual_tcp = ik.tcp_pose(joints(i), rig.bases[sides[i]])[0]
+                cp, cr = ik.tcp_pose(commands[i], rig.bases[sides[i]])
+                dr = Rotation.from_matrix(goal_rot @ tr.T).as_rotvec()
+                step_r = Rotation.from_rotvec(
+                    np.clip(0.12 * dr, -0.022, 0.022)
+                ).as_matrix()
+                delta = np.asarray(tip_target) - tp
+                arm = tp - actual_tcp
+                step_xyz = (
+                    cp + np.clip(0.10 * delta, -0.00045, 0.00045) + arm - step_r @ arm
+                )
+                goals = commands.copy()
+                goals[i], err, ea = ik.solve(
+                    step_xyz,
+                    ik.matrix_to_quat_xyzw(step_r @ cr),
+                    q_init=commands[i],
+                    base_pos=rig.bases[sides[i]],
+                    iters=30,
+                    tol=0.000015,
+                )
+                if err > 0.0012 or ea > 0.025:
+                    if args.adaptive_stroke and label == "driver_in_socket":
+                        return False
+                    raise ValueError(f"{label} wrist workspace exhausted")
+                move(label, goals, grip_state, 1)
+            return True
+
+        def tighten_nut(one_stroke=False):
+            # The second hand engages the nut laterally. Keep the left wrist's
+            # commanded position while turning, then withdraw the tools sequentially.
+            nut = lambda: body_pose("nut")[:3]
+            nut_phase = float(bench.state()[0][1] + bench.state()[0][3])
+            tp, tr = tool(1)
+            cp, cr = ik.tcp_pose(joints(1), rig.bases["right"])
+            offsets[1] = (tr.T @ (cp - tp), tr.T @ cr)
+            _, yaw, wr = wrench_flat(
+                nut(), nut_phase, *offsets[1], joints(1), rig.bases["right"]
+            )
+            results["selected_wrench_yaw_deg"] = math.degrees(yaw)
+            go_tool(
+                "wrench_above_approach",
+                1,
+                nut() - 0.036 * wr[:, 0] + [0, 0, 0.04],
+                wr,
+                52,
+            )
+            go_tool("wrench_level", 1, nut() - 0.036 * wr[:, 0], wr, 38)
+            home = yaw
+            for stroke in range(6):
+                # Approach between the flats and turn in short increments. The
+                # free wrench must turn the native relative nut angle under contact.
+                if args.guided_wrench:
+                    from wrench_guide import fit_wrench
+
+                    feed = 0.030
+                    ready = 0
+                    for _ in range(320):
+                        pos, orient = tool(1)
+                        nut_pose = body_pose("nut")
+                        contact_fit = fit_wrench(pos, orient, nut_pose)
+                        rot_nut = Rotation.from_quat(nut_pose[3:]).as_matrix()
+                        phi = math.atan2(rot_nut[1, 0], rot_nut[0, 0])
+                        desired = yaw + math.remainder(phi - yaw, math.pi / 3)
+                        yaw += np.clip(desired - yaw, -0.012, 0.012)
+                        wr = Rotation.from_euler("z", yaw).as_matrix()
+                        centered = (
+                            abs(contact_fit["across_m"]) < 0.00045
+                            and abs(contact_fit["height_m"]) < 0.00055
+                        )
+                        if centered or feed > 0.022:
+                            feed = max(0.0, feed - 0.00032)
+                        servo_tool(
+                            1,
+                            yaw,
+                            nut_pose[:3] - feed * wr[:, 0],
+                            1,
+                            "wrench_guided_seat",
+                        )
+                        seated = (
+                            abs(contact_fit["along_m"]) < 0.0016
+                            and centered
+                            and contact_fit["face_clearance_m"] >= -0.00008
+                        )
+                        ready = ready + 1 if seated else 0
+                        if ready >= 3:
+                            break
+                    results.setdefault("wrench_seats", []).append(contact_fit)
+                    if ready < 3:
+                        raise ValueError(
+                            f"nut did not seat between the wrench flats: {contact_fit}"
+                        )
+                else:
+                    for dist in np.linspace(0.036, 0.0, 36):
+                        servo_tool(1, yaw, nut() - dist * wr[:, 0], 3, "wrench_seat")
+                old_nt = latest["nt"]
+                seat = []
+                for j in range(14):
+                    yaw -= math.radians(4.5)
+                    wr = Rotation.from_euler("z", yaw).as_matrix()
+                    servo_tool(1, yaw, nut(), 6, "wrench_tighten")
+                    seat.append(latest["seat_n"])
+                    if len(seat) >= 3 and min(seat[-3:]) >= args.wrench_preload_n:
+                        break
+                results.setdefault("wrench_strokes", []).append(
+                    dict(
+                        relative_turn_rad=latest["nt"] - old_nt, seat_n=latest["seat_n"]
+                    )
+                )
+                if one_stroke:
+                    if latest["nt"] - old_nt > -math.radians(20):
+                        raise ValueError(
+                            "free wrench did not transmit 20 degrees of physical rotation"
+                        )
+                    return
+                for dist in np.linspace(0.0, 0.035, 22):
+                    servo_tool(1, yaw, nut() - dist * wr[:, 0], 3, "wrench_back_out")
+                if min(r["fixture"]["seat_n"] for r in trace[-5:]) >= max(
+                    3.0, 0.90 * args.wrench_preload_n
+                ):
+                    break
+                if latest["nt"] - old_nt > -0.08:
+                    raise ValueError("wrench failed to rotate the physical nut")
+                phase = latest["st"] + latest["nt"]
+                yaw = phase + round((home - phase) / (math.pi / 3)) * math.pi / 3
+                wr = Rotation.from_euler("z", yaw).as_matrix()
+                go_tool("wrench_reindex", 1, nut() - 0.036 * wr[:, 0], wr, 35)
+            if latest["seat_n"] < 2.0:
+                raise ValueError("no stable nut preload after wrench removal")
+
+        if args.check_wrench_stroke:
+            tighten_nut(one_stroke=True)
+            return
         screw = lambda: body_pose("screw")[:3]
         above = screw() + [0, 0, 0.050]
         # Hex socket indexed every 60 degrees. Choose a reachable wrist at the
@@ -1139,39 +1409,6 @@ def main():
 
         indexed = insert_driver(idx * math.pi / 3, 0.014)
 
-        # Stay in the grasp's measured wrist frame during contact. Recomputing
-        # a full free-space IK command here reintroduces static arm sag.
-        def servo_tool(i, angle, tip_target, n, label):
-            goal_rot = Rotation.from_euler("z", angle).as_matrix()
-            for _ in range(n):
-                tp, tr = tool(i)
-                actual_tcp = ik.tcp_pose(joints(i), rig.bases[sides[i]])[0]
-                cp, cr = ik.tcp_pose(commands[i], rig.bases[sides[i]])
-                dr = Rotation.from_matrix(goal_rot @ tr.T).as_rotvec()
-                step_r = Rotation.from_rotvec(
-                    np.clip(0.12 * dr, -0.022, 0.022)
-                ).as_matrix()
-                delta = np.asarray(tip_target) - tp
-                arm = tp - actual_tcp
-                step_xyz = (
-                    cp + np.clip(0.10 * delta, -0.00045, 0.00045) + arm - step_r @ arm
-                )
-                goals = commands.copy()
-                goals[i], err, ea = ik.solve(
-                    step_xyz,
-                    ik.matrix_to_quat_xyzw(step_r @ cr),
-                    q_init=commands[i],
-                    base_pos=rig.bases[sides[i]],
-                    iters=30,
-                    tol=0.000015,
-                )
-                if err > 0.0012 or ea > 0.025:
-                    if args.adaptive_stroke and label == "driver_in_socket":
-                        return False
-                    raise ValueError(f"{label} wrist workspace exhausted")
-                move(label, goals, grip_state, 1)
-            return True
-
         target_angle = (
             math.radians(87) / 300 - 0.0057
         ) * math.tau / 0.001 + args.driver_correction_rad
@@ -1351,53 +1588,7 @@ def main():
             indexed = insert_driver(indexed, 0.007)
         if abs(latest["st"] - target_angle) > 0.20:
             raise ValueError("measured screw angle outside 90-degree setting approach")
-        # The second hand engages the nut laterally. Keep the left wrist's
-        # commanded position while turning, then withdraw the tools sequentially.
-        nut = lambda: body_pose("nut")[:3]
-        nut_phase = float(bench.state()[0][1] + bench.state()[0][3])
-        tp, tr = tool(1)
-        cp, cr = ik.tcp_pose(joints(1), rig.bases["right"])
-        offsets[1] = (tr.T @ (cp - tp), tr.T @ cr)
-        _, yaw, wr = wrench_flat(
-            nut(), nut_phase, *offsets[1], joints(1), rig.bases["right"]
-        )
-        results["selected_wrench_yaw_deg"] = math.degrees(yaw)
-        go_tool(
-            "wrench_above_approach", 1, nut() - 0.036 * wr[:, 0] + [0, 0, 0.04], wr, 52
-        )
-        go_tool("wrench_level", 1, nut() - 0.036 * wr[:, 0], wr, 38)
-        home = yaw
-        for stroke in range(6):
-            # Approach between the flats and turn in short increments. The
-            # free wrench must turn the native relative nut angle under contact.
-            for dist in np.linspace(0.036, 0.0, 36):
-                servo_tool(1, yaw, nut() - dist * wr[:, 0], 3, "wrench_seat")
-            old_nt = latest["nt"]
-            seat = []
-            for j in range(14):
-                yaw -= math.radians(4.5)
-                wr = Rotation.from_euler("z", yaw).as_matrix()
-                servo_tool(1, yaw, nut(), 6, "wrench_tighten")
-                seat.append(latest["seat_n"])
-                if len(seat) >= 3 and min(seat[-3:]) >= args.wrench_preload_n:
-                    break
-            results.setdefault("wrench_strokes", []).append(
-                dict(relative_turn_rad=latest["nt"] - old_nt, seat_n=latest["seat_n"])
-            )
-            for dist in np.linspace(0.0, 0.035, 22):
-                servo_tool(1, yaw, nut() - dist * wr[:, 0], 3, "wrench_back_out")
-            if min(r["fixture"]["seat_n"] for r in trace[-5:]) >= max(
-                3.0, 0.90 * args.wrench_preload_n
-            ):
-                break
-            if latest["nt"] - old_nt > -0.08:
-                raise ValueError("wrench failed to rotate the physical nut")
-            phase = latest["st"] + latest["nt"]
-            yaw = phase + round((home - phase) / (math.pi / 3)) * math.pi / 3
-            wr = Rotation.from_euler("z", yaw).as_matrix()
-            go_tool("wrench_reindex", 1, nut() - 0.036 * wr[:, 0], wr, 35)
-        if latest["seat_n"] < 2.0:
-            raise ValueError("no stable nut preload after wrench removal")
+        tighten_nut()
         go_tool("driver_back_out", 0, screw() + [0, 0, 0.035], tool(0)[1], 30)
         for i in (1, 0):
             rp, rr = rack_poses[i]
@@ -1418,6 +1609,11 @@ def main():
         results["failure"] = str(exc)
         print("WORKCELL TRIAL", str(exc), flush=True)
     finally:
+        if grade_bound is not None:
+            results["local_score_bound"] = grade_bound.report()
+            if grade_bound.grader.tick != results["physics_ticks"]:
+                results["local_score_bound"]["certain_current_zero"] = False
+                results["local_score_bound"]["incomplete_native_stream"] = True
         if room_contacts is not None:
             results["room_contacts"] = room_contacts.report()
 
