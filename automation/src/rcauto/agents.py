@@ -135,9 +135,14 @@ class Agent:
                 event = json.loads(line)
             except ValueError:
                 continue
+            if not isinstance(event, dict):
+                continue
             item = event.get("item", {})
-            if item.get("type") == "error" and any(
-                marker in item.get("message", "")
+            if not isinstance(item, dict):
+                continue
+            message = item.get("message")
+            if item.get("type") == "error" and isinstance(message, str) and any(
+                marker in message
                 for marker in [
                     "Code Mode is unavailable",
                     "failed to spawn code-mode host",
