@@ -80,3 +80,9 @@ Repeating the piston test at 480 Hz retained the stop face and clamp but exceede
 For a separate powered-adjustment negative control, the same 240 Hz assembly received an actual finite 0.030 N·m external driver torque for 0.25 s starting at 13.25 s. Screw travel rose from 0.202 µm to 228.76 µm and the seat force fell to zero. The official frozen score has not changed. The file `motion-resolution-replay.json` evaluates a possible alternative on existing traces only, with no certification or YAM result.
 
 The final independent counterhold variant uses a native implicit, bounded rotational tool drive during tightening. Its native maximum effort was verified as zero after releasing the driver. It retained stop contact and 5.86 N on the cover, but the powered axial speed reached 0.01319 mm/s at 240 Hz. This also remains a component result.
+
+## Mounted workcell and physical YAM commissioning
+
+[Workcell runner and reproduction steps](task/workcell/README.md). The robot acquires both free tools in the mounted workspace. In the first transfer the driver tip missed by 76 mm. Breaking the path into a lift, a rotation and a measured wrist correction reached the socket area. The subsequent contact trial exceeded the guide's travel and created a 9.9 mm seat overlap. The resulting screw rotation is invalid as adjustment evidence. [Transfer log](measurements/yam-workcell-transfer.json).
+
+At 240 Hz, a capped instrument held 3.86 N after release. Three measured reopenings reached 90.92°, 90.92° and 90.91°. Loading caused a maximum 31.65 µm of axial movement and 1.09° of absolute nut rotation in powered intervals. These exceed the approved 1 µm and 0.01° limits. The angle-only result does not qualify. [Independent audit](measurements/mounted12-audit.json). Separate runs lowered the actuator force and measured the native bearing torque. Their audits retain unsuccessful controls alongside closer endpoint results.
