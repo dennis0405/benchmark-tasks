@@ -1,0 +1,18 @@
+{
+  "scope": "failed loaded-reset native preflight; no qualification claim",
+  "checks": [
+    {
+      "name": "native_program_completed_without_exception",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "boolean",
+      "passed": false
+    }
+  ],
+  "artifacts": [],
+  "execution_exception": {
+    "message": "TypeError: int() argument must be a string, a bytes-like object or a real number, not 'CollisionAPI'",
+    "traceback": "Traceback (most recent call last):\n  File \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_loaded_reset_native_probe.py\", line 480, in <module>\n    main()\n  File \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_loaded_reset_native_probe.py\", line 164, in main\n    receiver_colliders = sum(int(stage.GetPrimAtPath(path).IsValid() and\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_loaded_reset_native_probe.py\", line 164, in <genexpr>\n    receiver_colliders = sum(int(stage.GetPrimAtPath(path).IsValid() and\n                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nTypeError: int() argument must be a string, a bytes-like object or a real number, not 'CollisionAPI'\n"
+  }
+}

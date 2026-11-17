@@ -1,17 +1,17 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the bounded loaded-reset probe after the latest review. It now validates RGB finiteness/range before sanitization, records screen pose and loose-body angular state, and explicitly limits speed, displacement, and height results to 20 Hz endpoint observations. Authored-mass propagation is no longer presented as cooked-geometry validation, and final center height is not presented as genuine passage evidence. Full 240 Hz stability, continuous passage, loaded grasp/separation, scoring, and workforce eligibility remain unresolved. Static Python compilation passed; no sandbox GPU rollout was attempted.",
+  "summary": "Repaired the loaded-scene native probe after its USD collider audit incorrectly cast CollisionAPI to int. The probe now uses HasAPI, and syntax validation passes. Trusted-host GPU execution remains required; qualification, YAM demos, and workforce eligibility remain unresolved.",
   "scripts": [
     {
       "id": "loaded_reset_native_probe",
       "script": "task/run_loaded_reset_native_probe.py",
       "args": [
+        "--device",
+        "cuda:0",
         "--report",
         "../measurements/loaded-reset-native-probe.json",
         "--screenshot",
         "../measurements/loaded-reset-native-probe.png",
-        "--seed",
-        "8261",
         "--duration",
         "3.0"
       ],
@@ -19,8 +19,7 @@
     }
   ],
   "files": [
-    "task/run_loaded_reset_native_probe.py",
     "task/full_screen_scene.py",
-    "task/task.py"
+    "task/run_loaded_reset_native_probe.py"
   ]
 }

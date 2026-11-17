@@ -29,9 +29,13 @@ from yam_arena.scene import env_cfg_callback, scene_assets
 APERTURE, RIB, PITCH = 0.0127, 0.003, 0.0157
 PERF_R, INNER_R, OUTER_R = 0.150, 0.18115, 0.18415
 FLOOR_T, DEPTH, MASS_TARGET = 0.003, 0.0635, 0.40
-TABLETOP_HEIGHT, SUPPORT_H = 0.75, 0.055
+TABLETOP_HEIGHT, SUPPORT_H = 0.75, 0.0595
 SCREEN_X, SCREEN_Y = 0.37, 0.0
-SUPPORT_TOP = TABLETOP_HEIGHT + 0.055
+# The 50 mm receiver walls end at z=0.805 m.  The posts and screen underside
+# are authored at z=0.8095 m, leaving 4.5 mm against the frozen 4 mm minimum while
+# making the support contact a zero-gap reset rather than an overlap that the
+# solver would have to conceal by depenetration.
+SUPPORT_TOP = TABLETOP_HEIGHT + SUPPORT_H
 SCREEN_ROOT_Z = SUPPORT_TOP + FLOOR_T
 SUPPORT_POST_RADIUS = 0.004
 SUPPORT_POST_X = 0.125
@@ -153,7 +157,8 @@ def mass_properties():
 
 def processing_material():
     """Frozen uncalibrated ceramic/polymer contact assumption."""
-    return sim_utils.RigidBodyMaterialCfg(static_friction=0.50, dynamic_friction=0.35, restitution=0.05)
+    return sim_utils.RigidBodyMaterialCfg(static_friction=0.50, dynamic_friction=0.35,
+        restitution=0.05, friction_combine_mode="average")
 
 
 def grasp_material():
@@ -277,6 +282,40 @@ def screen_object():
 
 MEDIA_DIAMETER, MEDIA_LENGTH, MEDIA_DENSITY = 0.009525, 0.022225, 2500.0
 WASHER_OD, WASHER_BORE, WASHER_T, WASHER_DENSITY = 0.030, 0.008, 0.004, 7850.0
+RECEIVER_INNER_XY, RECEIVER_WALL_T, RECEIVER_WALL_H = 0.280, 0.006, 0.050
+RECEIVER_FLOOR_T = 0.004
+
+
+def ceramic_material():
+    # This material is also the media/media interface.  Keep its authored
+    # coefficients distinct from the 0.50/0.35 ceramic/polymer screen
+    # interface; silently reusing the screen material would erase the frozen
+    # 0.40/0.30 media/media constitutive assumption.
+    # PhysX selects the higher-priority combine mode.  ``max`` therefore gives
+    # ceramic/ceramic 0.40/0.30 and ceramic/polymer max(0.40/0.30,
+    # 0.50/0.35)=0.50/0.35.
+    return sim_utils.RigidBodyMaterialCfg(static_friction=0.40, dynamic_friction=0.30,
+        restitution=0.05, friction_combine_mode="max")
+
+
+def steel_material():
+    # ``min`` has priority over the processing material's ``average`` mode,
+    # yielding the frozen steel/polymer 0.45/0.35 pair.
+    return sim_utils.RigidBodyMaterialCfg(static_friction=0.45, dynamic_friction=0.35,
+        restitution=0.05, friction_combine_mode="min")
+
+
+def _configure_dynamic_root(root, solver_position_iterations=32, solver_velocity_iterations=8):
+    api = PhysxSchema.PhysxRigidBodyAPI.Apply(root.GetPrim())
+    api.CreateSolverPositionIterationCountAttr(solver_position_iterations)
+    api.CreateSolverVelocityIterationCountAttr(solver_velocity_iterations)
+    api.CreateMaxDepenetrationVelocityAttr(2.0)
+
+
+def _configure_collider(prim):
+    api = PhysxSchema.PhysxCollisionAPI.Apply(prim)
+    api.CreateContactOffsetAttr(0.00015)
+    api.CreateRestOffsetAttr(0.0)
 
 
 def _rigid_root(prim_path, translation, mass_value, inertia):
@@ -287,6 +326,7 @@ def _rigid_root(prim_path, translation, mass_value, inertia):
     mass.CreateMassAttr(mass_value)
     mass.CreateCenterOfMassAttr(Gf.Vec3f(0, 0, 0))
     mass.CreateDiagonalInertiaAttr(Gf.Vec3f(*inertia))
+    _configure_dynamic_root(root)
     return root
 
 
@@ -313,6 +353,10 @@ def spawn_angle_cut_media(prim_path, cfg, translation=None, orientation=None, **
     mesh.CreateSubdivisionSchemeAttr("none"); mesh.CreateDisplayColorAttr([Gf.Vec3f(0.82, 0.78, 0.69)])
     UsdPhysics.CollisionAPI.Apply(mesh.GetPrim())
     UsdPhysics.MeshCollisionAPI.Apply(mesh.GetPrim()).CreateApproximationAttr("convexHull")
+    _configure_collider(mesh.GetPrim())
+    material_path = f"{prim_path}/CeramicPhysicsMaterial"
+    ceramic_material().func(material_path, ceramic_material())
+    sim_utils.bind_physics_material(mesh.GetPath().pathString, material_path, stronger_than_descendants=True)
     sim_utils.activate_contact_sensors(prim_path)
     return root.GetPrim()
 
@@ -330,6 +374,10 @@ def spawn_washer(prim_path, cfg, translation=None, orientation=None, **_):
         poly = Polygon([(ri*math.cos(a0),ri*math.sin(a0)), (ro*math.cos(a0),ro*math.sin(a0)),
                         (ro*math.cos(a1),ro*math.sin(a1)), (ri*math.cos(a1),ri*math.sin(a1))])
         prism(f"{prim_path}/Wedge_{i:02d}", poly, -WASHER_T/2, WASHER_T/2, (0.35,0.37,0.40), "washer")
+        _configure_collider(sim_utils.get_current_stage().GetPrimAtPath(f"{prim_path}/Wedge_{i:02d}"))
+    material_path = f"{prim_path}/SteelPhysicsMaterial"
+    steel_material().func(material_path, steel_material())
+    sim_utils.bind_physics_material(prim_path, material_path, stronger_than_descendants=True)
     sim_utils.activate_contact_sensors(prim_path)
     return root.GetPrim()
 
@@ -348,6 +396,35 @@ def loaded_objects():
             spawner_cfg=sim_utils.SpawnerCfg(func=spawn_washer),
             initial_pose=Pose(position_xyz=(SCREEN_X+x, SCREEN_Y+y, SCREEN_ROOT_Z+WASHER_T/2+0.0005))))
     return assets
+
+
+def spawn_receiver(prim_path, cfg, translation=None, orientation=None, **_):
+    """Author a fixed open receiver below the screen with a measurable free volume."""
+    root = UsdGeom.Xform.Define(sim_utils.get_current_stage(), prim_path)
+    root.AddTranslateOp().Set(Gf.Vec3d(*(translation or (0, 0, 0))))
+    half = RECEIVER_INNER_XY / 2
+    outer = half + RECEIVER_WALL_T
+    floor = box(-outer, -outer, outer, outer)
+    prism(f"{prim_path}/Floor", floor, 0.0, RECEIVER_FLOOR_T, (0.20, 0.23, 0.26), "receiver")
+    walls = {
+        "XNeg": box(-outer, -outer, -half, outer), "XPos": box(half, -outer, outer, outer),
+        "YNeg": box(-half, -outer, half, -half), "YPos": box(-half, half, half, outer),
+    }
+    for name, shape in walls.items():
+        prism(f"{prim_path}/Wall_{name}", shape, RECEIVER_FLOOR_T,
+              RECEIVER_FLOOR_T + RECEIVER_WALL_H, (0.24, 0.28, 0.31), "receiver")
+    material_path = f"{prim_path}/PhysicsMaterial"
+    processing_material().func(material_path, processing_material())
+    sim_utils.bind_physics_material(prim_path, material_path, stronger_than_descendants=True)
+    for child in ["Floor", *[f"Wall_{name}" for name in walls]]:
+        _configure_collider(sim_utils.get_current_stage().GetPrimAtPath(f"{prim_path}/{child}"))
+    return root.GetPrim()
+
+
+def receiver_object():
+    return Object(name="receiver", object_type=ObjectType.BASE,
+        spawner_cfg=sim_utils.SpawnerCfg(func=spawn_receiver),
+        initial_pose=Pose(position_xyz=(SCREEN_X, SCREEN_Y, TABLETOP_HEIGHT + 0.001)))
 
 
 def spawn_support_pair(prim_path, cfg, translation=None, orientation=None, **_):
@@ -398,7 +475,7 @@ def native_support_geometry_audit(stage):
             "post_count": len(post_rows)}
 
 
-def build_environment():
+def build_environment(include_loaded=False):
     embodiment=BimanualYamEmbodiment(enable_cameras=True, overview_cam=True,
       # Keep the embodiment's verified robot-wide contact sensors enabled.
       # Their spawn configuration activates contact reporting on the YAM link
@@ -435,18 +512,47 @@ def build_environment():
                 "{ENV_REGEX_NS}/support_pos/Post_0",
                 "{ENV_REGEX_NS}/support_pos/Post_1"],
             max_contact_data_count_per_prim=RAW_CONTACT_CAPACITY_PER_PRIM)))
+    if include_loaded:
+        receiver_shapes = ["{ENV_REGEX_NS}/receiver/Floor", *[
+            f"{{ENV_REGEX_NS}}/receiver/Wall_{side}"
+            for side in ("XNeg", "XPos", "YNeg", "YPos")]]
+        support_shapes = [
+            f"{{ENV_REGEX_NS}}/support_{sign}/Post_{index}"
+            for sign in ("neg", "pos") for index in range(2)]
+        # These discovery sensors are declared before PHYSICS_READY.  The
+        # screen sensor directly exposes unintended receiver support; the ten
+        # loose-body sensors expose reset contacts against screen, receiver,
+        # and supports without treating a 20 Hz endpoint as a penetration
+        # qualification.
+        scene_fields.append(("screen_fixture_contacts", ContactSensorCfg,
+            ContactSensorCfg(
+                prim_path="{ENV_REGEX_NS}/screen", update_period=0.0,
+                history_length=0, track_air_time=False,
+                filter_prim_paths_expr=[*receiver_shapes, *support_shapes],
+                max_contact_data_count_per_prim=RAW_CONTACT_CAPACITY_PER_PRIM)))
+        for name in [*[f"media_{i:02d}" for i in range(8)],
+                     *[f"washer_{i:02d}" for i in range(2)]]:
+            for category, filters in (("screen", ["{ENV_REGEX_NS}/screen"]),
+                                      ("receiver", receiver_shapes),
+                                      ("support", support_shapes)):
+                scene_fields.append((f"{name}_{category}_contacts", ContactSensorCfg,
+                    ContactSensorCfg(
+                        prim_path=f"{{ENV_REGEX_NS}}/{name}", update_period=0.0,
+                        history_length=0, track_air_time=False,
+                        filter_prim_paths_expr=filters,
+                        max_contact_data_count_per_prim=RAW_CONTACT_CAPACITY_PER_PRIM)))
     embodiment.scene_config=make_configclass("FullScreenYamSceneCfg", scene_fields)()
     # This first manipulation component records RGB video for visual inspection.
     # Object-identity visibility remains unqualified until the full-scene stage.
     embodiment.camera_config.overview_cam.data_types = ["rgb"]
     return IsaacLabArenaEnvironment(name="full_screen_yam_preflight",
-      scene=Scene([*scene_assets(objects=False,d435_collider=False),*fixture_assets(),screen_object()]),
+      scene=Scene([*scene_assets(objects=False,d435_collider=False),*fixture_assets(),screen_object(),
+                   *([receiver_object(), *loaded_objects()] if include_loaded else [])]),
       embodiment=embodiment, env_cfg_callback=env_cfg_callback(CONTROL_HZ))
 
 
 def build_loaded_environment():
     """Same public YAM scene with the frozen 8-media/2-washer free rigid batch."""
-    environment = build_environment()
+    environment = build_environment(include_loaded=True)
     environment.name = "loaded_screen_reset_preflight"
-    environment.scene.add_assets(loaded_objects())
     return environment

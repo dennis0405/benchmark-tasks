@@ -14,8 +14,8 @@ from pathlib import Path
 
 def arg_path(name, default):
     for i, value in enumerate(sys.argv[1:]):
-        if value == name and i + 2 <= len(sys.argv) - 1:
-            return Path(sys.argv[i + 2])
+        if value == name and i + 1 < len(sys.argv[1:]):
+            return Path(sys.argv[1:][i + 1])
         if value.startswith(name + "="):
             return Path(value.split("=", 1)[1])
     return Path(default)
@@ -57,9 +57,13 @@ launcher = AppLauncher(args); simulation_app = launcher.app
 import imageio.v2 as imageio
 import numpy as np
 import torch
+import isaaclab.sim as sim_utils
 from yam_arena.constants import FINGER_OPEN, READY
-from full_screen_scene import (CONTROL_HZ, MEDIA_DENSITY, MEDIA_DIAMETER, MEDIA_LENGTH,
-    SCREEN_ROOT_Z, WASHER_BORE, WASHER_DENSITY, WASHER_OD, WASHER_T, build_loaded_environment)
+from full_screen_scene import (CONTROL_HZ, HOLES, MEDIA_DENSITY, MEDIA_DIAMETER, MEDIA_LENGTH,
+    FLOOR_T, RECEIVER_FLOOR_T, RECEIVER_INNER_XY, RECEIVER_WALL_H, SCREEN_ROOT_Z, SCREEN_X,
+    SUPPORT_H, TABLETOP_HEIGHT,
+    WASHER_BORE, WASHER_DENSITY, WASHER_OD, WASHER_T, build_loaded_environment)
+from pxr import Gf, PhysxSchema, Usd, UsdGeom, UsdPhysics, UsdShade
 
 
 def evaluate(row):
@@ -75,9 +79,78 @@ def main():
     env = ArenaEnvBuilder(build_loaded_environment(), ArenaEnvBuilderCfg(
         num_envs=1, solve_relations=False, device=args.device)).make_registered()
     base = env.unwrapped; env.reset(seed=args.seed)
+    stage = sim_utils.get_current_stage()
     dt = float(base.sim.get_physics_dt())
     names = [f"media_{i:02d}" for i in range(8)] + [f"washer_{i:02d}" for i in range(2)]
     bodies = {name: base.scene.rigid_objects[name] for name in names}
+    # Count instantiated native PhysX views and independently audit their USD
+    # rigid-body schemas.  Do not infer body counts from the requested asset
+    # names: a failed/multipart instantiation must be visible in this probe.
+    native_body_audit = {}
+    for name, body in bodies.items():
+        prim_path = f"/World/envs/env_0/{name}"
+        prim = stage.GetPrimAtPath(prim_path)
+        rigid_api = UsdPhysics.RigidBodyAPI(prim)
+        view = body.root_physx_view
+        view_count = int(view.count)
+        data_body_count = int(body.data.body_mass.torch.shape[1])
+        rigid_schema_paths = [
+            candidate.GetPath().pathString for candidate in Usd.PrimRange(prim)
+            if candidate.HasAPI(UsdPhysics.RigidBodyAPI)
+        ]
+        collision_rows = []
+        for candidate in Usd.PrimRange(prim):
+            if not candidate.HasAPI(UsdPhysics.CollisionAPI):
+                continue
+            collision_api = UsdPhysics.CollisionAPI(candidate)
+            enabled_attr = collision_api.GetCollisionEnabledAttr()
+            enabled = bool(enabled_attr.Get()) if enabled_attr.HasAuthoredValueOpinion() else True
+            mesh_api = UsdPhysics.MeshCollisionAPI(candidate)
+            approximation_attr = mesh_api.GetApproximationAttr()
+            approximation = (str(approximation_attr.Get())
+                             if approximation_attr and approximation_attr.HasAuthoredValueOpinion()
+                             else "")
+            collision_rows.append({"path": candidate.GetPath().pathString,
+                "enabled": enabled,
+                "mesh_collision_schema": bool(candidate.HasAPI(UsdPhysics.MeshCollisionAPI)),
+                "approximation": approximation})
+        rigid_enabled_attr = rigid_api.GetRigidBodyEnabledAttr()
+        kinematic_attr = rigid_api.GetKinematicEnabledAttr()
+        rigid_enabled = bool(rigid_enabled_attr.Get()) if rigid_enabled_attr.HasAuthoredValueOpinion() else True
+        kinematic = bool(kinematic_attr.Get()) if kinematic_attr.HasAuthoredValueOpinion() else False
+        native_body_audit[name] = {
+            "prim_path": prim_path,
+            "prim_valid": bool(prim.IsValid()),
+            "usd_rigid_body_schema": bool(prim.HasAPI(UsdPhysics.RigidBodyAPI)),
+            "usd_rigid_body_schema_paths": rigid_schema_paths,
+            "usd_rigid_body_schema_count": len(rigid_schema_paths),
+            "usd_rigid_body_enabled": rigid_enabled,
+            "usd_kinematic_enabled": kinematic,
+            "native_physx_view_count": view_count,
+            "native_mass_tensor_body_count": data_body_count,
+            "native_collision_shapes": collision_rows,
+            "native_collision_shape_count": len(collision_rows),
+            "native_enabled_collision_shape_count": sum(int(row["enabled"]) for row in collision_rows),
+            "native_convex_hull_collision_shape_count": sum(
+                int(row["enabled"] and row["mesh_collision_schema"]
+                    and row["approximation"] == "convexHull") for row in collision_rows),
+        }
+    media_native_dynamic_count = sum(
+        row["native_physx_view_count"]
+        for name, row in native_body_audit.items()
+        if name.startswith("media_") and row["prim_valid"] and row["usd_rigid_body_schema"]
+        and row["usd_rigid_body_enabled"] and not row["usd_kinematic_enabled"]
+        and row["usd_rigid_body_schema_count"] == 1
+        and row["native_mass_tensor_body_count"] == row["native_physx_view_count"]
+    )
+    washer_native_dynamic_count = sum(
+        row["native_physx_view_count"]
+        for name, row in native_body_audit.items()
+        if name.startswith("washer_") and row["prim_valid"] and row["usd_rigid_body_schema"]
+        and row["usd_rigid_body_enabled"] and not row["usd_kinematic_enabled"]
+        and row["usd_rigid_body_schema_count"] == 1
+        and row["native_mass_tensor_body_count"] == row["native_physx_view_count"]
+    )
     expected_media_mass = MEDIA_DENSITY * math.pi * (MEDIA_DIAMETER/2)**2 * MEDIA_LENGTH
     expected_washer_mass = WASHER_DENSITY * math.pi * ((WASHER_OD/2)**2-(WASHER_BORE/2)**2) * WASHER_T
     native_masses = {}
@@ -86,14 +159,153 @@ def main():
     screen = base.scene.rigid_objects["screen"]
     screen.update(dt)
     initial = {name: body.data.root_pos_w.torch[0].detach().cpu().numpy().astype(float).copy() for name, body in bodies.items()}
+    receiver_paths = ["/World/envs/env_0/receiver/Floor", *[
+        f"/World/envs/env_0/receiver/Wall_{side}" for side in ("XNeg", "XPos", "YNeg", "YPos")]]
+    receiver_colliders = sum(int(
+        stage.GetPrimAtPath(path).IsValid()
+        and stage.GetPrimAtPath(path).HasAPI(UsdPhysics.CollisionAPI)
+    ) for path in receiver_paths)
+
+    def world_bounds(path):
+        prim = stage.GetPrimAtPath(path)
+        if not prim.IsValid():
+            raise RuntimeError(f"missing collider for world bounds: {path}")
+        bbox = UsdGeom.BBoxCache(Usd.TimeCode.Default(), [UsdGeom.Tokens.default_]).ComputeWorldBound(prim)
+        aligned = bbox.ComputeAlignedRange()
+        return np.asarray(aligned.GetMin(), dtype=float), np.asarray(aligned.GetMax(), dtype=float)
+
+    receiver_bounds = {path: world_bounds(path) for path in receiver_paths}
+    receiver_wall_top_z = max(receiver_bounds[path][1][2] for path in receiver_paths[1:])
+    # The screen root is a live native rigid pose.  Floor collision geometry
+    # spans local z=[-FLOOR_T,0], so this is the actual reset underside rather
+    # than a stale composed-USD transform for a moving body.
+    live_screen_floor_underside_z = float(screen.data.root_pos_w.torch[0, 2].detach().cpu()) - FLOOR_T
+    live_receiver_to_screen_vertical_clearance = live_screen_floor_underside_z - receiver_wall_top_z
+
+    support_paths = [f"/World/envs/env_0/support_{sign}/Post_{index}"
+                     for sign in ("neg", "pos") for index in range(2)]
+    support_bounds = {path: world_bounds(path) for path in support_paths}
+    live_support_top_z = max(bounds[1][2] for bounds in support_bounds.values())
+    # Keep the authored reset calculation independent of the live post-reset
+    # pose.  A solver correction must not be allowed to conceal bad authoring.
+    authored_screen_root_z = float(SCREEN_ROOT_Z)
+    authored_screen_floor_underside_z = authored_screen_root_z - FLOOR_T
+    authored_receiver_wall_top_z = TABLETOP_HEIGHT + 0.001 + RECEIVER_FLOOR_T + RECEIVER_WALL_H
+    authored_support_top_z = TABLETOP_HEIGHT + SUPPORT_H
+    authored_receiver_to_screen_vertical_clearance = (
+        authored_screen_floor_underside_z - authored_receiver_wall_top_z)
+    authored_screen_support_signed_gap = (
+        authored_screen_floor_underside_z - authored_support_top_z)
+    authored_screen_support_penetration = max(0.0, -authored_screen_support_signed_gap)
+    live_screen_reset_correction = abs(
+        live_screen_floor_underside_z - authored_screen_floor_underside_z)
+
+    screen_fixture_sensor = base.scene.sensors["screen_fixture_contacts"]
+    loose_fixture_sensors = {name: {
+        category: base.scene.sensors[f"{name}_{category}_contacts"]
+        for category in ("screen", "receiver", "support")}
+        for name in names}
+
+    def force_matrix(sensor):
+        matrix = sensor.data.normal_force_matrix_w
+        if matrix is None:
+            raise RuntimeError("filtered native contact force matrix was not allocated")
+        return matrix.torch[0].detach().cpu().numpy().astype(float)
+
+    # Capture reset-cleared buffers for the trace only.  They are deliberately
+    # not used as collision evidence: env.reset clears them and no completed
+    # physics interval has occurred yet.
+    o0_screen_fixture_forces = np.linalg.norm(
+        force_matrix(screen_fixture_sensor), axis=-1)
+    if o0_screen_fixture_forces.shape[-1] != 9:
+        raise RuntimeError(
+            f"expected 9 O0 screen fixture filters, got shape {o0_screen_fixture_forces.shape}")
+    o0_screen_receiver_force = float(np.max(o0_screen_fixture_forces[..., :5]))
+    o0_screen_support_force = float(np.max(o0_screen_fixture_forces[..., 5:]))
+
+    def material_row(path):
+        prim = stage.GetPrimAtPath(path)
+        bound, _ = UsdShade.MaterialBindingAPI(prim).ComputeBoundMaterial("physics")
+        if not bound:
+            raise RuntimeError(f"missing resolved physics material: {path}")
+        api = UsdPhysics.MaterialAPI(bound.GetPrim())
+        physx = PhysxSchema.PhysxMaterialAPI(bound.GetPrim())
+        return [float(api.GetStaticFrictionAttr().Get()),
+                float(api.GetDynamicFrictionAttr().Get()), float(api.GetRestitutionAttr().Get()),
+                str(physx.GetFrictionCombineModeAttr().Get())]
+
+    ceramic_coefficients = material_row("/World/envs/env_0/media_00/Collider")
+    steel_coefficients = material_row("/World/envs/env_0/washer_00/Wedge_00")
+    receiver_coefficients = material_row("/World/envs/env_0/receiver/Floor")
+
+    # Scorer state begins before O_1.  Passage latches are false because no
+    # completed physics interval exists yet, not because score is forced to a
+    # constant.  Each observation below recomputes containment from live body
+    # state and updates the sampled crossing history.  This 20 Hz observer is
+    # deliberately not presented as the later 240 Hz swept-path scorer.
+    causal_passage = {name: False for name in names[:8]}
+    receiver_center = np.array([0.37, 0.0])
+    receiver_floor_z = TABLETOP_HEIGHT + 0.001 + RECEIVER_FLOOR_T
+
+    def receiver_contained(name, pos):
+        # Conservative enclosing extents: false negatives are acceptable in
+        # this discovery observer, but a center-only receiver hit is not.
+        radius = MEDIA_LENGTH / 2 if name.startswith("media") else WASHER_OD / 2
+        half_height = MEDIA_LENGTH / 2 if name.startswith("media") else WASHER_OD / 2
+        return bool(np.all(np.abs(pos[:2] - receiver_center) + radius <= RECEIVER_INNER_XY / 2)
+                    and pos[2] - half_height >= receiver_floor_z
+                    and pos[2] + half_height <= receiver_floor_z + RECEIVER_WALL_H)
+
+    contained = {name: receiver_contained(name, initial[name]) for name in names[:8]}
+    eligible = {name: causal_passage[name] and contained[name] for name in names[:8]}
+
+    def score_from_state():
+        recovered = sum(native_masses[name] for name in names[:8] if eligible[name])
+        fraction = recovered / sum(native_masses[name] for name in names[:8])
+        return fraction, 0.90 * min(fraction / 0.98, 1.0)
+
+    recovered_mass_fraction, initial_score = score_from_state()
+    # This enclosing-volume predicate is intentionally retained only as a
+    # conservative discovery signal for planning the next exact collider
+    # observer.  It is not an exact transformed-component containment check
+    # and therefore is not a pass/fail check in this preflight.
+    initial_receiver_conservative_proxy_count = 0
+    for name in names:
+        initial_receiver_conservative_proxy_count += int(receiver_contained(name, initial[name]))
     action = torch.tensor(np.r_[READY, FINGER_OPEN, READY, FINGER_OPEN], dtype=torch.float32,
                           device=args.device).unsqueeze(0)
     samples = int(math.ceil(args.duration * CONTROL_HZ)); trace = []
     max_speed = 0.0; max_displacement = 0.0; min_z = math.inf
+    max_screen_receiver_force = 0.0
+    max_screen_support_force = 0.0
+    max_loose_receiver_force = 0.0
+    max_loose_support_force = 0.0
+    max_loose_screen_force = 0.0
+    per_body_contact_max = {
+        name: {"screen_N": 0.0, "receiver_N": 0.0, "support_N": 0.0}
+        for name in names}
+    previous_media_z = {name: float(initial[name][2]) for name in names[:8]}
     final_rgb = None
     for sample in range(samples):
         env.step(action)
         row = {"control_sample": sample + 1, "time_s": (sample + 1) / CONTROL_HZ, "objects": {}}
+        screen_fixture_forces = np.linalg.norm(force_matrix(screen_fixture_sensor), axis=-1)
+        if screen_fixture_forces.shape[-1] != 9:
+            raise RuntimeError(
+                f"expected 9 screen fixture filters, got shape {screen_fixture_forces.shape}")
+        # The final matrix axis is filter order: five receiver colliders then
+        # four support posts.  Preserve every expanded screen collider row.
+        sample_screen_receiver = float(np.max(screen_fixture_forces[..., :5]))
+        sample_screen_support = float(np.max(screen_fixture_forces[..., 5:]))
+        max_screen_receiver_force = max(max_screen_receiver_force, sample_screen_receiver)
+        max_screen_support_force = max(max_screen_support_force, sample_screen_support)
+        row["native_fixture_contacts"] = {
+            "screen_receiver_force_max_N": sample_screen_receiver,
+            "screen_support_force_max_N": sample_screen_support,
+            "loose_body_screen_force_max_N": 0.0,
+            "loose_body_receiver_force_max_N": 0.0,
+            "loose_body_support_force_max_N": 0.0,
+        }
         for name, body in bodies.items():
             body.update(dt)
             pos = body.data.root_pos_w.torch[0].detach().cpu().numpy().astype(float)
@@ -103,6 +315,38 @@ def main():
             max_speed = max(max_speed, speed); max_displacement = max(max_displacement, disp); min_z = min(min_z, float(pos[2]))
             row["objects"][name] = {"position_w_m": pos.tolist(), "linear_velocity_w_m_s": vel.tolist(),
                                     "angular_velocity_w_rad_s": ang.tolist()}
+            loose_screen = float(np.max(np.linalg.norm(
+                force_matrix(loose_fixture_sensors[name]["screen"]), axis=-1)))
+            loose_receiver = float(np.max(np.linalg.norm(
+                force_matrix(loose_fixture_sensors[name]["receiver"]), axis=-1)))
+            loose_support = float(np.max(np.linalg.norm(
+                force_matrix(loose_fixture_sensors[name]["support"]), axis=-1)))
+            max_loose_screen_force = max(max_loose_screen_force, loose_screen)
+            max_loose_receiver_force = max(max_loose_receiver_force, loose_receiver)
+            max_loose_support_force = max(max_loose_support_force, loose_support)
+            per_body_contact_max[name]["screen_N"] = max(per_body_contact_max[name]["screen_N"], loose_screen)
+            per_body_contact_max[name]["receiver_N"] = max(per_body_contact_max[name]["receiver_N"], loose_receiver)
+            per_body_contact_max[name]["support_N"] = max(per_body_contact_max[name]["support_N"], loose_support)
+            row["native_fixture_contacts"]["loose_body_screen_force_max_N"] = max(
+                row["native_fixture_contacts"]["loose_body_screen_force_max_N"], loose_screen)
+            row["native_fixture_contacts"]["loose_body_receiver_force_max_N"] = max(
+                row["native_fixture_contacts"]["loose_body_receiver_force_max_N"], loose_receiver)
+            row["native_fixture_contacts"]["loose_body_support_force_max_N"] = max(
+                row["native_fixture_contacts"]["loose_body_support_force_max_N"], loose_support)
+            if name in causal_passage:
+                # A sampled sign change is recorded as a discovery event only
+                # when the body center is inside a real indexed aperture.  It
+                # cannot qualify a genuine passage because the 20 Hz samples
+                # do not bound swept surface travel.
+                local_xy = pos[:2] - np.array([SCREEN_X, 0.0])
+                aperture_center_distance = min(
+                    float(np.linalg.norm(local_xy - np.asarray(hole))) for hole in HOLES)
+                crossed = previous_media_z[name] > SCREEN_ROOT_Z and pos[2] < SCREEN_ROOT_Z
+                if crossed and aperture_center_distance <= (0.0127 - MEDIA_DIAMETER) / 2:
+                    causal_passage[name] = True
+                previous_media_z[name] = float(pos[2])
+                contained[name] = receiver_contained(name, pos)
+                eligible[name] = causal_passage[name] and contained[name]
         screen.update(dt)
         row["screen"] = {
             "root_position_w_m": screen.data.root_pos_w.torch[0].detach().cpu().numpy().astype(float).tolist(),
@@ -111,14 +355,27 @@ def main():
             "root_angular_velocity_w_rad_s": screen.data.root_ang_vel_w.torch[0].detach().cpu().numpy().astype(float).tolist(),
         }
         trace.append(row)
+        recovered_mass_fraction, sampled_score = score_from_state()
+        row["sampled_scorer"] = {"causal_passage": dict(causal_passage),
+                                  "receiver_contained": dict(contained),
+                                  "eligible": dict(eligible),
+                                  "recovered_mass_fraction": recovered_mass_fraction,
+                                  "score_without_release_dwell": sampled_score}
         cam = base.scene.sensors.get("overview_cam", base.scene.sensors.get("top_cam"))
         rgb = cam.data.output["rgb"].torch[0].detach().cpu().numpy()[...,:3]
         if sample == 0:
             min_finite_fraction = 1.0
             min_in_range_fraction = 1.0
-        finite = np.isfinite(rgb)
-        min_finite_fraction = min(min_finite_fraction, float(np.mean(finite)))
-        min_in_range_fraction = min(min_in_range_fraction, float(np.mean(finite & (rgb >= 0) & (rgb <= 255))))
+        # Camera validity is a per-pixel predicate: every RGB channel must be
+        # valid.  Averaging the channel mask would incorrectly count one bad
+        # channel as only one third of a bad pixel.
+        finite_pixels = np.all(np.isfinite(rgb), axis=-1)
+        finite_in_range_pixels = np.all(
+            np.isfinite(rgb) & (rgb >= 0) & (rgb <= 255), axis=-1)
+        min_finite_fraction = min(
+            min_finite_fraction, float(np.mean(finite_pixels)))
+        min_in_range_fraction = min(
+            min_in_range_fraction, float(np.mean(finite_in_range_pixels)))
         final_rgb = np.nan_to_num(rgb, nan=0, posinf=255, neginf=0).clip(0,255).astype(np.uint8)
     args.screenshot.parent.mkdir(parents=True, exist_ok=True); imageio.imwrite(args.screenshot, final_rgb)
     trace_path = args.report.with_name(args.report.stem + "-trace.json.gz")
@@ -126,10 +383,47 @@ def main():
     media_error = max(abs(native_masses[n]-expected_media_mass)/expected_media_mass for n in names[:8])
     washer_error = max(abs(native_masses[n]-expected_washer_mass)/expected_washer_mass for n in names[8:])
     final_centers_below = sum(int(trace[-1]["objects"][n]["position_w_m"][2] < SCREEN_ROOT_Z-0.001) for n in names)
+    media_topology_ok = sum(int(
+        native_body_audit[name]["native_collision_shape_count"] == 1
+        and native_body_audit[name]["native_enabled_collision_shape_count"] == 1
+        and native_body_audit[name]["native_convex_hull_collision_shape_count"] == 1)
+        for name in names[:8])
+    washer_topology_ok = sum(int(
+        native_body_audit[name]["native_collision_shape_count"] == 32
+        and native_body_audit[name]["native_enabled_collision_shape_count"] == 32
+        and native_body_audit[name]["native_convex_hull_collision_shape_count"] == 32)
+        for name in names[8:])
+    bodies_with_screen_contact = sum(
+        int(per_body_contact_max[name]["screen_N"] > 1e-6) for name in names)
+    minimum_body_screen_contact = min(per_body_contact_max[name]["screen_N"] for name in names)
     checks = [
       {"name":"native_physics_timestep_240hz","measured":abs(dt-1/240),"operator":"<=","threshold":1e-12,"unit":"s"},
-      {"name":"free_rigid_media_body_count","measured":len(names[:8]),"operator":"==","threshold":8,"unit":"bodies"},
-      {"name":"free_rigid_washer_body_count","measured":len(names[8:]),"operator":"==","threshold":2,"unit":"bodies"},
+      {"name":"native_dynamic_media_body_count","measured":media_native_dynamic_count,"operator":"==","threshold":8,"unit":"bodies"},
+      {"name":"native_dynamic_washer_body_count","measured":washer_native_dynamic_count,"operator":"==","threshold":2,"unit":"bodies"},
+      {"name":"media_with_exactly_one_enabled_convex_hull_collider","measured":media_topology_ok,"operator":"==","threshold":8,"unit":"bodies"},
+      {"name":"washers_with_exactly_32_enabled_convex_hull_wedge_colliders","measured":washer_topology_ok,"operator":"==","threshold":2,"unit":"bodies"},
+      {"name":"receiver_native_collider_count","measured":receiver_colliders,"operator":"==","threshold":5,"unit":"colliders"},
+      {"name":"authored_receiver_wall_to_screen_floor_vertical_clearance","measured":authored_receiver_to_screen_vertical_clearance,"operator":">=","threshold":0.004,"unit":"m"},
+      {"name":"authored_screen_support_signed_gap_absolute_error","measured":abs(authored_screen_support_signed_gap),"operator":"<=","threshold":1e-9,"unit":"m"},
+      {"name":"authored_screen_support_penetration","measured":authored_screen_support_penetration,"operator":"<=","threshold":0.0005,"unit":"m"},
+      {"name":"live_post_reset_receiver_wall_to_screen_floor_vertical_clearance","measured":live_receiver_to_screen_vertical_clearance,"operator":">=","threshold":0.004,"unit":"m"},
+      {"name":"live_post_reset_screen_floor_correction_from_authored_reset","measured":live_screen_reset_correction,"operator":"<=","threshold":0.0005,"unit":"m"},
+      {"name":"screen_receiver_native_contact_force_max_from_20hz_observations","measured":max_screen_receiver_force,"operator":"<=","threshold":1e-6,"unit":"N"},
+      {"name":"screen_support_native_contact_force_max_from_20hz_observations","measured":max_screen_support_force,"operator":">","threshold":1e-6,"unit":"N"},
+      {"name":"loose_body_screen_native_contact_force_max_from_20hz_observations","measured":max_loose_screen_force,"operator":">","threshold":1e-6,"unit":"N"},
+      {"name":"loaded_bodies_with_individual_native_screen_contact","measured":bodies_with_screen_contact,"operator":"==","threshold":10,"unit":"bodies"},
+      {"name":"minimum_per_body_native_screen_contact_force_from_20hz_observations","measured":minimum_body_screen_contact,"operator":">","threshold":1e-6,"unit":"N"},
+      {"name":"loose_body_receiver_native_contact_force_max_from_20hz_observations","measured":max_loose_receiver_force,"operator":"<=","threshold":1e-6,"unit":"N"},
+      {"name":"loose_body_support_native_contact_force_max_from_20hz_observations","measured":max_loose_support_force,"operator":"<=","threshold":1e-6,"unit":"N"},
+      {"name":"untouched_sampled_scorer_value_after_noop","measured":sampled_score,"operator":"==","threshold":0.0,"unit":"score"},
+      {"name":"media_media_static_friction_material_readback_error","measured":abs(ceramic_coefficients[0]-0.40),"operator":"<=","threshold":1e-6,"unit":"coefficient"},
+      {"name":"media_media_dynamic_friction_material_readback_error","measured":abs(ceramic_coefficients[1]-0.30),"operator":"<=","threshold":1e-6,"unit":"coefficient"},
+      {"name":"media_material_max_combine_mode_readback","measured":int(ceramic_coefficients[3]=="max"),"operator":"==","threshold":1,"unit":"boolean"},
+      {"name":"steel_static_friction_readback_error","measured":abs(steel_coefficients[0]-0.45),"operator":"<=","threshold":1e-6,"unit":"coefficient"},
+      {"name":"steel_dynamic_friction_readback_error","measured":abs(steel_coefficients[1]-0.35),"operator":"<=","threshold":1e-6,"unit":"coefficient"},
+      {"name":"steel_material_min_combine_mode_readback","measured":int(steel_coefficients[3]=="min"),"operator":"==","threshold":1,"unit":"boolean"},
+      {"name":"receiver_static_friction_readback_error","measured":abs(receiver_coefficients[0]-0.50),"operator":"<=","threshold":1e-6,"unit":"coefficient"},
+      {"name":"polymer_material_average_combine_mode_readback","measured":int(receiver_coefficients[3]=="average"),"operator":"==","threshold":1,"unit":"boolean"},
       {"name":"authored_media_mass_propagation_readback_relative_error_max","measured":media_error,"operator":"<=","threshold":1e-4,"unit":"fraction"},
       {"name":"authored_washer_mass_propagation_readback_relative_error_max","measured":washer_error,"operator":"<=","threshold":1e-4,"unit":"fraction"},
       {"name":"noop_final_object_centers_below_screen_reference_height_at_20hz_endpoint","measured":final_centers_below,"operator":"==","threshold":0,"unit":"body_centers"},
@@ -142,14 +436,44 @@ def main():
     for row in checks: row["passed"] = evaluate(row)
     workspace = Path(__file__).resolve().parents[1]
     artifacts = [p.resolve().relative_to(workspace).as_posix() for p in (args.screenshot, trace_path)]
-    report = {"scope":"loaded reset and 20 Hz endpoint-observation native preflight only; not 240 Hz stability, grasp, passage, retention, scorer, or full qualification",
+    report = {"scope":"loaded reset and 20 Hz endpoint-observation native preflight only; sampled causal observer is not the frozen 240 Hz swept-path scorer and this is not grasp, passage, retention, or full qualification",
       "component_preflight_passed":all(r["passed"] for r in checks), "seed":args.seed,
       "physics_dt_s":dt, "control_hz":CONTROL_HZ, "duration_s":args.duration,
-      "native_body_masses_kg":native_masses, "checks":checks, "artifacts":artifacts,
+      "native_body_masses_kg":native_masses, "native_body_audit":native_body_audit,
+      "checks":checks, "artifacts":artifacts,
+      "native_contact_observation":{"screen_receiver_force_max_N":max_screen_receiver_force,
+          "screen_support_force_max_N":max_screen_support_force,
+          "loose_body_screen_force_max_N":max_loose_screen_force,
+          "loose_body_receiver_force_max_N":max_loose_receiver_force,
+          "loose_body_support_force_max_N":max_loose_support_force,
+          "per_body_force_maxima":per_body_contact_max,
+          "authored_reset":{"screen_root_z_m":authored_screen_root_z,
+              "screen_floor_underside_z_m":authored_screen_floor_underside_z,
+              "receiver_wall_top_z_m":authored_receiver_wall_top_z,
+              "support_top_z_m":authored_support_top_z,
+              "screen_support_signed_gap_m":authored_screen_support_signed_gap,
+              "screen_support_penetration_m":authored_screen_support_penetration,
+              "receiver_vertical_clearance_m":authored_receiver_to_screen_vertical_clearance},
+          "live_post_reset":{"receiver_wall_top_z_m":receiver_wall_top_z,
+              "screen_floor_underside_z_m":live_screen_floor_underside_z,
+              "support_top_z_m":live_support_top_z,
+              "receiver_vertical_clearance_m":live_receiver_to_screen_vertical_clearance,
+              "screen_floor_correction_from_authored_m":live_screen_reset_correction},
+          "reset_cleared_contact_buffers_not_collision_evidence":{
+              "screen_receiver_force_N":o0_screen_receiver_force,
+              "screen_support_force_N":o0_screen_support_force},
+          "sampling":"Reset-cleared force buffers are recorded but never graded; contact checks begin after the first completed 20 Hz control step"},
+      "native_material_readback":{"ceramic":ceramic_coefficients,"steel":steel_coefficients,"receiver":receiver_coefficients},
+      "scorer_state":{"initial_score":initial_score,"causal_passage":causal_passage,
+                      "receiver_contained":contained,"eligible":eligible,
+                      "initial_receiver_conservative_enclosing_volume_proxy_count":initial_receiver_conservative_proxy_count,
+                      "final_sampled_recovered_mass_fraction":recovered_mass_fraction,
+                      "final_sampled_score_without_release_dwell":sampled_score},
+      "receiver_proxy_scope":"The initial receiver proxy uses conservative enclosing extents and is reported for discovery only. It is not exact transformed-collider containment and is excluded from component_preflight_passed.",
       "mass_readback_scope":"comparison to the explicitly authored analytical mass formulas; verifies propagation only, not cooked-geometry-derived mass, constitutive fidelity, or inertia qualification",
       "endpoint_height_scope":"final body-center height only; not passage history, whole-collider crossing, aperture identity, swept clearance, or invalid-crossing detection",
       "sampling_scope":"loose-body translation and linear speed are observed after 20 Hz control steps; they do not establish the frozen 240 Hz <=0.01 m/s stability criterion",
-      "unqualified_observables":["240 Hz loaded-scene stability","genuine aperture passage","washer retention under agitation","loaded bilateral grasp","receiver containment","frozen aggregate contract"]}
+      "unqualified_observables":["240 Hz loaded-scene stability","full native signed-distance penetration sweep","between-control-step contact transients","genuine aperture passage","washer retention under agitation","loaded bilateral grasp","post-passage receiver containment","frozen aggregate contract"]}
     args.report.parent.mkdir(parents=True, exist_ok=True); args.report.write_text(json.dumps(report, indent=2))
     env.close(); simulation_app.close()
 
