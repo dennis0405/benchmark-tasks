@@ -48,3 +48,20 @@ print(json.dumps({'type':'item.completed','item':{'type':'error','message':'Code
     executable.chmod(0o700)
     with pytest.raises(StateError, match="tool runtime"):
         Agent(str(executable), timeout=3).run("smoke", "test", tmp_path, {"type": "object"})
+
+
+@pytest.mark.parametrize("event", ["plain log", None, 3, [], {"item": "log"},
+                                   {"item": None}, {"item": {"type": "error", "message": None}}])
+def test_non_event_json_in_log_does_not_crash_valid_structured_result(tmp_path, event):
+    import json
+
+    executable = tmp_path / "fake-codex"
+    executable.write_text(
+        "#!/usr/bin/env python3\nimport pathlib,sys\n"
+        "pathlib.Path(sys.argv[sys.argv.index('-o')+1]).write_text('{\"ok\":true}')\n"
+        + "print(" + repr(json.dumps(event)) + ")\n"
+    )
+    executable.chmod(0o700)
+    assert Agent(str(executable), timeout=3).run(
+        "smoke", "test", tmp_path, {"type": "object", "required": ["ok"]}
+    ) == {"ok": True}
