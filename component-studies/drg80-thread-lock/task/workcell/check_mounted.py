@@ -12,14 +12,19 @@ p.add_argument("--out", type=Path, required=True)
 p.add_argument("--rise-seconds", type=float, default=0.0)
 p.add_argument("--diagnostic-support-stiffness", type=float, default=1e6)
 p.add_argument("--measured-contact", action="store_true")
+p.add_argument("--transmitted-reaction", action="store_true")
+p.add_argument("--implicit-axial", action="store_true")
 p.add_argument("--native-friction", action="store_true")
 p.add_argument("--continuous-seat", action="store_true")
 p.add_argument("--velocity-iters", type=int, default=4)
+p.add_argument("--solver", choices=("tgs", "pgs"), default="tgs")
+p.add_argument("--contact-last", action="store_true")
 p.add_argument("--valve-force", type=float, default=5.0)
+p.add_argument("--driver-correction-rad", type=float, default=0.0)
 p.add_argument("--tightening-travel", type=float, default=1.0)
 p.add_argument("--drive-instrument", action="store_true")
 p.add_argument("--release-only", action="store_true")
-p.add_argument("--powered-fault",action="store_true")
+p.add_argument("--powered-fault", action="store_true")
 p.add_argument("--early", action="store_true")
 p.add_argument("--hz", type=int, default=240)
 args = p.parse_args()
@@ -27,6 +32,7 @@ app = AppLauncher(headless=True).app
 import numpy as np
 import isaaclab.sim as sim_utils
 from pxr import UsdGeom
+from isaaclab_physx.physics import PhysxCfg
 from build_bench import build
 from native_bench import Bench
 
@@ -41,9 +47,19 @@ def main():
         instrumented=args.drive_instrument,
         velocity_iters=args.velocity_iters,
         continuous_seat=args.continuous_seat,
+        implicit_axial=args.implicit_axial,
     )
     sim = sim_utils.SimulationContext(
-        sim_utils.SimulationCfg(dt=1 / args.hz, device="cuda:0", render_interval=12)
+        sim_utils.SimulationCfg(
+            dt=1 / args.hz,
+            device="cuda:0",
+            render_interval=12,
+            physics=PhysxCfg(
+                solver_type=int(args.solver == "tgs"),
+                solve_articulation_contact_last=args.contact_last,
+                enable_external_forces_every_iteration=args.solver == "tgs",
+            ),
+        )
     )
     x = UsdGeom.Xform.Define(sim.stage, "/World/Press")
     x.GetPrim().GetReferences().AddReference(str(local.resolve()))
@@ -54,6 +70,8 @@ def main():
         valve_force=args.valve_force,
         rise_seconds=args.rise_seconds,
         native_friction=args.native_friction,
+        transmitted_reaction=args.transmitted_reaction,
+        implicit_axial=args.implicit_axial,
         support_stiffness=args.diagnostic_support_stiffness,
         measured_contact=args.measured_contact,
     )
@@ -112,7 +130,9 @@ def main():
 
     tr = []
     try:
-        target = (math.radians(87) / 300 - 0.0057) * math.tau / 0.001
+        target = (
+            math.radians(87) / 300 - 0.0057
+        ) * math.tau / 0.001 + args.driver_correction_rad
         for phase, duration in (
             ("reset", 0.5),
             ("adjust", 2),
@@ -155,8 +175,8 @@ def main():
                 if args.drive_instrument:
                     diag[:4] = 0
                     tool_instrument(q, phase, i / args.hz)
-                if args.powered_fault and phase=="open1" and i>=.8*args.hz:
-                    diag[1]+=.030
+                if args.powered_fault and phase == "open1" and i >= 0.8 * args.hz:
+                    diag[1] += 0.030
                 bench.step(diag)
                 sim.step(render=False)
                 row = bench.read()

@@ -19,7 +19,17 @@ class Bench:
         native_friction=False,
         support_stiffness=1e6,
         measured_contact=False,
+        implicit_axial=False,
+        transmitted_reaction=False,
     ):
+        self.implicit_axial = implicit_axial
+        self.transmitted_reaction = transmitted_reaction
+        self.old_axial_velocity = None
+        self.previous_thread_angles = None
+        if transmitted_reaction and not (implicit_axial and native_friction):
+            raise ValueError(
+                "reaction measurement requires physical axial drives and dry friction"
+            )
         self.measured_contact = measured_contact
         self.previous_q = None
         self.valve_force = float(valve_force)
@@ -119,6 +129,17 @@ class Bench:
             )
             torque = float(np.cross(lever, vectors)[:, 2].sum())
             force = float(vectors[:, 2].sum())
+            # Sidewall friction also loads a real driver axially. Normal
+            # impulses alone omit this component of the measured tool wrench.
+            tangent, anchors, patches, offsets = view.get_friction_data(dt=self.h)
+            patch_count = int(patches.numpy().ravel()[0])
+            if patch_count:
+                head = int(offsets.numpy().ravel()[0])
+                region = slice(head, head + patch_count)
+                tangent = tangent.numpy()[region].reshape(-1, 3)
+                arms = anchors.numpy()[region].reshape(-1, 3) - position
+                force += float(tangent[:, 2].sum())
+                torque += float(np.cross(arms, tangent)[:, 2].sum())
             # The parent coordinates also move the distal nut.
             efforts[:2] += (force, torque)
             if name == "nut":
@@ -163,50 +184,74 @@ class Bench:
         sensed[1] += self.bearing_nm
         sensed[3] += self.bearing_nm
         gravity = -self.art.get_gravity_compensation_forces().numpy()[0, self.index]
-        predicted_mass = self.mass.copy()
-        predicted_mass[4, 4] += (
-            150**2 * (self.mass[5, 5] + self.mass[6, 6]) + 350 * self.h
-        )
-        external = applied + sensed + gravity
-        external[4] -= 350 * v[4]
-        rows = self.rows
-        gaps = self.gap0 + self.rows @ q
-        if self.measured_contact:
-            if self.previous_q is not None:
-                v = v.copy()
-                v[:4] = (q[:4] - self.previous_q[:4]) / self.h
-            self.previous_q = q.copy()
-            normal = [
-                abs(view.get_contact_force_matrix(dt=self.h).numpy().reshape(3)[2])
-                for view in (self.seat, self.stop)
-            ]
-            keep = np.ones(len(rows), dtype=bool)
-            for j, load in enumerate(normal):
-                if load > 0:
-                    # A contact impulse has already been observed. Use it as the
-                    # predictor's external load, and remove that predictive bound.
-                    # PhysX remains the sole writer of real contact impulses.
-                    external += load * rows[j]
-                    keep[j] = False
-            rows, gaps = rows[keep], gaps[keep]
-        internal, self.loads, friction = solve_internal(
-            predicted_mass,
-            v,
-            external,
-            self.g,
-            self.g @ q,
-            self.k,
-            self.d,
-            rows,
-            gaps,
-            self.h,
-            self.axes,
-        )
+        if self.transmitted_reaction:
+            # Axial momentum balance in the two serial prismatic coordinates.
+            # The native bearing and stop normals act upward on their workpieces.
+            # Their opposite impulses act on the grounded frame and the piston.
+            seat_z = self.seat.get_contact_force_matrix(dt=self.h).numpy().reshape(3)[2]
+            stop_z = self.stop.get_contact_force_matrix(dt=self.h).numpy().reshape(3)[2]
+            va = v[[0, 2]]
+            accel = (
+                np.zeros(2)
+                if self.old_axial_velocity is None
+                else (va - self.old_axial_velocity) / self.h
+            )
+            self.old_axial_velocity = va.copy()
+            # The contact views use nut/frame and piston/screw body order.
+            measured = (
+                (gravity + applied + sensed)[[0, 2]]
+                + np.array([seat_z - stop_z, seat_z])
+                - self.mass[np.ix_([0, 2], [0, 2])] @ accel
+            )
+            self.loads = measured.copy()
+            internal = self.axes.T @ (0.001 / math.tau * measured)
+        else:
+            predicted_mass = self.mass.copy()
+            predicted_mass[4, 4] += (
+                150**2 * (self.mass[5, 5] + self.mass[6, 6]) + 350 * self.h
+            )
+            external = applied + sensed + gravity
+            external[4] -= 350 * v[4]
+            rows = self.rows
+            gaps = self.gap0 + self.rows @ q
+            if self.measured_contact:
+                if self.previous_q is not None:
+                    v = v.copy()
+                    v[:4] = (q[:4] - self.previous_q[:4]) / self.h
+                self.previous_q = q.copy()
+                normal = [
+                    abs(view.get_contact_force_matrix(dt=self.h).numpy().reshape(3)[2])
+                    for view in (self.seat, self.stop)
+                ]
+                keep = np.ones(len(rows), dtype=bool)
+                for j, load in enumerate(normal):
+                    if load > 0:
+                        # A contact impulse has already been observed. Use it as the
+                        # predictor's external load, and remove that predictive bound.
+                        # PhysX remains the sole writer of real contact impulses.
+                        external += load * rows[j]
+                        keep[j] = False
+                rows, gaps = rows[keep], gaps[keep]
+            internal, self.loads, friction = solve_internal(
+                predicted_mass,
+                v,
+                external,
+                self.g,
+                self.g @ q,
+                self.k,
+                self.d,
+                rows,
+                gaps,
+                self.h,
+                self.axes,
+            )
+            measured = self.k * (self.g @ q) + self.d * (self.g @ v)
+            if self.native_friction:
+                internal -= self.axes.T @ friction
         if self.native_friction:
             # The PhysX articulation exposes static/dynamic friction EFFORT per
             # DOF, independently of the finite diagnostic drive. Let the same
             # solver resolve contact and the load-dependent angular stick/slip.
-            measured = self.k * (self.g @ q) + self.d * (self.g @ v)
             for i, idx in enumerate((self.index[1], self.index[3])):
                 force = abs(measured[i]) * 0.0035
                 self.friction_props[0, idx, :] = (
@@ -217,7 +262,32 @@ class Bench:
             self.art.set_dof_friction_properties(
                 wp.array(self.friction_props, device="cpu"), self.cpu_ids
             )
-            internal -= self.axes.T @ friction
+        if self.implicit_axial:
+            # The true contact solver acts on the passive axial spring damper
+            # within the same step. Its moving datum is solely the thread angle.
+            # The predictor still supplies the conjugate thread torques.
+            lead = 0.001 / math.tau
+            pos = self.art.get_dof_position_targets().numpy().copy()
+            vel = self.art.get_dof_velocity_targets().numpy().copy()
+            angles = q[[1, 3]]
+            # Reported PhysX velocity can be nonzero while the angular pose is stationary.
+            # Evaluate the moving axial datum from successive actual thread orientations.
+            omega = (
+                np.zeros(2)
+                if self.previous_thread_angles is None
+                else (angles - self.previous_thread_angles) / self.h
+            )
+            self.previous_thread_angles = angles.copy()
+            for i, (axial, rotary) in enumerate(((0, 1), (2, 3))):
+                pos[0, self.index[axial]] = lead * (q[rotary] + self.h * omega[i])
+                vel[0, self.index[axial]] = lead * omega[i]
+                internal[axial] = 0.0
+            self.art.set_dof_position_targets(
+                wp.array(pos, device=self.device), self.ids
+            )
+            self.art.set_dof_velocity_targets(
+                wp.array(vel, device=self.device), self.ids
+            )
         efforts = np.zeros((1, self.art.max_dofs), dtype=np.float32)
         efforts[0, self.index] = applied + internal
         # Jaw gearing and piston damping live in the native constraints. The
@@ -275,6 +345,11 @@ class Bench:
         face_n, points, penetration = self.seat_face_load()
         effort = float(self.art.get_dof_actuation_forces().numpy()[0, self.index[4]])
         return dict(
+            projected_axial_n=self.art.get_dof_projected_joint_forces()
+            .numpy()[0, [self.index[0], self.index[2]]]
+            .tolist()
+            if self.implicit_axial
+            else None,
             sz=q[0],
             st=q[1],
             nz=q[2],

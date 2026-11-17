@@ -22,3 +22,29 @@ For the welded-bearing trial, add `--continuous-seat --native-friction --rise-se
 `check_loaded_equilibrium.py` compares an ideal settled pose with the frozen stiffness and measured geometry. Gravity at 90° assists opening by 1.21 N. With the open port above 1 N, the ideal settled stop load exceeds 2.20 N. The original shaft/seat network can balance at most about 1.13 N of load change inside the approved pose spans. This is a static comparison for the current rigid-cover design. The measured transients are larger. Material sensitivity runs are explicitly excluded from benchmark qualification.
 
 For the revised reversible-deflection criterion, run the same welded-bearing commands at 240 and 480 Hz (fixture option `--hz 480`). Audit each native-step trace with its matching `--hz`. The independent audits for mounted23b and mounted23a passed at their respective rates. The peak loaded axial excursions were 36.77 and 23.05 µm. The fault control still caught actual powered rotation. See the [measurement summary](../../measurements/mounted-elastic-recovery.json). The separate robot recording is a partial commissioning attempt.
+
+### Unannounced axial loads and revised mounted fixture
+
+The split predictor passed its declared-load checks but displaced the shaft 3.70 mm under an unannounced −5 N load. At the specified stiffness the expected displacement is −5 µm. This invalidates use of that mechanism for unknown robot contact, even though it passed its own powered-cycle checks.
+
+The experimental alternative leaves both original axial stiffnesses and dampings in place. PhysX solves each axial spring during contact about the measured helical datum. The rotational effort uses the measured axial momentum balance, including the tool contact wrench, native bearing and stop reactions. It is a discrete coupling and has been checked on the loads listed below. Each fixture test uses a bounded commissioning instrument. The force-perturbation test adds its load after the predictor has finished.
+
+Run from the fork root with the restored Arena interpreter. Fresh output names keep the physical reports separate.
+
+```sh
+study=component-studies/drg80-thread-lock/task/workcell
+run=automation-results/20261114T031727-dc73f2bb
+for hz in 240 480
+do
+  python "$study/check_unseen_axial.py" --assets "$run/task-prototype/assets" --out "measurements/unannounced-$hz.json" --hz "$hz" --solver pgs --implicit-axial --transmitted-reaction
+  python "$study/check_mounted.py" --assets "$run/task-prototype/assets" --out "measurements/service-$hz.json" --hz "$hz" --solver pgs --continuous-seat --native-friction --implicit-axial --transmitted-reaction --rise-seconds .16 --early --drive-instrument --tightening-travel 1.25 --driver-correction-rad=-.60
+done
+```
+
+The 0.60 rad clockwise correction and the 1.25 rad wrench travel past nominal first contact are tool inputs for calibrating the fixture. The task grader reads the measured mechanism state and does not use either parameter. At 240 Hz the three re-openings reached 90.558°. At 480 Hz they reached 89.624°. Both included three measured unloaded returns, retained contact force, admissible bearing clearance and a powered-motion check. [Physical measurements and raw trace hashes](../../measurements/robot-load-qualification.json).
+
+For a real commissioning attempt use the same geometry, solver and driver correction in `yam_workcell.py`. The robot path only sends bimanual joint actions. A failed stroke, an incomplete observation stream or a run from the fallback layout cannot establish a service-task score.
+
+```sh
+python "$study/yam_workcell.py" --workspace "$run" --output measurements/actual-robot.json --solver pgs --continuous-seat --native-friction --implicit-axial --transmitted-reaction --rise-seconds .16 --driver-correction-rad=-.60
+```

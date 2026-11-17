@@ -16,7 +16,14 @@ def audit(rows, hz):
     first = None
     for tick, r in enumerate(rows, 1):
         violation = motion.observe(
-            tick, r["actuator_n"], r["sz"], r["st"], r["st"] + r["nt"], r["stop_n"], True, abs(r["angular_speed"])<=2 and abs(r["piston_speed"])<=.005
+            tick,
+            r["actuator_n"],
+            r["sz"],
+            r["st"],
+            r["st"] + r["nt"],
+            r["stop_n"],
+            True,
+            abs(r["angular_speed"]) <= 2 and abs(r["piston_speed"]) <= 0.005,
         )
         if violation and first is None:
             first = {
@@ -39,6 +46,11 @@ def audit(rows, hz):
     release_n = min((r["seat_n"] for r in release), default=None)
     endpoints = [s[-1]["angle"] for s in opens if s]
     checks = {
+        "released_and_open_seat_gap": all(
+            len(window) == hz // 4
+            and all(-0.00010 <= row["seat_gap"] <= 0.00050 for row in window)
+            for window in [release, *opens]
+        ),
         "retained_preload": bool(release and release_n >= 2),
         "three_open_endpoints": all(
             len(s) == hz // 4
@@ -52,12 +64,12 @@ def audit(rows, hz):
             len(s) == hz // 4 and min(r["seat_n"] for r in s) >= 2 for s in opens
         ),
         "powered_motion": first is None and motion.windows > 0,
-        "three_unloaded_recoveries": not motion.elastic_seen or motion.recoveries>=3,
+        "three_unloaded_recoveries": not motion.elastic_seen or motion.recoveries >= 3,
     }
     return {
         "scope": "instrumented fixture only; these are necessary conditions, no task points",
         "rate_hz": hz,
-        "verified_recoveries":motion.recoveries,
+        "verified_recoveries": motion.recoveries,
         "checks": checks,
         "release_min_n": release_n,
         "open_endpoints_deg": endpoints,

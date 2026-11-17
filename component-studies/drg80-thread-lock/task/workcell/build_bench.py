@@ -59,7 +59,12 @@ def continuous_ring(stage, parent, prefix):
 
 
 def build(
-    destination, assets, instrumented=False, velocity_iters=4, continuous_seat=False
+    destination,
+    assets,
+    instrumented=False,
+    velocity_iters=4,
+    continuous_seat=False,
+    implicit_axial=False,
 ):
     stage = Usd.Stage.CreateNew(str(destination))
     root = UsdGeom.Xform.Define(stage, "/Bench")
@@ -129,6 +134,16 @@ def build(
     joint("st", hinge, "s_car", "screw", "Z", (-1800.0, 1800.0))
     joint("nz", slide, "screw", "n_car", "Z", (-0.005, 0.005))
     joint("nt", hinge, "n_car", "nut", "Z", (-2160.0, 2160.0))
+    if implicit_axial:
+        for name, k, d in (("sz", 1e6, 4000.0), ("nz", 1e5, 2500.0)):
+            drive = UsdPhysics.DriveAPI.Apply(
+                stage.GetPrimAtPath("/Bench/" + name), "linear"
+            )
+            drive.CreateTypeAttr("force")
+            drive.CreateStiffnessAttr(k)
+            drive.CreateDampingAttr(d)
+            drive.CreateTargetPositionAttr(0.0)
+            drive.CreateTargetVelocityAttr(0.0)
     if instrumented:
         for joint_name in ("st", "nt"):
             drive = UsdPhysics.DriveAPI.Apply(
