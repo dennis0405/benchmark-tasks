@@ -122,6 +122,19 @@ python "$w/check_mount_release.py" --assets "$run/task-prototype/assets" --out m
 python "$w/check_bit_capture.py" --assets "$run/task-prototype/assets" --out measurements/unheld.json --hz 480 --external-mount --compliant-feed --long-lead --depth-stop --mounted-offset-mm 0.4 --release
 ```
 
-The depth stop is a convex 24-sided steel collar 6.50 mm across the vertices and 2.00 mm thick. Its lower face sits 4.75 mm above the bit tip. The driver mass and inertia include this extra material. In the native capture probe the instrument released all force and torque for 480 steps. The smallest floor clearance was 1.25 mm, the straight hex engagement stayed above 3.62 mm and the peak contact load was below 0.90 N. The original uncollared driver crossed the geometric floor by 0.102 mm. A preliminary thin-cylinder collar also failed. [All three physical controls](../../measurements/unheld-driver.json).
+The depth stop is a convex 24-sided steel collar 6.50 mm across the vertices and 2.00 mm thick. Its lower face sits 4.75 mm above the bit tip. The driver mass and inertia include this extra material. In the native capture probe the instrument released all force and torque for 480 steps. The smallest floor clearance was 1.25 mm, the straight hex engagement stayed above 3.748 mm and the peak contact load was below 0.90 N. The original uncollared driver crossed the geometric floor by 0.102 mm. A preliminary thin-cylinder collar also failed. [All three physical controls](../../measurements/unheld-driver.json).
 
 In yam23 the free driver turned the adjuster to −197.53°. The left arm reached its wrist limit before it could withdraw. The [camera recording](../../measurements/yam-three-driver-strokes.mp4) shows the entire partial attempt. The follow-up trial (yam24) reserved 12 mm of straight withdrawal and checked joint margin before the next torque command. The first withdrawal cleared the socket, but only the bevel entered on the second insertion. Independent YAM valve tests from the original setting recorded three complete 3.00° → 102.04° reversals. The [valve results](../../measurements/yam-actuator-and-wrench-checks.json) report native contacts and score bounds. The separate [30-position YAM reach survey](../../measurements/fixture-placement-screen.json) uses offline IK and leaves the physical scene unchanged.
+
+The following command uses the finite mount and re-grasps the depth-limited bit inside the socket. It starts from the original rack reset. The driver and wrench never receive direct drive commands. Use a fresh output basename when restoring a run. The program writes the trace on a controlled exit; an interrupted process can leave only the generated USDs and console log.
+
+```sh
+w=component-studies/drg80-thread-lock/task/workcell
+run=automation-results/20261114T031727-dc73f2bb
+python "$w/yam_workcell.py" --workspace "$run" --output measurements/shoulder-service.json \
+  --hz 480 --solver pgs --external-mount --continuous-seat --implicit-axial \
+  --transmitted-reaction --native-friction --rise-seconds .16 --driver-correction-rad=-.60 \
+  --guided-wrench --room-damage --quick-valve --push-valve --contact-guided \
+  --align-before-feed --supported-turn --long-lead --adaptive-stroke --reserve-retreat \
+  --depth-stop --seated-regrasp
+```
