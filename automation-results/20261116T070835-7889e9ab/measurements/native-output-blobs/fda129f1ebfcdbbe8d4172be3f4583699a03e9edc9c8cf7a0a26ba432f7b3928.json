@@ -1,0 +1,25 @@
+{
+  "scope": "failed empty-screen component attempt; not full qualification",
+  "component_preflight_passed": false,
+  "execution_exception": {
+    "type": "RuntimeError",
+    "message": "Sensor at path '/World/envs/env_[^/]+/screen' could not find any bodies with contact reporter API.\nHINT: Make sure to enable 'activate_contact_sensors' in the corresponding asset spawn configuration.",
+    "traceback": "Traceback (most recent call last):\n  File \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_yam_preflight.py\", line 604, in run_with_failure_receipt\n    return main()\n           ^^^^^^\n  File \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_yam_preflight.py\", line 290, in main\n    audit=geometry_audit(); expected=mass_properties(); env=make_env()\n                                                            ^^^^^^^^^^\n  File \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_yam_preflight.py\", line 164, in make_env\n    num_envs=1, solve_relations=False, device=args.device)).make_registered()\n                                                            ^^^^^^^^^^^^^^^^^\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/isaaclab_arena/environments/arena_env_builder.py\", line 623, in make_registered\n    env, _ = self.make_registered_and_return_cfg(env_cfg, env_kwargs, render_mode=render_mode)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/isaaclab_arena/environments/arena_env_builder.py\", line 646, in make_registered_and_return_cfg\n    env = gym.make(name, cfg=cfg, render_mode=render_mode, **env_kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/.venv/lib/python3.12/site-packages/gymnasium/envs/registration.py\", line 734, in make\n    env = env_creator(**env_spec_kwargs)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/isaaclab_arena/environments/isaaclab_arena_manager_based_env.py\", line 64, in __init__\n    super().__init__(cfg=cfg, render_mode=render_mode, **kwargs)\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/envs/manager_based_rl_env.py\", line 81, in __init__\n    super().__init__(cfg=cfg)\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/envs/manager_based_env.py\", line 123, in __init__\n    self._init_sim()\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/envs/manager_based_env.py\", line 196, in _init_sim\n    self.sim.reset()\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/sim/simulation_context.py\", line 769, in reset\n    self.physics_manager.reset(soft)\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab_physx/isaaclab_physx/physics/physx_manager.py\", line 487, in reset\n    cls.raise_callback_exception_if_any()\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab_physx/isaaclab_physx/physics/physx_manager.py\", line 640, in raise_callback_exception_if_any\n    raise exc\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/physics/physics_manager.py\", line 603, in safe_callback_invoke\n    fn(*args)\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/sensors/sensor_base.py\", line 317, in _invoke\n    getattr(obj_ref, callback_name)(event)\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab/isaaclab/sensors/sensor_base.py\", line 356, in _initialize_callback\n    self._initialize_impl()\n  File \"/data/robocurve-automation/sources/IsaacLab-Arena/submodules/IsaacLab/source/isaaclab_physx/isaaclab_physx/sensors/contact_sensor/contact_sensor.py\", line 347, in _initialize_impl\n    raise RuntimeError(\nRuntimeError: Sensor at path '/World/envs/env_[^/]+/screen' could not find any bodies with contact reporter API.\nHINT: Make sure to enable 'activate_contact_sensors' in the corresponding asset spawn configuration.\n",
+    "phase": "see traceback; setup/motion/postprocessing/cleanup"
+  },
+  "artifacts": [
+    "measurements/full-screen-yam-preflight.mp4",
+    "measurements/full-screen-yam-initial.png",
+    "measurements/full-screen-yam-preflight-trace.json"
+  ],
+  "checks": [
+    {
+      "name": "native_program_completed_without_exception",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "boolean",
+      "passed": false
+    }
+  ]
+}

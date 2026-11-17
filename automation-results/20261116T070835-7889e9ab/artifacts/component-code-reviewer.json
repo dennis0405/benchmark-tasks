@@ -1,21 +1,24 @@
 {
   "verdict": "pass",
   "findings": [
-    "The planned v29 source correctly replaces stale USD fingertip observations with live `Articulation.data.body_link_pos_w.torch` values, uniquely indexed through native body names, and updates both call sites.",
-    "The regression check derives each of four fingertip motions from recorded native pose samples and requires the minimum motion to be at least 0.05 m; it is neither constant nor inferred from commanded actions.",
-    "Released clearance uses fresh terminal-dwell observations, the complete modeled screen solid, and CAD-derived fingertip collider bounding radii while preserving the frozen 0.06 m criterion.",
-    "The program retains native 240 Hz physics checks, guarded 14D robot actions, actual joint/body/contact traces, sustained contact/lift/hold logic, decoded media validation, and failure receipts. No object-state writes, fake welds, disabled collisions, or constant qualification readings were found.",
-    "The planned arguments omit unsupported `--headless` and use workspace-relative report paths. Claims in the generated report remain explicitly limited to the empty-screen component; full media-separation qualification is deferred.",
-    "The source-plan summary mentions an earlier host result, but this verdict certifies only the generated source paths and observables. The executor must still produce and hash-bind the fresh native report after this review."
+    "Generated-source preflight resolves both prior failures: floor/wall friction is restored to 0.50/0.35, while 1.2/1.0 is confined to visibly distinct grasp tabs and verified through native composed-material readback.",
+    "Contact and stationarity durations are explicitly identified as 20 Hz sampled observations. The report states they do not establish continuous 240 Hz behavior and lists continuous 240 Hz dwell as unqualified.",
+    "The planned program uses native rigid-body, joint, contact, support, mass/inertia, camera, and material observations; it does not claim full loaded-scene qualification or future native results.",
+    "Workforce/category importance and full loaded media-separation physics remain honestly unresolved, as permitted for this prototype preflight stage."
   ],
   "evidence_paths": [
     "artifacts/component-source-plan.json",
+    "task/full_screen_scene.py:154",
+    "task/full_screen_scene.py:159",
+    "task/full_screen_scene.py:187",
+    "task/full_screen_scene.py:242",
+    "task/run_full_screen_yam_preflight.py:225",
+    "task/run_full_screen_yam_preflight.py:361",
+    "task/run_full_screen_yam_preflight.py:529",
+    "task/run_full_screen_yam_preflight.py:574",
+    "task/run_full_screen_yam_preflight.py:584",
+    "task/run_full_screen_yam_preflight.py:598",
     "input/last-failure.json",
-    "input/operator-source-notes.json",
-    "input/runtime-api-preflight.json",
-    "input/pinned-runtime-sources/6e03c85172da8712bdebc6e19c89cea7868afb02f9e96259c82a281cca4270b4-rigid_object_data.py",
-    "input/pinned-runtime-sources/841ca674429d5bd405d212f93494c42ff32ae162e4add373474193adbec746f7-base_rigid_object_data.py",
-    "task/run_full_screen_yam_preflight.py",
-    "task/full_screen_scene.py"
+    "artifacts/contract.json"
   ]
 }

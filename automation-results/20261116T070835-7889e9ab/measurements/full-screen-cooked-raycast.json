@@ -1,0 +1,49 @@
+{
+  "checks": [
+    {
+      "name": "cooked_aperture_center_ray_blocked_count",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 0,
+      "unit": "of_261_rays"
+    },
+    {
+      "name": "cooked_rib_center_ray_miss_count",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 0,
+      "unit": "of_484_rays"
+    },
+    {
+      "name": "cooked_annulus_ray_miss_count",
+      "measured": 0,
+      "operator": "==",
+      "threshold": 0,
+      "unit": "of_24_rays"
+    },
+    {
+      "name": "native_scene_query_aperture_count",
+      "measured": 261,
+      "operator": "==",
+      "threshold": 261,
+      "unit": "rays"
+    },
+    {
+      "name": "native_scene_query_rib_sample_count",
+      "measured": 484,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "rays"
+    },
+    {
+      "name": "physics_dt_absolute_error",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-12,
+      "unit": "s"
+    }
+  ],
+  "artifacts": [
+    "measurements/full-screen-cooked-raycast-trace.json"
+  ]
+}

@@ -17,9 +17,9 @@ from isaaclab_arena.environments.isaaclab_arena_environment import IsaacLabArena
 from isaaclab_arena.scene.scene import Scene
 from isaaclab_arena.utils.pose import Pose
 from isaaclab_arena.utils.configclass import make_configclass
-from pxr import Gf, PhysxSchema, Semantics, UsdGeom, UsdPhysics, Vt
+from pxr import Gf, PhysxSchema, Usd, UsdGeom, UsdPhysics, UsdShade, Vt
 from shapely.geometry import Point, Polygon, box
-from shapely.ops import unary_union
+from shapely.ops import triangulate, unary_union
 from shapely.geometry.polygon import orient
 from yam_arena.embodiment import BimanualYamEmbodiment
 from yam_arena.rig import TABLETOP as TABLETOP_RIG
@@ -29,12 +29,21 @@ from yam_arena.scene import env_cfg_callback, scene_assets
 APERTURE, RIB, PITCH = 0.0127, 0.003, 0.0157
 PERF_R, INNER_R, OUTER_R = 0.150, 0.18115, 0.18415
 FLOOR_T, DEPTH, MASS_TARGET = 0.003, 0.0635, 0.40
-TABLETOP_HEIGHT, SUPPORT_H = 0.75, 0.010
+TABLETOP_HEIGHT, SUPPORT_H = 0.75, 0.055
 SCREEN_X, SCREEN_Y = 0.37, 0.0
 SUPPORT_TOP = TABLETOP_HEIGHT + 0.055
 SCREEN_ROOT_Z = SUPPORT_TOP + FLOOR_T
+SUPPORT_POST_RADIUS = 0.004
+SUPPORT_POST_X = 0.125
+SUPPORT_POST_Y = 0.115
 CONTROL_HZ = 20
 DISK_RESOLUTION = 96
+# GEOS ``buffer`` uses this many segments per quadrant for each aperture.
+# The collision boundary is therefore a regular 20-gon whose across-flats
+# diameter is APERTURE*cos(pi/20) = 12.5436 mm.  This is inside the frozen
+# 12.5--12.9 mm clear-diameter interval while retaining a genuinely circular
+# (polygonal CAD) opening rather than the superseded square prototype.
+APERTURE_RESOLUTION = 5
 # The first native grasp attempt produced 63 raw points for one filtered
 # fingertip/screen pair.  Reserve four times that observed requirement so the
 # complete pair slice is available during denser transients.  The runner still
@@ -62,22 +71,22 @@ def disk(radius):
 
 
 def floor_pieces():
-    """Non-overlapping convex polygons whose union is the perforated disk."""
+    """Non-overlapping convex triangles forming the circular-perforated disk.
+
+    Collision meshes are authored as convex hulls, so passing a concave cell
+    would silently fill part of an aperture.  GEOS constrained-Delaunay output
+    is filtered by a strict representative point against the exact polygonal
+    solid; the later symmetric-difference audit detects either missing solid
+    material or filled aperture material.
+    """
     boundary = disk(INNER_R)
-    hole_union = unary_union([box(x-APERTURE/2, y-APERTURE/2,
-                                  x+APERTURE/2, y+APERTURE/2) for x, y in HOLES])
+    hole_union = unary_union([
+        Point(x, y).buffer(APERTURE / 2, resolution=APERTURE_RESOLUTION)
+        for x, y in HOLES
+    ])
     solid = boundary.difference(hole_union)
-    # Grid lines at every hole edge partition the disk into rectangles.  Each
-    # rectangle/disk intersection is convex because both operands are convex.
-    cuts = sorted({-INNER_R, INNER_R, *[x+s*APERTURE/2 for x, _ in HOLES for s in (-1, 1)]})
-    ycuts = sorted({-INNER_R, INNER_R, *[y+s*APERTURE/2 for _, y in HOLES for s in (-1, 1)]})
-    pieces = []
-    for xa, xb in zip(cuts, cuts[1:]):
-        for ya, yb in zip(ycuts, ycuts[1:]):
-            p = box(xa, ya, xb, yb).intersection(solid)
-            if p.area > 1e-12:
-                if p.geom_type == "Polygon": pieces.append(p)
-                else: pieces.extend(g for g in p.geoms if g.area > 1e-12)
+    pieces = [p for p in triangulate(solid)
+              if p.area > 1e-12 and solid.covers(p.representative_point())]
     return pieces, solid
 
 
@@ -142,7 +151,13 @@ def mass_properties():
             "volume": volume, "layers": layers, "floor": floor}
 
 
-def material():
+def processing_material():
+    """Frozen uncalibrated ceramic/polymer contact assumption."""
+    return sim_utils.RigidBodyMaterialCfg(static_friction=0.50, dynamic_friction=0.35, restitution=0.05)
+
+
+def grasp_material():
+    """Disclosed high-friction material used only by the visible orange tabs."""
     return sim_utils.RigidBodyMaterialCfg(static_friction=1.2, dynamic_friction=1.0, restitution=0.02)
 
 
@@ -162,9 +177,10 @@ def prism(path, poly, za, zb, color, semantic_label=None):
     UsdPhysics.MeshCollisionAPI.Apply(mesh.GetPrim()).CreateApproximationAttr("convexHull")
     PhysxSchema.PhysxCollisionAPI.Apply(mesh.GetPrim()).CreateContactOffsetAttr(0.001)
     if semantic_label is not None:
-        semantics = Semantics.SemanticsAPI.Apply(mesh.GetPrim(), "Semantics")
-        semantics.CreateSemanticTypeAttr().Set("class")
-        semantics.CreateSemanticDataAttr().Set(semantic_label)
+        # Isaac Sim 6 / USD 0.25 removed the legacy ``pxr.Semantics`` schema.
+        # Use Isaac Lab's public helper, which authors UsdSemantics.LabelsAPI
+        # and is shared by the installed spawners and segmentation utilities.
+        sim_utils.add_labels(mesh.GetPrim(), labels=[semantic_label], instance_name="class")
     return mesh.GetPrim()
 
 
@@ -175,8 +191,10 @@ def spawn_screen(prim_path, cfg, translation=None, orientation=None, **_):
     props = mass_properties(); mass = UsdPhysics.MassAPI.Apply(root.GetPrim())
     mass.CreateMassAttr(props["mass"]); mass.CreateCenterOfMassAttr(Gf.Vec3f(*props["com"]))
     mass.CreateDiagonalInertiaAttr(Gf.Vec3f(*props["inertia"]))
-    material_path = f"{prim_path}/PhysicsMaterial"
-    material().func(material_path, material())
+    material_path = f"{prim_path}/ProcessingPhysicsMaterial"
+    processing_material().func(material_path, processing_material())
+    grasp_material_path = f"{prim_path}/VisibleTabGraspPhysicsMaterial"
+    grasp_material().func(grasp_material_path, grasp_material())
     pieces, _ = floor_pieces()
     for i, p in enumerate(pieces):
         prism(f"{prim_path}/Floor_{i:04d}", p, -FLOOR_T, 0, (0.28,0.39,0.48), "screen")
@@ -193,11 +211,20 @@ def spawn_screen(prim_path, cfg, translation=None, orientation=None, **_):
         p=box(-TAB_SIZE[0]/2,s*TAB_Y-TAB_SIZE[1]/2,TAB_SIZE[0]/2,s*TAB_Y+TAB_SIZE[1]/2)
         prism(f"{prim_path}/Tab_{'pos' if s > 0 else 'neg'}",p,TAB_Z-TAB_SIZE[2]/2,TAB_Z+TAB_SIZE[2]/2,
               (0.78,0.55,0.18), f"screen_tab_{s:+d}")
-    # Bind the authored high-friction material to every collision descendant.
-    # Binding only the fixture material leaves the actual tab grasp dependent
-    # on the simulator default, so the root binding is deliberately stronger
-    # than any descendant binding.
-    sim_utils.bind_physics_material(prim_path, material_path, stronger_than_descendants=True)
+    # ``Object._generate_rigid_cfg`` requests contact activation, but a custom
+    # bare SpawnerCfg is returned unchanged and has no
+    # ``activate_contact_sensors`` field for Isaac Lab's spawn wrapper to act
+    # on.  Activate the public contact-report schema here, after the rigid body
+    # exists and before PHYSICS_READY initializes the scene-config sensors.
+    sim_utils.activate_contact_sensors(prim_path)
+    # Apply the frozen processing material to the floor/wall by default, then
+    # override only the two visibly orange grasp tabs.  A weaker root binding
+    # is essential: a stronger root would silently defeat both tab overrides.
+    sim_utils.bind_physics_material(prim_path, material_path, stronger_than_descendants=False)
+    for sign in ("neg", "pos"):
+        sim_utils.bind_physics_material(
+            f"{prim_path}/Tab_{sign}", grasp_material_path, stronger_than_descendants=True
+        )
     return root.GetPrim()
 
 
@@ -206,7 +233,37 @@ def geometry_audit():
     return {"hole_count": len(actual.interiors) if actual.geom_type == "Polygon" else sum(len(g.interiors) for g in actual.geoms), "piece_count": len(pieces),
             "solid_connected_components": 1 if actual.geom_type == "Polygon" else len(actual.geoms),
             "symmetric_difference_area_m2": float(actual.symmetric_difference(intended).area),
-            "intended_solid_area_m2": float(intended.area)}
+            "intended_solid_area_m2": float(intended.area),
+            "aperture_boundary_segments": 4 * APERTURE_RESOLUTION,
+            "aperture_vertex_diameter_m": APERTURE,
+            "aperture_clear_diameter_m": APERTURE * math.cos(math.pi / (4 * APERTURE_RESOLUTION))}
+
+
+def native_screen_material_audit(stage):
+    """Resolve composed physics bindings on representative real colliders."""
+    root = "/World/envs/env_0/screen"
+    rows = {}
+    for label, path in {
+        "floor": f"{root}/Floor_0000",
+        "wall": f"{root}/Wall_000",
+        "tab_neg": f"{root}/Tab_neg",
+        "tab_pos": f"{root}/Tab_pos",
+    }.items():
+        prim = stage.GetPrimAtPath(path)
+        if not prim.IsValid():
+            raise RuntimeError(f"missing collider for material audit: {path}")
+        bound, _ = UsdShade.MaterialBindingAPI(prim).ComputeBoundMaterial("physics")
+        if not bound:
+            raise RuntimeError(f"no resolved physics material on {path}")
+        mat_prim = bound.GetPrim()
+        physx = PhysxSchema.PhysxMaterialAPI(mat_prim)
+        rows[label] = {
+            "collider_path": path,
+            "material_path": mat_prim.GetPath().pathString,
+            "static_friction": float(physx.GetStaticFrictionAttr().Get()),
+            "dynamic_friction": float(physx.GetDynamicFrictionAttr().Get()),
+        }
+    return rows
 
 
 def screen_object():
@@ -215,11 +272,52 @@ def screen_object():
       initial_pose=Pose(position_xyz=(SCREEN_X, SCREEN_Y, SCREEN_ROOT_Z)))
 
 
+def spawn_support_pair(prim_path, cfg, translation=None, orientation=None, **_):
+    """Author one static support group as two annulus-only round posts."""
+    root = UsdGeom.Xform.Define(sim_utils.get_current_stage(), prim_path)
+    root.AddTranslateOp().Set(Gf.Vec3d(*(translation or (0, 0, 0))))
+    material_path = f"{prim_path}/PhysicsMaterial"
+    processing_material().func(material_path, processing_material())
+    for index, x in enumerate((-SUPPORT_POST_X, SUPPORT_POST_X)):
+        cylinder = UsdGeom.Cylinder.Define(sim_utils.get_current_stage(), f"{prim_path}/Post_{index}")
+        cylinder.CreateAxisAttr("Z")
+        cylinder.CreateRadiusAttr(SUPPORT_POST_RADIUS)
+        cylinder.CreateHeightAttr(SUPPORT_H)
+        cylinder.AddTranslateOp().Set(Gf.Vec3d(x, 0.0, 0.0))
+        cylinder.CreateDisplayColorAttr([Gf.Vec3f(0.25, 0.25, 0.28)])
+        UsdPhysics.CollisionAPI.Apply(cylinder.GetPrim())
+        PhysxSchema.PhysxCollisionAPI.Apply(cylinder.GetPrim()).CreateContactOffsetAttr(0.001)
+    sim_utils.bind_physics_material(prim_path, material_path, stronger_than_descendants=True)
+    return root.GetPrim()
+
+
 def fixture_assets():
     return [Object(name=f"support_{'pos' if s > 0 else 'neg'}", object_type=ObjectType.BASE,
-      spawner_cfg=sim_utils.CuboidCfg(size=(0.52,0.015,SUPPORT_H),
-        collision_props=sim_utils.CollisionPropertiesCfg(), physics_material=material()),
-      initial_pose=Pose(position_xyz=(SCREEN_X,s*0.10,SUPPORT_TOP-SUPPORT_H/2))) for s in (-1,1)]
+      spawner_cfg=sim_utils.SpawnerCfg(func=spawn_support_pair),
+      initial_pose=Pose(position_xyz=(SCREEN_X, s*SUPPORT_POST_Y,
+                                      TABLETOP_HEIGHT + SUPPORT_H/2))) for s in (-1,1)]
+
+
+def native_support_geometry_audit(stage):
+    """Measure post clearance from the perforated disk from composed USD geometry."""
+    clearances = []
+    post_rows = []
+    for sign in ("neg", "pos"):
+        for index in range(2):
+            path = f"/World/envs/env_0/support_{sign}/Post_{index}"
+            cylinder = UsdGeom.Cylinder.Get(stage, path)
+            if not cylinder:
+                raise RuntimeError(f"missing authored support post: {path}")
+            radius = float(cylinder.GetRadiusAttr().Get())
+            matrix = UsdGeom.Xformable(cylinder.GetPrim()).ComputeLocalToWorldTransform(Usd.TimeCode.Default())
+            center = matrix.Transform(Gf.Vec3d(0.0, 0.0, 0.0))
+            radial = math.hypot(float(center[0]) - SCREEN_X, float(center[1]) - SCREEN_Y)
+            clearance = radial - radius - PERF_R
+            clearances.append(clearance)
+            post_rows.append({"path": path, "center_w_m": [float(v) for v in center],
+                              "radius_m": radius, "perforated_region_clearance_m": clearance})
+    return {"posts": post_rows, "minimum_perforated_region_clearance_m": min(clearances),
+            "post_count": len(post_rows)}
 
 
 def build_environment():
@@ -243,6 +341,22 @@ def build_environment():
                 filter_prim_paths_expr=["{ENV_REGEX_NS}/screen"],
                 max_contact_data_count_per_prim=RAW_CONTACT_CAPACITY_PER_PRIM)
             scene_fields.append((name, ContactSensorCfg, cfg))
+    # Observe the two support groups independently.  This sensor is authored
+    # before PHYSICS_READY for the same lifecycle reason as the fingertip
+    # sensors above; post-hoc sensors can remain uninitialized in this runtime.
+    scene_fields.append(("screen_support_contacts", ContactSensorCfg,
+        ContactSensorCfg(
+            prim_path="{ENV_REGEX_NS}/screen",
+            update_period=0.0, history_length=0, track_air_time=False,
+            filter_prim_paths_expr=[
+                # The support roots are grouping Xforms, not collision shapes.
+                # Bind every actual Post collider explicitly.  The runner sums
+                # each adjacent pair into one independently measured side.
+                "{ENV_REGEX_NS}/support_neg/Post_0",
+                "{ENV_REGEX_NS}/support_neg/Post_1",
+                "{ENV_REGEX_NS}/support_pos/Post_0",
+                "{ENV_REGEX_NS}/support_pos/Post_1"],
+            max_contact_data_count_per_prim=RAW_CONTACT_CAPACITY_PER_PRIM)))
     embodiment.scene_config=make_configclass("FullScreenYamSceneCfg", scene_fields)()
     # This first manipulation component records RGB video for visual inspection.
     # Object-identity visibility remains unqualified until the full-scene stage.

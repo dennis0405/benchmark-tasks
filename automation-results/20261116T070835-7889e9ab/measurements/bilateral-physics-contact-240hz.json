@@ -1,0 +1,56 @@
+{
+  "checks": [
+    {
+      "name": "physics_dt_absolute_error",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-12,
+      "unit": "s"
+    },
+    {
+      "name": "cuda_backed_contact_matrices",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "bool"
+    },
+    {
+      "name": "left_positive_contact_physics_samples",
+      "measured": 698,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "right_positive_contact_physics_samples",
+      "measured": 698,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "same_interval_bilateral_contact_physics_samples",
+      "measured": 698,
+      "operator": ">",
+      "threshold": 0,
+      "unit": "completed_physics_samples"
+    },
+    {
+      "name": "longest_uninterrupted_bilateral_contact_duration",
+      "measured": 2.908333333333333,
+      "operator": ">=",
+      "threshold": 0.5,
+      "unit": "s"
+    },
+    {
+      "name": "fresh_completed_physics_sample_count",
+      "measured": 720,
+      "operator": "==",
+      "threshold": 720,
+      "unit": "samples"
+    }
+  ],
+  "artifacts": [
+    "measurements/bilateral-physics-contact-240hz-trace.json"
+  ]
+}

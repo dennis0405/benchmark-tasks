@@ -106,7 +106,8 @@ from yam_arena.constants import FINGER_CLOSED, FINGER_OPEN, LEFT_BASE_POS, READY
 from yam_arena.robot import asset_link_paths
 
 from full_screen_scene import (CONTROL_HZ, DEPTH, FLOOR_T, INNER_R, OUTER_R, RAW_CONTACT_CAPACITY_PER_PRIM, SCREEN_ROOT_Z,
-    SCREEN_X, TAB_SIZE, TAB_Y, TAB_Z, build_environment, geometry_audit, mass_properties)
+    SCREEN_X, TAB_SIZE, TAB_Y, TAB_Z, build_environment, geometry_audit, mass_properties,
+    native_support_geometry_audit, native_screen_material_audit)
 
 EXPECTED_PHYSICS_HZ = 240
 EXPECTED_DT = 1 / EXPECTED_PHYSICS_HZ
@@ -288,6 +289,8 @@ def main():
     np.random.seed(args.seed); torch.manual_seed(args.seed)
     audit=geometry_audit(); expected=mass_properties(); env=make_env()
     base=env.unwrapped; screen=base.scene.rigid_objects["screen"]
+    support_geometry = native_support_geometry_audit(sim_utils.get_current_stage())
+    material_audit = native_screen_material_audit(sim_utils.get_current_stage())
     native_dt=float(base.sim.get_physics_dt())
     native_physics_hz=1.0/native_dt
     tip_names,_=tip_paths_and_positions(base)
@@ -295,10 +298,17 @@ def main():
     sensor_names=[f"{arm}_{tip}_screen_contact" for arm in ("left","right")
                   for tip in ("tip_left","tip_right")]
     sensors=[base.scene.sensors[name] for name in sensor_names]
+    support_sensor=base.scene.sensors["screen_support_contacts"]
     uninitialized=[name for name,sensor in zip(sensor_names,sensors,strict=True)
                    if not sensor.is_initialized]
+    if not support_sensor.is_initialized:
+        uninitialized.append("screen_support_contacts")
     if uninitialized:
         raise RuntimeError(f"scene-configured contact sensors failed to initialize: {uninitialized}")
+    support_filter_count=int(support_sensor.contact_view.filter_count)
+    if support_filter_count != 4:
+        raise RuntimeError("screen/support sensor did not bind the four post colliders: "
+                           f"filter_count={support_filter_count}")
     tip_radii,tip_collider_paths=tip_collision_bounding_radii(tip_names)
     def state():
         screen.update(native_dt)
@@ -337,6 +347,7 @@ def main():
     rp=demo.ArmPlan(waypoints(right_pick),RIGHT_BASE_POS,q_start=READY)
     samples=math.ceil(max(lp.duration,rp.duration)*CONTROL_HZ)
     initial_z=float(initial[2]); frames=[]; trace=[]; hold_good=[]; bilateral=[]
+    reseat_good=[]; reseat_run=0; reseat_established=False
     previous_screen_state=None
     finite_rgb_fractions=[]; nonblank_rgb=[]
     raw_nonzero_tab_reactions=0; reconciled_positive_pair_samples=0; positive_pair_samples=0
@@ -382,6 +393,18 @@ def main():
             if forces[-1] > 1e-9:
                 positive_pair_samples += 1
                 reconciled_positive_pair_samples += int(reconciliation["verified"])
+        support_sensor.update(1/CONTROL_HZ,force_recompute=True)
+        support_matrix=support_sensor.data.normal_force_matrix_w.torch
+        if support_matrix is None or tuple(support_matrix.shape[:3]) != (1,1,4):
+            raise RuntimeError(f"unexpected screen/support force tensor shape: "
+                               f"{None if support_matrix is None else tuple(support_matrix.shape)}")
+        support_post_force_vectors=support_matrix[0,0].detach().cpu().numpy()
+        # Filters are ordered neg/Post_0, neg/Post_1, pos/Post_0, pos/Post_1.
+        # Summing each physical pair yields the two required support groups.
+        support_force_vectors=support_post_force_vectors.reshape(2,2,3).sum(axis=1)
+        support_force_magnitudes=np.linalg.norm(support_force_vectors,axis=1)
+        both_support_groups=bool(np.all(np.isfinite(support_force_magnitudes))
+                                 and np.all(support_force_magnitudes>1e-9))
         # Both fingertips of each arm must map to the same physical tab, and
         # their measured world-frame force vectors must oppose one another.
         arm_ok=[]; opposition=[]; arm_tab_signs=[]
@@ -417,10 +440,31 @@ def main():
             sampled_angular_speed=float(2*math.acos(cosine)*CONTROL_HZ)
         stationary=sampled_linear_speed<=0.01 and sampled_angular_speed<=0.10
         if ll=="hold" and rl=="hold": hold_good.append(bool(both and lifted and stationary))
+        # The return waypoint completes before the release phase begins.
+        # Establish reseating from fresh post-return observations while the
+        # hands open: both independent support groups must carry resolved
+        # contact, the screen must recover reset height and attitude, and its
+        # sampled motion must be stationary.  Clearance is not sampled until
+        # this condition has held continuously for 0.25 s.
+        q=np.asarray(s[3:7],dtype=float); q=q/np.linalg.norm(q)
+        xq,yq,zq,wq=q
+        normal=np.array([2*(xq*zq+wq*yq),2*(yq*zq-wq*xq),1-2*(xq*xq+yq*yq)])
+        tilt_deg=float(math.degrees(math.acos(np.clip(normal[2],-1.0,1.0))))
+        post_return=ll in ("release","clear","clear_dwell") and rl in ("release","clear","clear_dwell")
+        reseated_now=bool(post_return and both_support_groups
+                          and abs(float(s[2])-initial_z)<=0.002
+                          and tilt_deg<=3.0 and stationary)
+        if post_return:
+            reseat_good.append(reseated_now)
+            reseat_run=reseat_run+1 if reseated_now else 0
+            reseat_established=reseat_established or reseat_run>=6
         if ll=="clear_dwell" and rl=="clear_dwell":
-            release_clear_samples += 1
-            min_release_clear=min(min_release_clear,*
-              (point_to_screen_clearance(p,s)-r for p,r in zip(tips,tip_radii,strict=True)))
+            # Gate release-clearance evaluation on physical reseating first;
+            # a falling or displaced screen cannot earn a clearance result.
+            if reseat_established and reseated_now:
+                release_clear_samples += 1
+                min_release_clear=min(min_release_clear,*
+                  (point_to_screen_clearance(p,s)-r for p,r in zip(tips,tip_radii,strict=True)))
         # Identity-grounded scene visibility is not claimed in this RGB-only preflight.
         trace.append({"control_sample":n,"time_s":t,"left_phase":ll,"right_phase":rl,
           "action_14d":action[0].detach().cpu().numpy().tolist(),
@@ -436,7 +480,14 @@ def main():
           "per_arm_tab_signs":[sorted(x) for x in arm_tab_signs],
           "per_arm_force_opposition_cosine":opposition,
           "bilateral_opposing_tab_contact":both,
-          "post_retreat_clearance_sample":ll=="clear_dwell" and rl=="clear_dwell",
+          "screen_support_force_vector_w_N":support_force_vectors.tolist(),
+          "screen_support_post_force_vector_w_N":support_post_force_vectors.tolist(),
+          "screen_support_force_magnitude_N":support_force_magnitudes.tolist(),
+          "both_support_groups_in_resolved_contact":both_support_groups,
+          "screen_tilt_from_reset_vertical_deg":tilt_deg,
+          "post_return_reseated_sample":reseated_now,
+          "reseat_established_before_clearance":reseat_established,
+          "post_retreat_clearance_sample":ll=="clear_dwell" and rl=="clear_dwell" and reseat_established and reseated_now,
           "maximum_native_contact_count_so_far":max_native_contact_count,
           "configured_raw_contact_capacity_per_prim":RAW_CONTACT_CAPACITY_PER_PRIM})
         previous_screen_state=s.copy()
@@ -475,7 +526,6 @@ def main():
       run_finalizers_preserving_primary(failure_info,[
         ("failure_report.refresh",lambda:args.report.write_text(json.dumps(failure_report,indent=2)))],secondary_errors)
       raise_primary(failure_info)
-    final=state()
     # N observations at 20 Hz span N-1 completed intervals.  The first true
     # observation contributes zero dwell, matching the frozen dwell semantics.
     def observed_dwell(samples):
@@ -483,6 +533,7 @@ def main():
         return max(0,longest_run-1)/CONTROL_HZ
     longest=observed_dwell(hold_good)
     bilateral_s=observed_dwell(bilateral)
+    reseated_s=observed_dwell(reseat_good)
     # Decode what was actually written.  This catches an encoder/container
     # failure that an in-memory frame count cannot detect.
     decoded=[]
@@ -510,20 +561,31 @@ def main():
                                     default=0.0))
     checks=[
        {"name":"minimum_native_fingertip_motion_across_four_links","measured":min(tip_motion_maxima),"operator":">=","threshold":0.05,"unit":"m"},
-       {"name":"scene_configured_contact_sensors_initialized","measured":sum(int(s.is_initialized) for s in sensors),"operator":"==","threshold":4,"unit":"sensors"},
+       {"name":"scene_configured_contact_sensors_initialized","measured":sum(int(s.is_initialized) for s in [*sensors,support_sensor]),"operator":"==","threshold":5,"unit":"sensors"},
+       {"name":"native_support_contact_filter_collider_count","measured":support_filter_count,"operator":"==","threshold":4,"unit":"colliders"},
        {"name":"native_physics_timestep_matches_240_hz_plan","measured":abs(native_dt-EXPECTED_DT),"operator":"<=","threshold":1e-12,"unit":"s"},
-       {"name":"complete_square_aperture_count","measured":audit["hole_count"],"operator":"==","threshold":261,"unit":"holes"},
+       {"name":"complete_circular_aperture_count","measured":audit["hole_count"],"operator":"==","threshold":261,"unit":"holes"},
+       {"name":"circular_aperture_clear_diameter_lower_bound","measured":audit["aperture_clear_diameter_m"],"operator":">=","threshold":0.0125,"unit":"m"},
+       {"name":"circular_aperture_clear_diameter_upper_bound","measured":audit["aperture_clear_diameter_m"],"operator":"<=","threshold":0.0129,"unit":"m"},
        {"name":"authored_floor_symmetric_difference_area","measured":audit["symmetric_difference_area_m2"],"operator":"<=","threshold":1e-9,"unit":"m^2"},
        {"name":"authored_solid_connected_components","measured":audit["solid_connected_components"],"operator":"==","threshold":1,"unit":"components"},
+       {"name":"support_post_count_exact","measured":support_geometry["post_count"],"operator":"==","threshold":4,"unit":"posts"},
+       {"name":"support_post_perforated_region_clearance_min","measured":support_geometry["minimum_perforated_region_clearance_m"],"operator":">=","threshold":0.004,"unit":"m"},
+       {"name":"processing_floor_static_friction_readback","measured":material_audit["floor"]["static_friction"],"operator":"==","threshold":0.50,"unit":"coefficient"},
+       {"name":"processing_wall_dynamic_friction_readback","measured":material_audit["wall"]["dynamic_friction"],"operator":"==","threshold":0.35,"unit":"coefficient"},
+       {"name":"visible_tab_negative_static_friction_readback","measured":material_audit["tab_neg"]["static_friction"],"operator":"==","threshold":1.2,"unit":"coefficient"},
+       {"name":"visible_tab_positive_dynamic_friction_readback","measured":material_audit["tab_pos"]["dynamic_friction"],"operator":"==","threshold":1.0,"unit":"coefficient"},
        {"name":"native_mass_relative_error","measured":abs(native_mass-expected["mass"])/expected["mass"],"operator":"<=","threshold":1e-4,"unit":"fraction"},
        {"name":"native_inertia_max_relative_error","measured":float(np.max(np.abs(np.sort(native_principal)-np.sort(expected_inertia))/np.sort(expected_inertia))),"operator":"<=","threshold":1e-3,"unit":"fraction"},
        {"name":"nonzero_signed_raw_tab_reaction_points","measured":raw_nonzero_tab_reactions,"operator":">","threshold":0,"unit":"points"},
        {"name":"positive_native_pair_samples_with_verified_raw_vector_reconciliation","measured":reconciled_positive_pair_samples,"operator":"==","threshold":positive_pair_samples,"unit":"control_samples"},
        {"name":"maximum_native_contact_count_below_configured_capacity","measured":max_native_contact_count,"operator":"<","threshold":RAW_CONTACT_CAPACITY_PER_PRIM,"unit":"contacts_per_prim"},
        {"name":"native_reported_contact_capacity_matches_configuration","measured":0 if not math.isfinite(min_native_contact_capacity) else min_native_contact_capacity,"operator":"==","threshold":RAW_CONTACT_CAPACITY_PER_PRIM,"unit":"contacts_per_prim"},
-       {"name":"measured_bilateral_opposing_tab_contact_duration","measured":bilateral_s,"operator":">=","threshold":0.5,"unit":"s"},
+       {"name":"bilateral_opposing_tab_contact_dwell_from_20hz_observations","measured":bilateral_s,"operator":">=","threshold":0.5,"unit":"s_observed_at_20_hz"},
        {"name":"observed_screen_lift_height","measured":max_z-initial_z,"operator":">=","threshold":0.03,"unit":"m"},
-       {"name":"contact_supported_stationary_lifted_hold_duration","measured":longest,"operator":">=","threshold":3.0,"unit":"s"},
+       {"name":"contact_supported_stationary_lifted_dwell_from_20hz_observations","measured":longest,"operator":">=","threshold":3.0,"unit":"s_observed_at_20_hz"},
+       {"name":"post_return_support_pose_stationary_dwell_from_20hz_observations","measured":reseated_s,"operator":">=","threshold":0.25,"unit":"s_observed_at_20_hz"},
+       {"name":"reseating_established_before_clearance_evaluation","measured":int(reseat_established),"operator":"==","threshold":1,"unit":"boolean"},
        {"name":"post_retreat_fresh_observation_count","measured":release_clear_samples,"operator":">=","threshold":2,"unit":"control_samples"},
        {"name":"released_fingertip_collider_to_screen_conservative_clearance","measured":0 if not math.isfinite(min_release_clear) else min_release_clear,"operator":">=","threshold":0.06,"unit":"m"},
        {"name":"native_rgb_minimum_finite_pixel_fraction","measured":min(finite_rgb_fractions,default=0.0),"operator":"==","threshold":1.0,"unit":"fraction"},
@@ -534,12 +596,16 @@ def main():
     for check in checks:
         check["passed"]=evaluate_check(check)
     report={"scope":"empty full-screen bimanual YAM component only; not media-separation qualification",
-      "unqualified_observables":["object-identity camera visibility", "full frozen physics coverage", "media separation"],
+      "unqualified_observables":["continuous 240 Hz bilateral contact/dwell", "object-identity camera visibility", "full frozen physics coverage", "media separation"],
       "component_preflight_passed":all(check["passed"] for check in checks),
       "fingertip_pose_source":"native Articulation.data.body_link_pos_w",
       "native_fingertip_max_motion_m":tip_motion_maxima,
       "native_physics_dt_s":native_dt,"native_physics_hz":native_physics_hz,
-      "expected_physics_hz":EXPECTED_PHYSICS_HZ,"control_hz":CONTROL_HZ,"geometry_audit":audit,
+      "expected_physics_hz":EXPECTED_PHYSICS_HZ,"control_hz":CONTROL_HZ,
+      "dwell_observation_semantics":"Boolean contact and stationarity predicates are sampled after each 20 Hz control step; N consecutive true observations establish only (N-1)/20 seconds at that observation cadence and do not establish intervening 240 Hz continuity.",
+      "geometry_audit":audit,
+      "native_support_geometry_audit":support_geometry,
+      "native_screen_material_audit":material_audit,
       "native_mass_kg":native_mass,"expected_mass_kg":expected["mass"],
       "native_principal_inertia_kg_m2":native_principal.tolist(),"expected_inertia_kg_m2":expected_inertia.tolist(),
       "tip_collision_bounding_radius_m":tip_radii,"tip_collision_prim_paths":tip_collider_paths,

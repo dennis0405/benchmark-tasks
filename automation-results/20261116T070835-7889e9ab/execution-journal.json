@@ -5,7 +5,7 @@
     "instance": "robocurve-conveyor",
     "created_at": "2026-11-16T07:08:35.696140+00:00",
     "status": "blocked",
-    "stage": "contract",
+    "stage": null,
     "mode": "production",
     "config": {
       "instance": "robocurve-conveyor",
@@ -51,7 +51,7 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 91361,
+    "supervisor_pid": 4038,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log",
     "compute": "running",
     "migration": {
@@ -85,15 +85,16 @@
       "tool_write_verified": true,
       "production_task_validated": false
     },
-    "revision": 32,
-    "revision_request": "사용자 요청: 기존 제출물은 연구실 Google Sheet의 pending/accepted목록으로 아이디어비교하고, 스킬도이렇게수정한뒤체기반작업을재개한다. 새source modegoogle_sheet가적용됐다. 아이디어단계에서legacy671건/1976수정본전수원문검사를다시하지않는다. Source scope/수집시각/hash/summary-vs-latest-source근거수준을정확히기록하고, 실제유사/불명확후보만최신task.json또는README/task/scoring확인한다. 빈설명4행도누락없게원문확인한다. 중복기준자체를억지통과시키지않고진짜overlap/uncertainty는유지한다. 기존399건검토및모든물리증거는history/checkpoint에보존했다. 최종제출전공식목록검토/6벤치마크/물리검증/Dream단일시도예산/검토digest승인은유지한다.\n동일run/branch의현재selected 체분리MVP를그대로유지한다. 새아이디어·직군중요도조사·3후보재생성을하지않는다. 실제혼합물8ceramicmedia와2steelwasher가체안에놓인초기상태. NO feedcup. YAM양손tab파지->실제lift->기울여선택적으로체질하여media를수거함에회수하고washer는체안보존->양받침복귀->양손해제3초. 현재selected의원형12.7mm공간(32gon근사제안),OD368.3/depth63.5/3mmfloor,261holes와washerOD30/bore8/T4를공개가정과일치되게구현한다. 기존nativeempty성공은SQUAREholesprototype만증명하므로새circleCAD/fullloaded검증으로대체해야한다. 수거함50mm와구멍안막는postsupports,실제물리frictionbinding/positiveCADmassI/nativebodyliveposes를검증한다.\ninput/operator-source-notes.json의현재selecteddelta/CPUcircleCAD정확분할/정적기하retention증명조건/convexslab기하관측및fixednegative-tilt+linearshake CPU제안을참고하되native검증으로간주하지않는다. 작동하는빈체helper(센서PHYSICS_READY이전설치, body_link_pos_w.torch와actualquat,guidecolliderbounds,RGB.torch,rawcontact완전reconcile,guardedbootstrap,H264 streaming)를보존한다. --headless flag금지HEADLESS=1env. 이전emptyprobe/74casegrid/일반API테스트반복금지. 실제내용물새scene/observer/scorer/fullYAM motion으로진행한다. native실패도영상/trace보존하여실제보이는결과를바탕으로수정한다.\n새MVP계약과코드를일치시키고.90media회수+.10실제최종dwell,초기0,washer보존/유출/낙하/invalidpassage/물리변조hardzero,actualpartial/failurecontrols와동일action240/480검사/독립재채점/두번freshfullscoreH264까지완성한다. 측정상수/그립weld/물체posevelocity쓰기/충돌비활성화/숨은힘/불리한시행삭제금지. 기존진단이실제메커니즘과모순이면실측·독립contractamendment로해결한다. 물리본작업완성전Dream연결을서두르지않는다. 선별GitHub+private/server원본보관정책유지.",
+    "revision": 33,
+    "revision_request": "사용자의 현재 지시와 앞서 확정한 지시를 함께 따른다. 사용자 원문: \"체로 분리하는 거로 일단 진행해보자. 해당 업무가 직군적으로 중요한건 채점자의 판단이고 일단 우리는 그럴싸한 작업이 나오면 그거로 진행하자.\" 그리고 \"그거 검토하고 앞으로 skill 도 그렇게 동작하도록 수정한 다음에 우리 원래 작업 (체 기반 작업) 다시 진행하자.\"\n새 Sheet 기반 아이디어 중복 검사가 543/543, 최신원문14건, 6벤치마크 및 독립novelty-critic PASS로 완료됐다. 이 통과와 현재 selected는 유지한다. candidates/novelty/직군규모조사를 다시 시작하지 않는다. 같은 run/branch의 bimanual-tab-sieve-separation을 계속한다.\n이 run만 prototype_importance_deferred=true로 명시적으로 설정했다. 직군중요도와 500k specific-operation 근거는 미확인이다. 일반 O*NET 직군602k를 특정 수작업 종사자수로 둔갑시키거나 카테고리를 통과하려고 바꾸지 않는다. 제조사 manual-screen 방법에 대한 사실/형상/단위 검증은 유지하되, 직군중요도 판단은 보류하고 물리 시제품의 contract/environment/demo를 구현한다. 이 예외는 물리/신규성/채점 조건을 완화하지 않는다. Coordinator는 qualified native demo 완료 뒤 export/release/Dream 전에 미확인 eligibility를 기록하고 반드시 차단한다. 지금은 현장 인구조사나 자격확정이 아니라 실제 환경과 데모 완성이 목표다.\ncontract-critic의 실제 수학/측정 문제는 모두 고친다. 첫 true physics interval을 포함한 정확한3초dwell, initial speed 측정window, continuous synchronized bilateral contact, lift의기준root높이, camera시험집계, 240/480 동일actionpair수와pair간집계, force/penetration/jointmargin의계측대상/집계/reset을 명확히 고정한다. 수치 기준과 물리관측은 진짜소스/측정으로 검증하고 불리한시행을 없애지 않는다. 수정마다 이미정의된기준을 다시흐리게 만들지 않는다.\n구성은 현재 selected 그대로 8free ceramic media + 2thinsteel washers(OD30/bore8/T4mm), 실제261개 circular12.7mm openings/3mmfloor, OD368.3mm screen,50mmreceiver/solidannuluspostsupports. NO feedcup. YAM 양손tab실제접촉파지->lift->선택적통과/washer보존->양받침복귀->양손해제3초. 원형32gon/9256prismsCPU CAD와 -20deg/15mmX2Hz/70mmcommandlift CPU proposal은 가설이며 native 검증으로 간주하지 않는다. 빈SQUAREhole체lift35mm/3.2sposehold 성공은 기반 helper로만 재사용하고 새circle/loadedtask 성공이라 하지 않는다.\noperator-source-notes의 작동하는 SDK수정(센서PHYSICS_READY이전설치/body_link_pos_w.torch/actualquats/guidecolliderbounds/RGB.torch/rawcontactcomplete/streamingH264/guardedbootstrap)을 보존한다. --headless 금지HEADLESS=1env. scene변경 후 실제cookedcollider/openings/massI/materialfrictionbinding을 확인한다. 물체pose/velocity쓰기, weld, collisiondisable, hiddenforce, fakeconstantmetrics 금지. 옛74casegrid/API(empty체)시험을 반복하지 말고 실제내용물 새장면과관측/채점/동작을 구현한다. 실제 실패영상과rawtrace도 보존하고 안정되면 독립재채점,부분/실패controls,동일action240/480,두freshfullscoreH264까지 이어간다.\n이전revision32의모든비교/contract수정/측정원본은 보존한다. 원본private/server + 필요한근거GitHub 선별정책 그대로. Dream은 이 원형 제작 단계에서 실행하지 않는다.\n",
     "approval": null,
-    "resume_from_stage": "novelty",
-    "error": "worker paused at stage boundary",
+    "resume_from_stage": "contract",
+    "error": "review evidence missing or outside approved run directories: task/full_screen_scene.py:154",
     "remote_status": {
-      "status": "paused",
-      "stage": "contract",
-      "at": "2026-11-17T00:32:43.183151+00:00"
+      "status": "blocked",
+      "error": "review evidence missing or outside approved run directories: task/full_screen_scene.py:154",
+      "type": "GateError",
+      "at": "2026-11-17T01:29:25.871571+00:00"
     },
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab",
     "stop_error": "command failed: brev: you're logged out — run `brev login` to authenticate\n",
@@ -14907,6 +14908,1032 @@
       "run": "20261116T070835-7889e9ab",
       "at": "2026-11-17T00:37:23.442684+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"worker paused at stage boundary\"}"
+    },
+    {
+      "seq": 8586,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:39:44.824266+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 8588,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:40:16.109245+00:00",
+      "data": "{\"revision\": 33, \"revision_request\": \"\\uc0ac\\uc6a9\\uc790\\uc758 \\ud604\\uc7ac \\uc9c0\\uc2dc\\uc640 \\uc55e\\uc11c \\ud655\\uc815\\ud55c \\uc9c0\\uc2dc\\ub97c \\ud568\\uaed8 \\ub530\\ub978\\ub2e4. \\uc0ac\\uc6a9\\uc790 \\uc6d0\\ubb38: \\\"\\uccb4\\ub85c \\ubd84\\ub9ac\\ud558\\ub294 \\uac70\\ub85c \\uc77c\\ub2e8 \\uc9c4\\ud589\\ud574\\ubcf4\\uc790. \\ud574\\ub2f9 \\uc5c5\\ubb34\\uac00 \\uc9c1\\uad70\\uc801\\uc73c\\ub85c \\uc911\\uc694\\ud55c\\uac74 \\ucc44\\uc810\\uc790\\uc758 \\ud310\\ub2e8\\uc774\\uace0 \\uc77c\\ub2e8 \\uc6b0\\ub9ac\\ub294 \\uadf8\\ub7f4\\uc2f8\\ud55c \\uc791\\uc5c5\\uc774 \\ub098\\uc624\\uba74 \\uadf8\\uac70\\ub85c \\uc9c4\\ud589\\ud558\\uc790.\\\" \\uadf8\\ub9ac\\uace0 \\\"\\uadf8\\uac70 \\uac80\\ud1a0\\ud558\\uace0 \\uc55e\\uc73c\\ub85c skill \\ub3c4 \\uadf8\\ub807\\uac8c \\ub3d9\\uc791\\ud558\\ub3c4\\ub85d \\uc218\\uc815\\ud55c \\ub2e4\\uc74c\\uc5d0 \\uc6b0\\ub9ac \\uc6d0\\ub798 \\uc791\\uc5c5 (\\uccb4 \\uae30\\ubc18 \\uc791\\uc5c5) \\ub2e4\\uc2dc \\uc9c4\\ud589\\ud558\\uc790.\\\"\\n\\uc0c8 Sheet \\uae30\\ubc18 \\uc544\\uc774\\ub514\\uc5b4 \\uc911\\ubcf5 \\uac80\\uc0ac\\uac00 543/543, \\ucd5c\\uc2e0\\uc6d0\\ubb3814\\uac74, 6\\ubca4\\uce58\\ub9c8\\ud06c \\ubc0f \\ub3c5\\ub9bdnovelty-critic PASS\\ub85c \\uc644\\ub8cc\\ub410\\ub2e4. \\uc774 \\ud1b5\\uacfc\\uc640 \\ud604\\uc7ac selected\\ub294 \\uc720\\uc9c0\\ud55c\\ub2e4. candidates/novelty/\\uc9c1\\uad70\\uaddc\\ubaa8\\uc870\\uc0ac\\ub97c \\ub2e4\\uc2dc \\uc2dc\\uc791\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uac19\\uc740 run/branch\\uc758 bimanual-tab-sieve-separation\\uc744 \\uacc4\\uc18d\\ud55c\\ub2e4.\\n\\uc774 run\\ub9cc prototype_importance_deferred=true\\ub85c \\uba85\\uc2dc\\uc801\\uc73c\\ub85c \\uc124\\uc815\\ud588\\ub2e4. \\uc9c1\\uad70\\uc911\\uc694\\ub3c4\\uc640 500k specific-operation \\uadfc\\uac70\\ub294 \\ubbf8\\ud655\\uc778\\uc774\\ub2e4. \\uc77c\\ubc18 O*NET \\uc9c1\\uad70602k\\ub97c \\ud2b9\\uc815 \\uc218\\uc791\\uc5c5 \\uc885\\uc0ac\\uc790\\uc218\\ub85c \\ub454\\uac11\\uc2dc\\ud0a4\\uac70\\ub098 \\uce74\\ud14c\\uace0\\ub9ac\\ub97c \\ud1b5\\uacfc\\ud558\\ub824\\uace0 \\ubc14\\uafb8\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc81c\\uc870\\uc0ac manual-screen \\ubc29\\ubc95\\uc5d0 \\ub300\\ud55c \\uc0ac\\uc2e4/\\ud615\\uc0c1/\\ub2e8\\uc704 \\uac80\\uc99d\\uc740 \\uc720\\uc9c0\\ud558\\ub418, \\uc9c1\\uad70\\uc911\\uc694\\ub3c4 \\ud310\\ub2e8\\uc740 \\ubcf4\\ub958\\ud558\\uace0 \\ubb3c\\ub9ac \\uc2dc\\uc81c\\ud488\\uc758 contract/environment/demo\\ub97c \\uad6c\\ud604\\ud55c\\ub2e4. \\uc774 \\uc608\\uc678\\ub294 \\ubb3c\\ub9ac/\\uc2e0\\uaddc\\uc131/\\ucc44\\uc810 \\uc870\\uac74\\uc744 \\uc644\\ud654\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. Coordinator\\ub294 qualified native demo \\uc644\\ub8cc \\ub4a4 export/release/Dream \\uc804\\uc5d0 \\ubbf8\\ud655\\uc778 eligibility\\ub97c \\uae30\\ub85d\\ud558\\uace0 \\ubc18\\ub4dc\\uc2dc \\ucc28\\ub2e8\\ud55c\\ub2e4. \\uc9c0\\uae08\\uc740 \\ud604\\uc7a5 \\uc778\\uad6c\\uc870\\uc0ac\\ub098 \\uc790\\uaca9\\ud655\\uc815\\uc774 \\uc544\\ub2c8\\ub77c \\uc2e4\\uc81c \\ud658\\uacbd\\uacfc \\ub370\\ubaa8 \\uc644\\uc131\\uc774 \\ubaa9\\ud45c\\ub2e4.\\ncontract-critic\\uc758 \\uc2e4\\uc81c \\uc218\\ud559/\\uce21\\uc815 \\ubb38\\uc81c\\ub294 \\ubaa8\\ub450 \\uace0\\uce5c\\ub2e4. \\uccab true physics interval\\uc744 \\ud3ec\\ud568\\ud55c \\uc815\\ud655\\ud55c3\\ucd08dwell, initial speed \\uce21\\uc815window, continuous synchronized bilateral contact, lift\\uc758\\uae30\\uc900root\\ub192\\uc774, camera\\uc2dc\\ud5d8\\uc9d1\\uacc4, 240/480 \\ub3d9\\uc77cactionpair\\uc218\\uc640pair\\uac04\\uc9d1\\uacc4, force/penetration/jointmargin\\uc758\\uacc4\\uce21\\ub300\\uc0c1/\\uc9d1\\uacc4/reset\\uc744 \\uba85\\ud655\\ud788 \\uace0\\uc815\\ud55c\\ub2e4. \\uc218\\uce58 \\uae30\\uc900\\uacfc \\ubb3c\\ub9ac\\uad00\\uce21\\uc740 \\uc9c4\\uc9dc\\uc18c\\uc2a4/\\uce21\\uc815\\uc73c\\ub85c \\uac80\\uc99d\\ud558\\uace0 \\ubd88\\ub9ac\\ud55c\\uc2dc\\ud589\\uc744 \\uc5c6\\uc560\\uc9c0 \\uc54a\\ub294\\ub2e4. \\uc218\\uc815\\ub9c8\\ub2e4 \\uc774\\ubbf8\\uc815\\uc758\\ub41c\\uae30\\uc900\\uc744 \\ub2e4\\uc2dc\\ud750\\ub9ac\\uac8c \\ub9cc\\ub4e4\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n\\uad6c\\uc131\\uc740 \\ud604\\uc7ac selected \\uadf8\\ub300\\ub85c 8free ceramic media + 2thinsteel washers(OD30/bore8/T4mm), \\uc2e4\\uc81c261\\uac1c circular12.7mm openings/3mmfloor, OD368.3mm screen,50mmreceiver/solidannuluspostsupports. NO feedcup. YAM \\uc591\\uc190tab\\uc2e4\\uc81c\\uc811\\ucd09\\ud30c\\uc9c0->lift->\\uc120\\ud0dd\\uc801\\ud1b5\\uacfc/washer\\ubcf4\\uc874->\\uc591\\ubc1b\\uce68\\ubcf5\\uadc0->\\uc591\\uc190\\ud574\\uc81c3\\ucd08. \\uc6d0\\ud61532gon/9256prismsCPU CAD\\uc640 -20deg/15mmX2Hz/70mmcommandlift CPU proposal\\uc740 \\uac00\\uc124\\uc774\\uba70 native \\uac80\\uc99d\\uc73c\\ub85c \\uac04\\uc8fc\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4. \\ube48SQUAREhole\\uccb4lift35mm/3.2sposehold \\uc131\\uacf5\\uc740 \\uae30\\ubc18 helper\\ub85c\\ub9cc \\uc7ac\\uc0ac\\uc6a9\\ud558\\uace0 \\uc0c8circle/loadedtask \\uc131\\uacf5\\uc774\\ub77c \\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\noperator-source-notes\\uc758 \\uc791\\ub3d9\\ud558\\ub294 SDK\\uc218\\uc815(\\uc13c\\uc11cPHYSICS_READY\\uc774\\uc804\\uc124\\uce58/body_link_pos_w.torch/actualquats/guidecolliderbounds/RGB.torch/rawcontactcomplete/streamingH264/guardedbootstrap)\\uc744 \\ubcf4\\uc874\\ud55c\\ub2e4. --headless \\uae08\\uc9c0HEADLESS=1env. scene\\ubcc0\\uacbd \\ud6c4 \\uc2e4\\uc81ccookedcollider/openings/massI/materialfrictionbinding\\uc744 \\ud655\\uc778\\ud55c\\ub2e4. \\ubb3c\\uccb4pose/velocity\\uc4f0\\uae30, weld, collisiondisable, hiddenforce, fakeconstantmetrics \\uae08\\uc9c0. \\uc61b74casegrid/API(empty\\uccb4)\\uc2dc\\ud5d8\\uc744 \\ubc18\\ubcf5\\ud558\\uc9c0 \\ub9d0\\uace0 \\uc2e4\\uc81c\\ub0b4\\uc6a9\\ubb3c \\uc0c8\\uc7a5\\uba74\\uacfc\\uad00\\uce21/\\ucc44\\uc810/\\ub3d9\\uc791\\uc744 \\uad6c\\ud604\\ud55c\\ub2e4. \\uc2e4\\uc81c \\uc2e4\\ud328\\uc601\\uc0c1\\uacfcrawtrace\\ub3c4 \\ubcf4\\uc874\\ud558\\uace0 \\uc548\\uc815\\ub418\\uba74 \\ub3c5\\ub9bd\\uc7ac\\ucc44\\uc810,\\ubd80\\ubd84/\\uc2e4\\ud328controls,\\ub3d9\\uc77caction240/480,\\ub450freshfullscoreH264\\uae4c\\uc9c0 \\uc774\\uc5b4\\uac04\\ub2e4.\\n\\uc774\\uc804revision32\\uc758\\ubaa8\\ub4e0\\ube44\\uad50/contract\\uc218\\uc815/\\uce21\\uc815\\uc6d0\\ubcf8\\uc740 \\ubcf4\\uc874\\ud55c\\ub2e4. \\uc6d0\\ubcf8private/server + \\ud544\\uc694\\ud55c\\uadfc\\uac70GitHub \\uc120\\ubcc4\\uc815\\ucc45 \\uadf8\\ub300\\ub85c. Dream\\uc740 \\uc774 \\uc6d0\\ud615 \\uc81c\\uc791 \\ub2e8\\uacc4\\uc5d0\\uc11c \\uc2e4\\ud589\\ud558\\uc9c0 \\uc54a\\ub294\\ub2e4.\\n\", \"approval\": null}"
+    },
+    {
+      "seq": 8589,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:40:16.109504+00:00",
+      "data": "{\"resume_from_stage\": \"contract\"}"
+    },
+    {
+      "seq": 8590,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:40:16.112315+00:00",
+      "data": "{\"supervisor_pid\": 4038, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261116T070835-7889e9ab/supervisor.log\"}"
+    },
+    {
+      "seq": 8591,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:40:16.189171+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 8592,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:40:28.334874+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 8593,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:41:35.110416+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 8600,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:48:11.799750+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab\"}"
+    },
+    {
+      "seq": 8601,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:48:12.212741+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T00:48:12.041913+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8603,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:48:27.636770+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T00:48:12.041913+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8605,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:48:43.239713+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T00:48:12.041913+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8607,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:48:58.664510+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T00:48:12.041913+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8609,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:49:14.076908+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T00:48:12.041913+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8611,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:49:29.546864+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T00:48:12.041913+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8613,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:49:44.982645+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T00:48:12.041913+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8615,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:50:00.414710+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T00:48:12.041913+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8617,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:50:15.854631+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T00:48:12.041913+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8619,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:50:31.275661+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T00:48:12.041913+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8621,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:50:46.805793+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T00:48:12.041913+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8623,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:51:02.270099+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T00:48:12.041913+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8625,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:51:17.692284+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T00:48:12.041913+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 8627,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:51:33.116425+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8629,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:51:48.547169+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8631,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:52:04.220787+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8633,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:52:19.685737+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8635,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:52:35.249134+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8637,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:52:50.683148+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8639,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:53:06.169222+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8641,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:53:21.587693+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8643,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:53:37.006742+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8645,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:53:52.463893+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8647,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:54:07.883092+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8649,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:54:23.314451+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8651,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:54:38.758427+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8653,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:54:54.178126+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8655,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:55:09.774003+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8657,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:55:25.235654+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8659,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:55:40.660800+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8661,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:55:56.084449+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8663,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:56:11.492625+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8665,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:56:26.913936+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8667,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:56:42.343781+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8669,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:56:57.764146+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8671,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:57:13.205032+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8673,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:57:28.716538+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8675,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:57:44.142210+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8677,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:57:59.567797+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8679,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:58:15.117251+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8681,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:58:30.544921+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8683,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:58:46.143961+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8685,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:59:01.569792+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8687,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:59:17.001982+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8689,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:59:32.548629+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8691,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T00:59:47.987924+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8693,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:00:03.413092+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8695,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:00:18.891039+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8697,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:00:34.388760+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8699,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:00:49.810334+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8701,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:01:05.232291+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8703,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:01:20.745179+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8705,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:01:36.177422+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8707,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:01:51.620296+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8709,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:02:07.040668+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8711,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:02:22.522767+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8713,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:02:37.946368+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8715,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:02:53.366262+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8717,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:03:08.793348+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8719,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:03:24.205462+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8721,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:03:39.666000+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8723,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:03:55.092763+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8725,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:04:10.672316+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8727,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:04:26.136829+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8729,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:04:41.579027+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8731,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:04:56.990668+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8733,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:05:12.403116+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8735,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:05:27.813109+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8737,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:05:43.218280+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8739,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:05:58.632335+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8741,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:06:14.038956+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8743,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:06:29.462869+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8745,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:06:44.870574+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8747,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:07:00.277817+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8749,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:07:15.917712+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8751,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:07:31.366632+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8753,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:07:46.772668+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8755,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:08:02.328692+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8757,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:08:17.765931+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8759,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:08:33.186915+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8761,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:08:48.600841+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8763,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:09:04.009375+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8765,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:09:19.423615+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8767,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:09:34.841042+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8769,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:09:50.256716+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8771,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:10:05.666584+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8773,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:10:21.069402+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8775,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:10:36.477796+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8777,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:10:51.881719+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8779,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:11:07.293651+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8781,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:11:22.702595+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8783,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:11:38.163939+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8785,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:11:53.572560+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8787,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:12:09.090606+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8789,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:12:24.550794+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8791,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:12:39.966676+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8793,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:12:55.426171+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8795,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:13:10.824682+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8797,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:13:26.237954+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8799,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:13:41.580919+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8801,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:13:56.987747+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8803,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:14:12.632517+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8805,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:14:28.048936+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8807,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:14:43.453289+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8809,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:14:58.858924+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8811,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:15:14.265853+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8813,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:15:29.670549+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8815,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:15:45.075346+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8817,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:16:00.477598+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8819,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:16:15.959357+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8821,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:16:31.370412+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8823,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:16:46.785594+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8825,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:17:02.185654+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8827,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:17:17.591588+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8829,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:17:32.997665+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8831,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:17:48.402230+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8833,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:18:03.812151+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8835,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:18:19.229870+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8837,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:18:34.641519+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8839,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:18:50.050611+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8841,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:19:05.467511+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8843,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:19:20.908230+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8845,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:19:36.322846+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8847,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:19:51.734638+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8849,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:20:07.362370+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8851,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:20:22.767858+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8853,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:20:38.259414+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8855,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:20:53.669460+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8857,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:21:09.081281+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8859,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:21:24.475682+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8861,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:21:39.995533+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8863,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:21:55.391602+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8865,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:22:10.793631+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8867,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:22:26.192192+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8869,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:22:41.640191+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8871,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:22:57.297778+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8873,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:23:12.730583+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8875,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:23:28.142258+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8877,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:23:43.551206+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8879,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:23:58.952544+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8881,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:24:14.352609+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8883,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:24:29.760585+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8885,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:24:45.231693+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8887,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:25:00.640867+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8889,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:25:16.045351+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8891,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:25:31.502329+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8893,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:25:47.350959+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8895,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:26:03.001742+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8897,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:26:18.422098+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8899,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:26:33.828118+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8901,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:26:49.236974+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8903,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:27:04.709932+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8905,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:27:20.111968+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8907,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:27:35.516963+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8908,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:27:50.911085+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8909,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:28:06.310952+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8910,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:28:21.709932+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8911,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:28:37.418811+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8912,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:28:52.829922+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8913,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:29:08.242381+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8914,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:29:23.681691+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"environment\", \"at\": \"2026-11-17T00:51:25.934092+00:00\"}, \"stage\": \"environment\"}"
+    },
+    {
+      "seq": 8915,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:29:39.082541+00:00",
+      "data": "{\"remote_status\": {\"status\": \"blocked\", \"error\": \"review evidence missing or outside approved run directories: task/full_screen_scene.py:154\", \"type\": \"GateError\", \"at\": \"2026-11-17T01:29:25.871571+00:00\"}, \"stage\": null}"
+    },
+    {
+      "seq": 8919,
+      "run": "20261116T070835-7889e9ab",
+      "at": "2026-11-17T01:36:31.060731+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"review evidence missing or outside approved run directories: task/full_screen_scene.py:154\"}"
     }
   ],
   "effects": {

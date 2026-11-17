@@ -8,10 +8,10 @@
   "component_preflight_passed": true,
   "fingertip_pose_source": "native Articulation.data.body_link_pos_w",
   "native_fingertip_max_motion_m": [
-    0.2402620009056881,
-    0.18007887736085468,
-    0.21886322909975683,
-    0.1946004685668112
+    0.24098070776274536,
+    0.18008656598197276,
+    0.2187283528334488,
+    0.19352637583980836
   ],
   "native_physics_dt_s": 0.004166666666666667,
   "native_physics_hz": 240.0,
@@ -19,22 +19,71 @@
   "control_hz": 20,
   "geometry_audit": {
     "hole_count": 261,
-    "piece_count": 1208,
+    "piece_count": 6124,
     "solid_connected_components": 1,
-    "symmetric_difference_area_m2": 1.2389808999839768e-18,
-    "intended_solid_area_m2": 0.06099108599647114
+    "symmetric_difference_area_m2": 0.0,
+    "intended_solid_area_m2": 0.07056629445413612,
+    "aperture_boundary_segments": 20,
+    "aperture_vertex_diameter_m": 0.0127,
+    "aperture_clear_diameter_m": 0.01254364192555825
+  },
+  "native_support_geometry_audit": {
+    "posts": [
+      {
+        "path": "/World/envs/env_0/support_neg/Post_0",
+        "center_w_m": [
+          0.245,
+          -0.115,
+          0.7775
+        ],
+        "radius_m": 0.004,
+        "perforated_region_clearance_m": 0.015852877514630298
+      },
+      {
+        "path": "/World/envs/env_0/support_neg/Post_1",
+        "center_w_m": [
+          0.495,
+          -0.115,
+          0.7775
+        ],
+        "radius_m": 0.004,
+        "perforated_region_clearance_m": 0.015852877514630298
+      },
+      {
+        "path": "/World/envs/env_0/support_pos/Post_0",
+        "center_w_m": [
+          0.245,
+          0.115,
+          0.7775
+        ],
+        "radius_m": 0.004,
+        "perforated_region_clearance_m": 0.015852877514630298
+      },
+      {
+        "path": "/World/envs/env_0/support_pos/Post_1",
+        "center_w_m": [
+          0.495,
+          0.115,
+          0.7775
+        ],
+        "radius_m": 0.004,
+        "perforated_region_clearance_m": 0.015852877514630298
+      }
+    ],
+    "minimum_perforated_region_clearance_m": 0.015852877514630298,
+    "post_count": 4
   },
   "native_mass_kg": 0.4000000059604645,
   "expected_mass_kg": 0.4,
   "native_principal_inertia_kg_m2": [
-    0.005398948211222887,
-    0.00634822528809309,
-    0.011404098942875862
+    0.0052004544995725155,
+    0.0060911946929991245,
+    0.010954913683235645
   ],
   "expected_inertia_kg_m2": [
-    0.006348225179221859,
-    0.005398948258000606,
-    0.01140409917665804
+    0.006091194530439144,
+    0.005200454716974203,
+    0.010954913761151082
   ],
   "tip_collision_bounding_radius_m": [
     0.10578381235723194,
@@ -239,7 +288,7 @@
   "checks": [
     {
       "name": "minimum_native_fingertip_motion_across_four_links",
-      "measured": 0.18007887736085468,
+      "measured": 0.18008656598197276,
       "operator": ">=",
       "threshold": 0.05,
       "unit": "m",
@@ -247,10 +296,18 @@
     },
     {
       "name": "scene_configured_contact_sensors_initialized",
+      "measured": 5,
+      "operator": "==",
+      "threshold": 5,
+      "unit": "sensors",
+      "passed": true
+    },
+    {
+      "name": "native_support_contact_filter_collider_count",
       "measured": 4,
       "operator": "==",
       "threshold": 4,
-      "unit": "sensors",
+      "unit": "colliders",
       "passed": true
     },
     {
@@ -262,7 +319,7 @@
       "passed": true
     },
     {
-      "name": "complete_square_aperture_count",
+      "name": "complete_circular_aperture_count",
       "measured": 261,
       "operator": "==",
       "threshold": 261,
@@ -270,8 +327,24 @@
       "passed": true
     },
     {
+      "name": "circular_aperture_clear_diameter_lower_bound",
+      "measured": 0.01254364192555825,
+      "operator": ">=",
+      "threshold": 0.0125,
+      "unit": "m",
+      "passed": true
+    },
+    {
+      "name": "circular_aperture_clear_diameter_upper_bound",
+      "measured": 0.01254364192555825,
+      "operator": "<=",
+      "threshold": 0.0129,
+      "unit": "m",
+      "passed": true
+    },
+    {
       "name": "authored_floor_symmetric_difference_area",
-      "measured": 1.2389808999839768e-18,
+      "measured": 0.0,
       "operator": "<=",
       "threshold": 1e-09,
       "unit": "m^2",
@@ -286,6 +359,22 @@
       "passed": true
     },
     {
+      "name": "support_post_count_exact",
+      "measured": 4,
+      "operator": "==",
+      "threshold": 4,
+      "unit": "posts",
+      "passed": true
+    },
+    {
+      "name": "support_post_perforated_region_clearance_min",
+      "measured": 0.015852877514630298,
+      "operator": ">=",
+      "threshold": 0.004,
+      "unit": "m",
+      "passed": true
+    },
+    {
       "name": "native_mass_relative_error",
       "measured": 1.4901161138336505e-08,
       "operator": "<=",
@@ -295,7 +384,7 @@
     },
     {
       "name": "native_inertia_max_relative_error",
-      "measured": 2.049983729735232e-08,
+      "measured": 4.180436127792526e-08,
       "operator": "<=",
       "threshold": 0.001,
       "unit": "fraction",
@@ -303,7 +392,7 @@
     },
     {
       "name": "nonzero_signed_raw_tab_reaction_points",
-      "measured": 1918,
+      "measured": 1094,
       "operator": ">",
       "threshold": 0,
       "unit": "points",
@@ -311,15 +400,15 @@
     },
     {
       "name": "positive_native_pair_samples_with_verified_raw_vector_reconciliation",
-      "measured": 660,
+      "measured": 658,
       "operator": "==",
-      "threshold": 660,
+      "threshold": 658,
       "unit": "control_samples",
       "passed": true
     },
     {
       "name": "maximum_native_contact_count_below_configured_capacity",
-      "measured": 154,
+      "measured": 152,
       "operator": "<",
       "threshold": 256,
       "unit": "contacts_per_prim",
@@ -343,7 +432,7 @@
     },
     {
       "name": "observed_screen_lift_height",
-      "measured": 0.03505593538284302,
+      "measured": 0.035254061222076416,
       "operator": ">=",
       "threshold": 0.03,
       "unit": "m",
@@ -358,6 +447,22 @@
       "passed": true
     },
     {
+      "name": "post_return_bilateral_support_pose_stationary_duration",
+      "measured": 1.85,
+      "operator": ">=",
+      "threshold": 0.25,
+      "unit": "s",
+      "passed": true
+    },
+    {
+      "name": "reseating_established_before_clearance_evaluation",
+      "measured": 1,
+      "operator": "==",
+      "threshold": 1,
+      "unit": "boolean",
+      "passed": true
+    },
+    {
       "name": "post_retreat_fresh_observation_count",
       "measured": 10,
       "operator": ">=",
@@ -367,7 +472,7 @@
     },
     {
       "name": "released_fingertip_collider_to_screen_conservative_clearance",
-      "measured": 0.08017443794344913,
+      "measured": 0.08026263092219289,
       "operator": ">=",
       "threshold": 0.06,
       "unit": "m",
@@ -383,7 +488,7 @@
     },
     {
       "name": "native_rgb_minimum_pixel_standard_deviation",
-      "measured": 47.45259475708008,
+      "measured": 47.39491653442383,
       "operator": ">=",
       "threshold": 2.0,
       "unit": "uint8_level",

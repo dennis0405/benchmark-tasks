@@ -12000,5 +12000,1322 @@
       }
     ],
     "at": "2026-11-16T21:46:26.156779+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Repaired the latest host failure in the bounded cooked full-screen raycast probe: the shared scene builder now uses Isaac Lab's public UsdSemantics.LabelsAPI helper instead of the removed pxr.Semantics module. Both files pass Python compilation. This probe measures cooked collision openings, ribs, annulus, and timestep only; it does not claim full physics or task qualification. Workforce/category importance remains unresolved and deferred.",
+      "scripts": [
+        {
+          "id": "full_screen_cooked_raycast_repair",
+          "script": "task/run_full_screen_cooked_raycast_probe.py",
+          "args": [
+            "--device",
+            "cuda:0",
+            "--report",
+            "../measurements/full-screen-cooked-raycast.json"
+          ],
+          "report": "measurements/full-screen-cooked-raycast.json"
+        }
+      ],
+      "files": [
+        "task/full_screen_scene.py",
+        "task/run_full_screen_cooked_raycast_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The planned cooked-raycast probe is appropriately limited to native scene-query discovery and does not claim full environment, manipulation, or scoring qualification.",
+        "The previous pxr.Semantics import failure is addressed by using Isaac Lab's public sim_utils.add_labels API with the documented labels and instance_name arguments.",
+        "The probe advances one real 240 Hz physics interval before querying cooked collision geometry, tests all 261 aperture centers, representative narrow ribs, and 24 annulus points, and preserves per-hit collision paths in a trace.",
+        "Reported checks derive from native raycast samples and the live SimulationContext timestep; no constant success value or substitute metric is used.",
+        "Loaded-screen behavior, frozen-contract qualification, robot demonstrations, and workforce/category importance remain explicitly unresolved for later stages."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/full_screen_scene.py",
+        "task/run_full_screen_cooked_raycast_probe.py",
+        "input/last-failure.json",
+        "../logs/full-screen-cooked-raycast-42ee39286d.log",
+        "input/pinned-runtime-sources/23ea6ea0070a56fccee5d90843186e2b1a430f5112800a9549b8becdb88480b4-_physx.pyi"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_cooked_raycast_probe.py",
+          "--device",
+          "cuda:0",
+          "--report",
+          "../measurements/full-screen-cooked-raycast.json"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/full_screen_cooked_raycast_repair-08925610e9.log",
+        "finished_at": "2026-11-17T00:59:54.503971+00:00",
+        "id": "full_screen_cooked_raycast_repair",
+        "report": "measurements/full-screen-cooked-raycast.json",
+        "report_sha256": "0e409a80f91a313d472bf03447fb528f3c132c278a0f61a9c6cf26c01f84dc85",
+        "source_digest": "39e4499101694a326509bc5082cb0d91b67565155fb0d7bce3f9439800b25184",
+        "source_snapshot": "measurements/native-source-snapshots/39e4499101694a326509bc5082cb0d91b67565155fb0d7bce3f9439800b25184.json",
+        "output_snapshot": "measurements/native-output-snapshots/3384f8d22b8e42f287ee6c94d2f59628.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_full_screen_cooked_raycast_probe.cpython-312.pyc",
+          "__pycache__/full_screen_scene.cpython-312.pyc"
+        ],
+        "measurements": {
+          "checks": [
+            {
+              "name": "cooked_aperture_center_ray_blocked_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_261_rays"
+            },
+            {
+              "name": "cooked_rib_center_ray_miss_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_484_rays"
+            },
+            {
+              "name": "cooked_annulus_ray_miss_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_24_rays"
+            },
+            {
+              "name": "native_scene_query_aperture_count",
+              "measured": 261,
+              "operator": "==",
+              "threshold": 261,
+              "unit": "rays"
+            },
+            {
+              "name": "native_scene_query_rib_sample_count",
+              "measured": 484,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "rays"
+            },
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-12,
+              "unit": "s"
+            }
+          ],
+          "artifacts": [
+            "measurements/full-screen-cooked-raycast-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-17T00:59:54.778612+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "The repaired native cooked-collider probe completed successfully on the trusted GPU host. All 261 aperture-center rays passed unobstructed; all 484 rib and 24 annulus samples hit cooked floor collision; the measured timestep was 1/240 s. This validates only cooked full-screen raycast geometry, not loaded dynamics, frozen-contract qualification, demos, or unresolved workforce eligibility.",
+      "scripts": [
+        {
+          "id": "full_screen_cooked_raycast_repair",
+          "script": "task/run_full_screen_cooked_raycast_probe.py",
+          "args": [
+            "--device",
+            "cuda:0",
+            "--report",
+            "../measurements/full-screen-cooked-raycast.json"
+          ],
+          "report": "measurements/full-screen-cooked-raycast.json"
+        }
+      ],
+      "files": [
+        "task/full_screen_scene.py",
+        "task/run_full_screen_cooked_raycast_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The repaired preflight source is bounded to cooked-collider scene-query validation and does not claim loaded dynamics, manipulation, scoring, or frozen-contract qualification.",
+        "The prior `pxr.Semantics` import failure is removed; semantic labels now use `sim_utils.add_labels` without affecting the raycast probe's measurements.",
+        "The probe advances a real 240 Hz physics interval, then derives every reported check from native raycasts against `/World/Screen/Floor_*`: all 261 aperture centers, 484 axial-neighbor rib midpoints, and 24 solid-annulus samples.",
+        "The report records the live physics timestep and preserves per-hit collision paths in a separate trace. No constant success value, raster proxy, state write, collision disablement, weld, or substitute force/torque metric is used.",
+        "The 20-sided aperture approximation has a 12.5436 mm inscribed clear diameter, within the frozen 12.5–12.9 mm contract interval. Workforce/category eligibility remains explicitly unresolved and must still block export, release certification, and Dream."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/full_screen_scene.py",
+        "task/run_full_screen_cooked_raycast_probe.py",
+        "artifacts/contract.json",
+        "input/last-failure.json",
+        "../logs/full-screen-cooked-raycast-42ee39286d.log",
+        "input/runtime-api-preflight.json"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_cooked_raycast_probe.py",
+          "--device",
+          "cuda:0",
+          "--report",
+          "../measurements/full-screen-cooked-raycast.json"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/full_screen_cooked_raycast_repair-090a628b83.log",
+        "finished_at": "2026-11-17T01:01:56.002672+00:00",
+        "id": "full_screen_cooked_raycast_repair",
+        "report": "measurements/full-screen-cooked-raycast.json",
+        "report_sha256": "0e409a80f91a313d472bf03447fb528f3c132c278a0f61a9c6cf26c01f84dc85",
+        "source_digest": "39e4499101694a326509bc5082cb0d91b67565155fb0d7bce3f9439800b25184",
+        "source_snapshot": "measurements/native-source-snapshots/39e4499101694a326509bc5082cb0d91b67565155fb0d7bce3f9439800b25184.json",
+        "output_snapshot": "measurements/native-output-snapshots/d76d6222e07241fd9a81687de92996fc.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_full_screen_cooked_raycast_probe.cpython-312.pyc",
+          "__pycache__/full_screen_scene.cpython-312.pyc"
+        ],
+        "measurements": {
+          "checks": [
+            {
+              "name": "cooked_aperture_center_ray_blocked_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_261_rays"
+            },
+            {
+              "name": "cooked_rib_center_ray_miss_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_484_rays"
+            },
+            {
+              "name": "cooked_annulus_ray_miss_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_24_rays"
+            },
+            {
+              "name": "native_scene_query_aperture_count",
+              "measured": 261,
+              "operator": "==",
+              "threshold": 261,
+              "unit": "rays"
+            },
+            {
+              "name": "native_scene_query_rib_sample_count",
+              "measured": 484,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "rays"
+            },
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-12,
+              "unit": "s"
+            }
+          ],
+          "artifacts": [
+            "measurements/full-screen-cooked-raycast-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-17T01:01:56.272690+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "The repaired native cooked-collider probe passed on the trusted GPU host: 261/261 aperture centers were unobstructed, all 484 rib and 24 annulus samples hit cooked floor collision, and the measured timestep was 1/240 s. Scope is limited to cooked full-screen geometry; loaded dynamics, frozen-contract qualification, demos, and workforce eligibility remain unresolved.",
+      "scripts": [
+        {
+          "id": "full_screen_cooked_raycast_repair",
+          "script": "task/run_full_screen_cooked_raycast_probe.py",
+          "args": [
+            "--device",
+            "cuda:0",
+            "--report",
+            "../measurements/full-screen-cooked-raycast.json"
+          ],
+          "report": "measurements/full-screen-cooked-raycast.json"
+        }
+      ],
+      "files": [
+        "task/full_screen_scene.py",
+        "task/run_full_screen_cooked_raycast_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The planned preflight is appropriately bounded to cooked-collider path discovery and does not claim frozen-contract, dynamics, manipulation, scoring, or demo qualification.",
+        "The prior failure is addressed: task/full_screen_scene.py now uses sim_utils.add_labels instead of importing the unavailable pxr.Semantics schema.",
+        "The probe enables native scene-query support, advances one completed 240 Hz physics interval, queries actual cooked collision descendants, and records per-ray paths/distances for all 261 aperture centers, 484 axial rib midpoints, and 24 annulus samples.",
+        "The workspace-relative execution contract is correct: from workspace/task, ../measurements/full-screen-cooked-raycast.json resolves to the declared measurements/full-screen-cooked-raycast.json report.",
+        "No constant success/score, object-state success edit, raster proxy, fake control, or aggregate frozen-contract qualification is present. Workforce/category eligibility remains explicitly unresolved and is not treated as passed."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_full_screen_cooked_raycast_probe.py",
+        "task/full_screen_scene.py",
+        "input/last-failure.json",
+        "../logs/full-screen-cooked-raycast-42ee39286d.log",
+        "input/pinned-runtime-sources/23ea6ea0070a56fccee5d90843186e2b1a430f5112800a9549b8becdb88480b4-_physx.pyi"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_cooked_raycast_probe.py",
+          "--device",
+          "cuda:0",
+          "--report",
+          "../measurements/full-screen-cooked-raycast.json"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/full_screen_cooked_raycast_repair-f295b94928.log",
+        "finished_at": "2026-11-17T01:03:50.330669+00:00",
+        "id": "full_screen_cooked_raycast_repair",
+        "report": "measurements/full-screen-cooked-raycast.json",
+        "report_sha256": "0e409a80f91a313d472bf03447fb528f3c132c278a0f61a9c6cf26c01f84dc85",
+        "source_digest": "39e4499101694a326509bc5082cb0d91b67565155fb0d7bce3f9439800b25184",
+        "source_snapshot": "measurements/native-source-snapshots/39e4499101694a326509bc5082cb0d91b67565155fb0d7bce3f9439800b25184.json",
+        "output_snapshot": "measurements/native-output-snapshots/a3c527abf02f416b9a08adb49dfab61c.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "checks": [
+            {
+              "name": "cooked_aperture_center_ray_blocked_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_261_rays"
+            },
+            {
+              "name": "cooked_rib_center_ray_miss_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_484_rays"
+            },
+            {
+              "name": "cooked_annulus_ray_miss_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_24_rays"
+            },
+            {
+              "name": "native_scene_query_aperture_count",
+              "measured": 261,
+              "operator": "==",
+              "threshold": 261,
+              "unit": "rays"
+            },
+            {
+              "name": "native_scene_query_rib_sample_count",
+              "measured": 484,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "rays"
+            },
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-12,
+              "unit": "s"
+            }
+          ],
+          "artifacts": [
+            "measurements/full-screen-cooked-raycast-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-17T01:03:50.601364+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "The recorded failure is already repaired and superseded by a successful trusted-host run. The native cooked-collider probe measured 261/261 aperture centers unobstructed, 484/484 rib samples and 24/24 annulus samples hitting collision geometry, at 240 Hz. This establishes only cooked full-screen geometry behavior; loaded dynamics, complete frozen-contract qualification, demos, and workforce eligibility remain unresolved.",
+      "scripts": [
+        {
+          "id": "full_screen_cooked_raycast_repair",
+          "script": "task/run_full_screen_cooked_raycast_probe.py",
+          "args": [
+            "--device",
+            "cuda:0",
+            "--report",
+            "../measurements/full-screen-cooked-raycast.json"
+          ],
+          "report": "measurements/full-screen-cooked-raycast.json"
+        }
+      ],
+      "files": [
+        "task/full_screen_scene.py",
+        "task/run_full_screen_cooked_raycast_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The planned program is a narrowly scoped native cooked-collider discovery probe; it does not claim dynamics, manipulation, scoring, full frozen-contract qualification, or submission eligibility.",
+        "The probe enables scene-query support, advances one completed 240 Hz physics interval, and queries actual cooked collision descendants rather than raster geometry or constant proxy values.",
+        "It records raw collision paths and distances for all 261 aperture-center rays, every derived axial rib midpoint, and 24 solid-annulus samples, then computes its reported counts from those native query results.",
+        "The ray geometry is internally consistent: rays span the authored 3 mm floor slab; aperture centers correspond to the 261 generated openings; rib samples are actual neighboring-hole midpoints; and annulus samples lie outside the perforated radius.",
+        "The workspace-relative report argument resolves correctly from the executor's workspace/task cwd, and the report includes a workspace-relative raw trace artifact.",
+        "The prior pxr.Semantics import failure is addressed by using the runtime-supported sim_utils.add_labels helper. Workforce/category importance remains unresolved and is not represented as passed."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_full_screen_cooked_raycast_probe.py",
+        "task/full_screen_scene.py",
+        "input/last-failure.json",
+        "input/repository-AGENTS.md",
+        "input/review-prompt.txt",
+        "input/pinned-runtime-sources/33783dab0ab4c2f2857455bb90d4d58217b14356f06772cca4e3b76a6883e22e-simulation_cfg.py"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_cooked_raycast_probe.py",
+          "--device",
+          "cuda:0",
+          "--report",
+          "../measurements/full-screen-cooked-raycast.json"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/full_screen_cooked_raycast_repair-2e9a138c83.log",
+        "finished_at": "2026-11-17T01:05:22.861435+00:00",
+        "id": "full_screen_cooked_raycast_repair",
+        "report": "measurements/full-screen-cooked-raycast.json",
+        "report_sha256": "0e409a80f91a313d472bf03447fb528f3c132c278a0f61a9c6cf26c01f84dc85",
+        "source_digest": "39e4499101694a326509bc5082cb0d91b67565155fb0d7bce3f9439800b25184",
+        "source_snapshot": "measurements/native-source-snapshots/39e4499101694a326509bc5082cb0d91b67565155fb0d7bce3f9439800b25184.json",
+        "output_snapshot": "measurements/native-output-snapshots/9d30a90098f949aba100919446294824.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [],
+        "measurements": {
+          "checks": [
+            {
+              "name": "cooked_aperture_center_ray_blocked_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_261_rays"
+            },
+            {
+              "name": "cooked_rib_center_ray_miss_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_484_rays"
+            },
+            {
+              "name": "cooked_annulus_ray_miss_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_24_rays"
+            },
+            {
+              "name": "native_scene_query_aperture_count",
+              "measured": 261,
+              "operator": "==",
+              "threshold": 261,
+              "unit": "rays"
+            },
+            {
+              "name": "native_scene_query_rib_sample_count",
+              "measured": 484,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "rays"
+            },
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-12,
+              "unit": "s"
+            }
+          ],
+          "artifacts": [
+            "measurements/full-screen-cooked-raycast-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-17T01:05:23.132777+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "The recorded pxr.Semantics import failure is repaired and superseded by successful trusted-host runs. Native cooked-collider measurements found all 261 aperture centers unobstructed, all 484 rib samples and 24 annulus samples collidable, with a 1/240 s physics timestep. This preflight validates only cooked full-screen geometry; loaded dynamics, complete frozen-contract qualification, demos, workforce eligibility, export, release, and Dream remain unresolved.",
+      "scripts": [
+        {
+          "id": "full_screen_cooked_raycast_repair",
+          "script": "task/run_full_screen_cooked_raycast_probe.py",
+          "args": [
+            "--device",
+            "cuda:0",
+            "--report",
+            "../measurements/full-screen-cooked-raycast.json"
+          ],
+          "report": "measurements/full-screen-cooked-raycast.json"
+        }
+      ],
+      "files": [
+        "task/full_screen_scene.py",
+        "task/run_full_screen_cooked_raycast_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The planned script is a bounded native cooked-collider discovery probe and does not claim full environment, manipulation, scoring, demo, or frozen-contract qualification.",
+        "The prior pxr.Semantics import failure is repaired using the runtime-supported sim_utils.add_labels path.",
+        "The probe enables scene queries, advances one completed 240 Hz physics interval, and derives aperture, rib, and annulus checks from actual PhysX raycast hits on cooked Floor_* colliders.",
+        "All 261 aperture centers, 484 axial rib midpoints, and 24 annulus locations are explicitly sampled; raw collision paths and distances are preserved in a workspace-relative trace.",
+        "Report resolution is correct for the executor cwd: ../measurements/full-screen-cooked-raycast.json resolves to measurements/full-screen-cooked-raycast.json.",
+        "Workforce/category importance, loaded dynamics, complete frozen-contract qualification, demos, export, release, and Dream remain unresolved and are not represented as passed by the probe."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_full_screen_cooked_raycast_probe.py",
+        "task/full_screen_scene.py",
+        "input/last-failure.json",
+        "input/runtime-api-preflight.json",
+        "input/pinned-runtime-sources/23ea6ea0070a56fccee5d90843186e2b1a430f5112800a9549b8becdb88480b4-_physx.pyi",
+        "../logs/full-screen-cooked-raycast-42ee39286d.log"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_cooked_raycast_probe.py",
+          "--device",
+          "cuda:0",
+          "--report",
+          "../measurements/full-screen-cooked-raycast.json"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/full_screen_cooked_raycast_repair-6492de37b3.log",
+        "finished_at": "2026-11-17T01:07:14.634547+00:00",
+        "id": "full_screen_cooked_raycast_repair",
+        "report": "measurements/full-screen-cooked-raycast.json",
+        "report_sha256": "0e409a80f91a313d472bf03447fb528f3c132c278a0f61a9c6cf26c01f84dc85",
+        "source_digest": "39e4499101694a326509bc5082cb0d91b67565155fb0d7bce3f9439800b25184",
+        "source_snapshot": "measurements/native-source-snapshots/39e4499101694a326509bc5082cb0d91b67565155fb0d7bce3f9439800b25184.json",
+        "output_snapshot": "measurements/native-output-snapshots/da867391695144f3acb2b57d75955989.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_full_screen_cooked_raycast_probe.cpython-312.pyc",
+          "__pycache__/full_screen_scene.cpython-312.pyc"
+        ],
+        "measurements": {
+          "checks": [
+            {
+              "name": "cooked_aperture_center_ray_blocked_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_261_rays"
+            },
+            {
+              "name": "cooked_rib_center_ray_miss_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_484_rays"
+            },
+            {
+              "name": "cooked_annulus_ray_miss_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_24_rays"
+            },
+            {
+              "name": "native_scene_query_aperture_count",
+              "measured": 261,
+              "operator": "==",
+              "threshold": 261,
+              "unit": "rays"
+            },
+            {
+              "name": "native_scene_query_rib_sample_count",
+              "measured": 484,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "rays"
+            },
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-12,
+              "unit": "s"
+            }
+          ],
+          "artifacts": [
+            "measurements/full-screen-cooked-raycast-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-17T01:07:14.907357+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "The pxr.Semantics import failure is repaired and superseded by successful trusted-host runs. Native measurements found all 261 aperture centers unobstructed, all 484 rib samples and 24 annulus samples collidable, at a 1/240 s physics timestep. This validates only cooked full-screen geometry; loaded dynamics, frozen-contract qualification, demos, workforce eligibility, export, release, and Dream remain unresolved.",
+      "scripts": [
+        {
+          "id": "full_screen_cooked_raycast_repair",
+          "script": "task/run_full_screen_cooked_raycast_probe.py",
+          "args": [
+            "--device",
+            "cuda:0",
+            "--report",
+            "../measurements/full-screen-cooked-raycast.json"
+          ],
+          "report": "measurements/full-screen-cooked-raycast.json"
+        }
+      ],
+      "files": [
+        "task/full_screen_scene.py",
+        "task/run_full_screen_cooked_raycast_probe.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The planned script is a bounded native cooked-collider discovery probe and does not claim full environment, dynamics, scoring, demo, or frozen-contract qualification.",
+        "The previous pxr.Semantics import failure is repaired using the runtime-supported sim_utils.add_labels path.",
+        "The probe enables scene-query support, completes one 240 Hz physics interval, and derives its measurements from actual PhysX raycast hits on cooked Floor_* colliders.",
+        "It samples all 261 aperture centers, 484 axial rib midpoints, and 24 annulus locations, preserving collision paths and hit distances in a workspace-relative trace.",
+        "The planned ../measurements/full-screen-cooked-raycast.json path correctly resolves from the executor cwd workspace/task.",
+        "Workforce eligibility, loaded dynamics, full qualification, demos, export, release, and Dream remain explicitly unresolved."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/run_full_screen_cooked_raycast_probe.py",
+        "task/full_screen_scene.py",
+        "input/last-failure.json",
+        "input/runtime-api-preflight.json",
+        "input/pinned-runtime-sources/23ea6ea0070a56fccee5d90843186e2b1a430f5112800a9549b8becdb88480b4-_physx.pyi",
+        "../logs/full-screen-cooked-raycast-42ee39286d.log"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_cooked_raycast_probe.py",
+          "--device",
+          "cuda:0",
+          "--report",
+          "../measurements/full-screen-cooked-raycast.json"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/full_screen_cooked_raycast_repair-4ecf9c20f2.log",
+        "finished_at": "2026-11-17T01:08:44.218367+00:00",
+        "id": "full_screen_cooked_raycast_repair",
+        "report": "measurements/full-screen-cooked-raycast.json",
+        "report_sha256": "0e409a80f91a313d472bf03447fb528f3c132c278a0f61a9c6cf26c01f84dc85",
+        "source_digest": "39e4499101694a326509bc5082cb0d91b67565155fb0d7bce3f9439800b25184",
+        "source_snapshot": "measurements/native-source-snapshots/39e4499101694a326509bc5082cb0d91b67565155fb0d7bce3f9439800b25184.json",
+        "output_snapshot": "measurements/native-output-snapshots/c0ba92d7679e4d26ab370442bcdb3641.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_full_screen_cooked_raycast_probe.cpython-312.pyc",
+          "__pycache__/full_screen_scene.cpython-312.pyc"
+        ],
+        "measurements": {
+          "checks": [
+            {
+              "name": "cooked_aperture_center_ray_blocked_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_261_rays"
+            },
+            {
+              "name": "cooked_rib_center_ray_miss_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_484_rays"
+            },
+            {
+              "name": "cooked_annulus_ray_miss_count",
+              "measured": 0,
+              "operator": "==",
+              "threshold": 0,
+              "unit": "of_24_rays"
+            },
+            {
+              "name": "native_scene_query_aperture_count",
+              "measured": 261,
+              "operator": "==",
+              "threshold": 261,
+              "unit": "rays"
+            },
+            {
+              "name": "native_scene_query_rib_sample_count",
+              "measured": 484,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "rays"
+            },
+            {
+              "name": "physics_dt_absolute_error",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-12,
+              "unit": "s"
+            }
+          ],
+          "artifacts": [
+            "measurements/full-screen-cooked-raycast-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-17T01:08:44.489413+00:00"
+  },
+  {
+    "qualification": false,
+    "plan": {
+      "phase": "preflight",
+      "summary": "Repaired the failed post-return dwell probe. The prior sensor filtered non-colliding support Xform parents, producing zero force despite a physically stationary reset pose. The revised native probe filters all four actual Post colliders, aggregates them into independent negative/positive support groups, verifies four native filter bindings, and retains the frozen 0.25 s fresh-observation dwell requirement. Syntax validation passed; trusted-host native execution remains required. Loaded separation, complete frozen-contract qualification, demos, workforce eligibility, export, release, and Dream remain unresolved.",
+      "scripts": [
+        {
+          "id": "full_screen_yam_support_contact_repair",
+          "script": "task/run_full_screen_yam_preflight.py",
+          "args": [
+            "--device",
+            "cuda:0",
+            "--report",
+            "../measurements/full-screen-yam-preflight.json",
+            "--video",
+            "../measurements/full-screen-yam-preflight.mp4",
+            "--screenshot",
+            "../measurements/full-screen-yam-initial.png"
+          ],
+          "report": "measurements/full-screen-yam-preflight.json"
+        }
+      ],
+      "files": [
+        "task/full_screen_scene.py",
+        "task/run_full_screen_yam_preflight.py"
+      ]
+    },
+    "source_review": {
+      "verdict": "pass",
+      "findings": [
+        "The repair directly addresses the recorded failure: the support sensor now filters the four collision-bearing Post prims instead of non-colliding support Xforms, verifies filter_count == 4, and aggregates each post pair into independent negative/positive support groups.",
+        "The repaired dwell is measured from fresh native contact, pose, attitude, and consecutive 20 Hz motion observations. Six consecutive valid observations span five intervals, correctly establishing the stated 0.25 s component dwell.",
+        "Qualification remains fail-closed: absent or malformed support tensors, incorrect filter binding, nonfinite values, insufficient dwell, missing reseating, or missing clearance observations prevent a component pass.",
+        "The program is honestly limited to an empty-screen YAM component preflight. It does not claim loaded separation, complete frozen-contract qualification, full-rate physics evidence, demos, or workforce/category eligibility.",
+        "The planned execution uses native rigid-body, articulation, contact-tensor, camera, mass, inertia, and composed-USD observations with guarded 14D YAM actions; no post-reset task-object writes, teleports, welds, collision disabling, freezing, or hidden forces were found.",
+        "Impact-on-jobs eligibility remains explicitly unresolved and must continue to block export, release certification, and Dream, but it does not block this authorized prototype preflight."
+      ],
+      "evidence_paths": [
+        "artifacts/component-source-plan.json",
+        "task/full_screen_scene.py",
+        "task/run_full_screen_yam_preflight.py",
+        "input/last-failure.json",
+        "input/revision-request.txt",
+        "input/runtime-api-preflight.json",
+        "input/pinned-runtime-sources/000dde649a8b270af0f7102fff67a51abc1a2ff359fa3179f52830d5b83fde80-contact_sensor.py",
+        "input/pinned-runtime-sources/3f72a3cb2ccd2bedb666f58a912d9bd2d1b69e1c8c285d77e24e71c27ad2e3e9-contact_sensor_cfg.py",
+        "input/pinned-runtime-sources/1ba654210857a63b98236512e5f225723c3eb1dee64e867eaa4fade0578ccb7b-physics-tensors-api.py"
+      ]
+    },
+    "receipts": [
+      {
+        "argv": [
+          "/data/robocurve-automation/sources/IsaacLab-Arena/.venv/bin/python",
+          "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/workspace/task/run_full_screen_yam_preflight.py",
+          "--device",
+          "cuda:0",
+          "--report",
+          "../measurements/full-screen-yam-preflight.json",
+          "--video",
+          "../measurements/full-screen-yam-preflight.mp4",
+          "--screenshot",
+          "../measurements/full-screen-yam-initial.png"
+        ],
+        "exit_code": 0,
+        "log": "/data/robocurve-automation/worker-state/runs/20261116T070835-7889e9ab/logs/full_screen_yam_support_contact_repair-2ad6f76601.log",
+        "finished_at": "2026-11-17T01:25:06.404401+00:00",
+        "id": "full_screen_yam_support_contact_repair",
+        "report": "measurements/full-screen-yam-preflight.json",
+        "report_sha256": "2841a18ea8caa54729ec92039170bd849cd54d59a8dbe1f908d2ccdd07b8e35c",
+        "source_digest": "8e910066e8f1c26dff00dbf9efe6e955b3ff207e8f814565ebf19afff30a99a3",
+        "source_snapshot": "measurements/native-source-snapshots/8e910066e8f1c26dff00dbf9efe6e955b3ff207e8f814565ebf19afff30a99a3.json",
+        "output_snapshot": "measurements/native-output-snapshots/d638b5a4abeb4a9683694da8d5cd36c4.json",
+        "validation_scope": "native-discovery",
+        "discarded_bytecode": [
+          "__pycache__/run_full_screen_yam_preflight.cpython-312.pyc",
+          "__pycache__/full_screen_scene.cpython-312.pyc"
+        ],
+        "measurements": {
+          "scope": "empty full-screen bimanual YAM component only; not media-separation qualification",
+          "unqualified_observables": [
+            "object-identity camera visibility",
+            "full frozen physics coverage",
+            "media separation"
+          ],
+          "component_preflight_passed": true,
+          "fingertip_pose_source": "native Articulation.data.body_link_pos_w",
+          "native_fingertip_max_motion_m": [
+            0.24098070776274536,
+            0.18008656598197276,
+            0.2187283528334488,
+            0.19352637583980836
+          ],
+          "native_physics_dt_s": 0.004166666666666667,
+          "native_physics_hz": 240.0,
+          "expected_physics_hz": 240,
+          "control_hz": 20,
+          "geometry_audit": {
+            "hole_count": 261,
+            "piece_count": 6124,
+            "solid_connected_components": 1,
+            "symmetric_difference_area_m2": 0.0,
+            "intended_solid_area_m2": 0.07056629445413612,
+            "aperture_boundary_segments": 20,
+            "aperture_vertex_diameter_m": 0.0127,
+            "aperture_clear_diameter_m": 0.01254364192555825
+          },
+          "native_support_geometry_audit": {
+            "posts": [
+              {
+                "path": "/World/envs/env_0/support_neg/Post_0",
+                "center_w_m": [
+                  0.245,
+                  -0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_neg/Post_1",
+                "center_w_m": [
+                  0.495,
+                  -0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_pos/Post_0",
+                "center_w_m": [
+                  0.245,
+                  0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              },
+              {
+                "path": "/World/envs/env_0/support_pos/Post_1",
+                "center_w_m": [
+                  0.495,
+                  0.115,
+                  0.7775
+                ],
+                "radius_m": 0.004,
+                "perforated_region_clearance_m": 0.015852877514630298
+              }
+            ],
+            "minimum_perforated_region_clearance_m": 0.015852877514630298,
+            "post_count": 4
+          },
+          "native_mass_kg": 0.4000000059604645,
+          "expected_mass_kg": 0.4,
+          "native_principal_inertia_kg_m2": [
+            0.0052004544995725155,
+            0.0060911946929991245,
+            0.010954913683235645
+          ],
+          "expected_inertia_kg_m2": [
+            0.006091194530439144,
+            0.005200454716974203,
+            0.010954913761151082
+          ],
+          "tip_collision_bounding_radius_m": [
+            0.10578381235723194,
+            0.10578426718563368,
+            0.10578381235723194,
+            0.10578426718563368
+          ],
+          "tip_collision_prim_paths": [
+            [
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_000/tip_left_000",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_001/tip_left_001",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_002/tip_left_002",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_003/tip_left_003",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_004/tip_left_004",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_005/tip_left_005",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_006/tip_left_006",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_007/tip_left_007",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_008/tip_left_008",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_009/tip_left_009",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_010/tip_left_010",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_011/tip_left_011",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_012/tip_left_012",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_013/tip_left_013",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_014/tip_left_014",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_015/tip_left_015",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_016/tip_left_016",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_017/tip_left_017",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_018/tip_left_018",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_019/tip_left_019",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_020/tip_left_020",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_021/tip_left_021",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_022/tip_left_022",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_023/tip_left_023",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_024/tip_left_024",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_025/tip_left_025",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_026/tip_left_026",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_027/tip_left_027",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_028/tip_left_028",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_029/tip_left_029",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_030/tip_left_030",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_031/tip_left_031",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_032/tip_left_032",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_033/tip_left_033",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_034/tip_left_034",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_035/tip_left_035",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_036/tip_left_036",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_037/tip_left_037",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_038/tip_left_038",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_039/tip_left_039",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_040/tip_left_040",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_041/tip_left_041",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_042/tip_left_042",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_043/tip_left_043",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_044/tip_left_044"
+            ],
+            [
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_000/tip_right_000",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_001/tip_right_001",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_002/tip_right_002",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_003/tip_right_003",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_004/tip_right_004",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_005/tip_right_005",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_006/tip_right_006",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_007/tip_right_007",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_008/tip_right_008",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_009/tip_right_009",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_010/tip_right_010",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_011/tip_right_011",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_012/tip_right_012",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_013/tip_right_013",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_014/tip_right_014",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_015/tip_right_015",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_016/tip_right_016",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_017/tip_right_017",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_018/tip_right_018",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_019/tip_right_019",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_020/tip_right_020",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_021/tip_right_021",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_022/tip_right_022",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_023/tip_right_023",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_024/tip_right_024",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_025/tip_right_025",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_026/tip_right_026",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_027/tip_right_027",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_028/tip_right_028",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_029/tip_right_029",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_030/tip_right_030",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_031/tip_right_031",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_032/tip_right_032",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_033/tip_right_033",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_034/tip_right_034",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_035/tip_right_035",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_036/tip_right_036",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_037/tip_right_037",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_038/tip_right_038",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_039/tip_right_039",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_040/tip_right_040",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_041/tip_right_041",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_042/tip_right_042",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_043/tip_right_043",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_044/tip_right_044",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_045/tip_right_045",
+              "/World/envs/env_0/LeftArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_046/tip_right_046"
+            ],
+            [
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_000/tip_left_000",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_001/tip_left_001",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_002/tip_left_002",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_003/tip_left_003",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_004/tip_left_004",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_005/tip_left_005",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_006/tip_left_006",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_007/tip_left_007",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_008/tip_left_008",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_009/tip_left_009",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_010/tip_left_010",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_011/tip_left_011",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_012/tip_left_012",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_013/tip_left_013",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_014/tip_left_014",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_015/tip_left_015",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_016/tip_left_016",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_017/tip_left_017",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_018/tip_left_018",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_019/tip_left_019",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_020/tip_left_020",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_021/tip_left_021",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_022/tip_left_022",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_023/tip_left_023",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_024/tip_left_024",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_025/tip_left_025",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_026/tip_left_026",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_027/tip_left_027",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_028/tip_left_028",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_029/tip_left_029",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_030/tip_left_030",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_031/tip_left_031",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_032/tip_left_032",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_033/tip_left_033",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_034/tip_left_034",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_035/tip_left_035",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_036/tip_left_036",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_037/tip_left_037",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_038/tip_left_038",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_039/tip_left_039",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_040/tip_left_040",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_041/tip_left_041",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_042/tip_left_042",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_043/tip_left_043",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_left/tip_left_044/tip_left_044"
+            ],
+            [
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_000/tip_right_000",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_001/tip_right_001",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_002/tip_right_002",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_003/tip_right_003",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_004/tip_right_004",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_005/tip_right_005",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_006/tip_right_006",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_007/tip_right_007",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_008/tip_right_008",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_009/tip_right_009",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_010/tip_right_010",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_011/tip_right_011",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_012/tip_right_012",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_013/tip_right_013",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_014/tip_right_014",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_015/tip_right_015",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_016/tip_right_016",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_017/tip_right_017",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_018/tip_right_018",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_019/tip_right_019",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_020/tip_right_020",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_021/tip_right_021",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_022/tip_right_022",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_023/tip_right_023",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_024/tip_right_024",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_025/tip_right_025",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_026/tip_right_026",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_027/tip_right_027",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_028/tip_right_028",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_029/tip_right_029",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_030/tip_right_030",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_031/tip_right_031",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_032/tip_right_032",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_033/tip_right_033",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_034/tip_right_034",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_035/tip_right_035",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_036/tip_right_036",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_037/tip_right_037",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_038/tip_right_038",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_039/tip_right_039",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_040/tip_right_040",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_041/tip_right_041",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_042/tip_right_042",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_043/tip_right_043",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_044/tip_right_044",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_045/tip_right_045",
+              "/World/envs/env_0/RightArm/Geometry/base/link1/link2/link3/link4/link5/gripper/tip_right/tip_right_046/tip_right_046"
+            ]
+          ],
+          "checks": [
+            {
+              "name": "minimum_native_fingertip_motion_across_four_links",
+              "measured": 0.18008656598197276,
+              "operator": ">=",
+              "threshold": 0.05,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "scene_configured_contact_sensors_initialized",
+              "measured": 5,
+              "operator": "==",
+              "threshold": 5,
+              "unit": "sensors",
+              "passed": true
+            },
+            {
+              "name": "native_support_contact_filter_collider_count",
+              "measured": 4,
+              "operator": "==",
+              "threshold": 4,
+              "unit": "colliders",
+              "passed": true
+            },
+            {
+              "name": "native_physics_timestep_matches_240_hz_plan",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-12,
+              "unit": "s",
+              "passed": true
+            },
+            {
+              "name": "complete_circular_aperture_count",
+              "measured": 261,
+              "operator": "==",
+              "threshold": 261,
+              "unit": "holes",
+              "passed": true
+            },
+            {
+              "name": "circular_aperture_clear_diameter_lower_bound",
+              "measured": 0.01254364192555825,
+              "operator": ">=",
+              "threshold": 0.0125,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "circular_aperture_clear_diameter_upper_bound",
+              "measured": 0.01254364192555825,
+              "operator": "<=",
+              "threshold": 0.0129,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "authored_floor_symmetric_difference_area",
+              "measured": 0.0,
+              "operator": "<=",
+              "threshold": 1e-09,
+              "unit": "m^2",
+              "passed": true
+            },
+            {
+              "name": "authored_solid_connected_components",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "components",
+              "passed": true
+            },
+            {
+              "name": "support_post_count_exact",
+              "measured": 4,
+              "operator": "==",
+              "threshold": 4,
+              "unit": "posts",
+              "passed": true
+            },
+            {
+              "name": "support_post_perforated_region_clearance_min",
+              "measured": 0.015852877514630298,
+              "operator": ">=",
+              "threshold": 0.004,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "native_mass_relative_error",
+              "measured": 1.4901161138336505e-08,
+              "operator": "<=",
+              "threshold": 0.0001,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "native_inertia_max_relative_error",
+              "measured": 4.180436127792526e-08,
+              "operator": "<=",
+              "threshold": 0.001,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "nonzero_signed_raw_tab_reaction_points",
+              "measured": 1094,
+              "operator": ">",
+              "threshold": 0,
+              "unit": "points",
+              "passed": true
+            },
+            {
+              "name": "positive_native_pair_samples_with_verified_raw_vector_reconciliation",
+              "measured": 658,
+              "operator": "==",
+              "threshold": 658,
+              "unit": "control_samples",
+              "passed": true
+            },
+            {
+              "name": "maximum_native_contact_count_below_configured_capacity",
+              "measured": 152,
+              "operator": "<",
+              "threshold": 256,
+              "unit": "contacts_per_prim",
+              "passed": true
+            },
+            {
+              "name": "native_reported_contact_capacity_matches_configuration",
+              "measured": 256,
+              "operator": "==",
+              "threshold": 256,
+              "unit": "contacts_per_prim",
+              "passed": true
+            },
+            {
+              "name": "measured_bilateral_opposing_tab_contact_duration",
+              "measured": 8.15,
+              "operator": ">=",
+              "threshold": 0.5,
+              "unit": "s",
+              "passed": true
+            },
+            {
+              "name": "observed_screen_lift_height",
+              "measured": 0.035254061222076416,
+              "operator": ">=",
+              "threshold": 0.03,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "contact_supported_stationary_lifted_hold_duration",
+              "measured": 3.2,
+              "operator": ">=",
+              "threshold": 3.0,
+              "unit": "s",
+              "passed": true
+            },
+            {
+              "name": "post_return_bilateral_support_pose_stationary_duration",
+              "measured": 1.85,
+              "operator": ">=",
+              "threshold": 0.25,
+              "unit": "s",
+              "passed": true
+            },
+            {
+              "name": "reseating_established_before_clearance_evaluation",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "boolean",
+              "passed": true
+            },
+            {
+              "name": "post_retreat_fresh_observation_count",
+              "measured": 10,
+              "operator": ">=",
+              "threshold": 2,
+              "unit": "control_samples",
+              "passed": true
+            },
+            {
+              "name": "released_fingertip_collider_to_screen_conservative_clearance",
+              "measured": 0.08026263092219289,
+              "operator": ">=",
+              "threshold": 0.06,
+              "unit": "m",
+              "passed": true
+            },
+            {
+              "name": "native_rgb_minimum_finite_pixel_fraction",
+              "measured": 1.0,
+              "operator": "==",
+              "threshold": 1.0,
+              "unit": "fraction",
+              "passed": true
+            },
+            {
+              "name": "native_rgb_minimum_pixel_standard_deviation",
+              "measured": 47.39491653442383,
+              "operator": ">=",
+              "threshold": 2.0,
+              "unit": "uint8_level",
+              "passed": true
+            },
+            {
+              "name": "decoded_h264_valid_frame_count",
+              "measured": 295,
+              "operator": "==",
+              "threshold": 295,
+              "unit": "frames",
+              "passed": true
+            },
+            {
+              "name": "decoded_h264_nonblank_frame_count",
+              "measured": 295,
+              "operator": "==",
+              "threshold": 295,
+              "unit": "frames",
+              "passed": true
+            },
+            {
+              "name": "decoded_initial_screenshot_valid_nonblank",
+              "measured": 1,
+              "operator": "==",
+              "threshold": 1,
+              "unit": "boolean",
+              "passed": true
+            }
+          ],
+          "artifacts": [
+            "measurements/full-screen-yam-preflight.mp4",
+            "measurements/full-screen-yam-initial.png",
+            "measurements/full-screen-yam-preflight-trace.json"
+          ]
+        }
+      }
+    ],
+    "at": "2026-11-17T01:25:07.189438+00:00"
   }
 ]
