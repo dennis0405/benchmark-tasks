@@ -17,7 +17,11 @@ class Bench:
         valve_force=5.0,
         rise_seconds=0.0,
         native_friction=False,
+        support_stiffness=1e6,
+        measured_contact=False,
     ):
+        self.measured_contact = measured_contact
+        self.previous_q = None
         self.valve_force = float(valve_force)
         self.rise_seconds = float(rise_seconds)
         self.h = 1 / hz
@@ -47,7 +51,7 @@ class Bench:
         sz, st, nz, nt, p, jl, jr, valve = self.unit
         lead = 0.001 / math.tau
         self.g = np.array([sz - lead * st, nz - lead * nt])
-        self.k = np.array([1e6, 1e5])
+        self.k = np.array([support_stiffness, 1e5])
         self.d = np.array([4000.0, 2500.0])
         self.axes = np.array([st, nt])
         self.rows = np.array([sz + nz, sz - p, p, -p, sz, -sz, nz, -nz])
@@ -98,22 +102,6 @@ class Bench:
         )
 
     def tool_efforts(self):
-        if self.native_friction:
-            # The PhysX articulation exposes static/dynamic friction EFFORT per
-            # DOF, independently of the finite diagnostic drive. Let the same
-            # solver resolve contact and the load-dependent angular stick/slip.
-            measured = self.k * (self.g @ q) + self.d * (self.g @ v)
-            for i, idx in enumerate((self.index[1], self.index[3])):
-                force = abs(measured[i]) * 0.0035
-                self.friction_props[0, idx, :] = (
-                    (0.08, 0.35)[i] * force,
-                    (0.064, 0.28)[i] * force,
-                    0.0,
-                )
-            self.art.set_dof_friction_properties(
-                wp.array(self.friction_props, device="cpu"), self.cpu_ids
-            )
-            internal -= self.axes.T @ friction
         efforts = np.zeros(8)
         for name, view in self.tool_pairs:
             forces, points, normals, sep, count, start = view.get_contact_data(
@@ -181,6 +169,26 @@ class Bench:
         )
         external = applied + sensed + gravity
         external[4] -= 350 * v[4]
+        rows = self.rows
+        gaps = self.gap0 + self.rows @ q
+        if self.measured_contact:
+            if self.previous_q is not None:
+                v = v.copy()
+                v[:4] = (q[:4] - self.previous_q[:4]) / self.h
+            self.previous_q = q.copy()
+            normal = [
+                abs(view.get_contact_force_matrix(dt=self.h).numpy().reshape(3)[2])
+                for view in (self.seat, self.stop)
+            ]
+            keep = np.ones(len(rows), dtype=bool)
+            for j, load in enumerate(normal):
+                if load > 0:
+                    # A contact impulse has already been observed. Use it as the
+                    # predictor's external load, and remove that predictive bound.
+                    # PhysX remains the sole writer of real contact impulses.
+                    external += load * rows[j]
+                    keep[j] = False
+            rows, gaps = rows[keep], gaps[keep]
         internal, self.loads, friction = solve_internal(
             predicted_mass,
             v,
@@ -189,8 +197,8 @@ class Bench:
             self.g @ q,
             self.k,
             self.d,
-            self.rows,
-            self.gap0 + self.rows @ q,
+            rows,
+            gaps,
             self.h,
             self.axes,
         )
@@ -225,6 +233,37 @@ class Bench:
             k: v.get_transforms().numpy()[0].tolist() for k, v in self.bodies.items()
         }
 
+    def seat_face_load(self):
+        """Sum resolved normal forces on the N73/cover bearing face."""
+        force, point, normal, separation, count, start = self.seat.get_contact_data(
+            dt=self.h
+        )
+        n = int(count.numpy().ravel()[0])
+        if not n:
+            return 0.0, 0, 0.0
+        first = int(start.numpy().ravel()[0])
+        sl = slice(first, first + n)
+        transform = self.bodies["frame"].get_transforms().numpy()[0]
+        x, y, z, w = transform[3:]
+        up = np.array(
+            [2 * (x * z + w * y), 2 * (y * z - w * x), 1 - 2 * (x * x + y * y)]
+        )
+        across = np.array(
+            [2 * (x * y - w * z), 1 - 2 * (x * x + z * z), 2 * (y * z + w * x)]
+        )
+        center = transform[:3] - 0.018 * across + 0.090 * up
+        rel = point.numpy()[sl].reshape(-1, 3) - center
+        height = rel @ up
+        local_radius = np.linalg.norm(rel - np.outer(height, up), axis=1)
+        faces = (
+            (np.abs(normal.numpy()[sl].reshape(-1, 3) @ up) > 0.95)
+            & (np.abs(height) < 0.00025)
+            & (local_radius <= 0.0076)
+        )
+        loads = np.abs(force.numpy()[sl].ravel())
+        depths = np.maximum(0.0, -separation.numpy()[sl].ravel())
+        return float(loads[faces].sum()), int(faces.sum()), float(depths.max())
+
     def read(self):
         q, v = self.state()
         seat = float(
@@ -233,6 +272,7 @@ class Bench:
         stop = float(
             abs(self.stop.get_contact_force_matrix(dt=self.h).numpy().reshape(3)[2])
         )
+        face_n, points, penetration = self.seat_face_load()
         effort = float(self.art.get_dof_actuation_forces().numpy()[0, self.index[4]])
         return dict(
             sz=q[0],
@@ -248,7 +288,10 @@ class Bench:
             nut_speed=v[1] + v[3],
             piston_speed=v[4],
             angular_speed=math.degrees(v[6] - v[5]),
-            seat_n=seat,
+            seat_pair_axial_n=seat,
+            seat_n=face_n,
+            seat_face_points=points,
+            seat_max_pair_penetration_m=penetration,
             stop_n=stop,
             stop_gap=self.gap0[1] + q[0] - q[4],
             seat_gap=self.gap0[0] + q[0] + q[2],

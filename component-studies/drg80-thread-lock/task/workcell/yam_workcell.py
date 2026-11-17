@@ -11,6 +11,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--workspace", type=Path, required=True)
 parser.add_argument("--output", type=Path, required=True)
 parser.add_argument("--video", type=Path)
+parser.add_argument("--continuous-seat", action="store_true")
+parser.add_argument("--native-friction", action="store_true")
+parser.add_argument("--rise-seconds", type=float, default=0.0)
 
 args = parser.parse_args()
 args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -152,7 +155,7 @@ from native_bench import Bench
 def main():
     objects, rig, embodiment, sides, names, grasps = load_station()
     fixture = args.output.with_suffix(".usda").resolve()
-    build(fixture, task_assets())
+    build(fixture, task_assets(), continuous_seat=args.continuous_seat)
     objects.append(
         scene.Object(
             name="gripper_bench",
@@ -193,7 +196,13 @@ def main():
             if x.GetName() == "sz"
         )
         targets = [base.scene[name].root_physx_view.prim_paths[0] for name in names]
-        bench = Bench(root, round(1 / base.physics_dt), tools=targets)
+        bench = Bench(
+            root,
+            round(1 / base.physics_dt),
+            tools=targets,
+            native_friction=args.native_friction,
+            rise_seconds=args.rise_seconds,
+        )
 
         from runpy import run_path
 
@@ -295,7 +304,10 @@ def main():
                     rgb = rgb.torch if hasattr(rgb, "torch") else rgb
                     writer.append_data(rgb[0, ..., :3].cpu().numpy().astype(np.uint8))
             commands[:] = target
-            results["completed"].append(label)
+            if not results["completed"] or results["completed"][-1] != label:
+                results["completed"].append(label)
+            if label == "guarded_insert":
+                return
             print(
                 label,
                 trace[-1]["tools"],
@@ -457,20 +469,61 @@ def main():
                 32,
             )
         go_tool("driver_above_socket", 0, above, rot, 20)
-        for h in (0.022, 0.009, 0.004):
-            go_tool("driver_preinsert", 0, screw() + [0, 0, h], rot, 26)
-        go_tool("driver_at_socket", 0, screw() + [0, 0, 0.001], rot, 36)
-        # The freely mounted screw can turn on initial contact. Re-index the
-        # driver to the actual socket orientation before applying a stroke.
-        sr = Rotation.from_quat(bench.poses()["screw"][3:]).as_matrix()
-        socket_yaw = math.atan2(sr[1, 0], sr[0, 0])
-        current_yaw = math.atan2(tool(0)[1][1, 0], tool(0)[1][0, 0])
-        indexed = (
-            socket_yaw + round((current_yaw - socket_yaw) / (math.pi / 3)) * math.pi / 3
-        )
-        rot = Rotation.from_euler("z", indexed).as_matrix()
-        for h in (-0.001, -0.0025, -0.0035):
-            go_tool("driver_engage", 0, screw() + [0, 0, h], rot, 26)
+        # Stop the free-space transfer above the hardware. The 0.20 mm
+        # difference across flats leaves only 0.10 mm clearance per side.
+        go_tool("driver_preinsert", 0, screw() + [0, 0, 0.016], rot, 36)
+        height = 0.014
+        indexed = idx * math.pi / 3
+        aligned = 0
+        for step in range(450):
+            tip_pos, tool_rot = tool(0)
+            part = bench.poses()["screw"]
+            part_rot = Rotation.from_quat(part[3:]).as_matrix()
+            socket_yaw = math.atan2(part_rot[1, 0], part_rot[0, 0])
+            indexed = (
+                socket_yaw + round((indexed - socket_yaw) / (math.pi / 3)) * math.pi / 3
+            )
+            goal_rot = Rotation.from_euler("z", indexed).as_matrix()
+            err_rot = Rotation.from_matrix(goal_rot @ tool_rot.T).as_rotvec()
+            delta = np.asarray(part[:3]) - tip_pos
+            radial = np.linalg.norm(delta[:2])
+            if radial < 0.00010 and np.linalg.norm(err_rot) < 0.011:
+                aligned += 1
+            else:
+                aligned = 0
+            if height > 0.005 or aligned >= 2:
+                height = max(-0.0035, height - (0.00055 if height > 0.005 else 0.00018))
+            axial_force = bench.tool_efforts()[0]
+            if height < 0.001 and abs(axial_force) > 3 and radial > 0.0001:
+                height = min(0.004, height + 0.0002)
+            delta[2] += height
+            if height <= -0.0035 and abs(delta[2]) < 0.00025 and radial < 0.00015:
+                break
+            goals = commands.copy()
+            cp, cr = ik.tcp_pose(goals[0], rig.bases["left"])
+            actual_tcp = ik.tcp_pose(joints(0), rig.bases["left"])[0]
+            arm_to_tip = tip_pos - actual_tcp
+            dq = Rotation.from_rotvec(
+                np.clip(0.075 * err_rot, -0.003, 0.003)
+            ).as_matrix()
+            next_xyz = (
+                cp
+                + np.clip(0.13 * delta, -0.0008, 0.0008)
+                + arm_to_tip
+                - dq @ arm_to_tip
+            )
+            goals[0], pe, ae = ik.solve(
+                next_xyz,
+                ik.matrix_to_quat_xyzw(dq @ cr),
+                q_init=goals[0],
+                base_pos=rig.bases["left"],
+                iters=18,
+                tol=0.000015,
+            )
+            if pe > 0.002 or ae > 0.035:
+                raise ValueError("guarded insertion wrist travel exhausted")
+            move("guarded_insert", goals, grip_state, 1)
+        results["commanded_insertion_height_m"] = height
         tip = tool(0)[0] - screw()
         results["engagement_radial_m"] = float(np.linalg.norm(tip[:2]))
         results["engagement_depth_m"] = float(-tip[2])

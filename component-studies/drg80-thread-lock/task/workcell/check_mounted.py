@@ -10,6 +10,8 @@ p = argparse.ArgumentParser()
 p.add_argument("--assets", type=Path, required=True)
 p.add_argument("--out", type=Path, required=True)
 p.add_argument("--rise-seconds", type=float, default=0.0)
+p.add_argument("--diagnostic-support-stiffness", type=float, default=1e6)
+p.add_argument("--measured-contact", action="store_true")
 p.add_argument("--native-friction", action="store_true")
 p.add_argument("--continuous-seat", action="store_true")
 p.add_argument("--velocity-iters", type=int, default=4)
@@ -51,6 +53,8 @@ def main():
         valve_force=args.valve_force,
         rise_seconds=args.rise_seconds,
         native_friction=args.native_friction,
+        support_stiffness=args.diagnostic_support_stiffness,
+        measured_contact=args.measured_contact,
     )
 
     def tool_instrument(q, phase, t):
@@ -229,9 +233,13 @@ def main():
             dict(
                 checks={k: bool(v) for k, v in checks.items()},
                 fixture_checks_pass=all(checks.values()),
+                support_stiffness_n_m=args.diagnostic_support_stiffness,
+                benchmark_stiffness=args.diagnostic_support_stiffness == 1e6,
                 qualification=qualification,
                 all_necessary_pass=bool(
-                    all(checks.values()) and qualification["all_necessary_pass"]
+                    args.diagnostic_support_stiffness == 1e6
+                    and all(checks.values())
+                    and qualification["all_necessary_pass"]
                 ),
                 final={
                     phase: hold(phase)[-1]
