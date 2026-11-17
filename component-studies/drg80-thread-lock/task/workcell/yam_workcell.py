@@ -20,11 +20,22 @@ tips.add_argument(
 )
 parser.add_argument("--contact-guided", action="store_true")
 tips.add_argument("--long-lead", action="store_true")
+parser.add_argument(
+    "--adaptive-stroke",
+    action="store_true",
+    help="End torque early at the physical wrist limit and reindex in free space.",
+)
 parser.add_argument("--seated-regrasp", action="store_true")
 parser.add_argument("--supported-turn", action="store_true")
 parser.add_argument("--align-before-feed", action="store_true")
 parser.add_argument("--wrench-preload-n", type=float, default=5.0)
+parser.add_argument(
+    "--check-valve-close",
+    action="store_true",
+    help="Test the real YAM lever closure separately on the unadjusted workcell.",
+)
 parser.add_argument("--observe-reset", action="store_true")
+parser.add_argument("--room-damage", action="store_true")
 parser.add_argument("--solver", choices=("tgs", "pgs"), default="tgs")
 parser.add_argument("--contact-last", action="store_true")
 parser.add_argument("--driver-correction-rad", type=float, default=0.0)
@@ -179,6 +190,8 @@ from contact_limits import contact_bounds
 from tool_bounds import ToolBounds
 from adjustment_volume import AdjustmentVolume
 from nut_retention import nut_retention
+from room_contacts import RoomContacts
+from workcell_clearance import WorkcellClearance
 from service_paths import wrench_flat, lever_grasp, lever_pose
 
 
@@ -234,6 +247,7 @@ def main():
         "align_before_feed": args.align_before_feed,
         "wrench_preload_target_n": args.wrench_preload_n,
         "seated_regrasp": args.seated_regrasp,
+        "adaptive_stroke": args.adaptive_stroke,
         "bit_chamfer_m": bit_chamfer,
         "implicit_axial": args.implicit_axial,
         "transmitted_reaction": args.transmitted_reaction,
@@ -242,6 +256,7 @@ def main():
     trace = []
     callbacks = []
     writer = None
+    room_contacts = None
     try:
         env.reset()
         base = env.unwrapped
@@ -314,6 +329,22 @@ def main():
         if set(guide_paths) != set(guides):
             raise ValueError("nut retention view did not resolve all three bodies")
         guide_order = [guide_paths.index(path) for path in guides]
+        if args.room_damage:
+            room_contacts = RoomContacts(
+                PhysxManager.get_physics_sim_view(),
+                base.sim.stage,
+                round(1 / base.physics_dt),
+            )
+        clear_view = WorkcellClearance(
+            PhysxManager.get_physics_sim_view(),
+            base.sim.stage,
+            root,
+            targets,
+            [
+                base.scene[side + "_robot"].root_physx_view.link_paths[0]
+                for side in sides
+            ],
+        )
         prior_rack = None
 
         def pre(*args, **kwargs):
@@ -333,6 +364,13 @@ def main():
             results["physics_ticks"] += 1
             r = bench.read()
             latest = r
+            if room_contacts is not None:
+                violation = room_contacts.observe(results["physics_ticks"])
+                if violation:
+                    results.setdefault(
+                        "callback_error",
+                        f"room contact exceeded universal damage limit: {violation}",
+                    )
             poses = tool_view.get_transforms().numpy()[tool_order]
             contained = [
                 body.in_cradle(pose[:3], Rotation.from_quat(pose[3:]).as_matrix(), box)
@@ -348,6 +386,12 @@ def main():
                 )
                 prior_rack = contained
             r["tools_racked"] = all(contained)
+            if all(contained):
+                r["robot_tool_clearance_lower_bound_m"] = clear_view.lower_bound()
+                r["clearance_certified_30mm"] = (
+                    r["robot_tool_clearance_lower_bound_m"] >= 0.030
+                )
+
             frame = bench.bodies["frame"].get_transforms().numpy()[0]
             retention = nut_retention(*guide_view.get_transforms().numpy()[guide_order])
             r.update(retention)
@@ -396,6 +440,7 @@ def main():
             contact_data = contacts.get_contact_data(dt=base.physics_dt)
             count = contact_data[4].numpy()
             released = not np.any(count)
+            r["released"] = bool(released)
             if not released:
                 force, pen = contact_bounds(
                     contact_data[0].numpy(),
@@ -441,9 +486,19 @@ def main():
                     f"native guide/seat failed at tick {results['physics_ticks']}: sz={r['sz']}, nz={r['nz']}, gap={r['seat_gap']}",
                 )
 
+        def observe_after_step(*args, **kwargs):
+            if "callback_error" in results:
+                return
+            try:
+                post()
+            except Exception as exc:
+                results["callback_error"] = (
+                    f"native observer failed at tick {results['physics_ticks']}: {exc!r}"
+                )
+
         for event, callback in (
             (IsaacEvents.PRE_PHYSICS_STEP, pre),
-            (IsaacEvents.POST_PHYSICS_STEP, post),
+            (IsaacEvents.POST_PHYSICS_STEP, observe_after_step),
         ):
             callbacks.append(
                 PhysxManager.register_callback(
@@ -495,6 +550,8 @@ def main():
                 poses = [tool(i) for i in range(2)]
                 rec = dict(
                     phase=label,
+                    action=action.tolist(),
+                    measured_arm_joints_rad=[joints(i).tolist() for i in range(2)],
                     driver_contact_n=(driver_impulse / base.step_dt).tolist(),
                     fixture=latest,
                     tools=[p.tolist() for p, _ in poses],
@@ -537,11 +594,120 @@ def main():
                 flush=True,
             )
 
+        def run_valve(grip_state, cold_test=False):
+            # A real parallel-jaw grasp on the instrument handle drives the pivot.
+            pivot = np.array(bench.poses()["lever"][:3])
+
+            residual, hand, neutral, tilt, yaw = lever_grasp(
+                pivot, [joints(0), joints(1)], rig.bases
+            )
+            results["lever_plan"] = dict(
+                arm=sides[hand],
+                neutral_tilt_deg=tilt,
+                yaw_deg=yaw,
+                weighted_ik_error_m=residual,
+            )
+            arm = rig.bases[sides[hand]]
+
+            def handle_motion(label, deg, steps, extra_z=0.0):
+                goals = commands.copy()
+                pos, rot = lever_pose(pivot, deg, neutral, extra_z)
+                q, ep, ea = ik.solve(
+                    pos,
+                    ik.matrix_to_quat_xyzw(rot),
+                    q_init=joints(hand),
+                    base_pos=arm,
+                    iters=180,
+                )
+                if ep > 0.003 or ea > 0.04:
+                    raise ValueError("lever IK infeasible")
+                goals[hand] = q
+                move(label, goals, grip_state, steps)
+                # Factory joint gains deflect under gravity and contact. Correct
+                # actual TCP tracking with bounded joint-position actions.
+                for _ in range(4):
+                    actual, orientation = ik.tcp_pose(joints(hand), arm)
+                    error = pos - actual
+                    rotation_error = Rotation.from_matrix(
+                        rot @ orientation.T
+                    ).as_rotvec()
+                    if (
+                        np.linalg.norm(error) < 0.001
+                        and np.linalg.norm(rotation_error) < 0.025
+                    ):
+                        break
+                    cp, cr = ik.tcp_pose(commands[hand], arm)
+                    corr = Rotation.from_rotvec(
+                        np.clip(0.5 * rotation_error, -0.025, 0.025)
+                    ).as_matrix()
+                    goals[hand], _, _ = ik.solve(
+                        cp + np.clip(0.6 * error, -0.002, 0.002),
+                        ik.matrix_to_quat_xyzw(corr @ cr),
+                        q_init=commands[hand],
+                        base_pos=arm,
+                        iters=40,
+                    )
+                    move(label + "_trim", goals, grip_state, 3)
+
+            # A 16 mm handle needs a 32 mm approach opening. Wide-open pads
+            # otherwise sweep the neighbouring jaw when approached from the side.
+            grip_state[hand] = 0.016 / abs(FINGER_OPEN)
+            move("valve_preshape", commands.copy(), grip_state, 15)
+            handle_motion("valve_above", 0, 40, 0.035)
+            handle_motion("valve_grasp", 0, 30)
+            grip_state[hand] = (0.008 - 0.0016) / abs(FINGER_OPEN)
+            handle_motion("valve_grip_close", 0, 20)
+            if cold_test:
+                for degree in range(0, -31, -5):
+                    handle_motion("cold_valve_close", degree, 5)
+                handle_motion("cold_close_dwell", -30, 24)
+                final = bench.read()
+                result = dict(
+                    lever_deg=math.degrees(final["lever"]),
+                    jaw_deg=final["angle"],
+                    actuator_n=final["actuator_n"],
+                )
+                results["cold_close"] = result
+                if not (
+                    -35 <= result["lever_deg"] <= -25
+                    and result["jaw_deg"] <= 10
+                    and result["actuator_n"] < -1
+                ):
+                    raise ValueError(f"physical close detent not attained: {result}")
+                return
+            endpoints = []
+            for cycle in range(4):
+                for degree in range(0 if cycle == 0 else -30, 31, 5):
+                    handle_motion("valve_open", degree, 5)
+                handle_motion("open_dwell", 30, 24)
+                sample = bench.read()
+                if abs(sample["angle"] - 90) > 3 or sample["stop_n"] < 0.1:
+                    raise ValueError(
+                        "open endpoint missing native contact or outside tolerance"
+                    )
+                endpoints.append(sample["angle"])
+                if cycle < 3:
+                    for degree in range(30, -31, -5):
+                        handle_motion("valve_close", degree, 5)
+                    handle_motion("close_dwell", -30, 24)
+                    if bench.read()["angle"] > 10:
+                        raise ValueError("jaw did not physically close")
+            results["actual_open_endpoints_deg"] = endpoints
+            grip_state[hand] = 1
+            handle_motion("valve_release", 30, 20)
+            move("equipment_clear", [READY, READY], grip_state, 60)
+            move("clear_dwell", [READY, READY], grip_state, 30)
+
+        if args.check_valve_close:
+            run_valve([1.0, 1.0], cold_test=True)
+            return
         if args.observe_reset:
             move("observe_reset", commands.copy(), [1.0, 1.0], 12)
             results["reset_observation"] = {
                 key: latest[key]
                 for key in (
+                    "robot_tool_clearance_lower_bound_m",
+                    "clearance_certified_30mm",
                     "nut_guide_overlap_m",
                     "retainer_installed_error_m",
                     "nuts_retained",
@@ -1000,8 +1166,11 @@ def main():
                     tol=0.000015,
                 )
                 if err > 0.0012 or ea > 0.025:
+                    if args.adaptive_stroke and label == "driver_in_socket":
+                        return False
                     raise ValueError(f"{label} wrist workspace exhausted")
                 move(label, goals, grip_state, 1)
+            return True
 
         target_angle = (
             math.radians(87) / 300 - 0.0057
@@ -1090,12 +1259,28 @@ def main():
             arc = max(50, min(270, -neg_span - 12))
             increment = 2.0 if args.supported_turn else 4.5
             depth = 0.0040 if args.supported_turn else 0.0026
+            within_reach = True
             for j in range(math.ceil(arc / increment)):
                 remaining = latest["st"] - target_angle
                 if remaining < 0.10:
                     break
                 indexed -= min(math.radians(increment), remaining)
-                servo_tool(0, indexed, drive_tip(depth), 7, "driver_in_socket")
+                within_reach = servo_tool(
+                    0, indexed, drive_tip(depth), 7, "driver_in_socket"
+                )
+                if not within_reach:
+                    if initial_angle - latest["st"] < 0.1:
+                        raise ValueError("available arc too short to turn the screw")
+                    _, real_rot = tool(0)
+                    indexed = math.atan2(real_rot[1, 0], real_rot[0, 0])
+                    results.setdefault("wrist_reindexes", []).append(
+                        dict(
+                            tick=results["physics_ticks"],
+                            angle=latest["st"],
+                            fit=measured_fit(),
+                        )
+                    )
+                    break
                 surface = measured_fit()
                 if (
                     args.supported_turn
@@ -1129,7 +1314,10 @@ def main():
                     )
                 if yaw_start - indexed >= math.radians(arc):
                     break
-            servo_tool(0, indexed, drive_tip(depth), 10, "driver_stroke_hold")
+            # Only hold a reachable target. A shortened stroke already holds
+            # the last in-range physical command and must retreat axially.
+            if within_reach:
+                servo_tool(0, indexed, drive_tip(depth), 10, "driver_stroke_hold")
             state = bench.read()
             turn = state["st"] - initial_angle
             tip = tool(0)[0] - screw()
@@ -1224,66 +1412,14 @@ def main():
         results["released_preload_min_n"] = min(preload)
         if min(preload) < 2:
             raise ValueError("insufficient measured preload after releasing both tools")
-        # A real parallel-jaw grasp on the instrument handle drives the pivot.
-        pivot = np.array(bench.poses()["lever"][:3])
-
-        residual, hand, neutral, tilt, yaw = lever_grasp(
-            pivot, [joints(0), joints(1)], rig.bases
-        )
-        results["lever_plan"] = dict(
-            arm=sides[hand],
-            neutral_tilt_deg=tilt,
-            yaw_deg=yaw,
-            weighted_ik_error_m=residual,
-        )
-        arm = rig.bases[sides[hand]]
-
-        def handle_motion(label, deg, steps, extra_z=0.0):
-            goals = commands.copy()
-            pos, rot = lever_pose(pivot, deg, neutral, extra_z)
-            q, ep, ea = ik.solve(
-                pos,
-                ik.matrix_to_quat_xyzw(rot),
-                q_init=joints(hand),
-                base_pos=arm,
-                iters=180,
-            )
-            if ep > 0.003 or ea > 0.04:
-                raise ValueError("lever IK infeasible")
-            goals[hand] = q
-            move(label, goals, grip_state, steps)
-
-        handle_motion("valve_above", 0, 40, 0.035)
-        handle_motion("valve_grasp", 0, 30)
-        grip_state[hand] = 0
-        handle_motion("valve_grip_close", 0, 20)
-        endpoints = []
-        for cycle in range(4):
-            for degree in range(0 if cycle == 0 else -30, 31, 5):
-                handle_motion("valve_open", degree, 5)
-            handle_motion("open_dwell", 30, 24)
-            sample = bench.read()
-            if abs(sample["angle"] - 90) > 3 or sample["stop_n"] < 0.1:
-                raise ValueError(
-                    "open endpoint missing native contact or outside tolerance"
-                )
-            endpoints.append(sample["angle"])
-            if cycle < 3:
-                for degree in range(30, -31, -5):
-                    handle_motion("valve_close", degree, 5)
-                handle_motion("close_dwell", -30, 24)
-                if bench.read()["angle"] > 10:
-                    raise ValueError("jaw did not physically close")
-        results["actual_open_endpoints_deg"] = endpoints
-        grip_state[hand] = 1
-        handle_motion("valve_release", 30, 20)
-        move("equipment_clear", [READY, READY], grip_state, 60)
-        move("clear_dwell", [READY, READY], grip_state, 30)
+        run_valve(grip_state)
 
     except Exception as exc:
         results["failure"] = str(exc)
         print("WORKCELL TRIAL", str(exc), flush=True)
     finally:
+        if room_contacts is not None:
+            results["room_contacts"] = room_contacts.report()
 
         def number(value):
             if isinstance(value, np.generic):

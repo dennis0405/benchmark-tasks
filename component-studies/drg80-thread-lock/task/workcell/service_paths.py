@@ -4,7 +4,6 @@ import math
 import numpy as np
 from scipy.spatial.transform import Rotation
 from yam_arena import ik
-from yam_arena.constants import PAD_TIP_PAST_TCP
 from yam_arena.demo import grip_rotation
 
 
@@ -26,40 +25,44 @@ def lever_pose(pivot, degree, neutral, approach=0.0):
     link = Rotation.from_euler("y", degree, degrees=True).as_matrix()
     rot = link @ neutral
     grip = pivot + 0.070 * link[:, 2]
-    return grip - (PAD_TIP_PAST_TCP + approach) * rot[:, 2], rot
+    return grip - approach * rot[:, 2], rot
 
 
 def lever_grasp(pivot, starts, bases):
-    solutions = []
-    for i, side in enumerate(("left", "right")):
-        for tilt in (45, 65, 85):
-            for yaw in (0, 90, 180, 270):
-                neutral = Rotation.from_euler(
-                    "x", tilt if side == "right" else -tilt, degrees=True
-                ).as_matrix() @ grip_rotation(math.radians(yaw))
-                # The pads close across the cylinder, clear of the end cap.
-                if abs(neutral[2, 0]) > 0.40:
-                    continue
-                track = [
-                    lever_pose(pivot, angle, neutral, gap)
-                    for angle, gap in [
-                        (0, 0.035),
-                        (0, 0),
-                        (15, 0),
-                        (30, 0),
-                        (0, 0),
-                        (-15, 0),
-                        (-30, 0),
-                        (0, 0),
-                        (30, 0),
+    # Approach from the open front side of the table. Coming across the
+    # gripper body from the rear let a finger push a jaw during a valve test.
+    for bearing in (90, 65, 115, 40, 140, 0):
+        front = Rotation.from_euler("z", bearing, degrees=True).as_matrix()
+        solutions = []
+        for i, side in enumerate(("left", "right")):
+            for tilt in (45, 65, 85):
+                for yaw in (0, 90, 180, 270):
+                    lean = Rotation.from_euler(
+                        "x", tilt if side == "left" else -tilt, degrees=True
+                    ).as_matrix()
+                    neutral = front @ lean @ grip_rotation(math.radians(yaw))
+                    if abs(neutral[2, 0]) > 0.40 or neutral[0, 2] < 0.30:
+                        continue
+                    track = [
+                        lever_pose(pivot, angle, neutral, gap)
+                        for angle, gap in [
+                            (0, 0.035),
+                            (0, 0),
+                            (15, 0),
+                            (30, 0),
+                            (0, 0),
+                            (-15, 0),
+                            (-30, 0),
+                            (0, 0),
+                            (30, 0),
+                        ]
                     ]
-                ]
-                possible, residual = screen(track, starts[i], bases[side])
-                if possible:
-                    solutions.append((residual, i, neutral, tilt, yaw))
-    if not solutions:
-        raise ValueError("no side-on lever grasp spans both detents")
-    return min(solutions, key=lambda item: item[0])
+                    possible, residual = screen(track, starts[i], bases[side])
+                    if possible:
+                        solutions.append((residual, i, neutral, tilt, yaw))
+        if solutions:
+            return min(solutions, key=lambda item: item[0])
+    raise ValueError("no front approach spans both valve detents")
 
 
 def wrench_flat(center, phase, offset, orient, start, base):
