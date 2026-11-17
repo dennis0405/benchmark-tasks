@@ -1,0 +1,495 @@
+{
+  "scope": "native 20 Hz staged receiver/support coupling isolation only; no frozen 240 Hz penetration, stability, grasp, passage, scoring, or qualification claim",
+  "variant": "washers",
+  "receiver_inner_dimensions_m": [
+    0.28,
+    0.28
+  ],
+  "seed": 8261,
+  "duration_s": 3.0,
+  "physics_dt_s": 0.004166666666666667,
+  "control_role": "staged_payload_isolation",
+  "component_preflight_passed": true,
+  "checks": [
+    {
+      "name": "native_physics_timestep_240hz_error",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-12,
+      "unit": "s",
+      "passed": true
+    },
+    {
+      "name": "receiver_collider_count",
+      "measured": 5,
+      "operator": "==",
+      "threshold": 5,
+      "unit": "colliders",
+      "passed": true
+    },
+    {
+      "name": "support_collider_count",
+      "measured": 4,
+      "operator": "==",
+      "threshold": 4,
+      "unit": "colliders",
+      "passed": true
+    },
+    {
+      "name": "screen_receiver_native_contact_force_max_20hz_observed",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "unit": "N",
+      "passed": true
+    },
+    {
+      "name": "screen_negative_support_group_contact_force_max_20hz_observed",
+      "measured": 2.649626493454569,
+      "operator": ">",
+      "threshold": 1e-06,
+      "unit": "N",
+      "passed": true
+    },
+    {
+      "name": "screen_positive_support_group_contact_force_max_20hz_observed",
+      "measured": 2.7329378128053428,
+      "operator": ">",
+      "threshold": 1e-06,
+      "unit": "N",
+      "passed": true
+    },
+    {
+      "name": "noop_screen_translation_max_20hz_observed",
+      "measured": 1.2040143766652e-07,
+      "operator": "<=",
+      "threshold": 0.002,
+      "unit": "m",
+      "passed": true
+    },
+    {
+      "name": "authored_screen_translation_max_20hz_observed",
+      "measured": 1.2049582382701726e-07,
+      "operator": "<=",
+      "threshold": 0.002,
+      "unit": "m",
+      "passed": true
+    },
+    {
+      "name": "noop_screen_linear_speed_max_20hz_observed",
+      "measured": 5.749942060362465e-05,
+      "operator": "<=",
+      "threshold": 0.01,
+      "unit": "m/s",
+      "passed": true
+    },
+    {
+      "name": "noop_screen_rotation_from_first_native_max_20hz_observed",
+      "measured": 3.8628224721001805e-07,
+      "operator": "<=",
+      "threshold": 0.017453292519943295,
+      "unit": "rad",
+      "passed": true
+    },
+    {
+      "name": "authored_screen_rotation_max_20hz_observed",
+      "measured": 3.8628224721001805e-07,
+      "operator": "<=",
+      "threshold": 0.017453292519943295,
+      "unit": "rad",
+      "passed": true
+    },
+    {
+      "name": "noop_screen_angular_speed_max_20hz_observed",
+      "measured": 0.00030094375857852505,
+      "operator": "<=",
+      "threshold": 2.0,
+      "unit": "rad/s",
+      "passed": true
+    },
+    {
+      "name": "payload_native_body_count",
+      "measured": 2,
+      "operator": "==",
+      "threshold": 2,
+      "unit": "bodies",
+      "passed": true
+    },
+    {
+      "name": "noop_payload_translation_max_20hz_observed",
+      "measured": 0.0005013346951643105,
+      "operator": "<=",
+      "threshold": 0.002,
+      "unit": "m",
+      "passed": true
+    },
+    {
+      "name": "authored_payload_translation_max_20hz_observed",
+      "measured": 0.0005013370794430139,
+      "operator": "<=",
+      "threshold": 0.002,
+      "unit": "m",
+      "passed": true
+    },
+    {
+      "name": "noop_payload_linear_speed_max_20hz_observed",
+      "measured": 8.887887485759578e-05,
+      "operator": "<=",
+      "threshold": 0.01,
+      "unit": "m/s",
+      "passed": true
+    },
+    {
+      "name": "noop_payload_rotation_from_first_native_max_20hz_observed",
+      "measured": 7.867374530367817e-05,
+      "operator": "<=",
+      "threshold": 0.017453292519943295,
+      "unit": "rad",
+      "passed": true
+    },
+    {
+      "name": "authored_payload_rotation_max_20hz_observed",
+      "measured": 7.867374530367817e-05,
+      "operator": "<=",
+      "threshold": 0.017453292519943295,
+      "unit": "rad",
+      "passed": true
+    },
+    {
+      "name": "noop_payload_angular_speed_max_20hz_observed",
+      "measured": 0.0030772762554633903,
+      "operator": "<=",
+      "threshold": 2.0,
+      "unit": "rad/s",
+      "passed": true
+    },
+    {
+      "name": "authored_to_first_native_payload_position_error_max",
+      "measured": 5.877936727539972e-09,
+      "operator": "<=",
+      "threshold": 0.001,
+      "unit": "m",
+      "passed": true
+    },
+    {
+      "name": "authored_to_first_native_payload_orientation_error_max",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 0.001,
+      "unit": "rad",
+      "passed": true
+    },
+    {
+      "name": "payload_receiver_unintended_contact_force_max_20hz_observed",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "unit": "N",
+      "passed": true
+    },
+    {
+      "name": "payload_support_unintended_contact_force_max_20hz_observed",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "unit": "N",
+      "passed": true
+    },
+    {
+      "name": "every_payload_expected_screen_contact_force_max_minimum",
+      "measured": 0.20229800045491775,
+      "operator": ">",
+      "threshold": 1e-06,
+      "unit": "N",
+      "passed": true
+    },
+    {
+      "name": "payload_contact_measurement_value_count",
+      "measured": 20,
+      "operator": "==",
+      "threshold": 20,
+      "unit": "values",
+      "passed": true
+    },
+    {
+      "name": "authored_to_first_native_screen_position_error",
+      "measured": 4.768371586472142e-09,
+      "operator": "<=",
+      "threshold": 0.001,
+      "unit": "m",
+      "passed": true
+    },
+    {
+      "name": "authored_to_first_native_screen_orientation_error",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 0.001,
+      "unit": "rad",
+      "passed": true
+    }
+  ],
+  "per_filter_native_contact_force_max_N": {
+    "/World/envs/env_0/receiver/Floor": 0.0,
+    "/World/envs/env_0/receiver/Wall_XNeg": 0.0,
+    "/World/envs/env_0/receiver/Wall_XPos": 0.0,
+    "/World/envs/env_0/receiver/Wall_YNeg": 0.0,
+    "/World/envs/env_0/receiver/Wall_YPos": 0.0,
+    "/World/envs/env_0/support_neg/Post_0": 1.6619095802307817,
+    "/World/envs/env_0/support_neg/Post_1": 2.649626493454569,
+    "/World/envs/env_0/support_pos/Post_0": 2.7329378128053428,
+    "/World/envs/env_0/support_pos/Post_1": 1.6133502721786739
+  },
+  "authored_collision_world_bounds": {
+    "/World/envs/env_0/receiver/Floor": {
+      "min_w_m": [
+        0.2240000021457672,
+        -0.1459999978542328,
+        0.751
+      ],
+      "max_w_m": [
+        0.5159999978542328,
+        0.1459999978542328,
+        0.7550000001899898
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/receiver/Wall_XNeg": {
+      "min_w_m": [
+        0.2240000021457672,
+        -0.1459999978542328,
+        0.7550000001899898
+      ],
+      "max_w_m": [
+        0.22999999940395355,
+        0.1459999978542328,
+        0.8050000014007092
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/receiver/Wall_XPos": {
+      "min_w_m": [
+        0.5100000005960464,
+        -0.1459999978542328,
+        0.7550000001899898
+      ],
+      "max_w_m": [
+        0.5159999978542328,
+        0.1459999978542328,
+        0.8050000014007092
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/receiver/Wall_YNeg": {
+      "min_w_m": [
+        0.22999999940395355,
+        -0.1459999978542328,
+        0.7550000001899898
+      ],
+      "max_w_m": [
+        0.5100000005960464,
+        -0.14000000059604645,
+        0.8050000014007092
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/receiver/Wall_YPos": {
+      "min_w_m": [
+        0.22999999940395355,
+        0.14000000059604645,
+        0.7550000001899898
+      ],
+      "max_w_m": [
+        0.5100000005960464,
+        0.1459999978542328,
+        0.8050000014007092
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/support_neg/Post_0": {
+      "min_w_m": [
+        0.2409999998100102,
+        -0.11900000018998981,
+        0.7499999993145465
+      ],
+      "max_w_m": [
+        0.2490000001899898,
+        -0.1109999998100102,
+        0.8095000006854534
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/support_neg/Post_1": {
+      "min_w_m": [
+        0.4909999998100102,
+        -0.11900000018998981,
+        0.7499999993145465
+      ],
+      "max_w_m": [
+        0.4990000001899898,
+        -0.1109999998100102,
+        0.8095000006854534
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/support_pos/Post_0": {
+      "min_w_m": [
+        0.2409999998100102,
+        0.1109999998100102,
+        0.7499999993145465
+      ],
+      "max_w_m": [
+        0.2490000001899898,
+        0.11900000018998981,
+        0.8095000006854534
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/support_pos/Post_1": {
+      "min_w_m": [
+        0.4909999998100102,
+        0.1109999998100102,
+        0.7499999993145465
+      ],
+      "max_w_m": [
+        0.4990000001899898,
+        0.11900000018998981,
+        0.8095000006854534
+      ],
+      "collision_enabled": true
+    }
+  },
+  "authored_screen_position_w_m": [
+    0.37,
+    0.0,
+    0.8125
+  ],
+  "authored_screen_quaternion_w_xyzw": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "initial_screen_position_w_m": [
+    0.3700000047683716,
+    0.0,
+    0.8125
+  ],
+  "initial_screen_quaternion_w_xyzw": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "payload_contact_filter_paths": {
+    "screen": [
+      "/World/envs/env_0/screen"
+    ],
+    "receiver": [
+      "/World/envs/env_0/receiver/Floor",
+      "/World/envs/env_0/receiver/Wall_XNeg",
+      "/World/envs/env_0/receiver/Wall_XPos",
+      "/World/envs/env_0/receiver/Wall_YNeg",
+      "/World/envs/env_0/receiver/Wall_YPos"
+    ],
+    "support": [
+      "/World/envs/env_0/support_neg/Post_0",
+      "/World/envs/env_0/support_neg/Post_1",
+      "/World/envs/env_0/support_pos/Post_0",
+      "/World/envs/env_0/support_pos/Post_1"
+    ]
+  },
+  "per_payload_filter_native_contact_force_max_N": {
+    "washer_00": {
+      "screen": {
+        "/World/envs/env_0/screen": 0.20229800045491775
+      },
+      "receiver": {
+        "/World/envs/env_0/receiver/Floor": 0.0,
+        "/World/envs/env_0/receiver/Wall_XNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_XPos": 0.0,
+        "/World/envs/env_0/receiver/Wall_YNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_YPos": 0.0
+      },
+      "support": {
+        "/World/envs/env_0/support_neg/Post_0": 0.0,
+        "/World/envs/env_0/support_neg/Post_1": 0.0,
+        "/World/envs/env_0/support_pos/Post_0": 0.0,
+        "/World/envs/env_0/support_pos/Post_1": 0.0
+      }
+    },
+    "washer_01": {
+      "screen": {
+        "/World/envs/env_0/screen": 0.20229943096639236
+      },
+      "receiver": {
+        "/World/envs/env_0/receiver/Floor": 0.0,
+        "/World/envs/env_0/receiver/Wall_XNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_XPos": 0.0,
+        "/World/envs/env_0/receiver/Wall_YNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_YPos": 0.0
+      },
+      "support": {
+        "/World/envs/env_0/support_neg/Post_0": 0.0,
+        "/World/envs/env_0/support_neg/Post_1": 0.0,
+        "/World/envs/env_0/support_pos/Post_0": 0.0,
+        "/World/envs/env_0/support_pos/Post_1": 0.0
+      }
+    }
+  },
+  "authored_payload_positions_w_m": {
+    "washer_00": [
+      0.5,
+      0.07,
+      0.815
+    ],
+    "washer_01": [
+      0.24,
+      -0.07,
+      0.815
+    ]
+  },
+  "first_native_payload_positions_w_m": {
+    "washer_00": [
+      0.5,
+      0.07000000029802322,
+      0.8149999976158142
+    ],
+    "washer_01": [
+      0.23999999463558197,
+      -0.07000000029802322,
+      0.8149999976158142
+    ]
+  },
+  "authored_payload_quaternions_w_xyzw": {
+    "washer_00": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "washer_01": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "first_native_payload_quaternions_w_xyzw": {
+    "washer_00": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "washer_01": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "artifacts": [
+    "measurements/receiver-coupling-washers-280-trace.json"
+  ],
+  "sampling_scope": "Forces and poses are read after completed 20 Hz control steps. They identify the contacted fixture filter but do not bound unsampled 240 Hz transients or prove signed separation."
+}

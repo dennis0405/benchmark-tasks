@@ -382,19 +382,21 @@ def spawn_washer(prim_path, cfg, translation=None, orientation=None, **_):
     return root.GetPrim()
 
 
-def loaded_objects():
+def loaded_objects(payload_kind="full"):
     assets = []
     # Transverse, separated packing over central ribs; reset is above the physical floor.
     for index, (x, y) in enumerate((
         (-.0157,-.0471),(.0157,-.0471),(-.0157,-.0157),(.0157,-.0157),
         (-.0157,.0157),(.0157,.0157),(-.0157,.0471),(.0157,.0471))):
-        assets.append(Object(name=f"media_{index:02d}", object_type=ObjectType.RIGID,
-            spawner_cfg=sim_utils.SpawnerCfg(func=spawn_angle_cut_media),
-            initial_pose=Pose(position_xyz=(SCREEN_X+x, SCREEN_Y+y, SCREEN_ROOT_Z+MEDIA_DIAMETER/2+0.0005))))
+        if payload_kind in ("media", "full"):
+            assets.append(Object(name=f"media_{index:02d}", object_type=ObjectType.RIGID,
+                spawner_cfg=sim_utils.SpawnerCfg(func=spawn_angle_cut_media),
+                initial_pose=Pose(position_xyz=(SCREEN_X+x, SCREEN_Y+y, SCREEN_ROOT_Z+MEDIA_DIAMETER/2+0.0005))))
     for index, (x, y) in enumerate(((.130,.070),(-.130,-.070))):
-        assets.append(Object(name=f"washer_{index:02d}", object_type=ObjectType.RIGID,
-            spawner_cfg=sim_utils.SpawnerCfg(func=spawn_washer),
-            initial_pose=Pose(position_xyz=(SCREEN_X+x, SCREEN_Y+y, SCREEN_ROOT_Z+WASHER_T/2+0.0005))))
+        if payload_kind in ("washers", "full"):
+            assets.append(Object(name=f"washer_{index:02d}", object_type=ObjectType.RIGID,
+                spawner_cfg=sim_utils.SpawnerCfg(func=spawn_washer),
+                initial_pose=Pose(position_xyz=(SCREEN_X+x, SCREEN_Y+y, SCREEN_ROOT_Z+WASHER_T/2+0.0005))))
     return assets
 
 
@@ -402,13 +404,18 @@ def spawn_receiver(prim_path, cfg, translation=None, orientation=None, **_):
     """Author a fixed open receiver below the screen with a measurable free volume."""
     root = UsdGeom.Xform.Define(sim_utils.get_current_stage(), prim_path)
     root.AddTranslateOp().Set(Gf.Vec3d(*(translation or (0, 0, 0))))
-    half = RECEIVER_INNER_XY / 2
-    outer = half + RECEIVER_WALL_T
-    floor = box(-outer, -outer, outer, outer)
+    inner_x, inner_y = ((float(RECEIVER_INNER_XY), float(RECEIVER_INNER_XY))
+                        if isinstance(RECEIVER_INNER_XY, (int, float))
+                        else tuple(map(float, RECEIVER_INNER_XY)))
+    half_x, half_y = inner_x / 2, inner_y / 2
+    outer_x, outer_y = half_x + RECEIVER_WALL_T, half_y + RECEIVER_WALL_T
+    floor = box(-outer_x, -outer_y, outer_x, outer_y)
     prism(f"{prim_path}/Floor", floor, 0.0, RECEIVER_FLOOR_T, (0.20, 0.23, 0.26), "receiver")
     walls = {
-        "XNeg": box(-outer, -outer, -half, outer), "XPos": box(half, -outer, outer, outer),
-        "YNeg": box(-half, -outer, half, -half), "YPos": box(-half, half, half, outer),
+        "XNeg": box(-outer_x, -outer_y, -half_x, outer_y),
+        "XPos": box(half_x, -outer_y, outer_x, outer_y),
+        "YNeg": box(-half_x, -outer_y, half_x, -half_y),
+        "YPos": box(-half_x, half_y, half_x, outer_y),
     }
     for name, shape in walls.items():
         prism(f"{prim_path}/Wall_{name}", shape, RECEIVER_FLOOR_T,
@@ -475,8 +482,8 @@ def native_support_geometry_audit(stage):
             "post_count": len(post_rows)}
 
 
-def build_environment(include_loaded=False):
-    embodiment=BimanualYamEmbodiment(enable_cameras=True, overview_cam=True,
+def build_environment(include_loaded=False, payload_kind="full", enable_cameras=True):
+    embodiment=BimanualYamEmbodiment(enable_cameras=enable_cameras, overview_cam=enable_cameras,
       # Keep the embodiment's verified robot-wide contact sensors enabled.
       # Their spawn configuration activates contact reporting on the YAM link
       # bodies; the four filtered sensors below then measure screen-only pairs.
@@ -530,8 +537,9 @@ def build_environment(include_loaded=False):
                 history_length=0, track_air_time=False,
                 filter_prim_paths_expr=[*receiver_shapes, *support_shapes],
                 max_contact_data_count_per_prim=RAW_CONTACT_CAPACITY_PER_PRIM)))
-        for name in [*[f"media_{i:02d}" for i in range(8)],
-                     *[f"washer_{i:02d}" for i in range(2)]]:
+        payload_names = ([f"media_{i:02d}" for i in range(8)] if payload_kind in ("media", "full") else [])
+        payload_names += ([f"washer_{i:02d}" for i in range(2)] if payload_kind in ("washers", "full") else [])
+        for name in payload_names:
             for category, filters in (("screen", ["{ENV_REGEX_NS}/screen"]),
                                       ("receiver", receiver_shapes),
                                       ("support", support_shapes)):
@@ -544,10 +552,11 @@ def build_environment(include_loaded=False):
     embodiment.scene_config=make_configclass("FullScreenYamSceneCfg", scene_fields)()
     # This first manipulation component records RGB video for visual inspection.
     # Object-identity visibility remains unqualified until the full-scene stage.
-    embodiment.camera_config.overview_cam.data_types = ["rgb"]
+    if enable_cameras:
+        embodiment.camera_config.overview_cam.data_types = ["rgb"]
     return IsaacLabArenaEnvironment(name="full_screen_yam_preflight",
       scene=Scene([*scene_assets(objects=False,d435_collider=False),*fixture_assets(),screen_object(),
-                   *([receiver_object(), *loaded_objects()] if include_loaded else [])]),
+                   *([receiver_object(), *loaded_objects(payload_kind)] if include_loaded else [])]),
       embodiment=embodiment, env_cfg_callback=env_cfg_callback(CONTROL_HZ))
 
 

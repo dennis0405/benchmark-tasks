@@ -1,0 +1,735 @@
+{
+  "scope": "native 20 Hz staged receiver/support coupling isolation only; no frozen 240 Hz penetration, stability, grasp, passage, scoring, or qualification claim",
+  "variant": "media",
+  "receiver_inner_dimensions_m": [
+    0.28,
+    0.28
+  ],
+  "seed": 8261,
+  "duration_s": 3.0,
+  "physics_dt_s": 0.004166666666666667,
+  "control_role": "staged_payload_isolation",
+  "component_preflight_passed": true,
+  "checks": [
+    {
+      "name": "native_physics_timestep_240hz_error",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-12,
+      "unit": "s",
+      "passed": true
+    },
+    {
+      "name": "receiver_collider_count",
+      "measured": 5,
+      "operator": "==",
+      "threshold": 5,
+      "unit": "colliders",
+      "passed": true
+    },
+    {
+      "name": "support_collider_count",
+      "measured": 4,
+      "operator": "==",
+      "threshold": 4,
+      "unit": "colliders",
+      "passed": true
+    },
+    {
+      "name": "screen_receiver_native_contact_force_max_20hz_observed",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "unit": "N",
+      "passed": true
+    },
+    {
+      "name": "screen_negative_support_group_contact_force_max_20hz_observed",
+      "measured": 2.5730617046401907,
+      "operator": ">",
+      "threshold": 1e-06,
+      "unit": "N",
+      "passed": true
+    },
+    {
+      "name": "screen_positive_support_group_contact_force_max_20hz_observed",
+      "measured": 2.620662689210317,
+      "operator": ">",
+      "threshold": 1e-06,
+      "unit": "N",
+      "passed": true
+    },
+    {
+      "name": "noop_screen_translation_max_20hz_observed",
+      "measured": 1.1935595652259903e-07,
+      "operator": "<=",
+      "threshold": 0.002,
+      "unit": "m",
+      "passed": true
+    },
+    {
+      "name": "authored_screen_translation_max_20hz_observed",
+      "measured": 1.194511687888035e-07,
+      "operator": "<=",
+      "threshold": 0.002,
+      "unit": "m",
+      "passed": true
+    },
+    {
+      "name": "noop_screen_linear_speed_max_20hz_observed",
+      "measured": 4.264667720262791e-05,
+      "operator": "<=",
+      "threshold": 0.01,
+      "unit": "m/s",
+      "passed": true
+    },
+    {
+      "name": "noop_screen_rotation_from_first_native_max_20hz_observed",
+      "measured": 1.1151007970494002e-06,
+      "operator": "<=",
+      "threshold": 0.017453292519943295,
+      "unit": "rad",
+      "passed": true
+    },
+    {
+      "name": "authored_screen_rotation_max_20hz_observed",
+      "measured": 1.1151007970494002e-06,
+      "operator": "<=",
+      "threshold": 0.017453292519943295,
+      "unit": "rad",
+      "passed": true
+    },
+    {
+      "name": "noop_screen_angular_speed_max_20hz_observed",
+      "measured": 0.0002918629223931315,
+      "operator": "<=",
+      "threshold": 2.0,
+      "unit": "rad/s",
+      "passed": true
+    },
+    {
+      "name": "payload_native_body_count",
+      "measured": 8,
+      "operator": "==",
+      "threshold": 8,
+      "unit": "bodies",
+      "passed": true
+    },
+    {
+      "name": "noop_payload_translation_max_20hz_observed",
+      "measured": 0.0007038134769196646,
+      "operator": "<=",
+      "threshold": 0.002,
+      "unit": "m",
+      "passed": true
+    },
+    {
+      "name": "authored_payload_translation_max_20hz_observed",
+      "measured": 0.0007038187266456393,
+      "operator": "<=",
+      "threshold": 0.002,
+      "unit": "m",
+      "passed": true
+    },
+    {
+      "name": "noop_payload_linear_speed_max_20hz_observed",
+      "measured": 0.0009679768042825142,
+      "operator": "<=",
+      "threshold": 0.01,
+      "unit": "m/s",
+      "passed": true
+    },
+    {
+      "name": "noop_payload_rotation_from_first_native_max_20hz_observed",
+      "measured": 0.016308534947190704,
+      "operator": "<=",
+      "threshold": 0.017453292519943295,
+      "unit": "rad",
+      "passed": true
+    },
+    {
+      "name": "authored_payload_rotation_max_20hz_observed",
+      "measured": 0.016308534947190704,
+      "operator": "<=",
+      "threshold": 0.017453292519943295,
+      "unit": "rad",
+      "passed": true
+    },
+    {
+      "name": "noop_payload_angular_speed_max_20hz_observed",
+      "measured": 0.05976567701853672,
+      "operator": "<=",
+      "threshold": 2.0,
+      "unit": "rad/s",
+      "passed": true
+    },
+    {
+      "name": "authored_to_first_native_payload_position_error_max",
+      "measured": 1.3920598398421105e-08,
+      "operator": "<=",
+      "threshold": 0.001,
+      "unit": "m",
+      "passed": true
+    },
+    {
+      "name": "authored_to_first_native_payload_orientation_error_max",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 0.001,
+      "unit": "rad",
+      "passed": true
+    },
+    {
+      "name": "payload_receiver_unintended_contact_force_max_20hz_observed",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "unit": "N",
+      "passed": true
+    },
+    {
+      "name": "payload_support_unintended_contact_force_max_20hz_observed",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 1e-06,
+      "unit": "N",
+      "passed": true
+    },
+    {
+      "name": "every_payload_expected_screen_contact_force_max_minimum",
+      "measured": 0.03885020694736567,
+      "operator": ">",
+      "threshold": 1e-06,
+      "unit": "N",
+      "passed": true
+    },
+    {
+      "name": "payload_contact_measurement_value_count",
+      "measured": 80,
+      "operator": "==",
+      "threshold": 80,
+      "unit": "values",
+      "passed": true
+    },
+    {
+      "name": "authored_to_first_native_screen_position_error",
+      "measured": 4.768371586472142e-09,
+      "operator": "<=",
+      "threshold": 0.001,
+      "unit": "m",
+      "passed": true
+    },
+    {
+      "name": "authored_to_first_native_screen_orientation_error",
+      "measured": 0.0,
+      "operator": "<=",
+      "threshold": 0.001,
+      "unit": "rad",
+      "passed": true
+    }
+  ],
+  "per_filter_native_contact_force_max_N": {
+    "/World/envs/env_0/receiver/Floor": 0.0,
+    "/World/envs/env_0/receiver/Wall_XNeg": 0.0,
+    "/World/envs/env_0/receiver/Wall_XPos": 0.0,
+    "/World/envs/env_0/receiver/Wall_YNeg": 0.0,
+    "/World/envs/env_0/receiver/Wall_YPos": 0.0,
+    "/World/envs/env_0/support_neg/Post_0": 1.676937222481233,
+    "/World/envs/env_0/support_neg/Post_1": 2.5730617046401907,
+    "/World/envs/env_0/support_pos/Post_0": 2.620662689210317,
+    "/World/envs/env_0/support_pos/Post_1": 1.5724303722382789
+  },
+  "authored_collision_world_bounds": {
+    "/World/envs/env_0/receiver/Floor": {
+      "min_w_m": [
+        0.2240000021457672,
+        -0.1459999978542328,
+        0.751
+      ],
+      "max_w_m": [
+        0.5159999978542328,
+        0.1459999978542328,
+        0.7550000001899898
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/receiver/Wall_XNeg": {
+      "min_w_m": [
+        0.2240000021457672,
+        -0.1459999978542328,
+        0.7550000001899898
+      ],
+      "max_w_m": [
+        0.22999999940395355,
+        0.1459999978542328,
+        0.8050000014007092
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/receiver/Wall_XPos": {
+      "min_w_m": [
+        0.5100000005960464,
+        -0.1459999978542328,
+        0.7550000001899898
+      ],
+      "max_w_m": [
+        0.5159999978542328,
+        0.1459999978542328,
+        0.8050000014007092
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/receiver/Wall_YNeg": {
+      "min_w_m": [
+        0.22999999940395355,
+        -0.1459999978542328,
+        0.7550000001899898
+      ],
+      "max_w_m": [
+        0.5100000005960464,
+        -0.14000000059604645,
+        0.8050000014007092
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/receiver/Wall_YPos": {
+      "min_w_m": [
+        0.22999999940395355,
+        0.14000000059604645,
+        0.7550000001899898
+      ],
+      "max_w_m": [
+        0.5100000005960464,
+        0.1459999978542328,
+        0.8050000014007092
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/support_neg/Post_0": {
+      "min_w_m": [
+        0.2409999998100102,
+        -0.11900000018998981,
+        0.7499999993145465
+      ],
+      "max_w_m": [
+        0.2490000001899898,
+        -0.1109999998100102,
+        0.8095000006854534
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/support_neg/Post_1": {
+      "min_w_m": [
+        0.4909999998100102,
+        -0.11900000018998981,
+        0.7499999993145465
+      ],
+      "max_w_m": [
+        0.4990000001899898,
+        -0.1109999998100102,
+        0.8095000006854534
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/support_pos/Post_0": {
+      "min_w_m": [
+        0.2409999998100102,
+        0.1109999998100102,
+        0.7499999993145465
+      ],
+      "max_w_m": [
+        0.2490000001899898,
+        0.11900000018998981,
+        0.8095000006854534
+      ],
+      "collision_enabled": true
+    },
+    "/World/envs/env_0/support_pos/Post_1": {
+      "min_w_m": [
+        0.4909999998100102,
+        0.1109999998100102,
+        0.7499999993145465
+      ],
+      "max_w_m": [
+        0.4990000001899898,
+        0.11900000018998981,
+        0.8095000006854534
+      ],
+      "collision_enabled": true
+    }
+  },
+  "authored_screen_position_w_m": [
+    0.37,
+    0.0,
+    0.8125
+  ],
+  "authored_screen_quaternion_w_xyzw": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "initial_screen_position_w_m": [
+    0.3700000047683716,
+    0.0,
+    0.8125
+  ],
+  "initial_screen_quaternion_w_xyzw": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "payload_contact_filter_paths": {
+    "screen": [
+      "/World/envs/env_0/screen"
+    ],
+    "receiver": [
+      "/World/envs/env_0/receiver/Floor",
+      "/World/envs/env_0/receiver/Wall_XNeg",
+      "/World/envs/env_0/receiver/Wall_XPos",
+      "/World/envs/env_0/receiver/Wall_YNeg",
+      "/World/envs/env_0/receiver/Wall_YPos"
+    ],
+    "support": [
+      "/World/envs/env_0/support_neg/Post_0",
+      "/World/envs/env_0/support_neg/Post_1",
+      "/World/envs/env_0/support_pos/Post_0",
+      "/World/envs/env_0/support_pos/Post_1"
+    ]
+  },
+  "per_payload_filter_native_contact_force_max_N": {
+    "media_00": {
+      "screen": {
+        "/World/envs/env_0/screen": 0.03885274382372882
+      },
+      "receiver": {
+        "/World/envs/env_0/receiver/Floor": 0.0,
+        "/World/envs/env_0/receiver/Wall_XNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_XPos": 0.0,
+        "/World/envs/env_0/receiver/Wall_YNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_YPos": 0.0
+      },
+      "support": {
+        "/World/envs/env_0/support_neg/Post_0": 0.0,
+        "/World/envs/env_0/support_neg/Post_1": 0.0,
+        "/World/envs/env_0/support_pos/Post_0": 0.0,
+        "/World/envs/env_0/support_pos/Post_1": 0.0
+      }
+    },
+    "media_01": {
+      "screen": {
+        "/World/envs/env_0/screen": 0.0388605222344362
+      },
+      "receiver": {
+        "/World/envs/env_0/receiver/Floor": 0.0,
+        "/World/envs/env_0/receiver/Wall_XNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_XPos": 0.0,
+        "/World/envs/env_0/receiver/Wall_YNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_YPos": 0.0
+      },
+      "support": {
+        "/World/envs/env_0/support_neg/Post_0": 0.0,
+        "/World/envs/env_0/support_neg/Post_1": 0.0,
+        "/World/envs/env_0/support_pos/Post_0": 0.0,
+        "/World/envs/env_0/support_pos/Post_1": 0.0
+      }
+    },
+    "media_02": {
+      "screen": {
+        "/World/envs/env_0/screen": 0.0388839580155542
+      },
+      "receiver": {
+        "/World/envs/env_0/receiver/Floor": 0.0,
+        "/World/envs/env_0/receiver/Wall_XNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_XPos": 0.0,
+        "/World/envs/env_0/receiver/Wall_YNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_YPos": 0.0
+      },
+      "support": {
+        "/World/envs/env_0/support_neg/Post_0": 0.0,
+        "/World/envs/env_0/support_neg/Post_1": 0.0,
+        "/World/envs/env_0/support_pos/Post_0": 0.0,
+        "/World/envs/env_0/support_pos/Post_1": 0.0
+      }
+    },
+    "media_03": {
+      "screen": {
+        "/World/envs/env_0/screen": 0.03893846273729991
+      },
+      "receiver": {
+        "/World/envs/env_0/receiver/Floor": 0.0,
+        "/World/envs/env_0/receiver/Wall_XNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_XPos": 0.0,
+        "/World/envs/env_0/receiver/Wall_YNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_YPos": 0.0
+      },
+      "support": {
+        "/World/envs/env_0/support_neg/Post_0": 0.0,
+        "/World/envs/env_0/support_neg/Post_1": 0.0,
+        "/World/envs/env_0/support_pos/Post_0": 0.0,
+        "/World/envs/env_0/support_pos/Post_1": 0.0
+      }
+    },
+    "media_04": {
+      "screen": {
+        "/World/envs/env_0/screen": 0.038871210158972436
+      },
+      "receiver": {
+        "/World/envs/env_0/receiver/Floor": 0.0,
+        "/World/envs/env_0/receiver/Wall_XNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_XPos": 0.0,
+        "/World/envs/env_0/receiver/Wall_YNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_YPos": 0.0
+      },
+      "support": {
+        "/World/envs/env_0/support_neg/Post_0": 0.0,
+        "/World/envs/env_0/support_neg/Post_1": 0.0,
+        "/World/envs/env_0/support_pos/Post_0": 0.0,
+        "/World/envs/env_0/support_pos/Post_1": 0.0
+      }
+    },
+    "media_05": {
+      "screen": {
+        "/World/envs/env_0/screen": 0.03886389744594961
+      },
+      "receiver": {
+        "/World/envs/env_0/receiver/Floor": 0.0,
+        "/World/envs/env_0/receiver/Wall_XNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_XPos": 0.0,
+        "/World/envs/env_0/receiver/Wall_YNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_YPos": 0.0
+      },
+      "support": {
+        "/World/envs/env_0/support_neg/Post_0": 0.0,
+        "/World/envs/env_0/support_neg/Post_1": 0.0,
+        "/World/envs/env_0/support_pos/Post_0": 0.0,
+        "/World/envs/env_0/support_pos/Post_1": 0.0
+      }
+    },
+    "media_06": {
+      "screen": {
+        "/World/envs/env_0/screen": 0.03885020694736567
+      },
+      "receiver": {
+        "/World/envs/env_0/receiver/Floor": 0.0,
+        "/World/envs/env_0/receiver/Wall_XNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_XPos": 0.0,
+        "/World/envs/env_0/receiver/Wall_YNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_YPos": 0.0
+      },
+      "support": {
+        "/World/envs/env_0/support_neg/Post_0": 0.0,
+        "/World/envs/env_0/support_neg/Post_1": 0.0,
+        "/World/envs/env_0/support_pos/Post_0": 0.0,
+        "/World/envs/env_0/support_pos/Post_1": 0.0
+      }
+    },
+    "media_07": {
+      "screen": {
+        "/World/envs/env_0/screen": 0.03946069630680971
+      },
+      "receiver": {
+        "/World/envs/env_0/receiver/Floor": 0.0,
+        "/World/envs/env_0/receiver/Wall_XNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_XPos": 0.0,
+        "/World/envs/env_0/receiver/Wall_YNeg": 0.0,
+        "/World/envs/env_0/receiver/Wall_YPos": 0.0
+      },
+      "support": {
+        "/World/envs/env_0/support_neg/Post_0": 0.0,
+        "/World/envs/env_0/support_neg/Post_1": 0.0,
+        "/World/envs/env_0/support_pos/Post_0": 0.0,
+        "/World/envs/env_0/support_pos/Post_1": 0.0
+      }
+    }
+  },
+  "authored_payload_positions_w_m": {
+    "media_00": [
+      0.3543,
+      -0.0471,
+      0.8177625
+    ],
+    "media_01": [
+      0.3857,
+      -0.0471,
+      0.8177625
+    ],
+    "media_02": [
+      0.3543,
+      -0.0157,
+      0.8177625
+    ],
+    "media_03": [
+      0.3857,
+      -0.0157,
+      0.8177625
+    ],
+    "media_04": [
+      0.3543,
+      0.0157,
+      0.8177625
+    ],
+    "media_05": [
+      0.3857,
+      0.0157,
+      0.8177625
+    ],
+    "media_06": [
+      0.3543,
+      0.0471,
+      0.8177625
+    ],
+    "media_07": [
+      0.3857,
+      0.0471,
+      0.8177625
+    ]
+  },
+  "first_native_payload_positions_w_m": {
+    "media_00": [
+      0.35429999232292175,
+      -0.0471000000834465,
+      0.8177624940872192
+    ],
+    "media_01": [
+      0.385699987411499,
+      -0.0471000000834465,
+      0.8177624940872192
+    ],
+    "media_02": [
+      0.35429999232292175,
+      -0.015699999406933784,
+      0.8177624940872192
+    ],
+    "media_03": [
+      0.385699987411499,
+      -0.015699999406933784,
+      0.8177624940872192
+    ],
+    "media_04": [
+      0.35429999232292175,
+      0.015699999406933784,
+      0.8177624940872192
+    ],
+    "media_05": [
+      0.385699987411499,
+      0.015699999406933784,
+      0.8177624940872192
+    ],
+    "media_06": [
+      0.35429999232292175,
+      0.0471000000834465,
+      0.8177624940872192
+    ],
+    "media_07": [
+      0.385699987411499,
+      0.0471000000834465,
+      0.8177624940872192
+    ]
+  },
+  "authored_payload_quaternions_w_xyzw": {
+    "media_00": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "media_01": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "media_02": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "media_03": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "media_04": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "media_05": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "media_06": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "media_07": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "first_native_payload_quaternions_w_xyzw": {
+    "media_00": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "media_01": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "media_02": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "media_03": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "media_04": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "media_05": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "media_06": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ],
+    "media_07": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  },
+  "artifacts": [
+    "measurements/receiver-coupling-media-280-trace.json"
+  ],
+  "sampling_scope": "Forces and poses are read after completed 20 Hz control steps. They identify the contacted fixture filter but do not bound unsampled 240 Hz transients or prove signed separation."
+}

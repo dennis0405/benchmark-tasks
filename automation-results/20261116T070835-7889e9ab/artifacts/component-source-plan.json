@@ -1,25 +1,30 @@
 {
   "phase": "preflight",
-  "summary": "Repaired the loaded-scene native probe after its USD collider audit incorrectly cast CollisionAPI to int. The probe now uses HasAPI, and syntax validation passes. Trusted-host GPU execution remains required; qualification, YAM demos, and workforce eligibility remain unresolved.",
+  "summary": "Repair the obsolete empty-scene negative-control expectation by rerunning the current bounded isolation probe. It now measures unintended receiver-contact headroom while still requiring both authored support groups to carry native contact. Existing repaired media-only and washer-only receipts passed; full loaded reset and qualification remain unverified. Workforce/category importance remains unresolved.",
   "scripts": [
     {
-      "id": "loaded_reset_native_probe",
-      "script": "task/run_loaded_reset_native_probe.py",
+      "id": "receiver-coupling-empty-control-repair",
+      "script": "task/run_receiver_coupling_isolation_probe.py",
       "args": [
-        "--device",
-        "cuda:0",
-        "--report",
-        "../measurements/loaded-reset-native-probe.json",
-        "--screenshot",
-        "../measurements/loaded-reset-native-probe.png",
+        "--variant",
+        "empty",
+        "--receiver-inner-x",
+        "0.280",
+        "--receiver-inner-y",
+        "0.280",
         "--duration",
-        "3.0"
+        "3.0",
+        "--seed",
+        "8261",
+        "--report",
+        "../measurements/receiver-coupling-empty-280-repaired.json",
+        "--headless"
       ],
-      "report": "measurements/loaded-reset-native-probe.json"
+      "report": "measurements/receiver-coupling-empty-280-repaired.json"
     }
   ],
   "files": [
-    "task/full_screen_scene.py",
-    "task/run_loaded_reset_native_probe.py"
+    "task/run_receiver_coupling_isolation_probe.py",
+    "task/full_screen_scene.py"
   ]
 }

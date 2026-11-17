@@ -1,0 +1,249 @@
+#!/usr/bin/env python3
+"""Bounded native probe isolating receiver/support coupling by staged payload."""
+from __future__ import annotations
+
+import argparse, json, math, os, subprocess, sys, tempfile, traceback
+from pathlib import Path
+
+
+def _arg_path(flag, default):
+    for i, value in enumerate(sys.argv[1:]):
+        if value == flag and i + 1 < len(sys.argv[1:]):
+            return Path(sys.argv[1:][i + 1])
+        if value.startswith(flag + "="):
+            return Path(value.split("=", 1)[1])
+    return Path(default)
+
+
+def _failure(path, message, detail=""):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({
+        "scope": "failed receiver-coupling isolation preflight; no qualification claim",
+        "checks": [{"name": "native_program_completed_without_exception", "measured": 0,
+                    "operator": "==", "threshold": 1, "unit": "boolean", "passed": False}],
+        "artifacts": [], "execution_exception": {"message": message, "traceback": detail[-20000:]}
+    }, indent=2))
+
+
+if __name__ == "__main__" and os.environ.get("ROBOCURVE_RECEIVER_ISOLATION_CHILD") != "1":
+    report = _arg_path("--report", "../measurements/receiver-coupling-isolation.json")
+    env = os.environ.copy(); env["ROBOCURVE_RECEIVER_ISOLATION_CHILD"] = "1"
+    with tempfile.NamedTemporaryFile(prefix="receiver-isolation-", suffix=".stderr", delete=False) as stream:
+        stderr_path = Path(stream.name)
+        done = subprocess.run([sys.executable, str(Path(__file__).resolve()), *sys.argv[1:]], env=env, stderr=stream)
+    stderr = stderr_path.read_text(errors="replace"); stderr_path.unlink(missing_ok=True)
+    if stderr: sys.stderr.write(stderr)
+    if done.returncode and not report.is_file():
+        _failure(report, f"native child exited with status {done.returncode}", stderr)
+    raise SystemExit(done.returncode)
+
+
+from isaaclab.app import AppLauncher
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument("--report", type=Path, default=Path("../measurements/receiver-coupling-isolation.json"))
+parser.add_argument("--variant", choices=("empty", "media", "washers", "full"), default="empty")
+parser.add_argument("--receiver-inner-x", type=float, default=0.280)
+parser.add_argument("--receiver-inner-y", type=float, default=0.280)
+parser.add_argument("--expected-coupling-negative-control", action="store_true")
+parser.add_argument("--duration", type=float, default=3.0)
+parser.add_argument("--seed", type=int, default=8261)
+AppLauncher.add_app_launcher_args(parser)
+args = parser.parse_args(); args.enable_cameras = False
+launcher = AppLauncher(args); simulation_app = launcher.app
+
+import numpy as np
+import torch
+import isaaclab.sim as sim_utils
+from pxr import Usd, UsdGeom, UsdPhysics
+from yam_arena.constants import FINGER_OPEN, READY
+import full_screen_scene as scene_def
+
+
+def _passed(row):
+    a, b = float(row["measured"]), float(row["threshold"])
+    if not (math.isfinite(a) and math.isfinite(b)): return False
+    return {"==": a == b, "<=": a <= b, ">=": a >= b, "<": a < b, ">": a > b}[row["operator"]]
+
+
+def _quat_angle(q_a, q_b):
+    """Shortest rotation angle; root_quat_w uses native (x, y, z, w) order here."""
+    a = np.asarray(q_a, dtype=float); b = np.asarray(q_b, dtype=float)
+    a /= np.linalg.norm(a); b /= np.linalg.norm(b)
+    return 2.0 * math.acos(float(np.clip(abs(np.dot(a, b)), 0.0, 1.0)))
+
+
+def main():
+    from isaaclab_arena.environments.arena_env_builder import ArenaEnvBuilder
+    from isaaclab_arena.environments.arena_env_builder_cfg import ArenaEnvBuilderCfg
+    scene_def.RECEIVER_INNER_XY = (args.receiver_inner_x, args.receiver_inner_y)
+    np.random.seed(args.seed); torch.manual_seed(args.seed)
+    spec = scene_def.build_environment(include_loaded=True, payload_kind=args.variant)
+    spec.name = f"receiver_coupling_{args.variant}_{int(args.receiver_inner_x*1000)}x{int(args.receiver_inner_y*1000)}"
+    env = ArenaEnvBuilder(spec, ArenaEnvBuilderCfg(num_envs=1, solve_relations=False, device=args.device)).make_registered()
+    base = env.unwrapped; env.reset(seed=args.seed)
+    stage = sim_utils.get_current_stage(); dt = float(base.sim.get_physics_dt())
+    screen = base.scene.rigid_objects["screen"]; screen.update(dt)
+    authored_screen_pos = np.array([scene_def.SCREEN_X, scene_def.SCREEN_Y, scene_def.SCREEN_ROOT_Z], dtype=float)
+    authored_screen_quat = np.array([0.0, 0.0, 0.0, 1.0], dtype=float)
+    initial_screen_pos = screen.data.root_pos_w.torch[0].detach().cpu().numpy().astype(float).copy()
+    initial_screen_quat = screen.data.root_quat_w.torch[0].detach().cpu().numpy().astype(float).copy()
+    payload_names = ([f"media_{i:02d}" for i in range(8)] if args.variant in ("media", "full") else [])
+    payload_names += ([f"washer_{i:02d}" for i in range(2)] if args.variant in ("washers", "full") else [])
+    bodies = {name: base.scene.rigid_objects[name] for name in payload_names}
+    authored_payload = {}
+    for index, (x, y) in enumerate(((-.0157,-.0471),(.0157,-.0471),(-.0157,-.0157),(.0157,-.0157),(-.0157,.0157),(.0157,.0157),(-.0157,.0471),(.0157,.0471))):
+        authored_payload[f"media_{index:02d}"] = np.array([scene_def.SCREEN_X+x, scene_def.SCREEN_Y+y, scene_def.SCREEN_ROOT_Z+scene_def.MEDIA_DIAMETER/2+0.0005])
+    for index, (x, y) in enumerate(((.130,.070),(-.130,-.070))):
+        authored_payload[f"washer_{index:02d}"] = np.array([scene_def.SCREEN_X+x, scene_def.SCREEN_Y+y, scene_def.SCREEN_ROOT_Z+scene_def.WASHER_T/2+0.0005])
+    initial_payload = {}; initial_payload_quat = {}
+    for name, body in bodies.items():
+        body.update(dt); initial_payload[name] = body.data.root_pos_w.torch[0].detach().cpu().numpy().astype(float).copy()
+        initial_payload_quat[name] = body.data.root_quat_w.torch[0].detach().cpu().numpy().astype(float).copy()
+
+    receiver_paths = ["/World/envs/env_0/receiver/Floor", *[
+        f"/World/envs/env_0/receiver/Wall_{side}" for side in ("XNeg", "XPos", "YNeg", "YPos")]]
+    support_paths = [f"/World/envs/env_0/support_{side}/Post_{i}"
+                     for side in ("neg", "pos") for i in range(2)]
+    filter_paths = receiver_paths + support_paths
+
+    def bounds(path):
+        prim = stage.GetPrimAtPath(path)
+        box = UsdGeom.BBoxCache(Usd.TimeCode.Default(), [UsdGeom.Tokens.default_]).ComputeWorldBound(prim).ComputeAlignedRange()
+        return {"min_w_m": [float(v) for v in box.GetMin()], "max_w_m": [float(v) for v in box.GetMax()],
+                "collision_enabled": bool(prim.HasAPI(UsdPhysics.CollisionAPI))}
+
+    geometry = {path: bounds(path) for path in filter_paths}
+    sensor = base.scene.sensors["screen_fixture_contacts"]
+    per_filter_max = np.zeros(len(filter_paths), dtype=float)
+    payload_filter_paths = {"screen": ["/World/envs/env_0/screen"], "receiver": receiver_paths, "support": support_paths}
+    payload_force_max = {name: {category: np.zeros(len(paths), dtype=float) for category, paths in payload_filter_paths.items()} for name in payload_names}
+    max_screen_disp = 0.0; max_screen_authored_disp = 0.0; max_screen_speed = 0.0
+    max_screen_angle = 0.0; max_screen_authored_angle = 0.0; max_screen_angular_speed = 0.0
+    max_payload_disp = 0.0; max_payload_authored_disp = 0.0; max_payload_speed = 0.0
+    max_payload_angle = 0.0; max_payload_authored_angle = 0.0; max_payload_angular_speed = 0.0
+    trace = []
+    action = torch.tensor(np.r_[READY, FINGER_OPEN, READY, FINGER_OPEN], dtype=torch.float32,
+                          device=args.device).unsqueeze(0)
+    for index in range(int(math.ceil(args.duration * scene_def.CONTROL_HZ))):
+        env.step(action); screen.update(dt)
+        matrix = sensor.data.normal_force_matrix_w
+        if matrix is None: raise RuntimeError("screen fixture filtered-force matrix unavailable")
+        forces = np.linalg.norm(matrix.torch[0].detach().cpu().numpy().astype(float), axis=-1)
+        if forces.shape[-1] != len(filter_paths):
+            raise RuntimeError(f"expected {len(filter_paths)} filters, got {forces.shape}")
+        sample_filters = np.max(forces.reshape(-1, len(filter_paths)), axis=0)
+        per_filter_max = np.maximum(per_filter_max, sample_filters)
+        spos = screen.data.root_pos_w.torch[0].detach().cpu().numpy().astype(float)
+        squat = screen.data.root_quat_w.torch[0].detach().cpu().numpy().astype(float)
+        svel = screen.data.root_lin_vel_w.torch[0].detach().cpu().numpy().astype(float)
+        sangvel = screen.data.root_ang_vel_w.torch[0].detach().cpu().numpy().astype(float)
+        max_screen_disp = max(max_screen_disp, float(np.linalg.norm(spos-initial_screen_pos)))
+        max_screen_authored_disp = max(max_screen_authored_disp, float(np.linalg.norm(spos-authored_screen_pos)))
+        max_screen_speed = max(max_screen_speed, float(np.linalg.norm(svel)))
+        max_screen_angle = max(max_screen_angle, _quat_angle(squat, initial_screen_quat))
+        max_screen_authored_angle = max(max_screen_authored_angle, _quat_angle(squat, authored_screen_quat))
+        max_screen_angular_speed = max(max_screen_angular_speed, float(np.linalg.norm(sangvel)))
+        payload_row = {}
+        for name, body in bodies.items():
+            body.update(dt)
+            pos = body.data.root_pos_w.torch[0].detach().cpu().numpy().astype(float)
+            quat = body.data.root_quat_w.torch[0].detach().cpu().numpy().astype(float)
+            vel = body.data.root_lin_vel_w.torch[0].detach().cpu().numpy().astype(float)
+            angvel = body.data.root_ang_vel_w.torch[0].detach().cpu().numpy().astype(float)
+            disp, speed = float(np.linalg.norm(pos-initial_payload[name])), float(np.linalg.norm(vel))
+            max_payload_disp, max_payload_speed = max(max_payload_disp, disp), max(max_payload_speed, speed)
+            max_payload_authored_disp = max(max_payload_authored_disp, float(np.linalg.norm(pos-authored_payload[name])))
+            angle, angular_speed = _quat_angle(quat, initial_payload_quat[name]), float(np.linalg.norm(angvel))
+            max_payload_angle, max_payload_angular_speed = max(max_payload_angle, angle), max(max_payload_angular_speed, angular_speed)
+            max_payload_authored_angle = max(max_payload_authored_angle, _quat_angle(quat, authored_screen_quat))
+            payload_row[name] = {"position_w_m": pos.tolist(), "quaternion_w_xyzw": quat.tolist(),
+                                 "linear_velocity_w_m_s": vel.tolist(), "angular_velocity_w_rad_s": angvel.tolist()}
+            payload_row[name]["filter_force_N"] = {}
+            for category, paths in payload_filter_paths.items():
+                payload_matrix = base.scene.sensors[f"{name}_{category}_contacts"].data.normal_force_matrix_w
+                if payload_matrix is None: raise RuntimeError(f"{name}/{category} filtered-force matrix unavailable")
+                payload_forces = np.linalg.norm(payload_matrix.torch[0].detach().cpu().numpy().astype(float), axis=-1)
+                if payload_forces.shape[-1] != len(paths): raise RuntimeError(f"{name}/{category}: expected {len(paths)} filters, got {payload_forces.shape}")
+                sample_payload = np.max(payload_forces.reshape(-1, len(paths)), axis=0)
+                payload_force_max[name][category] = np.maximum(payload_force_max[name][category], sample_payload)
+                payload_row[name]["filter_force_N"].update({path: float(value) for path, value in zip(paths, sample_payload)})
+        trace.append({"control_sample": index+1, "time_s": (index+1)/scene_def.CONTROL_HZ,
+                      "screen_position_w_m": spos.tolist(), "screen_linear_velocity_w_m_s": svel.tolist(),
+                      "screen_quaternion_w_xyzw": squat.tolist(), "screen_angular_velocity_w_rad_s": sangvel.tolist(),
+                      "filter_force_N": {p: float(v) for p, v in zip(filter_paths, sample_filters)},
+                      "payload": payload_row})
+
+    receiver_max = float(np.max(per_filter_max[:5]))
+    support_neg_max = float(np.max(per_filter_max[5:7]))
+    support_pos_max = float(np.max(per_filter_max[7:9]))
+    checks = [
+        {"name":"native_physics_timestep_240hz_error", "measured":abs(dt-1/240), "operator":"<=", "threshold":1e-12, "unit":"s"},
+        {"name":"receiver_collider_count", "measured":sum(int(geometry[p]["collision_enabled"]) for p in receiver_paths), "operator":"==", "threshold":5, "unit":"colliders"},
+        {"name":"support_collider_count", "measured":sum(int(geometry[p]["collision_enabled"]) for p in support_paths), "operator":"==", "threshold":4, "unit":"colliders"},
+        {"name":"screen_receiver_native_contact_force_max_20hz_observed", "measured":receiver_max, "operator":">" if args.expected_coupling_negative_control else "<=", "threshold":1e-6, "unit":"N"},
+        {"name":"screen_negative_support_group_contact_force_max_20hz_observed", "measured":support_neg_max, "operator":">", "threshold":1e-6, "unit":"N"},
+        {"name":"screen_positive_support_group_contact_force_max_20hz_observed", "measured":support_pos_max, "operator":">", "threshold":1e-6, "unit":"N"},
+        {"name":"noop_screen_translation_max_20hz_observed", "measured":max_screen_disp, "operator":"<=", "threshold":0.002, "unit":"m"},
+        {"name":"authored_screen_translation_max_20hz_observed", "measured":max_screen_authored_disp, "operator":"<=", "threshold":0.002, "unit":"m"},
+        {"name":"noop_screen_linear_speed_max_20hz_observed", "measured":max_screen_speed, "operator":"<=", "threshold":0.01, "unit":"m/s"},
+        {"name":"noop_screen_rotation_from_first_native_max_20hz_observed", "measured":max_screen_angle, "operator":"<=", "threshold":math.radians(1.0), "unit":"rad"},
+        {"name":"authored_screen_rotation_max_20hz_observed", "measured":max_screen_authored_angle, "operator":"<=", "threshold":math.radians(1.0), "unit":"rad"},
+        {"name":"noop_screen_angular_speed_max_20hz_observed", "measured":max_screen_angular_speed, "operator":"<=", "threshold":2.0, "unit":"rad/s"},
+    ]
+    if payload_names:
+        first_native_payload_error = max(float(np.linalg.norm(initial_payload[name]-authored_payload[name])) for name in payload_names)
+        first_native_payload_angle_error = max(_quat_angle(initial_payload_quat[name], authored_screen_quat) for name in payload_names)
+        payload_receiver_force_max = max(float(np.max(payload_force_max[name]["receiver"])) for name in payload_names)
+        payload_support_force_max = max(float(np.max(payload_force_max[name]["support"])) for name in payload_names)
+        payload_screen_force_min = min(float(np.max(payload_force_max[name]["screen"])) for name in payload_names)
+        checks += [
+            {"name":"payload_native_body_count", "measured":len(bodies), "operator":"==", "threshold":len(payload_names), "unit":"bodies"},
+            {"name":"noop_payload_translation_max_20hz_observed", "measured":max_payload_disp, "operator":"<=", "threshold":0.002, "unit":"m"},
+            {"name":"authored_payload_translation_max_20hz_observed", "measured":max_payload_authored_disp, "operator":"<=", "threshold":0.002, "unit":"m"},
+            {"name":"noop_payload_linear_speed_max_20hz_observed", "measured":max_payload_speed, "operator":"<=", "threshold":0.01, "unit":"m/s"},
+            {"name":"noop_payload_rotation_from_first_native_max_20hz_observed", "measured":max_payload_angle, "operator":"<=", "threshold":math.radians(1.0), "unit":"rad"},
+            {"name":"authored_payload_rotation_max_20hz_observed", "measured":max_payload_authored_angle, "operator":"<=", "threshold":math.radians(1.0), "unit":"rad"},
+            {"name":"noop_payload_angular_speed_max_20hz_observed", "measured":max_payload_angular_speed, "operator":"<=", "threshold":2.0, "unit":"rad/s"},
+            {"name":"authored_to_first_native_payload_position_error_max", "measured":first_native_payload_error, "operator":"<=", "threshold":0.001, "unit":"m"},
+            {"name":"authored_to_first_native_payload_orientation_error_max", "measured":first_native_payload_angle_error, "operator":"<=", "threshold":0.001, "unit":"rad"},
+            {"name":"payload_receiver_unintended_contact_force_max_20hz_observed", "measured":payload_receiver_force_max, "operator":"<=", "threshold":1e-6, "unit":"N"},
+            {"name":"payload_support_unintended_contact_force_max_20hz_observed", "measured":payload_support_force_max, "operator":"<=", "threshold":1e-6, "unit":"N"},
+            {"name":"every_payload_expected_screen_contact_force_max_minimum", "measured":payload_screen_force_min, "operator":">", "threshold":1e-6, "unit":"N"},
+            {"name":"payload_contact_measurement_value_count", "measured":len(payload_names)*sum(len(p) for p in payload_filter_paths.values()), "operator":"==", "threshold":len(payload_names)*10, "unit":"values"},
+        ]
+    checks.append({"name":"authored_to_first_native_screen_position_error", "measured":float(np.linalg.norm(initial_screen_pos-authored_screen_pos)), "operator":"<=", "threshold":0.001, "unit":"m"})
+    checks.append({"name":"authored_to_first_native_screen_orientation_error", "measured":_quat_angle(initial_screen_quat, authored_screen_quat), "operator":"<=", "threshold":0.001, "unit":"rad"})
+    for row in checks: row["passed"] = _passed(row)
+    trace_path = args.report.with_name(args.report.stem + "-trace.json")
+    args.report.parent.mkdir(parents=True, exist_ok=True); trace_path.write_text(json.dumps(trace, separators=(",", ":")))
+    workspace = Path(__file__).resolve().parents[1]
+    report = {
+        "scope":"native 20 Hz staged receiver/support coupling isolation only; no frozen 240 Hz penetration, stability, grasp, passage, scoring, or qualification claim",
+        "variant":args.variant, "receiver_inner_dimensions_m":[args.receiver_inner_x,args.receiver_inner_y],
+        "seed":args.seed, "duration_s":args.duration, "physics_dt_s":dt,
+        "control_role":"expected_failure_negative_control" if args.expected_coupling_negative_control else "passing_candidate",
+        "component_preflight_passed":all(row["passed"] for row in checks), "checks":checks,
+        "per_filter_native_contact_force_max_N":{p:float(v) for p,v in zip(filter_paths,per_filter_max)},
+        "authored_collision_world_bounds":geometry,
+        "authored_screen_position_w_m":authored_screen_pos.tolist(),
+        "authored_screen_quaternion_w_xyzw":authored_screen_quat.tolist(),
+        "initial_screen_position_w_m":initial_screen_pos.tolist(), "initial_screen_quaternion_w_xyzw":initial_screen_quat.tolist(),
+        "payload_contact_filter_paths":payload_filter_paths,
+        "per_payload_filter_native_contact_force_max_N":{name:{category:{path:float(value) for path,value in zip(payload_filter_paths[category], values)} for category,values in categories.items()} for name,categories in payload_force_max.items()},
+        "authored_payload_positions_w_m":{name:value.tolist() for name,value in authored_payload.items() if name in bodies},
+        "first_native_payload_positions_w_m":{name:value.tolist() for name,value in initial_payload.items()},
+        "authored_payload_quaternions_w_xyzw":{name:authored_screen_quat.tolist() for name in bodies},
+        "first_native_payload_quaternions_w_xyzw":{name:value.tolist() for name,value in initial_payload_quat.items()},
+        "artifacts":[trace_path.resolve().relative_to(workspace).as_posix()],
+        "sampling_scope":"Forces and poses are read after completed 20 Hz control steps. They identify the contacted fixture filter but do not bound unsampled 240 Hz transients or prove signed separation."
+    }
+    args.report.write_text(json.dumps(report, indent=2)); env.close(); simulation_app.close()
+
+
+try:
+    main()
+except BaseException as exc:
+    _failure(args.report, f"{type(exc).__name__}: {exc}", traceback.format_exc())
+    try: simulation_app.close()
+    except BaseException: pass
+    raise
