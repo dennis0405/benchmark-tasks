@@ -2,6 +2,14 @@
 
 These are component experiments for the 90-degree opening-stop benchmark, recorded on the production Brev L40S. The whole workcell still requires a physical YAM demonstration and end-to-end grading.
 
+## Bidirectional relative-thread qualification
+
+On the replacement Crusoe L40S, changing only the old fixed tendon's joint limit from four revolutions to two changed the spurious extension from 3.90 mm to 1.90 mm. Two independent implicit drives restored the expected displacement but transmitted only 3.12 N at 240 Hz. The corrected solver computes one shared thread load and applies conjugate axial force and relative torque. Native contacts determine both poses and transmit the measured load. Physical face separations enter the local implicit force predictor. No state, stop position or score is written.
+
+Both drive directions passed at 240 and 480 Hz under 0.005 N·m with the nut rotating relative to a freely rotating screw. The controller inferred angular loading from native motion. Measured elastic extension was 0.314 mm and the physical plate reaction was 31.4 N. Halving the torque and increasing the plate gap to 0.25 mm gave 0.157 mm and 15.7 N. Each case also checked unloading, world-transform agreement and clearance from the rotary limit. These isolated tests omit thread friction to measure the normal constitutive law. The original uploaded fixed-tendon results below remain historical.
+
+Run `python task/thread_coupled_probe.py --mechanism coupled-effort --observed-load --hz 240 --output measurements/verify240.json` from this directory with the pinned Isaac environment. Use 480 for the refinement or add `--magnitude .0025 --gap .00025` for the independent load case. [Native results and trace hashes](measurements/thread-balance-recovery.json).
+
 ## Approved powered-motion revision
 
 The current contract measures the maximum minus minimum over each contiguous interval above 1 N of absolute native piston effort. Include the previous sample at entry. A span above 1 µm along the screw axis or above 0.01° about either the screw or nut axis latches damage until reset. The instantaneous-rate results documented below describe earlier experiments. The approved revision changes one damage rule and its matching negative control. The prior review receipt applies to its original digest.
