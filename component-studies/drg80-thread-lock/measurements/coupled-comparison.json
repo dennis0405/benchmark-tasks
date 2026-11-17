@@ -81,6 +81,46 @@
     }
   },
   {
+    "variant": "dual-cap480",
+    "hz": 480,
+    "checks_passed": 15,
+    "checks_total": 17,
+    "passed": false,
+    "released_normal_force_min_N": 7.006777763366699,
+    "proof_screw_excursion_um": 0.17185448086820543,
+    "proof_screw_excursion_deg": 0.0019431888188686276,
+    "proof_screw_speed_mm_s": 0.06880844011902809,
+    "proof_nut_angular_speed_rad_s": 0.004520416259765625,
+    "proof_screw_angular_speed_rad_s": 0.014476776123046875,
+    "replay": {
+      "probe": "dual-cap480.trace.json",
+      "hz": 480,
+      "thresholds": {
+        "screw_angle_rad": 0.01,
+        "angle_rad": 0.01,
+        "screw_z_m": 1e-05
+      },
+      "first_failure": {
+        "step": 5882,
+        "time_s": 12.254166666666666,
+        "exceeded": [
+          "screw_z_m"
+        ],
+        "rates": {
+          "screw_angle_rad": 0.0023317337036132812,
+          "angle_rad": 0.000858306884765625,
+          "screw_z_m": 1.7919810488820076e-05
+        }
+      },
+      "over_limit_steps": 648,
+      "peak_rates": {
+        "screw_angle_rad": 0.014476776123046875,
+        "angle_rad": 0.004520416259765625,
+        "screw_z_m": 6.880844011902809e-05
+      }
+    }
+  },
+  {
     "variant": "dual-center240",
     "hz": 240,
     "checks_passed": 11,
@@ -121,10 +161,90 @@
     }
   },
   {
+    "variant": "dual-clamp240",
+    "hz": 240,
+    "checks_passed": 16,
+    "checks_total": 17,
+    "passed": false,
+    "released_normal_force_min_N": 14.817717552185059,
+    "proof_screw_excursion_um": 0.06708796718157828,
+    "proof_screw_excursion_deg": 0.0016204623805855251,
+    "proof_screw_speed_mm_s": 0.01074979081749916,
+    "proof_nut_angular_speed_rad_s": 0.002689361572265625,
+    "proof_screw_angular_speed_rad_s": 0.0066089630126953125,
+    "replay": {
+      "probe": "dual-clamp240.trace.json",
+      "hz": 240,
+      "thresholds": {
+        "screw_angle_rad": 0.01,
+        "angle_rad": 0.01,
+        "screw_z_m": 1e-05
+      },
+      "first_failure": {
+        "step": 2975,
+        "time_s": 12.395833333333334,
+        "exceeded": [
+          "screw_z_m"
+        ],
+        "rates": {
+          "screw_angle_rad": 0.004520416259765625,
+          "angle_rad": 0.001373291015625,
+          "screw_z_m": 1.02460035122931e-05
+        }
+      },
+      "over_limit_steps": 7,
+      "peak_rates": {
+        "screw_angle_rad": 0.0066089630126953125,
+        "angle_rad": 0.002689361572265625,
+        "screw_z_m": 1.074979081749916e-05
+      }
+    }
+  },
+  {
     "variant": "dual-constitutive240",
     "valid_trace": false,
     "reason": "invalid recorded sample index",
     "passed": false
+  },
+  {
+    "variant": "dual-fault240",
+    "hz": 240,
+    "checks_passed": 12,
+    "checks_total": 17,
+    "passed": false,
+    "released_normal_force_min_N": 7.2882866859436035,
+    "proof_screw_excursion_um": 228.75842114444822,
+    "proof_screw_excursion_deg": 83.26920795481473,
+    "proof_screw_speed_mm_s": 2.440356183797121,
+    "proof_nut_angular_speed_rad_s": 16.7744779586792,
+    "proof_screw_angular_speed_rad_s": 13.547358512878418,
+    "replay": {
+      "probe": "dual-fault240.trace.json",
+      "hz": 240,
+      "thresholds": {
+        "screw_angle_rad": 0.01,
+        "angle_rad": 0.01,
+        "screw_z_m": 1e-05
+      },
+      "first_failure": {
+        "step": 2944,
+        "time_s": 12.266666666666667,
+        "exceeded": [
+          "screw_z_m"
+        ],
+        "rates": {
+          "screw_angle_rad": 0.0005900859832763672,
+          "angle_rad": 0.00034332275390625,
+          "screw_z_m": 1.595442881807685e-05
+        }
+      },
+      "over_limit_steps": 144,
+      "peak_rates": {
+        "screw_angle_rad": 13.547358512878418,
+        "angle_rad": 16.7744779586792,
+        "screw_z_m": 0.002440356183797121
+      }
+    }
   },
   {
     "variant": "dual-lighter240",
