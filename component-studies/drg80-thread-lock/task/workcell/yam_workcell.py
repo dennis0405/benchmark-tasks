@@ -209,7 +209,14 @@ def main():
         scoring = run_path(
             str(Path(__file__).resolve().parent.parent / "stop_lock_score.py")
         )
-        powered = scoring["EnergizedMotion"]()
+        powered = scoring["ElasticLockMotion"](round(1/base.physics_dt))
+        protected=[root+"/"+name for name in ("screw","nut","retainer","left_jaw","right_jaw","piston")]
+        external=list(targets)
+        for side in sides:
+            links=base.scene[side+"_robot"].root_physx_view.link_paths[0]
+            external.extend(links)
+        contacts=PhysxManager.get_physics_sim_view().create_rigid_contact_view(protected,
+            filter_patterns=[external for _ in protected],max_contact_data_count=2048)
 
         def pre(*args, **kwargs):
             if "callback_error" in results:
@@ -228,6 +235,9 @@ def main():
                 r["sz"],
                 r["st"],
                 r["st"] + r["nt"],
+                r["stop_n"],
+                not np.any(contacts.get_contact_data(dt=base.physics_dt)[4].numpy()),
+                abs(r["angular_speed"])<=2 and abs(r["piston_speed"])<=.005,
             )
             if violated:
                 results.setdefault("powered_fault", powered.first_failure)
@@ -475,8 +485,14 @@ def main():
         height = 0.014
         indexed = idx * math.pi / 3
         aligned = 0
-        for step in range(450):
+        prev_p,prev_r=tool(0)
+        tip_step=np.zeros(3)
+        angular_step=np.zeros(3)
+        for step in range(640):
             tip_pos, tool_rot = tool(0)
+            tip_step=.65*tip_step+.35*(tip_pos-prev_p)
+            angular_step=.65*angular_step+.35*Rotation.from_matrix(tool_rot@prev_r.T).as_rotvec()
+            prev_p,prev_r=tip_pos,tool_rot
             part = bench.poses()["screw"]
             part_rot = Rotation.from_quat(part[3:]).as_matrix()
             socket_yaw = math.atan2(part_rot[1, 0], part_rot[0, 0])
@@ -487,7 +503,7 @@ def main():
             err_rot = Rotation.from_matrix(goal_rot @ tool_rot.T).as_rotvec()
             delta = np.asarray(part[:3]) - tip_pos
             radial = np.linalg.norm(delta[:2])
-            if radial < 0.00010 and np.linalg.norm(err_rot) < 0.011:
+            if radial < 0.00011 and np.linalg.norm(err_rot[:2]) < 0.015 and abs(err_rot[2]) < .050:
                 aligned += 1
             else:
                 aligned = 0
@@ -504,11 +520,11 @@ def main():
             actual_tcp = ik.tcp_pose(joints(0), rig.bases["left"])[0]
             arm_to_tip = tip_pos - actual_tcp
             dq = Rotation.from_rotvec(
-                np.clip(0.075 * err_rot, -0.003, 0.003)
+                np.clip(0.033 * err_rot - .80*angular_step, -0.003, 0.003)
             ).as_matrix()
             next_xyz = (
                 cp
-                + np.clip(0.13 * delta, -0.0008, 0.0008)
+                + np.clip(0.045 * delta - .85*tip_step, -0.0008, 0.0008)
                 + arm_to_tip
                 - dq @ arm_to_tip
             )
@@ -523,6 +539,9 @@ def main():
             if pe > 0.002 or ae > 0.035:
                 raise ValueError("guarded insertion wrist travel exhausted")
             move("guarded_insert", goals, grip_state, 1)
+            if step%20==0:
+                trace[-1]["guard"]=dict(height=height,radial=radial,rotation=err_rot.tolist(),
+                    tip_step=tip_step.tolist(),axial_force=axial_force)
         results["commanded_insertion_height_m"] = height
         tip = tool(0)[0] - screw()
         results["engagement_radial_m"] = float(np.linalg.norm(tip[:2]))

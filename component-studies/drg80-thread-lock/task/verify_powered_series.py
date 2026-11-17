@@ -28,7 +28,7 @@ def replay(root, hz, fault):
                                screw_angle=degrees(row["screw_angle_rad"]), nut_angle=degrees(row["angle_rad"])), i)
     motion = grader.energized_motion
     assert motion.windows == result["windows"] == 1
-    assert list(motion.first_failure or ()) == (result["first_failure"] or [])
+    assert list(motion.raw.first_failure or ()) == (result["first_failure"] or [])
     for name, value in zip(motion.channels, motion.maximum):
         assert abs(value-result["span"][name]) < 1e-12
     assert len(result["checks"]) == 17

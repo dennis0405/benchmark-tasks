@@ -19,6 +19,7 @@ p.add_argument("--valve-force", type=float, default=5.0)
 p.add_argument("--tightening-travel", type=float, default=1.0)
 p.add_argument("--drive-instrument", action="store_true")
 p.add_argument("--release-only", action="store_true")
+p.add_argument("--powered-fault",action="store_true")
 p.add_argument("--early", action="store_true")
 p.add_argument("--hz", type=int, default=240)
 args = p.parse_args()
@@ -154,6 +155,8 @@ def main():
                 if args.drive_instrument:
                     diag[:4] = 0
                     tool_instrument(q, phase, i / args.hz)
+                if args.powered_fault and phase=="open1" and i>=.8*args.hz:
+                    diag[1]+=.030
                 bench.step(diag)
                 sim.step(render=False)
                 row = bench.read()

@@ -86,3 +86,11 @@ The final independent counterhold variant uses a native implicit, bounded rotati
 [Workcell runner and reproduction steps](task/workcell/README.md). The robot acquires both free tools in the mounted workspace. In the first transfer the driver tip missed by 76 mm. Breaking the path into a lift, a rotation and a measured wrist correction reached the socket area. The subsequent contact trial exceeded the guide's travel and created a 9.9 mm seat overlap. The resulting screw rotation is invalid as adjustment evidence. [Transfer log](measurements/yam-workcell-transfer.json).
 
 At 240 Hz, a capped instrument held 3.86 N after release. Three measured reopenings reached 90.92°, 90.92° and 90.91°. Loading caused a maximum 31.65 µm of axial movement and 1.09° of absolute nut rotation in powered intervals. These exceed the approved 1 µm and 0.01° limits. The angle-only result does not qualify. [Independent audit](measurements/mounted12-audit.json). Separate runs lowered the actuator force and measured the native bearing torque. Their audits retain unsuccessful controls alongside closer endpoint results.
+
+### Reversible deflection and powered loosening
+
+The revised grader keeps the original thread, gravity and stiffness. A supported or freely moving screw still has a 1 µm axial limit while powered. At the physically loaded stop it can deflect within the original 0.10 mm setting tolerance. The unloaded pose must recover to within 1 µm, and a comparable force plateau must reproduce its prior axial position. The 0.01° absolute rotation limits still apply throughout powered motion.
+
+The mounted fixture completed three full re-openings at 240 Hz and 480 Hz. Each test recovered its unloaded setting three times. Release preload was at least 29.52 N and 27.74 N, respectively. A separate 0.030 N·m external torque while powered triggered the rotation fault at tick 1753. The earlier instantaneous-speed and 1 µm loaded-span findings above document earlier contract versions. [Measured fixture results](measurements/mounted-elastic-recovery.json).
+
+The free-tool YAM trial picked up the driver and wrench. The guarded alignment trials have not demonstrated a complete service task. The [camera recording](measurements/yam-socket-insertion-attempt.mp4) shows an earlier unsuccessful insertion.

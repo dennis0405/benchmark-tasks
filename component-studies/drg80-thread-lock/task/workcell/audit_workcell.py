@@ -12,11 +12,11 @@ def audit(rows, hz):
     grader = run_path(
         str(Path(__file__).resolve().parent.parent / "stop_lock_score.py")
     )
-    motion = grader["EnergizedMotion"]()
+    motion = grader["ElasticLockMotion"](hz)
     first = None
     for tick, r in enumerate(rows, 1):
         violation = motion.observe(
-            tick, r["actuator_n"], r["sz"], r["st"], r["st"] + r["nt"]
+            tick, r["actuator_n"], r["sz"], r["st"], r["st"] + r["nt"], r["stop_n"], True, abs(r["angular_speed"])<=2 and abs(r["piston_speed"])<=.005
         )
         if violation and first is None:
             first = {
@@ -52,10 +52,12 @@ def audit(rows, hz):
             len(s) == hz // 4 and min(r["seat_n"] for r in s) >= 2 for s in opens
         ),
         "powered_motion": first is None and motion.windows > 0,
+        "three_unloaded_recoveries": not motion.elastic_seen or motion.recoveries>=3,
     }
     return {
         "scope": "instrumented fixture only; these are necessary conditions, no task points",
         "rate_hz": hz,
+        "verified_recoveries":motion.recoveries,
         "checks": checks,
         "release_min_n": release_n,
         "open_endpoints_deg": endpoints,

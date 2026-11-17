@@ -15,8 +15,8 @@ for hz in (240,480):
         module.publish_native_observation(obs)
     assert task.score({})==.5
     assert module.publish_native_observation(dict(obs,physics_tick=tick+1,screw_height=.9e-6))==.5
-    assert module.publish_native_observation(dict(obs,physics_tick=tick+2,screw_height=1.1e-6))==0
-    assert module.publish_native_observation(dict(obs,physics_tick=tick+3))==0
+    assert module.publish_native_observation(dict(obs,physics_tick=tick+2,screw_height=1.1e-6))==.5
+    assert module.publish_native_observation(dict(obs,physics_tick=tick+3,screw_angle=.011))==0
     assert not task.success({})
     module.reset_native_observations(hz)
     try:
