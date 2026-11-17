@@ -26,7 +26,7 @@ import torch
 from isaaclab_arena.environments.arena_env_builder import ArenaEnvBuilder
 from isaaclab_arena.environments.arena_env_builder_cfg import ArenaEnvBuilderCfg
 from yam_arena import ik, scene, station, task_file
-from yam_arena.constants import PAD_TIP_PAST_TCP, READY
+from yam_arena.constants import FINGER_OPEN, PAD_TIP_PAST_TCP, READY
 from yam_arena.demo import grip_rotation
 from yam_arena.embodiment import BimanualYamEmbodiment
 
@@ -348,6 +348,10 @@ def main():
             if error > 0.002:
                 raise ValueError(f"rack IK {side} {error}")
             plans.append(path)
+        # A 24 mm driver and 12 mm wrench do not need a commanded zero
+        # aperture. Leave 1.6 mm of pad compression per finger (~8 N at
+        # the stock 5000 N/m gain) to avoid exciting the free handle.
+        held_openings=[(.012-.0016)/abs(FINGER_OPEN),(.006-.0016)/abs(FINGER_OPEN)]
         for label, idx, g, n in (
             ("settle", None, 1, 24),
             ("approach", 0, 1, 60),
@@ -359,14 +363,14 @@ def main():
             move(
                 label,
                 [p[idx] for p in plans] if idx is not None else [READY, READY],
-                [g, g],
+                [1.,1.] if g else held_openings,
                 n,
             )
         lift = np.array(trace[-1]["tools"])[:, 2] - np.array(trace[23]["tools"])[:, 2]
         results["held_lift_m"] = lift.tolist()
         if min(lift) < 0.030:
             raise ValueError("tools not both held after lift")
-        grip_state = [0, 0]
+        grip_state = held_openings.copy()
         rack_poses = [tool(i) for i in range(2)]
         offsets = []
         for i in range(2):
