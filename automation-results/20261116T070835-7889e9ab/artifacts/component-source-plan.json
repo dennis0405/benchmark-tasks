@@ -1,26 +1,31 @@
 {
   "phase": "preflight",
-  "summary": "Repair the obsolete empty-scene negative-control expectation by rerunning the current bounded isolation probe. It now measures unintended receiver-contact headroom while still requiring both authored support groups to carry native contact. Existing repaired media-only and washer-only receipts passed; full loaded reset and qualification remain unverified. Workforce/category importance remains unresolved.",
+  "summary": "Repaired the bounded full-payload probe to derive untouched score and receiver-media count from live native body poses, causal sampled passage, conservative whole-body containment, and native mass readback. The 20 Hz observer is explicitly not frozen 240 Hz qualification. Static parsing passed; trusted-host GPU execution is required. Workforce eligibility, loaded YAM manipulation, full qualification, export, release, and Dream remain unresolved.",
   "scripts": [
     {
-      "id": "receiver-coupling-empty-control-repair",
+      "id": "receiver_coupling_full_payload_scoring_repair",
       "script": "task/run_receiver_coupling_isolation_probe.py",
       "args": [
+        "--device",
+        "cuda:0",
         "--variant",
-        "empty",
+        "full",
         "--receiver-inner-x",
         "0.280",
         "--receiver-inner-y",
         "0.280",
         "--duration",
         "3.0",
-        "--seed",
-        "8261",
         "--report",
-        "../measurements/receiver-coupling-empty-280-repaired.json",
-        "--headless"
+        "../measurements/receiver-coupling-full-280-scored.json",
+        "--video",
+        "../measurements/receiver-coupling-full-280-scored.mp4",
+        "--first-frame",
+        "../measurements/receiver-coupling-full-280-scored-first.png",
+        "--last-frame",
+        "../measurements/receiver-coupling-full-280-scored-last.png"
       ],
-      "report": "measurements/receiver-coupling-empty-280-repaired.json"
+      "report": "measurements/receiver-coupling-full-280-scored.json"
     }
   ],
   "files": [

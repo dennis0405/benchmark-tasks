@@ -539,10 +539,19 @@ def build_environment(include_loaded=False, payload_kind="full", enable_cameras=
                 max_contact_data_count_per_prim=RAW_CONTACT_CAPACITY_PER_PRIM)))
         payload_names = ([f"media_{i:02d}" for i in range(8)] if payload_kind in ("media", "full") else [])
         payload_names += ([f"washer_{i:02d}" for i in range(2)] if payload_kind in ("washers", "full") else [])
+        # Thirty filtered sensors in the combined scene (including filters on
+        # 64 washer wedges) overloaded native contact instrumentation on this
+        # pinned runtime: the first completed frame showed non-physical 1e5 N
+        # reactions and ejected bodies.  Keep one direct screen sensor per
+        # loose body for the combined probe.  The hash-bound media-only and
+        # washer-only probes retain receiver/support isolation measurements.
+        payload_filters = (("screen", ["{ENV_REGEX_NS}/screen"]),) if payload_kind == "full" else (
+            ("screen", ["{ENV_REGEX_NS}/screen"]),
+            ("receiver", receiver_shapes),
+            ("support", support_shapes),
+        )
         for name in payload_names:
-            for category, filters in (("screen", ["{ENV_REGEX_NS}/screen"]),
-                                      ("receiver", receiver_shapes),
-                                      ("support", support_shapes)):
+            for category, filters in payload_filters:
                 scene_fields.append((f"{name}_{category}_contacts", ContactSensorCfg,
                     ContactSensorCfg(
                         prim_path=f"{{ENV_REGEX_NS}}/{name}", update_period=0.0,
