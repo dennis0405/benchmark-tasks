@@ -1,0 +1,20 @@
+{
+  "verdict": "repair",
+  "findings": [
+    "The prior five scoring defects are repaired: topping separation anywhere off C latches after 60 native samples; eligibility requires simultaneous safe release and withdrawal; the episode stops at score freeze; Q-O includes grippers; and the untouched control now correctly attributes zero to yaw below 90 degrees.",
+    "All 23 required controls recompute as stated under the grading formula. Initial/insufficient, excursion, support-loss, topping-loss, bypass, containment, damage, shortcut, incomplete-dwell, and timeout cases score 0; safe 120 degrees scores 0.5; safe wrapped yaw of 150–180 degrees scores 1.0. The 210-degree directed case wraps to 150 degrees and scores 1.0. The first nonzero tier is 90 degrees, no bonus exists, and timeout remains zero unless eligibility was reached earlier.",
+    "The grading timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; 28,800 native samples at 240 Hz equal 120 seconds; the eligibility dwell is 240 native samples (1 second); topping loss is 60 samples (0.25 seconds); and refinement uses 480 Hz without changing the native grade.",
+    "Several prospective physics-validation metrics remain insufficiently computable despite having units and thresholds. The contract does not define the aggregation for `trajectory_*_signed_separation` metrics (minimum over which collider pairs and samples), whether `episode_depth_valid_pixel_fraction_min` is a per-frame minimum or episode-wide pixel ratio, or which contact pair/event supplies `refinement_peak_force_relative_difference_upper_bound`. `trajectory_core_deck_contact_gap_upper_bound` is also not defined from the signed-separation/contact observations and is potentially inconsistent in name with the exact resolved-contact SUPPORT predicate. Define each observable, pair scope, temporal aggregation, empty-contact behavior, and refinement matching rule explicitly.",
+    "The indexed pinned-runtime preflight and `input/pinned-runtime-sources` snapshot are absent, so compatibility with the pinned YAM/Arena APIs cannot be verified here. Consistent with the prospective-review rule and the contract’s own disclosure, this absence does not itself refute the specification, but no API-compatibility claim is established."
+  ],
+  "evidence_paths": [
+    "artifacts/contract.json",
+    "artifacts/selected.json",
+    "input/last-failure.json",
+    "input/request.json",
+    "input/review-prompt.txt",
+    "input/repository-AGENTS.md",
+    "input/operator-source-notes.json",
+    "artifacts/research.json"
+  ]
+}

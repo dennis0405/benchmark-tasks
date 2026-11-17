@@ -1,116 +1,156 @@
 {
   "candidates": [
     {
-      "id": "pizza-turn-180-centered",
-      "title": "Centered half-turn of a partially baked pizza with a turning peel",
-      "objective": "Using YAM and a representative full-scale turning peel, rotate a roughly 300 mm partially baked pizza approximately 180 degrees on the stone inside a closed-roof 16-inch-class oven. Bring the visibly pale rim sector toward the modeled hot side while keeping the pizza near its initial center, top-side-up, supported, and inside the oven throughout; then withdraw the peel completely. Cooking chemistry and food safety are outside scope.",
+      "id": "pizza-turn-180-small-strokes",
+      "title": "Centered 180° pizza turn using repeated short peel strokes",
+      "objective": "With YAM holding a full-scale 7-inch turning peel, rotate a roughly 300 mm partially baked pizza about 180° inside a representative closed-roof 16-inch oven. Use repeated short, low-lift strokes so some pizza-to-stone contact remains at all times, keep the pizza within 50 mm of its initial center throughout, release it top-side-up on the stone, and withdraw the peel. Cooking chemistry and food safety are outside scope.",
       "skills": [
-        "long-handled tool grasp and control",
-        "thin-blade insertion beneath a compliant crust rim",
-        "guarded lifting to reduce deck friction",
-        "tangential traction and in-plane yaw control",
-        "confined wrist and tool coordination",
-        "controlled release and collision-free withdrawal"
+        "full-scale long-handled tool grasp and steering",
+        "thin-blade insertion beneath a minimally compliant crust rim",
+        "guarded low-lift force control",
+        "repeated tangential traction with stroke resets",
+        "center-preserving in-plane rotation",
+        "confined release and collision-free withdrawal"
       ],
-      "success_conditions": "Use native pose and contact traces plus video. Full credit: absolute yaw change 150–210 degrees; maximum center excursion throughout the trial no more than 50 mm; final center displacement no more than 35 mm; pizza continuously supported by stone, peel, or both; pizza remains top-side-up and entirely inside the oven; peel finishes fully clear. Partial credit: yaw change 90–149 degrees; maximum trajectory excursion no more than 80 mm; final displacement no more than 60 mm; all support, containment, orientation, release, and damage conditions still satisfied. Zero credit otherwise, including gripper contact with pizza, removing it to rotate, any interval without stone-or-peel support, overturning, pose writes, welds, unreleased peel contact, crust penetration, permanent rim folding outside the validated compliance range, topping separation, a fall, or damaging robot/tool/oven collision. The pale sector is visible corroboration, not a substitute for measured yaw.",
-      "industrial_value": "Represents the repeated in-oven turning operation used to expose different pizza sectors to uneven heat without extracting the food. It evaluates confined food-service tool manipulation rather than the rejected miniature launch task.",
-      "dexterity": "High: the robot must acquire and steer a long tool, insert a thin blade under a compliant edge, modulate normal force, generate controlled tangential traction, limit translation of a weakly supported food object, and release it cleanly through a restricted oven mouth.",
+      "success_conditions": "Using only the current native trial, award full credit when wrapped final yaw after release is 150–210°, maximum pizza-center excursion is no more than 50 mm at every recorded physics frame, pizza-to-deck contact remains present throughout, the pizza stays top-side-up and entirely inside the oven, no crust damage or topping loss occurs, and the peel is fully withdrawn. Award partial credit for 90–149° yaw only when all other full-credit conditions hold. Award zero for less than 90° yaw, excursion over 50 mm, any loss of deck contact, direct gripper contact with the pizza, taking the pizza outside the oven to turn it, overturning, crust penetration, permanent rim folding, topping separation, collision damage, pose writes, fake grasp welds, disabled collisions, or unreleased peel contact. Stroke count, hand identity, and action order are diagnostic only.",
+      "industrial_value": "Represents the in-oven turning operation used in pizza preparation while testing long-tool control and manipulation of a weakly constrained food item in a confined, roofed workspace. The distinctive ability is tool-mediated under-edge insertion followed by centered rotation while deck support is continuously preserved, rather than generic rigid-object turning or pizza launching.",
+      "dexterity": "High: the peel must enter beneath a compliant rim without puncturing it, apply several small tangential strokes without lifting the pizza clear of the deck, limit cumulative translation, release cleanly, and clear the oven mouth.",
       "evidence": [
         {
-          "source_id": "s-dc498840962a0e73",
-          "locator": "The Turning Peel section, acquired text near line 9320",
-          "quote_sha256": "bd932b7f60ba0dd632bc7a5bace137956f438d7370a52c2f017d8ac52e495da5"
+          "source_id": "s-0ddef800cdce9843",
+          "locator": "Product introduction, Ooni Pizza Turning Peel",
+          "quote_sha256": "54e5ffd43ce67af181a9da9a47ef9567b3da02bef7c9085211face4c92a4bdd4"
+        },
+        {
+          "source_id": "s-0ddef800cdce9843",
+          "locator": "Product specifications, immediately below “Ooni 7” Pizza Turning Peel”",
+          "quote_sha256": "023a4176a6cd93e3f1ef0d5a13041cd3ce2441abde55976c235edf855b81fe42"
+        },
+        {
+          "source_id": "s-0ddef800cdce9843",
+          "locator": "Product specifications, line following the 7-inch peel dimensions",
+          "quote_sha256": "1ac53b1c4325b37d7c248bae3b2a80c280926cbfb7ea22cd1cafa740fa6f7121"
+        },
+        {
+          "source_id": "s-0ddef800cdce9843",
+          "locator": "Loaded with Features, faster non-stop pizza cooking",
+          "quote_sha256": "09b9b42d47fa81e76f11944ca23741418df032aa1640c614f12a83c1e9dd5322"
         },
         {
           "source_id": "s-dcad206fb5f64f5c",
-          "locator": "Pizza peel use procedure, acquired text near line 12375",
-          "quote_sha256": "7bb8ba3155e2e3d1bd26b3ea8cd7abd4ffc145c72b418ad254e533361b58512c"
+          "locator": "Pizza-peel use procedure",
+          "quote_sha256": "50ea3fce2a3ccf33d217993508eef1e44e9cb462983dc448384c261202560506"
         },
         {
-          "source_id": "s-dc498840962a0e73",
-          "locator": "How to Pick the Right Pizza Peel, form-and-function paragraph near lines 9270–9273",
-          "quote_sha256": "7e16b4bd65ed6642e97d91616e310dca1a02da27d34ee4fc72a359a1c00b8476"
+          "source_id": "s-6ff9ae104970e4bc",
+          "locator": "Loaded with Features, XL Cooking Area",
+          "quote_sha256": "0a165e36ccb02e3d0b99f42a4761d316cc1fd212629251399e72a9f45b071212"
+        },
+        {
+          "source_id": "s-6ff9ae104970e4bc",
+          "locator": "Product specifications, Dimensions, metric unboxed value",
+          "quote_sha256": "298832e3009350c322a5f466d78cb2b8d62a95746d12869fdfbc3ed9a5212b00"
+        },
+        {
+          "source_id": "s-6ff9ae104970e4bc",
+          "locator": "Product features, included cordierite pizza stone",
+          "quote_sha256": "2d8caae1531264dcdcd5751ee21b7c97941b7de436406a5062569b6b535fb71f"
         },
         {
           "source_id": "s-2fa2e714ac721261",
-          "locator": "Final review record, Construct validity paragraph near line 2055",
-          "quote_sha256": "3b86459e10716b929d85876f31284e25aee82b672970a6c7777ef353b4d4fc48"
+          "locator": "Final review record, Construct validity paragraph",
+          "quote_sha256": "8f9885cc3589ca4db54ab36e5956fd0f12ce1fdeddeda32c64096b285173988b"
         }
       ],
-      "asset_plan": "Create an independently authored representative fixture rather than claiming an exact product replica: a closed-roof 16-inch-class oven with a nominal 406 mm pizza capacity, a 300 mm pizza, and a small circular perforated turning-peel head on a long handle. Treat mouth height, deck depth, blade thickness, masses, friction, and stiffness as disclosed provisional settings. Model the set underside/core as rigid and use only a shallow validated compliant rim/contact approximation; toppings may be visually integrated but must not create hidden grasp geometry. Before full-demo development, run separate current-trial native tests for YAM grasp acquisition, full-scale handle reach, roof and mouth clearance, blade insertion, tangential traction, continuous support, release, and withdrawal. Use ordinary guarded YAM joint and gripper actions only, with no task-object pose control, weld, collision disabling, or scale reduction.",
-      "risk": "The dominant risks are insufficient full-scale reach, handle or wrist collision at the oven mouth, blade tunneling, excessive stone friction, unrealistic rim compliance, and poor yaw observability. A visible asymmetric browning marker resolves yaw ambiguity without changing collision or mass. Any failed reach, clearance, insertion, traction, support, or release gate blocks the full demonstration rather than permitting smaller equipment or hidden constraints.",
+      "asset_plan": "Create an independently authored representative fixture rather than claiming an exact product replica. Preserve the documented 630 × 580 × 370 mm oven exterior, 16-inch capacity, 15 mm cordierite deck, and 170 × 800 × 20 mm, 0.4 kg turning peel. Use a provisional 300 mm pizza with a set rigid underside/core and shallow rim compliance limited to what blade entry requires. Treat mouth height, interior roof profile, usable deck depth, peel-edge thickness, pizza mass, friction, restitution, and rim stiffness as disclosed modeling assumptions requiring calibration. Gate development in this order: real-YAM handle grasp; full-scale reach and mouth/roof clearance; low repeated insertion strokes with no food pose scripting; tangential traction with continuous deck contact; trajectory-wide center and wrapped-yaw measurement; release clearance; and complete withdrawal. Use normal YAM joint and gripper commands only.",
+      "risk": "The 800 mm handle may exceed practical YAM reach or collide with the oven mouth; a thin peel can tunnel through the rim; uncalibrated friction or compliance can produce implausible traction, lift, or folding; and center error can accumulate across strokes. Any failed native-physics gate blocks the full demonstration—equipment may not be scaled down and hidden pivots, pose control, collision disabling, or relaxed scoring are prohibited.",
       "feasibility_status": "ready",
       "missing_evidence": []
     },
     {
-      "id": "pizza-turn-90-centered",
-      "title": "Centered corrective quarter-turn with a turning peel",
-      "objective": "Rotate the roughly 300 mm pizza by approximately 90 degrees inside the closed-roof oven, keeping its center tightly controlled, then return it to full stone support and withdraw the peel.",
+      "id": "pizza-turn-90-corrective",
+      "title": "Centered corrective 90° pizza turn",
+      "objective": "Use the same full-scale turning peel and roofed oven to rotate a roughly 300 mm partially baked pizza approximately 90° using low, short strokes while retaining deck contact, limiting center excursion to 50 mm, releasing top-side-up inside the oven, and withdrawing the tool.",
       "skills": [
         "precise peel-tip insertion",
         "small-angle tangential traction",
-        "center stabilization under friction",
-        "confined long-tool manipulation",
+        "yaw stopping under deck friction",
+        "confined long-tool control",
         "low-disturbance release"
       ],
-      "success_conditions": "Full credit: yaw change 75–105 degrees, maximum center excursion no more than 35 mm, final displacement no more than 25 mm, continuous stone-or-peel support, top-side-up containment inside the oven, and complete withdrawal. Partial credit: yaw change 45–74 degrees, maximum excursion no more than 60 mm, final displacement no more than 45 mm, with the same safety and release conditions. Zero credit for gripper bypass, extraction for rotation, support loss, overturning, pose writes, welds, damage, topping loss, collision penetration, or retained peel contact.",
-      "industrial_value": "Models a smaller corrective reorientation used when only one portion of the rim requires further exposure to the hot side.",
-      "dexterity": "Emphasizes precise initiation and stopping of yaw with minimal center drift and minimal disturbance during release.",
+      "success_conditions": "Full credit requires wrapped final yaw after release of 75–105°, maximum center excursion no more than 50 mm throughout the native trace, uninterrupted pizza-to-deck contact, top-side-up containment inside the oven, no crust damage or topping loss, and complete peel withdrawal. Partial credit requires 45–74° yaw with every other condition unchanged. Zero credit applies to direct gripper bypass, external rotation, support loss, overturning, penetration, damage, pose writes, welds, disabled collisions, or retained tool contact.",
+      "industrial_value": "Represents a smaller corrective in-oven turn when one sector needs additional exposure, using the same real turning tool and confined contact mechanics.",
+      "dexterity": "Emphasizes accurate initiation and stopping of tool-mediated yaw while suppressing translation and avoiding excess rim lift.",
       "evidence": [
         {
           "source_id": "s-dc498840962a0e73",
-          "locator": "How to Pick the Right Pizza Peel, introductory paragraph near line 9260",
+          "locator": "How to Pick the Right Pizza Peel, introductory discussion",
           "quote_sha256": "8afd9add2aa6ba68cb93ae19c720a31d6bf567c19b1c4b7386ee4729cd48ada0"
         },
         {
-          "source_id": "s-dc498840962a0e73",
-          "locator": "The Turning Peel section, acquired text near line 9320",
-          "quote_sha256": "bd932b7f60ba0dd632bc7a5bace137956f438d7370a52c2f017d8ac52e495da5"
+          "source_id": "s-0ddef800cdce9843",
+          "locator": "Loaded with Features, Banishes the burn",
+          "quote_sha256": "213f3936ac26b2242105975d114a8c85ef9f9ea6102e55db16b7b9e2d5cb55b3"
+        },
+        {
+          "source_id": "s-0ddef800cdce9843",
+          "locator": "Product specifications, immediately below “Ooni 7” Pizza Turning Peel”",
+          "quote_sha256": "023a4176a6cd93e3f1ef0d5a13041cd3ce2441abde55976c235edf855b81fe42"
+        },
+        {
+          "source_id": "s-0ddef800cdce9843",
+          "locator": "Product specifications, line following the 7-inch peel dimensions",
+          "quote_sha256": "1ac53b1c4325b37d7c248bae3b2a80c280926cbfb7ea22cd1cafa740fa6f7121"
         }
       ],
-      "asset_plan": "Use the same representative rigid-core, compliant-rim pizza, closed-roof oven, and circular turning peel as the half-turn candidate. Measure yaw using a visual sector that does not alter physical properties. Validate full-scale reach, insertion, traction, release, and trajectory-wide center tracking before attempting a scored trial.",
-      "risk": "The tight excursion tolerance may be incompatible with the uncalibrated peel-to-crust and crust-to-stone contacts. It must not be rescued with a pivot joint, center pin, hidden damping, or modified object pose.",
+      "asset_plan": "Reuse the documented full-scale oven, stone, peel, and representative pizza model from the half-turn objective. Validate stopping accuracy and complete physical release with native YAM actions before adopting the proposed angular band.",
+      "risk": "The quarter-turn is shorter but its narrow stopping band may be dominated by uncalibrated peel-to-crust and crust-to-stone friction. No center pin, pivot, or hidden damping may be introduced.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
-        "A native YAM trial has not demonstrated the 35 mm trajectory-wide center bound with the full-scale fixture.",
-        "Contact parameters have not been calibrated sufficiently to justify the tighter precision threshold."
+        "A native full-scale YAM trial has not established repeatable stopping within the proposed 75–105° band.",
+        "Contact parameters have not been calibrated against a representative partially baked crust."
       ]
     },
     {
-      "id": "pizza-pale-sector-to-hot-side",
-      "title": "Orient a pale crust sector toward the oven hot side",
-      "objective": "From a varied initial pizza yaw, use the turning peel to place a visible pale rim sector in a defined hot-side angular zone while the pizza remains centered, supported, top-side-up, and inside the oven; then withdraw the tool.",
+      "id": "pizza-pale-sector-hot-side",
+      "title": "Turn a pale crust sector toward the oven hot side",
+      "objective": "From a varied initial yaw, identify a visibly pale rim sector and use the full-scale turning peel to bring it toward a defined hot-side direction while maintaining deck contact, no more than 50 mm center excursion, top-side-up containment, final release, and peel withdrawal.",
       "skills": [
-        "target-sector localization",
-        "rotation-direction selection",
-        "selected-rim blade insertion",
+        "visual sector localization",
+        "rotation-direction and insertion-point selection",
         "closed-loop tangential yaw correction",
-        "confined release and withdrawal"
+        "center stabilization under friction",
+        "confined tool release"
       ],
-      "success_conditions": "Full credit: pale-sector centerline within 20 degrees of the hot-side target, true yaw change at least 60 degrees, maximum center excursion no more than 50 mm, final displacement no more than 35 mm, continuous stone-or-peel support, top-side-up containment, and complete withdrawal. Partial credit: final angular error 21–40 degrees, yaw change at least 40 degrees, maximum excursion no more than 75 mm, final displacement no more than 55 mm, and all safety conditions satisfied. Zero credit for translating without sufficient yaw, gripper bypass, extraction for rotation, support loss, overturning, pose writes, welds, damage, topping loss, penetration, or retained peel contact.",
-      "industrial_value": "Captures purpose-driven correction of visible uneven baking rather than execution of a fixed rotation alone.",
-      "dexterity": "Combines target-conditioned action selection with insertion-point choice, direction control, tangential traction, and accurate stopping in a confined workspace.",
+      "success_conditions": "Full credit requires the pale-sector centerline to finish within 20° of the hot-side marker after release, at least 60° wrapped yaw change, maximum center excursion no more than 50 mm throughout, continuous pizza-to-deck contact, top-side-up containment, no crust damage or topping loss, and full peel withdrawal. Partial credit permits 21–40° final angular error while retaining every other condition. Zero credit includes translation without required yaw, direct gripper bypass, external rotation, loss of deck contact, overturning, penetration, damage, pose writes, welds, disabled collisions, or retained peel contact.",
+      "industrial_value": "Tests perception-guided correction of visibly uneven baking while preserving the real under-edge tool interaction and confined geometry.",
+      "dexterity": "Adds direction, insertion-point, and stopping decisions to blade insertion, low-lift tangential traction, center control, release, and withdrawal.",
       "evidence": [
         {
           "source_id": "s-dc498840962a0e73",
-          "locator": "How to Pick the Right Pizza Peel, introductory paragraph near line 9260",
+          "locator": "How to Pick the Right Pizza Peel, introductory discussion",
           "quote_sha256": "8afd9add2aa6ba68cb93ae19c720a31d6bf567c19b1c4b7386ee4729cd48ada0"
         },
         {
           "source_id": "s-dcad206fb5f64f5c",
-          "locator": "Pizza peel use procedure, acquired text near line 12375",
+          "locator": "Pizza-peel use procedure",
           "quote_sha256": "50ea3fce2a3ccf33d217993508eef1e44e9cb462983dc448384c261202560506"
+        },
+        {
+          "source_id": "s-6ff9ae104970e4bc",
+          "locator": "Loaded with Features, Innovative L-Shaped Burner",
+          "quote_sha256": "c290628fbf975c4d49f53e2703a34be8bf202f5de56b86f9dbe13b43e0163fc4"
         }
       ],
-      "asset_plan": "Use the same representative full-scale fixture and minimal compliant-rim model. Encode the pale sector only as a visual and read-only scoring marker. Represent the hot side with a nonphysical scene marker because thermal simulation is excluded. Restrict varied starts to configurations that pass native reach and clearance tests.",
-      "risk": "The acquired procedure supports turning in response to cooking progress but does not specify a quantitative hot-side zone. The angular tolerance is therefore a disclosed benchmark convention, and initial-yaw variation may expose unreachable insertion configurations.",
+      "asset_plan": "Reuse the half-turn fixture and minimal compliant-rim model. Make browning asymmetry a read-only visual yaw marker with no collision or mass effect. Represent the hot side visually because heat transfer and cooking chemistry are excluded. Test every allowed initial yaw for native reach, insertion, traction, release, and withdrawal.",
+      "risk": "The sources establish observation-guided turning but not a quantitative target-zone tolerance. Varied starting orientations may also require unreachable approaches in the roofed workspace.",
       "feasibility_status": "research-needed",
       "missing_evidence": [
-        "No acquired industrial source specifies a quantitative hot-side angular tolerance.",
-        "Native reachability and traction have not been established across the proposed varied initial yaws."
+        "No acquired source establishes the proposed 20° hot-side tolerance.",
+        "Native full-scale reach and traction have not been demonstrated across the proposed initial-yaw range."
       ]
     }
   ],
-  "selected_id": "pizza-turn-180-centered",
-  "selection_reason": "The centered half-turn retains the required direction and directly measures the source-supported ability to rotate a pizza without removing it from the oven. It is distinct from the rejected launch task and from benchmark tasks involving pizza preparation, oven operation, or object placement. Unlike the tighter or varied-yaw alternatives, its representative geometry and broad outcome tolerances are sufficient to begin staged physical validation; mandatory full-scale reach, clearance, insertion, traction, support, release, and withdrawal gates prevent miniaturization or simulated shortcuts."
+  "selected_id": "pizza-turn-180-small-strokes",
+  "selection_reason": "This is the only candidate that directly preserves the requested half-turn while making repeated short, low-lift strokes, continuous deck support, a 50 mm trajectory-wide center limit, wrapped post-release yaw, and withdrawal observable. Exact acquired-source excerpts ground the 630 × 580 × 370 mm oven envelope, 16-inch capacity, 15 mm stone, and 170 × 800 × 20 mm, 0.4 kg peel without concatenating separated source fields. The objective tests under-edge insertion, controlled tangential traction, cumulative center control, and confined release; it is distinct from the rejected miniature pizza-launch setup. The alternative objectives remain meaningful but require additional stopping-accuracy or varied-start evidence."
 }

@@ -54,21 +54,21 @@
         "yam_sha": "0059d02a1a91bc6834c1d0846022891df0c78730"
       }
     },
-    "supervisor_pid": 47172,
+    "supervisor_pid": 78311,
     "supervisor_log": "/Users/dennis0405/.local/state/rcauto/runs/20261117T061915-1716ccff/supervisor.log",
-    "error": "incomplete evidence reference: source_id='s-6ff9ae104970e4bc', known_source=True, has_locator=True, quote_chars=6 (minimum 12). Use an exact acquired-text excerpt; inspect images separately, rather than quoting a short figure label.",
+    "error": "contract-critic: The prior five scoring defects are repaired: topping separation anywhere off C latches after 60 native samples; eligibility requires simultaneous safe release and withdrawal; the episode stops at score freeze; Q-O includes grippers; and the untouched control now correctly attributes zero to yaw below 90 degrees.; All 23 required controls recompute as stated under the grading formula. Initial/insufficient, excursion, support-loss, topping-loss, bypass, containment, damage, shortcut, incomplete-dwell, and timeout cases score 0; safe 120 degrees scores 0.5; safe wrapped yaw of 150–180 degrees scores 1.0. The 210-degree directed case wraps to 150 degrees and scores 1.0. The first nonzero tier is 90 degrees, no bonus exists, and timeout remains zero unless eligibility was reached earlier.; The grading timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; 28,800 native samples at 240 Hz equal 120 seconds; the eligibility dwell is 240 native samples (1 second); topping loss is 60 samples (0.25 seconds); and refinement uses 480 Hz without changing the native grade.; Several prospective physics-validation metrics remain insufficiently computable despite having units and thresholds. The contract does not define the aggregation for `trajectory_*_signed_separation` metrics (minimum over which collider pairs and samples), whether `episode_depth_valid_pixel_fraction_min` is a per-frame minimum or episode-wide pixel ratio, or which contact pair/event supplies `refinement_peak_force_relative_difference_upper_bound`. `trajectory_core_deck_contact_gap_upper_bound` is also not defined from the signed-separation/contact observations and is potentially inconsistent in name with the exact resolved-contact SUPPORT predicate. Define each observable, pair scope, temporal aggregation, empty-contact behavior, and refinement matching rule explicitly.; The indexed pinned-runtime preflight and `input/pinned-runtime-sources` snapshot are absent, so compatibility with the pinned YAM/Arena APIs cannot be verified here. Consistent with the prospective-review rule and the contract’s own disclosure, this absence does not itself refute the specification, but no API-compatibility claim is established.",
     "approval": null,
     "compute": "running",
     "remote_status": {
       "status": "blocked",
-      "error": "incomplete evidence reference: source_id='s-6ff9ae104970e4bc', known_source=True, has_locator=True, quote_chars=6 (minimum 12). Use an exact acquired-text excerpt; inspect images separately, rather than quoting a short figure label.",
+      "error": "contract-critic: The prior five scoring defects are repaired: topping separation anywhere off C latches after 60 native samples; eligibility requires simultaneous safe release and withdrawal; the episode stops at score freeze; Q-O includes grippers; and the untouched control now correctly attributes zero to yaw below 90 degrees.; All 23 required controls recompute as stated under the grading formula. Initial/insufficient, excursion, support-loss, topping-loss, bypass, containment, damage, shortcut, incomplete-dwell, and timeout cases score 0; safe 120 degrees scores 0.5; safe wrapped yaw of 150–180 degrees scores 1.0. The 210-degree directed case wraps to 150 degrees and scores 1.0. The first nonzero tier is 90 degrees, no bonus exists, and timeout remains zero unless eligibility was reached earlier.; The grading timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; 28,800 native samples at 240 Hz equal 120 seconds; the eligibility dwell is 240 native samples (1 second); topping loss is 60 samples (0.25 seconds); and refinement uses 480 Hz without changing the native grade.; Several prospective physics-validation metrics remain insufficiently computable despite having units and thresholds. The contract does not define the aggregation for `trajectory_*_signed_separation` metrics (minimum over which collider pairs and samples), whether `episode_depth_valid_pixel_fraction_min` is a per-frame minimum or episode-wide pixel ratio, or which contact pair/event supplies `refinement_peak_force_relative_difference_upper_bound`. `trajectory_core_deck_contact_gap_upper_bound` is also not defined from the signed-separation/contact observations and is potentially inconsistent in name with the exact resolved-contact SUPPORT predicate. Define each observable, pair scope, temporal aggregation, empty-contact behavior, and refinement matching rule explicitly.; The indexed pinned-runtime preflight and `input/pinned-runtime-sources` snapshot are absent, so compatibility with the pinned YAM/Arena APIs cannot be verified here. Consistent with the prospective-review rule and the contract’s own disclosure, this absence does not itself refute the specification, but no API-compatibility claim is established.",
       "type": "GateError",
-      "at": "2026-11-17T06:38:06.193254+00:00"
+      "at": "2026-11-17T07:50:23.214618+00:00"
     },
     "remote_run": "/data/robocurve-automation/worker-state/runs/20261117T061915-1716ccff",
     "stop_error": "command failed: ssh: ssh: Could not resolve hostname global.prd.ga.run.brev.nvidia.com: nodename nor servname provided, or not known\n",
-    "revision": 1,
-    "revision_request": "Keep the selected centered half-turn. The exact official product pages were acquired into input/sources.json, with verbatim snippets and IDs in input/operator-source-notes.json. Use those for dimensions; only quote strings actually present in the indexed source text. Continue the same proposal.",
+    "revision": 2,
+    "revision_request": "좋아. 그럼 삽으로 가장자리를 덜 들어 올리고 짧게 여러 번 돌려서, 피자가 화덕 바닥에 닿은 채 중심이 크게 밀리지 않고 180도 돌아가는지 검증해보자. 안정적으로 되면 Isaac Sim에서 YAM 데모까지 구현하고 실제 실행 영상도 보여줘. Preserve the selected task and prior evidence. Every quote in the candidate and critic must exceed 12 characters (include neighbouring text from input/sources.json). Retain the true board and peel specifications. Max centre travel 50mm throughout; contact with the deck throughout; evaluate final yaw from wrapped final orientation after release. Start with low repeated small strokes before the full native robot.",
     "resume_from_stage": "candidates"
   },
   "events": [
@@ -341,6 +341,546 @@
       "run": "20261117T061915-1716ccff",
       "at": "2026-11-17T06:38:16.625448+00:00",
       "data": "{\"status\": \"blocked\", \"error\": \"incomplete evidence reference: source_id='s-6ff9ae104970e4bc', known_source=True, has_locator=True, quote_chars=6 (minimum 12). Use an exact acquired-text excerpt; inspect images separately, rather than quoting a short figure label.\"}"
+    },
+    {
+      "seq": 9635,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T06:39:17.404022+00:00",
+      "data": "{\"compute\": \"stopped\"}"
+    },
+    {
+      "seq": 9636,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:25:57.830904+00:00",
+      "data": "{\"revision\": 2, \"revision_request\": \"\\uc88b\\uc544. \\uadf8\\ub7fc \\uc0bd\\uc73c\\ub85c \\uac00\\uc7a5\\uc790\\ub9ac\\ub97c \\ub35c \\ub4e4\\uc5b4 \\uc62c\\ub9ac\\uace0 \\uc9e7\\uac8c \\uc5ec\\ub7ec \\ubc88 \\ub3cc\\ub824\\uc11c, \\ud53c\\uc790\\uac00 \\ud654\\ub355 \\ubc14\\ub2e5\\uc5d0 \\ub2ff\\uc740 \\ucc44 \\uc911\\uc2ec\\uc774 \\ud06c\\uac8c \\ubc00\\ub9ac\\uc9c0 \\uc54a\\uace0 180\\ub3c4 \\ub3cc\\uc544\\uac00\\ub294\\uc9c0 \\uac80\\uc99d\\ud574\\ubcf4\\uc790. \\uc548\\uc815\\uc801\\uc73c\\ub85c \\ub418\\uba74 Isaac Sim\\uc5d0\\uc11c YAM \\ub370\\ubaa8\\uae4c\\uc9c0 \\uad6c\\ud604\\ud558\\uace0 \\uc2e4\\uc81c \\uc2e4\\ud589 \\uc601\\uc0c1\\ub3c4 \\ubcf4\\uc5ec\\uc918. Preserve the selected task and prior evidence. Every quote in the candidate and critic must exceed 12 characters (include neighbouring text from input/sources.json). Retain the true board and peel specifications. Max centre travel 50mm throughout; contact with the deck throughout; evaluate final yaw from wrapped final orientation after release. Start with low repeated small strokes before the full native robot.\", \"approval\": null}"
+    },
+    {
+      "seq": 9637,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:25:57.831265+00:00",
+      "data": "{\"resume_from_stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9638,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:25:57.835935+00:00",
+      "data": "{\"supervisor_pid\": 78311, \"supervisor_log\": \"/Users/dennis0405/.local/state/rcauto/runs/20261117T061915-1716ccff/supervisor.log\"}"
+    },
+    {
+      "seq": 9639,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:25:57.911908+00:00",
+      "data": "{\"status\": \"syncing-catalog\", \"error\": null, \"approval\": null}"
+    },
+    {
+      "seq": 9640,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:26:09.380473+00:00",
+      "data": "{\"status\": \"starting\"}"
+    },
+    {
+      "seq": 9641,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:27:30.459902+00:00",
+      "data": "{\"compute\": \"running\", \"remote_status\": null, \"stage\": null}"
+    },
+    {
+      "seq": 9642,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:27:56.781875+00:00",
+      "data": "{\"status\": \"working\", \"remote_run\": \"/data/robocurve-automation/worker-state/runs/20261117T061915-1716ccff\"}"
+    },
+    {
+      "seq": 9643,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:27:57.432718+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9644,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:28:12.870053+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9645,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:28:28.303367+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9646,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:28:43.762294+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9647,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:28:59.202168+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9648,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:29:14.648601+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9649,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:29:30.082634+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9650,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:29:45.687609+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9651,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:30:01.169556+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9652,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:30:16.719891+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9653,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:30:32.167440+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9654,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:30:47.640460+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9655,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:31:03.077283+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9656,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:31:18.506663+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9657,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:31:34.032465+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9658,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:31:49.511046+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9659,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:32:04.950116+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9660,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:32:20.413511+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9661,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:32:35.977210+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"candidates\", \"at\": \"2026-11-17T07:27:57.155100+00:00\"}, \"stage\": \"candidates\"}"
+    },
+    {
+      "seq": 9662,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:32:51.420029+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9663,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:33:07.224493+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9664,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:33:22.683765+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9665,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:33:38.128573+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9666,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:33:53.807932+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9667,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:34:09.262029+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9668,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:34:24.717525+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9669,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:34:40.246182+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9670,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:34:55.689713+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9671,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:35:11.139002+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9672,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:35:26.654626+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9673,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:35:42.089274+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9674,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:35:57.519694+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9675,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:36:13.172586+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9676,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:36:28.842318+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9677,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:36:44.374509+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9678,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:36:59.809416+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9679,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:37:15.248168+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9680,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:37:30.674255+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9681,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:37:46.104845+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9682,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:38:01.689278+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9683,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:38:17.128775+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9684,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:38:32.566497+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9685,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:38:48.009766+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9686,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:39:03.445833+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9687,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:39:19.018265+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9688,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:39:34.484090+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9689,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:39:49.921226+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9690,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:40:05.494624+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9691,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:40:20.963016+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9692,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:40:36.646228+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9693,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:40:52.107807+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9694,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:41:07.552516+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9695,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:41:23.131484+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9696,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:41:38.782325+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9697,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:41:54.246160+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9698,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:42:09.806792+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"novelty\", \"at\": \"2026-11-17T07:32:36.479811+00:00\"}, \"stage\": \"novelty\"}"
+    },
+    {
+      "seq": 9699,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:42:25.272059+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9700,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:42:40.747264+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9701,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:42:56.188222+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9702,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:43:11.622329+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9703,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:43:27.122126+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9704,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:43:42.588145+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9705,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:43:58.028129+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9706,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:44:13.455983+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9707,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:44:28.910912+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9708,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:44:44.346355+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9709,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:44:59.779624+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9710,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:45:15.264787+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9711,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:45:30.694873+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9712,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:45:46.140931+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9713,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:46:21.819120+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9714,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:46:37.438506+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9715,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:46:52.932247+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9716,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:47:08.441062+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9717,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:47:23.983097+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9718,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:47:39.442902+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9719,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:47:54.911982+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9720,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:48:10.449720+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9721,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:48:26.191834+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9722,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:48:41.831409+00:00",
+      "data": "{\"remote_status\": {\"status\": \"working\", \"stage\": \"contract\", \"at\": \"2026-11-17T07:42:11.883770+00:00\"}, \"stage\": \"contract\"}"
+    },
+    {
+      "seq": 9723,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:50:43.650229+00:00",
+      "data": "{\"remote_status\": {\"status\": \"blocked\", \"error\": \"contract-critic: The prior five scoring defects are repaired: topping separation anywhere off C latches after 60 native samples; eligibility requires simultaneous safe release and withdrawal; the episode stops at score freeze; Q-O includes grippers; and the untouched control now correctly attributes zero to yaw below 90 degrees.; All 23 required controls recompute as stated under the grading formula. Initial/insufficient, excursion, support-loss, topping-loss, bypass, containment, damage, shortcut, incomplete-dwell, and timeout cases score 0; safe 120 degrees scores 0.5; safe wrapped yaw of 150\\u2013180 degrees scores 1.0. The 210-degree directed case wraps to 150 degrees and scores 1.0. The first nonzero tier is 90 degrees, no bonus exists, and timeout remains zero unless eligibility was reached earlier.; The grading timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; 28,800 native samples at 240 Hz equal 120 seconds; the eligibility dwell is 240 native samples (1 second); topping loss is 60 samples (0.25 seconds); and refinement uses 480 Hz without changing the native grade.; Several prospective physics-validation metrics remain insufficiently computable despite having units and thresholds. The contract does not define the aggregation for `trajectory_*_signed_separation` metrics (minimum over which collider pairs and samples), whether `episode_depth_valid_pixel_fraction_min` is a per-frame minimum or episode-wide pixel ratio, or which contact pair/event supplies `refinement_peak_force_relative_difference_upper_bound`. `trajectory_core_deck_contact_gap_upper_bound` is also not defined from the signed-separation/contact observations and is potentially inconsistent in name with the exact resolved-contact SUPPORT predicate. Define each observable, pair scope, temporal aggregation, empty-contact behavior, and refinement matching rule explicitly.; The indexed pinned-runtime preflight and `input/pinned-runtime-sources` snapshot are absent, so compatibility with the pinned YAM/Arena APIs cannot be verified here. Consistent with the prospective-review rule and the contract\\u2019s own disclosure, this absence does not itself refute the specification, but no API-compatibility claim is established.\", \"type\": \"GateError\", \"at\": \"2026-11-17T07:50:23.214618+00:00\"}, \"stage\": null}"
+    },
+    {
+      "seq": 9724,
+      "run": "20261117T061915-1716ccff",
+      "at": "2026-11-17T07:50:49.210810+00:00",
+      "data": "{\"status\": \"blocked\", \"error\": \"contract-critic: The prior five scoring defects are repaired: topping separation anywhere off C latches after 60 native samples; eligibility requires simultaneous safe release and withdrawal; the episode stops at score freeze; Q-O includes grippers; and the untouched control now correctly attributes zero to yaw below 90 degrees.; All 23 required controls recompute as stated under the grading formula. Initial/insufficient, excursion, support-loss, topping-loss, bypass, containment, damage, shortcut, incomplete-dwell, and timeout cases score 0; safe 120 degrees scores 0.5; safe wrapped yaw of 150\\u2013180 degrees scores 1.0. The 210-degree directed case wraps to 150 degrees and scores 1.0. The first nonzero tier is 90 degrees, no bonus exists, and timeout remains zero unless eligibility was reached earlier.; The grading timing is internally consistent: 2,400 controls at 20 Hz equal 120 seconds; 28,800 native samples at 240 Hz equal 120 seconds; the eligibility dwell is 240 native samples (1 second); topping loss is 60 samples (0.25 seconds); and refinement uses 480 Hz without changing the native grade.; Several prospective physics-validation metrics remain insufficiently computable despite having units and thresholds. The contract does not define the aggregation for `trajectory_*_signed_separation` metrics (minimum over which collider pairs and samples), whether `episode_depth_valid_pixel_fraction_min` is a per-frame minimum or episode-wide pixel ratio, or which contact pair/event supplies `refinement_peak_force_relative_difference_upper_bound`. `trajectory_core_deck_contact_gap_upper_bound` is also not defined from the signed-separation/contact observations and is potentially inconsistent in name with the exact resolved-contact SUPPORT predicate. Define each observable, pair scope, temporal aggregation, empty-contact behavior, and refinement matching rule explicitly.; The indexed pinned-runtime preflight and `input/pinned-runtime-sources` snapshot are absent, so compatibility with the pinned YAM/Arena APIs cannot be verified here. Consistent with the prospective-review rule and the contract\\u2019s own disclosure, this absence does not itself refute the specification, but no API-compatibility claim is established.\"}"
     }
   ],
   "effects": {

@@ -1,0 +1,29 @@
+{
+  "verdict": "pass",
+  "findings": [
+    "The objective and tested ability are clear: use a full-scale turning peel to rotate a roughly 300 mm pizza 150–210° through repeated low-lift strokes while preserving deck contact, limiting center excursion to 50 mm, avoiding damage/loss, releasing the pizza, and withdrawing the peel. Official Ooni sources substantiate the 170 × 800 × 20 mm, 0.4 kg peel and representative 630 × 580 × 370 mm, 16-inch-capacity oven with 15 mm cordierite stone: https://eu.ooni.com/products/ooni-pizza-turning-peel and https://eu.ooni.com/products/ooni-koda-16.",
+    "The configured google-sheet-pending-accepted scope is exhaustively represented: 569/569 pending or accepted rows have semantic comparisons, all 569 have explicit distinct verdicts, and 14 plausible or unclear cases received latest-source review. Evidence levels remain explicit: 555 sheet-summary comparisons and 14 latest-source comparisons. No overlap or unresolved shortlisted ambiguity is recorded.",
+    "The strongest board neighbors remain materially distinct. PR #2311, “Move baked cookies from a sheet pan to a cooling rack with a turner,” shares thin-blade insertion under fragile baked food but tests unsupported transfer and rack placement rather than center-preserving rotation with continuous deck contact: https://github.com/robocurve/benchmark-tasks/pull/2311. PR #2310, “Toss diced potato in a saute pan,” tests ballistic pan-driven tumbling rather than quasi-static peel traction: https://github.com/robocurve/benchmark-tasks/pull/2310. PR #424, “Turn a long parcel in place between two neighbours, then push it lengthwise into a taped bay,” shares in-place yaw but uses direct bimanual carton manipulation rather than under-edge tool coupling: https://github.com/robocurve/benchmark-tasks/pull/424.",
+    "Rejected PR #720, “Launch a pizza from the peel onto an oven stone that is out of reach,” is outside the configured pending/accepted sheet scope but was retained as relevant historical context. Its tested objective was pizza launching, and its rejected 90 mm rigid pizza/open-topped miniature oven differs from the present full-scale, closed-roof, continuously supported in-place turning objective: https://github.com/robocurve/benchmark-tasks/pull/720#issuecomment-6816792297.",
+    "Pinned original definitions and selector/registry inventories were covered for every required suite. Closest named tasks were LIBERO “Push the plate to the front of the stove,” RoboCasa “RotatePan,” SimplerEnv “PutCarrotOnPlateInScene-v0,” BEHAVIOR “make_pizza-0,” DataCenterBench “Turn the round knob,” and RoboDojo “push_T.” None combines long-peel grasping, compliant-rim under-edge insertion, repeated tangential traction, continuous food-to-deck support, bounded center travel, confined release, and tool withdrawal. Original repositories: https://github.com/Lifelong-Robot-Learning/LIBERO, https://github.com/robocasa/robocasa, https://github.com/simpler-env/SimplerEnv, https://github.com/StanfordVL/BEHAVIOR-1K, and https://github.com/robodojo-benchmark/RoboDojo.",
+    "This verdict is limited to the ideation novelty gate. Full-scale YAM reach, mouth/roof clearance, crust contact physics, traction, release, and native robot demonstration remain mandatory downstream gates and are not claimed here."
+  ],
+  "evidence_paths": [
+    "artifacts/selected.json",
+    "artifacts/novelty.json",
+    "artifacts/benchmark-novelty-selection.json",
+    "artifacts/benchmark-definition-coverage.json",
+    "input/catalog.json",
+    "input/sheet-novelty-details.json",
+    "input/benchmark-sources.json",
+    "input/sources.json",
+    "input/benchmark-corpora/LIBERO/manifest.json",
+    "input/benchmark-corpora/RoboCasa/manifest.json",
+    "input/benchmark-corpora/SimplerEnv/manifest.json",
+    "input/benchmark-corpora/BEHAVIOR/manifest.json",
+    "input/benchmark-corpora/DataCenterBench/manifest.json",
+    "input/benchmark-corpora/RoboDojo/manifest.json",
+    "artifacts/candidate-critic.json",
+    "artifacts/candidate-preflight.json"
+  ]
+}

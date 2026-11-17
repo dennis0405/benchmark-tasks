@@ -1,0 +1,172 @@
+{
+  "comparisons": [
+    {
+      "suite": "LIBERO",
+      "coverage_method": "Verified the manifest's complete 135-file inventory against all three recorded selectors: libero/libero/bddl_files/*.bddl, libero/libero/benchmark/*.py, and libero/libero/envs/predicates/*.py. Searched the complete task inventory for pizza, oven, stove, plate, pushing, turning, rotation, and support-related goals, then read the closest original BDDL definition in full.",
+      "objective": "Candidate: rotate a roughly 300 mm pizza about 180° in place inside a roofed oven. Closest LIBERO task: translate a plate to a region in front of a stove.",
+      "physical_skill": "Candidate requires grasping and steering a long turning peel, inserting its blade under a minimally compliant rim, and applying repeated tangential strokes while preserving stone contact and limiting center drift. The LIBERO neighbor requires ordinary planar plate pushing and has no tool-mediated under-edge engagement, confined oven reach, food compliance, or centered rotation requirement.",
+      "success_condition": "Candidate requires released wrapped yaw of 150–210°, trajectory-wide center excursion no greater than 50 mm, continuous deck contact, top-side-up containment, no damage or topping loss, and peel withdrawal. LIBERO succeeds when the plate is On a target region; it does not constrain yaw, continuous support history, release, or damage.",
+      "evidence_paths": [
+        "input/benchmark-corpora/LIBERO/manifest.json",
+        "artifacts/benchmark-definition-coverage.json",
+        "input/benchmark-candidate.json"
+      ],
+      "closest_tasks": [
+        {
+          "name": "Push the plate to the front of the stove",
+          "source_path": "input/benchmark-corpora/LIBERO/Lifelong-Robot-Learning/LIBERO/8f1084e3132a39270c3a13ebe37270a43ece2a01/libero/libero/bddl_files/libero_goal/push_the_plate_to_the_front_of_the_stove.bddl",
+          "quote": "(:language Push the plate to the front of the stove)",
+          "objective": "Move a plate into the designated stove-front region.",
+          "physical_skill": "Direct planar pushing or repositioning of a rigid plate on an open tabletop.",
+          "success_condition": "The plate satisfies On plate_1 main_table_stove_front_region.",
+          "reason": "It is the closest LIBERO task because it moves a supported flat object near cooking equipment, but its goal is translation into a region rather than centered in-place rotation through peel traction.",
+          "verdict": "distinct"
+        }
+      ],
+      "verdict": "distinct",
+      "reason": "Complete registry coverage revealed no LIBERO task testing under-edge peel insertion and centered food rotation while continuous deck support is preserved. Shared planar contact is only a ubiquitous primitive."
+    },
+    {
+      "suite": "RoboCasa",
+      "coverage_method": "Verified the complete 381-file manifest against the kitchen task selector, environment exports, and dataset_registry.py. Searched the full inventory for frying, pan rotation, food turning, pizza, oven, spatula, and tool-use tasks; confirmed RotatePan is present in the dataset registry and read its complete task implementation, including backend success logic.",
+      "objective": "Candidate: turn the pizza itself about 180° while it remains centered and supported inside a closed-roof oven. RotatePan: rotate a pan slightly on a stove while meat remains inside it to distribute heat.",
+      "physical_skill": "Both involve in-plane rotation of a cooking-related supported object. RotatePan directly manipulates rigid cookware, normally by its handle, and only requires more than 15° yaw. The candidate's essential mechanism is thin-blade insertion beneath compliant food followed by repeated low-lift tangential traction through a long tool in a confined oven mouth.",
+      "success_condition": "Candidate uses released final pizza yaw, a 50 mm trajectory-wide center bound, continuous pizza-to-deck contact, containment, damage/loss exclusions, and peel withdrawal. RotatePan latches success after pan yaw exceeds 15°, provided pan-stove contact, meat-in-pan, and gripper separation hold; it does not score center excursion or food/deck contact history.",
+      "evidence_paths": [
+        "input/benchmark-corpora/RoboCasa/manifest.json",
+        "artifacts/benchmark-definition-coverage.json",
+        "input/benchmark-candidate.json"
+      ],
+      "closest_tasks": [
+        {
+          "name": "RotatePan",
+          "source_path": "input/benchmark-corpora/RoboCasa/robocasa/robocasa/425684d332f135f5b30a40b321f52d15a0fe9250/robocasa/environments/kitchen/composite/frying/rotate_pan.py",
+          "quote": "Simulates the task of rotating the pan slightly to distribute heat evenly.",
+          "objective": "Rotate a pan on an active stove to distribute heat while keeping meat or seafood in the pan.",
+          "physical_skill": "Rigid cookware rotation on a stove by direct pan manipulation.",
+          "success_condition": "Pan contacts the stove, meat remains in the pan, yaw change exceeds 15° at some point, and the gripper is far from the pan.",
+          "reason": "This is the strongest plausible overlap because both rotate a cooking object while it remains on a hot support. It does not exercise the candidate's central peel-mediated under-edge insertion and traction on the food itself, nor centered 180° rotation under a roof.",
+          "verdict": "distinct"
+        }
+      ],
+      "verdict": "distinct",
+      "reason": "RotatePan covers supported cooking-object yaw change, but the actual tested mechanism and failure modes are materially different. The candidate is not novel merely because it uses pizza; novelty rests on under-edge tool coupling, continuous food-deck support, and centered confined rotation."
+    },
+    {
+      "suite": "SimplerEnv",
+      "coverage_method": "Verified all 11 manifest files against SimplerEnv's public environment map and ManiSkill2_real2sim registered environments. Reviewed the complete inventory of grasp, move-near, drawer, and put-on tasks; followed the carrot-on-plate registry mapping to its backend evaluate implementation and read the complete source file.",
+      "objective": "Candidate: reorient a pizza in place inside an oven without removing it from its supporting stone. Closest SimplerEnv task: move a carrot from one tabletop location and place it on a plate.",
+      "physical_skill": "Candidate requires long-tool grasping, blade insertion, tangential force control, repeated re-engagement, and center-preserving rotation. The SimplerEnv task is direct rigid-object grasp-and-place onto a receptacle.",
+      "success_condition": "Candidate requires 150–210° released yaw plus continuous contact and whole-trajectory center constraints. PutCarrotOnPlate succeeds from a bounding-box/contact-based on-target predicate; object yaw and its support history are irrelevant.",
+      "evidence_paths": [
+        "input/benchmark-corpora/SimplerEnv/manifest.json",
+        "artifacts/benchmark-definition-coverage.json",
+        "input/benchmark-candidate.json"
+      ],
+      "closest_tasks": [
+        {
+          "name": "PutCarrotOnPlateInScene-v0",
+          "source_path": "input/benchmark-corpora/SimplerEnv/simpler-env/ManiSkill2_real2sim/ef7a4d4fdf4b69f2c2154db5b15b9ac8dfe10682/mani_skill2_real2sim/envs/custom_scenes/put_on_in_scene.py",
+          "quote": "return \"put carrot on plate\"",
+          "objective": "Place a carrot on a plate.",
+          "physical_skill": "Direct grasp, transport, and placement of a rigid food object onto a target receptacle.",
+          "success_condition": "The carrot satisfies the source-on-target bounding-box and contact checks.",
+          "reason": "It is the nearest food-and-support task in the complete SimplerEnv registry, but it evaluates relocation onto a target rather than tool-mediated in-place rotation while retaining the original support.",
+          "verdict": "distinct"
+        }
+      ],
+      "verdict": "distinct",
+      "reason": "No SimplerEnv definition tests food turning, peel or spatula insertion, continuous original-surface contact, or center-preserving yaw control."
+    },
+    {
+      "suite": "BEHAVIOR",
+      "coverage_method": "Verified the complete 1,122-file inventory across both recorded BEHAVIOR activity-definition corpora and the selected OmniGibson task/state backend files. Searched all activity definitions for pizza, dough, oven, baking stone, turning, flipping, and utensil-mediated food manipulation, then read the complete make_pizza definition; its explicit goal resolves the otherwise broad activity name.",
+      "objective": "Candidate: rotate an already partially baked pizza in place on an oven stone. make_pizza: create a pizza from dough and toppings and leave the resulting pizza on a cookie sheet.",
+      "physical_skill": "Candidate tests peel insertion beneath a set but compliant crust, low-lift tangential traction, constrained long-tool control, and repeated centered rotation. make_pizza tests ingredient preparation/assembly represented through BEHAVIOR predicates; it does not require turning the pizza, using a peel, or retaining stone support during manipulation.",
+      "success_condition": "Candidate requires quantitative yaw and center limits throughout a native trial, continuous deck contact, final release, containment, and no damage or topping loss. make_pizza requires a real pizza object ontop of a cookie sheet.",
+      "evidence_paths": [
+        "input/benchmark-corpora/BEHAVIOR/manifest.json",
+        "artifacts/benchmark-definition-coverage.json",
+        "input/benchmark-candidate.json"
+      ],
+      "closest_tasks": [
+        {
+          "name": "make_pizza-0",
+          "source_path": "input/benchmark-corpora/BEHAVIOR/StanfordVL/BEHAVIOR-1K/cc8f4ce0c89fa5a2f4be510b187989aa0dc69761/bddl3/bddl/activity_definitions/make_pizza/problem0.bddl",
+          "quote": "(ontop ?pizza.n.01_1 ?cookie_sheet.n.01_1)",
+          "objective": "Make a pizza from the specified dough, cheese, pepperoni, mushrooms, and onion.",
+          "physical_skill": "Multi-object food preparation and assembly culminating in a pizza on a cookie sheet.",
+          "success_condition": "The future pizza becomes real and is ontop of the cookie sheet.",
+          "reason": "This is the closest object/domain match, but the original goal confirms that it tests pizza creation and support placement, not the candidate's turning mechanism or trajectory constraints.",
+          "verdict": "distinct"
+        }
+      ],
+      "verdict": "distinct",
+      "reason": "The complete BEHAVIOR inventory includes pizza preparation and pizza-stone cleaning, but no inspected definition tests centered in-oven rotation of supported pizza through peel traction. Matching the food noun or cooking setting does not establish overlap."
+    },
+    {
+      "suite": "DataCenterBench",
+      "coverage_method": "Verified both manifest entries and enumerated all ten published setup/instruction/reset/rubric records in official-setups.json; consulted the linked procedure collection as context. Compared every task's actual manipulation and rubric, selecting the rotary dimmer as the closest orientation-change task.",
+      "objective": "Candidate: rotate a large, weakly constrained food item about its own center using a peel while it remains on a stone. Turn the round knob: rotate a captive dimmer knob clockwise to a marked angular endpoint.",
+      "physical_skill": "Both demand controlled angular motion and final release. The DataCenterBench task uses direct gripper contact on a constrained rotary control; it lacks tool grasping, under-edge insertion, planar traction, deformable rim interaction, support preservation, and confined withdrawal.",
+      "success_condition": "Candidate requires 150–210° wrapped released yaw, no more than 50 mm center travel at every physics frame, continuous deck contact, safe containment, and clean peel withdrawal. The dimmer rubric checks whether the knob's line reaches the goal mark, with partial credit for noticeable clockwise motion.",
+      "evidence_paths": [
+        "input/benchmark-corpora/DataCenterBench/manifest.json",
+        "input/benchmark-corpora/DataCenterBench/official-setups.json",
+        "input/benchmark-corpora/DataCenterBench/official-procedures.json",
+        "artifacts/benchmark-definition-coverage.json",
+        "input/benchmark-candidate.json"
+      ],
+      "closest_tasks": [
+        {
+          "name": "Turn the round knob",
+          "source_path": "input/benchmark-corpora/DataCenterBench/official-setups.json",
+          "quote": "Turn the round knob on the white box clockwise until the black line on it points at the black mark on the box.",
+          "objective": "Turn a rotary dimmer from its starting mark to a clockwise goal mark.",
+          "physical_skill": "Direct angular manipulation of a captive rotary control.",
+          "success_condition": "Full credit when the knob line points at the goal mark; partial credit when it turns noticeably clockwise but stops short.",
+          "reason": "It is the closest of the ten published tasks by angular objective and release-compatible endpoint, but the captive knob mechanism is not the candidate's supported planar food rotation through an intermediate tool.",
+          "verdict": "distinct"
+        }
+      ],
+      "verdict": "distinct",
+      "reason": "None of the ten published DataCenterBench tasks contains peel-like tool mediation, under-edge engagement, or rotation of a freely supported object while bounding translation and maintaining support."
+    },
+    {
+      "suite": "RoboDojo",
+      "coverage_method": "Verified all 110 manifest files against task/RoboDojo/tasks/*.py, task/RoboDojo/config/*.yml, and task_registry.py. Reviewed the full task/config inventory for pushing, sweeping, food handling, rotation, alignment, and no-lift objectives, then read PushT's complete implementation and detailed scoring text.",
+      "objective": "Candidate: rotate pizza approximately 180° around nearly the same center inside an oven. PushT: push a T-shaped block across a tabletop until both its position and orientation match a target pad.",
+      "physical_skill": "Both require planar contact manipulation, orientation control, and maintained table/deck support. PushT uses direct gripper pushing of a rigid block toward a displaced target. The candidate uses a held peel, thin under-edge insertion, repeated traction/reset strokes, compliant-rim force control, and confined long-handle steering while suppressing translation.",
+      "success_condition": "Candidate scores released wrapped yaw relative to the start while enforcing a 50 mm trajectory-wide center bound, continuous deck contact, containment, no damage/loss, and peel withdrawal. PushT requires final xy and qpos proximity, no lift, and both robot arms returned to origin; translation toward the target is intended rather than penalized.",
+      "evidence_paths": [
+        "input/benchmark-corpora/RoboDojo/manifest.json",
+        "artifacts/benchmark-definition-coverage.json",
+        "input/benchmark-candidate.json"
+      ],
+      "closest_tasks": [
+        {
+          "name": "push_T",
+          "source_path": "input/benchmark-corpora/RoboDojo/robodojo-benchmark/RoboDojo/fbfbbcb3801397fa00dcffaef3ca64d97c3fe76f/task/RoboDojo/tasks/push_T.py",
+          "quote": "Push the T-shaped block to align it precisely with the gray T-shaped pad.",
+          "objective": "Push a T-shaped block to a target planar pose matching a T-shaped pad.",
+          "physical_skill": "Direct planar pushing with coupled translation and orientation correction while avoiding lift.",
+          "success_condition": "The block is within the target xy threshold, its orientation matches, it was not lifted above the allowed height, and the robot returns to origin.",
+          "reason": "This is the closest physical-ability neighbor because it controls planar orientation under continuous support. Its defining goal is displaced rigid-block pose matching by direct pushing, not centered rotation of compliant food through peel insertion and traction.",
+          "verdict": "distinct"
+        }
+      ],
+      "verdict": "distinct",
+      "reason": "PushT establishes that supported planar orientation control is covered, but not the candidate's essential intermediate-tool coupling, under-edge insertion, low-lift food traction, center-preservation constraint, and confined withdrawal."
+    }
+  ],
+  "candidate_digest": "3920804b1321ca6b9e8be655ed4372044750c6ddc06f7874815fdabe26602808",
+  "at": "2026-11-17T07:35:29.097116+00:00",
+  "definition_manifests": {
+    "LIBERO": "d56c21d63d9843e3e3f2e4d5eaf595aa91d47e711ebbeea343164ec2d0df7839",
+    "RoboCasa": "49fe450ee6d0b14c5bf81d50ef4155ef3f336d7812422a8fc884b0226ead5191",
+    "SimplerEnv": "6ff281026d0ee7e7699f6565e000ddc38c8a42f5ab09f376b9c06b44d4443ace",
+    "BEHAVIOR": "586702538569713ac89b7059a372e006eb379fa861a799be4678faee14209776",
+    "DataCenterBench": "16182cef096220ea36fff9cd06de5fa50f9d839192bc964798c23317c5392ff5",
+    "RoboDojo": "70fbb337c5553dda79c857d1e35ad9285f57d9c790f7031b8787152140da32b9"
+  }
+}
