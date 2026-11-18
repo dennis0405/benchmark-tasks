@@ -1,0 +1,19 @@
+{
+  "title": "Sweep scattered crumbs into a handheld dustpan and lift them clear",
+  "instruction": "Use the hand brush to sweep all eight crumbs into the dustpan while holding its front edge against the surface. Lift the loaded pan at least 5 cm and keep all the crumbs inside for three seconds.",
+  "category": "Impact on jobs",
+  "context": "US janitors and building cleaners held about 2.4 million jobs in 2025 (BLS). O*NET 37-2011.00 includes sweeping floors. The task isolates picking up a scattered dry spill on a reachable patch.",
+  "setup": "Two YAM arms at a tabletop 747.5 mm above the origin. A freely movable 190 x 150 mm dustpan has a 35 mm entrance bevel and 6 mm deck. Its upright grip is 245 mm behind the lip. A movable hand brush has a 93 mm head with nine rigid bristle groups. Eight 10 or 11 x 8 x 6 mm loose rigid crumbs occupy a fixed irregular 150 x 133 mm patch. Initial coordinates and grip dimensions are given in task.py and the four local USD assets.",
+  "run_limit": "720 steps at 20 Hz",
+  "fidelity": "Single-instance Isaac Sim 6.1, CPU PhysX with RTX cameras. Free rigid tools and crumbs; nine rigid bristle segments approximate a hand brush. The tabletop represents a reachable floor patch. Grip and brush contact are inferred from measured geometry and motion; bristle deformation and real hardware are uncalibrated.",
+  "scores": "Dream-1 run: 0 after 720 steps (36 simulated seconds); termination: step_limit. Scripted/teleoperated demo: 1 after 542 steps.",
+  "keywords": [
+    "bimanual sweeping",
+    "dustpan",
+    "debris collection",
+    "load retention"
+  ],
+  "scoring": "Each crumb earns 1/16 while fully supported inside the tray after a valid brush-driven crossing of the flush front lip with both tools held. Leaving the pan cancels its entry credit. Each such crumb earns another 1/16 after remaining inside, clear of the brush, for 3 continuous seconds while the held pan clears the surface by at least 50 mm at all four bottom corners. Full credit requires all eight throughout the same final interval. The reported score is the current score at termination. README describes grip and contact proxies.",
+  "reset_notes": "Use seed 0. Both arms start at READY, both tools rest on the surface, and all eight pieces reset to the coordinates in task.py with zero velocity. The layout is fixed.",
+  "media": "M-854YAJ"
+}

@@ -1,0 +1,37 @@
+#usda 1.0
+(
+    defaultPrim = "Tool"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "Tool" (
+    prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+)
+{
+    float physics:mass = 0.0008
+
+    def Cube "piece0" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Tool/surface43>
+        custom float physxCollision:contactOffset = 0.0007
+        custom float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.29, 0.115, 0.038)]
+        double size = 1
+        float3 xformOp:scale = (0.01, 0.008, 0.006)
+        double3 xformOp:translate = (0, 0, 0)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Material "surface43" (
+        prepend apiSchemas = ["PhysicsMaterialAPI"]
+    )
+    {
+        float physics:dynamicFriction = 0.43
+        float physics:restitution = 0
+        float physics:staticFriction = 0.53
+    }
+}
+

@@ -1,0 +1,1 @@
+Original geometry for this task. Dimensions are in metres. The dustpan has a thin convex entrance wedge, flat base, side walls and an upright handle. The Isaac hand brush uses nine rigid bristle segments. There are two variants of freely simulated rigid debris. The corresponding development rig tests passive vertical bristle compliance separately in MuJoCo.
