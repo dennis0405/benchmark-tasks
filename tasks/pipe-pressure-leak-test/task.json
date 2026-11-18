@@ -1,0 +1,19 @@
+{
+  "title": "Pressure-test a water-filled pipe circuit, isolate the pump, read the pressure drop and depressurize",
+  "category": "Impact on jobs",
+  "keywords": [
+    "hydrostatic test",
+    "manual pump",
+    "isolation",
+    "plumbing"
+  ],
+  "instruction": "Use the hand pump to test this water-filled pipe circuit at 3 bar. Isolate it from the pump, observe the gauge for 60 seconds, and set the result selector to FAIL if the pressure falls more than 0.2 bar, otherwise PASS. Then release the pressure through the return valve and leave the apparatus and both hands clear.",
+  "context": "US plumbers, pipefitters and steamfitters routinely fill pipework and monitor gauges for leaks (O*NET 47-2152.00). BLS reports 510,600 US jobs in this occupation in 2025. This task models a low-pressure bench screen.",
+  "setup": "A bimanual YAM faces a water-filled manual test pump bolted to a table at z = 747.5 mm. The 440 × 200 mm reservoir holds 4.5 L. A 300 mm steel lever starts at its lower stop and travels 0–50°. The copper specimen is 10 m long, with 35 mm outside and 32 mm inside diameter, coiled at a 155 mm mean radius and 38 mm pitch. The TEST and PUMP dials (110 and 70 mm diameter) read 0–6 bar. Isolation starts open, return closed, both gauges at zero and the result selector centered. The cartridge returns water to the reservoir. Even seeds use a nominal 0.20 mm bore, 0.65 m capillary. Odd seeds use an externally identical plugged cartridge. Valve, selector and lever coordinates are in the asset builder.",
+  "scoring": "0.25 for bringing TEST to 3.00 ± 0.15 bar after at least 0.2 mL of positive stroke displacement. 0.50 for completing a continuous 60 s observation that starts in band with isolation closed (≥88°) and return shut (≤2°). 0.75 when the first selection from neutral after observation matches the measured result while isolation remains closed and return shut (drop >0.20 bar: FAIL at ≥25°, otherwise PASS at ≤−25°). A wrong first choice, opening either valve before committing, or reaching both result marks before completion permanently caps the score at 0.50. 1.00 for the correct selection with both pressures ≤0.10 bar, isolation reopened (≤10°), return open (≥80°), and both hands clear for 3 s. Either pressure exceeding 4.50 bar permanently scores zero.",
+  "run_limit": "4,000 control steps at 20 Hz (200 s).",
+  "reset_notes": "With both valves open and both gauges at zero, install the selected cartridge, fill with water and purge both lines. Record gauge zeros, clear peak memory, leave isolation open, return closed, handle at its lower stop, selector centered and both arms at READY. Use the rate check in README before the first trial and after a cartridge change.",
+  "fidelity": "PhysX rigid bodies, revolute joints and gripper contacts supply the lever and valve motion. A lumped, isothermal hydraulic model maps displacement to gauge pressures and pressure to lever torque. Both dial needles follow their modeled pressures. There are no resolved fluid particles or flexible pipe walls. Compliance, capillary conductance and pivot damping are nominal. Hardware calibration is pending.",
+  "scores": "Rescored original Isaac Sim recordings using the first-selection rule: Dream-1 on seed 0 scored 0.0 in 4,000 steps (200 s, step limit). Scripted YAM scored 1.0 on seed 0 (2,512 steps) and 1.0 on seed 1 (2,467 steps).",
+  "media": "M-4SKLXB"
+}
