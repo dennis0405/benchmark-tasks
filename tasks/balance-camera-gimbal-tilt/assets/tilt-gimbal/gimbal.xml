@@ -1,0 +1,50 @@
+<mujoco model="passive tilt balance bench">
+ <compiler angle="degree" inertiafromgeom="auto"/>
+ <option timestep="0.002" integrator="implicitfast" noslip_iterations="8" gravity="0 0 -9.81"/>
+ <default><joint armature="0.00003"/><geom friction="0.85 0.01 0.001" solref="0.006 1" solimp="0.95 0.99 0.001"/></default>
+ <worldbody>
+  <light pos="0 -0.5 1.2" dir="0 0.3 -1"/>
+  <geom name="bench" type="plane" size=".35 .35 .01" rgba=".52 .49 .45 1"/>
+  <body name="stand" pos="0 0 .145">
+   <geom name="base" type="box" pos="0 0 -.137" size=".110 .105 .008" rgba=".23 .26 .27 1"/>
+   <geom name="upright" type="box" pos="0 .121 -.072" size=".018 .013 .065" rgba=".26 .29 .30 1"/>
+   <geom name="scale_face" type="cylinder" fromto="0 .103 0 0 .107 0" size=".049" rgba=".82 .79 .69 1" contype="0" conaffinity="0"/>
+   <geom name="up_mark" type="box" pos=".039 .100 .0225" size=".004 .002 .0025" rgba=".05 .53 .33 1" contype="0" conaffinity="0"/>
+   <geom name="down_mark" type="box" pos=".039 .100 -.0225" size=".004 .002 .0025" rgba=".05 .53 .33 1" contype="0" conaffinity="0"/>
+   <body name="cradle">
+    <joint name="tilt" type="hinge" axis="0 1 0" range="-55 55" damping=".04" frictionloss=".00015"/>
+    <inertial pos=".00590625 0 .0041625" mass=".32" diaginertia=".00065 .00065 .00068"/>
+    <geom type="cylinder" fromto="0 .052 0 0 .121 0" size=".014" rgba=".22 .25 .29 1" contype="0" conaffinity="0"/>
+    <geom name="tilt_handle_stem" type="box" pos=".055 -.047 -.053" size=".007 .043 .006" rgba=".25 .27 .27 1"/>
+    <geom name="tilt_handle" type="box" pos=".055 -.089 -.053" size=".018 .012 .013" rgba=".24 .37 .40 1"/>
+    <geom name="rail_guide" type="box" pos="0 0 -.046" size=".069 .022 .005" rgba=".26 .28 .29 1"/>
+    <geom name="tilt_pointer" type="box" pos=".022 .096 0" size=".022 .0015 .0018" rgba=".92 .30 .08 1" contype="0" conaffinity="0"/>
+    <geom name="cradle_yoke" type="box" pos="0 .064 -.026" size=".013 .007 .029" rgba=".28 .31 .32 1"/>
+    <geom name="cradle_crossbar" type="box" pos="0 .039 -.054" size=".018 .045 .005" rgba=".28 .31 .32 1"/>
+    <geom name="fixed_grip_mount" type="box" pos="-.0525 .080 -.058" size=".057 .005 .004" rgba=".17 .19 .20 1"/>
+    <geom name="trim_weight" type="box" pos=".043 .062 -.046" size=".009 .010 .010" rgba=".42 .45 .46 1"/>
+    <geom name="brake_grip" type="box" pos="-.105 .08 -.041" size=".017 .005 .018" rgba=".17 .19 .20 1"/>
+    <body name="camera">
+     <joint name="slide" type="slide" axis="1 0 0" range="-.048 .04" damping=".055"/>
+     <inertial pos=".019 0 0" mass=".62" diaginertia=".00055 .00165 .0017"/>
+     <geom name="plate" type="box" pos="0 0 -.033" size=".080 .014 .005" rgba=".56 .60 .61 1"/>
+     <geom name="plate_foot" type="box" pos="-.012 0 -.026" size=".020 .011 .004" rgba=".22 .23 .22 1"/>
+     <geom name="camera_body" type="box" pos="-.012 0 .001" size=".028 .038 .026" rgba=".13 .15 .16 1"/>
+     <geom name="lens" type="cylinder" fromto=".016 0 .002 .089 0 .002" size=".022" rgba=".20 .22 .23 1"/>
+     <geom name="lens_ring" type="cylinder" fromto=".076 0 .002 .081 0 .002" size=".0225" rgba=".62 .35 .16 1"/>
+     <geom name="lens_glass" type="cylinder" fromto=".089 0 .002 .090 0 .002" size=".019" rgba=".12 .35 .43 1"/>
+     <geom name="grip_neck" type="box" pos="-.019 -.055 0" size=".011 .019 .009" rgba=".25 .23 .21 1"/>
+     <geom name="handgrip" type="box" pos="-.019 -.083 0" size=".019 .010 .023" rgba=".35 .34 .31 1"/>
+    </body>
+    <body name="brake">
+     <joint name="release" type="slide" axis="0 1 0" range="-.001 .017" stiffness="600" springref="-.030" damping="1.0"/>
+     <geom name="shoe" type="box" pos="0 .019 -.033" size=".018 .005 .005" mass=".018" rgba=".44 .36 .23 1"/>
+     <geom name="trigger_shank" type="box" pos="0 .0325 -.034" size=".009 .010 .004" mass="0" rgba=".44 .36 .23 1"/>
+     <geom name="trigger_arm" type="box" pos="-.0525 .046 -.053" size=".057 .004 .005" mass="0" rgba=".74 .44 .14 1"/>
+     <geom name="trigger_elbow" type="box" pos="0 .046 -.044" size=".008 .004 .011" mass="0" rgba=".74 .44 .14 1"/>
+     <geom name="release_tab" type="box" pos="-.105 .046 -.041" size=".016 .005 .016" mass=".018" rgba=".91 .52 .14 1"/>
+    </body>
+   </body>
+  </body>
+ </worldbody>
+</mujoco>
