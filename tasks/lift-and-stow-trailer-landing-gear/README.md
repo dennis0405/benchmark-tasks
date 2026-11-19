@@ -39,3 +39,5 @@ The initial contact release is submillimetre. The station camera mainly shows ar
 ## Recorded model trial
 
 Dream-1 scored 0.0 after 1,400 actions (70.00 simulated seconds, step_limit). The measured control loop took 286.7 seconds, plus simulator startup. Seed 0 was used for both policies. Dream received the top and wrist RGB views, joint/gripper state and the task instruction. The overview RGB is the external recording camera.
+
+During the model trial, no pad-to-grip or other monitored gripper-to-crank contact was recorded. The shaft nevertheless advanced to 23.76° of recorded low-gear travel and the foot reached 0.02454 mm clearance, below the 0.035 mm threshold. No grasp-qualified lift or axial shift was credited. The cause of this uncommanded fixture motion has not been isolated.
