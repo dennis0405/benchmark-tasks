@@ -1,0 +1,1069 @@
+#usda 1.0
+(
+    defaultPrim = "Rig"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "Rig"
+{
+    def Material "Steel" (
+        prepend apiSchemas = ["PhysicsMaterialAPI"]
+    )
+    {
+        float physics:dynamicFriction = 0.24
+        float physics:restitution = 0.02
+        float physics:staticFriction = 0.32
+    }
+
+    def Cube "Stem" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.000035
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float3 xformOp:scale = (0.0044, 0.075, 0.03)
+        double3 xformOp:translate = (0, 0, 0.082)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Mesh "Lip" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI", "PhysicsMeshCollisionAPI", "PhysxConvexHullCollisionAPI"]
+    )
+    {
+        int[] faceVertexCounts = [8, 8, 4, 4, 4, 4, 4, 4, 4, 4]
+        int[] faceVertexIndices = [0, 1, 2, 3, 4, 5, 6, 7, 15, 14, 13, 12, 11, 10, 9, 8, 0, 8, 9, 1, 1, 9, 10, 2, 2, 10, 11, 3, 3, 11, 12, 4, 4, 12, 13, 5, 5, 13, 14, 6, 6, 14, 15, 7, 7, 15, 8, 0]
+        rel material:binding:physics = </Rig/Steel>
+        uniform token physics:approximation = "convexHull"
+        float physxCollision:contactOffset = 0.000035
+        float physxCollision:restOffset = 0
+        float physxConvexHullCollision:minThickness = 0.00004
+        point3f[] points = [(-0.0022, -0.0375, 0.0945), (-0.00365, -0.0375, 0.0954), (-0.00365, -0.0375, 0.0959), (-0.0013, -0.0375, 0.1), (0.0013, -0.0375, 0.1), (0.00365, -0.0375, 0.0959), (0.00365, -0.0375, 0.0954), (0.0022, -0.0375, 0.0945), (-0.0022, 0.0375, 0.0945), (-0.00365, 0.0375, 0.0954), (-0.00365, 0.0375, 0.0959), (-0.0013, 0.0375, 0.1), (0.0013, 0.0375, 0.1), (0.00365, 0.0375, 0.0959), (0.00365, 0.0375, 0.0954), (0.0022, 0.0375, 0.0945)]
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        uniform token subdivisionScheme = "none"
+    }
+
+    def Xform "Crown" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI", "PhysxContactReportAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0.009, 0.001, -0.002)
+        float3 physics:diagonalInertia = (0.000025, 0.000002, 0.000026)
+        float physics:mass = 0.024
+        float physxContactReport:threshold = 0
+        float physxRigidBody:maxDepenetrationVelocity = 1
+        float physxRigidBody:sleepThreshold = 0
+        int physxRigidBody:solverPositionIterationCount = 24
+        int physxRigidBody:solverVelocityIterationCount = 8
+        float xformOp:rotateY = 0
+        double3 xformOp:translate = (-0.085, 0.112, 0.12215000000000001)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateY"]
+
+        def Cube "Bridge" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+        )
+        {
+            rel material:binding:physics = </Rig/Steel>
+            float physxCollision:contactOffset = 0.000035
+            float physxCollision:restOffset = 0
+            color3f[] primvars:displayColor = [(0.88, 0.42, 0.035)]
+            double size = 1
+            float3 xformOp:scale = (0.012, 0.014, 0.0016)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "Ballast" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+        )
+        {
+            rel material:binding:physics = </Rig/Steel>
+            float physxCollision:contactOffset = 0.000035
+            float physxCollision:restOffset = 0
+            color3f[] primvars:displayColor = [(0.88, 0.42, 0.035)]
+            double size = 1
+            float3 xformOp:scale = (0.006, 0.016, 0.005)
+            double3 xformOp:translate = (0.009, 0, -0.002)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "Grip" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+        )
+        {
+            rel material:binding:physics = </Rig/Rubber>
+            float physxCollision:contactOffset = 0.00004
+            float physxCollision:restOffset = 0
+            color3f[] primvars:displayColor = [(0.88, 0.42, 0.035)]
+            double size = 1
+            float3 xformOp:scale = (0.014, 0.11, 0.01)
+            double3 xformOp:translate = (0.015, 0.003, -0.002)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "Heel" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+        )
+        {
+            rel material:binding:physics = </Rig/Steel>
+            float physxCollision:contactOffset = 0.000035
+            float physxCollision:restOffset = 0
+            color3f[] primvars:displayColor = [(0.88, 0.42, 0.035)]
+            double size = 1
+            float3 xformOp:scale = (0.007, 0.016, 0.02)
+            double3 xformOp:translate = (0.0077, 0, -0.013)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Xform "Left" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI", "PhysxContactReportAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0, 0, 0)
+        float3 physics:diagonalInertia = (1.3e-7, 8e-8, 1.1e-7)
+        float physics:mass = 0.0025
+        float physxContactReport:threshold = 0
+        float physxRigidBody:maxDepenetrationVelocity = 1
+        float physxRigidBody:sleepThreshold = 0
+        int physxRigidBody:solverPositionIterationCount = 24
+        int physxRigidBody:solverVelocityIterationCount = 8
+        float xformOp:rotateY = 0
+        double3 xformOp:translate = (-0.09010000000000001, 0.112, 0.12215000000000001)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateY"]
+
+        def Cube "Spring" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+        )
+        {
+            rel material:binding:physics = </Rig/Steel>
+            float physxCollision:contactOffset = 0.000035
+            float physxCollision:restOffset = 0
+            color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+            double size = 1
+            float3 xformOp:scale = (0.0008, 0.012, 0.0074)
+            double3 xformOp:translate = (0, 0, -0.0037)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Mesh "Toe" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI", "PhysicsMeshCollisionAPI", "PhysxConvexHullCollisionAPI"]
+        )
+        {
+            int[] faceVertexCounts = [5, 5, 4, 4, 4, 4, 4]
+            int[] faceVertexIndices = [0, 1, 2, 3, 4, 9, 8, 7, 6, 5, 0, 5, 6, 1, 1, 6, 7, 2, 2, 7, 8, 3, 3, 8, 9, 4, 4, 9, 5, 0]
+            rel material:binding:physics = </Rig/Steel>
+            uniform token physics:approximation = "convexHull"
+            float physxCollision:contactOffset = 0.000035
+            float physxCollision:restOffset = 0
+            float physxConvexHullCollision:minThickness = 0.00004
+            point3f[] points = [(0.0004, -0.006, -0.00695), (0.00205, -0.006, -0.00765), (0.00205, -0.006, -0.0082), (-0.0004, -0.006, -0.0104), (-0.0004, -0.006, -0.00695), (0.0004, 0.006, -0.00695), (0.00205, 0.006, -0.00765), (0.00205, 0.006, -0.0082), (-0.0004, 0.006, -0.0104), (-0.0004, 0.006, -0.00695)]
+            color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+            uniform token subdivisionScheme = "none"
+        }
+    }
+
+    def PhysicsRevoluteJoint "HingeLeft" (
+        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+    )
+    {
+        float drive:angular:physics:damping = 0.000020943951
+        float drive:angular:physics:stiffness = 0.010471975
+        float drive:angular:physics:targetPosition = 0
+        uniform token drive:angular:physics:type = "force"
+        uniform token physics:axis = "Y"
+        rel physics:body0 = </Rig/Crown>
+        rel physics:body1 = </Rig/Left>
+        point3f physics:localPos0 = (-0.0051, 0, 0)
+        point3f physics:localPos1 = (0, 0, 0)
+        float physics:lowerLimit = -28
+        float physics:upperLimit = 28
+    }
+
+    def Xform "Right" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI", "PhysxContactReportAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0, 0, 0)
+        float3 physics:diagonalInertia = (1.3e-7, 8e-8, 1.1e-7)
+        float physics:mass = 0.0025
+        float physxContactReport:threshold = 0
+        float physxRigidBody:maxDepenetrationVelocity = 1
+        float physxRigidBody:sleepThreshold = 0
+        int physxRigidBody:solverPositionIterationCount = 24
+        int physxRigidBody:solverVelocityIterationCount = 8
+        float xformOp:rotateY = 0
+        double3 xformOp:translate = (-0.0799, 0.112, 0.12215000000000001)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateY"]
+
+        def Cube "Spring" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+        )
+        {
+            rel material:binding:physics = </Rig/Steel>
+            float physxCollision:contactOffset = 0.000035
+            float physxCollision:restOffset = 0
+            color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+            double size = 1
+            float3 xformOp:scale = (0.0008, 0.012, 0.0074)
+            double3 xformOp:translate = (0, 0, -0.0037)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Mesh "Toe" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI", "PhysicsMeshCollisionAPI", "PhysxConvexHullCollisionAPI"]
+        )
+        {
+            int[] faceVertexCounts = [5, 5, 4, 4, 4, 4, 4]
+            int[] faceVertexIndices = [0, 1, 2, 3, 4, 9, 8, 7, 6, 5, 0, 5, 6, 1, 1, 6, 7, 2, 2, 7, 8, 3, 3, 8, 9, 4, 4, 9, 5, 0]
+            rel material:binding:physics = </Rig/Steel>
+            uniform token physics:approximation = "convexHull"
+            float physxCollision:contactOffset = 0.000035
+            float physxCollision:restOffset = 0
+            float physxConvexHullCollision:minThickness = 0.00004
+            point3f[] points = [(-0.0004, -0.006, -0.00695), (-0.00205, -0.006, -0.00765), (-0.00205, -0.006, -0.0082), (0.0004, -0.006, -0.0104), (0.0004, -0.006, -0.00695), (-0.0004, 0.006, -0.00695), (-0.00205, 0.006, -0.00765), (-0.00205, 0.006, -0.0082), (0.0004, 0.006, -0.0104), (0.0004, 0.006, -0.00695)]
+            color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+            uniform token subdivisionScheme = "none"
+        }
+    }
+
+    def PhysicsRevoluteJoint "HingeRight" (
+        prepend apiSchemas = ["PhysicsDriveAPI:angular"]
+    )
+    {
+        float drive:angular:physics:damping = 0.000020943951
+        float drive:angular:physics:stiffness = 0.010471975
+        float drive:angular:physics:targetPosition = 0
+        uniform token drive:angular:physics:type = "force"
+        uniform token physics:axis = "Y"
+        rel physics:body0 = </Rig/Crown>
+        rel physics:body1 = </Rig/Right>
+        point3f physics:localPos0 = (0.0051, 0, 0)
+        point3f physics:localPos1 = (0, 0, 0)
+        float physics:lowerLimit = -28
+        float physics:upperLimit = 28
+    }
+
+    def Xform "Hammer" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysxRigidBodyAPI", "PhysicsMassAPI", "PhysxContactReportAPI"]
+    )
+    {
+        point3f physics:centerOfMass = (0, -0.035, 0.008)
+        float3 physics:diagonalInertia = (0.0003, 0.000005, 0.0003)
+        float physics:mass = 0.12
+        float physxContactReport:threshold = 0
+        float physxRigidBody:maxDepenetrationVelocity = 1
+        float physxRigidBody:sleepThreshold = 0
+        int physxRigidBody:solverPositionIterationCount = 24
+        int physxRigidBody:solverVelocityIterationCount = 8
+        float xformOp:rotateY = 0
+        double3 xformOp:translate = (-0.085, -0.075, 0.142)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateY"]
+
+        def Cube "Nose" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+        )
+        {
+            rel material:binding:physics = </Rig/Steel>
+            float physxCollision:contactOffset = 0.000035
+            float physxCollision:restOffset = 0
+            color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+            double size = 1
+            float3 xformOp:scale = (0.012, 0.014, 0.005)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "Head" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+        )
+        {
+            rel material:binding:physics = </Rig/Steel>
+            float physxCollision:contactOffset = 0.00004
+            float physxCollision:restOffset = 0
+            color3f[] primvars:displayColor = [(0.21, 0.26, 0.29)]
+            double size = 1
+            float3 xformOp:scale = (0.017, 0.018, 0.016)
+            double3 xformOp:translate = (0, 0, 0.008)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "Shaft" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+        )
+        {
+            rel material:binding:physics = </Rig/Steel>
+            float physxCollision:contactOffset = 0.00004
+            float physxCollision:restOffset = 0
+            color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+            double size = 1
+            float3 xformOp:scale = (0.009, 0.092, 0.009)
+            double3 xformOp:translate = (0, -0.048, 0.01)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cube "Handle" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+        )
+        {
+            rel material:binding:physics = </Rig/Rubber>
+            float physxCollision:contactOffset = 0.00004
+            float physxCollision:restOffset = 0
+            color3f[] primvars:displayColor = [(0.74, 0.15, 0.035)]
+            double size = 1
+            float3 xformOp:scale = (0.02, 0.081, 0.02)
+            double3 xformOp:translate = (0, -0.084, 0.01)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+    }
+
+    def Material "Rubber" (
+        prepend apiSchemas = ["PhysicsMaterialAPI"]
+    )
+    {
+        float physics:dynamicFriction = 0.85
+        float physics:staticFriction = 1.1
+    }
+
+    def Cube "ClipToeRest" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.04, 0.19, 0.28)]
+        double size = 1
+        float3 xformOp:scale = (0.014, 0.006, 0.20314)
+        double3 xformOp:translate = (-0.07, 0.09, 0.013570000000000006)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "ClipGripRest" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.04, 0.19, 0.28)]
+        double size = 1
+        float3 xformOp:scale = (0.014, 0.006, 0.20314)
+        double3 xformOp:translate = (-0.07, 0.135, 0.013570000000000006)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "HammerHeadRest" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.04, 0.19, 0.28)]
+        double size = 1
+        float3 xformOp:scale = (0.012, 0.012, 0.22749)
+        double3 xformOp:translate = (-0.085, -0.075, 0.02574499999999999)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "HammerRearRest" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.04, 0.19, 0.28)]
+        double size = 1
+        float3 xformOp:scale = (0.018, 0.01, 0.22999)
+        double3 xformOp:translate = (-0.085, -0.191, 0.02699499999999999)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment03" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -31.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.0438898794361397, 0.08362177380574375)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment04" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -40.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.05455363605973543, 0.0758741011104026)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment05" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -49.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.06387410111040259, 0.06655363605973544)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment06" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -58.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.07162177380574375, 0.05588987943613971)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment07" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -67.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.0776058807309481, 0.04414540831866755)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment08" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -76.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.08167907331340483, 0.03160941056389606)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment09" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -85.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.08374105603358276, 0.01859056404113898)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment10" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -94.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.08374105603358276, 0.00540943595886103)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment11" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -103.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.08167907331340485, -0.007609410563896048)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment12" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -112.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.0776058807309481, -0.020145408318667537)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment13" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -121.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.07162177380574376, -0.031889879436139704)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment14" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -130.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.0638741011104026, -0.04255363605973542)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment15" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -139.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.05455363605973544, -0.05187410111040261)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment16" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -148.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.043889879436139714, -0.05962177380574375)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment17" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -157.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.03214540831866755, -0.0656058807309481)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment18" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -166.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.019609410563896066, -0.06967907331340484)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment19" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -175.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, 0.0065905640411389865, -0.07174105603358276)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment20" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -184.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.0065905640411389275, -0.07174105603358277)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment21" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -193.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.019609410563896045, -0.06967907331340485)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment22" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -202.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.03214540831866754, -0.0656058807309481)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment23" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -211.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.04388987943613973, -0.05962177380574374)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment24" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -220.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.05455363605973539, -0.05187410111040264)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment25" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -229.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.06387410111040258, -0.04255363605973547)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment26" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -238.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.07162177380574376, -0.03188987943613969)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment27" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -247.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.0776058807309481, -0.020145408318667523)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment28" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -256.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.08167907331340482, -0.007609410563896104)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment29" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -265.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.08374105603358276, 0.005409435958860972)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment30" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -274.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.08374105603358276, 0.018590564041139)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment31" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -283.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.08167907331340483, 0.03160941056389607)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment32" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -292.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.07760588073094811, 0.04414540831866749)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment33" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -301.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.07162177380574378, 0.05588987943613967)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment34" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -310.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.06387410111040259, 0.06655363605973545)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment35" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -319.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.054553636059735414, 0.0758741011104026)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "RimSegment36" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -328.5
+        float3 xformOp:scale = (0.009, 0.014, 0.009)
+        double3 xformOp:translate = (0, -0.043889879436139756, 0.08362177380574372)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "Stand" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.04, 0.19, 0.28)]
+        double size = 1
+        float3 xformOp:scale = (0.025, 0.024, 0.1)
+        double3 xformOp:translate = (0, 0, -0.04)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "Base" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.04, 0.19, 0.28)]
+        double size = 1
+        float3 xformOp:scale = (0.22, 0.48, 0.012)
+        double3 xformOp:translate = (-0.028, 0, -0.091)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "Mark0"
+    {
+        color3f[] primvars:displayColor = [(0.15, 0.8, 0.22)]
+        double size = 1
+        float3 xformOp:scale = (0.0006, 0.003, 0.012)
+        double3 xformOp:translate = (0.00235, -0.012, 0.084)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "Mark1"
+    {
+        color3f[] primvars:displayColor = [(0.15, 0.8, 0.22)]
+        double size = 1
+        float3 xformOp:scale = (0.0006, 0.003, 0.012)
+        double3 xformOp:translate = (0.00235, 0.012, 0.084)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cylinder "Hub" (
+        prepend apiSchemas = ["PhysicsCollisionAPI"]
+    )
+    {
+        uniform token axis = "X"
+        double height = 0.019
+        color3f[] primvars:displayColor = [(0.37, 0.44, 0.52)]
+        double radius = 0.017
+        double3 xformOp:translate = (0, 0, 0.012)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Cylinder "Axle" (
+        prepend apiSchemas = ["PhysicsCollisionAPI"]
+    )
+    {
+        uniform token axis = "X"
+        double height = 0.051
+        color3f[] primvars:displayColor = [(0.2, 0.25, 0.27)]
+        double radius = 0.007
+        double3 xformOp:translate = (0.001, 0, 0.012)
+        uniform token[] xformOpOrder = ["xformOp:translate"]
+    }
+
+    def Cube "Spoke0" (
+        prepend apiSchemas = ["PhysicsCollisionAPI"]
+    )
+    {
+        color3f[] primvars:displayColor = [(0.32, 0.39, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -36
+        float3 xformOp:scale = (0.007, 0.009, 0.068)
+        double3 xformOp:translate = (0, 0.02645033635316129, 0.04840576474687264)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "Spoke1" (
+        prepend apiSchemas = ["PhysicsCollisionAPI"]
+    )
+    {
+        color3f[] primvars:displayColor = [(0.32, 0.39, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -108
+        float3 xformOp:scale = (0.007, 0.009, 0.068)
+        double3 xformOp:translate = (0, 0.042797543233281915, -0.0019057647468726287)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "Spoke2" (
+        prepend apiSchemas = ["PhysicsCollisionAPI"]
+    )
+    {
+        color3f[] primvars:displayColor = [(0.32, 0.39, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -180
+        float3 xformOp:scale = (0.007, 0.009, 0.068)
+        double3 xformOp:translate = (0, 5.5109105961630896e-18, -0.033)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "Spoke3" (
+        prepend apiSchemas = ["PhysicsCollisionAPI"]
+    )
+    {
+        color3f[] primvars:displayColor = [(0.32, 0.39, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -252
+        float3 xformOp:scale = (0.007, 0.009, 0.068)
+        double3 xformOp:translate = (0, -0.04279754323328191, -0.0019057647468726392)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "Spoke4" (
+        prepend apiSchemas = ["PhysicsCollisionAPI"]
+    )
+    {
+        color3f[] primvars:displayColor = [(0.32, 0.39, 0.44)]
+        double size = 1
+        float xformOp:rotateX = -324
+        float3 xformOp:scale = (0.007, 0.009, 0.068)
+        double3 xformOp:translate = (0, -0.0264503363531613, 0.04840576474687262)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateX", "xformOp:scale"]
+    }
+
+    def Cube "HeelRest" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.04, 0.19, 0.28)]
+        double size = 1
+        float3 xformOp:scale = (0.01, 0.01, 0.18714)
+        double3 xformOp:translate = (-0.07730000000000001, 0.112, 0.0055700000000000055)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "LeftLeafRest" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.00004
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.04, 0.19, 0.28)]
+        double size = 1
+        float3 xformOp:scale = (0.003, 0.01, 0.19974)
+        double3 xformOp:translate = (-0.09010000000000001, 0.112, 0.011870000000000006)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "OuterFace" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Rig/Steel>
+        float physxCollision:contactOffset = 0.000035
+        float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.35, 0.41, 0.44)]
+        double size = 1
+        float3 xformOp:scale = (0.0063, 0.074, 0.015)
+        double3 xformOp:translate = (0.001, 0, 0.074)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+}
+
