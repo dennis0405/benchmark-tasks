@@ -862,6 +862,12 @@ def _piece_spawner(spec: Part):
             UsdPhysics.MassAPI.Apply(prim).CreateCenterOfMassAttr(
                 Gf.Vec3f(*(float(v) for v in spec.com))
             )
+        if spec.free:
+            from pxr import PhysxSchema
+            PhysxSchema.PhysxContactReportAPI.Apply(prim).CreateThresholdAttr(0.)
+            if spec.name == 'mallet':
+                # Keep native support impulses observable throughout the hands-free hold.
+                PhysxSchema.PhysxRigidBodyAPI.Apply(prim).CreateSleepThresholdAttr(0.)
         if spec.spring is not None:
             _add_spring(prim, spec)
         if spec.anchor is not None:

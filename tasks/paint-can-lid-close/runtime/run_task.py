@@ -23,6 +23,7 @@ p.add_argument('--policy',choices=('scripted','dream'),default='scripted')
 p.add_argument('--budget-path',default='/dream-budget/ledger.sqlite3')
 AppLauncher.add_app_launcher_args(p)
 args=p.parse_args(); args.enable_cameras=True
+args.device='cpu'  # Preserve the qualified native contact-reporting backend; RTX cameras use the GPU.
 if args.policy=='dream' and args.episodes!=1:p.error('Dream runs exactly one episode')
 print('[task] Starting Isaac Sim application',flush=True)
 app=AppLauncher(args).app
@@ -61,8 +62,8 @@ source_hashes={str(f.relative_to(source_snapshot)):hashlib.sha256(f.read_bytes()
     for f in source_snapshot.rglob('*') if f.is_file()}
 cameras=('overview_cam','top_cam','left_cam','right_cam')
 emb=BimanualYamEmbodiment(enable_cameras=True,contact_sensors=False,rig=station.rig(),overview_cam=True)
-emb.camera_config.overview_cam.width=1280;emb.camera_config.overview_cam.height=720
-eye=np.array([.95,-.80,1.45]); target=np.array([.22,0,.80])
+emb.camera_config.overview_cam.width=960;emb.camera_config.overview_cam.height=640
+eye=np.array([.81,-.54,1.38]); target=np.array([.33,0,.86])
 forward=(target-eye)/np.linalg.norm(target-eye)
 left=np.cross([0.,0.,1.],forward);left/=np.linalg.norm(left)
 up=np.cross(forward,left)
@@ -128,7 +129,7 @@ try:
     print('[task] Building physical environment',flush=True)
     env=task.make_environment(emb,args.device)
     print('[task] Physical environment ready',flush=True)
-    dynamics=task.make_dynamics(env) if hasattr(task,'make_dynamics') else None
+    dynamics=None
     ready=torch.tensor([[*READY,1,*READY,1]],dtype=torch.float32,device=env.unwrapped.device)
     results=[]
     for episode in range(args.episodes):
@@ -137,7 +138,9 @@ try:
         scorer=task.make_scorer()
         env.reset(seed=args.seed)
         print(f'[task] Reset episode {episode+1}; settling 30 frames',flush=True)
-        if dynamics is not None:dynamics.reset()
+        if hasattr(task,'make_dynamics'):
+            if dynamics is None:dynamics=task.make_dynamics(env)
+            else:dynamics.reset()
         for settling_step in range(-30,0):
             if dynamics is not None:dynamics.before_step(settling_step,ready[0].cpu().numpy())
             env.step(ready)

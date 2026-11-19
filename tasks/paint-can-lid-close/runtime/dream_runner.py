@@ -1,4 +1,4 @@
-"""Official Dream YAM policy with a persistent budget and one bounded session recovery."""
+"""Official Dream YAM policy with a persistent budget and bounded session recovery."""
 import time
 import warnings
 
@@ -33,20 +33,34 @@ def guard_exchange(original, ledger, task, run, stats=None):
     return exchange
 
 
+MAX_SESSION_RECOVERIES = 32
+
+
 def request_with_recovery(client, commanded, expired_type, stats):
-    """At most one session replacement per rollout; preserve observations and simulator state."""
+    """Bounded SDK session continuation; never reset the simulator or observations."""
+    consecutive = 0
     while True:
         try:
             return client.get_action(commanded=commanded)
         except expired_type:
-            if stats['session_recoveries'] >= 1:
+            if consecutive >= 2 or stats['session_recoveries'] >= MAX_SESSION_RECOVERIES:
                 raise
+            consecutive += 1
             stats['session_recoveries'] += 1
-            print('[dream] Session replaced; continuing current scene once, subject to the same budget',flush=True)
+            print(f"[dream] Session continuation {stats['session_recoveries']}/{MAX_SESSION_RECOVERIES}; physical trial unchanged", flush=True)
 
 
 class Runner:
     def __init__(self, task, run, instruction, budget_path, seed=0):
+        import os
+        from pathlib import Path
+        credentials=Path(os.environ['DREAM_CREDENTIALS'])
+        if credentials.stat().st_mode & 0o077:
+            raise RequestStopped('Dream credential file must be owner-only')
+        for line in credentials.read_text().splitlines():
+            name,separator,value=line.partition('=')
+            if separator and name=='DREAM_API_KEY':
+                os.environ[name]=value
         import dream
         import dream.transport
         from inspect_robots import EmbodimentInfo, Scene

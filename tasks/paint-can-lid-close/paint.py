@@ -46,7 +46,7 @@ CLOTH_C = (0.370, -0.020)
 FLOOR = TOP + CLOTH[2]                   # the cloth's top: what the can stands on
 
 # -- paint can (free) ----------------------------------------------------------------------------
-CAN_C = (0.370, 0.050)                   # its axis
+CAN_C = (0.340, -0.005)                   # its axis
 R_CAN = 0.0842                           # outside radius at the chimes
 H_CAN = 0.1905                           # base to the top of the top chime
 R_WALL = 0.0836
@@ -61,7 +61,7 @@ LID_MASS = 0.07
 
 # -- mallet (free) -------------------------------------------------------------------------------
 HEAD_R = 0.0255
-HEAD_L = 0.092
+HEAD_L = 0.134
 HANDLE_R = 0.0125
 HANDLE_L = 0.255                         # head centre to the butt
 MALLET_MASS = 0.31

@@ -11,7 +11,7 @@ import numpy as np
 import paint as P
 
 HZ = 20
-HOLD_S = 1.0
+HOLD_S = 3.0
 SEATED_MM = 1.0                       # the lid within this of seated (flush in the ring)
 SHOVE_MM = 15.0                       # the can pushed further than this over the cloth ...
 TILT_DEG = 8.0                        # ... or tipped further than this: struck unsteadied (caps 0.5)
@@ -56,7 +56,7 @@ class TrialScorer:
             raise ValueError("lid seating measurements missing")
         self.step = step
         can = np.asarray(root_poses["can"], float)
-        lid = np.asarray(root_poses["lid"], float)
+        lid = np.asarray(root_poses["rim0"], float)
         mal = np.asarray(root_poses["mallet"], float)
         moved = math.hypot(can[0] - P.CAN_C[0], can[1] - P.CAN_C[1])
         up = P.mat(can) @ np.array([0.0, 0.0, 1.0])
@@ -80,10 +80,11 @@ class TrialScorer:
         d_top = pts[:, 2] - (lid[2] + P.LID_T / 2)
         d_can = np.maximum(d_side, d_top)
         gap = float(min(d_handle.min(), d_head.min(), d_can.min()))
-        clear = gap >= CLEAR
+        open_hands = all(min(abs(x) for x in robot[s]["fingers"]) > .015 for s in ("left","right"))
+        clear = gap >= CLEAR and open_hands and not mechanics["left_contacts"] and not mechanics["right_contacts"]
         o = objects.get("mallet", {}) if isinstance(objects, dict) else {}
         rest = _v(o, "lin_vel") < REST_V and _v(o, "ang_vel") < REST_W
-        laid = mal[2] - P.FLOOR < DOWN_Z
+        laid = mal[2] - P.FLOOR < DOWN_Z and mechanics["cloth_support"]
         score = 0.0
         if n >= 3:
             score = 0.25
