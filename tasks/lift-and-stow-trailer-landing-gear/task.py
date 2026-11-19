@@ -4,7 +4,7 @@ from scoring import Scorer
 
 HZ=20
 import json
-NAME = 'load-coupled-trailer-landing-gear'
+NAME = 'half-turn-trailer-wrist'
 INSTRUCTION = json.loads(Path(__file__).with_name('task.json').read_text())['instruction']
 MAX_STEPS = 1400
 OBJECT_NAMES = ('gearbox','shoe','slider','spindle','crank')
@@ -31,6 +31,15 @@ def make_environment(embodiment, device, control_hz=HZ):
         left=np.cross([0.,0.,1.],forward);left/=np.linalg.norm(left)
         overview.offset.pos=tuple(eye);overview.offset.rot=tuple(ik.matrix_to_quat_xyzw(np.column_stack((forward,left,np.cross(forward,left)))))
     objects=task_room('station',embodiment.rig.top_cam)
+    # Put the arms on a side bench and a separate fixed plinth; the entire crank sweep is in the aisle.
+    from yam_arena.scene import _box, _Table, STATION_TABLE_COLOR
+    objects=[obj for obj in objects if obj.name!='table']
+    objects.extend([
+        _box("side_bench",(.83,.415,.06),(-.335,.4425,.7175),STATION_TABLE_COLOR,cls=_Table),
+        _box("bench_leg_one",(.075,.075,.70),(-.62,.565,.3375),(.26,.29,.30)),
+        _box("bench_leg_two",(.075,.075,.70),(.0,.30,.3375),(.26,.29,.30)),
+        _box("right_arm_plinth",(.17,.15,.76),(0.,-.305,.3675),(.34,.37,.38)),
+    ])
     # Increase diffuse room light so the dark camera body and fingers are visible in shadow.
     dome_index=next(i for i,obj in enumerate(objects) if isinstance(obj,DomeLight))
     objects[dome_index]=DomeLight(spawner_cfg=sim_utils.DomeLightCfg(intensity=600.,color=(.86,.90,.92)))

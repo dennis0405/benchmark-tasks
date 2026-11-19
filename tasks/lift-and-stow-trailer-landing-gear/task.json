@@ -1,9 +1,9 @@
 {
-  "title": "Lift the grounded landing foot before shifting and securing the crank",
-  "instruction": "The tractor is coupled and the landing foot rests on the ground plate. Turn the crank in low until the foot clears the plate. Then push the handle inward into high, finish retracting the leg, and park the crank in the keeper.",
+  "title": "Lift the grounded trailer foot, turn half a revolution in high, and stow the crank",
+  "instruction": "Lift the grounded foot in low. Shift the same crank into high, turn it half a revolution, then fold it into its keeper and let go.",
   "category": "Impact on jobs",
-  "setup": "Two YAM arms with parallel grippers face a fixed two-speed gearbox and hinged 355.6 mm-radius crank. A steel-like 230 × 210 × 26 mm shoe rests on a fixed 380 × 380 × 20 mm plate. The selector starts in low, the crank is deployed and the keeper is empty. The 28 mm selector slides along the crank axis. All parts are rigid. The gearbox center is at (0.335, −0.401, 0.910) m in station coordinates with yaw 95°. The deployment angle starts at 15°. Fixed mount and plate coordinates and the preload specification are in the README.",
-  "scoring": "Four ordered milestones, 0.25 each. With a loaded start, turn at least 15° in low from a grounded two-hand grasp. Lift the shoe at least 0.035 mm clear of all plate contacts for three observations. While clear, maintain a two-hand grasp through the axial shift to at least 22.4 mm. Turn through a net 40° in high with the grip maintained and reach at least 0.9503 mm clearance (rounded). Fold at least 85°, engage the keeper within 20 mm and keep the shoe retracted and the crank unsupported by the hands for three seconds. Leaving low (5.6 mm) before the lift qualifies invalidates the trial. An established grasp can bridge one missing pad observation when both grippers stay closed and within 12 mm of the grip.",
+  "setup": "Two YAM arms with parallel grippers stand on a side bench and a separate plinth. A rigid gearbox carries a 355.6 mm-radius folding crank, a 28 mm sliding selector and a steel-like 230 × 210 × 26 mm landing shoe. The shoe starts on a fixed 380 × 380 × 20 mm plate, the selector is in low, and the crank starts deployed at 15°. The keeper sits at the opposite end of the 180° high-gear sweep. Dimensions and reset references are in the README and USD asset.",
+  "scoring": "Four ordered milestones worth 0.25 each. Start with the shoe loaded on the plate. Grip with both hands and advance at least 15° in low from a grounded grip sample. Maintain at least 0.035 mm clearance with no ground contact for three observations. While gripping and clear, push inward to at least 22.4 mm. Leaving the low range at 5.6 mm before a qualified lift permanently scores zero. In high, accumulate at least 180° net rotation over consecutive gripped frame pairs and reach at least 3.6718 mm clearance (rounded). Fold the crank at least 85°, engage the keeper within 20 mm, remain fully retracted and hold with both hands clear for 3.00 s. See README for the grip sensor tolerance.",
   "run_limit": "1400 steps at 20 Hz",
   "keywords": [
     "bimanual",
@@ -12,7 +12,8 @@
     "axial shift",
     "keeper"
   ],
-  "context": "After a tractor couples to a trailer, the driver retracts the landing gear and secures its crank. This bench fixture isolates unloading the shoe, shifting and parking.",
-  "fidelity": "Rigid, counterbalanced short-stroke bench fixture. The screw model maps measured crank rotation to extension at 25.4/32 and 25.4/3.5 mm per revolution. Ground-contact impulse produces a measured support force that adds friction torque to the crank spindle. The keeper uses a reduced detent model. Final shoe clearance is about 0.97 mm. Actual vehicle loads, operator torque and full road travel are outside the calibrated scope.",
-  "scores": "Dream-1 scored 0.0 after 1,400 actions (70.00 simulated seconds, step_limit). Scripted YAM scored 1.0 after 830 actions (41.50 simulated seconds)."
+  "context": "After coupling a tractor to a trailer, the driver raises the landing gear and secures the crank. This fixture isolates the transition from a supported foot to high gear and storage.",
+  "fidelity": "Rigid counterbalanced bench mechanism with 0.79375 and 7.25714 mm of screw travel per revolution in low and high. Measured foot support increases spindle resistance. Crank damping is 0.97 N·m·s/rad. The 3.72 mm nominal stroke represents a shortened test rig. The catch uses a detent force model. Full vehicle loads, road clearance and physical hardware performance remain unvalidated.",
+  "reset_notes": "Restore the supplied fixed layout and settle for 30 control frames. Use seed 0.",
+  "scores": "Dream-1 scored 0.00 after 1,400 actions (70.00 simulated seconds, step_limit). Scripted YAM scored 1.00 after 1,188 actions (59.40 simulated seconds)."
 }

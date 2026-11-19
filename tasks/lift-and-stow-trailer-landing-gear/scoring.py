@@ -63,7 +63,7 @@ class Scorer:
         self.previous_high_angle = m['high_deg']
         self.previous_grip = both
         retracted = m['clearance_mm'] >= STROKE*1000-.045
-        if self.shift and self.gripped_high_angle >= 40 and retracted:
+        if self.shift and self.gripped_high_angle >= 180 and retracted:
             self.full = True
         parked = (self.full and clear and retracted and m['caught'] and m['fold'] >= 85
                   and m['gap_mm'] < 20 and m['slide_mm'] >= 22.4 and m['hands_clear'])

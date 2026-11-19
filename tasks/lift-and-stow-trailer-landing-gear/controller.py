@@ -36,7 +36,8 @@ class Controller:
         q=self.q0+(q1-self.q0)*u;jaw=self.jaw0+(jaw1-self.jaw0)*u
         ref=self.ref0+(ref1-self.ref0)*u
         _,_,_,a,s,fold,_=self.o.read()
-        actual=np.array([np.rad2deg(a),s,np.rad2deg(fold)])
+        actual_angle=ref[0]+(np.rad2deg(a)-ref[0]+180.)%360.-180.
+        actual=np.array([actual_angle,s,np.rad2deg(fold)])
         if phase not in ('pregrasp','open','withdraw','clearance','released'):
             if phase in ('approach','grasp'):
                 cmd=actual.copy()

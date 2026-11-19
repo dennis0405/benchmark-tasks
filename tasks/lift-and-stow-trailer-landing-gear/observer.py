@@ -113,7 +113,7 @@ class Observer:
         self.normal_load += -math.expm1(-dt/.016) * (load - self.normal_load)
         elastic_slip = error / .012
         thrust_torque = -THRUST_FRICTION * THRUST_RADIUS * self.normal_load * elastic_slip
-        base_torque = -1.55 * elastic_slip - .12 * spin
+        base_torque = -1.55 * elastic_slip - .97 * spin
         resistance = base_torque + thrust_torque
         self.torque_sums += dt * np.array([spin, base_torque, thrust_torque, resistance])
         self.load_sum += self.normal_load * dt
