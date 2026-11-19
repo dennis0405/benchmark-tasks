@@ -1,6 +1,7 @@
 import numpy as np
 from yam_arena.task_file import ObjectState
-from metrics import measure
+from yam_arena import ik
+from yam_arena.station import BASES
 from task import BASE
 
 class Observer:
@@ -16,7 +17,8 @@ class Observer:
         self.bodies={n:self.view.create_rigid_body_view(root+'/'+n) for n in ('Disc','Ring')}
         self.paths={}; self.to_path=lambda k:str(PhysicsSchemaTools.intToSdfPath(k)).lower()
         from joints import Breaks
-        self.breaks=Breaks()
+        self.audit_breaks=Breaks()
+        self.visual={}
         self.before_step(0,None);self.q=None
         carb.settings.get_settings().set('/physics/disableContactProcessing',False)
         self.contact=omni.physx.get_physx_simulation_interface().subscribe_contact_report_events(self.events)
@@ -39,14 +41,22 @@ class Observer:
             p=v.get_transforms()[0].copy();vel=v.get_velocities()[0].copy();poses[n]=p
             objects[n]=ObjectState(p[:3],p[3:],vel[:3],vel[3:],p[:3]-.02,p[:3]+.02)
         return objects,poses
+    def rgb(self):
+        def array(x):
+            x=x.torch if hasattr(x,'torch') else x
+            return x[0].cpu().numpy()
+        views=[]
+        for name in ('overview_cam','top_cam'):
+            cam=self.env.unwrapped.scene[name].data
+            views.append((array(cam.output['rgb'])[:,:,:3],array(cam.pos_w),array(cam.quat_w_ros),
+                          array(cam.intrinsic_matrices)))
+        return views
     def after_step(self,step,objects,poses,robot):
         self.q=np.array([robot[s]['joints'] for s in ('left','right')])
         tcp=np.array([robot[s]['tcp'] for s in ('left','right')])
-        m=measure(poses['Disc'].tolist(),poses['Ring'].tolist(),BASE)
-        m.update(self.breaks.fields())
-        m['contacts']=sorted('/'.join(i) for i in self.hits)
-        m['disc_contact']=any(i[0]=='disc' for i in self.hits)
-        m['hands_clear']=not self.hits and min(np.linalg.norm(tcp-np.asarray(BASE),axis=1))>.072
-        m['hands_clear']=bool(m['hands_clear'])
-        return m
-
+        wrist,rot=ik.tcp_pose(self.q[1],BASES['right'])
+        tip=wrist+.078*rot[:,2]
+        center=np.asarray(BASE)
+        clear=min(np.linalg.norm(tcp-center,axis=1))>.072 and np.linalg.norm(tip-center)>.072
+        return dict(hands_clear=bool(clear and not self.hits),contacts=sorted('/'.join(i) for i in self.hits),
+                    blade_tip=(tip-center).tolist(),vision=self.visual,physics_audit=self.audit_breaks.fields())

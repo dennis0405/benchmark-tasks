@@ -8,9 +8,9 @@ INSTRUCTION=json.loads((HERE/'task.json').read_text())['instruction']
 HZ=20
 MAX_STEPS=240
 OBJECT_NAMES=('Disc','Ring')
-BASE=(.32,0.,.866)
-SETUP_CAMERA_EYE=(.57,.48,1.075)
-SETUP_CAMERA_TARGET=(.32,-.004,.85)
+BASE=(.30,0.,.84)
+SETUP_CAMERA_EYE=(.34,.24,1.17)
+SETUP_CAMERA_TARGET=(.282,.047,.84)
 
 def make_environment(embodiment,device,control_hz=HZ):
     import isaaclab.sim as sim_utils
@@ -29,6 +29,8 @@ def make_environment(embodiment,device,control_hz=HZ):
         eye=np.array(SETUP_CAMERA_EYE); f=np.array(SETUP_CAMERA_TARGET)-eye;f/=np.linalg.norm(f)
         l=np.cross([0.,0.,1.],f);l/=np.linalg.norm(l)
         cam.offset.pos=tuple(eye);cam.offset.rot=tuple(ik.matrix_to_quat_xyzw(np.column_stack((f,l,np.cross(f,l)))))
+    from tool import spawn_arm_with_blade
+    embodiment.scene_config.right_robot.spawn.func=spawn_arm_with_blade
     items=task_room('station',embodiment.rig.top_cam)
     light=next(i for i,obj in enumerate(items) if isinstance(obj,DomeLight))
     items[light]=DomeLight(spawner_cfg=sim_utils.DomeLightCfg(intensity=820.,color=(.98,.96,.93)))
