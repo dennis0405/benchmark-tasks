@@ -25,3 +25,7 @@ A loaded sample needs contact points, a contact-force reading above 0.005 N, cal
 The underlying screw, detent and hinge balancing torques are reduced models. The 0.035 mm lift criterion relies on simulation geometry and contact telemetry. It would require a displacement indicator for physical replication.
 
 The primary Dream episode ended at the step limit after 1,400 actions with score 0.0 (70 simulated seconds, about 280 seconds in the control loop). The early-shift control reached high with the shoe still bearing on the plate and scored 0.0.
+
+## Fixture coordinates for reset
+
+All coordinates are metres in the station world frame. The two robot base centers have their midpoint at (0, 0, 0.750). Mount the gearbox center at (0.335048, −0.400598, 0.910) with yaw 95°. The plate center is (0.388213, −1.008277, −0.0025) and its top surface is at 0.0075. The keeper reference point is (0.136371, −0.446087, 0.945598). Set the crank to 15° and the selector to zero before settling. The 0.17 kg shoe uses a 15 µm model preload offset with spring gain 4,800 N/m. At the first scored sample the native contact reading was 0.0687 N. The solver keeps the low-gear reaction and input-shaft drag separate. A physically built fixture would need an independent displacement indicator and support-force measurement to reproduce these thresholds.
