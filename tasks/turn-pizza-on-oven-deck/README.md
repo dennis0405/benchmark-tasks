@@ -2,11 +2,15 @@
 
 Use the turning peel to rotate the pizza half a turn on the oven deck. Keep the pizza centered and topping-side up, then leave the blade on the front landing shelf and the shaft on the rear cradle. The asymmetrical toppings show its orientation. Either direction of rotation earns the same score.
 
+## Why turn a pizza?
+
+In a home pizza oven, the edge closest to the heat can brown while the opposite edge is still pale. A cook slips a turning peel against the rim and gives the pizza a half-turn so the paler edge faces the heat. The familiar skill is making that turn in a tight space while the pizza stays centered on the stone and the toppings stay upright. The cold setup below isolates the peel handling.
+
 ## Fixed setup
 
 The stone deck is 48 × 78 cm, its top is 100 cm above the floor, and its opening is 13 cm high. The 30 cm pizza starts at world XY (0.95, −0.26) m. The 17 cm round blade starts at (0.62, −0.35) m. A 5.5 × 4.8 cm rear stand supports the shaft 34 cm behind the blade. Two 5 mm tall lips leave a 30 mm opening around the 16 mm wide shaft. The blade and shaft are one free 400 g rigid body. Both parallel-gripper YAM arms are present. The right gripper starts open above the handle.
 
-The simulated 283 g crust has a central body, 16 compliant rim segments and 12 compressible contact pads. Toppings are fixed visual landmarks. The simulation evaluates manipulation of a set crust. It does not model heat, cooking, topping loss or empirically calibrated food mechanics. The roof and one wall use a visual cutaway and retain their colliders.
+The simulated pizza has a total mass of 283 g. Its crust has a central body, 16 compliant rim segments and 12 compressible contact pads. Toppings are fixed visual landmarks. The simulation evaluates manipulation of a set crust. It does not model heat, cooking, topping loss or empirically calibrated food mechanics. The roof and one wall use a visual cutaway and retain their colliders.
 
 ## Score
 
@@ -25,7 +29,13 @@ Loss of deck support (vertical contact below 0.001 N), center excursion over 50 
 
 ## Cold reproduction setup
 
-Use an unheated mock oven and a cold pre-baked crust of the stated size. Mark the initial crust center and one radial line on the crust. Put a ruler and angle scale in the deck plane. Record synchronized overhead and oven-opening views that resolve the rim and both supports. Mark the blade center and a point 34 cm down the shaft.
+Prepare one pizza per physical attempt. The quantities below define the proposed test specimen. The recorded trials used the simulated pizza.
+
+1. **Make the crust.** Use plain refrigerated wheat pizza dough from the same product and lot for a batch. Start with a 280 g portion. Roll it to a 300 mm circle on baking parchment, dock the center with a fork and leave the outer 15 mm intact. Bake bare on a sheet pan in a preheated 220 °C conventional oven for 10 minutes, then check at one-minute intervals until the center is set and the underside is dry. Cool uncovered on a wire rack until a probe inserted horizontally into the center reads 20–22 °C. Remove the parchment. Use intact bases measuring 300 ± 3 mm across two perpendicular diameters and weighing 250 ± 3 g after cooling. If a pilot base misses the mass range, adjust the next dough portion by the cooled mass difference and record the portion and bake time for the batch.
+2. **Add the orientation landmarks.** Spread 23 ± 1 g of plain tomato paste in a centered 196 mm circle, leaving the outer rim bare. Punch four red bell-pepper discs and one green disc with a 32 mm cutter. Pat dry and trim the flesh side to give 10 ± 1 g for all five together. Press each disc flat into the paste. Measured from the pizza center in millimeters along the deck's world X and Y axes, place the green disc at (0, 63) and the red discs at (−55, −25), (44, −40), (35, 17) and (−40, 35). Keep the underside dry and free of loose flour, oil and parchment.
+3. **Check and reset.** Weigh the assembled pizza on a tared scale. The target is **283 ± 5 g including toppings**. Confirm the center is at 20–22 °C immediately before each start and use a dry stone at the same temperature in an unheated mock oven. Brush crumbs from the stone and wipe the peel dry. Align the pizza center with the fixed setup mark and point the green disc along +Y. Reset the peel on both supports and open both grippers. Log mass, temperature and a setup photo before starting. Use a fresh matched pizza for every attempt, including retries, so previous peel strokes cannot soften or tear the next rim.
+
+Mark the initial center and a radial line on the crust using food coloring. Put a ruler and angle scale in the deck plane. Record synchronized overhead and oven-opening views that resolve the rim and both supports. Mark the blade center and a point 34 cm down the shaft.
 
 For a physical trial, use the following video measurements as contact proxies.
 
