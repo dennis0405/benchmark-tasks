@@ -59,7 +59,8 @@ for source in ('dream_runner.py','dream_budget.py'):
 source_snapshot=root/'task-source'
 source_hashes={str(f.relative_to(source_snapshot)):hashlib.sha256(f.read_bytes()).hexdigest()
     for f in source_snapshot.rglob('*') if f.is_file()}
-cameras=('overview_cam','top_cam','left_cam','right_cam')
+model_cameras=('top_cam','left_cam','right_cam')
+cameras=('overview_cam',*model_cameras,'side_cam')
 emb=BimanualYamEmbodiment(enable_cameras=True,contact_sensors=False,rig=station.rig(),overview_cam=True)
 emb.camera_config.overview_cam.width=1280;emb.camera_config.overview_cam.height=720
 eye=np.array([.95,-.80,1.45]); target=np.array([.22,0,.80])
@@ -183,7 +184,7 @@ try:
                     state.extend(q[names.index(f'joint{i}')] for i in range(1,7))
                     state.append(float(np.clip(np.mean([q[names.index(f'joint{i}')]/FINGER_OPEN for i in (7,8)]),0,1)))
                 try:
-                    action=dream_runner.act({name:frame(name) for name in cameras if name!='overview_cam'},np.asarray(state))
+                    action=dream_runner.act({name:frame(name) for name in model_cameras},np.asarray(state))
                 except Exception as error:
                     from dream_runner import RequestStopped
                     from dream_budget import BudgetStopped

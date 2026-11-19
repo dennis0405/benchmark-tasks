@@ -39,6 +39,16 @@ def make_environment(embodiment, device, control_hz=HZ):
     standard=env_cfg_callback(control_hz)
     def configure(cfg):
         standard(cfg)
+        # This review camera looks horizontally along -X. Keep all existing cameras.
+        import copy
+        side = copy.deepcopy(overview)
+        side.prim_path = "{ENV_REGEX_NS}/MetrologySide"
+        side.width, side.height = 1280, 720
+        side.spawn.horizontal_aperture = 20.955
+        side.spawn.focal_length = 92.0
+        side.offset.pos = (1.52, -.097, .817)
+        side.offset.rot = tuple(ik.matrix_to_quat_xyzw(np.diag([-1., -1., 1.])))
+        cfg.scene.side_cam = side
         cfg.sim.dt=1/240
         cfg.decimation=12
         cfg.sim.render_interval=12

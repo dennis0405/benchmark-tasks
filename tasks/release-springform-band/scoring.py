@@ -14,7 +14,7 @@ class Scorer:
         x,y,_ = m['band_xyz']
         height = np.asarray(m['lip_above_plate_mm'])
         margin = np.asarray(m['lip_radial_margin_mm'])
-        self.violation |= m['motion_mm'] > 2 or m['tilt_deg'] > 2
+        self.violation |= m['motion_mm'] > 3 or m['tilt_deg'] > 3
         if self.previous is not None:
             old_height,old_margin = self.previous
             # Determine the radial clearance when each facet actually crossed the

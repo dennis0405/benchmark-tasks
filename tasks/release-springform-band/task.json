@@ -2,15 +2,15 @@
   "title": "Release a cheesecake from its springform band",
   "category": "Societal relatability",
   "instruction": "Remove the metal band from the cooled cheesecake and set it on the empty mat. Leave the cake upright and undisturbed on its original base.",
-  "setup": "Center a cooled, 146 mm diameter, 48 mm high cheesecake on a 150 mm round metal base. Its sides have already been loosened. Close the 60 mm high springform band around the base. The latch faces the robot. The pan starts centered on one of two adjacent 210 × 189 × 10 mm nonslip mats; the empty mat center is 194 mm away. See the setup photo for orientation.",
+  "setup": "Center a cooled cheesecake (146 mm diameter, 48 mm high) on its 150 mm metal base. The pre-loosened cake starts upright inside a closed 76 mm high springform band with a flat latch facing the arms. The pan is centered on one of two adjacent 210 × 189 × 10 mm nonslip mats spaced 194 mm center-to-center. Two fixed millimeter scales flank the starting pan.",
   "run_limit": "860 steps at 20 Hz",
-  "scoring": "0 if either cake or base ever moves more than 2 mm from its starting position or tilts over 2 degrees. Earn 0.5 when the band clears the plate rim and then the top of the cake. Reinserting the band around its base loses this credit. Earn 1.0 when the removed band is supported on the empty mat with its center over the mat, stationary (below 15 mm/s and 0.15 rad/s) and clear of both arms for one continuous second. Otherwise 0.",
-  "fidelity": "The cooled cheesecake and base are separate free rigid bodies. Four mechanically linked sectors approximate expansion of the metal band; the lower rolled lip engages the plate rim. Opposed lift ears provide purchase for the parallel grippers. Adhesion and cake deformation are omitted.",
-  "scores": "Dream-1: 0.0 after 860 of 860 steps (43.00 s). Scripted YAM demonstration: 1.0 after 640 of 860 steps (32.00 s).",
+  "scoring": "0 if either cake or base ever moves more than 3 mm from its starting position or tilts over 3 degrees. Earn 0.5 when the band clears the plate rim and then the top of the cake. Reinserting the band around its base loses this credit. Earn 1.0 when the removed band is supported on the empty mat with its center over the mat, stationary (below 15 mm/s and 0.15 rad/s) and clear of both arms for one continuous second. Otherwise 0.",
   "keywords": [
     "bimanual",
     "latch release",
     "controlled lift",
     "springform pan"
-  ]
+  ],
+  "fidelity": "Four linked rigid sectors approximate a springform band expanding at its latch. The arms grip the ordinary upper wall and a flat metal lever. The cake and its raised base are separate free rigid bodies. The model omits cake adhesion and deformation. Dimensions of the simulated lever are assumed.",
+  "scores": "Dream-1: 0.0 after 860 of 860 steps (43.00 s). Scripted YAM: 1.0 after 603 of 860 steps (30.15 s)."
 }

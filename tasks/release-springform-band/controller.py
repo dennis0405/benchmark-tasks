@@ -29,7 +29,7 @@ class Controller:
             goal_center=np.array([.32,-.097])
             error_xy=goal_center-pose[:2]
             rot=Rotation.from_quat(pose[3:])
-            offsets=np.array([[0,.100,.066],[-.124,-.027,.076]])
+            offsets=np.array([[0,.082,.075],[-.119,-.025,.055]])
             droop=(rot.apply(offsets)-offsets)[:,2]
             error=np.column_stack([np.tile(error_xy,(2,1)),-droop])
             self.center_trim=np.clip(self.center_trim+.065*error,-.014,.014)
