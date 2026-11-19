@@ -18,6 +18,10 @@ Four ordered milestones worth 0.25 each. Start with the shoe loaded on the plate
 
 For a physical bench trial, a dial indicator on the shoe with 0.01 mm or finer resolution and a contact indicator on the plate can distinguish takeoff from compression. Mark the spindle and the two selector positions and record the crank and hand release on video. To reproduce the exact rule on an instrumented bench, zero the shoe indicator at loaded contact, synchronize a contact switch and four pad-contact indicators to the video at 20 Hz, and use encoder marks at 15° and 180° and selector marks at 5.6 and 22.4 mm. Each pad may register anywhere within one 50 ms bin. Read the parked crank against an 85° template and keep a 20 mm keeper gauge and a 47 mm hand-clearance reference in view. The supported reset force is about 33 N in simulation. A physical bench trial has not been performed.
 
+## Asset sources
+
+The landing gear, shoe, ground plate, keeper, side bench and arm plinth are original task geometry. The task license covers the original material in this folder. The standard YAM embodiment and room are provided at run time by the pinned arena dependency. The YAM URDF and robot meshes originate with I2RT under the MIT license. The arena repository documents the robot asset attribution and lists no project-wide license of its own. Its source is downloaded during the optional image build. [Pinned arena README](https://github.com/kairosiann/yam-isaac-lab-arena/blob/0059d02a1a91bc6834c1d0846022891df0c78730/README.md#license) · [Robot asset license](https://github.com/kairosiann/yam-isaac-lab-arena/blob/0059d02a1a91bc6834c1d0846022891df0c78730/yam_arena/assets/yam/LICENSE.i2rt) · [I2RT robot source](https://github.com/i2rt-robotics/i2rt)
+
 ## Run and rescore
 
 Seed 0, Isaac Sim 6.1.0, physics at 240 Hz and control at 20 Hz. Each trial allows 1,400 actions (70 simulated seconds). Build the pinned runtime with `python3 runtime/build_image.py` or use the existing image. Run from this task directory.
