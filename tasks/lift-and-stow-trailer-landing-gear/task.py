@@ -4,7 +4,7 @@ from scoring import Scorer
 
 HZ=20
 import json
-NAME = 'lift-and-stow-trailer-landing-gear'
+NAME = 'load-coupled-trailer-landing-gear'
 INSTRUCTION = json.loads(Path(__file__).with_name('task.json').read_text())['instruction']
 MAX_STEPS = 1400
 OBJECT_NAMES = ('gearbox','shoe','slider','spindle','crank')

@@ -10,6 +10,7 @@ NAMES=('gearbox','shoe','slider','spindle','crank')
 PLAN=json.loads(Path(__file__).with_name('motion.json').read_text())
 START,END=np.deg2rad([PLAN['start'],PLAN['end']])
 from limits import LOW_LEAD as LOW, HIGH_LEAD as HIGH, STROKE as LIMIT, PAD_TOP, FOOT_HALF_WIDTHS, FOOT_CENTER_Z, PRELOAD
+from limits import CARRIAGE_MASS, OUTPUT_STIFFNESS, OUTPUT_DAMPING, THRUST_FRICTION, THRUST_RADIUS
 INDEX=np.array([0],dtype=np.uint32)
 R0=Rotation.from_euler('z',PLAN['yaw'],degrees=True).as_matrix()
 
@@ -31,6 +32,10 @@ class Observer:
         self.travel=0.;self.low=0.;self.high=0.;self.prev=START;self.rest=START;self.peak=0.;self.caught=False
         self.measured=None;self.contacts=set();self.other=set()
         self.warm=True
+        self.pending_normal_impulse = 0.
+        self.normal_load = 0.
+        self.torque_sums = np.zeros(4)
+        self.load_time = self.load_sum = 0.
         self.ground_hits=0;self.ground_impulse=0.;self.interval_dt=0.
         carb.settings.get_settings().set('/physics/disableContactProcessing',False)
         self.contact=omni.physx.get_physx_simulation_interface().subscribe_contact_report_events(self.on_contact)
@@ -42,8 +47,10 @@ class Observer:
             pair=[str(PhysicsSchemaTools.intToSdfPath(getattr(h,k))).lower() for k in ('collider0','collider1')]
             if any(x.endswith('/shoe/foot_plate') for x in pair) and any(x.endswith('/ground_pad') for x in pair):
                 for k in range(h.contact_data_offset, h.contact_data_offset + h.num_contact_data):
-                    impulse = np.linalg.norm(data[k].impulse)
-                    self.ground_impulse += float(impulse)
+                    # The plate normal is world +Z. Ignore tangential friction impulses.
+                    normal_impulse = abs(float(data[k].impulse[2]))
+                    self.ground_impulse += normal_impulse
+                    self.pending_normal_impulse += normal_impulse
                     self.ground_hits += 1
             for a,b in (pair,pair[::-1]):
                 if '/landing/' not in a:continue
@@ -56,6 +63,8 @@ class Observer:
     def before_step(self,step,action):
         self.contacts=set();self.other=set()
         self.ground_hits=0;self.ground_impulse=0.; self.interval_dt=0.
+        self.torque_sums[:] = 0.
+        self.load_sum = self.load_time = 0.
         if step==1:
             self.warm=False
             self.prev=self.read()[3];self.low=self.high=self.travel=self.peak=0.
@@ -96,7 +105,20 @@ class Observer:
         balance_arm = h[:,0] * (-.185)
         balance_torque = float(np.cross(balance_arm, [0.,0.,-.98*9.81]) @ fa)
         tau += balance_torque
-        drag=-1.55*error/.012-.12*spin-min(5.,max(0,self.travel-LIMIT)*2*np.pi/HIGH*18.)
+        # The preceding PhysX substep supplies the normal impulse. It is consumed
+        # once, even when a control sample ends between physics callbacks.
+        load = self.pending_normal_impulse / dt
+        self.pending_normal_impulse = 0.
+        # Compliant thrust bearing. The short response time filters contact chatter.
+        self.normal_load += -math.expm1(-dt/.016) * (load - self.normal_load)
+        elastic_slip = error / .012
+        thrust_torque = -THRUST_FRICTION * THRUST_RADIUS * self.normal_load * elastic_slip
+        base_torque = -1.55 * elastic_slip - .12 * spin
+        resistance = base_torque + thrust_torque
+        self.torque_sums += dt * np.array([spin, base_torque, thrust_torque, resistance])
+        self.load_sum += self.normal_load * dt
+        self.load_time += dt
+        drag = resistance - min(5.,max(0,self.travel-LIMIT)*2*np.pi/HIGH*18.)
         if self.caught:
             drag+=np.clip(-28*math.remainder(angle-END,2*np.pi)-.25*spin,-3.,3.)
             tau+=np.clip(35*(np.pi/2-fold)-.4*omega,-3.,3.)
@@ -105,7 +127,7 @@ class Observer:
         speed=-float(v['slider'][:3]@axis)
         self.apply('slider',f=-axis*(4*np.tanh((slide-.014)/.002)-12*speed))
         z=p['shoe'][2]-(p['gearbox'][2]-.35)
-        self.apply('shoe',f=[0,0,.17*9.81+4800*(min(self.travel,LIMIT)-PRELOAD-z)-36*v['shoe'][2]])
+        self.apply('shoe',f=[0,0,CARRIAGE_MASS*9.81+OUTPUT_STIFFNESS*(min(self.travel,LIMIT)-PRELOAD-z)-OUTPUT_DAMPING*v['shoe'][2]])
     def states(self):
         if self.bodies is None:self.reset()
         out={};poses={}
@@ -124,7 +146,10 @@ class Observer:
         # Lowest transformed corner of the actual box, measured independently of screw travel.
         foot_rot = Rotation.from_quat(p['shoe'][3:]).as_matrix()
         bottom = float(p['shoe'][2]) + foot_rot[2,2]*FOOT_CENTER_Z - abs(foot_rot[2]) @ FOOT_HALF_WIDTHS
-        return dict(ground_points=self.ground_hits, ground_force_n=self.ground_impulse/max(self.interval_dt, 1e-9),
+        spin,base_torque,thrust_torque,resistance = self.torque_sums/max(self.load_time,1e-9)
+        return dict(spin_rad_s=spin, bearing_load_n=self.load_sum/max(self.load_time,1e-9),
+                    base_torque_nm=base_torque, thrust_torque_nm=thrust_torque,
+                    drivetrain_torque_nm=resistance, ground_points=self.ground_hits, ground_force_n=self.ground_impulse/max(self.interval_dt, 1e-9),
                     clearance_mm=(bottom-PAD_TOP)*1000, angle=math.degrees(angle),fold=math.degrees(fold),slide_mm=slide*1000,
                     travel_mm=self.travel*1000,peak_mm=self.peak*1000,
                     foot_mm=float((p['shoe'][2]-p['gearbox'][2]+.35)*1000),
