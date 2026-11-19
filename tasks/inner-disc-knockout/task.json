@@ -1,0 +1,17 @@
+{
+  "title": "Remove only the center knockout from an electrical enclosure",
+  "instruction": "Open the smaller conduit entry in the de-energized electrical box. Bend the center slug free, leave the surrounding ring intact and move both hands clear.",
+  "setup": "Fixed open-sided enclosure with a 198 by 168 mm front panel, a 63 mm center slug (40 g), an independently attached annulus (68 mm inner and 103 mm outer diameter, 72 g) and a fixed catch tray underneath. The panel is vertical on the table. The parts start flush, both tabs intact, and both YAM grippers clear.",
+  "scoring": "Outer tab fracture, ring tilt above 8 degrees, or outer tab anchor separation above 5 mm makes the episode score zero. Otherwise earn 0.5 once robot contact bends the center slug more than 14 degrees relative to the ring while the inner anchors remain less than 4 mm apart. For 1.0 the inner tab must subsequently register fracture and the anchors separate by more than 9 mm. Then maintain more than 45 mm between centers, both tool centers more than 72 mm from the fixture center, and no reported robot contact with the fixture for 20 consecutive control frames. Other outcomes retain the earned partial credit or zero.",
+  "run_limit": "240 control steps at 20 Hz (12.0 simulated seconds).",
+  "category": "Impact on jobs",
+  "keywords": [
+    "electrical installation",
+    "concentric knockout",
+    "selective release"
+  ],
+  "context": "Preparing a conduit entry in a de-energized enclosure requires opening the intended diameter while preserving the surrounding knockout.",
+  "reset_notes": "Start a fresh episode with seed 0 to restore both frangible joints and the initial robot posture. Settle for 30 frames.",
+  "fidelity": "Concentric rigid parts and separate breakable constraints approximate a stamped steel knockout. Break loads, bending compliance and kerf dimensions are simulation parameters. The open-sided bench fixture provides access to both faces. Steel tearing, wiring, live electrical equipment and connector fit are outside this model.",
+  "scores": "Dream-1 seed 0 scored 0.0 in 240 of 240 steps (12.00 s), ending at the step limit. Scripted YAM seed 0 scored 1.0 in 174 of 240 steps (8.70 s)."
+}
