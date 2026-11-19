@@ -1,0 +1,316 @@
+#usda 1.0
+(
+    defaultPrim = "Cards"
+    metersPerUnit = 1
+    upAxis = "Z"
+)
+
+def Xform "Cards"
+{
+    def Material "cardstock" (
+        prepend apiSchemas = ["PhysicsMaterialAPI"]
+    )
+    {
+        float physics:dynamicFriction = 0.675
+        float physics:restitution = 0
+        float physics:staticFriction = 0.75
+    }
+
+    def Material "rubber" (
+        prepend apiSchemas = ["PhysicsMaterialAPI"]
+    )
+    {
+        float physics:dynamicFriction = 0.72
+        float physics:restitution = 0
+        float physics:staticFriction = 0.8
+    }
+
+    def Cube "mat" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Cards/rubber>
+        custom float physxCollision:contactOffset = 0.00015
+        custom float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.065, 0.18, 0.16)]
+        double size = 1
+        float3 xformOp:scale = (0.29, 0.44, 0.0275)
+        double3 xformOp:translate = (0.3, 0, 0.76125)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "coral_back" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Cards/rubber>
+        custom float physxCollision:contactOffset = 0.00015
+        custom float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.41, 0.27, 0.13)]
+        double size = 1
+        float3 xformOp:scale = (0.005, 0.077, 0.02)
+        double3 xformOp:translate = (0.2965, 0.165, 0.785)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "coral_front" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Cards/rubber>
+        custom float physxCollision:contactOffset = 0.00015
+        custom float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.41, 0.27, 0.13)]
+        double size = 1
+        float3 xformOp:scale = (0.005, 0.077, 0.02)
+        double3 xformOp:translate = (0.3035, 0.165, 0.785)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "blue_back" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Cards/rubber>
+        custom float physxCollision:contactOffset = 0.00015
+        custom float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.41, 0.27, 0.13)]
+        double size = 1
+        float3 xformOp:scale = (0.005, 0.077, 0.02)
+        double3 xformOp:translate = (0.2965, -0.165, 0.785)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Cube "blue_front" (
+        prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+    )
+    {
+        rel material:binding:physics = </Cards/rubber>
+        custom float physxCollision:contactOffset = 0.00015
+        custom float physxCollision:restOffset = 0
+        color3f[] primvars:displayColor = [(0.41, 0.27, 0.13)]
+        double size = 1
+        float3 xformOp:scale = (0.005, 0.077, 0.02)
+        double3 xformOp:translate = (0.3035, -0.165, 0.785)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+    }
+
+    def Xform "coral" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI", "PhysxContactReportAPI"]
+    )
+    {
+        float physics:mass = 0.008
+        custom float physxContactReport:threshold = 0
+        custom bool physxRigidBody:enableCCD = 1
+        custom float physxRigidBody:sleepThreshold = 0
+        custom int physxRigidBody:solverPositionIterationCount = 24
+        custom int physxRigidBody:solverVelocityIterationCount = 8
+        float xformOp:rotateZ = 90
+        double3 xformOp:translate = (0.3, 0.165, 0.8387)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+        def Cube "face" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+        )
+        {
+            rel material:binding:physics = </Cards/cardstock>
+            custom float physxCollision:contactOffset = 0.00015
+            custom float physxCollision:restOffset = 0
+            color3f[] primvars:displayColor = [(0.97, 0.91, 0.75)]
+            double size = 1
+            float3 xformOp:scale = (0.089, 0.00065, 0.127)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "pip_0_0"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.72, 0.075, 0.035)]
+            double radius = 0.006
+            double3 xformOp:translate = (-0.026, -0.000345, 0.042)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "pip_0_1"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.72, 0.075, 0.035)]
+            double radius = 0.006
+            double3 xformOp:translate = (0.026, -0.000345, -0.042)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "pip_0_2"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.72, 0.075, 0.035)]
+            double radius = 0.006
+            double3 xformOp:translate = (0, -0.000345, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "pip_2_0"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.72, 0.075, 0.035)]
+            double radius = 0.006
+            double3 xformOp:translate = (-0.026, 0.000345, 0.042)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "pip_2_1"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.72, 0.075, 0.035)]
+            double radius = 0.006
+            double3 xformOp:translate = (0.026, 0.000345, -0.042)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "pip_2_2"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.72, 0.075, 0.035)]
+            double radius = 0.006
+            double3 xformOp:translate = (0, 0.000345, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+
+    def Xform "blue" (
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxRigidBodyAPI", "PhysxContactReportAPI"]
+    )
+    {
+        float physics:mass = 0.008
+        custom float physxContactReport:threshold = 0
+        custom bool physxRigidBody:enableCCD = 1
+        custom float physxRigidBody:sleepThreshold = 0
+        custom int physxRigidBody:solverPositionIterationCount = 24
+        custom int physxRigidBody:solverVelocityIterationCount = 8
+        float xformOp:rotateZ = 90
+        double3 xformOp:translate = (0.3, -0.165, 0.8387)
+        uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:rotateZ"]
+
+        def Cube "face" (
+            prepend apiSchemas = ["PhysicsCollisionAPI", "PhysxCollisionAPI", "MaterialBindingAPI"]
+        )
+        {
+            rel material:binding:physics = </Cards/cardstock>
+            custom float physxCollision:contactOffset = 0.00015
+            custom float physxCollision:restOffset = 0
+            color3f[] primvars:displayColor = [(0.97, 0.91, 0.75)]
+            double size = 1
+            float3 xformOp:scale = (0.089, 0.00065, 0.127)
+            double3 xformOp:translate = (0, 0, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate", "xformOp:scale"]
+        }
+
+        def Cylinder "pip_0_0"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.035, 0.11, 0.23)]
+            double radius = 0.006
+            double3 xformOp:translate = (-0.026, -0.000345, 0.042)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "pip_0_1"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.035, 0.11, 0.23)]
+            double radius = 0.006
+            double3 xformOp:translate = (0.026, -0.000345, -0.042)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "pip_0_2"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.035, 0.11, 0.23)]
+            double radius = 0.006
+            double3 xformOp:translate = (0, -0.000345, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "pip_0_3"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.035, 0.11, 0.23)]
+            double radius = 0.006
+            double3 xformOp:translate = (0.017, -0.000345, 0.018)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "pip_0_4"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.035, 0.11, 0.23)]
+            double radius = 0.006
+            double3 xformOp:translate = (-0.017, -0.000345, -0.018)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "pip_2_0"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.035, 0.11, 0.23)]
+            double radius = 0.006
+            double3 xformOp:translate = (-0.026, 0.000345, 0.042)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "pip_2_1"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.035, 0.11, 0.23)]
+            double radius = 0.006
+            double3 xformOp:translate = (0.026, 0.000345, -0.042)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "pip_2_2"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.035, 0.11, 0.23)]
+            double radius = 0.006
+            double3 xformOp:translate = (0, 0.000345, 0)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "pip_2_3"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.035, 0.11, 0.23)]
+            double radius = 0.006
+            double3 xformOp:translate = (0.017, 0.000345, 0.018)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+
+        def Cylinder "pip_2_4"
+        {
+            uniform token axis = "Y"
+            double height = 0.00003
+            color3f[] primvars:displayColor = [(0.035, 0.11, 0.23)]
+            double radius = 0.006
+            double3 xformOp:translate = (-0.017, 0.000345, -0.018)
+            uniform token[] xformOpOrder = ["xformOp:translate"]
+        }
+    }
+}
+
