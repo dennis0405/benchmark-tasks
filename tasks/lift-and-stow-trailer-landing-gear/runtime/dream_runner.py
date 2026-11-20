@@ -1,4 +1,5 @@
 """Official Dream YAM policy with a persistent budget and bounded session recovery."""
+import re
 import time
 import warnings
 
@@ -36,7 +37,7 @@ def guard_exchange(original, ledger, task, run, stats=None):
 MAX_SESSION_RECOVERIES = 32
 
 
-def request_with_recovery(client, commanded, expired_type, stats):
+def request_with_recovery(client, commanded, expired_type, server_error, stats):
     """Bounded SDK session continuation; never reset the simulator or observations."""
     consecutive = 0
     while True:
@@ -48,6 +49,22 @@ def request_with_recovery(client, commanded, expired_type, stats):
             consecutive += 1
             stats['session_recoveries'] += 1
             print(f"[dream] Session continuation {stats['session_recoveries']}/{MAX_SESSION_RECOVERIES}; physical trial unchanged", flush=True)
+        except server_error as error:
+            # Keep the same live observation and simulator tick while the service recovers.
+            # Each exchange is reserved by the transport guard, including retries.
+            code = str(getattr(error, 'code', ''))
+            safe_code = code if re.fullmatch(r'DA-[0-9]{4}', code) else 'unknown'
+            retryable = error.retryable is True
+            print(f'[dream] Service response {safe_code}, retryable={retryable}', flush=True)
+            if not retryable or consecutive >= 5 or stats['service_retries'] >= 32:
+                raise
+            delay = error.retry_after_s
+            if delay is not None and not (0 <= delay <= 120):
+                raise
+            time.sleep(max(delay or 0., min(2 ** consecutive, 30)))
+            consecutive += 1
+            stats['service_retries'] += 1
+
 
 
 class Runner:
@@ -72,7 +89,7 @@ class Runner:
             raise RequestStopped("Dream SDK changed; review transport guard before spending")
         self.ledger = Ledger(budget_path)
         self.task, self.run = task, run
-        self.stats = {"reserved_calls": 0, "session_recoveries": 0}
+        self.stats = {"reserved_calls": 0, "session_recoveries": 0, "service_retries": 0}
         self.ledger.status(task, run)  # Fail before opening a client if the ledger is missing.
         self._original = dream.transport.Transport._exchange
         dream.transport.Transport._exchange = guard_exchange(self._original, self.ledger, task, run, self.stats)
@@ -82,9 +99,9 @@ class Runner:
             def act(session, commanded):
                 client = session._open()
                 sent = time.monotonic()
-                recovered_before=self.stats["session_recoveries"]
+                calls_before=self.stats["reserved_calls"]
                 try:
-                    reply = request_with_recovery(client, None if commanded is None else _station.commanded(commanded), dream.DreamSessionExpired, self.stats)
+                    reply = request_with_recovery(client, None if commanded is None else _station.commanded(commanded), dream.DreamSessionExpired, dream.DreamServerError, self.stats)
                 except (BudgetStopped, RequestStopped):
                     raise
                 except Exception as error:
@@ -96,7 +113,7 @@ class Runner:
                         reason = "request_refused"
                     raise RequestStopped(f"{type(error).__name__}:{reason}") from None
                 timing = client.last_timing or {}
-                return Chunk(_station.rows(reply), time.monotonic()-sent, 1+self.stats["session_recoveries"]-recovered_before,
+                return Chunk(_station.rows(reply), time.monotonic()-sent, self.stats["reserved_calls"]-calls_before,
                              timing.get("serve_infer_ms"), client.session_id)
 
         self.policy = DreamPolicy(session=SingleAttemptSession(), record=False)
@@ -117,7 +134,7 @@ class Runner:
             budget = self.ledger.status(self.task, self.run)
         except BudgetStopped as error:
             budget = {"error": str(error), "reserved": {"run_calls": self.stats["reserved_calls"]}}
-        return {"budget": budget, "policy": self.policy.transcript(), "session_recoveries": self.stats["session_recoveries"]}
+        return {"budget": budget, "policy": self.policy.transcript(), "session_recoveries": self.stats["session_recoveries"], "service_retries": self.stats["service_retries"]}
 
     def close(self):
         import dream.transport
