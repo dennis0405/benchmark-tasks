@@ -1,20 +1,18 @@
 {
-  "title": "Lift the grounded trailer foot, turn half a revolution in high, and stow the crank",
-  "instruction": "Lift the grounded foot in low. Shift the same crank into high, turn it half a revolution, then fold it into its keeper and let go.",
+  "title": "Retract a grounded two-speed landing leg to its travel stop and stow the crank",
+  "instruction": "Raise the foot in low gear until it is clear of the ground. Push the same crank into high, wind the leg fully up to its travel stop, and stow the crank in its keeper. Withdraw both hands.",
   "category": "Impact on jobs",
-  "setup": "Two YAM arms with parallel grippers stand on a side bench and a separate plinth. A rigid gearbox carries a 355.6 mm-radius folding crank, a 28 mm sliding selector and a steel-like 230 × 210 × 26 mm landing shoe. The shoe starts on a fixed 380 × 380 × 20 mm plate, the selector is in low, and the crank starts deployed at 15°. The keeper sits at the opposite end of the 180° high-gear sweep. Dimensions and reset references are in the README and USD asset.",
-  "scoring": "Four ordered milestones worth 0.25 each. Start with the shoe loaded on the plate. Grip with both hands and advance at least 15° in low from a grounded grip sample. Maintain at least 0.035 mm clearance with no ground contact for three observations. While gripping and clear, push inward to at least 22.4 mm. Leaving the low range at 5.6 mm before a qualified lift permanently scores zero. In high, accumulate at least 180° net rotation over consecutive gripped frame pairs and reach at least 3.6718 mm clearance (rounded). Fold the crank at least 85°, engage the keeper within 20 mm, remain fully retracted and hold with both hands clear for 3.00 s. See README for the grip sensor tolerance.",
-  "run_limit": "1400 steps at 20 Hz",
+  "setup": "Two YAM arms beside a rigidly mounted telescoping steel-like leg. A 230 by 210 mm sand shoe rests on a fixed pad, 305 mm below its retracted stop. The 355.6 mm folding crank starts deployed in low, its shaft shifts axially by 28 mm, and a fixed keeper receives the sleeve. The side bench leaves the crank orbit clear.",
+  "scoring": "0 for an early shift or unfinished retraction. 0.5 for lifting the grounded shoe at least 3 mm in low, then pushing into high and retracting into the final 5 mm of its 305 mm stroke. 1.0 for keeping the shoe there with the crank seated in its keeper and both hands withdrawn for three continuous seconds.",
+  "run_limit": "24000 steps at 20 Hz",
+  "context": "A driver raises the landing gear after coupling and secures the crank for travel.",
   "keywords": [
-    "bimanual",
-    "hand crank",
     "two-speed landing gear",
-    "axial shift",
-    "keeper"
+    "crank",
+    "axial gear selection",
+    "retention"
   ],
-  "context": "After coupling a tractor to a trailer, the driver raises the landing gear and secures the crank. This fixture isolates the transition from a supported foot to high gear and storage.",
-  "fidelity": "Rigid counterbalanced bench mechanism with 0.79375 and 7.25714 mm of screw travel per revolution in low and high. Measured foot support increases spindle resistance. Crank damping is 0.97 N·m·s/rad. The 3.72 mm nominal stroke represents a shortened test rig. The catch uses a detent force model. Full vehicle loads, road clearance and physical hardware performance remain unvalidated.",
-  "reset_notes": "Restore the supplied fixed layout and settle for 30 control frames. Use seed 0.",
-  "scores": "Dream-1 scored 0.00 after 1,400 actions (70.00 simulated seconds, step_limit). Scripted YAM scored 1.00 after 1,188 actions (59.40 simulated seconds).",
-  "media": "M-QJXA6S"
+  "reset_notes": "Seed 0. Fixed gearbox, grounded shoe, selector out and deployed crank. Settle for 30 control frames.",
+  "fidelity": "Full-size crank radius and A400 gear ratios. A single counterbalanced rigid carriage, simplified shoe, thrust friction and passive keeper approximate an unloaded shop fixture. The nominal 305 mm stroke ends at the travel stop. The model omits the second leg, cross shaft and trailer load. Simulated one-gripper operation and effort have not been validated on stock equipment.",
+  "scores": "YAM 1.0 in 17,360 actions, 868.00 simulated seconds, under the revised position-based scorer. Revised-environment Dream-1 evaluation pending."
 }

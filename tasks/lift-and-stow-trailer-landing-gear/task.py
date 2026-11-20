@@ -4,13 +4,13 @@ from scoring import Scorer
 
 HZ=20
 import json
-NAME = 'half-turn-trailer-wrist'
+NAME = 'a400-full-travel'
 INSTRUCTION = json.loads(Path(__file__).with_name('task.json').read_text())['instruction']
-MAX_STEPS = 1400
+MAX_STEPS = 24000
 OBJECT_NAMES = ('gearbox','shoe','slider','spindle','crank')
 
-SETUP_CAMERA_EYE=(2.06,-1.97,1.60)
-SETUP_CAMERA_TARGET=(.25,-.52,.60)
+SETUP_CAMERA_EYE=(-1.20,-1.85,1.58)
+SETUP_CAMERA_TARGET=(.37,-.29,.80)
 
 def make_environment(embodiment, device, control_hz=HZ):
     import isaaclab.sim as sim_utils
@@ -27,7 +27,7 @@ def make_environment(embodiment, device, control_hz=HZ):
     from yam_arena import ik
     overview=getattr(embodiment.camera_config,'overview_cam',None)
     if overview is not None:
-        eye=np.array([2.06,-1.97,1.60]);target=np.array([.25,-.52,.60]);forward=target-eye;forward/=np.linalg.norm(forward)
+        eye=np.array([-.97,-1.65,1.48]);target=np.array([.50,-.25,.83]);forward=target-eye;forward/=np.linalg.norm(forward)
         left=np.cross([0.,0.,1.],forward);left/=np.linalg.norm(left)
         overview.offset.pos=tuple(eye);overview.offset.rot=tuple(ik.matrix_to_quat_xyzw(np.column_stack((forward,left,np.cross(forward,left)))))
     objects=task_room('station',embodiment.rig.top_cam)

@@ -14,7 +14,7 @@ class Ledger:
         self.path=Path(path)
         try:
             self.receipt=json.loads(self.path.read_text())
-            if self.receipt['task']!='half-turn-trailer-wrist' or self.receipt['cap_usd']!=20:
+            if self.receipt['task']!='a400-full-travel' or self.receipt['cap_usd']!=20:
                 raise ValueError('Unexpected episode reservation')
             if self.receipt['cumulative_reserved_usd']>self.receipt['cumulative_cap_usd']:
                 raise ValueError('Account reservation exceeds authorization')

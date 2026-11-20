@@ -56,7 +56,7 @@ class Observer:
                 if '/landing/' not in a:continue
                 for side in ('left','right'):
                     if not any(x in b for x in ('/'+side+'_robot/','/'+side+'arm/')):continue
-                    if a.endswith('/crank/grip') and 'tip_' in b:
+                    if a.endswith('/roller/grip') and 'tip_' in b:
                         pad='tip_left' if 'tip_left' in b else 'tip_right'
                         self.contacts.add((side,pad))
                     else:self.other.add(side+':'+a.rsplit('/',1)[-1])
@@ -125,7 +125,7 @@ class Observer:
         self.apply('crank',t=fa*tau)
         self.apply('spindle',t=axis*drag-fa*tau)
         speed=-float(v['slider'][:3]@axis)
-        self.apply('slider',f=-axis*(4*np.tanh((slide-.014)/.002)-12*speed))
+        self.apply('slider',f=-axis*(16*np.tanh((slide-.014)/.002)-35*speed))
         z=p['shoe'][2]-(p['gearbox'][2]-.35)
         self.apply('shoe',f=[0,0,CARRIAGE_MASS*9.81+OUTPUT_STIFFNESS*(min(self.travel,LIMIT)-PRELOAD-z)-OUTPUT_DAMPING*v['shoe'][2]])
     def states(self):
@@ -147,7 +147,7 @@ class Observer:
         foot_rot = Rotation.from_quat(p['shoe'][3:]).as_matrix()
         bottom = float(p['shoe'][2]) + foot_rot[2,2]*FOOT_CENTER_Z - abs(foot_rot[2]) @ FOOT_HALF_WIDTHS
         spin,base_torque,thrust_torque,resistance = self.torque_sums/max(self.load_time,1e-9)
-        return dict(spin_rad_s=spin, bearing_load_n=self.load_sum/max(self.load_time,1e-9),
+        return dict(pilot=getattr(self,"pilot",{}),spin_rad_s=spin, bearing_load_n=self.load_sum/max(self.load_time,1e-9),
                     base_torque_nm=base_torque, thrust_torque_nm=thrust_torque,
                     drivetrain_torque_nm=resistance, ground_points=self.ground_hits, ground_force_n=self.ground_impulse/max(self.interval_dt, 1e-9),
                     clearance_mm=(bottom-PAD_TOP)*1000, angle=math.degrees(angle),fold=math.degrees(fold),slide_mm=slide*1000,
