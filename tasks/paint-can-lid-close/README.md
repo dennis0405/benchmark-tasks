@@ -2,6 +2,22 @@
 
 Steady the can with one hand, tap the loose lid down around the rim with the rubber mallet, return the mallet to the cloth, and release the work. The trial has a fixed initial state and a limit of 1,800 control steps at 20 Hz. Isaac Sim 6.1.0 runs PhysX on CPU at 480 Hz and renders the three policy cameras and the observer camera on an RTX GPU.
 
+## Societal relatability
+
+After touching up a wall, people often close the can to save the remaining paint for another repair. The near edge can look flush while the far edge is still raised. Steadying the can on a drop cloth and tapping around the rim addresses that familiar problem. The trial measures how evenly the lid is seated. It does not test airtightness or paint shelf life.
+
+## Response to the original paint-can review
+
+The original review (TK-CYLBEJ) raised three issues. The follow-up review (TK-UAEDED) asked how each was addressed. [Original feedback](https://github.com/robocurve/benchmark-tasks/pull/2337#issuecomment-6930831796) · [Follow-up feedback](https://github.com/robocurve/benchmark-tasks/pull/2916#issuecomment-7021719151)
+
+| Earlier concern | Current implementation and evidence |
+| --- | --- |
+| A near pass or very light motion could seat the lid. | A sector needs a solver-reported impact from the rubber head while the can and mallet are held. The strike must drive that sector past its 2 mm engagement point within one control step. In a simulated component test, a pass with a 1.875 mm minimum gap produced zero contact impulse and zero retained insertion. A light touch also left zero insertion. A direct tap drove the target sector 3.965 mm into its 4 mm travel. The 800-step YAM near-pass control earned 0.00 points with zero credited sectors. |
+| Partial credit could be awarded without observable seating. | Mark eight sectors at 45° intervals and measure each against its own fully seated reference. For the bench trial, verify the strike on video and the final height with a straightedge and feeler gauge. Only struck sectors within 1 mm of their reference count. In the recorded YAM run, all eight qualified by 23.70 s. Returning the mallet and clearing both hands for 3 s brought the score to 1.00 at 38.40 s. Scorer tests also rejected a delayed press and a tap on an already seated sector, and removed credit when a sector reopened. |
+| Wet paint could transfer to the shared robot. | The specified bench fixture uses a clean, dry can and groove with steel ballast secured low in the can. The can and ballast together weigh 2.40 kg. The recorded simulation uses this dry setup. No wet paint is required for the bench procedure. |
+
+**Physical checks still open.** The recorded strikes are simulation results. The impact needed to seat a real steel lid, the depth retained at the struck sector and the movement of adjacent sectors have yet to be measured on a physical can. The simulated rigid side tab is a grasp fixture. Its shape, compliance and grasp stability have not been checked against a retail can’s handle. The enlarged mallet also awaits physical calibration.
+
 ## Repeatable dry setup
 
 Use an unused or fully cleaned and dried one-US-gallon steel ring-and-plug can (168 mm diameter, 190.5 mm height), a matching metal lid and a dry folded canvas cloth (620 × 500 × 4 mm). Secure clean steel ballast low in the can, centring it horizontally, and weigh the can and ballast together to 2.40 kg. Keep the groove and tool faces clean and dry. The simulated can's centre of mass is 40 mm below its mid-height. The side tab is a rigid 14 × 76 × 18 mm pinch surface on the +y side with its centre 121 mm from the can axis and 110 mm above the cloth. Use the grippable end to steady the can.
