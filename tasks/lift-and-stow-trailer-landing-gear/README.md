@@ -48,3 +48,7 @@ docker run --rm --gpus "device=$GPU" --shm-size 8g --user "$(id -u):$(id -g)" -v
 For Dream-1 use the same image with `--policy dream --budget-path /dream-budget/account-reservation.json`. Mount your owner-readable Dream credential file read-only at `/run/secrets/dream.env`, set `DREAM_CREDENTIALS=/run/secrets/dream.env` and mount the writable directory of your approved account reservation at `/dream-budget`. Its native task ID is `a400-full-travel`. The runtime records each SDK request against that reservation. From this directory inside the image run `python runtime/rescore.py --task ./task.py path/to/trajectory.jsonl --expect path/to/result.json`.
 
 Both policies receive the same instruction and environment. Dream uses robot camera RGB and measured joint state. The external overview provides the trial video.
+
+## Dream-1 trial
+
+Dream-1 scored 0.0 in its single seed-0 Blackwell trial. It stopped early after 7,809 control steps (390.45 simulated seconds, DreamServerError:request_refused). The model returned 162 action chunks. The Blackwell YAM demo scored 1.0 on replay with the revised scorer after 17,360 control steps (868.00 simulated seconds). The control loop ran for 22.0 minutes of wall time. The submitted model video shows the actual policy rollout. Its recorded states reproduced the terminal score on all 7,809 samples.
