@@ -1337,9 +1337,10 @@ def Xform "Pan"
     }
 
     def Xform "cake" (
-        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI"]
+        prepend apiSchemas = ["PhysicsRigidBodyAPI", "PhysicsMassAPI", "PhysxContactReportAPI"]
     )
     {
+        custom float physxContactReport:threshold = 0
         bool physics:kinematicEnabled = 0
         float physics:mass = 0.48
         double3 xformOp:translate = (0.32, 0, 0.794)

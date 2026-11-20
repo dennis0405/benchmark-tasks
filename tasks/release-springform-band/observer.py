@@ -4,6 +4,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation
 from yam_arena.task_file import ObjectState
 from separation import measure
+from cake_contact import manifold_peaks, touches_exposed_cake
 NAMES=('base','cake','band','lever','sector0','sector1','sector2','sector3')
 class Observer:
     def __init__(self,env):self.env=env;self.bodies=None;self.joints=None
@@ -20,6 +21,8 @@ class Observer:
         self.joints=None;self.origin=None;self.band_pose=None
         self.contacts=set()
         self.active_pairs=set()
+        self.cake_sensor_ready = False
+        self.cake_impulse_ns = self.cake_penetration_mm = 0.0
         self.mat_touch=False
         carb.settings.get_settings().set('/physics/disableContactProcessing',False)
         self.subscription=omni.physx.get_physx_simulation_interface().subscribe_contact_report_events(self.contact)
@@ -32,6 +35,15 @@ class Observer:
             if h.type == ContactEventType.CONTACT_LOST:
                 self.active_pairs.discard(paths)
             elif h.num_contact_data:
+                if (not self.cake_sensor_ready
+                        and any('/pan_fixture/cake/' in p for p in paths)
+                        and any('/pan_fixture/base/' in p for p in paths)):
+                    support, _ = manifold_peaks(data, h.contact_data_offset, h.num_contact_data)
+                    self.cake_sensor_ready = support > 0.0
+                if touches_exposed_cake(paths):
+                    impulse, depth = manifold_peaks(data, h.contact_data_offset, h.num_contact_data)
+                    self.cake_impulse_ns = max(self.cake_impulse_ns, impulse)
+                    self.cake_penetration_mm = max(self.cake_penetration_mm, depth)
                 if self.contact_label(paths):
                     self.active_pairs.add(paths)
                     self.record_pair(paths)
@@ -53,6 +65,7 @@ class Observer:
         elif label:self.contacts.add(label)
 
     def before_step(self,step,action):
+        self.cake_impulse_ns = self.cake_penetration_mm = 0.0
         self.contacts.clear()
         self.mat_touch=False
 
@@ -67,6 +80,8 @@ class Observer:
         if self.origin is None:self.origin={n:p.copy() for n,p in poses.items()}
         return objs,poses
     def after_step(self,step,objects,poses,robot):
+        if not self.cake_sensor_ready:
+            raise RuntimeError('No measured cake/base support impulse after settling. Check PhysX contact reporting.')
         self.joints=np.array([robot[s]['joints'] for s in ('left','right')])
         self.band_pose=poses['band']
         rb=Rotation.from_quat(poses['band'][3:])
@@ -79,6 +94,7 @@ class Observer:
         tilt=max(float(np.degrees(np.arccos(np.clip(Rotation.from_quat(poses[n][3:]).as_matrix()[2,2],-1,1)))) for n in ('cake','base'))
         for paths in self.active_pairs:
             self.record_pair(paths)
-        return dict(**measure(poses),on_destination_mat=self.mat_touch,robot_contacts=sorted(self.contacts),angle_deg=float(np.degrees(angle)),expansion_mm=[round(1000*r,3) for r in rad],motion_mm=1000*movement,
+        return dict(**measure(poses),cake_contact_impulse_ns=self.cake_impulse_ns,
+                    cake_penetration_mm=self.cake_penetration_mm,on_destination_mat=self.mat_touch,robot_contacts=sorted(self.contacts),angle_deg=float(np.degrees(angle)),expansion_mm=[round(1000*r,3) for r in rad],motion_mm=1000*movement,
                     tilt_deg=tilt,band_xyz=poses['band'][:3].tolist(),hands_away=not self.contacts,
                     speed=float(np.linalg.norm(objects['band'].lin_vel)),spin=float(np.linalg.norm(objects['band'].ang_vel)))

@@ -4,14 +4,15 @@
   "instruction": "Remove the metal band from the cooled cheesecake and set it on the empty mat. Leave the cake upright and undisturbed on its original base.",
   "setup": "Center a cooled cheesecake (146 mm diameter, 48 mm high) on its 150 mm metal base. The pre-loosened cake starts upright inside a closed 76 mm high springform band with a flat latch facing the arms. The pan is centered on one of two adjacent 210 × 189 × 10 mm nonslip mats spaced 194 mm center-to-center. Two fixed millimeter scales flank the starting pan.",
   "run_limit": "860 steps at 20 Hz",
-  "scoring": "0 if either cake or base ever moves more than 3 mm from its starting position or tilts over 3 degrees. Earn 0.5 when the band clears the plate rim and then the top of the cake. Reinserting the band around its base loses this credit. Earn 1.0 when the removed band is supported on the empty mat with its center over the mat, stationary (below 15 mm/s and 0.15 rad/s) and clear of both arms for one continuous second. Otherwise 0.",
+  "scoring": "0 if either cake or base ever moves more than 3 mm from its starting position or tilts over 3 degrees. Also give zero for damage at any time. In simulation this is ≥ 0.025 N·s normal impulse in one exposed-cake contact manifold or ≥ 2 mm penetration. In real trials inspect for a new indentation, gouge, height loss, split or detached piece using the scaled-photo thresholds in the README. Earn 0.5 when the band clears the plate rim and then the top of the cake. Reinserting the band around its base loses this credit. Earn 1.0 when the removed band is supported on the empty mat with its center over the mat, stationary (below 15 mm/s and 0.15 rad/s) and clear of both arms for one continuous second. Otherwise 0.",
   "keywords": [
     "bimanual",
     "latch release",
     "controlled lift",
     "springform pan"
   ],
-  "fidelity": "Four linked rigid sectors approximate a springform band expanding at its latch. The arms grip the ordinary upper wall and a flat metal lever. The cake and its raised base are separate free rigid bodies. The model omits cake adhesion and deformation. Dimensions of the simulated lever are assumed.",
-  "scores": "Dream-1: 0.0 after 860 of 860 steps (43.00 s). Scripted YAM: 1.0 after 603 of 860 steps (30.15 s).",
-  "media": "M-UP3PD7"
+  "fidelity": "Four linked rigid sectors approximate a springform band expanding at its latch. The arms grip the ordinary upper wall and a flat metal lever. The cake and its raised base are separate free rigid bodies. The model omits cake adhesion and deformation. Dimensions of the simulated lever are assumed. Exposed cake contact is measured as a proxy for damage. The relationship between the proxy and physical damage to the reference sample has not been calibrated.",
+  "scores": "Dream-1 original model video: 0.0 in 860/860 steps (43.00 s). The same 860 recorded actions replayed under the revised scorer: 0.0, zero new model calls. Revised scripted YAM video: 1.0 in 603 steps (30.15 s). Press and oblique scrape controls: 0.0 each.",
+  "media": "M-H28NAZ",
+  "reset_notes": "Stage a chilled whole John & Jill’s New York Retail 28 oz unit per trial. Trim and measure 146 ± 1 mm diameter and 48 ± 1 mm height, photograph the top and sides, and mount on the original plate at 4 ± 1 °C. Loosen around the entire closed band. Use clean removable food-safe gripper pad covers. See README for inspection and replacement."
 }

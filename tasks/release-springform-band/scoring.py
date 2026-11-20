@@ -1,9 +1,11 @@
 """Ordered release of the real lip, followed by independent support on the second mat."""
 import numpy as np
+from cake_contact import MAX_NORMAL_IMPULSE_NS, MAX_PENETRATION_MM
 
 class Scorer:
     def __init__(self):
         self.violation = False
+        self.cake_damaged = False
         self.removed = False
         self.hold = 0
         self.previous = None
@@ -11,6 +13,10 @@ class Scorer:
 
     def update(self, *, mechanics, **kwargs):
         m = mechanics
+        if 'cake_contact_impulse_ns' not in m or 'cake_penetration_mm' not in m:
+            raise ValueError('Missing cake-contact measurements. Replay actions in Isaac Sim with the revised observer.')
+        self.cake_damaged |= (m['cake_contact_impulse_ns'] >= MAX_NORMAL_IMPULSE_NS
+                              or m['cake_penetration_mm'] >= MAX_PENETRATION_MM)
         x,y,_ = m['band_xyz']
         height = np.asarray(m['lip_above_plate_mm'])
         margin = np.asarray(m['lip_radial_margin_mm'])
@@ -30,10 +36,10 @@ class Scorer:
             self.removed = False
         on_target = m['on_destination_mat'] and abs(x-.32) < .105 and abs(y-.097) < .0945
         stable = m['speed'] < .015 and m['spin'] < .15
-        partial = self.removed and not self.violation
+        partial = self.removed and not (self.violation or self.cake_damaged)
         resting = partial and on_target and stable and not m['robot_contacts']
         self.hold = self.hold+1 if resting else 0
         success = self.hold >= 21  # 21 samples at 20 Hz span one full second.
         return dict(score=1.0 if success else .5 if partial else 0.0,success=success,
                     held_frames=self.hold,disturbed=self.violation,facets_passed=int(self.passed.sum()),
-                    removed=bool(self.removed))
+                    cake_damaged=bool(self.cake_damaged),removed=bool(self.removed))
